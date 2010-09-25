@@ -1,0 +1,27 @@
+
+(define-function test-< ()
+  (check-true "(< 1 2 3 4)" (< 1 2 3 4))
+  (check-false "(< 2 1 3 4)" (< 2 1 3 4))
+  (check-false "(< 3 2 1 4)" (< 3 2 1 4))
+  (check-false "(< 4 3 2 1)" (< 4 3 2 1)))
+
+(define-function test-reduce ()
+  (check-equal "" (reduce1 + [1 2 3 4 5]) 15)
+  (check-equal "" (reduce + 1 [2 3 4 5]) 15))
+
+(define-function test-apply ()
+  (check-equal "" (apply + 1 [2 3 4 5]) 15)
+  (check-equal "" (apply + 1 2 3 [4 5]) 15))
+
+(define-function test-format-to-string ()
+  (check-equal "" (format-to-string "%d%%%d" 1 2) "1%2") 
+  (check-equal "" (format-to-string "x%mx"
+				    (method (stream)
+				      (write stream "%test%")))
+	       "x%test%x"))
+
+;; run tests
+(do apply (list test-< 
+		test-apply
+		test-reduce
+		test-format-to-string))

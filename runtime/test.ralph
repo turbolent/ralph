@@ -1,0 +1,66 @@
+
+(define-function report-success ((description <string>) (explanation <string>))
+  (format-out " \\033[32m✓\\033[0m %s: %s" description explanation))
+
+(define-function report-failure ((description <string>) (explanation <string>))
+  (format-out " \\033[31m✘\\033[0m %s: %s" description explanation))
+
+;; TODO: use macros and format-out value of expression
+
+(define-function check-equal ((description <string>) expected-value test-value)
+  (if (= expected-value test-value)
+      (report-success description
+		      (format-to-string "Values are equal: %=, %="
+					expected-value test-value))
+      (report-failure description
+		      (format-to-string "Values should be equal: %=, %="
+					expected-value test-vaulue))))
+
+(define-function check-true ((description <string>) expression)
+  (if expression
+      (report-success description
+		      (format-to-string "Expression is true: %s"
+					expression))
+      (report-failure description
+		      (format-to-string "Expression should be true: %s"
+					expression))))
+
+(define-function check-false ((description <string>) expression)
+  (if (not expression)
+      (report-success description
+		      (format-to-string "Expression is false: %="
+					expression))
+      (report-failure description
+		      (format-to-string "Expression should be false: %="
+					expression))))
+
+;; TODO: expression is a function atm, should become a macro
+(define-function check-condition ((description <string>) (condition-class <class>) expression)
+  (handler-case
+      (begin
+       (expression)
+       (report-failure description
+		       (format-to-string "Condition %= should have been signaled."
+					 condition-class)))
+    ((condition-class)
+	(report-success description
+	 (format-to-string "Condition %= was signaled."
+			   condition-class)))))
+
+
+;; TODO: expression is a function atm, should become a macro
+(define-function check-no-error ((description <string>) expression)
+  (handler-case
+      (begin
+       (expression)
+       (report-success description "No error was signaled."))
+    ((<error> condition: condition)
+	(report-failure description
+	 (format-to-string "Condition %= shouldn't have been signaled." condition)))))
+
+(define-function check-instance? ((description <string>) (value-type <class>) value)
+  (if (instance? value value-type)
+      (report-success description 
+		      (format-to-string "Value is of instance %=: %=" value-type value))
+      (report-failure description 
+		      (format-to-string "Value should be of instance %=: %=" value-type value))))

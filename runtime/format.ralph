@@ -1,0 +1,40 @@
+
+;; format
+
+(define-method format-out ((control-string <string>) #rest args)
+  "Formats arguments to *standard-output*."
+  (apply format *standard-output* control-string args))
+
+(define-method format-to-string ((control-string <string>) #rest args)
+  "Process a format string and return the result as another string.
+This function effectively calls format and returns the result as a string."
+  (bind ((stream (make <string-stream>)))
+    (apply format stream control-string args)
+    (stream-contents stream)))
+
+(define-method format ((stream <stream>) (control-string <string>) #rest args)
+  (bind-methods ((dispatch (char)
+		   (select ==
+		     (("s" "S" "c" "C") (print-message arg stream))
+		     (("=") (print arg stream))
+		     (("b" "B") (format-integer arg 2 stream))
+		     (("o" "O") (format-integer arg 8 stream))
+		     (("d" "D") (format-integer arg 10 stream))
+		     (("x" "X") (format-integer arg 16 stream))
+		     (("m" "M") (arg stream))
+		     (("%") (write-element stream "%"))
+		     ;; TODO: make condition
+		     (else: (error "Unknown format dispatch character, %c" char)))))
+    (reduce (method (skip? char)
+	      (when (and (not skip?) (= char "%"))
+		(dispatch char)
+		#t))
+	    #f control-string)))
+
+;; print
+
+(define-method print-message ((object <string>) (stream <stream>))
+  (write stream object))
+
+(define-method print-message ((object <symbol>) (stream <stream>))
+  (write stream (as <string> object)))

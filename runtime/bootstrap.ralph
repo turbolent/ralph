@@ -1,0 +1,37 @@
+
+;; TODO: >, <=, >=
+(define-function < (object1 object2 #rest objects)
+  (every? (method (object1 object2)
+	    (js:< object1 object2))
+	  (concatenate (list object1 object2)
+		       objects)))
+
+
+;; TODO: -
+;; (define-function + (object1 #rest objects)
+;;  (reduce1 (method (object1 object2)
+;;    ...
+
+(define-function = (object1 object2)
+  (js:== object1 object2))
+
+(define-function == (object1 object2)
+  (js:=== object1 object2))
+
+(define-function object-class (object)
+  (js:get-property object __proto__ constructor))
+
+;; unlike the specification, doesn't require any arguments
+(define-function apply ((function <function>) #rest arguments)
+  "Applies a function to arguments."
+  ((js:get-property function apply) js:null
+   (if (> (size more-arguments) 1)
+       (concatenate (but-last arguments)
+		    (last arguments))
+       arguments)))
+
+(define-function reduce1 ((function <function>) (collection <collection>))
+  "Combines the elements of a collection into a single value by repeatedly
+applying a binary function, using the first element of the collection as
+the seed value."
+  ((js:get-property collection reduce) function))
