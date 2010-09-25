@@ -1,184 +1,15 @@
-// reduced compiler, runs on any CommonJS-compatible engine
 
-// TODO: escapes in strings: \t, \r, \n
+var primitives = require('./primitives');
+var Symbol = primitives.Symbol, HashSymbol = primitives.HashSymbol;
 
-var system = require('system');
-var fs = require('fs');
+var Reader = require('./reader').Reader;
+var Stream = require('./stream').Stream;
 
 // utils
 
 Object.prototype.toArray = function () {
     return Array.prototype.slice.call(this);
 }
-
-// stream
-
-function Stream (string) {
-    this.string = string;
-    this.index = 0;
-}
-
-Stream.prototype.peekChar = function () {
-    return this.string[this.index];
-}
-
-Stream.prototype.rest = function () {
-    return this.string.substring(this.index);
-}
-
-Stream.prototype.skipLine = function () {
-    var result = /(.*)[\n]/.exec(this.rest());
-    this.index += result[1].length;
-}
-
-Stream.prototype.skipWhitespace = function () {
-    var result = /[ \t\n]*/.exec(this.rest());
-    this.index += result[0].length;
-}
-
-Stream.prototype.readChar = function () {
-    return this.string[this.index++];
-}
-
-Stream.prototype.eof = function () {
-    return this.index >= (this.string.length - 1);
-}
-
-// symbol
-
-function Symbol (name) {
-    this.name = name;
-}
-
-Symbol.escaped = {
-    '-': 'minus',
-    '+': 'plus',
-    '!': 'bang',
-    '?': 'what',
-    '%': 'percent',
-    '#': 'hash',
-    '@': 'at',
-    '*': 'star',
-    '/': 'slash',
-    '=': 'equals',
-    ':': 'colon',
-    '<': 'lessthan',
-    '>': 'greaterthan'
-}
-
-Symbol.reserved = ['function', 'arguments'];
-
-Symbol.prototype.escape = function () {
-    var name = this.name;
-    for (c in Symbol.escaped) {
-	name = name.replace(new RegExp('\\' + c, 'g'),
-			    '_' + Symbol.escaped[c] + '_');
-    }
-    if (Symbol.reserved.indexOf(name) >= 0)
-	name = '_' + name;
-    return name;
-}
-
-Symbol.prototype.toString = function () {
-    return this.escape();
-}
-
-// hash symbols
-
-var HashSymbol = function (name) {
-    this.name = name;
-}
-
-HashSymbol.names = ['key', 'rest', 'values'];
-
-HashSymbol.names.forEach(function (hashSymbol) {
-    HashSymbol[hashSymbol] = new HashSymbol(hashSymbol);
-});
-
-/* TODO: into own namespace?
-HashSymbol.prototype.toString = function () {
-    return 'HashSymbol.' + this.name;
-}
-*/
-
-// reader
-
-function Reader (stream) {
-    this.stream = stream;
-}
-
-Reader.prototype.read = function () {
-    this.stream.skipWhitespace();
-
-    if (!this.stream.eof()) {
-	switch (this.stream.peekChar()) {
-	case ';':
-	    this.stream.skipLine();
-	    return this.read();
-	case '"':
-	    return this.readString();
-	case '(':
-	    return this.readList();
-	default:
-	    return this.readAtom();
-	}
-    }
-}
-
-Reader.prototype.readAtom = function () {
-    var c = this.stream.peekChar();
-    if ((c >= '0' && c <= '9') || c == '-')
-	return this.readNumber();
-    else
-	return this.readSymbol();
-}
-
-Reader.prototype.readList = function () {
-    var result = new Array();
-    this.stream.readChar();
-    this.stream.skipWhitespace();
-
-    while (this.stream.peekChar() != ')') {
-	if (this.stream.eof())
-	    throw new Error('Unbalanced parens');
-	var next = this.read();
-	result.push(next);
-	this.stream.skipWhitespace();
-    }
-
-    this.stream.readChar();
-    return result;
-}
-
-Reader.prototype.readSymbol = function () {
-    var match = /[^()\n\t ]+/.exec(this.stream.rest());
-    var name = match[0];
-    this.stream.index += name.length;
-    // TODO: keywords
-    if (name[0] == '#' && HashSymbol.names.indexOf(name.substring(1)) >= 0)
-	return HashSymbol[name.substring(1)];
-    else
-	return new Symbol(match[0]);
-}
-
-Reader.prototype.readString = function () {
-    this.stream.readChar();
-    var c, result = "";
-    while ((c = this.stream.readChar()) != '"') {
-	if (c == '\\')
-	    result += this.stream.readChar();
-	else
-	    result += c;
-    }
-    return result;
-}
-
-Reader.prototype.readNumber = function () {
-    var match = /[^()\n\t ]+/.exec(this.stream.rest());
-    this.stream.index += match[0].length;
-    return new Number(match[0]);
-}
-
 
 // compiler
 
@@ -287,6 +118,8 @@ function functionDeclaration (name, args, body) {
 var macros = {
     'define-function': function (name, args) {
 	var body = arguments.toArray().slice(2);
+	if (!(name instanceof Symbol))
+	    throw new Error('function\'s name should be a symbol');
 	return functionDeclaration(name, args, body);
     },
     'method': function (args) {
@@ -324,7 +157,7 @@ var macros = {
 	    + ';\n})()';
     },
     // TODO: expand to (bind ((name (method (..
-    'bind-methods': function {
+    'bind-methods': function () {
     },
     'js:get-property': function () {
 	var elements = arguments.toArray();
@@ -371,20 +204,11 @@ var symbolMacros = {
     '#t': function () { return 'true'; }
 }
 
-function main () {
-    if (system.args.length < 2)
-	throw new Error("provide a filename");
+// interface
 
-    var filename = system.args[1];
-    var data = fs.read(filename);
-
-    var stream = new Stream("(\n" + data + "\n)");
+exports.compile = function (code) {
+    var stream = new Stream("(\n" + code + "\n)");
     var reader = new Reader(stream);
     var forms = reader.read();
-
-    fs.write(fs.base(filename, '.ralph') + '.js',
-	     compileAll(forms) + '\n');
+    return compileAll(forms);
 }
-
-main();
-
