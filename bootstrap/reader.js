@@ -1,6 +1,6 @@
 
 var primitives = require('./primitives');
-var Symbol = primitives.Symbol;
+var Symbol = primitives.Symbol, HashSymbol = primitives.HashSymbol;
 
 function Reader (stream) {
     this.stream = stream;
