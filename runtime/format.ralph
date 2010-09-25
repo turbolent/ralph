@@ -13,6 +13,7 @@ This function effectively calls format and returns the result as a string."
     (stream-contents stream)))
 
 (define-method format ((stream <stream>) (control-string <string>) #rest args)
+  "Format a string and write it to a stream."
   (bind-methods ((dispatch (char)
 		   (select ==
 		     (("s" "S" "c" "C") (print-message arg stream))
@@ -26,9 +27,13 @@ This function effectively calls format and returns the result as a string."
 		     ;; TODO: make condition
 		     (else: (error "Unknown format dispatch character, %c" char)))))
     (reduce (method (skip? char)
-	      (when (and (not skip?) (= char "%"))
-		(dispatch char)
-		#t))
+	      (if (and (not skip?) (= char "%"))
+		  (begin
+		   (dispatch char)
+		   #t)
+		  (begin
+		   (write-element stream char)
+		   #f)))
 	    #f control-string)))
 
 ;; print
