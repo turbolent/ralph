@@ -1,0 +1,18 @@
+
+(define-function curry ((function <function>) #rest curried-args)
+  "Returns a function based on an exisiting function 
+and a number of default initial arguments."
+  (method (#rest args)
+    (apply function (concatenate curried-args args))))
+
+(define-function rcurry ((function <function>) #rest curried-args)
+  "Returns a function based on an exisiting function 
+and a number of default final arguments."
+  (method (#rest args)
+    (apply function (concatenate args curried-args))))
+
+(define-function always (value)
+  "Returns a function that always returns a particular object."
+  (method (#rest args)
+    value))
+
