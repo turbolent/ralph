@@ -165,10 +165,7 @@ var macros = {
 			  .concat(elements.slice(1)
 				  .map(compile)
 				  .map(function (element) {
-				      if (element instanceof Symbol)
-					  return '.' + element;
-				      else
-					  return '[' + element + ']';
+				      return '[' + element + ']';
 				  })).join(''));
     },
     'begin': function () {
