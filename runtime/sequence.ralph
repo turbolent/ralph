@@ -1,0 +1,67 @@
+
+(define-function first ((sequence <sequence>))
+  "Returns the first element of a sequence."
+  (element sequence 0))
+
+(define-function second ((sequence <sequence>))
+  (element sequence 1))
+
+(define-function third ((sequence <sequence>))
+  (element sequence 2))
+
+;; unlike specification, defined on <sequence>
+(define-function tail ((sequence <sequence>))
+  (copy-sequence sequence start: 1))
+
+(define-function last ((sequence <sequence>))
+  (element sequence (- (size sequence) 1)))
+
+;; not in the standard
+(define-function but-last ((sequence <sequence>))
+  (copy-sequene sequence end: (- (size sequence) 1)))
+
+(define-method empty? ((collection <collection>))
+  "Returns true if the collection has zero elements."
+  (= (size sequence) 0))
+
+(define-method add! ((source-sequence <sequence>) new-element)
+  "Adds an element to a sequence."
+  ;; TODO: push-last only available for deques
+  (push-last source-sequence new-element))
+
+(define-method reverse ((source-sequence <sequence>))
+  "Returns a sequence with elements in the reverse 
+order of its arguments sequence."
+  (reverse! (copy-sequence source-sequence)))
+
+(define-method choose-by ((predicate <function>) (test-sequence <sequence>) 
+			  (value-sequence <sequence>))
+  "Returns those elments of a sequence that correspond to those in another 
+sequence that satisfy a predicate."
+  (bind ((test-keys (choose (method (test-key)
+			      (predicate (element test-sequence test-key)))
+			    (key-sequence test-sequence))))
+    (map (curry element value-sequence) test-keys)))
+
+(define-method sort ((source-sequence <sequence>) #key (test <))
+  "Returns a sequence containing the elements of its 
+argument sequence, sorted."
+  (sort! (copy-sequence source-sequence) test: test))
+
+(define-method replace-subsequence 
+    ((target-sequence <sequence>) (insert-sequence <sequence>)
+     #key (start 0) (end (size target-sequence)))
+  "Returns a sequence where a portion of the sequence is replaced with
+the elements of another sequence."
+  (concatenate (copy-sequence target-sequence end: start)
+	       insert-sequence
+	       (copy-sequence target-sequence start: end)))
+
+(define-method find-key ((collection <collection>) (predicate <function>)
+			 #key (skip 0) (failure #f))
+  "Returns the key in a collection such that the corresponding collection
+element satisfies a predicate."
+  (bind ((keys (choose (method (key)
+		         (predicate (element collection key)))
+		       (key-sequence collection))))
+    (or (element keys skip) failure)))
