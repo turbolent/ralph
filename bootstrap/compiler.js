@@ -107,7 +107,7 @@ function functionDeclaration (name, args, body) {
     var rest = "";
     var restPosition = args.indexOf(HashSymbol.rest);
     if (restPosition >= 0)
-	rest = restDeclaration(args[restPosition + 1], 
+	rest = restDeclaration(args[restPosition + 1],
 			       requiredArguments(args).length);
 
     // TODO: keyword arguments, use reduce
@@ -118,6 +118,8 @@ function functionDeclaration (name, args, body) {
 }
 
 var macros = {
+    // TODO: should be property of current module,
+    //       and accessible as function
     'define-function': function (name, args) {
 	var body = arguments.toArray().slice(2);
 	if (!(name instanceof Symbol))
@@ -146,7 +148,7 @@ var macros = {
     // TODO: bind multiple values
     // e.g. (bind ((foo bar baz (values 1 2 3)))
     // arguments.callee.acceptsMultipleValues = true;
-    // (...) ? arguments.callee.MultipleValues : 
+    // (...) ? arguments.callee.MultipleValues :
     //         new Array([foo, bar, baz].length)
     // TODO: test multiple value bind with nested functions
     'bind': function (bindings) {
