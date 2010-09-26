@@ -34,7 +34,7 @@ Symbol.prototype.escape = function () {
 }
 
 Symbol.prototype.toString = function () {
-    return this.escape();
+    return this.escape().toLowerCase();
 }
 
 // hash symbols
