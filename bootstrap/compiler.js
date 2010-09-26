@@ -194,6 +194,9 @@ var macros = {
 	    return compile([new Symbol('if'), cases[0][0],
 			    cases[0].splice(1),
 			    [new Symbol('cond')].concat(cases.splice(1))]);
+    },
+    'js:negative': function (object) {
+	return '(- ' + object + ')';
     }
 }
 
