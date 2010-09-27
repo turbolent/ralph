@@ -6,35 +6,46 @@ function Symbol (name) {
 exports.Symbol = Symbol;
 
 Symbol.escaped = {
-    '-': 'minus', '+': 'plus', '!': 'bang', '?': 'what', '%': 'percent',
-    '#': 'hash', '@': 'at', '*': 'star', '/': 'slash', '=': 'equals', 
-    ':': 'colon', '<': 'lessthan', '>': 'greaterthan'
+    '+': 'PLUS', '!': 'BANG', '?': 'WHAT', '%': 'PERCENT',
+    '#': 'HASH', '@': 'AT', '*': 'STAR', '/': 'SLASH', '=': 'EQUALS',
+    ':': 'COLON', '<': 'LESSTHAN', '>': 'GREATERTHAN'
 }
 
 Symbol.reserved = [
-    "break", "case", "catch", "continue", "default", "delete", "do", "else", 
-    "finally", "for", "function", "if", "in", "instanceof", "new", "return", 
-    "switch", "this", "throw", "try", "typeof", "var", "void", "while", 
-    "with", "abstract", "boolean", "byte", "char", "class", "const", 
-    "debugger", "double", "enum", "export", "extends", "final", "float", 
-    "goto", "implements", "import", "int", "interface", "long", "native", 
-    "package", "private", "protected", "public", "short", "static", "super", 
+    "break", "case", "catch", "continue", "default", "delete", "do", "else",
+    "finally", "for", "function", "if", "in", "instanceof", "new", "return",
+    "switch", "this", "throw", "try", "typeof", "var", "void", "while",
+    "with", "abstract", "boolean", "byte", "char", "class", "const",
+    "debugger", "double", "enum", "export", "extends", "final", "float",
+    "goto", "implements", "import", "int", "interface", "long", "native",
+    "package", "private", "protected", "public", "short", "static", "super",
     "synchronized", "throws", "transient", "volatile", "null", "true", "false"
 ];
 
 Symbol.prototype.escape = function () {
-    var name = this.name;
-    for (var c in Symbol.escaped) {
-	name = name.replace(new RegExp('\\' + c, 'g'),
-			    '_' + Symbol.escaped[c] + '_');
+    if (Symbol.reserved.indexOf(this.name) >= 0) {
+	return '_' + this.name;
+    } else {
+	var result = '';
+	var up = false;
+	for (var i = 0; i < this.name.length; i++) {
+	    var c = this.name[i];
+	    if (c != '-') {
+		if (up)
+		    result += c.toUpperCase();
+		else if (Symbol.escaped.hasOwnProperty(c))
+		    result += Symbol.escaped[c];
+		else
+		    result += c;
+	    }
+	    up = (c == '-');
+	}
+	return result;
     }
-    if (Symbol.reserved.indexOf(name) >= 0)
-	name = '_' + name;
-    return name;
 }
 
 Symbol.prototype.toString = function () {
-    return this.escape().toLowerCase();
+    return this.escape();
 }
 
 // hash symbols
