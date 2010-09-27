@@ -24,9 +24,9 @@ Reader.prototype.read = function () {
     }
 }
 
-var hexNumberExpression = /0x[0-9a-fA-F]+/;
-var octalNumberExpression = /0[0-7]+/;
-var decimalNumberExpression = /\d*\.?\d*(?:[eE]-?\d*(?:\d\.?|\.?\d)\d*)?/;
+var hexNumberExpression = /^0x[0-9a-f]+/i;
+var octalNumberExpression = /^0[0-7]+/;
+var decimalNumberExpression = /^\d*\.?\d*(?:e-?\d*(?:\d\.?|\.?\d)\d*)?/i;
 
 Reader.prototype.readAtom = function () {
     var c = this.stream.peekChar();
