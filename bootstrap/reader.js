@@ -9,7 +9,6 @@ exports.Reader = Reader;
 
 Reader.prototype.read = function () {
     this.stream.skipWhitespace();
-
     if (!this.stream.eof()) {
 	switch (this.stream.peekChar()) {
 	case ';':
@@ -53,8 +52,12 @@ Reader.prototype.readList = function () {
     while (this.stream.peekChar() != ')') {
 	if (this.stream.eof())
 	    throw new Error('Unbalanced parens');
-	var next = this.read();
-	result.push(next);
+	if (this.stream.peekChar() == ';')
+	    this.stream.skipLine();
+	else {
+	    var next = this.read();
+	    result.push(next);
+	}
 	this.stream.skipWhitespace();
     }
 
