@@ -9,17 +9,19 @@ var Stream = require('./stream').Stream;
 
 Object.prototype.toArray = function () {
     return Array.prototype.slice.call(this);
-}
+};
 
 // compiler
 
 function compileAll (forms, all, comma) {
     var separator = ';\n';
-    if (comma)
+    if (comma) { 
 	separator = ', ';
+    }
     var result = forms.map(compile).join(separator);
-    if (all && forms.length == 1)
+    if (all && forms.length == 1) {
 	result += (separator + '\n');
+    }
     return result;
 }
 
@@ -27,12 +29,13 @@ function compile (form) {
     if (form instanceof Array) {
 	var head = form[0];
 	var rest = form.slice(1);
-	if (macros.hasOwnProperty(head.name))
+	if (macros.hasOwnProperty(head.name)) {
 	    return macros[head.name].apply(this, rest);
-	else if (infix.hasOwnProperty(head.name))
+	} else if (infix.hasOwnProperty(head.name)) {
 	    return rest.map(compile).join(' ' + infix[head.name] + ' ');
-	else
+	} else {
 	    return compile(head) + '(' + rest.map(compile).join(', ') + ')';
+	}
     } else if (typeof form == "string") {
 	return '"' + form + '"';
     } else if (form instanceof Symbol
@@ -63,9 +66,9 @@ function restDeclaration (name, requiredArguments) {
 
 function argumentNames (args) {
     return args.map(function (arg) {
-	if (arg instanceof Array)
+	if (arg instanceof Array) {
 	    return arg[0];
-	else
+	} else
 	    return arg;
     });
 }
@@ -73,8 +76,9 @@ function argumentNames (args) {
 function requiredArguments (args) {
     function position (hashSymbol) {
 	var result = args.indexOf(hashSymbol);
-	if (result == -1)
+	if (result == -1) {
 	    result = args.length;
+	}
 	return result;
     }
     var hashSymbolPositions =
@@ -106,9 +110,10 @@ function functionDeclaration (name, args, body) {
     }
     var rest = "";
     var restPosition = args.indexOf(HashSymbol.rest);
-    if (restPosition >= 0)
+    if (restPosition >= 0) {
 	rest = restDeclaration(args[restPosition + 1],
 			       requiredArguments(args).length);
+    }
 
     // TODO: keyword arguments, use reduce
     return (documentation +
@@ -158,24 +163,27 @@ var macros = {
     // TODO: test multiple value bind with nested functions
     'bind': function (bindings) {
 	var body = arguments.toArray().slice(1);
-	return '(function () {\n'
-	    + compileAll(bindings.map(function (binding) {
-		return ([new Symbol('define')].concat(binding));
-	    }), true)
-	    + compileAll(addReturn(body))
-	    + ';\n})()';
+	var declarations = bindings.map(function (binding) {
+	    return ([new Symbol('define')].concat(binding));
+	});
+	return ('(function () {\n' + compileAll(declarations, true) 
+		+ compileAll(addReturn(body)) + ';\n})()');
     },
     // TODO: expand to (bind ((name (method (..
     'bind-methods': function () {
     },
     'js:get-property': function () {
 	var elements = arguments.toArray();
-	return new Symbol([compile(elements[0])]
-			  .concat(elements.slice(1)
-				  .map(compile)
-				  .map(function (element) {
-				      return '[' + element + ']';
-				  })).join(''));
+	var object = elements[0];
+	if (!(object instanceof Symbol || typeof object == "string")) {
+	    object = compile(object);
+	}
+	return object +
+	    elements.slice(1)
+	    .map(compile)
+	    .map(function (element) {
+		return '[' + element + ']';
+	    }).join('');
     },
     'begin': function () {
 	return '(' + compileAll(arguments.toArray(), false, true) + ')';
@@ -193,17 +201,28 @@ var macros = {
     // FIXME
     'cond': function () {
 	var cases = arguments.toArray();
-	if (cases[0][0].name == 'else:')
-	    return compile(cases[0].splice(1));
+	var _case = _case;
+	if (_case[0].name == 'else:')
+	    return compile(_case.splice(1));
 	else if (cases.length == 1)
 	    return compile(new Symbol('#f'));
 	else
-	    return compile([new Symbol('if'), cases[0][0],
-			    cases[0].splice(1),
+	    return compile([new Symbol('if'), _case[0],
+			    _case.splice(1),
 			    [new Symbol('cond')].concat(cases.splice(1))]);
     },
     'js:negative': function (object) {
 	return '(- ' + object + ')';
+    },
+    'not': function (expression) {
+	return '!' + compile(expression); 
+    },
+    // TODO:
+    'handler-case': function (expression) {
+	return compile([[new Symbol('begin'), [new Symbol('method'), []]]]);
+    },
+    'js:identifier': function (name) {
+	return ('' + name);
     }
 }
 
