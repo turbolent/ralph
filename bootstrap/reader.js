@@ -73,7 +73,7 @@ Reader.prototype.readSymbol = function () {
     if (name[0] == '#' && HashSymbol.names.indexOf(name.substring(1)) >= 0)
 	return HashSymbol[name.substring(1)];
     else
-	return new Symbol(match[0]);
+	return new Symbol(match[0].toLowerCase());
 }
 
 // TODO: escapes in strings: \t, \r, \n
