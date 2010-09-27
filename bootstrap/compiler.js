@@ -15,7 +15,7 @@ Object.prototype.toArray = function () {
 
 function compileAll (forms, all, comma) {
     var separator = ';\n';
-    if (comma) { 
+    if (comma) {
 	separator = ', ';
     }
     var result = forms.map(compile).join(separator);
@@ -50,6 +50,8 @@ function compile (form) {
 var infix = {
     'and': '&&',
     'or': '||',
+    'js:+': '+',
+    'js:-': '-',
     'js:>': '>',
     'js:<': '<',
     'js:>=': '>=',
@@ -128,13 +130,13 @@ var macros = {
     'define-function': function (name, args) {
 	var body = arguments.toArray().slice(2);
 	if (!(name instanceof Symbol))
-	    throw new Error('function\'s name should be a symbol: ' 
+	    throw new Error('function\'s name should be a symbol: '
 			    + JSON.stringify(name));
 	return functionDeclaration(name, args, body);
     },
     'method': function (args) {
 	var body = arguments.toArray().slice(1);
-	return functionDeclaration("", args, body);
+	return '(' + functionDeclaration("", args, body) + ')';
     },
     'list': function () {
 	return '[' + arguments.toArray().map(compile).join(', ') + ']';
@@ -147,8 +149,6 @@ var macros = {
 	var args = arguments.toArray().slice(1);
 	return 'new ' + name + '(' + args.map(compile).join(', ') + ')';
     },
-    // TODO: 'define creates a variable accessible through
-    //        variable-name in the current module'
     'define': function (name, value) {
 	return "var " + name + " = " + compile(value);
     },
@@ -166,11 +166,8 @@ var macros = {
 	var declarations = bindings.map(function (binding) {
 	    return ([new Symbol('define')].concat(binding));
 	});
-	return ('(function () {\n' + compileAll(declarations, true) 
+	return ('(function () {\n' + compileAll(declarations, true)
 		+ compileAll(addReturn(body)) + ';\n})()');
-    },
-    // TODO: expand to (bind ((name (method (..
-    'bind-methods': function () {
     },
     'js:get-property': function () {
 	var elements = arguments.toArray();
@@ -219,15 +216,27 @@ var macros = {
 	return '(- ' + object + ')';
     },
     'not': function (expression) {
-	return '!' + compile(expression); 
-    },
-    // TODO:
-    'handler-case': function (expression) {
-	return compile([[new Symbol('begin'), [new Symbol('method'), []]]]);
+	return '!' + compile(expression);
     },
     'js:identifier': function (name) {
 	return ('' + name);
-    }
+    },
+    // statement!
+    'js:for-in': function (variableAndExpression) {
+	var body = arguments.toArray().slice(1);
+	var variable = variableAndExpression[0];
+	var expression = variableAndExpression[1];
+	return 'for (var ' + variable + ' in ' + compile(expression) + ') {\n'
+	    + compileAll(body, true) + '}';
+    },
+    // TODO:
+    'handler-case': function (expression) {
+	return compile([[new Symbol('method'), []]]);
+    },
+    // TODO: expand to (bind ((name (method (..
+    'bind-methods': function () {
+    },
+    // TODO: define-method
 }
 
 var symbolMacros = {
