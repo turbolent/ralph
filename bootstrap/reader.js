@@ -25,11 +25,23 @@ Reader.prototype.read = function () {
     }
 }
 
+var hexNumberExpression = /0x[0-9a-fA-F]+/;
+var octalNumberExpression = /0[0-7]+/;
+var decimalNumberExpression = /\d*\.?\d*(?:[eE]-?\d*(?:\d\.?|\.?\d)\d*)?/;
+
 Reader.prototype.readAtom = function () {
     var c = this.stream.peekChar();
-    if ((c >= '0' && c <= '9') || c == '-')
+    var rest = this.stream.rest()
+    if ([hexNumberExpression,
+	 octalNumberExpression,
+	 decimalNumberExpression]
+	.some(function (expression) {
+	    var match = expression.exec(rest);
+	    return match && match[0] != '';
+	}))
+    {
 	return this.readNumber();
-    else
+    } else
 	return this.readSymbol();
 }
 
