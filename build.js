@@ -4,14 +4,17 @@ var fs = require('fs');
 var compiler = require('./bootstrap/compiler');
 
 function compileFile (path) {
-    fs.write((fs.directory(path) + '/' + 
+    fs.write((fs.directory(path) + '/' +
 	      fs.base(path, '.ralph') + '.js'),
 	     compiler.compile(fs.read(path)) + '\n');
 }
 
 var commands = {
     clean: function () {
-	// clean runtime
+	commands.cleanRuntime();
+	commands.cleanTests();
+    },
+    cleanRuntime: function () {
 	system.print('Cleaning runtime ...');
 	fs.listTree('./runtime/').forEach(function (path) {
 	    var path = './runtime/' + path;
@@ -20,9 +23,12 @@ var commands = {
 		fs.removeTree(path);
 	    }
 	});
-	// clean tests 
+    },
+    cleanTests: function () {
 	system.print('Cleaning tests ...');
-	fs.removeTree('./tests.js');
+	try {
+	    fs.removeTree('./tests.js');
+	} catch (e) {};
     },
     bootstrapRuntime: function () {
 	system.print('Bootstraping runtime ...');
@@ -35,10 +41,6 @@ var commands = {
 		compileFile(path);
 	    }
 	});
-    },
-    compileTestLibrary: function () {
-	system.print('Compiling test library ...');
-	compileFile(path);
     },
     compileTests: function () {
 	system.print('Compiling tests ...');
