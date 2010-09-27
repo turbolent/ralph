@@ -6,7 +6,7 @@ function Symbol (name) {
 exports.Symbol = Symbol;
 
 Symbol.escaped = {
-    '+': 'PLUS', '!': 'BANG', '?': 'WHAT', '%': 'PERCENT',
+    '-': 'MINUS', '+': 'PLUS', '!': 'BANG', '?': 'WHAT', '%': 'PERCENT',
     '#': 'HASH', '@': 'AT', '*': 'STAR', '/': 'SLASH', '=': 'EQUALS',
     ':': 'COLON', '<': 'LESSTHAN', '>': 'GREATERTHAN'
 }
@@ -37,6 +37,8 @@ Symbol.prototype.escape = function () {
 		    result += Symbol.escaped[c];
 		else
 		    result += c;
+	    } else if (i == (this.name.length - 1)) {
+		result += Symbol.escaped[c];
 	    }
 	    up = (c == '-');
 	}
