@@ -123,12 +123,13 @@ var macros = {
     'define-function': function (name, args) {
 	var body = arguments.toArray().slice(2);
 	if (!(name instanceof Symbol))
-	    throw new Error('function\'s name should be a symbol');
+	    throw new Error('function\'s name should be a symbol: ' 
+			    + JSON.stringify(name));
 	return functionDeclaration(name, args, body);
     },
     'method': function (args) {
 	var body = arguments.toArray().slice(1);
-	return functionDeclaration(null, args, body);
+	return functionDeclaration("", args, body);
     },
     'js:array': function () {
 	return '[' + arguments.toArray().map(compile).join(', ') + ']';
