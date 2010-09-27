@@ -1,4 +1,12 @@
-(define <object> Object)
+
+(define <object> (js:identifier "Object"))
+
+(define-function list (#rest elements)
+  (bind ((result (js:new "Array")))
+    ((js:get-property (object-class (js:identifier "Array")) 
+		      "splice" "apply")
+     result (concatenate (list 0 0) elements))
+    result))
 
 (define-method < (object1 object2 #rest objects)
   (every? (method (object1 object2)

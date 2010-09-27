@@ -131,12 +131,16 @@ var macros = {
 	var body = arguments.toArray().slice(1);
 	return functionDeclaration("", args, body);
     },
-    'js:array': function () {
+    'list': function () {
 	return '[' + arguments.toArray().map(compile).join(', ') + ']';
     },
     'js:call': function (name) {
 	var args = arguments.toArray().slice(1);
 	return name + '(' + args.map(compile).join(', ') + ')';
+    },
+    'js:new': function (name) {
+	var args = arguments.toArray().slice(1);
+	return 'new ' + name + '(' + args.map(compile).join(', ') + ')';
     },
     // TODO: 'define creates a variable accessible through
     //        variable-name in the current module'
