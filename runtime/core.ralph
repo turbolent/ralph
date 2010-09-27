@@ -131,11 +131,11 @@ of its arguments sequence."
 	    (add! keys key))
     keys))
 
-(defun as-uppercase ((string <string>))
+(define-function as-uppercase ((string <string>))
   "Coerces a sttring to uppercase."
   ((js:get-property string "toUpperCase")))
 
-(defun as-lowercase ((string <string>))
+(define-function as-lowercase ((string <string>))
   "Coerces a sttring to lowercase."
   ((js:get-property string "toLowerCase")))
 
