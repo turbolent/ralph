@@ -132,11 +132,11 @@ of its arguments sequence."
     keys))
 
 (define-function as-uppercase ((string <string>))
-  "Coerces a sttring to uppercase."
+  "Coerces a string to uppercase."
   ((js:get-property string "toUpperCase")))
 
 (define-function as-lowercase ((string <string>))
-  "Coerces a sttring to lowercase."
+  "Coerces a string to lowercase."
   ((js:get-property string "toLowerCase")))
 
 ;; as-uppercase! and as-lowercase! impossible,
@@ -149,8 +149,8 @@ of its arguments sequence."
 (define-function do ((function <function>) (collection <collection>)
 		     #rest more-collections)
   "Iterates over the collections for side effect."
+  ;; TODO: forEach only defined on arrays, for-in also works on strings
   ((js:get-property collection "forEach") function))
-
 
 (define-function map ((function <function>) (collection <collection>)
 		      #rest more-collections)
