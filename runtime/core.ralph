@@ -3,8 +3,7 @@
 
 (define-function list (#rest elements)
   (bind ((result (js:new "Array")))
-    ((js:get-property (object-class (js:identifier "Array")) 
-		      "splice" "apply")
+    ((js:get-property "Array" "prototype" "splice" "apply")
      result (concatenate (list 0 0) elements))
     result))
 
@@ -181,4 +180,4 @@ element of the collection."
 ;; TODO: why is this a function in the specification?
 (define-function concatenate ((first-sequence <sequence>) #rest more-sequences)
   "Returns the concatenation of one or more sequences."
-  ((js:get-property first-sequence "concat") more-sequences))
+  ((js:get-property "Array" "prototype" "concat" "apply") first-sequence more-sequences))
