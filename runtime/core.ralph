@@ -64,7 +64,9 @@
 
 (define-function object-class (object)
   "Returns the class of an object."
-  ((js:get-property Object "getPrototypeOf") object))
+  ;; Object.getPrototypeOf on primitives only works in FireFox"
+  ;; ((js:get-property "Object" "getPrototypeOf") object))
+  (js:get-property object "__proto__" "constructor")) 
 
 (define-function instance? (object (type <type>))
   "Tests wether an object is an instance of a type."
