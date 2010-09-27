@@ -24,7 +24,7 @@ Symbol.reserved = [
 
 Symbol.prototype.escape = function () {
     var name = this.name;
-    for (c in Symbol.escaped) {
+    for (var c in Symbol.escaped) {
 	name = name.replace(new RegExp('\\' + c, 'g'),
 			    '_' + Symbol.escaped[c] + '_');
     }
