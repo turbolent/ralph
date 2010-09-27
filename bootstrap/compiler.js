@@ -180,9 +180,13 @@ var macros = {
 	}
 	return object +
 	    elements.slice(1)
-	    .map(compile)
 	    .map(function (element) {
-		return '[' + element + ']';
+		if (typeof element == 'string' &&
+		    /^[a-zA-Z_]+$/.exec(element))
+		{
+		    return '.' + element;
+		} else
+		    return '[' + compile(element) + ']';
 	    }).join('');
     },
     'begin': function () {
