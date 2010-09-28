@@ -13,7 +13,6 @@ Object.prototype.toArray = function () {
 
 //// expansion
 
-
 function argumentNames (args) {
     return args.map(function (arg) {
 	return (arg instanceof Array ? arg[0] : arg);
@@ -211,18 +210,19 @@ var specialForms = {
     'begin': function (allowStatements) {
 	var forms = arguments.toArray().splice(1);
 	if (allowStatements) {
-	    var separator = (allowStatements ? ';\n' : ', ');
+	    var separator = ';\n';
 	    var result = forms.map(write).join(separator);
-	    return result + separator;
+	    if (forms.length > 1)
+		result += '\n';
+	    return result;
 	} else
-	    return '(' + forms.map(writeStatements).join(', ') + ')';
+	    return '(' + forms.map(write).join(', ') + ')';
     },
     'if': function (allowStatements, test, then, _else) {
-	var elseUseful = (_else instanceof Array);
 	if (allowStatements) {
-	     var result = 'if (' + write(test) + ') {\n'
+	    var result = 'if (' + write(test) + ') {\n'
 		+ writeStatements(then) + '}';
-	    if (elseUseful)
+	    if (_else instanceof Array)
 		result += (' else {\n' + writeStatements(_else) + '\n}');
 	    return result;
 	} else {
@@ -287,9 +287,7 @@ var specialForms = {
     'js:return': function (allowStatements, body) {
 	return 'return ' + write(body);
     },
-    'js:function': function (allowStatements, name, args) {
-	var body = arguments.toArray().slice(3);
-	body.unshift(new Symbol('begin'));
+    'js:function': function (allowStatements, name, args, body) {
 	return 'function ' + (name ? name + ' ' : '')
 	    + '(' + args.join(', ') + ') '
 	    + '{\n' + writeStatements(addReturn(body)) + '}';
