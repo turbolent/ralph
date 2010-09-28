@@ -203,15 +203,19 @@ var macros = {
     // FIXME
     'cond': function () {
 	var cases = arguments.toArray();
-	var _case = _case;
-	if (_case[0].name == 'else:')
-	    return compile(_case.splice(1));
-	else if (cases.length == 1)
+	if (cases.length == 0)
 	    return compile(new Symbol('#f'));
-	else
-	    return compile([new Symbol('if'), _case[0],
-			    _case.splice(1),
-			    [new Symbol('cond')].concat(cases.splice(1))]);
+	else {
+	    var _case = cases[0];
+	    if (_case instanceof Symbol && _case[0].name == 'else:')
+		return compile(_case.splice(1));
+	    else {
+		var then = _case.splice(1);
+		then.unshift(new Symbol('begin'));
+		return compile([new Symbol('if'), _case[0], then,
+				[new Symbol('cond')].concat(cases.splice(1))]);
+	    }
+	}
     },
     'js:negative': function (object) {
 	return '(- ' + object + ')';
