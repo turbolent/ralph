@@ -211,12 +211,12 @@ var specialForms = {
 	var forms = arguments.toArray().splice(1);
 	if (allowStatements) {
 	    var separator = ';\n';
-	    var result = forms.map(write).join(separator);
+	    var result = forms.map(writeExpressions).join(separator);
 	    if (forms.length > 1)
 		result += '\n';
 	    return result;
 	} else
-	    return '(' + forms.map(write).join(', ') + ')';
+	    return '(' + forms.map(writeExpressions).join(', ') + ')';
     },
     'if': function (allowStatements, test, then, _else) {
 	if (allowStatements) {
@@ -233,7 +233,7 @@ var specialForms = {
     },
     'list': function (allowStatements) {
 	var elements = arguments.toArray().splice(1);
-	return '[' + elements.map(write).join(', ') + ']';
+	return '[' + elements.map(writeExpressions).join(', ') + ']';
     },
     'js:defined': function (allowStatements, expression) {
 	return '(typeof (' + write(expression) + ') != "undefined")';
@@ -272,11 +272,11 @@ var specialForms = {
     },
     'js:call': function (allowStatements, name) {
 	var args = arguments.toArray().slice(2);
-	return name + '(' + args.map(write).join(', ') + ')';
+	return name + '(' + args.map(writeExpressions).join(', ') + ')';
     },
     'js:new': function (allowStatements, name) {
 	var args = arguments.toArray().slice(2);
-	return 'new ' + name + '(' + args.map(write).join(', ') + ')';
+	return 'new ' + name + '(' + args.map(writeExpressions).join(', ') + ')';
     },
     'js:var': function (allowStatements, name, value) {
 	return "var " + name + " = " + write(value);
@@ -306,18 +306,22 @@ function writeStatements (form) {
     return write(form, true);
 }
 
+function writeExpressions (form) {
+    return write(form, false);
+}
+
 function write (form, allowStatements) {
     if (form instanceof Array) {
 	var head = form[0];
 	var rest = form.slice(1);
 	if (head instanceof Symbol && infix.hasOwnProperty(head.name)) {
-	    return '(' + rest.map(write).join(' ' + infix[head.name] + ' ') + ')';
+	    return '(' + rest.map(writeExpressions).join(' ' + infix[head.name] + ' ') + ')';
 	} else if (head instanceof Symbol && specialForms.hasOwnProperty(head.name)) {
 	    return specialForms[head.name].apply(this, [allowStatements].concat(rest));
 	} else if (head instanceof Array && head[0] && head[0].name == 'js:function') {
-	    return '(' + write(head) + ')(' + rest.map(write).join(', ') + ')';
+	    return '(' + write(head) + ')(' + rest.map(writeExpressions).join(', ') + ')';
 	} else {
-	    return write(head) + '(' + rest.map(write).join(', ') + ')';
+	    return write(head) + '(' + rest.map(writeExpressions).join(', ') + ')';
 	}
     } else if (typeof form == "string") {
 	return '"' + form + '"';
