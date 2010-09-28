@@ -5,73 +5,18 @@ var Symbol = primitives.Symbol, HashSymbol = primitives.HashSymbol;
 var Reader = require('./reader').Reader;
 var Stream = require('./stream').Stream;
 
-// utils
+//// utils
 
 Object.prototype.toArray = function () {
     return Array.prototype.slice.call(this);
 };
 
-// compiler
+//// expansion
 
-function compileAll (forms, all, comma) {
-    var separator = ';\n';
-    if (comma) {
-	separator = ', ';
-    }
-    var result = forms.map(compile).join(separator);
-    if (all && forms.length == 1) {
-	result += (separator + '\n');
-    }
-    return result;
-}
-
-function compile (form) {
-    if (form instanceof Array) {
-	var head = form[0];
-	var rest = form.slice(1);
-	if (head instanceof Symbol && macros.hasOwnProperty(head.name)) {
-	    return macros[head.name].apply(this, rest);
-	} else if (head instanceof Symbol && infix.hasOwnProperty(head.name)) {
-	    return rest.map(compile).join(' ' + infix[head.name] + ' ');
-	} else {
-	    return compile(head) + '(' + rest.map(compile).join(', ') + ')';
-	}
-    } else if (typeof form == "string") {
-	return '"' + form + '"';
-    } else if (form instanceof Symbol
-	       && symbolMacros.hasOwnProperty(form.name)) {
-	return symbolMacros[form.name]();
-    } else
-	return form;
-}
-
-// TODO: precedence?
-
-var infix = {
-    'and': '&&',
-    'or': '||',
-    'js:+': '+',
-    'js:-': '-',
-    'js:>': '>',
-    'js:<': '<',
-    'js:>=': '>=',
-    'js:<=': '<=',
-    'js:==': '==',
-    'js:===': '==='
-}
-
-function restDeclaration (name, requiredArguments) {
-    return 'var ' + name
-	+ ' = Array.prototype.slice.call(arguments, '
-	+ requiredArguments + ');\n';
-}
 
 function argumentNames (args) {
     return args.map(function (arg) {
-	if (arg instanceof Array) {
-	    return arg[0];
-	} else
-	    return arg;
+	return (arg instanceof Array ? arg[0] : arg);
     });
 }
 
@@ -102,26 +47,23 @@ function addReturn (forms) {
 }
 
 function functionDeclaration (name, args, body) {
-    var documentation = "";
+    var documentation = [];
     if (typeof body[0] == 'string' && body.length > 1) {
-	documentation = '/** \n';
-	body.shift().split('\n').forEach(function (line) {
-	    documentation += ' * ' + line + '\n';
-	});
-	documentation += ' */\n';
+	documentation.push([new Symbol('js:documentation'), body.shift()]);
     }
-    var rest = "";
+    var rest = [];
     var restPosition = args.indexOf(HashSymbol.rest);
     if (restPosition >= 0) {
-	rest = restDeclaration(args[restPosition + 1],
-			       requiredArguments(args).length);
+	rest.push([new Symbol('js:var'), args[restPosition + 1],
+		   [[new Symbol('js:get-property'),
+		     "Array", "prototype", "slice", "call"],
+		    [new Symbol('js:identifier'), "arguments"],
+		    requiredArguments(args).length]]);
     }
-
-    // TODO: keyword arguments, use reduce
-    return (documentation +
-	    'function ' + (name ? name + ' ' : '')
-	    + '(' + argumentNames(requiredArguments(args)).join(', ') + ') '
-	    + '{\n' + rest + compileAll(addReturn(body)) + ';\n}');
+    // TODO: documentation, keyword arguments, use reduce
+    return [new Symbol('js:function'), name,
+	    argumentNames(requiredArguments(args))]
+	.concat(rest).concat(body);
 }
 
 var macros = {
@@ -136,24 +78,7 @@ var macros = {
     },
     'method': function (args) {
 	var body = arguments.toArray().slice(1);
-	return '(' + functionDeclaration("", args, body) + ')';
-    },
-    'list': function () {
-	return '[' + arguments.toArray().map(compile).join(', ') + ']';
-    },
-    'js:call': function (name) {
-	var args = arguments.toArray().slice(1);
-	return name + '(' + args.map(compile).join(', ') + ')';
-    },
-    'js:new': function (name) {
-	var args = arguments.toArray().slice(1);
-	return 'new ' + name + '(' + args.map(compile).join(', ') + ')';
-    },
-    'define': function (name, value) {
-	return "var " + name + " = " + compile(value);
-    },
-    'js:return': function (body) {
-	return 'return ' + compile(body);
+	return functionDeclaration(null, args, body);
     },
     // TODO: bind multiple values
     // e.g. (bind ((foo bar baz (values 1 2 3)))
@@ -164,116 +89,232 @@ var macros = {
     'bind': function (bindings) {
 	var body = arguments.toArray().slice(1);
 	var declarations = bindings.map(function (binding) {
-	    return ([new Symbol('define')].concat(binding));
+	    return ([new Symbol('js:var')].concat(binding));
 	});
-	return compile([[new Symbol('method'), []]
-			.concat(declarations)
-			.concat(body)]);
-    },
-    'js:get-property': function () {
-	var elements = arguments.toArray();
-	var object = elements[0];
-	if (!(object instanceof Symbol || typeof object == "string")) {
-	    object = compile(object);
-	}
-	return object +
-	    elements.slice(1)
-	    .map(function (element) {
-		if (typeof element == 'string' &&
-		    /^[a-zA-Z_]+$/.exec(element))
-		{
-		    return '.' + element;
-		} else
-		    return '[' + compile(element) + ']';
-	    }).join('');
-    },
-    'begin': function () {
-	return '(' + compileAll(arguments.toArray(), false, true) + ')';
-    },
-    'if': function (test, then, _else) {
-	return '(' + compile(test) + ' ? '
-	    + compile(then) + ' : ' + compile(_else) + ')';
+	return [[new Symbol('method'), []]
+		.concat(declarations)
+		.concat(body)];
     },
     'when': function (test, then) {
-	return compile([new Symbol('if'), test, then, new Symbol('#f')]);
+	return [new Symbol('if'), test, then, new Symbol('#f')];
     },
-    'js:defined': function (expression) {
-	return '(typeof (' + compile(expression) + ') != "undefined")';
-    },
-    // FIXME
     'cond': function () {
 	var cases = arguments.toArray();
 	if (cases.length == 0)
-	    return compile(new Symbol('#f'));
+	    return new Symbol('#f');
 	else {
 	    var _case = cases[0];
 	    if (_case instanceof Symbol && _case[0].name == 'else:')
-		return compile(_case.splice(1));
+		return _case.splice(1);
 	    else {
 		var then = _case.splice(1);
 		then.unshift(new Symbol('begin'));
-		return compile([new Symbol('if'), _case[0], then,
-				[new Symbol('cond')].concat(cases.splice(1))]);
+		return [new Symbol('if'), _case[0], then,
+			[new Symbol('cond')].concat(cases.splice(1))];
 	    }
 	}
-    },
-    'js:negative': function (object) {
-	return '(- ' + object + ')';
-    },
-    'not': function (expression) {
-	return '!' + compile(expression);
-    },
-    'js:identifier': function (name) {
-	return ('' + name);
-    },
-    // statement!
-    'js:for-in': function (variableAndExpression) {
-	var body = arguments.toArray().slice(1);
-	var variable = variableAndExpression[0];
-	var expression = variableAndExpression[1];
-	return 'for (var ' + variable + ' in ' + compile(expression) + ') {\n'
-	    + compileAll(body, true) + '}';
     },
     'bind-methods': function (bindings) {
 	var body = arguments.toArray().slice(1);
 	var methodBindings = bindings.map(function (binding) {
 	    return [binding[0], [new Symbol('method')].concat(binding.slice(1))];
 	});
-	return compile([new Symbol('bind'), methodBindings].concat(body));
-    },
-    'js:try': function (body, _catch) {
-	return 'try {\n'
-	    + compileAll(addReturn(body), true)
-	    + '\n} catch (__CONDITION__) {\n'
-	    + compile(_catch)
-	    + '\n}';
+	return [new Symbol('bind'), methodBindings].concat(body);
     },
     'handler-case': function (body) {
 	var conditions = arguments.toArray().slice(1);
+	// TODO: gensym
+	var conditionVariable = new Symbol('__CONDITION__');
 	var cases = conditions.map(function (condition) {
 	    var _if = condition[0];
 	    return [[new Symbol('instance?'),
-		     new Symbol('__CONDITION__'), _if[0]]]
+		     conditionVariable, _if[0]]]
 		.concat(condition.splice(1));
 	});
-	return compile([[new Symbol('method'), [],
-			 [new Symbol('js:try'), [body],
-			  [new Symbol('cond')].concat(cases)]]]);
+	return [[new Symbol('method'), [],
+		 [new Symbol('js:try'), [body], conditionVariable,
+		  [new Symbol('cond')].concat(cases)]]];
     },
     // TODO: define-method
 }
 
-var symbolMacros = {
-    'js:null': function () { return 'null'; },
-    '#f': function () { return 'false'; },
-    '#t': function () { return 'true'; }
+var symbolMacros = {}
+
+function macroexpand (form) {
+    if (form instanceof Array) {
+	var head = form[0];
+	var rest = form.slice(1);
+	if (head instanceof Symbol && macros.hasOwnProperty(head.name))
+	    form = macros[head.name].apply(this, rest);
+
+	if (form instanceof Array)
+	    return form.map(macroexpand);
+	else
+	    return macroexpand(form);
+    } else if (form instanceof Symbol
+	       && symbolMacros.hasOwnProperty(form.name)) {
+	return macroexpand(symbolMacros[form.name]());
+    } else
+	return form;
 }
 
-// interface
+//// writing
+
+var infix = {
+    'and': '&&',
+    'or': '||',
+    'js:+': '+',
+    'js:-': '-',
+    'js:>': '>',
+    'js:<': '<',
+    'js:>=': '>=',
+    'js:<=': '<=',
+    'js:==': '==',
+    'js:===': '==='
+}
+
+var symbolValues = {
+    'js:null': 'null',
+    '#f': 'false',
+    '#t': 'true'
+}
+
+var specialForms = {
+    'js:negative': function (allowStatements, object) {
+	return '(- ' + write(object) + ')';
+    },
+    'not': function (allowStatements, expression) {
+	return '!' + write(expression);
+    },
+    'begin': function (allowStatements) {
+	var forms = arguments.toArray().splice(1);
+	if (allowStatements) {
+	    var separator = (allowStatements ? ';\n' : ', ');
+	    var result = forms.map(write).join(separator);
+	    return result + separator;
+	} else
+	    return '(' + forms.map(writeStatements).join(', ') + ')';
+    },
+    'if': function (allowStatements, test, then, _else) {
+	if (allowStatements) {
+	    return 'if (' + write(test) + ') {\n'
+	    + writeStatements(then)
+		+ '\n} else {\n'
+		+ writeStatements(_else)
+		+ '}\n';
+	} else {
+	    return '(' + write(test) + ' ? '
+		+ write(then) + ' : '
+		+ write(_else) + ')';
+	}
+    },
+    'list': function (allowStatements) {
+	var elements = arguments.toArray().splice(1);
+	return '[' + elements.map(write).join(', ') + ']';
+    },
+    'js:defined': function (allowStatements, expression) {
+	return '(typeof (' + write(expression) + ') != "undefined")';
+    },
+    'js:try': function (allowStatements, body, conditionVariable, _catch) {
+	// if !allowStatements: wrap with function
+	return 'try {\n'
+	    + writeStatements(body) // TODO: return?
+	    + '\n} catch (' + write(conditionVariable) + ') {\n'
+	    + writeStatements(_catch)
+	    + '\n}';
+    },
+    'js:for-in': function (allowStatements, variableAndExpression) {
+	// if !allowStatements: wrap with function
+	var body = arguments.toArray().slice(2);
+	var variable = variableAndExpression[0];
+	var expression = variableAndExpression[1];
+	return 'for (var ' + variable + ' in ' + write(expression) + ') {\n'
+	    + writeStatements(body) + '}';
+    },
+    'js:identifier': function (allowStatements, name) {
+	return ('' + name);
+    },
+    'js:get-property': function (allowStatements) {
+	var elements = arguments.toArray().splice(1);
+	var object = elements[0];
+	return object + (elements.slice(1)
+			 .map(function (element) {
+			     if (typeof element == 'string' &&
+				 /^[a-zA-Z_]+$/.exec(element))
+			     {
+				 return '.' + element;
+			     } else
+				 return '[' + element + ']';
+			 }).join(''));
+    },
+    'js:call': function (allowStatements, name) {
+	var args = arguments.toArray().slice(2);
+	return name + '(' + args.map(write).join(', ') + ')';
+    },
+    'js:new': function (allowStatements, name) {
+	var args = arguments.toArray().slice(2);
+	return 'new ' + name + '(' + args.map(write).join(', ') + ')';
+    },
+    'js:var': function (allowStatements, name, value) {
+	return "var " + name + " = " + write(value);
+    },
+    'define': function (allowStatements, name, value) {
+	return name + " = " + write(value);
+    },
+    'js:return': function (allowStatements, body) {
+	return 'return ' + write(body);
+    },
+    'js:function': function (allowStatements, name, args) {
+	var body = arguments.toArray().slice(3);
+	body.unshift(new Symbol('begin'));
+	return 'function ' + (name ? name + ' ' : '')
+	    + '(' + args.join(', ') + ') '
+	    + '{\n' + writeStatements(addReturn(body)) + '}';
+    },
+    'js:documentation': function (allowStatements, documentation) {
+	return '/** \n'
+	    + documentation.split('\n').map(function (line) {
+		return ' * ' + line;
+	    }).join('\n')
+	    + '\n */\n';
+    }
+}
+
+// helper
+function writeStatements (form) {
+    return write(form, true);
+}
+
+function write (form, allowStatements) {
+    if (form instanceof Array) {
+	var head = form[0];
+	var rest = form.slice(1);
+	if (head instanceof Symbol && infix.hasOwnProperty(head.name)) {
+	    return rest.map(write).join(' ' + infix[head.name] + ' ');
+	} else if (head instanceof Symbol && specialForms.hasOwnProperty(head.name)) {
+	    return specialForms[head.name].apply(this, [allowStatements].concat(rest));
+	} else if (head instanceof Array && head[0] && head[0].name == 'js:function') {
+	    return '(' + write(head) + ')(' + rest.map(write).join(', ') + ')';
+	} else {
+	    return write(head) + '(' + rest.map(write).join(', ') + ')';
+	}
+    } else if (typeof form == "string") {
+	return '"' + form + '"';
+    } else if (form instanceof Symbol && symbolValues.hasOwnProperty(form.name)) {
+	return symbolValues[form.name];
+    } else
+	return form;
+}
+
+function compile (form, allowStatements) {
+    return write(macroexpand(form), allowStatements);
+}
+
+//// interface
 
 exports.compile = function (code) {
-    var stream = new Stream("(\n" + code + "\n)");
+    var stream = new Stream("(begin\n" + code + "\n)");
     var reader = new Reader(stream);
-    var forms = reader.read();
-    return compileAll(forms);
+    var form = reader.read();
+    return compile(form, true);
 }
