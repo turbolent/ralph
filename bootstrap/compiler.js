@@ -51,19 +51,37 @@ function functionDeclaration (name, args, body) {
     if (typeof body[0] == 'string' && body.length > 1) {
 	documentation.push([new Symbol('js:documentation'), body.shift()]);
     }
-    var rest = [];
+    var restAndKey = [];
     var restPosition = args.indexOf(HashSymbol.rest);
     if (restPosition >= 0) {
-	rest.push([new Symbol('js:var'), args[restPosition + 1],
+	restAndKey.push([new Symbol('js:var'), args[restPosition + 1],
 		   [[new Symbol('js:get-property'),
 		     "Array", "prototype", "slice", "call"],
 		    [new Symbol('js:identifier'), "arguments"],
 		    requiredArguments(args).length]]);
     }
+    var keyPosition = args.indexOf(HashSymbol.key);
+    if (keyPosition >= 0) {
+	args.slice(keyPosition + 1).forEach(function (key) {
+	    var name, _default = new Symbol('#f');
+	    if (key instanceof Array) {
+		name = key[0];
+		_default = key[1];
+	    } else if (key instanceof Symbol) {
+		name = key;
+	    }
+	    if (name) {
+		restAndKey.push([new Symbol('js:var'), name, _default]);
+	    }
+	});
+	// TODO: search and set keyword values
+	// TODO: reuse rest variable is available:
+	// if (restPosition >= ) args[restPosition + 1]
+    }
     // TODO: documentation, keyword arguments, use reduce
     return [new Symbol('js:function'), name,
-	    argumentNames(requiredArguments(args))]
-	.concat(rest).concat(body);
+	    argumentNames(requiredArguments(args)),
+	    [new Symbol('begin')].concat(restAndKey).concat(body)];
 }
 
 var macros = {
