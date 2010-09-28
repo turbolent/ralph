@@ -29,9 +29,9 @@ function compile (form) {
     if (form instanceof Array) {
 	var head = form[0];
 	var rest = form.slice(1);
-	if (macros.hasOwnProperty(head.name)) {
+	if (head instanceof Symbol && macros.hasOwnProperty(head.name)) {
 	    return macros[head.name].apply(this, rest);
-	} else if (infix.hasOwnProperty(head.name)) {
+	} else if (head instanceof Symbol && infix.hasOwnProperty(head.name)) {
 	    return rest.map(compile).join(' ' + infix[head.name] + ' ');
 	} else {
 	    return compile(head) + '(' + rest.map(compile).join(', ') + ')';
