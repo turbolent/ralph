@@ -127,8 +127,8 @@ of its arguments sequence."
 (define-method key-sequence ((collection <collection>))
   "Returns a sequence containing the keys of its collection argument."
   (bind ((keys (list)))
-	(js:for-in (key collection)
-	    (add! keys key))
+    (js:for-in (key collection)
+      (add! keys key))
     keys))
 
 (define-function as-uppercase ((string <string>))

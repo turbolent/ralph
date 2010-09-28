@@ -230,7 +230,7 @@ var specialForms = {
 	var variable = variableAndExpression[0];
 	var expression = variableAndExpression[1];
 	return 'for (var ' + variable + ' in ' + write(expression) + ') {\n'
-	    + writeStatements(body) + '}';
+	    + writeStatements([new Symbol('begin')].concat(body)) + '}';
     },
     'js:identifier': function (allowStatements, name) {
 	return ('' + name);
