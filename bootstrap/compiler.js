@@ -166,8 +166,9 @@ var macros = {
 	var declarations = bindings.map(function (binding) {
 	    return ([new Symbol('define')].concat(binding));
 	});
-	return ('(function () {\n' + compileAll(declarations, true)
-		+ compileAll(addReturn(body)) + ';\n})()');
+	return compile([[new Symbol('method'), []]
+			.concat(declarations)
+			.concat(body)]);
     },
     'js:get-property': function () {
 	var elements = arguments.toArray();
