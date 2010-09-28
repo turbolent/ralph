@@ -196,12 +196,13 @@ var specialForms = {
 	    return '(' + forms.map(writeStatements).join(', ') + ')';
     },
     'if': function (allowStatements, test, then, _else) {
+	var elseUseful = (_else instanceof Array);
 	if (allowStatements) {
-	    return 'if (' + write(test) + ') {\n'
-	    + writeStatements(then)
-		+ '\n} else {\n'
-		+ writeStatements(_else)
-		+ '}\n';
+	     var result = 'if (' + write(test) + ') {\n'
+		+ writeStatements(then) + '}';
+	    if (elseUseful)
+		result += (' else {\n' + writeStatements(_else) + '\n}');
+	    return result;
 	} else {
 	    return '(' + write(test) + ' ? '
 		+ write(then) + ' : '
