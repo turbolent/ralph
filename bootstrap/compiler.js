@@ -154,6 +154,10 @@ var macros = {
 		  [new Symbol('cond')].concat(cases)]]];
     },
     // TODO: define-method
+    'define-method': function () {
+	return [new Symbol('begin'),
+		[new Symbol('define-function')].concat(arguments.toArray())];
+    }
 }
 
 var symbolMacros = {}
