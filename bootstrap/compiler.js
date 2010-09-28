@@ -154,7 +154,7 @@ var macros = {
     },
     // TODO: define-method
     'define-method': function () {
-	return [new Symbol('begin'),
+	return [new Symbol('js:statements'),
 		[new Symbol('define-function')].concat(arguments.toArray())];
     }
 }
@@ -252,7 +252,7 @@ var specialForms = {
 	var variable = variableAndExpression[0];
 	var expression = variableAndExpression[1];
 	return 'for (var ' + variable + ' in ' + write(expression) + ') {\n'
-	    + writeStatements([new Symbol('begin')].concat(body)) + '}';
+	    + writeStatements([new Symbol('begin')].concat(body)) + '\n}';
     },
     'js:identifier': function (allowStatements, name) {
 	return ('' + name);
@@ -298,6 +298,10 @@ var specialForms = {
 		return ' * ' + line;
 	    }).join('\n')
 	    + '\n */\n';
+    },
+    'js:statements': function (allowStatements) {
+	var body = arguments.toArray().slice(1);
+	return body.map(writeStatements).join('');
     }
 }
 
