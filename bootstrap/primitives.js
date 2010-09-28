@@ -19,7 +19,8 @@ Symbol.reserved = [
     "debugger", "double", "enum", "export", "extends", "final", "float",
     "goto", "implements", "import", "int", "interface", "long", "native",
     "package", "private", "protected", "public", "short", "static", "super",
-    "synchronized", "throws", "transient", "volatile", "null", "true", "false"
+    "synchronized", "throws", "transient", "volatile", "null", "true", "false",
+    'arguments'
 ];
 
 Symbol.prototype.escape = function () {
