@@ -291,7 +291,7 @@ function write (form, allowStatements) {
 	var head = form[0];
 	var rest = form.slice(1);
 	if (head instanceof Symbol && infix.hasOwnProperty(head.name)) {
-	    return rest.map(write).join(' ' + infix[head.name] + ' ');
+	    return '(' + rest.map(write).join(' ' + infix[head.name] + ' ') + ')';
 	} else if (head instanceof Symbol && specialForms.hasOwnProperty(head.name)) {
 	    return specialForms[head.name].apply(this, [allowStatements].concat(rest));
 	} else if (head instanceof Array && head[0] && head[0].name == 'js:function') {
