@@ -220,7 +220,7 @@ var specialForms = {
 	// if !allowStatements: wrap with function
 	return 'try {\n'
 	    + writeStatements(body) // TODO: return?
-	    + '\n} catch (' + write(conditionVariable) + ') {\n'
+	    + '} catch (' + write(conditionVariable) + ') {\n'
 	    + writeStatements(_catch)
 	    + '\n}';
     },
