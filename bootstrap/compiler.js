@@ -132,7 +132,7 @@ var macros = {
 		.concat(condition.splice(1));
 	});
 	return [[new Symbol('method'), [],
-		 [new Symbol('js:try'), [body], conditionVariable,
+		 [new Symbol('js:try'), body, conditionVariable,
 		  [new Symbol('cond')].concat(cases)]]];
     },
     // TODO: define-method
