@@ -234,12 +234,31 @@ var macros = {
 	return 'for (var ' + variable + ' in ' + compile(expression) + ') {\n'
 	    + compileAll(body, true) + '}';
     },
-    // TODO:
-    'handler-case': function (expression) {
-	return compile([[new Symbol('method'), []]]);
+    'bind-methods': function (bindings) {
+	var body = arguments.toArray().slice(1);
+	var methodBindings = bindings.map(function (binding) {
+	    return [binding[0], [new Symbol('method')].concat(binding.slice(1))];
+	});
+	return compile([new Symbol('bind'), methodBindings].concat(body));
     },
-    // TODO: expand to (bind ((name (method (..
-    'bind-methods': function () {
+    'js:try': function (body, _catch) {
+	return 'try {\n'
+	    + compileAll(addReturn(body), true)
+	    + '\n} catch (__CONDITION__) {\n'
+	    + compile(_catch)
+	    + '\n}';
+    },
+    'handler-case': function (body) {
+	var conditions = arguments.toArray().slice(1);
+	var cases = conditions.map(function (condition) {
+	    var _if = condition[0];
+	    return [[new Symbol('instance?'),
+		     new Symbol('__CONDITION__'), _if[0]]]
+		.concat(condition.splice(1));
+	});
+	return compile([[new Symbol('method'), [],
+			 [new Symbol('js:try'), [body],
+			  [new Symbol('cond')].concat(cases)]]]);
     },
     // TODO: define-method
 }
