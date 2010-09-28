@@ -122,12 +122,12 @@ var macros = {
 	else {
 	    var _case = cases[0];
 	    if (_case instanceof Symbol && _case[0].name == 'else:')
-		return _case.splice(1);
+		return _case.slice(1);
 	    else {
-		var then = _case.splice(1);
+		var then = _case.slice(1);
 		then.unshift(new Symbol('begin'));
 		return [new Symbol('if'), _case[0], then,
-			[new Symbol('cond')].concat(cases.splice(1))];
+			[new Symbol('cond')].concat(cases.slice(1))];
 	    }
 	}
     },
@@ -146,7 +146,7 @@ var macros = {
 	    var _if = condition[0];
 	    return [[new Symbol('instance?'),
 		     conditionVariable, _if[0]]]
-		.concat(condition.splice(1));
+		.concat(condition.slice(1));
 	});
 	return [[new Symbol('method'), [],
 		 [new Symbol('js:try'), body, conditionVariable,
@@ -208,7 +208,7 @@ var specialForms = {
 	return '!' + write(expression);
     },
     'begin': function (allowStatements) {
-	var forms = arguments.toArray().splice(1);
+	var forms = arguments.toArray().slice(1);
 	if (allowStatements) {
 	    var separator = ';\n';
 	    var result = forms.map(writeExpressions).join(separator);
@@ -232,7 +232,7 @@ var specialForms = {
 	}
     },
     'list': function (allowStatements) {
-	var elements = arguments.toArray().splice(1);
+	var elements = arguments.toArray().slice(1);
 	return '[' + elements.map(writeExpressions).join(', ') + ']';
     },
     'js:defined': function (allowStatements, expression) {
@@ -258,7 +258,7 @@ var specialForms = {
 	return ('' + name);
     },
     'js:get-property': function (allowStatements) {
-	var elements = arguments.toArray().splice(1);
+	var elements = arguments.toArray().slice(1);
 	var object = elements[0];
 	return object + (elements.slice(1)
 			 .map(function (element) {
