@@ -178,9 +178,9 @@ var macros = {
     },
     'handler-case': function (body) {
 	var conditions = arguments.toArray().slice(1);
-	// TODO: gensym
-	var conditionVariable = S('__CONDITION__');
+	var conditionVariable = Symbol.generate();
 	var cases = conditions.map(function (condition) {
+	    // TODO: bind condition: argument
 	    var _if = condition[0];
 	    return [[S('instance?'),
 		     conditionVariable, _if[0]]]
