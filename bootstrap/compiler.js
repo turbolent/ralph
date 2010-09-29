@@ -196,6 +196,17 @@ var macros = {
     'define-method': function () {
 	return [S('js:statements'),
 		[S('define-function')].concat(arguments.toArray())];
+    },
+    'values': function () {
+	var values = arguments.toArray();
+	var caller = ['arguments', 'callee', 'caller'];
+	return [S('begin'),
+		[S('when'), ([S('js:get-property')]
+			     .concat(caller).concat(['acceptsMultipleValues'])),
+		 [S('js:set'), ([S('js:get-property')]
+				.concat(caller).concat(['otherValues'])),
+		  [S('list')].concat(values.slice(1))]],
+		values[0]];
     }
 }
 
