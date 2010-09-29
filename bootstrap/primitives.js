@@ -6,9 +6,9 @@ function Symbol (name) {
 exports.Symbol = Symbol;
 
 Symbol.escaped = {
-    '-': 'MINUS', '+': 'PLUS', '!': 'BANG', '?': 'WHAT', '%': 'PERCENT',
-    '#': 'HASH', '@': 'AT', '*': 'STAR', '/': 'SLASH', '=': 'EQUALS',
-    ':': 'COLON', '<': 'LESSTHAN', '>': 'GREATERTHAN'
+    '-': '_M_', '+': '_PL_', '!': '_B_', '?': '_W_', '%': '_PE_',
+    '#': '_H_', '@': '_A_', '*': '_ST_', '/': '_SL_', '=': '_E_',
+    ':': '_C_', '<': '_LT_', '>': '_GT_', '_': '__'
 }
 
 Symbol.reserved = [
