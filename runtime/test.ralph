@@ -1,8 +1,12 @@
 
 (define-module test
-  import: (core)
+  import: (core format)
   export: (check-equal
-	   check-false))
+	   check-true
+	   check-false
+	   check-condition
+	   check-no-error
+	   check-instance?))
 
 (define-function report-success ((description <string>) (explanation <string>))
   (format-out " \\033[32m✓\\033[0m %s: %s" description explanation))
