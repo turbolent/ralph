@@ -175,11 +175,8 @@ var symbolMacros = {}
 
 function macroexpand (form) {
     if (form instanceof Array) {
-	var head = form[0];
-	var rest = form.slice(1);
-	if (head instanceof Symbol && macros.hasOwnProperty(head.name))
-	    form = macros[head.name].apply(this, rest);
-
+	while (form[0] instanceof Symbol && macros.hasOwnProperty(form[0].name))
+	    form = macros[form[0].name].apply(this, form.slice(1));
 	if (form instanceof Array)
 	    return form.map(macroexpand);
 	else
