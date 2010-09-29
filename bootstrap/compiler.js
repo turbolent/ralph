@@ -327,7 +327,7 @@ var specialForms = {
 	return "var " + name + " = " + write(value);
     },
     'js:set': function (allowStatements, name, value) {
-	return name + " = " + write(value);
+	return write(name) + " = " + write(value);
     },
     'js:return': function (allowStatements, body) {
 	return 'return ' + write(body);
