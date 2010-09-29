@@ -184,9 +184,17 @@ var macros = {
 	var cases = conditions.map(function (condition) {
 	    // TODO: bind condition: argument
 	    var _if = condition[0];
-	    return [[S('instance?'),
-		     conditionVariable, _if[0]]]
-		.concat(condition.slice(1));
+	    var type = _if[0];
+	    var binding = [];
+	    if (_if.length > 1) {
+		for (var i = 1; i < _if.length; i += 2) {
+		    var key = _if[i];
+		    if (key instanceof Symbol && key.name == 'condition:')
+			binding.push([S('js:var'), _if[i + 1], conditionVariable]);
+		}
+	    }
+	    return ([[S('instance?'), conditionVariable, type]]
+		    .concat(binding).concat(condition.slice(1)));
 	});
 	return [[S('method'), [],
 		 [S('js:try'), body, conditionVariable,
