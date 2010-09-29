@@ -1,4 +1,9 @@
 
+(define-module test
+  import: (core)
+  export: (check-equal
+	   check-false))
+
 (define-function report-success ((description <string>) (explanation <string>))
   (format-out " \\033[32m✓\\033[0m %s: %s" description explanation))
 
