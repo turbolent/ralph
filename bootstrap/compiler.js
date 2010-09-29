@@ -261,15 +261,18 @@ var specialForms = {
     'js:get-property': function (allowStatements) {
 	var elements = arguments.toArray().slice(1);
 	var object = elements[0];
-	return object + (elements.slice(1)
-			 .map(function (element) {
-			     if (typeof element == 'string' &&
-				 /^[a-zA-Z_]+$/.exec(element))
-			     {
-				 return '.' + element;
-			     } else
-				 return '[' + element + ']';
-			 }).join(''));
+	if (typeof object != 'string')
+	    object = write(object);
+	return object
+	    + (elements.slice(1)
+	       .map(function (element) {
+		   if (typeof element == 'string' &&
+		       /^[a-zA-Z_]+$/.exec(element))
+		   {
+		       return '.' + element;
+		   } else
+		       return '[' + write(element) + ']';
+	       }).join(''));
     },
     'js:call': function (allowStatements, name) {
 	var args = arguments.toArray().slice(2);
