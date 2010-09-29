@@ -232,7 +232,7 @@ var macros = {
 	    if (key instanceof Symbol) {
 		if (key.name == 'import:') {
 		    value.forEach(function (symbol) {
-			imports.push([S('include'), value.toString()]);
+			imports.push([S('include'), symbol.toString()]);
 		    });
 		} else if (key.name == 'export:') {
 		    // record exports
