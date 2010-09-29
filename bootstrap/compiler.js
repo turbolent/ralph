@@ -39,13 +39,13 @@ function requiredArguments (args) {
 }
 
 function addReturn (forms) {
-    // TODO: values
-    // var firstValue = ... , restValues = ... ;
-    // if (arguments.callee.caller.acceptsMultipleValues)
-    //   arguments.callee.caller.multipleValues = restValues;
-    // return firstValue;
     var last = forms.length - 1;
-    forms[last] = [S('js:return'), forms[last]];
+    if (forms[last] instanceof Array
+	&& !(forms[last][0] instanceof Symbol
+	     && forms[last][0].name == 'js:return'))
+    {
+	forms[last] = [S('js:return'), forms[last]];
+    }
     return forms;
 }
 
