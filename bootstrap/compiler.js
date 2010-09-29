@@ -195,16 +195,9 @@ function macroexpand (form) {
 //// writing
 
 var infix = {
-    'and': '&&',
-    'or': '||',
-    'js:+': '+',
-    'js:-': '-',
-    'js:>': '>',
-    'js:<': '<',
-    'js:>=': '>=',
-    'js:<=': '<=',
-    'js:==': '==',
-    'js:===': '==='
+    'and': '&&', 'or': '||', 'js:+': '+', 'js:-': '-',
+    'js:>': '>', 'js:<': '<', 'js:>=': '>=', 'js:<=': '<=',
+    'js:==': '==', 'js:===': '==='
 }
 
 var symbolValues = {
@@ -254,7 +247,7 @@ var specialForms = {
 	return '(typeof (' + write(expression) + ') != "undefined")';
     },
     'js:try': function (allowStatements, body, conditionVariable, _catch) {
-	// if !allowStatements: wrap with function
+	// TODO: if !allowStatements: wrap with function
 	return 'try {\n'
 	    + writeStatements(body) // TODO: return?
 	    + '} catch (' + write(conditionVariable) + ') {\n'
