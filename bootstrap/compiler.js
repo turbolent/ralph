@@ -138,8 +138,10 @@ var macros = {
 		.concat(declarations)
 		.concat(body)];
     },
-    'when': function (test, then) {
-	return [S('if'), test, then, S('#f')];
+    'when': function (test) {
+	var body = arguments.toArray().slice(1);
+	body.unshift(S('begin'));
+	return [S('if'), test, body, S('#f')];
     },
     'cond': function () {
 	var cases = arguments.toArray();
