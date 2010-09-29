@@ -390,7 +390,7 @@ var specialForms = {
     'js:function': function (allowStatements, name, args, body) {
 	return 'function ' + (name ? name + ' ' : '')
 	    + '(' + args.join(', ') + ') '
-	    + '{\n' + writeStatements(body) + '}';
+	    + '{\n' + writeStatements(body) + '\n}';
     },
     'js:documentation': function (allowStatements, documentation) {
 	return '/** \n'
@@ -401,7 +401,7 @@ var specialForms = {
     },
     'js:statements': function (allowStatements) {
 	var body = arguments.toArray().slice(1);
-	return body.map(writeStatements).join('');
+	return body.map(writeStatements).join(';\n');
     }
 }
 
