@@ -232,7 +232,7 @@ var specialForms = {
     'js:negative': function (allowStatements, object) {
 	return '(- ' + write(object) + ')';
     },
-    'not': function (allowStatements, expression) {
+    'js:not': function (allowStatements, expression) {
 	return '!' + write(expression);
     },
     'begin': function (allowStatements) {

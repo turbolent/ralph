@@ -1,6 +1,15 @@
 
 (define <object> (js:identifier "Object"))
 
+(define-function true? (value)
+  (or (js:=== value 0) value))
+
+(define-function not (value)
+  (js:not (true? value)))
+
+(define-function false? (value)
+  (not (true? value)))
+
 (define-function list (#rest elements)
   (bind ((result (js:new "Array")))
     ((js:get-property "Array" "prototype" "splice" "apply")
@@ -8,27 +17,32 @@
     result))
 
 (define-method < (object1 object2 #rest objects)
-  (every? (method (object1 object2)
-	    (js:< object1 object2))
-	  (concatenate (list object1 object2)
-		       objects)))
+  (true? (reduce1 (method (object1 object2)
+		  (when (js:< object1 object2)
+		    object2))
+	       (concatenate (list object1 object2)
+			    objects))))
 
 (define-method > (object1 object2 #rest objects)
-  (every? (method (object1 object2)
-	    (js:> object1 object2))
-	  (concatenate (list object1 object2)
-		       objects)))
+  (true? (reduce1 (method (object1 object2)
+		  (when (js:> object1 object2)
+		    object2))
+	       (concatenate (list object1 object2)
+			    objects))))
+
 (define-method <= (object1 object2 #rest objects)
-  (every? (method (object1 object2)
-	    (js:>= object1 object2))
-	  (concatenate (list object1 object2)
-		       objects)))
+  (true? (reduce1 (method (object1 object2)
+		  (when (js:<= object1 object2)
+		    object2))
+	       (concatenate (list object1 object2)
+			    objects))))
 
 (define-method >= (object1 object2 #rest objects)
-  (every? (method (object1 object2)
-	    (js:>= object1 object2))
-	  (concatenate (list object1 object2)
-		       objects)))
+  (true? (reduce1 (method (object1 object2)
+		  (when (js:>= object1 object2)
+		    object2))
+	       (concatenate (list object1 object2)
+			    objects))))
 
 (define-function + (object1 #rest objects)
   "Returns the sum of its arguments."
