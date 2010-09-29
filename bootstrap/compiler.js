@@ -130,6 +130,19 @@ var macros = {
 			[new Symbol('cond')].concat(cases.slice(1))];
 	}
     },
+    'select': function (value, test) {
+	function testExpression (testValue) {
+	    return [test, testValue, value];
+	}
+	var cases = arguments.toArray().slice(2).map(function (_case) {
+	    if (_case[0] instanceof Symbol && _case[0].name == 'else:')
+		return _case;
+	    else
+		return ([[new Symbol('or')].concat(_case[0].map(testExpression))]
+			.concat(_case.slice(1)));
+	});
+	return [new Symbol('cond')].concat(cases);
+    },
     'bind-methods': function (bindings) {
 	var body = arguments.toArray().slice(1);
 	var methodBindings = bindings.map(function (binding) {
