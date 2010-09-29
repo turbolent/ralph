@@ -11,6 +11,14 @@ Symbol.escaped = {
     ':': '_C_', '<': '_LT_', '>': '_GT_', '_': '__'
 }
 
+Symbol.counter = 0;
+
+Symbol.generate = function () {
+    var result = new Symbol('_' + Symbol.counter++);
+    result.generated = true;
+    return result;
+}
+
 Symbol.reserved = [
     "break", "case", "catch", "continue", "default", "delete", "do", "else",
     "finally", "for", "function", "if", "in", "instanceof", "new", "return",
@@ -24,7 +32,9 @@ Symbol.reserved = [
 ];
 
 Symbol.prototype.escape = function () {
-    if (Symbol.reserved.indexOf(this.name) >= 0) {
+    if (this.generated) {
+	return this.name;
+    } else if (Symbol.reserved.indexOf(this.name) >= 0) {
 	return '_' + this.name;
     } else if (this.name[0] == '<'
 	       && this.name[this.name.length - 1] == '>')
