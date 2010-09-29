@@ -196,14 +196,13 @@ var macros = {
 		}
 	    }
 	    return ([[S('instance?'), conditionVariable, type]]
-		    .concat(binding).concat(condition.slice(1)));
+		    .concat(binding).concat(addReturn(condition.slice(1))));
 	});
 	return [[S('js:function'), '', [],
 		 [S('begin'),
 		  [S('js:try'), addReturn(body),
 		   conditionVariable,
-		   addReturn([S('begin'),
-			      [S('cond')].concat(cases)])]]]];
+		   [S('cond')].concat(cases)]]]];
     },
     // TODO: define-method
     'define-method': function () {
