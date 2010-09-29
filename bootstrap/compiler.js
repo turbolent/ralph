@@ -103,10 +103,9 @@ function functionDeclaration (name, args, body) {
 			 [S('js:var'), valueVar, [S('js:get-property'), restVar, [S('js:+'), indexVar, 1]]],
 			 [S('when'), [S('instance?'), keyVar, S('<keyword>')], setter]]);
     }
-    // TODO: documentation, keyword arguments, use reduce
     return [S('js:function'), name,
 	    argumentNames(requiredArguments(args)),
-	    [S('begin')].concat(restAndKey).concat(body)];
+	    [S('begin')].concat(restAndKey).concat(addReturn(body))];
 }
 
 var macros = {
@@ -354,7 +353,7 @@ var specialForms = {
     'js:function': function (allowStatements, name, args, body) {
 	return 'function ' + (name ? name + ' ' : '')
 	    + '(' + args.join(', ') + ') '
-	    + '{\n' + writeStatements(addReturn(body)) + '}';
+	    + '{\n' + writeStatements(body) + '}';
     },
     'js:documentation': function (allowStatements, documentation) {
 	return '/** \n'
