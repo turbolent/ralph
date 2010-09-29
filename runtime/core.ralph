@@ -2,7 +2,8 @@
 (define <object> (js:identifier "Object"))
 
 (define-function true? (value)
-  (or (js:=== value 0) value))
+  (or (js:=== value 0)
+      (js:not (js:not value))))
 
 (define-function not (value)
   (js:not (true? value)))
@@ -18,29 +19,29 @@
 
 (define-method < (object1 object2 #rest objects)
   (true? (reduce1 (method (object1 object2)
-		  (when (js:< object1 object2)
-		    object2))
+		    (when (js:< object1 object2)
+		      object2))
 	       (concatenate (list object1 object2)
 			    objects))))
 
 (define-method > (object1 object2 #rest objects)
   (true? (reduce1 (method (object1 object2)
-		  (when (js:> object1 object2)
-		    object2))
+		    (when (js:> object1 object2)
+		      object2))
 	       (concatenate (list object1 object2)
 			    objects))))
 
 (define-method <= (object1 object2 #rest objects)
   (true? (reduce1 (method (object1 object2)
-		  (when (js:<= object1 object2)
-		    object2))
+		    (when (js:<= object1 object2)
+		      object2))
 	       (concatenate (list object1 object2)
 			    objects))))
 
 (define-method >= (object1 object2 #rest objects)
   (true? (reduce1 (method (object1 object2)
-		  (when (js:>= object1 object2)
-		    object2))
+		    (when (js:>= object1 object2)
+		      object2))
 	       (concatenate (list object1 object2)
 			    objects))))
 
@@ -61,25 +62,34 @@
 			    objects))))
 
 ;; unlike the specification, is a method
-(define-method = (object1 object2)
+(define-method = (object1 object2 #rest objects)
   "Compares objects for equality."
-  (every? (method (object1 object2)
-	    (js:== object1 object2))
-	  (concatenate (list object1 object2)
-		       objects)))
+  (cond
+    ;; TODO: implement as 2 methods with singletons
+    ((or (and (js:== object1 0)
+	      (js:== object2 #f))
+	 (and (js:== object1 #f)
+	      (js:== object2 0)))
+     #f)
+    (else: (true? (reduce1 (method (object1 object2)
+			     (when (js:== object1 object2)
+			       object2))
+			   (concatenate (list object1 object2)
+					objects))))))
 
 (define-function == (object1 object2 #rest objects)
   "Compares objects for identity."
-  (every? (method (object1 object2)
-	    (js:=== object1 object2))
-	  (concatenate (list object1 object2)
-		       objects)))
+  (true? (reduce1 (method (object1 object2)
+		    (when (js:== object1 object2)
+		      object2))
+		  (concatenate (list object1 object2)
+			       objects))))
 
 (define-function object-class (object)
   "Returns the class of an object."
   ;; Object.getPrototypeOf on primitives only works in FireFox"
   ;; ((js:get-property "Object" "getPrototypeOf") object))
-  (js:get-property object "__proto__" "constructor")) 
+  (js:get-property object "__proto__" "constructor"))
 
 (define-function instance? (object (type <type>))
   "Tests wether an object is an instance of a type."
