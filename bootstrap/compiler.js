@@ -116,7 +116,10 @@ var macros = {
 	if (!(name instanceof Symbol))
 	    throw new Error('function\'s name should be a symbol: '
 			    + JSON.stringify(name));
-	return functionDeclaration(name, args, body);
+	return [S('js:statements')]
+	    .concat(exports.indexOf(name.name) >= 0 ?
+		    [[S('js:export'), name]] : [])
+	    .concat([functionDeclaration(name, args, body)]);
     },
     'method': function (args) {
 	var body = arguments.toArray().slice(1);
@@ -207,6 +210,9 @@ var macros = {
 	return [S('js:statements'),
 		[S('define-function')].concat(arguments.toArray())];
     },
+    // TODO: define:
+    // - export in module if exported
+    // -> after symbol macro check: check if defined value
     'values': function () {
 	var values = arguments.toArray();
 	var caller = ['arguments', 'callee', 'caller'];
@@ -217,8 +223,36 @@ var macros = {
 				.concat(caller).concat(['otherValues'])),
 		  [S('list')].concat(values.slice(1))]],
 		values[0]];
+    },
+    'define-module': function (name) {
+	var keyArgs = arguments.toArray().slice(1);
+	var imports = [];
+	for (var i = 0; i < keyArgs.length; i += 2) {
+	    var key = keyArgs[i];
+	    var value = keyArgs[i + 1];
+	    if (key instanceof Symbol) {
+		if (key.name == 'import:') {
+		    value.forEach(function (symbol) {
+			imports.push([S('include'), value.toString()]);
+		    });
+		} else if (key.name == 'export:') {
+		    // record exports
+		    value.forEach(function (symbol) {
+			exports.push(symbol.name);
+		    });
+		}
+	    }
+	}
+	return [S('js:statements')].concat(imports);
+    },
+    'js:export': function (name) {
+	return [S('js:set'),
+		[S('js:get-property'), 'exports', name.toString()],
+		name];
     }
 }
+
+var exports = [];
 
 var symbolMacros = {}
 
