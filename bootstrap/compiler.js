@@ -54,17 +54,29 @@ function functionDeclaration (name, args, body) {
     if (typeof body[0] == 'string' && body.length > 1) {
 	documentation.push([S('js:documentation'), body.shift()]);
     }
+    var rest = [[S('js:get-property'),
+		 "Array", "prototype", "slice", "call"],
+		[S('js:identifier'), "arguments"],
+		requiredArguments(args).length];
     var restAndKey = [];
     var restPosition = args.indexOf(HashSymbol.rest);
     if (restPosition >= 0) {
-	restAndKey.push([new Symbol('js:var'), args[restPosition + 1],
-		   [[new Symbol('js:get-property'),
-		     "Array", "prototype", "slice", "call"],
-		    [new Symbol('js:identifier'), "arguments"],
-		    requiredArguments(args).length]]);
+	restAndKey.push([S('js:var'), args[restPosition + 1], rest]);
     }
     var keyPosition = args.indexOf(HashSymbol.key);
     if (keyPosition >= 0) {
+	// check order of #rest and #key
+	if (restPosition >= 0 && keyPosition < restPosition)
+	    throw new Error("function '" + name + "': #key before #rest in args: " +
+			    JSON.stringify(args));
+
+	var keyVar = Symbol.generate();
+	var valueVar = Symbol.generate();
+	var restVar = Symbol.generate();
+	var indexVar = Symbol.generate();
+
+	// declarations with defaults, setters
+	var setter = [S('select'), keyVar, S('==')];
 	args.slice(keyPosition + 1).forEach(function (key) {
 	    var name, _default = S('#f');
 	    if (key instanceof Array) {
@@ -75,11 +87,21 @@ function functionDeclaration (name, args, body) {
 	    }
 	    if (name) {
 		restAndKey.push([S('js:var'), name, _default]);
+		setter.push([[name.toString()], // TODO: check for keyword
+			     [S('js:set'), name, valueVar]]);
 	    }
 	});
-	// TODO: search and set keyword values
-	// TODO: reuse rest variable is available:
-	// if (restPosition >= ) args[restPosition + 1]
+	if (restPosition == -1)
+	    restAndKey.push([S('js:var'), restVar, rest]);
+	else
+	    restVar = args[restPosition + 1];
+
+	restAndKey.push([S('js:for'), [[indexVar, 0],
+				       [S('js:<'), indexVar, [S('js:get-property'), restVar, 'length']],
+				       [S('js:set'), indexVar, [S('js:+'), indexVar, 2]]],
+			 [S('js:var'), keyVar, [S('js:get-property'), restVar, indexVar]],
+			 [S('js:var'), valueVar, [S('js:get-property'), restVar, [S('js:+'), indexVar, 1]]],
+			 [S('when'), [S('instance?'), keyVar, S('<keyword>')], setter]]);
     }
     // TODO: documentation, keyword arguments, use reduce
     return [S('js:function'), name,
