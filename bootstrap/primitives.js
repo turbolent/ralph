@@ -39,7 +39,7 @@ Symbol.prototype.escape = function () {
     } else if (this.name[0] == '<'
 	       && this.name[this.name.length - 1] == '>')
     {
-	return '_C_'
+	return '_CL_'
 	    + (Symbol.prototype.escape
 	       .call(new Symbol(this.name.slice(1, -1))));
     } else {
