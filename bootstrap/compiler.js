@@ -121,14 +121,13 @@ var macros = {
 	    return new Symbol('#f');
 	else {
 	    var _case = cases[0];
-	    if (_case instanceof Symbol && _case[0].name == 'else:')
-		return _case.slice(1);
-	    else {
-		var then = _case.slice(1);
-		then.unshift(new Symbol('begin'));
+	    var then = _case.slice(1);
+	    then.unshift(new Symbol('begin'));
+	    if (_case[0] instanceof Symbol && _case[0].name == 'else:')
+		return then;
+	    else
 		return [new Symbol('if'), _case[0], then,
 			[new Symbol('cond')].concat(cases.slice(1))];
-	    }
 	}
     },
     'bind-methods': function (bindings) {
@@ -215,8 +214,10 @@ var specialForms = {
 	    if (forms.length > 1)
 		result += '\n';
 	    return result;
-	} else
+	} else if (forms.length > 1)
 	    return '(' + forms.map(writeExpressions).join(', ') + ')';
+	else
+	    return writeExpressions(forms[0]);
     },
     'if': function (allowStatements, test, then, _else) {
 	if (allowStatements) {
