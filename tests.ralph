@@ -5,6 +5,13 @@
   (check-false "(< 3 2 1 4)" (< 3 2 1 4))
   (check-false "(< 4 3 2 1)" (< 4 3 2 1)))
 
+(define-function test-= ()
+  (check-true "0 != false" (= 0 #f))
+  (check-false "(false? 0)" (false? 0))
+  (check-true "1, 1, 1" (= 1 1 1))
+  (check-false "1, 2, 1" (= 1 2 1))
+  (check-false "#f, #f, 0" (= #f #f 0)))
+  
 (define-function test-reduce ()
   (check-equal "" (reduce1 + [1 2 3 4 5]) 15)
   (check-equal "" (reduce + 1 [2 3 4 5]) 15))
@@ -22,6 +29,7 @@
 
 ;; run tests
 (do apply (list test-< 
+		test-=
 		test-apply
 		test-reduce
 		test-format-to-string))
