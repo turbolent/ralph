@@ -26,6 +26,12 @@ Symbol.reserved = [
 Symbol.prototype.escape = function () {
     if (Symbol.reserved.indexOf(this.name) >= 0) {
 	return '_' + this.name;
+    } else if (this.name[0] == '<'
+	       && this.name[this.name.length - 1] == '>')
+    {
+	return '_C_'
+	    + (Symbol.prototype.escape
+	       .call(new Symbol(this.name.slice(1, -1))));
     } else {
 	var result = '';
 	var up = false;
