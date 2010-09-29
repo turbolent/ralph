@@ -262,11 +262,21 @@ var specialForms = {
 	    + '\n}';
     },
     'js:for-in': function (allowStatements, variableAndExpression) {
-	// if !allowStatements: wrap with function
+	// TODO: if !allowStatements: wrap with function
 	var body = arguments.toArray().slice(2);
 	var variable = variableAndExpression[0];
 	var expression = variableAndExpression[1];
 	return 'for (var ' + variable + ' in ' + write(expression) + ') {\n'
+	    + writeStatements([S('begin')].concat(body)) + '\n}';
+    },
+    'js:for': function (allowStatements, initTestNext) {
+	// TODO: if !allowStatements: wrap with function
+	var body = arguments.toArray().slice(2);
+	var init = initTestNext[0];
+	var test = initTestNext[1];
+	var next = initTestNext[2];
+	return 'for (var ' + init[0] + ' = ' + init[1] + '; '
+	    + write(test) + '; ' + write(next) + ') {\n'
 	    + writeStatements([S('begin')].concat(body)) + '\n}';
     },
     'js:identifier': function (allowStatements, name) {
@@ -299,7 +309,7 @@ var specialForms = {
     'js:var': function (allowStatements, name, value) {
 	return "var " + name + " = " + write(value);
     },
-    'define': function (allowStatements, name, value) {
+    'js:set': function (allowStatements, name, value) {
 	return name + " = " + write(value);
     },
     'js:return': function (allowStatements, body) {
