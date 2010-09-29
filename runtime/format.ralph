@@ -15,7 +15,7 @@ This function effectively calls format and returns the result as a string."
 (define-method format ((stream <stream>) (control-string <string>) #rest args)
   "Format a string and write it to a stream."
   (bind-methods ((dispatch (char)
-		   (select ==
+		   (select char ==
 		     (("s" "S" "c" "C") (print-message arg stream))
 		     (("=") (print arg stream))
 		     (("b" "B") (format-integer arg 2 stream))
