@@ -11,6 +11,10 @@ Object.prototype.toArray = function () {
     return Array.prototype.slice.call(this);
 };
 
+function S (name) {
+    return new Symbol(name);
+}
+
 //// expansion
 
 function argumentNames (args) {
@@ -41,14 +45,14 @@ function addReturn (forms) {
     //   arguments.callee.caller.multipleValues = restValues;
     // return firstValue;
     var last = forms.length - 1;
-    forms[last] = [new Symbol('js:return'), forms[last]];
+    forms[last] = [S('js:return'), forms[last]];
     return forms;
 }
 
 function functionDeclaration (name, args, body) {
     var documentation = [];
     if (typeof body[0] == 'string' && body.length > 1) {
-	documentation.push([new Symbol('js:documentation'), body.shift()]);
+	documentation.push([S('js:documentation'), body.shift()]);
     }
     var restAndKey = [];
     var restPosition = args.indexOf(HashSymbol.rest);
@@ -62,7 +66,7 @@ function functionDeclaration (name, args, body) {
     var keyPosition = args.indexOf(HashSymbol.key);
     if (keyPosition >= 0) {
 	args.slice(keyPosition + 1).forEach(function (key) {
-	    var name, _default = new Symbol('#f');
+	    var name, _default = S('#f');
 	    if (key instanceof Array) {
 		name = key[0];
 		_default = key[1];
@@ -70,7 +74,7 @@ function functionDeclaration (name, args, body) {
 		name = key;
 	    }
 	    if (name) {
-		restAndKey.push([new Symbol('js:var'), name, _default]);
+		restAndKey.push([S('js:var'), name, _default]);
 	    }
 	});
 	// TODO: search and set keyword values
@@ -78,9 +82,9 @@ function functionDeclaration (name, args, body) {
 	// if (restPosition >= ) args[restPosition + 1]
     }
     // TODO: documentation, keyword arguments, use reduce
-    return [new Symbol('js:function'), name,
+    return [S('js:function'), name,
 	    argumentNames(requiredArguments(args)),
-	    [new Symbol('begin')].concat(restAndKey).concat(body)];
+	    [S('begin')].concat(restAndKey).concat(body)];
 }
 
 var macros = {
@@ -106,28 +110,28 @@ var macros = {
     'bind': function (bindings) {
 	var body = arguments.toArray().slice(1);
 	var declarations = bindings.map(function (binding) {
-	    return ([new Symbol('js:var')].concat(binding));
+	    return ([S('js:var')].concat(binding));
 	});
-	return [[new Symbol('method'), []]
+	return [[S('method'), []]
 		.concat(declarations)
 		.concat(body)];
     },
     'when': function (test, then) {
-	return [new Symbol('if'), test, then, new Symbol('#f')];
+	return [S('if'), test, then, S('#f')];
     },
     'cond': function () {
 	var cases = arguments.toArray();
 	if (cases.length == 0)
-	    return new Symbol('#f');
+	    return S('#f');
 	else {
 	    var _case = cases[0];
 	    var then = _case.slice(1);
-	    then.unshift(new Symbol('begin'));
+	    then.unshift(S('begin'));
 	    if (_case[0] instanceof Symbol && _case[0].name == 'else:')
 		return then;
 	    else
-		return [new Symbol('if'), _case[0], then,
-			[new Symbol('cond')].concat(cases.slice(1))];
+		return [S('if'), _case[0], then,
+			[S('cond')].concat(cases.slice(1))];
 	}
     },
     'select': function (value, test) {
@@ -138,36 +142,36 @@ var macros = {
 	    if (_case[0] instanceof Symbol && _case[0].name == 'else:')
 		return _case;
 	    else
-		return ([[new Symbol('or')].concat(_case[0].map(testExpression))]
+		return ([[S('or')].concat(_case[0].map(testExpression))]
 			.concat(_case.slice(1)));
 	});
-	return [new Symbol('cond')].concat(cases);
+	return [S('cond')].concat(cases);
     },
     'bind-methods': function (bindings) {
 	var body = arguments.toArray().slice(1);
 	var methodBindings = bindings.map(function (binding) {
-	    return [binding[0], [new Symbol('method')].concat(binding.slice(1))];
+	    return [binding[0], [S('method')].concat(binding.slice(1))];
 	});
-	return [new Symbol('bind'), methodBindings].concat(body);
+	return [S('bind'), methodBindings].concat(body);
     },
     'handler-case': function (body) {
 	var conditions = arguments.toArray().slice(1);
 	// TODO: gensym
-	var conditionVariable = new Symbol('__CONDITION__');
+	var conditionVariable = S('__CONDITION__');
 	var cases = conditions.map(function (condition) {
 	    var _if = condition[0];
-	    return [[new Symbol('instance?'),
+	    return [[S('instance?'),
 		     conditionVariable, _if[0]]]
 		.concat(condition.slice(1));
 	});
-	return [[new Symbol('method'), [],
-		 [new Symbol('js:try'), body, conditionVariable,
-		  [new Symbol('cond')].concat(cases)]]];
+	return [[S('method'), [],
+		 [S('js:try'), body, conditionVariable,
+		  [S('cond')].concat(cases)]]];
     },
     // TODO: define-method
     'define-method': function () {
-	return [new Symbol('js:statements'),
-		[new Symbol('define-function')].concat(arguments.toArray())];
+	return [S('js:statements'),
+		[S('define-function')].concat(arguments.toArray())];
     }
 }
 
@@ -263,7 +267,7 @@ var specialForms = {
 	var variable = variableAndExpression[0];
 	var expression = variableAndExpression[1];
 	return 'for (var ' + variable + ' in ' + write(expression) + ') {\n'
-	    + writeStatements([new Symbol('begin')].concat(body)) + '\n}';
+	    + writeStatements([S('begin')].concat(body)) + '\n}';
     },
     'js:identifier': function (allowStatements, name) {
 	return ('' + name);
