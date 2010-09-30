@@ -125,16 +125,46 @@ var macros = {
 	var body = arguments.toArray().slice(1);
 	return functionDeclaration(null, args, body);
     },
-    // TODO: bind multiple values
-    // e.g. (bind ((foo bar baz (values 1 2 3)))
-    // arguments.callee.acceptsMultipleValues = true;
-    // (...) ? arguments.callee.MultipleValues :
-    //         new Array([foo, bar, baz].length)
-    // TODO: test multiple value bind with nested functions
     'bind': function (bindings) {
 	var body = arguments.toArray().slice(1);
-	var declarations = bindings.map(function (binding) {
-	    return ([S('js:var')].concat(binding));
+	var declarations = [];
+	bindings.forEach(function (binding) {
+	    var value = binding[binding.length - 1];
+	    var variables = binding.slice(0, -1);
+	    var restPosition = variables.indexOf(HashSymbol.rest);
+	    var normalVariables = binding.slice(0, (restPosition >= 0 ?
+						    restPosition : variables.length));
+	    var valueSymbol = null;
+	    declarations.push([S('js:var'),
+			       (normalVariables.length > 0 ? normalVariables[0] :
+				(valueSymbol = Symbol.generate())),
+			       value]);
+	    if (normalVariables.length > 1 || restPosition >= 0) {
+		var otherValuesSymbol = Symbol.generate();
+		var otherValues = [S('js:get-property'), 'arguments', 'callee', 'otherValues'];
+		var i = 0;
+		var setters = normalVariables.slice(1)
+		    .map(function (variable) {
+			return [S('js:var'), variable,
+				[S('or'), [S('js:get-property'), otherValuesSymbol, i++], S('#f')]];
+		    });
+		declarations.push([S('js:try'),
+				   [S('begin'),
+				    [S('js:var'), otherValuesSymbol, [S('or'), otherValues, [S('list')]]]]
+				   .concat(setters)
+				   .concat(restPosition >= 0 ?
+				    	   [[S('js:var'), variables[restPosition + 1],
+				    	     (normalVariables.length == 0 ?
+					      [[S('js:get-property'), [S('list'), valueSymbol], 'concat'],
+					       otherValuesSymbol]
+					      : (normalVariables.length == 1 ? otherValuesSymbol
+						 : [[S('js:get-property'), otherValuesSymbol, 'slice'],
+						    normalVariables.length - 1]))]]
+					   : []),
+				   // catch Variable, and catch block
+				   null, null,
+				   [S('js:set'), otherValues, S('js:undefined')]]);
+	    }
 	});
 	return [[S('method'), []]
 		.concat(declarations)
@@ -209,18 +239,13 @@ var macros = {
 	return [S('js:statements'),
 		[S('define-function')].concat(arguments.toArray())];
     },
-    // TODO: define:
-    // - export in module if exported
-    // -> after symbol macro check: check if defined value
     'values': function () {
 	var values = arguments.toArray();
 	var caller = ['arguments', 'callee', 'caller'];
 	return [S('begin'),
-		[S('when'), ([S('js:get-property')]
-			     .concat(caller).concat(['acceptsMultipleValues'])),
-		 [S('js:set'), ([S('js:get-property')]
-				.concat(caller).concat(['otherValues'])),
-		  [S('list')].concat(values.slice(1))]],
+		[S('js:set'), ([S('js:get-property')]
+			       .concat(caller).concat(['otherValues'])),
+		 [S('list')].concat(values.slice(1))],
 		values[0]];
     },
     'define-module': function (name) {
