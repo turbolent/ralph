@@ -354,13 +354,17 @@ var specialForms = {
     'js:defined': function (allowStatements, expression) {
 	return '(typeof (' + write(expression) + ') != "undefined")';
     },
-    'js:try': function (allowStatements, body, conditionVariable, _catch) {
+    'js:try': function (allowStatements, body, conditionVariable, _catch, _finally) {
 	// TODO: if !allowStatements: wrap with function
-	return 'try {\n'
-	    + writeStatements(body) // TODO: return?
-	    + '} catch (' + write(conditionVariable) + ') {\n'
-	    + writeStatements(_catch)
-	    + '\n}';
+	var result = 'try {\n' + writeStatements(body) + '\n}';
+	if (_catch) {
+	    result += (' catch (' + write(conditionVariable) + ') {\n'
+		       + writeStatements(_catch)
+		       + '\n}');
+	}
+	if (_finally)
+	    result += (' finally {\n' + writeStatements(_finally) + '\n}');
+	return result;
     },
     'js:for-in': function (allowStatements, variableAndExpression) {
 	// TODO: if !allowStatements: wrap with function
