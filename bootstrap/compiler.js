@@ -274,6 +274,9 @@ var macros = {
 		[S('js:get-property'), 'exports', name.toString()],
 		name];
     }
+    // TODO: define:
+    // - export in module if exported
+    // -> after symbol macro check: check if defined value
 }
 
 var exports = [];
@@ -298,15 +301,17 @@ function macroexpand (form) {
 //// writing
 
 var infix = {
-    'and': '&&', 'or': '||', 'js:+': '+', 'js:-': '-',
-    'js:>': '>', 'js:<': '<', 'js:>=': '>=', 'js:<=': '<=',
+    'and': '&&', 'or': '||', 'js:+': '+',
+    'js:-': '-', 'js:>': '>', 'js:<': '<',
+    'js:>=': '>=', 'js:<=': '<=',
     'js:==': '==', 'js:===': '==='
 }
 
 var symbolValues = {
     'js:null': 'null',
     '#f': 'false',
-    '#t': 'true'
+    '#t': 'true',
+    'js:undefined': 'undefined'
 }
 
 var specialForms = {
