@@ -11,8 +11,16 @@ Object.prototype.toArray = function () {
     return Array.prototype.slice.call(this);
 };
 
+var interned = {};
+
 function S (name) {
-    return new Symbol(name);
+    if (interned.hasOwnProperty(name))
+	return interned[name];
+    else {
+	var symbol = new Symbol(name);
+	interned[name] = symbol;
+	return symbol;
+    }
 }
 
 //// expansion
