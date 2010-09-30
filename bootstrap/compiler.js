@@ -40,9 +40,9 @@ function requiredArguments (args) {
 
 function addReturn (forms) {
     var last = forms.length - 1;
-    if (forms[last] instanceof Array
-	&& !(forms[last][0] instanceof Symbol
-	     && forms[last][0].name == 'js:return'))
+    if (!(forms[last] instanceof Array
+	  && forms[last][0] instanceof Symbol
+	  && forms[last][0].name == 'js:return'))
     {
 	forms[last] = [S('js:return'), forms[last]];
     }
