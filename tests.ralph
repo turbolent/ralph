@@ -11,7 +11,7 @@
   (check-true "1, 1, 1" (= 1 1 1))
   (check-false "1, 2, 1" (= 1 2 1))
   (check-false "#f, #f, 0" (= #f #f 0)))
-  
+
 (define-function test-reduce ()
   (check-equal "" (reduce1 + [1 2 3 4 5]) 15)
   (check-equal "" (reduce + 1 [2 3 4 5]) 15))
@@ -21,15 +21,59 @@
   (check-equal "" (apply + 1 2 3 [4 5]) 15))
 
 (define-function test-format-to-string ()
-  (check-equal "" (format-to-string "%d%%%d" 1 2) "1%2") 
+  (check-equal "" (format-to-string "%d%%%d" 1 2) "1%2")
   (check-equal "" (format-to-string "x%mx"
 				    (method (stream)
 				      (write stream "%test%")))
 	       "x%test%x"))
 
+(define-function foo ()
+  (bind ((a1 (bar))
+	 (b1 b2 (bar))
+	 (c1 c2 c3 (bar))
+	 (d1 d2 d3 d4 (bar))
+	 (#rest e1 (bar))
+	 (f1 #rest f2 (bar))
+	 (g1 g2 #rest g3 (bar))
+ 	 (h1 (baz))
+ 	 (i1 i2 (baz))
+ 	 (j1 #rest j2 (baz))
+ 	 (#rest k1 (baz)))
+    (list a1
+	  b1 b2
+	  c1 c2 c3
+	  d1 d2 d3 d4
+	  e1
+	  f1 f2
+	  g1 g2 g3
+	  h1
+	  i1 i2
+	  j1 j2
+	  k1)))
+
+(define-function bar ()
+  (values 1 2 3))
+
+(define-function baz ()
+  1)
+
+(define-function test-bind ()
+  (check-equal "" (foo)
+	       (list 1
+		     1 2
+		     1 2 3
+		     1 2 3 #f
+		     (list 1 2 3)
+		     1 (list 2 3)
+		     1 2 (list 3)
+		     1
+		     1 #f
+		     1 (list)
+		     (list 1))))
 ;; run tests
-(do apply (list test-< 
+(do apply (list test-<
 		test-=
 		test-apply
 		test-reduce
+		test-bind
 		test-format-to-string))
