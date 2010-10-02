@@ -3,6 +3,11 @@
 (define-function js:length (object)
   (js:get-property object "length"))
 
+(define-function js:add (object1 #rest more-objects)
+  (reduce (method (object1 object2)
+	    (js:+ object1 object2))
+	  first-object more-objects))
+
 
 (define-function true? (value)
   (or (js:=== value 0)
