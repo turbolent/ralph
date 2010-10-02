@@ -1,5 +1,4 @@
 
-(define <object> (js:identifier "Object"))
 (define-function js:length (object)
   (js:get-property object "length"))
 
@@ -8,6 +7,7 @@
 	    (js:+ object1 object2))
 	  first-object more-objects))
 
+(define-class <object> ())
 
 (define-function true? (value)
   (or (js:=== value 0)
