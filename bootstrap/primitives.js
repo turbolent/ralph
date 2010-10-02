@@ -32,16 +32,20 @@ Symbol.reserved = [
 ];
 
 Symbol.prototype.escape = function () {
+    var first = this.name[0];
+    var last = this.name[this.name.length - 1];
     if (this.generated) {
 	return this.name;
     } else if (Symbol.reserved.indexOf(this.name) >= 0) {
 	return '_' + this.name;
-    } else if (this.name[0] == '<'
-	       && this.name[this.name.length - 1] == '>')
-    {
+    } else if (first == '<' && last == '>') {
 	return '_CL_'
 	    + (Symbol.prototype.escape
 	       .call(new Symbol(this.name.slice(1, -1))));
+    } else if (first == '*' && last == '*') {
+	return Symbol.prototype.escape
+	    .call(new Symbol(this.name.slice(1, -1)))
+	    .toUpperCase();
     } else {
 	var result = '';
 	var up = false;
