@@ -91,6 +91,13 @@
   ;; ((js:get-property "Object" "getPrototypeOf") object))
   (js:get-property object "__proto__" "constructor"))
 
+(define-function check-type (value (type <type>))
+  "Checks an object to ensure that it is an instance of a specified type."
+  (when (not (instance? value type))
+    (signal (make <type-error>
+		  value: value
+		  type: type))))
+
 (define-function instance? (object (type <type>))
   "Tests wether an object is an instance of a type."
   ((js:get-property type "prototype" "isPrototypeOf") object))
