@@ -12,6 +12,15 @@
 (define-function js:slice (object start end)
   ((js:get-property object "slice") start end))
 
+(define-function js:set-property (object key new-value)
+  (js:set (js:get-property object key) new-value))
+
+(define-function js:property-sequence (object)
+  (bind ((keys (make <array>)))
+    (js:for-in (key object)
+      (add! keys key))
+    keys))
+
 ;;;; object
 
 (define-class <object> ())
