@@ -240,6 +240,9 @@ element of the collection."
 
 (define-class <string> (<sequence>))
 
+(define-method element ((string <string>) position #key default)
+  (or ((js:get-property string "charAt") position) default))
+
 (define-function as-uppercase ((string <string>))
   "Coerces a string to uppercase."
   ((js:get-property string "toUpperCase")))
