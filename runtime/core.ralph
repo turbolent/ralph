@@ -1,4 +1,6 @@
 
+;;;; utility functions
+
 (define-function js:length (object)
   (js:get-property object "length"))
 
@@ -6,6 +8,11 @@
   (reduce (method (object1 object2)
 	    (js:+ object1 object2))
 	  first-object more-objects))
+
+(define-function js:slice (object start end)
+  ((js:get-property object "slice") start end))
+
+;;;; object
 
 (define-class <object> ())
 
@@ -267,11 +274,15 @@ element of the collection."
   ((js:get-property string "toLowerCase")))
 
 (define-method size ((string <string>))
-  "Returns the size of object."
-  (js:get-property string "length"))
+  "Returns the size of string."
+  (js:length string))
 
 (define-method concatenate ((first-string <string>) #rest more-strings)
   "Returns the concatenation of one or more strings."
-  (reduce (method (string1 string2)
-	    (js:+ string1 string2))
-	  first-string more-strings))
+  (apply js:add first-string more-strings))
+
+(define-method copy-sequence ((string <string>)
+			      #key (start 0) (end (size string)))
+  "Returns a new string containing the elements of string
+between start and end."
+  (js:slice string start end))
