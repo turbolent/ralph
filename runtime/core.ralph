@@ -267,6 +267,33 @@ element of the collection."
 
 
 
+
+;;;; table
+
+(define-class <table> (<collection>))
+
+(define-method make ((class (singleton <deque>)) #key (size 0))
+  ;; size ignored
+  (js:new (js:identifier "Object")))
+
+(define-method element ((table <table>) key #key default)
+  "Returns the element associated with a particular key."
+  (or (when ((js:get-property table "hasOwnProperty") key)
+	(js:get-property table key))
+      default))
+
+(define-method (setter element) ((table <table>) key new-value)
+  "Sets the element associated with a particular key."
+  (js:set-property table key new-value))
+
+(define-method key-sequence ((table <table>))
+  "Returns a sequence containing the keys of its collection argument."
+  (js:property-sequence table))
+
+(define-method size ((table <table>))
+  "Returns the size of table."
+  (js:length table))
+
 ;;;; deque
 
 (define-class <deque> (<sequence>))
