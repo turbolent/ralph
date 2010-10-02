@@ -25,6 +25,58 @@
 
 (define-class <object> ())
 
+;;;; collection
+
+;; every subclass needs to define:
+;; * key-sequence
+;; * size
+;; * element
+;; * (setter element)
+
+(define-class <collection> (<object>))
+
+(define-function elements ((collection <collection>))
+  (map (curry element collection)
+       (key-sequence collection)))
+
+(define-method empty? ((collection <collection>))
+  "Returns true if the collection has zero elements."
+  (= (size collection) 0))
+
+(define-method find-key ((collection <collection>) (predicate <function>)
+			 #key (skip 0) failure)
+  "Returns the key in a collection such that the corresponding collection
+element satisfies a predicate."
+  (bind ((keys (choose (method (element)
+		         (predicate element))
+		       (elements collection))))
+    (or (element keys skip) failure)))
+
+(define-method binary= ((collection1 <collection>) (collection2 <collection>))
+  (and (== (size collection1) (size collection2))
+       (bind ((keys1 (key-sequence collection1))
+	      (keys2 (key-sequence collection2)))
+         (and (every? == keys1 keys2)
+	      (every? =
+		      (map (curry element collection1) keys1)
+		      (map (curry element collection2) keys2))))))
+
+(define-function any? ((function <function>) (collection <collection>)
+		       #rest more-collections)
+  "Returns true if a predicate returns true at least
+once for the elements of the collection."
+  ;; TODO: return as soon as #t
+  (reduce (method (previous current)
+	    (or previous (function current)))
+	  #f (elements collection)))
+
+(define-function every? ((function <function>) (collection <collection>)
+			 #rest more-collections)
+  "Returns true if a predicate returns true for every
+element of the collection."
+  (reduce (method (previous current)
+	    (and previous (function current)))
+	  #t (elements collection)))
 (define-function true? (value)
   (or (js:=== value 0)
       (js:not (js:not value))))
@@ -240,17 +292,8 @@ of its arguments sequence."
   "Iterates over the collections and collects the results in a collection."
    ((js:get-property collection "map") function))
 
-(define-function any? ((function <function>) (collection <collection>)
-		       #rest more-collections)
-  "Returns true if a predicate returns true at least
-once for the elements of the collection."
-  ((js:get-property collection "some") function))
 
-(define-function every? ((function <function>) (collection <collection>)
-			 #rest more-collections)
-  "Returns true if a predicate returns true for every
-element of the collection."
-  ((js:get-property collection "every") function))
+
 
 (define-method choose ((predicate <function>) (source-sequence <sequence>))
   "Returns those elements of a sequence that satisfy a predicate."
