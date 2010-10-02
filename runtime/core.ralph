@@ -231,3 +231,23 @@ element of the collection."
 (define-method add! ((deque <deque>) new-value)
   "Adds an element at the beginning of the deque."
   (push deque new-value))
+
+;;;; string
+
+;; * as-uppercase! and as-lowercase! impossible,
+;;   as strings in JavaScript are immutable
+;; * generic < works for strings
+
+(define-class <string> (<sequence>))
+
+(define-function as-uppercase ((string <string>))
+  "Coerces a string to uppercase."
+  ((js:get-property string "toUpperCase")))
+
+(define-function as-lowercase ((string <string>))
+  "Coerces a string to lowercase."
+  ((js:get-property string "toLowerCase")))
+
+(define-method size ((string <string>))
+  "Returns the size of object."
+  (js:get-property string "length"))
