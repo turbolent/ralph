@@ -205,3 +205,29 @@ element of the collection."
 (define-function concatenate ((first-sequence <sequence>) #rest more-sequences)
   "Returns the concatenation of one or more sequences."
   ((js:get-property "Array" "prototype" "concat" "apply") first-sequence more-sequences))
+
+
+
+;;;; deque
+
+(define-class <deque> (<sequence>))
+
+(define-method push ((deque <deque>) new-value)
+  "Adds an element to the front of a deque."
+  ((js:get-property deque "unshift") new-value))
+
+(define-method push-last ((deque <deque>) new-value)
+  "Adds an element to the end of a deque."
+  ((js:get-property deque "push") new-value))
+
+(define-method pop ((sequence <sequence>))
+  "Removes and returns the first element of a deque."
+  ((js:get-property deque "shift")))
+
+(define-method pop-last ((sequence <sequence>))
+  "Removes and returns an element from the end of a deque."
+  ((js:get-property sequence "pop")))
+
+(define-method add! ((deque <deque>) new-value)
+  "Adds an element at the beginning of the deque."
+  (push deque new-value))
