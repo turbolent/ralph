@@ -57,7 +57,7 @@ function addReturn (forms) {
     return forms;
 }
 
-function functionDeclaration (name, args, body) {
+function functionDeclaration (args, body) {
     var documentation = [];
     if (typeof body[0] == 'string' && body.length > 1) {
 	documentation.push([S('js:documentation'), body.shift()]);
@@ -75,7 +75,7 @@ function functionDeclaration (name, args, body) {
     if (keyPosition >= 0) {
 	// check order of #rest and #key
 	if (restPosition >= 0 && keyPosition < restPosition)
-	    throw new Error("function '" + name + "': #key before #rest in args: " +
+	    throw new Error("#key before #rest in args: " +
 			    JSON.stringify(args));
 
 	var keyVar = Symbol.generate();
@@ -111,8 +111,7 @@ function functionDeclaration (name, args, body) {
 			 [S('js:var'), valueVar, [S('js:get-property'), restVar, [S('js:+'), indexVar, 1]]],
 			 [S('when'), [S('instance?'), keyVar, S('<keyword>')], setter]]);
     }
-    return [S('js:function'), name,
-	    argumentNames(requiredArguments(args)),
+    return [S('js:function'), argumentNames(requiredArguments(args)),
 	    [S('begin')].concat(restAndKey).concat(addReturn(body))];
 }
 
@@ -131,7 +130,7 @@ var macros = {
     },
     'method': function (args) {
 	var body = arguments.toArray().slice(1);
-	return functionDeclaration(null, args, body);
+	return functionDeclaration(args, body);
     },
     'bind': function (bindings) {
 	var body = arguments.toArray().slice(1);
@@ -236,7 +235,7 @@ var macros = {
 	    return ([[S('instance?'), conditionVariable, type]]
 		    .concat(binding).concat(addReturn(condition.slice(1))));
 	});
-	return [[S('js:function'), '', [],
+	return [[S('js:function'), [],
 		 [S('begin'),
 		  [S('js:try'), addReturn(body),
 		   conditionVariable,
@@ -270,24 +269,29 @@ var macros = {
 		} else if (key.name == 'export:') {
 		    // record exports
 		    value.forEach(function (symbol) {
-			exports.push(symbol.name);
+			exported.push(symbol.name);
 		    });
 		}
 	    }
 	}
-	return [S('js:statements')].concat(imports);
+	return [S('js:statements'),
+		[S('js:var'), S('*module*'), S('js:this')]]
+	    .concat(imports);
     },
     'js:export': function (name) {
 	return [S('js:set'),
 		[S('js:get-property'), 'exports', name.toString()],
 		name];
+    },
+    'define': function (name, value) {
+	return [S('js:statements'),
+		[S('js:set'), [S('js:get-property'), S('*module*'), name.toString()], value]]
+	    .concat(exported.indexOf(name.name) >= 0 ?
+		    [[S('js:export'), name]] : []);
     }
-    // TODO: define:
-    // - export in module if exported
-    // -> after symbol macro check: check if defined value
 }
 
-var exports = [];
+var exported = [];
 
 var symbolMacros = {}
 
@@ -317,9 +321,10 @@ var infix = {
 
 var symbolValues = {
     'js:null': 'null',
+    'js:this': 'this',
+    'js:undefined': 'undefined',
     '#f': 'false',
     '#t': 'true',
-    'js:undefined': 'undefined'
 }
 
 var specialForms = {
@@ -428,9 +433,8 @@ var specialForms = {
     'js:return': function (allowStatements, body) {
 	return 'return ' + write(body);
     },
-    'js:function': function (allowStatements, name, args, body) {
-	return 'function ' + (name ? name + ' ' : '')
-	    + '(' + args.join(', ') + ') '
+    'js:function': function (allowStatements, args, body) {
+	return 'function (' + args.join(', ') + ') '
 	    + '{\n' + writeStatements(body) + '\n}';
     },
     'js:documentation': function (allowStatements, documentation) {
