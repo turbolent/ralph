@@ -251,3 +251,9 @@ element of the collection."
 (define-method size ((string <string>))
   "Returns the size of object."
   (js:get-property string "length"))
+
+(define-method concatenate ((first-string <string>) #rest more-strings)
+  "Returns the concatenation of one or more strings."
+  (reduce (method (string1 string2)
+	    (js:+ string1 string2))
+	  first-string more-strings))
