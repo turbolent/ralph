@@ -269,6 +269,28 @@ element of the collection."
   "Adds an element at the beginning of the deque."
   (push deque new-value))
 
+(define-method copy-sequence ((deque <deque>)
+			      #key (start 0) (end (size deque)))
+  "Returns a new deque containing the elements of deque
+between start and end."
+  (js:slice deque start end))
+
+(define-method element ((deque <deque>) key #key default)
+  "Returns the element associated with a particular key."
+  (or (js:get-property deque key) default))
+
+(define-method (setter element) ((deque <deque>) key new-value)
+  "Sets the element associated with a particular key."
+  (js:set-property deque key new-value))
+
+(define-method key-sequence ((deque <deque>))
+  "Returns a sequence containing the keys of its collection argument."
+  (js:property-sequence deque))
+
+(define-method size ((deque <deque>))
+  "Returns the size of deque."
+  (js:length deque))
+
 ;;;; string
 
 ;; * as-uppercase! and as-lowercase! impossible,
