@@ -283,6 +283,9 @@ var macros = {
 		[S('js:get-property'), 'exports', name.toString()],
 		name];
     },
+    'if': function (test, then, _else) {
+	return [S('js:if'), [S('true?'), test], then, _else];
+    },
     'define': function (name, value) {
 	return [S('js:statements'),
 		[S('js:set'), [S('js:get-property'), S('*module*'), name.toString()], value]]
@@ -347,7 +350,7 @@ var specialForms = {
 	else
 	    return writeExpressions(forms[0]);
     },
-    'if': function (allowStatements, test, then, _else) {
+    'js:if': function (allowStatements, test, then, _else) {
 	if (allowStatements) {
 	    var result = 'if (' + write(test) + ') {\n'
 		+ writeStatements(then) + '}';
