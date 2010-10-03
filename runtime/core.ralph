@@ -1,5 +1,47 @@
 
+(define-module dylan
+  export: (%define
+	   %export
+	   %define-getter
+	   %define-setter
+	   setter
+	   empty?))
+
 ;;;; utility functions
+
+(js:define %define
+  (js:function (name value)
+    (begin
+      (js:set (js:get-property *module* name) value)
+      (js:if (js:>= ((js:get-property *module* "%exports" "indexOf") name) 0)
+             (%export name value)
+	     #f))))
+
+(define %export
+  (js:function (name value)
+     (js:set (js:get-property exports name) value)))
+
+;; manual export necessary
+(%export (js:escape %define) %define)
+
+(define %define-getter
+  (js:function (name function)
+    (bind ((existing-function (js:get-property *module* name))
+	   (setter (and existing-function
+			((js:get-property function "hasOwnProperty") "%setter")
+			(js:get-property function "%setter"))))
+      (%define name function)
+      (js:if setter
+	     (js:set (js:get-property function "%setter") setter)
+	     #f))))
+
+(define %define-setter
+  (js:function (name function)
+    (begin
+      (js:if (js:not (js:get-property *module* name))
+	     (%define name (js:new (js:identifier "Function")))
+	     #f)
+      (js:set (js:get-property *module* name "%setter") function))))
 
 (define-function js:length (object)
   (js:get-property object "length"))
@@ -20,6 +62,11 @@
     (js:for-in (key object)
       (add! keys key))
     keys))
+
+(define-function setter (function)
+  (when ((js:get-property function "hasOwnProperty") "%setter")
+    (js:get-property function "%setter")))
+
 
 ;;;; object
 

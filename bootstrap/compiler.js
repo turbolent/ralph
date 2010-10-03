@@ -120,13 +120,18 @@ var macros = {
     //       and accessible as function
     'define-function': function (name, args) {
 	var body = arguments.toArray().slice(2);
-	if (!(name instanceof Symbol))
-	    throw new Error('function\'s name should be a symbol: '
+	var setter = false;
+	if (name instanceof Array && name.length == 2
+	    && name[0] instanceof Symbol && name[0].name == 'setter')
+	{
+	    setter = true;
+	    name = name[1];
+	}
+	if (!(name instanceof Symbol || setter))
+	    throw new Error('function\'s name should be a symbol or (setter name): '
 			    + JSON.stringify(name));
-	return [S('js:statements')]
-	    .concat(exports.indexOf(name.name) >= 0 ?
-		    [[S('js:export'), name]] : [])
-	    .concat([functionDeclaration(name, args, body)]);
+	return [setter ? S('%define-setter') : S('%define-getter'),
+		name.toString(), functionDeclaration(args, body)];
     },
     'method': function (args) {
 	var body = arguments.toArray().slice(1);
@@ -258,43 +263,39 @@ var macros = {
     'define-module': function (name) {
 	var keyArgs = arguments.toArray().slice(1);
 	var imports = [];
+	var exports = [];
 	for (var i = 0; i < keyArgs.length; i += 2) {
 	    var key = keyArgs[i];
 	    var value = keyArgs[i + 1];
 	    if (key instanceof Symbol) {
 		if (key.name == 'import:') {
-		    value.forEach(function (symbol) {
-			imports.push([S('include'), symbol.toString()]);
+		    imports = value.map(function (symbol) {
+			return [S('include'), symbol.toString()];
 		    });
 		} else if (key.name == 'export:') {
-		    // record exports
-		    value.forEach(function (symbol) {
-			exported.push(symbol.name);
+		    exports = value.map(function (symbol) {
+			return symbol.toString();
 		    });
 		}
 	    }
 	}
 	return [S('js:statements'),
-		[S('js:var'), S('*module*'), S('js:this')]]
+		[S('js:var'), S('*module*'), S('js:this')],
+		[S('js:set'),
+		 [S('js:get-property'), S('*module*'), '%exports'],
+		 [S('list')].concat(exports)]]
 	    .concat(imports);
-    },
-    'js:export': function (name) {
-	return [S('js:set'),
-		[S('js:get-property'), 'exports', name.toString()],
-		name];
     },
     'if': function (test, then, _else) {
 	return [S('js:if'), [S('true?'), test], then, _else];
     },
+    'js:define': function (name, value) {
+	return [S('js:set'), [S('js:get-property'), S('*module*'), name.toString()], value];
+    },
     'define': function (name, value) {
-	return [S('js:statements'),
-		[S('js:set'), [S('js:get-property'), S('*module*'), name.toString()], value]]
-	    .concat(exported.indexOf(name.name) >= 0 ?
-		    [[S('js:export'), name]] : []);
-    }
+	return [S('%define'), name.toString(), value];
+    },
 }
-
-var exported = [];
 
 var symbolMacros = {}
 
@@ -425,7 +426,8 @@ var specialForms = {
     },
     'js:new': function (allowStatements, name) {
 	var args = arguments.toArray().slice(2);
-	return 'new ' + name + '(' + args.map(writeExpressions).join(', ') + ')';
+	return 'new ' + write(name) +
+	    '(' + args.map(writeExpressions).join(', ') + ')';
     },
     'js:var': function (allowStatements, name, value) {
 	return "var " + name + " = " + write(value);
