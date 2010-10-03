@@ -457,6 +457,9 @@ var specialForms = {
     'js:statements': function (allowStatements) {
 	var body = arguments.toArray().slice(1);
 	return body.map(writeStatements).join(';\n');
+    },
+    'js:escape': function (allowStatements, symbol) {
+	return write(symbol.toString());
     }
 }
 
