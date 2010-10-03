@@ -187,6 +187,11 @@ var macros = {
 	body.unshift(S('begin'));
 	return [S('if'), test, body, S('#f')];
     },
+    'unless': function (test) {
+	var body = arguments.toArray().slice(1);
+	body.unshift(S('begin'));
+	return [S('if'), [S('not'), test], body, S('#f')];
+    },
     'cond': function () {
 	var cases = arguments.toArray();
 	if (cases.length == 0)
