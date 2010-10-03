@@ -300,6 +300,11 @@ var macros = {
     'define': function (name, value) {
 	return [S('%define'), name.toString(), value];
     },
+    'set!': function (expression, value) {
+	return [[S('setter'), expression[0]]]
+	    .concat(expression.slice(1))
+	    .concat([value]);
+    }
 }
 
 var symbolMacros = {}
