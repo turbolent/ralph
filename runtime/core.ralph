@@ -100,7 +100,7 @@
   "Returns the key in a collection such that the corresponding collection
 element satisfies a predicate."
   (bind ((keys (choose (method (element)
-		         (predicate element))
+		         (true? (predicate element)))
 		       (elements collection))))
     (or (element keys skip) failure)))
 
