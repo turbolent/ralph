@@ -350,6 +350,16 @@ sequence that satisfy a predicate."
   "Returns the size of table."
   (js:length table))
 
+(define-function table (#rest elements)
+  (bind ((table (make <table>)))
+    (reduce (method (key current)
+	      (if key
+		  (begin
+		    (set! (element table key) current)
+		    #f)
+		  current))
+	    #f elements)))
+
 ;;;; deque
 
 (define-class <deque> (<sequence>))
