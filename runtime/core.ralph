@@ -68,7 +68,6 @@
   (when ((js:get-property function "hasOwnProperty") "%setter")
     (js:get-property function "%setter")))
 
-
 ;;;; object
 
 (define-class <object> ())
@@ -420,6 +419,13 @@ between start and end."
 
 (define-class <string> (<sequence>))
 
+;; TODO
+;; (define-method make ((class (singleton <deque>)) #key (size 0) (fill " "))
+;;   (bind ((deque (js:new (js:identifier "String") size)))
+;;     (do (rcurry (curry (setter element) deque) fill)
+;;         (key-sequence deque))
+;;     deque))
+
 (define-method element ((string <string>) position #key default)
   (or ((js:get-property string "charAt") position) default))
 
@@ -444,3 +450,93 @@ between start and end."
   "Returns a new string containing the elements of string
 between start and end."
   (js:slice string start end))
+
+;;;; keyword
+
+(define-class <keyword> (<object>)
+  (name type: <string>
+	init-keyword: name:))
+
+(define %interned (make <table>))
+
+(define-function %k (name)
+  (or (element %interned name)
+      (set! (element %interned name)
+	    (bind ((keyword (js:new <keyword>)))
+	      (set! (keyword-name keyword) name)
+	      keyword))))
+
+;;;; list / __vector__ / array ?!
+
+;; TODO
+
+(define-method copy-sequence ((sequence <sequence>)
+			      #key (start 0) (end (size sequence)))
+  "Returns a new string containing the elements of sequence
+between start and end."
+  (js:slice sequence start end))
+
+(define-function list (#rest elements)
+  (bind ((result (js:new "Array")))
+    ((js:get-property "Array" "prototype" "splice" "apply")
+     result (concatenate (list 0 0) elements))
+    result))
+
+(define-method concatenate ((first-sequence <sequence>) #rest more-sequences)
+  "Returns the concatenation of one or more sequences."
+  ((js:get-property "Array" "prototype" "concat" "apply")
+   first-sequence more-sequences))
+
+(define-method element ((sequence <sequence>) key #key default)
+  "Returns the element associated with a particular key."
+  (or (js:get-property sequence key) default))
+
+(define-method (setter element) ((sequence <sequence>) key new-value)
+  "Sets the element associated with a particular key."
+  (js:set-property sequence key new-value))
+
+(define-method key-sequence ((sequence <sequence>))
+  "Returns a sequence containing the keys of its collection argument."
+  (js:property-sequence sequence))
+
+(define-method size ((sequence <sequence>))
+  "Returns the size of sequence."
+  (js:length sequence))
+
+(define-function reverse! ((source-sequence <sequence>))
+  "Returns a sequence with elements in the reverse order
+of its arguments sequence."
+  ((js:get-property source-sequence "reverse")))
+
+(define-method reverse ((source-sequence <sequence>))
+  "Returns a sequence with elements in the reverse
+order of its arguments sequence."
+  (reverse! (copy-sequence source-sequence)))
+
+(define-method sort! ((source-sequence <sequence>) #key (test <))
+  "Returns a sequence containing the elements of its argument sequence, sorted."
+  ((js:get-property (elements source-sequence) "sort") test))
+
+(define-method sort ((source-sequence <sequence>) #key (test <))
+  "Returns a sequence containing the elements of its
+argument sequence, sorted."
+  (sort! (copy-sequence source-sequence) test: test))
+
+(define-method reduce1 ((function <function>) (collection <collection>))
+  "Combines the elements of a collection into a single value by repeatedly
+applying a binary function, using the first element of the collection as
+the seed value."
+  (bind ((elements (elements collection)))
+    (reduce function
+	    (first elements)
+	    (rest elements))))
+
+(define-method reduce ((function <function>) initial-value (collection <collection>))
+  "Combines the elements of a collection and a seed value into a single value by
+repeatedly applying a binary function."
+  ;; TODO
+  )
+
+(define-method choose ((predicate <function>) (source-sequence <sequence>))
+  "Returns those elements of a sequence that satisfy a predicate."
+  ((js:get-property (elements source-sequence) "filter") predicate))
