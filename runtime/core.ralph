@@ -5,7 +5,8 @@
 	   %define-getter
 	   %define-setter
 	   setter
-	   empty?))
+	   empty?
+	   <object>))
 
 ;;;; utility functions
 
