@@ -129,6 +129,9 @@ element of the collection."
   (reduce (method (previous current)
 	    (and previous (function current)))
 	  #t (elements collection)))
+
+;;;; comparison
+
 (define-function true? (value)
   (or (js:=== value 0)
       (js:not (js:not value))))
@@ -210,35 +213,22 @@ element of the collection."
 	        (js:- object1 object2))
 	      object1 objects)))
 
-;; unlike the specification, is a method
-(define-method = (object1 object2 #rest objects)
-  "Compares objects for equality."
-  (cond
-    ;; TODO: implement as 2 methods with singletons
-    ((or (and (js:== object1 0)
-	      (js:== object2 #f))
-	 (and (js:== object1 #f)
-	      (js:== object2 0)))
-     #f)
-    (else: (true? (reduce1 (method (object1 object2)
-			     (when (js:== object1 object2)
-			       object2))
-			   (concatenate (list object1 object2)
-					objects))))))
 
-(define-function == (object1 object2 #rest objects)
-  "Compares objects for identity."
-  (true? (reduce1 (method (object1 object2)
-		    (when (js:== object1 object2)
-		      object2))
-		  (concatenate (list object1 object2)
-			       objects))))
+;;;; reflection
+
+(define *type-mapping*
+  (table (js:identifier "Object") <object>
+	 (js:identifier "String") <string>
+	 (js:identifier "Number") <number>
+	 (js:identifier "Boolean") <boolean>))
 
 (define-function object-class (object)
   "Returns the class of an object."
-  ;; Object.getPrototypeOf on primitives only works in FireFox"
+  ;; Object.getPrototypeOf on primitives only works in FireFox:
   ;; ((js:get-property "Object" "getPrototypeOf") object))
-  (js:get-property object "__proto__" "constructor"))
+  (bind ((constructor (js:get-property object "__proto__" "constructor")))
+    (or (element *type-mapping* constructor)
+	constructor)))
 
 (define-function check-type (value (type <type>))
   "Checks an object to ensure that it is an instance of a specified type."
@@ -249,7 +239,15 @@ element of the collection."
 
 (define-function instance? (object (type <type>))
   "Tests wether an object is an instance of a type."
-  ((js:get-property type "prototype" "isPrototypeOf") object))
+  (bind ((mapped-type (find-key *type-mapping* (curry == type))))
+    ((js:get-property (if mapped-type
+			  (element *type-mapping* mapped-type)
+			  type)
+		      "prototype" "isPrototypeOf")
+     object)))
+
+
+;;;; functional
 
 ;; unlike the specification, doesn't require any arguments
 (define-function apply ((function <function>) #rest arguments)
@@ -260,101 +258,70 @@ element of the collection."
 		    (last arguments))
        arguments)))
 
-(define-function reduce1 ((function <function>) (collection <collection>))
-  "Combines the elements of a collection into a single value by repeatedly
-applying a binary function, using the first element of the collection as
-the seed value."
-  ((js:get-property collection "reduce") function))
+(define-function curry ((function <function>) #rest curried-args)
+  "Returns a function based on an exisiting function
+and a number of default initial arguments."
+  (method (#rest args)
+    (apply function (concatenate curried-args args))))
 
-;; unlike the specification, doesn't signal an error if the key wasn't found
-;; and no default value was supplied
-(define-method element ((collection <collection>) key #key default)
-  "Returns the collection element associated with a particular key."
-  (or (js:get-property collection key) default))
+(define-function rcurry ((function <function>) #rest curried-args)
+  "Returns a function based on an exisiting function
+and a number of default final arguments."
+  (method (#rest args)
+    (apply function (concatenate args curried-args))))
 
-(define-method copy-sequence (source #key (start 0) (end (size source)))
-  "Returns a new sequence containing the elements of source
-between start and end."
-  ((js:get-property source "slice") start end))
-
-(define-method size ((sequence <sequence>))
-  "Returns the size of object."
-  ;; length is a property, not a function
-  (js:get-property sequence "length"))
-
-;; TODO: specification: push(-last), pop(-last) only defined on <deque>
-(define-function push ((source-sequence <sequence>) new-value)
-  "Adds an element to the front of a sequence."
-  ((js:get-property source-sequence "unshift") new-value))
-
-(define-function push-last ((source-sequence <sequence>) new-value)
-  "Adds an element to the end of a sequence."
-  ((js:get-property source-sequence "push") new-value))
-
-(define-function pop ((sequence <sequence>))
-  "Removes and returns the first element of a sequence."
-  ((js:get-property source-sequence "shift")))
-
-(define-function pop-last ((sequence <sequence>))
-  "Removes and returns an element from the end of a sequence."
-  ((js:get-property sequence "pop")))
-
-(define-function reverse! ((source-sequence <sequence>))
-  "Returns a sequence with elements in the reverse order
-of its arguments sequence."
-  ((js:get-property source-sequence "reverse")))
-
-(define-method key-sequence ((collection <collection>))
-  "Returns a sequence containing the keys of its collection argument."
-  (bind ((keys (list)))
-    (js:for-in (key collection)
-      (add! keys key))
-    keys))
-
-(define-function as-uppercase ((string <string>))
-  "Coerces a string to uppercase."
-  ((js:get-property string "toUpperCase")))
-
-(define-function as-lowercase ((string <string>))
-  "Coerces a string to lowercase."
-  ((js:get-property string "toLowerCase")))
-
-;; as-uppercase! and as-lowercase! impossible,
-;; as strings in JavaScript are immutable
+(define-function always (value)
+  "Returns a function that always returns a particular object."
+  (method (#rest args)
+    value))
 
 
-;; TODO: more-collections for do, map, any?, every?:
-;; iterate over shortest key-sequence, apply elements
+;;;; sequence
 
-(define-function do ((function <function>) (collection <collection>)
-		     #rest more-collections)
-  "Iterates over the collections for side effect."
-  ;; TODO: forEach only defined on arrays, for-in also works on strings
-  ((js:get-property collection "forEach") function))
+;; every subclass needs to implement
+;; * copy-sequence
+;; * reverse(!)
+;; * sort(!)
 
-(define-function map ((function <function>) (collection <collection>)
-		      #rest more-collections)
-  "Iterates over the collections and collects the results in a collection."
-   ((js:get-property collection "map") function))
+(define-class <sequence> (<collection>))
 
+(define-function first ((sequence <sequence>))
+  "Returns the first element of a sequence."
+  (element sequence 0))
 
+(define-function second ((sequence <sequence>))
+  "Returns the second element of a sequence."
+  (element sequence 1))
 
+(define-function third ((sequence <sequence>))
+  "Returns the third element of a sequence."
+  (element sequence 2))
 
-(define-method choose ((predicate <function>) (source-sequence <sequence>))
-  "Returns those elements of a sequence that satisfy a predicate."
-  ((js:get-property source-sequence "filter") predicate))
+;; unlike specification, defined as function
+(define-function last ((sequence <sequence>))
+  "Returns the last element of a sequence."
+  (element sequence (- (size sequence) 1)))
 
-(define-method sort! ((source-sequence <sequence>) #key (test <))
-  "Returns a sequence containing the elements of its argument sequence, sorted."
-  ((js:get-property source-sequence "sort") test))
+(define-method replace-subsequence
+    ((target-sequence <sequence>) (insert-sequence <sequence>)
+     #key (start 0) (end (size target-sequence)))
+  "Returns a sequence where a portion of the sequence is replaced with
+the elements of another sequence."
+  (concatenate (copy-sequence target-sequence end: start)
+	       insert-sequence
+	       (copy-sequence target-sequence start: end)))
 
-;; TODO: why is this a function in the specification?
-(define-function concatenate ((first-sequence <sequence>) #rest more-sequences)
-  "Returns the concatenation of one or more sequences."
-  ((js:get-property "Array" "prototype" "concat" "apply") first-sequence more-sequences))
+(define-method but-last ((sequence <sequence>))
+  (copy-sequene sequence end: (- (size sequence) 1)))
 
-
-
+(define-method choose-by ((predicate <function>) (test-sequence <sequence>)
+			  (value-sequence <sequence>))
+  "Returns those elments of a sequence that correspond to those in another
+sequence that satisfy a predicate."
+  (bind ((test-keys (choose (method (test-key)
+			      (predicate (element test-sequence test-key)))
+			    (key-sequence test-sequence))))
+    (map (curry element value-sequence) test-keys)))
 
 ;;;; table
 
