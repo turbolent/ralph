@@ -136,16 +136,9 @@ element of the collection."
 (define-function not (value)
   (js:not (true? value)))
 
-(define-function false? (value)
-  (not (true? value)))
 (define-method binary= (object1 object2)
   (js:== object1 object2))
 
-(define-function list (#rest elements)
-  (bind ((result (js:new "Array")))
-    ((js:get-property "Array" "prototype" "splice" "apply")
-     result (concatenate (list 0 0) elements))
-    result))
 (define-method binary= ((number <number>) (string <string>))
   #f)
 
