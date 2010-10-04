@@ -194,21 +194,21 @@ element of the collection."
 	       (concatenate (list object1 object2)
 			    objects))))
 
-(define-function + (object1 #rest objects)
+;;;; arithmetic
+
+(define-class <number> (<object>))
+
+(define-function + ((number <number>) #rest more-numbers)
   "Returns the sum of its arguments."
-  (reduce1 (method (object1 object2)
-	     (js:+ object1 object2))
-	   (concatenate (list object1)
-			objects)))
+  (apply js:add number more-numbers))
 
 (define-function - (object1 #rest objects)
   "Returns the difference of its arguments."
   (if (empty? objects)
       (js:negative object1)
-      (reduce1 (method (object1 object2)
-	         (js:- object1 object2))
-	       (concatenate (list object1)
-			    objects))))
+      (reduce (method (object1 object2)
+	        (js:- object1 object2))
+	      object1 objects)))
 
 ;; unlike the specification, is a method
 (define-method = (object1 object2 #rest objects)
