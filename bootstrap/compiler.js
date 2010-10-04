@@ -304,6 +304,11 @@ var macros = {
 	return [[S('setter'), expression[0]]]
 	    .concat(expression.slice(1))
 	    .concat([value]);
+    },
+    'define-class': function (name, _super) {
+	return [S('define'), name,
+		[S('js:function'), [],
+		 [S('begin')]]];
     }
 }
 

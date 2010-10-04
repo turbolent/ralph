@@ -72,6 +72,11 @@
 
 (define-class <object> ())
 
+(define-method make ((type <type>))
+  (bind ((instance (js:new type)))
+    (initialize instance)
+    instance))
+
 ;;;; collection
 
 ;; every subclass needs to define:
