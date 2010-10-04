@@ -200,7 +200,7 @@ var macros = {
     },
     'select': function (value, test) {
 	function testExpression (testValue) {
-	    return [test, testValue, value];
+	    return [test, value, testValue];
 	}
 	var cases = arguments.toArray().slice(2).map(function (_case) {
 	    if (_case[0] instanceof Keyword && _case[0].name == 'else')
