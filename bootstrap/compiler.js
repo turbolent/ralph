@@ -1,6 +1,10 @@
 
 var primitives = require('./primitives');
-var Symbol = primitives.Symbol, HashSymbol = primitives.HashSymbol;
+var Symbol = primitives.Symbol,
+    Keyword = primitives.Keyword,
+    S = primitives.S,
+    K = primitives.K,
+    HashSymbol = primitives.HashSymbol;
 
 var Reader = require('./reader').Reader;
 var Stream = require('./stream').Stream;
@@ -10,18 +14,6 @@ var Stream = require('./stream').Stream;
 Object.prototype.toArray = function () {
     return Array.prototype.slice.call(this);
 };
-
-var interned = {};
-
-function S (name) {
-    if (interned.hasOwnProperty(name))
-	return interned[name];
-    else {
-	var symbol = new Symbol(name);
-	interned[name] = symbol;
-	return symbol;
-    }
-}
 
 //// expansion
 
@@ -95,8 +87,7 @@ function functionDeclaration (args, body) {
 	    }
 	    if (name) {
 		restAndKey.push([S('js:var'), name, _default]);
-		setter.push([[name.toString()], // TODO: check for keyword
-			     [S('js:set'), name, valueVar]]);
+		setter.push([[K(name.name)], [S('js:set'), name, valueVar]]);
 	    }
 	});
 	if (restPosition == -1)
@@ -200,7 +191,7 @@ var macros = {
 	    var _case = cases[0];
 	    var then = _case.slice(1);
 	    then.unshift(S('begin'));
-	    if (_case[0] instanceof Symbol && _case[0].name == 'else:')
+	    if (_case[0] instanceof Keyword && _case[0].name == 'else')
 		return then;
 	    else
 		return [S('if'), _case[0], then,
@@ -212,7 +203,7 @@ var macros = {
 	    return [test, testValue, value];
 	}
 	var cases = arguments.toArray().slice(2).map(function (_case) {
-	    if (_case[0] instanceof Symbol && _case[0].name == 'else:')
+	    if (_case[0] instanceof Keyword && _case[0].name == 'else')
 		return _case;
 	    else
 		return ([[S('or')].concat(_case[0].map(testExpression))]
@@ -238,7 +229,7 @@ var macros = {
 	    if (_if.length > 1) {
 		for (var i = 1; i < _if.length; i += 2) {
 		    var key = _if[i];
-		    if (key instanceof Symbol && key.name == 'condition:')
+		    if (key instanceof Keyword && key.name == 'condition')
 			binding.push([S('js:var'), _if[i + 1], conditionVariable]);
 		}
 	    }
@@ -272,12 +263,12 @@ var macros = {
 	for (var i = 0; i < keyArgs.length; i += 2) {
 	    var key = keyArgs[i];
 	    var value = keyArgs[i + 1];
-	    if (key instanceof Symbol) {
-		if (key.name == 'import:') {
+	    if (key instanceof Keyword) {
+		if (key.name == 'import') {
 		    imports = value.map(function (symbol) {
 			return [S('include'), symbol.toString()];
 		    });
-		} else if (key.name == 'export:') {
+		} else if (key.name == 'export') {
 		    exports = value.map(function (symbol) {
 			return symbol.toString();
 		    });

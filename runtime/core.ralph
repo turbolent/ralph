@@ -44,6 +44,20 @@
 	     #f)
       (js:set (js:get-property *module* name "%setter") function))))
 
+(%define %interned-keywords (js:new (js:identifier "Object")))
+
+(%define "_k"
+  (js:function (name)
+    (begin
+      (js:var keyword js:null)
+      (js:if ((js:get-property %interned-keywords "hasOwnProperty") name)
+	     (js:get-property %interned-keywords name)
+	     (begin
+	       (js:set keyword (js:new <keyword>))
+	       (js:set (js:get-property keyword "%name") name)
+	       (js:set (js:get-property %interned-keywords name) keyword)
+	       keyword)))))
+
 (define-function js:length (object)
   (js:get-property object "length"))
 
@@ -76,6 +90,10 @@
   (bind ((instance (js:new type)))
     (initialize instance)
     instance))
+
+;;;; keyword
+
+(define-class <keyword> (<object>))
 
 ;;;; collection
 
@@ -450,21 +468,6 @@ between start and end."
   "Returns a new string containing the elements of string
 between start and end."
   (js:slice string start end))
-
-;;;; keyword
-
-(define-class <keyword> (<object>)
-  (name type: <string>
-	init-keyword: name:))
-
-(define %interned (make <table>))
-
-(define-function %k (name)
-  (or (element %interned name)
-      (set! (element %interned name)
-	    (bind ((keyword (js:new <keyword>)))
-	      (set! (keyword-name keyword) name)
-	      keyword))))
 
 ;;;; list / __vector__ / array ?!
 

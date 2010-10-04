@@ -1,6 +1,8 @@
 
 var primitives = require('./primitives');
-var Symbol = primitives.Symbol, HashSymbol = primitives.HashSymbol;
+var S = primitives.S,
+    K = primitives.K,
+    HashSymbol = primitives.HashSymbol;
 
 function Reader (stream) {
     this.stream = stream;
@@ -72,8 +74,10 @@ Reader.prototype.readSymbol = function () {
     // TODO: keywords
     if (name[0] == '#' && HashSymbol.names.indexOf(name.substring(1)) >= 0)
 	return HashSymbol[name.substring(1)];
+    else if (name[name.length - 1] == ":")
+	return K(name.slice(0, -1).toLowerCase());
     else
-	return new Symbol(match[0].toLowerCase());
+	return S(name.toLowerCase());
 }
 
 // TODO: escapes in strings: \t, \r, \n

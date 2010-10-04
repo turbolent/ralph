@@ -71,6 +71,19 @@ Symbol.prototype.toString = function () {
     return this.escape();
 }
 
+Symbol.interned = {};
+
+function S (name) {
+    if (Symbol.interned.hasOwnProperty(name))
+	return Symbol.interned[name];
+    else {
+	var symbol = new Symbol(name);
+	Symbol.interned[name] = symbol;
+	return symbol;
+    }
+}
+exports.S = S;
+
 // hash symbols
 
 var HashSymbol = function (name) {
@@ -89,3 +102,27 @@ HashSymbol.prototype.toString = function () {
     return 'HashSymbol.' + this.name;
 }
 */
+
+// keywords
+
+function Keyword (name) {
+    this.name = name;
+}
+exports.Keyword = Keyword;
+
+Keyword.prototype.toString = function () {
+    return '_k("' + this.name + '")';
+}
+
+Keyword.interned = {};
+
+function K (name) {
+    if (Keyword.interned.hasOwnProperty(name))
+	return Keyword.interned[name];
+    else {
+	var keyword = new Keyword(name);
+	Keyword.interned[name] = keyword;
+	return keyword;
+    }
+}
+exports.K = K;
