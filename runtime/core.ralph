@@ -25,9 +25,13 @@
 ;; manual export necessary
 (%export (js:escape %define) %define)
 
+(define %get-definition
+  (js:function (name)
+    (js:get-property *module* name)))
+
 (define %define-getter
   (js:function (name function)
-    (bind ((existing-function (js:get-property *module* name))
+    (bind ((existing-function (%get-definition name))
 	   (setter (and existing-function
 			((js:get-property function "hasOwnProperty") "%setter")
 			(js:get-property function "%setter"))))
@@ -39,10 +43,10 @@
 (define %define-setter
   (js:function (name function)
     (begin
-      (js:if (js:not (js:get-property *module* name))
+      (js:if (js:not (%get-definition name))
 	     (%define name (js:new (js:identifier "Function")))
 	     #f)
-      (js:set (js:get-property *module* name "%setter") function))))
+      (js:set (js:get-property (%get-definition name) "%setter") function))))
 
 (%define %interned-keywords (js:new (js:identifier "Object")))
 
