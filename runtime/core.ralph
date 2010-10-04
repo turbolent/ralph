@@ -62,6 +62,12 @@
 	       (js:set (js:get-property %interned-keywords name) keyword)
 	       keyword)))))
 
+(define-method as ((type (singleton <string>)) (keyword <keyword>))
+  (js:get-property keyword "%name"))
+
+(define-method as ((type (singleton <keyword>)) (string <string>))
+  ((%get-defintion "_k") string))
+
 (define-function js:length (object)
   (js:get-property object "length"))
 
