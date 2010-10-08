@@ -425,18 +425,23 @@ var specialForms = {
 	var body = arguments.toArray().slice(2);
 	var variable = variableAndExpression[0];
 	var expression = variableAndExpression[1];
-	return 'for (var ' + variable + ' in ' + write(expression) + ') {\n'
+	var loop = 'for (var ' + variable + ' in ' + write(expression) + ') {\n'
 	    + writeStatements([S('begin')].concat(body)) + '\n}';
+	if (!allowStatements)
+	    loop = wrapBlock(loop);
+	return loop;
     },
     'js:for': function (allowStatements, initTestNext) {
-	// TODO: if !allowStatements: wrap with function
 	var body = arguments.toArray().slice(2);
 	var init = initTestNext[0];
 	var test = initTestNext[1];
 	var next = initTestNext[2];
-	return 'for (var ' + init[0] + ' = ' + init[1] + '; '
+	var loop = 'for (var ' + init[0] + ' = ' + init[1] + '; '
 	    + write(test) + '; ' + write(next) + ') {\n'
 	    + writeStatements([S('begin')].concat(body)) + '\n}';
+	if (!allowStatements)
+	    loop = wrapBlock(loop);
+	return loop;
     },
     'js:identifier': function (allowStatements, name) {
 	return ('' + name);
