@@ -141,6 +141,13 @@
 				   list)
 		(any? false? list)))
 
+(define-function test-return ()
+  (bind-methods ((foo ()
+		   (bind ((a 1))
+		     (return a))
+		   2))
+    (check-equal "Return in bind" (foo) 1)))
+
 ;; run tests
 (do apply (list test-<
 		test-=
@@ -149,4 +156,5 @@
 		test-bind
 		test-every?
 		test-any?
+		test-return
 		test-format-to-string))

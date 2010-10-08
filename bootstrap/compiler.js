@@ -17,6 +17,16 @@ Object.prototype.toArray = function () {
 
 //// expansion
 
+function searchHead (form, symbol) {
+    if (form instanceof Array) {
+	return form[0] == symbol ||
+	    form.slice(1).some(function (form) {
+		return searchHead(form, symbol);
+	    });
+    } else
+	return false;
+}
+
 function argumentNames (args) {
     return args.map(function (arg) {
 	return (arg instanceof Array ? arg[0] : arg);
@@ -41,10 +51,11 @@ function requiredArguments (args) {
 function addReturn (forms) {
     var last = forms.length - 1;
     if (!(forms[last] instanceof Array
-	  && forms[last][0] instanceof Symbol
-	  && forms[last][0].name == 'js:return'))
+	  && (forms[last][0] == S('return')
+	      || forms[last][0] == S('js:return'))))
     {
-	forms[last] = [S('js:return'), forms[last]];
+	forms[last] = [S('js:return'),
+		       [S('begin'), forms[last]]];
     }
     return forms;
 }
@@ -102,8 +113,17 @@ function functionDeclaration (args, body) {
 			 [S('js:var'), valueVar, [S('js:get-property'), restVar, [S('js:+'), indexVar, 1]]],
 			 [S('when'), [S('instance?'), keyVar, S('<keyword>')], setter]]);
     }
+    var completeBody = [S('begin')].concat(restAndKey).concat(addReturn(body));
+    if (searchHead(body, S('return'))) {
+	var returnSymbol = Symbol.generate();
+	completeBody = [S('js:try'),
+			completeBody,
+			returnSymbol,
+			[S('when'), [S('instance?'), returnSymbol, S('<return-value>')],
+			 [S('js:return'), [S('js:get-property'), returnSymbol, 'value']]]];
+    }
     return [S('js:function'), argumentNames(requiredArguments(args)),
-	    [S('begin')].concat(restAndKey).concat(addReturn(body))];
+	    completeBody];
 }
 
 var macros = {
@@ -169,9 +189,10 @@ var macros = {
 				   [S('js:set'), otherValues, S('js:undefined')]]);
 	    }
 	});
-	return [[S('method'), []]
-		.concat(declarations)
-		.concat(body)];
+	return [[S('js:function'), [],
+		 [S('begin')]
+		 .concat(declarations)
+		 .concat(body)]];
     },
     'when': function (test) {
 	var body = arguments.toArray().slice(1);
@@ -303,6 +324,9 @@ var macros = {
 	return [S('define'), name,
 		[S('js:function'), [],
 		 [S('begin')]]];
+    },
+    'return': function (value) {
+	return [S('js:throw'), [S('js:new'), S('<return-value>'), value]];
     }
 }
 
@@ -464,6 +488,9 @@ var specialForms = {
     },
     'js:escape': function (allowStatements, symbol) {
 	return write(symbol.toString());
+    },
+    'js:throw': function (allowStatements, error) {
+	return 'throw ' + write(error);
     }
 }
 

@@ -7,7 +7,8 @@
 	   setter
 	   empty?
 	   (js:identifier "_k")
-	   <object>))
+	   <object>
+	   <return-value>
 
 ;;;; utility functions
 
@@ -68,6 +69,10 @@
 
 (define-method as ((type (singleton <keyword>)) (string <string>))
   ((%get-defintion "_k") string))
+;; TODO: replace with proper define-class with slot and initialize method
+(define <return-value>
+  (js:function (value)
+    (js:set (js:get-property js:this "value") value)))
 
 (define-function js:length (object)
   (js:get-property object "length"))
