@@ -364,6 +364,10 @@ var symbolValues = {
     '#t': 'true',
 }
 
+function wrapBlock (code) {
+    return '(function () {\n' + code + '\n})()';
+}
+
 var specialForms = {
     'js:negative': function (allowStatements, object) {
 	return '(- ' + write(object) + ')';
@@ -490,7 +494,10 @@ var specialForms = {
 	return write(symbol.toString());
     },
     'js:throw': function (allowStatements, error) {
-	return 'throw ' + write(error);
+	var _throw = 'throw ' + write(error);
+	if (!allowStatements)
+	    _throw = wrapBlock(_throw);
+	return _throw;
     }
 }
 
