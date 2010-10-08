@@ -265,12 +265,15 @@ var macros = {
 	    var value = keyArgs[i + 1];
 	    if (key instanceof Keyword) {
 		if (key.name == 'import') {
-		    imports = value.map(function (symbol) {
-			return [S('include'), symbol.toString()];
+		    imports = value.map(function (name) {
+			return [S('include'), name.toString()];
 		    });
 		} else if (key.name == 'export') {
-		    exports = value.map(function (symbol) {
-			return symbol.toString();
+		    exports = value.map(function (name) {
+			if (name instanceof Symbol)
+			    return name.toString();
+			else
+			    return write(name);
 		    });
 		}
 	    }
