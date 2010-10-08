@@ -192,7 +192,7 @@ var macros = {
 	return [[S('js:function'), [],
 		 [S('begin')]
 		 .concat(declarations)
-		 .concat(body)]];
+		 .concat(addReturn(body))]];
     },
     'when': function (test) {
 	var body = arguments.toArray().slice(1);
@@ -375,7 +375,7 @@ var specialForms = {
 	var forms = arguments.toArray().slice(1);
 	if (allowStatements) {
 	    var separator = ';\n';
-	    var result = forms.map(writeExpressions).join(separator);
+	    var result = forms.map(writeStatements).join(separator);
 	    if (forms.length > 1)
 		result += '\n';
 	    return result;
