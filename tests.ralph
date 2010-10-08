@@ -139,7 +139,7 @@
 		(any? true? list))
     (check-true (format-to-string "any? false? on list %="
 				   list)
-		(any? false? list)))
+		(any? false? list))))
 
 (define-function test-return ()
   (bind-methods ((foo ()
