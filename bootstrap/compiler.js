@@ -20,7 +20,7 @@ Object.prototype.toArray = function () {
 function searchHead (form, symbol) {
     if (form instanceof Array) {
 	return form[0] == symbol ||
-	    form.slice(1).some(function (form) {
+	    form.some(function (form) {
 		return searchHead(form, symbol);
 	    });
     } else
