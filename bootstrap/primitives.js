@@ -52,10 +52,10 @@ Symbol.prototype.escape = function () {
 	for (var i = 0; i < this.name.length; i++) {
 	    var c = this.name[i];
 	    if (c != '-') {
-		if (up)
-		    result += c.toUpperCase();
-		else if (Symbol.escaped.hasOwnProperty(c))
+		if (Symbol.escaped.hasOwnProperty(c))
 		    result += Symbol.escaped[c];
+		else if (up)
+		    result += c.toUpperCase();
 		else
 		    result += c;
 	    } else if (i == (this.name.length - 1)) {
