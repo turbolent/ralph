@@ -65,10 +65,7 @@ function functionDeclaration (args, body) {
     if (typeof body[0] == 'string' && body.length > 1) {
 	documentation.push([S('js:documentation'), body.shift()]);
     }
-    var rest = [[S('js:get-property'),
-		 "Array", "prototype", "slice", "call"],
-		[S('js:identifier'), "arguments"],
-		requiredArguments(args).length];
+    var rest = [S('js:argument-list'), requiredArguments(args).length];
     var restAndKey = [];
     var restPosition = args.indexOf(HashSymbol.rest);
     if (restPosition >= 0) {
@@ -370,6 +367,7 @@ var symbolValues = {
     'js:null': 'null',
     'js:this': 'this',
     'js:undefined': 'undefined',
+    'js:arguments': 'arguments',
     '#f': 'false',
     '#t': 'true',
 }

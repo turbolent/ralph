@@ -94,6 +94,13 @@
       (add! keys key))
     keys))
 
+(define-function js:argument-list (skip)
+  ((js:get-property "Array" "prototype"
+		    "slice" "call")
+   (js:get-property js:arguments "callee"
+		    "caller" "arguments")
+   skip))
+
 (define-function setter (function)
   (when ((js:get-property function "hasOwnProperty") "%setter")
     (js:get-property function "%setter")))
