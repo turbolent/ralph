@@ -189,7 +189,7 @@ var macros = {
 				   [S('js:set'), otherValues, S('js:undefined')]]);
 	    }
 	});
-	return [[S('js:function'), [],
+	return [[S('%function'), [],
 		 [S('begin')]
 		 .concat(declarations)
 		 .concat(addReturn(body))]];
@@ -257,7 +257,7 @@ var macros = {
 	    return ([[S('instance?'), conditionVariable, type]]
 		    .concat(binding).concat(addReturn(condition.slice(1))));
 	});
-	return [[S('js:function'), [],
+	return [[S('%function'), [],
 		 [S('begin'),
 		  [S('js:try'), addReturn(body),
 		   conditionVariable,
@@ -322,7 +322,7 @@ var macros = {
     },
     'define-class': function (name, _super) {
 	return [S('define'), name,
-		[S('js:function'), [],
+		[S('%function'), [],
 		 [S('begin')]]];
     },
     'return': function (value) {
@@ -332,13 +332,23 @@ var macros = {
 
 var symbolMacros = {}
 
+var specialForms = {
+    '%function': function (args, body) {
+	return [S('js:function'), args, macroexpand(body)];
+    }
+}
+
 function macroexpand (form) {
     if (form instanceof Array) {
-	while (form[0] instanceof Symbol && macros.hasOwnProperty(form[0].name))
+	while (form[0] instanceof Symbol
+	       && macros.hasOwnProperty(form[0].name))
 	    form = macros[form[0].name].apply(this, form.slice(1));
-	if (form instanceof Array)
-	    return form.map(macroexpand);
-	else
+	if (form instanceof Array) {
+	    if (specialForms.hasOwnProperty(form[0].name))
+		return specialForms[form[0].name].apply(this, form.splice(1));
+	    else
+		return form.map(macroexpand);
+	} else
 	    return macroexpand(form);
     } else if (form instanceof Symbol
 	       && symbolMacros.hasOwnProperty(form.name)) {
@@ -368,7 +378,7 @@ function wrapBlock (code) {
     return '(function () {\n' + code + '\n})()';
 }
 
-var specialForms = {
+var writers = {
     'js:negative': function (allowStatements, object) {
 	return '(- ' + write(object) + ')';
     },
@@ -521,8 +531,8 @@ function write (form, allowStatements) {
 	var rest = form.slice(1);
 	if (head instanceof Symbol && infix.hasOwnProperty(head.name)) {
 	    return '(' + rest.map(writeExpressions).join(' ' + infix[head.name] + ' ') + ')';
-	} else if (head instanceof Symbol && specialForms.hasOwnProperty(head.name)) {
-	    return specialForms[head.name].apply(this, [allowStatements].concat(rest));
+	} else if (head instanceof Symbol && writers.hasOwnProperty(head.name)) {
+	    return writers[head.name].apply(this, [allowStatements].concat(rest));
 	} else if (head instanceof Array && head[0] && head[0].name == 'js:function') {
 	    return '(' + write(head) + ')(' + rest.map(writeExpressions).join(', ') + ')';
 	} else {
