@@ -51,8 +51,7 @@ function requiredArguments (args) {
 function addReturn (forms) {
     var last = forms.length - 1;
     if (!(forms[last] instanceof Array
-	  && (forms[last][0] == S('return')
-	      || forms[last][0] == S('js:return'))))
+	  && forms[last][0] == S('js:return')))
     {
 	forms[last] = [S('js:return'),
 		       [S('begin'), forms[last]]];
@@ -110,17 +109,8 @@ function functionDeclaration (args, body) {
 			 [S('js:var'), valueVar, [S('js:get-property'), restVar, [S('js:+'), indexVar, 1]]],
 			 [S('when'), [S('instance?'), keyVar, S('<keyword>')], setter]]);
     }
-    var completeBody = [S('begin')].concat(restAndKey).concat(addReturn(body));
-    if (searchHead(body, S('return'))) {
-	var returnSymbol = Symbol.generate();
-	completeBody = [S('js:try'),
-			completeBody,
-			returnSymbol,
-			[S('when'), [S('instance?'), returnSymbol, S('<return-value>')],
-			 [S('js:return'), [S('js:get-property'), returnSymbol, 'value']]]];
-    }
-    return [S('js:function'), argumentNames(requiredArguments(args)),
-	    completeBody];
+    return [S('%function'), argumentNames(requiredArguments(args)),
+	    [S('begin')].concat(restAndKey).concat(addReturn(body))];
 }
 
 var macros = {
@@ -322,8 +312,32 @@ var macros = {
 		[S('%function'), [],
 		 [S('begin')]]];
     },
-    'return': function (value) {
-	return [S('js:throw'), [S('js:new'), S('<return-value>'), value]];
+    'block': function (name) {
+	var body = arguments.toArray().slice(1);
+ 	var returnSymbol = name;
+ 	if (!(returnSymbol instanceof Array))
+ 	    throw new Error("block's exit-variable form should be a list");
+ 	if (returnSymbol.length > 1)
+ 	    throw new Error("block's exit-variable form shouldn't include more than one name");
+ 	if (returnSymbol.length == 1) {
+	    returnSymbol = returnSymbol[0];
+	    var conditionSymbol = Symbol.generate();
+ 	    return [S('js:try'),
+		    [S('bind-methods'),
+		     [[returnSymbol, [HashSymbol.rest, S('values')],
+ 		       [S('js:throw'),
+ 			// TODO: proper make call
+ 			[S('js:new'), S('<non-local-exit>'),
+			 returnSymbol.name, S('values')]]]]]
+		    .concat(body),
+ 		    conditionSymbol,
+ 		    [S('when'), [S('and'),
+				 [S('instance?'), conditionSymbol, S('<non-local-exit>')],
+				 [S('='), [S('js:get-property'), conditionSymbol, 'name'], returnSymbol.name]],
+ 		     [S('js:return'), [S('js:get-property'), conditionSymbol, 'values']]]];
+	} else
+	    // TODO:
+	    return [S('begin'), body];
     }
 }
 

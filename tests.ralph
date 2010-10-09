@@ -141,12 +141,19 @@
 				   list)
 		(any? false? list))))
 
-(define-function test-return ()
-  (bind-methods ((foo ()
-		   (bind ((a 1))
-		     (return a))
-		   2))
-    (check-equal "Return in bind" (foo) 1)))
+(define-function test-block ()
+  (bind-methods ((block1 ()
+		   (block ()
+		     (bind ((a 1))
+		       a
+		       2)))
+		 (block2 ()
+		   (block (success)
+		     (bind ((a 1))
+		       (success a)
+		       2))))
+    (check-equal "block without exit-variable" (block1) 2)
+    (check-equal "block with exit variable" (block2) 1)))
 
 ;; run tests
 (do apply (list test-<
@@ -156,5 +163,5 @@
 		test-bind
 		test-every?
 		test-any?
-		test-return
+		test-block
 		test-format-to-string))
