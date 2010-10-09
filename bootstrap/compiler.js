@@ -65,7 +65,7 @@ function functionDeclaration (args, body) {
 	documentation.push([S('js:documentation'), body.shift()]);
     }
     var rest = [S('js:argument-list'), requiredArguments(args).length];
-    var restAndKey = [];
+    var restAndKey = [[S('%set-top')]];
     var restPosition = args.indexOf(HashSymbol.rest);
     if (restPosition >= 0) {
 	restAndKey.push([S('js:var'), args[restPosition + 1], rest]);
@@ -254,15 +254,6 @@ var macros = {
     'define-method': function () {
 	return [S('js:statements'),
 		[S('define-function')].concat(arguments.toArray())];
-    },
-    'values': function () {
-	var values = arguments.toArray();
-	var caller = ['arguments', 'callee', 'caller'];
-	return [S('begin'),
-		[S('js:set'), ([S('js:get-property')]
-			       .concat(caller).concat(['otherValues'])),
-		 [S('list')].concat(values.slice(1))],
-		values[0]];
     },
     'define-module': function (name) {
 	var keyArgs = arguments.toArray().slice(1);

@@ -70,7 +70,13 @@
 (define-method as ((type (singleton <keyword>)) (string <string>))
   ((%get-defintion "_k") string))
 
-;; TODO: replace with proper define-class with slot 
+(define %set-top
+  (%function ()
+    (js:set (js:get-property js:arguments "callee"
+			     "caller" "%top")
+	    #t)))
+
+;; TODO: replace with proper define-class with slot
 ;; (superclass: condition?)
 (define <non-local-exit>
   (%function (name values)
@@ -83,6 +89,18 @@
     ;; TODO: use signal and proper make call
     (js:throw (js:new <non-local-exit>
 		      name values))))
+
+(define-function values (#rest values)
+  ;; function who called 'values'
+  (js:var callee (js:get-property js:arguments "callee" "caller"))
+  ;; skip 'scope functions'
+  (js:while (js:not (js:get-property callee "%top"))
+    (js:set callee (js:get-property callee "caller")))
+  ;; set values on the function
+  ;; that called the function which returns values
+  (js:set (js:get-property callee "caller" "otherValues")
+	  ((js:get-property values "slice") 1))
+  (js:get-property values 0))
 
 (define-function js:length (object)
   (js:get-property object "length"))

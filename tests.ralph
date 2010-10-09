@@ -52,7 +52,8 @@
 	  k1)))
 
 (define-function bar ()
-  (values 1 2 3))
+  (bind ((a 1))
+    (values a 2 3)))
 
 (define-function baz ()
   1)
