@@ -13,12 +13,12 @@
   (check-false "#f, #f, 0" (= #f #f 0)))
 
 (define-function test-reduce ()
-  (check-equal "" (reduce1 + [1 2 3 4 5]) 15)
-  (check-equal "" (reduce + 1 [2 3 4 5]) 15))
+  (check-equal "" (reduce1 + (list 1 2 3 4 5)) 15)
+  (check-equal "" (reduce + 1 (list 2 3 4 5)) 15))
 
 (define-function test-apply ()
-  (check-equal "" (apply + 1 [2 3 4 5]) 15)
-  (check-equal "" (apply + 1 2 3 [4 5]) 15))
+  (check-equal "" (apply + 1 (list 2 3 4 5)) 15)
+  (check-equal "" (apply + 1 2 3 (list 4 5)) 15))
 
 (define-function test-format-to-string ()
   (check-equal "" (format-to-string "%d%%%d" 1 2) "1%2")
