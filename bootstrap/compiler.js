@@ -463,6 +463,14 @@ var writers = {
 	    loop = wrapBlock(loop);
 	return loop;
     },
+    'js:while': function (allowStatements, test) {
+	var body = arguments.toArray().slice(2);
+	var loop = 'while (' + write(test) + ') {\n'
+	    + writeStatements([S('begin')].concat(body)) + '\n}';
+	if (!allowStatements)
+	    loop = wrapBlock(loop);
+	return loop;
+    },
     'js:identifier': function (allowStatements, name) {
 	return ('' + name);
     },
