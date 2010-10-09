@@ -129,7 +129,7 @@ var macros = {
 	    throw new Error('function\'s name should be a symbol or (setter name): '
 			    + JSON.stringify(name));
 	return [setter ? S('%define-setter') : S('%define-getter'),
-		name.toString(), functionDeclaration(args, body)];
+		name.toString(), [S('method'), args].concat(body)];
     },
     'method': function (args) {
 	var body = arguments.toArray().slice(1);
