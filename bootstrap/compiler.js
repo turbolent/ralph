@@ -323,12 +323,10 @@ var macros = {
 	    returnSymbol = returnSymbol[0];
 	    var conditionSymbol = Symbol.generate();
  	    return [S('js:try'),
-		    [S('bind-methods'),
-		     [[returnSymbol, [HashSymbol.rest, S('values')],
- 		       [S('js:throw'),
- 			// TODO: proper make call
- 			[S('js:new'), S('<non-local-exit>'),
-			 returnSymbol.name, S('values')]]]]]
+		    [S('bind'),
+		     // TODO: replace with proper make call
+		     [[returnSymbol,
+		       [S('%make-non-local-exit-function'), returnSymbol.name]]]]
 		    .concat(body),
  		    conditionSymbol,
  		    [S('when'), [S('and'),

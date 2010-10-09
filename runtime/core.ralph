@@ -70,11 +70,19 @@
 (define-method as ((type (singleton <keyword>)) (string <string>))
   ((%get-defintion "_k") string))
 
-;; TODO: replace with proper define-class with slot and initialize method
+;; TODO: replace with proper define-class with slot 
+;; (superclass: condition?)
 (define <non-local-exit>
   (%function (name values)
     (js:set (js:get-property js:this "name") name)
     (js:set (js:get-property js:this "values") values)))
+
+;; TODO: replace with proper initialization method
+(define-function %make-non-local-exit-function (name)
+  (method (#rest values)
+    ;; TODO: use signal and proper make call
+    (js:throw (js:new <non-local-exit>
+		      name values))))
 
 (define-function js:length (object)
   (js:get-property object "length"))
