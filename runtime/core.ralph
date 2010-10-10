@@ -30,7 +30,7 @@
 
 (define %get-definition
   (%function (name)
-    (js:get-property *module* name)))
+    (js:return (js:get-property *module* name))))
 
 (define %define-getter
   (%function (name function)
