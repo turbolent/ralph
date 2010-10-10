@@ -80,14 +80,14 @@ Reader.prototype.readSymbol = function () {
 	return S(name.toLowerCase());
 }
 
-// TODO: escapes in strings: \t, \r, \n
-
 Reader.prototype.readString = function () {
     this.stream.readChar();
     var c, result = "";
     while ((c = this.stream.readChar()) != '"') {
 	if (c == '\\')
 	    result += this.stream.readChar();
+	else if (c == '\n')
+	    result += '\\n\\\n';
 	else
 	    result += c;
     }
