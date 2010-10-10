@@ -6,6 +6,7 @@
 	   %define-setter
 	   setter
 	   empty?
+	   %interned-keywords
 	   (js:identifier "_k")
 	   <object>
 	   <non-local-exit>))
@@ -50,7 +51,7 @@
 	     #f)
       (js:set (js:get-property (%get-definition name) "%setter") function))))
 
-(%define %interned-keywords (js:new (js:identifier "Object")))
+(define %interned-keywords (js:new (js:identifier "Object")))
 
 (%define "_k"
   (%function (name)
