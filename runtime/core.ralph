@@ -202,6 +202,8 @@ element of the collection."
 
 ;;;; comparison
 
+(define-class <boolean> (<object>))
+
 (define-function true? (value)
   (or (js:=== value 0)
       (js:not (js:not value))))
@@ -285,12 +287,6 @@ element of the collection."
 
 
 ;;;; reflection
-
-(define *type-mapping*
-  (table (js:identifier "Object") <object>
-	 (js:identifier "String") <string>
-	 (js:identifier "Number") <number>
-	 (js:identifier "Boolean") <boolean>))
 
 (define-function object-class (object)
   "Returns the class of an object."
@@ -595,3 +591,10 @@ repeatedly applying a binary function."
 (define-method choose ((predicate <function>) (source-sequence <sequence>))
   "Returns those elements of a sequence that satisfy a predicate."
   ((js:get-property (elements source-sequence) "filter") predicate))
+
+
+(define *type-mapping*
+  (table (js:identifier "Object") <object>
+	 (js:identifier "String") <string>
+	 (js:identifier "Number") <number>
+	 (js:identifier "Boolean") <boolean>))
