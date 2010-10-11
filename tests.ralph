@@ -1,3 +1,5 @@
+(define-module tests
+  import: (core test))
 
 (define-function test-< ()
   (check-true "(< 1 2 3 4)" (< 1 2 3 4))
