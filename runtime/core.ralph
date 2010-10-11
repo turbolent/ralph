@@ -14,7 +14,7 @@
 ;;;; utility functions
 
 (js:define %define
-  (%function (name value)
+  (%function js:null (name value)
     (begin
       (js:set (js:get-property *module* name) value)
       (js:if (js:>= ((js:get-property *module* "%exports" "indexOf") name) 0)
@@ -22,7 +22,7 @@
 	     #f))))
 
 (define %export
-  (%function (name value)
+  (%function js:null (name value)
      (js:set (js:get-property exports name) value)))
 
 ;; manual export necessary
@@ -33,12 +33,12 @@
     (js:return ((js:get-property object "hasOwnProperty") name))))
 
 (define %get-definition
-  (%function (name)
+  (%function js:null (name)
     (js:return (and (js:has-property? *module* name)
 		    (js:get-property *module* name)))))
 
 (define %define-getter
-  (%function (name function)
+  (%function js:null (name function)
     (bind ((existing-function (%get-definition name))
 	   (setter (and existing-function
 			(js:has-property? function "%setter")
@@ -49,7 +49,7 @@
 	     #f))))
 
 (define %define-setter
-  (%function (name function)
+  (%function js:null (name function)
     (begin
       (js:if (js:not (%get-definition name))
 	     (%define name (js:new (js:identifier "Function")))
@@ -59,7 +59,7 @@
 (define %interned-keywords (js:new (js:identifier "Object")))
 
 (%define "_k"
-  (%function (name)
+  (%function js:null (name)
     (begin
       (js:var keyword js:null)
       (js:if (js:has-property? %interned-keywords name)
@@ -76,16 +76,10 @@
 (define-method as ((type (singleton <keyword>)) (string <string>))
   ((%get-defintion "_k") string))
 
-(define %set-top
-  (%function ()
-    (js:set (js:get-property js:arguments "callee"
-			     "caller" "%top")
-	    #t)))
-
 ;; TODO: replace with proper define-class with slot
 ;; (superclass: condition?)
 (define <non-local-exit>
-  (%function (name values)
+  (%function js:null (name values)
     (js:set (js:get-property js:this "name") name)
     (js:set (js:get-property js:this "values") values)))
 

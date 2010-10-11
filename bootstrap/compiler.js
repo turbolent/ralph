@@ -64,8 +64,11 @@ function functionDeclaration (args, body) {
     if (typeof body[0] == 'string' && body.length > 1) {
 	documentation.push([S('js:documentation'), body.shift()]);
     }
-    var rest = [S('js:argument-list'), requiredArguments(args).length];
-    var restAndKey = [[S('%set-top')]];
+    var functionSymbol = Symbol.generate();
+    var restAndKey = 
+	// named function access better than using arguments.callee
+	[[S('js:set'), [S('js:get-property'), functionSymbol, "%top"], S('#t')]];
+    var rest = [S('js:argument-list'), S('js:arguments'), requiredArguments(args).length];
     var restPosition = args.indexOf(HashSymbol.rest);
     if (restPosition >= 0) {
 	restAndKey.push([S('js:var'), args[restPosition + 1], rest]);
@@ -109,7 +112,7 @@ function functionDeclaration (args, body) {
 			 [S('js:var'), valueVar, [S('js:get-property'), restVar, [S('js:+'), indexVar, 1]]],
 			 [S('when'), [S('instance?'), keyVar, S('<keyword>')], setter]]);
     }
-    return [S('%function'), argumentNames(requiredArguments(args)),
+    return [S('%function'), functionSymbol, argumentNames(requiredArguments(args)),
 	    [S('begin')].concat(restAndKey).concat(addReturn(body))];
 }
 
@@ -176,7 +179,7 @@ var macros = {
 				   [S('js:set'), otherValues, S('js:undefined')]]);
 	    }
 	});
-	return [[S('%function'), [],
+	return [[S('%function'), S('js:null'), [],
 		 [S('begin')]
 		 .concat(declarations)
 		 .concat(addReturn(body))]];
@@ -244,7 +247,7 @@ var macros = {
 	    return ([[S('instance?'), conditionVariable, type]]
 		    .concat(binding).concat(addReturn(condition.slice(1))));
 	});
-	return [[S('%function'), [],
+	return [[S('%function'), S('js:null'), [],
 		 [S('begin'),
 		  [S('js:try'), addReturn(body),
 		   conditionVariable,
@@ -300,7 +303,7 @@ var macros = {
     },
     'define-class': function (name, _super) {
 	return [S('define'), name,
-		[S('%function'), [],
+		[S('%function'), S('js:null'), [],
 		 [S('begin')]]];
     },
     'block': function (name) {
@@ -333,18 +336,21 @@ var macros = {
 var symbolMacros = {}
 
 var specialForms = {
-    '%function': function (args, body) {
-	return [S('js:function'), args, macroexpand(body)];
+    '%function': function (name, args, body) {
+	if (name == S('js:null'))
+	    name = null;
+	return [S('js:function'), name, args, macroexpand(body)];
     }
 }
 
 function macroexpand (form) {
     if (form instanceof Array) {
-	while (form[0] instanceof Symbol
+	while (form instanceof Array 
+	       && form[0] instanceof Symbol
 	       && macros.hasOwnProperty(form[0].name))
 	    form = macros[form[0].name].apply(this, form.slice(1));
 	if (form instanceof Array) {
-	    if (specialForms.hasOwnProperty(form[0].name))
+	    if (form[0] instanceof Symbol && specialForms.hasOwnProperty(form[0].name))
 		return specialForms[form[0].name].apply(this, form.splice(1));
 	    else
 		return form.map(macroexpand);
@@ -499,8 +505,9 @@ var writers = {
     'js:return': function (allowStatements, body) {
 	return 'return ' + write(body);
     },
-    'js:function': function (allowStatements, args, body) {
-	return 'function (' + args.join(', ') + ') '
+    'js:function': function (allowStatements, name, args, body) {
+	return 'function ' + (name ? name + ' ': '') 
+	    + '(' + args.join(', ') + ') '
 	    + '{\n' + writeStatements(body) + '\n}';
     },
     'js:documentation': function (allowStatements, documentation) {
