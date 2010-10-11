@@ -65,7 +65,7 @@ function functionDeclaration (args, body) {
 	documentation.push([S('js:documentation'), body.shift()]);
     }
     var functionSymbol = Symbol.generate();
-    var restAndKey = 
+    var restAndKey =
 	// named function access better than using arguments.callee
 	[[S('js:set'), [S('js:get-property'), functionSymbol, "%top"], S('#t')]];
     var rest = [S('js:argument-list'), S('js:arguments'), requiredArguments(args).length];
@@ -353,7 +353,7 @@ var specialForms = {
 
 function macroexpand (form) {
     if (form instanceof Array) {
-	while (form instanceof Array 
+	while (form instanceof Array
 	       && form[0] instanceof Symbol
 	       && macros.hasOwnProperty(form[0].name))
 	    form = macros[form[0].name].apply(this, form.slice(1));
@@ -514,7 +514,7 @@ var writers = {
 	return 'return ' + write(body);
     },
     'js:function': function (allowStatements, name, args, body) {
-	return 'function ' + (name ? name + ' ': '') 
+	return 'function ' + (name ? name + ' ': '')
 	    + '(' + args.join(', ') + ') '
 	    + '{\n' + writeStatements(body) + '\n}';
     },
@@ -553,18 +553,23 @@ function write (form, allowStatements) {
     if (form instanceof Array) {
 	var head = form[0];
 	var rest = form.slice(1);
-	if (head instanceof Symbol && infix.hasOwnProperty(head.name)) {
+	if (head instanceof Symbol
+	    && infix.hasOwnProperty(head.name)) {
 	    return '(' + rest.map(writeExpressions).join(' ' + infix[head.name] + ' ') + ')';
-	} else if (head instanceof Symbol && writers.hasOwnProperty(head.name)) {
+	} else if (head instanceof Symbol
+		   && writers.hasOwnProperty(head.name)) {
 	    return writers[head.name].apply(this, [allowStatements].concat(rest));
-	} else if (head instanceof Array && head[0] && head[0].name == 'js:function') {
+	} else if (head instanceof Array
+		   && head[0] instanceof Symbol
+		   && head[0].name == 'js:function') {
 	    return '(' + write(head) + ')(' + rest.map(writeExpressions).join(', ') + ')';
 	} else {
 	    return write(head) + '(' + rest.map(writeExpressions).join(', ') + ')';
 	}
     } else if (typeof form == "string") {
 	return '"' + form + '"';
-    } else if (form instanceof Symbol && symbolValues.hasOwnProperty(form.name)) {
+    } else if (form instanceof Symbol
+	       && symbolValues.hasOwnProperty(form.name)) {
 	return symbolValues[form.name];
     } else
 	return form;
