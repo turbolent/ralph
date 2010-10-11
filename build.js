@@ -1,12 +1,36 @@
 var system = require('system');
-var fs = require('fs');
+var fs = require('fs-base');
+
+function extension (path) {
+    var dot = path.lastIndexOf('.');
+    if (dot != -1)
+	return path.substring(dot);
+    else
+	return "";
+}
+
+function basename (path) {
+    var base = path.substring(path.lastIndexOf('/') + 1);
+    if (base.lastIndexOf(".") != -1)
+	base = base.substring(0, base.lastIndexOf("."));
+    return base;
+}
+
+function dirname (path) {
+    return path.replace(/\/[^\/]*$/, '');
+}
 
 var compiler = require('./bootstrap/compiler');
 
 function compileFile (path) {
-    fs.write((fs.directory(path) + '/' +
-	      fs.base(path, '.ralph') + '.js'),
-	     compiler.compile(fs.read(path)) + '\n');
+    var source = fs.openRaw(path, 'r');
+    var target = fs.openRaw((dirname(path) + '/'
+			   + basename(path) + '.js'),
+			  'w');
+    var code = source.readWhole();
+    target.write(compiler.compile(code) + '\n');
+    source.close();
+    target.close();
 }
 
 var commands = {
@@ -15,35 +39,35 @@ var commands = {
 	commands.cleanTests();
     },
     cleanRuntime: function () {
-	system.print('Cleaning runtime ...');
-	fs.listTree('./runtime/').forEach(function (path) {
-	    var path = './runtime/' + path;
-	    if (fs.extension(path) == '.js') {
-		system.print(' - ' + path);
-		fs.removeTree(path);
+	print('Cleaning runtime ...');
+	fs.list('./runtime/').forEach(function (path) {
+	    path = './runtime/' + path;
+	    if (extension(path) == '.js') {
+		print(' - ' + path);
+		fs.remove(path);
 	    }
 	});
     },
     cleanTests: function () {
-	system.print('Cleaning tests ...');
+	print('Cleaning tests ...');
 	try {
-	    fs.removeTree('./tests.js');
+	    fs.remove('./tests.js');
 	} catch (e) {};
     },
     bootstrapRuntime: function () {
-	system.print('Bootstraping runtime ...');
-	fs.listTree('./runtime/').forEach(function (path) {
-	    var path = './runtime/' + path;
-	    if (fs.extension(path) == '.ralph' &&
-		fs.base(path, '.ralph')[0] != '.')
+	print('Bootstraping runtime ...');
+	fs.list('./runtime/').forEach(function (path) {
+	    path = './runtime/' + path;
+	    if (extension(path) == '.ralph' &&
+		basename(path)[0] != '.')
 	    {
-		system.print(' - ' + path);
+		print(' - ' + path);
 		compileFile(path);
 	    }
 	});
     },
     compileTests: function () {
-	system.print('Compiling tests ...');
+	print('Compiling tests ...');
 	compileFile('./tests.ralph');
     }
 }
