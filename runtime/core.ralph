@@ -123,12 +123,10 @@
       (add! keys key))
     keys))
 
-(define-function js:argument-list (skip)
+(define-function js:argument-list (arguments skip)
   ((js:get-property "Array" "prototype"
 		    "slice" "call")
-   (js:get-property js:arguments "callee"
-		    "caller" "arguments")
-   skip))
+   arguments skip))
 
 (define-function setter (function)
   (when (js:has-property? function "%setter")
