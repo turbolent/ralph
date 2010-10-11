@@ -94,7 +94,8 @@
   ;; function who called 'values'
   (js:var callee (js:get-property js:arguments "callee" "caller"))
   ;; skip 'scope functions'
-  (js:while (js:not (js:get-property callee "%top"))
+  (js:while (or (js:not (js:get-property callee "%top"))
+		(js:get-property callee "%skip"))
     (js:set callee (js:get-property callee "caller")))
   ;; set values on the function
   ;; that called the function which returns values
@@ -317,6 +318,7 @@ element of the collection."
 ;; unlike the specification, doesn't require any arguments
 (define-function apply ((function <function>) #rest arguments)
   "Applies a function to arguments."
+  (js:set (js:get-property apply "%skip") #t)
   ((js:get-property function "apply") js:null
    (if (> (size more-arguments) 1)
        (concatenate (but-last arguments)
