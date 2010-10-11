@@ -28,15 +28,20 @@
 ;; manual export necessary
 (%export (js:escape %define) %define)
 
+(define js:has-property?
+  (%function js:null (object name)
+    (js:return ((js:get-property object "hasOwnProperty") name))))
+
 (define %get-definition
   (%function (name)
-    (js:return (js:get-property *module* name))))
+    (js:return (and (js:has-property? *module* name)
+		    (js:get-property *module* name)))))
 
 (define %define-getter
   (%function (name function)
     (bind ((existing-function (%get-definition name))
 	   (setter (and existing-function
-			((js:get-property function "hasOwnProperty") "%setter")
+			(js:has-property? function "%setter")
 			(js:get-property function "%setter"))))
       (%define name function)
       (js:if setter
@@ -57,7 +62,7 @@
   (%function (name)
     (begin
       (js:var keyword js:null)
-      (js:if ((js:get-property %interned-keywords "hasOwnProperty") name)
+      (js:if (js:has-property? %interned-keywords name)
 	     (js:get-property %interned-keywords name)
 	     (begin
 	       (js:set keyword (js:new <keyword>))
@@ -131,7 +136,7 @@
    skip))
 
 (define-function setter (function)
-  (when ((js:get-property function "hasOwnProperty") "%setter")
+  (when (js:has-property? function "%setter")
     (js:get-property function "%setter")))
 
 ;;;; object
@@ -399,7 +404,7 @@ sequence that satisfy a predicate."
 
 (define-method element ((table <table>) key #key default)
   "Returns the element associated with a particular key."
-  (or (when ((js:get-property table "hasOwnProperty") key)
+  (or (when (js:has-property? table key)
 	(js:get-property table key))
       default))
 
