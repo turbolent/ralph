@@ -262,13 +262,21 @@ var macros = {
 	var keyArgs = arguments.toArray().slice(1);
 	var imports = [];
 	var exports = [];
+	var propertySymbol = Symbol.generate();
 	for (var i = 0; i < keyArgs.length; i += 2) {
 	    var key = keyArgs[i];
 	    var value = keyArgs[i + 1];
 	    if (key instanceof Keyword) {
 		if (key.name == 'import') {
 		    imports = value.map(function (name) {
-			return [S('include'), name.toString()];
+			var importSymbol = Symbol.generate();
+			return [S('begin'),
+				[S('js:var'), importSymbol, [S('require'), name.toString()]],
+				[S('js:for-in'),
+				 [propertySymbol, importSymbol],
+				 [S('js:set'),
+				  [S('js:get-property'), S('*module*'), propertySymbol],
+				  [S('js:get-property'), importSymbol, propertySymbol]]]];
 		    });
 		} else if (key.name == 'export') {
 		    exports = value.map(function (name) {
