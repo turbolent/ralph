@@ -105,9 +105,9 @@ function functionDeclaration (args, body) {
 	else
 	    restVar = args[restPosition + 1];
 
-	restAndKey.push([S('js:for'), [[indexVar, 0],
-				       [S('js:<'), indexVar, [S('js:get-property'), restVar, 'length']],
-				       [S('js:+'), indexVar, 2]],
+	restAndKey.push([S('js:for'), [[[indexVar, 0],
+					[S('js:<'), indexVar, [S('js:get-property'), restVar, 'length']],
+					[S('js:+'), indexVar, 2]]],
 			 [S('js:var'), keyVar, [S('js:get-property'), restVar, indexVar]],
 			 [S('js:var'), valueVar, [S('js:get-property'), restVar, [S('js:+'), indexVar, 1]]],
 			 [S('when'), [S('instance?'), keyVar, S('<keyword>')], setter]]);
@@ -456,13 +456,22 @@ var writers = {
 	    loop = wrapBlock(loop);
 	return loop;
     },
-    'js:for': function (allowStatements, initTestNext) {
+    'js:for': function (allowStatements, initTestNextClauses) {
 	var body = arguments.toArray().slice(2);
-	var init = initTestNext[0];
-	var test = initTestNext[1];
-	var next = initTestNext[2];
-	var loop = 'for (var ' + init[0] + ' = ' + init[1] + '; '
-	    + write(test) + '; ' + write([S('js:set'), init[0], next]) + ') {\n'
+	var inits = [];
+	var tests = [];
+	var nexts = [];
+	initTestNextClauses.forEach(function (initTestNext) {
+	    var init = initTestNext[0];
+	    inits.push(write(init[0]) + ' = ' + write(init[1]));
+	    tests.push(write(initTestNext[1]));
+	    nexts.push(write([S('js:set'), init[0], initTestNext[2]]));
+	});
+	var loop = 'for (var ' +
+	    ([inits, tests, nexts]
+	     .map(function (parts) { return parts.join(', '); })
+	     .join('; '))
+	    + ') {\n'
 	    + writeStatements([S('begin')].concat(body)) + '\n}';
 	if (!allowStatements)
 	    loop = wrapBlock(loop);
