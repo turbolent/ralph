@@ -416,7 +416,7 @@ var writers = {
     'js:if': function (allowStatements, test, then, _else) {
 	if (allowStatements) {
 	    var result = 'if (' + write(test) + ') {\n'
-		+ writeStatements(then) + '}';
+		+ writeStatements(then) + '\n}';
 	    if (_else instanceof Array)
 		result += (' else {\n' + writeStatements(_else) + '\n}');
 	    return result;
