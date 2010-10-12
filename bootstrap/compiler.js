@@ -385,6 +385,16 @@ var specialForms = {
     'define': function (name, value) {
 	return [S('%define'), name.toString(), macroexpand(value)];
     },
+    'js:for': function (clauses) {
+	var body = arguments.toArray().slice(1);
+	return [S('js:for'),
+		clauses.map(function (clause) {
+		    return [[clause[0][0], macroexpand(clause[0][1])],
+			    macroexpand(clause[1]),
+			    macroexpand(clause[2])]
+		})]
+	    .concat(macroexpand(body));
+    },
 }
 
 function macroexpand (form) {
