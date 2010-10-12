@@ -343,6 +343,30 @@ var macros = {
 		  [S('js:while'), test].concat(body),
 		  [S('js:return'), S('#f')]]]];
 
+    },
+    'for': function (clauses, end) {
+    	var body = arguments.toArray().slice(2);
+    	var initClauses = [];
+	var tmpClauses = [];
+	var bindClauses = [];
+	clauses.forEach(function (clause) {
+    	    initClauses.push([clause[0], clause[1]]);
+	    var tmp = Symbol.generate();
+	    tmpClauses.push([S('js:var'), tmp, clause[2]]);
+	    bindClauses.push([clause[0], tmp]);
+	});
+	var setClauses = bindClauses.map(function (clause) {
+	    return [S('set!')].concat(clause);
+	});
+    	return [S('bind'), initClauses,
+    		[S('while'), S('#t')]
+		.concat(tmpClauses)
+		.concat([[S('if'), [S('bind'), bindClauses,
+				    end[0]],
+    			  [S('js:return'), end.length == 1 ? S('#f') : end[1]],
+			  [S('begin')]
+			  .concat(setClauses)
+			  .concat(body)]])];
     }
 }
 
