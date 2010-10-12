@@ -121,7 +121,7 @@
 (define-function js:property-sequence (object)
   (bind ((keys (make <array>)))
     (js:for-in (key object)
-      (add! keys key))
+      ((js:get-property keys "push") key))
     keys))
 
 (define-function js:argument-list (arguments skip)
