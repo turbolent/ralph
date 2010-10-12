@@ -13,7 +13,7 @@
 
 ;;;; utility functions
 
-(js:define %define
+(%%define %define
   (%function js:null (name value)
     (begin
       (js:set (js:get-property *module* name) value)

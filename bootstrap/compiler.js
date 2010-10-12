@@ -298,12 +298,6 @@ var macros = {
     'if': function (test, then, _else) {
 	return [S('js:if'), [S('true?'), test], then, _else];
     },
-    'js:define': function (name, value) {
-	return [S('js:set'), [S('js:get-property'), S('*module*'), name.toString()], value];
-    },
-    'define': function (name, value) {
-	return [S('%define'), name.toString(), value];
-    },
     'set!': function (expression, value) {
 	return [[S('setter'), expression[0]]]
 	    .concat(expression.slice(1))
@@ -348,7 +342,14 @@ var specialForms = {
 	if (name == S('js:null'))
 	    name = null;
 	return [S('js:function'), name, args, macroexpand(body)];
-    }
+    },
+    '%%define': function (name, value) {
+	return [S('js:set'), [S('js:get-property'), S('*module*'), name.toString()],
+		macroexpand(value)];
+    },
+    'define': function (name, value) {
+	return [S('%define'), name.toString(), macroexpand(value)];
+    },
 }
 
 function macroexpand (form) {
