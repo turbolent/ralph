@@ -382,7 +382,7 @@ the elements of another sequence."
 	       (copy-sequence target-sequence start: end)))
 
 (define-method but-last ((sequence <sequence>))
-  (copy-sequene sequence end: (- (size sequence) 1)))
+  (copy-sequence sequence end: (- (size sequence) 1)))
 
 (define-method choose-by ((predicate <function>) (test-sequence <sequence>)
 			  (value-sequence <sequence>))
