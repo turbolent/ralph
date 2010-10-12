@@ -335,6 +335,14 @@ var macros = {
 	} else
 	    // TODO:
 	    return [S('begin'), body];
+    },
+    'while': function (test) {
+	var body = arguments.toArray().slice(1);
+	return [[S('%function'), S('js:null'), [],
+		 [S('begin'),
+		  [S('js:while'), test].concat(body),
+		  [S('js:return'), S('#f')]]]];
+
     }
 }
 
