@@ -319,10 +319,10 @@ element of the collection."
   "Applies a function to arguments."
   (js:set (js:get-property apply "%skip") #t)
   ((js:get-property function "apply") js:null
-   (if (> (size more-arguments) 1)
+   (if (js:> (size arguments) 1)
        (concatenate (but-last arguments)
 		    (last arguments))
-       arguments)))
+       (first arguments))))
 
 (define-function curry ((function <function>) #rest curried-args)
   "Returns a function based on an exisiting function
