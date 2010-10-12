@@ -107,7 +107,7 @@ function functionDeclaration (args, body) {
 
 	restAndKey.push([S('js:for'), [[indexVar, 0],
 				       [S('js:<'), indexVar, [S('js:get-property'), restVar, 'length']],
-				       [S('js:set'), indexVar, [S('js:+'), indexVar, 2]]],
+				       [S('js:+'), indexVar, 2]],
 			 [S('js:var'), keyVar, [S('js:get-property'), restVar, indexVar]],
 			 [S('js:var'), valueVar, [S('js:get-property'), restVar, [S('js:+'), indexVar, 1]]],
 			 [S('when'), [S('instance?'), keyVar, S('<keyword>')], setter]]);
@@ -462,7 +462,7 @@ var writers = {
 	var test = initTestNext[1];
 	var next = initTestNext[2];
 	var loop = 'for (var ' + init[0] + ' = ' + init[1] + '; '
-	    + write(test) + '; ' + write(next) + ') {\n'
+	    + write(test) + '; ' + write([S('js:set'), init[0], next]) + ') {\n'
 	    + writeStatements([S('begin')].concat(body)) + '\n}';
 	if (!allowStatements)
 	    loop = wrapBlock(loop);
