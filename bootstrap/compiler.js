@@ -299,9 +299,12 @@ var macros = {
 	return [S('js:if'), [S('true?'), test], then, _else];
     },
     'set!': function (expression, value) {
-	return [[S('setter'), expression[0]]]
-	    .concat(expression.slice(1))
-	    .concat([value]);
+	if (expression instanceof Array)
+	    return ([[S('setter'), expression[0]]]
+		    .concat(expression.slice(1))
+		    .concat([value]));
+	else
+	    return [S('js:set'), expression, value];
     },
     'define-class': function (name, _super) {
 	return [S('define'), name,
