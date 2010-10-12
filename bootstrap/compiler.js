@@ -86,7 +86,7 @@ function functionDeclaration (args, body) {
 	var indexVar = Symbol.generate();
 
 	// declarations with defaults, setters
-	var setter = [S('select'), keyVar, S('==')];
+	var setter = [S('select'), keyVar, S('js:==')];
 	args.slice(keyPosition + 1).forEach(function (key) {
 	    var name, _default = S('#f');
 	    if (key instanceof Array) {
