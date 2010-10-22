@@ -346,6 +346,22 @@ var macros = {
 		  [S('js:return'), S('#f')]]]];
 
     },
+    '%parallel-set': function () {
+    	var clauses = arguments.toArray();
+	if (clauses.length > 2) {
+	    var tmpClauses = [];
+	    var setClauses = [];
+	    for (var i = 0; i < clauses.length; i += 2) {
+		var tmp = Symbol.generate();
+		tmpClauses.push([S('js:var'), tmp, clauses[i+1]]);
+		setClauses.push([S('js:set'), clauses[i], tmp]);
+	    }
+	    return [S('begin')]
+		.concat(tmpClauses)
+		.concat(setClauses);
+	} else
+	    return [S('js:set')].concat(clauses);
+    },
     'for': function (clauses, end) {
     	var body = arguments.toArray().slice(2);
     	var initClauses = [];
