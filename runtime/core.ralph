@@ -301,30 +301,15 @@
 			     (%key-sequence test-array))))
     (%map (%curry %element value-array) test-keys)))
 
-;;;; string
+;;;; string primitives
 
 ;; * as-uppercase! and as-lowercase! impossible,
 ;;   as strings in JavaScript are immutable
-;; * generic < works for strings
 
-(define-class <string> (<sequence>))
-
-;; TODO
-;; (define-method make ((class (singleton <deque>)) #key (size 0) (fill " "))
-;;   (bind ((deque (js:new (js:identifier "String") size)))
-;;     (do (rcurry (curry (setter element) deque) fill)
-;;         (key-sequence deque))
-;;     deque))
-
-(define-method element ((string <string>) position #key default)
-  (or ((js:get-property string "charAt") position) default))
-
-(define-function as-uppercase ((string <string>))
-  "Coerces a string to uppercase."
+(define-function %as-uppercase (string)
   ((js:get-property string "toUpperCase")))
 
-(define-function as-lowercase ((string <string>))
-  "Coerces a string to lowercase."
+(define-function %as-lowercase (string)
   ((js:get-property string "toLowerCase")))
 
 (define-method size ((string <string>))
