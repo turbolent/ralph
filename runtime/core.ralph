@@ -479,12 +479,12 @@
 
 (define-function %map-types (source-type target-type)
   (js:set (js:get-property source-type "%internal-type")
-	  target-type))
+	  target-type)
+  (js:set (js:get-property target-type "%mapped-type")
+	  source-type))
 
-;; TODO: (do %map-types (...
-(%map-type <array> (js:identifier "Array"))
-(%map-type <object> (js:identifier "Object"))
-(%map-type <string> (js:identifier "String"))
-(%map-type <number> (js:identifier "Number"))
-(%map-type <boolean> (js:identifier "Boolean"))
-
+(%map-types <vector> (js:identifier "Array"))
+(%map-types <object> (js:identifier "Object"))
+(%map-types <string> (js:identifier "String"))
+(%map-types <number> (js:identifier "Number"))
+(%map-types <boolean> (js:identifier "Boolean"))
