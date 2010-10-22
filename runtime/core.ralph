@@ -58,24 +58,30 @@
   (%function js:null (value)
     (js:return (js:not (%true? value)))))
 
+;;;; getter
+
 (define %define-getter
   (%function js:null (name function)
-    (bind ((existing-function (%get-definition name))
-	   (setter (and existing-function
-			(js:has-property? function "%setter")
-			(js:get-property function "%setter"))))
+    (bind ((getter (%get-definition name))
+	   (setter (and getter
+			(js:has-property? getter "%setter")
+			(js:get-property getter "%setter"))))
       (%define name function)
-      (js:if setter
-	     (js:set (js:get-property function "%setter") setter)
-	     #f))))
+      (when setter
+	(js:set (js:get-property function "%setter") setter)))))
+
+;;;; setter
 
 (define %define-setter
   (%function js:null (name function)
     (begin
-      (js:if (js:not (%get-definition name))
-	     (%define name (js:new (js:identifier "Function")))
-	     #f)
+      (when (%not (%get-definition name))
+	(%define name (js:new (js:identifier "Function"))))
       (js:set (js:get-property (%get-definition name) "%setter") function))))
+
+(define-function setter (function)
+  (when (js:has-property? function "%setter")
+    (js:get-property function "%setter")))
 
 (define %interned-keywords (js:new (js:identifier "Object")))
 
