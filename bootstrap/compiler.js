@@ -321,16 +321,19 @@ var macros = {
 	    returnSymbol = returnSymbol[0];
 	    var conditionSymbol = Symbol.generate();
  	    return [S('js:try'),
-		    [S('bind'),
-		     // TODO: replace with proper make call
-		     [[returnSymbol,
-		       [S('%make-non-local-exit-function'), returnSymbol.name]]]]
-		    .concat(body),
+		    [S('js:return'),
+		     [S('bind'),
+		      // TODO: replace with proper make call
+		      [[returnSymbol,
+			[S('%make-non-local-exit-function'), returnSymbol.name]]]]
+		     .concat(body)],
  		    conditionSymbol,
- 		    [S('when'), [S('and'),
-				 [S('instance?'), conditionSymbol, S('<non-local-exit>')],
-				 [S('='), [S('js:get-property'), conditionSymbol, 'name'], returnSymbol.name]],
- 		     [S('js:return'), [S('js:get-property'), conditionSymbol, 'values']]]];
+		    [S('js:return'),
+		     [S('when'),
+		      [S('and'),
+		       [S('js:==='), [S('js:get-property'), conditionSymbol, 'constructor'], S('<non-local-exit>')],
+		       [S('js:==='), [S('js:get-property'), conditionSymbol, 'name'], returnSymbol.name]],
+ 		      [S('%apply'), S('values'), [S('js:get-property'), conditionSymbol, 'values']]]]];
 	} else
 	    // TODO:
 	    return [S('begin'), body];
