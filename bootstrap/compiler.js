@@ -523,7 +523,6 @@ var writers = {
 	return '(typeof (' + write(expression) + ') != "undefined")';
     },
     'js:try': function (allowStatements, body, conditionVariable, _catch, _finally) {
-	// TODO: if !allowStatements: wrap with function
 	var result = 'try {\n' + writeStatements(body) + '\n}';
 	if (_catch) {
 	    result += (' catch (' + write(conditionVariable) + ') {\n'
@@ -532,10 +531,11 @@ var writers = {
 	}
 	if (_finally)
 	    result += (' finally {\n' + writeStatements(_finally) + '\n}');
+	if (!allowStatements)
+	    result = wrapBlock(result);
 	return result;
     },
     'js:for-in': function (allowStatements, variableAndExpression) {
-	// TODO: if !allowStatements: wrap with function
 	var body = arguments.toArray().slice(2);
 	var variable = variableAndExpression[0];
 	var expression = variableAndExpression[1];
