@@ -429,6 +429,55 @@
 ;;   (subclass? (object-class object) type)
 
 
+;;;; object
+
+(define-function direct-superclasses ((class <class>))
+  (js:get-property class "class-direct-superclasses"))
+
+(define-function subclass? (class1 class2)
+  (or (%== class1 class2)
+      (block (return)
+        (for ((classes-left
+	       (direct-superclasses class1)
+	       (%concatenate (direct-superclasses (%first classes-left))
+			     (%rest classes-left))))
+	     ((%empty? classes-left) #f)
+	  (when (%== class2 (%first classes-left))
+	    (return #t))))))
+
+(define-function %make-object ()
+  (js:var object (js:make-object))
+;;  (js:set (js:get-property object "%class") <object>)
+  object)
+
+(define-function %make-class (name direct-superclasses)
+  (js:var class (js:make-object))
+;;  (js:set (js:get-property object "%class") <class>)
+;; TODO: remove
+  (js:set (js:get-property class "toString")
+	  (method ()
+	    (js:+ "{class " name "}")))
+  (js:set (js:get-property class "class-name") name)
+  (js:set (js:get-property class "class-direct-superclasses")
+	  direct-superclasses)
+  class)
+
+(%define-class <object> ())
+(%define-class <type> (<object>))
+(%define-class <class> (<type>))
+(%define-class <singleton> (<type>))
+(%define-class <function> (<object>))
+(%define-class <number> (<object>))
+(%define-class <boolean> (<object>))
+(%define-class <collection> (<object>))
+(%define-class <keyword> (<object>))
+(%define-class <table> (<collection>))
+(%define-class <sequence> (<collection>))
+(%define-class <string> (<sequence>))
+(%define-class <array> (<sequence>))
+(%define-class <vector> (<array>))
+
+(define-function %map-types (source-type target-type)
   (js:set (js:get-property source-type "%internal-type")
 	  target-type))
 
