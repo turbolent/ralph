@@ -140,22 +140,21 @@
 	    ((js:get-property values "slice") 1)))
   (js:get-property values 0))
 
-(define-function js:length (object)
-  (js:get-property object "length"))
+;;;; JS utilities
 
-(define-function js:add (object1 #rest more-objects)
-  (reduce (method (object1 object2)
-	    (js:+ object1 object2))
-	  first-object more-objects))
+(define-function js:length (array)
+  (js:get-property array "length"))
 
-(define-function js:slice (object start end)
-  ((js:get-property object "slice") start end))
+(define-function js:for-each (function objects)
+  ((js:get-property objects "forEach") function))
 
-(define-function js:set-property (object key new-value)
-  (js:set (js:get-property object key) new-value))
+(define-function js:slice (array start end)
+  ((js:get-property array "slice")
+   (or start 0)
+   (or end (js:length array))))
 
 (define-function js:property-sequence (object)
-  (bind ((keys (make <array>)))
+  (bind ((keys (js:new (js:identifier "Array"))))
     (js:for-in (key object)
       ((js:get-property keys "push") key))
     keys))
