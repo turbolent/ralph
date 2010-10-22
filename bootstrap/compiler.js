@@ -65,9 +65,10 @@ function functionDeclaration (args, body) {
 	documentation.push([S('js:documentation'), body.shift()]);
     }
     var functionSymbol = Symbol.generate();
-    var restAndKey =
+    var restAndKey = [];
+    if (searchHead(body, S('values')))
 	// named function access better than using arguments.callee
-	[[S('js:set'), [S('js:get-property'), functionSymbol, "%top"], S('#t')]];
+	restAndKey.push([S('js:set'), [S('js:get-property'), functionSymbol, "%top"], S('#t')]);
     var rest = [S('js:argument-list'), S('js:arguments'), requiredArguments(args).length];
     var restPosition = args.indexOf(HashSymbol.rest);
     if (restPosition >= 0) {
