@@ -118,17 +118,26 @@
     (js:throw (js:new <non-local-exit>
 		      name values))))
 
+;;;; multiple return values
+
 (define-function values (#rest values)
-  ;; function who called 'values'
-  (js:var callee (js:get-property js:arguments "callee" "caller"))
-  ;; skip 'scope functions'
-  (js:while (or (js:not (js:get-property callee "%top"))
-		(js:get-property callee "%skip"))
-    (js:set callee (js:get-property callee "caller")))
-  ;; set values on the function
-  ;; that called the function which returns values
-  (js:set (js:get-property callee "caller" "otherValues")
-	  ((js:get-property values "slice") 1))
+  (when (%empty? values)
+    (js:set values (%array #f)))
+  (when (js:> (%size values) 1)
+    ;; function who called 'values'
+    (js:var callee (js:get-property js:arguments "callee" "caller"))
+    ;; skip 'scope functions'
+    (js:var caller
+	    (for ((caller callee (js:get-property caller "caller"))
+		  (caller2 #f caller))
+		 ((or (%not caller)
+		      (and (js:has-property? caller "%top")
+			   (%not (js:has-property? caller "%skip"))))
+		  caller2)))
+    ;; set values on the function
+    ;; that called the function which returns values
+    (js:set (js:get-property caller "otherValues")
+	    ((js:get-property values "slice") 1)))
   (js:get-property values 0))
 
 (define-function js:length (object)
