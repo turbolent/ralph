@@ -110,7 +110,7 @@ function functionDeclaration (args, body) {
 					[S('js:+'), indexVar, 2]]],
 			 [S('js:var'), keyVar, [S('js:get-property'), restVar, indexVar]],
 			 [S('js:var'), valueVar, [S('js:get-property'), restVar, [S('js:+'), indexVar, 1]]],
-			 [S('when'), [S('instance?'), keyVar, S('<keyword>')], setter]]);
+			 [S('when'), [S('js:==='), [S('js:get-property'), keyVar, "constructor"], S('<keyword>')], setter]]);
     }
     return [S('%function'), functionSymbol, argumentNames(requiredArguments(args)),
 	    [S('begin')].concat(restAndKey).concat(addReturn(body))];
