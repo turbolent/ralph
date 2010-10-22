@@ -334,6 +334,101 @@
   (method (#rest args)
     value))
 
+;;;; arithmetic primitives
+;; (only work on JavaScript numbers)
+
+(define-function %+ (number #rest more-numbers)
+  (%reduce (method (number1 number2)
+	     (js:+ number1 number2))
+	   number more-numbers))
+
+(define-function %- (number #rest more-numbers)
+  (if (%empty? more-numbers)
+      (js:negative number)
+      (%reduce (method (number1 number2)
+	        (js:- number1 number2))
+	      number more-numbers)))
+
+;;;; comparison primitives
+
+(define-function %binary= (object1 object2)
+  ;; TODO:
+  (js:and (js:=== (%object-class object1)
+		  (%object-class object2))
+	  (js:== object1 object2)))
+
+(define-function %binary< (object1 object2)
+  ;; TODO:
+  (js:< object1 object2))
+
+(define-function %compare (function object1 object2 more-objects)
+  (block (return)
+    (%reduce1 (method (object1 object2)
+	        (if (function object1 object2)
+		    object2
+		    (return #f)))
+	      (%concatenate (%array object1 object2)
+			    more-objects))
+    #t))
+
+(define-function %= (object1 object2 #rest more-objects)
+  (%compare %binary= object1 object2 more-objects))
+
+(define-function %== (object1 object2 #rest more-objects)
+  (%compare (method (object1 object2)
+	      (js:=== object1 object2))
+	    object1 object2 more-objects))
+
+(define-function %< (object1 object2 #rest more-objects)
+  (%compare %binary< object1 object2 more-objects))
+
+(define-function %> (object1 object2 #rest more-objects)
+  (%compare (method (object1 object2)
+	      (%not (or (%binary< object1 object2)
+			(%binary= object1 object2))))
+	    object1 object2 more-objects))
+
+(define-function %<= (object1 object2 #rest more-objects)
+  (%compare (method (object1 object2)
+	      (or (%binary< object1 object2)
+		  (%binary= object1 object2)))
+	    object1 object2 more-objects))
+
+(define-function %>= (object1 object2 #rest more-objects)
+  (%compare (method (object1 object2)
+	      (%not (%binary< object1 object2)))
+	    object1 object2 more-objects))
+
+;;;; reflection primitives
+
+(define-function %object-class (object)
+  ;; Object.getPrototypeOf on primitives only works in FireFox:
+  ;; ((js:get-property "Object" "getPrototypeOf") object))
+  (bind ((type (js:get-property object "constructor")))
+    (if (js:has-property? type "%mapped-type")
+	(js:get-property type "%mapped-type")
+	type)))
+
+(define-function %check-type (value type)
+  (when (%not (%instance? value type))
+    (error "check-type failed")))
+
+(define-function %instance? (object type)
+  (js:var actual-type
+	  (if (js:has-property? type "%internal-type")
+	      (js:get-property type "%internal-type")
+	      type))
+  (js:or
+   ;; primitive
+   (js:constructor? object actual-type)
+   ;; object
+   ((js:get-property actual-type "prototype"
+		     "isPrototypeOf")
+    object)))
+;; TODO:
+;;   (subclass? (object-class object) type)
+
+
   (js:set (js:get-property source-type "%internal-type")
 	  target-type))
 
