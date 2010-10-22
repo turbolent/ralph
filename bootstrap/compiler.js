@@ -460,12 +460,13 @@ function macroexpand (form) {
 //// writing
 
 var infix = {
-    'and': '&&', 'or': '||',
+    'js:and': '&&', 'js:or': '||',
     'js:+': '+', 'js:-': '-',
     'js:*': '*', 'js:/': '/',
     'js:>': '>', 'js:<': '<',
     'js:>=': '>=', 'js:<=': '<=',
-    'js:==': '==', 'js:===': '==='
+    'js:==': '==', 'js:===': '===',
+    'js:instanceof': 'instanceof'
 }
 
 var symbolValues = {
