@@ -118,8 +118,6 @@ function functionDeclaration (args, body) {
 }
 
 var macros = {
-    // TODO: should be property of current module,
-    //       and accessible as function
     'define-function': function (name, args) {
 	var body = arguments.toArray().slice(2);
 	var setter = false;
@@ -164,18 +162,18 @@ var macros = {
 		    });
 		declarations.push([S('js:try'),
 				   [S('begin'),
-				    [S('js:var'), otherValuesSymbol, [S('or'), otherValues, [S('list')]]]]
+				    [S('js:var'), otherValuesSymbol, [S('or'), otherValues, [S('js:array')]]]]
 				   .concat(setters)
 				   .concat(restPosition >= 0 ?
 				    	   [[S('js:var'), variables[restPosition + 1],
 				    	     (normalVariables.length == 0 ?
-					      [[S('js:get-property'), [S('list'), valueSymbol], 'concat'],
+					      [[S('js:get-property'), [S('js:array'), valueSymbol], 'concat'],
 					       otherValuesSymbol]
 					      : (normalVariables.length == 1 ? otherValuesSymbol
 						 : [[S('js:get-property'), otherValuesSymbol, 'slice'],
 						    normalVariables.length - 1]))]]
 					   : []),
-				   // catch Variable, and catch block
+				   // catch variable, and catch block
 				   null, null,
 				   [S('js:set'), otherValues, S('js:undefined')]]);
 	    }
@@ -193,7 +191,7 @@ var macros = {
     'unless': function (test) {
 	var body = arguments.toArray().slice(1);
 	body.unshift(S('begin'));
-	return [S('if'), [S('not'), test], body, S('#f')];
+	return [S('if'), [S('%not'), test], body, S('#f')];
     },
     'cond': function () {
 	var cases = arguments.toArray();
@@ -245,7 +243,7 @@ var macros = {
 			binding.push([S('js:var'), _if[i + 1], conditionVariable]);
 		}
 	    }
-	    return ([[S('instance?'), conditionVariable, type]]
+	    return ([[S('%instance?'), conditionVariable, type]]
 		    .concat(binding).concat(addReturn(condition.slice(1))));
 	});
 	return [[S('%function'), S('js:null'), [],
@@ -293,11 +291,11 @@ var macros = {
 		[S('js:var'), S('*module*'), S('js:this')],
 		[S('js:set'),
 		 [S('js:get-property'), S('*module*'), '%exports'],
-		 [S('list')].concat(exports)]]
+		 [S('js:array')].concat(exports)]]
 	    .concat(imports);
     },
     'if': function (test, then, _else) {
-	return [S('js:if'), [S('true?'), test], then, _else];
+	return [S('js:if'), [S('%true?'), test], then, _else];
     },
     'set!': function (expression, value) {
 	if (expression instanceof Array)
@@ -307,10 +305,10 @@ var macros = {
 	else
 	    return [S('js:set'), expression, value];
     },
-    'define-class': function (name, _super) {
+    '%define-class': function (name, superclasses) {
 	return [S('define'), name,
-		[S('%function'), S('js:null'), [],
-		 [S('begin')]]];
+		[S('%make-class'), name.name,
+		 [S('js:array')].concat(superclasses)]];
     },
     'block': function (name) {
 	var body = arguments.toArray().slice(1);
@@ -371,7 +369,7 @@ var macros = {
     }
 }
 
-var symbolMacros = {}
+var symbolMacros = {};
 
 var specialForms = {
     '%function': function (name, args, body) {
@@ -475,7 +473,7 @@ var writers = {
 		+ write(_else) + ')';
 	}
     },
-    'list': function (allowStatements) {
+    'js:array': function (allowStatements) {
 	var elements = arguments.toArray().slice(1);
 	return '[' + elements.map(writeExpressions).join(', ') + ']';
     },
