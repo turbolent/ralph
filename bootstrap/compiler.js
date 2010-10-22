@@ -603,7 +603,10 @@ var writers = {
 	    '(' + args.map(writeExpressions).join(', ') + ')';
     },
     'js:var': function (allowStatements, name, value) {
-	return "var " + name + " = " + write(value);
+	var result = "var " + name;
+	if (value != S('js:undefined'))
+	    result += " = " + write(value);
+	return result;
     },
     'js:set': function (allowStatements, name, value) {
 	return write(name) + " = " + write(value);
