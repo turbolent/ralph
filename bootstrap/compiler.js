@@ -365,26 +365,48 @@ var macros = {
     'for': function (clauses, end) {
     	var body = arguments.toArray().slice(2);
     	var initClauses = [];
-	var tmpClauses = [];
-	var bindClauses = [];
-	clauses.forEach(function (clause) {
+    	var nextClauses = [];
+    	clauses.forEach(function (clause) {
+	    // initial value
     	    initClauses.push([clause[0], clause[1]]);
-	    var tmp = Symbol.generate();
-	    tmpClauses.push([S('js:var'), tmp, clause[2]]);
-	    bindClauses.push([clause[0], tmp]);
-	});
-	var setClauses = bindClauses.map(function (clause) {
-	    return [S('set!')].concat(clause);
-	});
+	    // next value
+	    nextClauses.push(clause[0])
+	    nextClauses.push(clause[2]);
+    	});
     	return [S('bind'), initClauses,
-    		[S('while'), S('#t')]
-		.concat(tmpClauses)
-		.concat([[S('if'), [S('bind'), bindClauses,
-				    end[0]],
-    			  [S('js:return'), end.length == 1 ? S('#f') : end[1]],
-			  [S('begin')]
-			  .concat(setClauses)
-			  .concat(body)]])];
+    		[S('while'), [S('%not'), end[0]]]
+		.concat(body)
+		.concat([[S('%parallel-set')]
+			 .concat(nextClauses)]),
+    		end.length == 1 ? S('#f') : end[1]];
+    },
+    'and': function () {
+	var expressions = arguments.toArray();
+	if (expressions.length === 0)
+	    return S('#t')
+	else {
+	    var butLast = expressions.slice(0, -1)
+		.map(function (expression) {
+		    return [S('%true?'), expression];
+		});
+	    return [S('when'), [S('js:and')].concat(butLast),
+		    expressions[expressions.length - 1]];
+	}
+    },
+    'or': function () {
+	var expressions = arguments.toArray();
+	var bindings = [];
+	var clauses = [];
+	expressions.forEach(function (expression) {
+	    var tmp = Symbol.generate();
+	    bindings.push([tmp, S('js:undefined')]);
+	    clauses.push([[S('begin'),
+			   [S('js:set'), tmp, expression],
+			   [S('%true?'), tmp]],
+			  tmp]);
+	});
+	return [S('bind'), bindings,
+		[S('cond')].concat(clauses)];
     }
 }
 
