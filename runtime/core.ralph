@@ -83,6 +83,8 @@
   (when (js:has-property? function "%setter")
     (js:get-property function "%setter")))
 
+;;;; keywords
+
 (define %interned-keywords (js:new (js:identifier "Object")))
 
 (%define "_k"
@@ -90,26 +92,24 @@
     (begin
       (js:var keyword js:null)
       (js:return
-       (js:if (js:has-property? %interned-keywords name)
-	      (js:get-property %interned-keywords name)
-	      (begin
-	       (js:set keyword (js:new <keyword>))
-	       (js:set (js:get-property keyword "%name") name)
-	       (js:set (js:get-property %interned-keywords name) keyword)
-	       keyword))))))
+       (if (js:has-property? %interned-keywords name)
+	   (js:get-property %interned-keywords name)
+	   (begin
+	    (js:set keyword (js:new <keyword>))
+	    (js:set (js:get-property keyword "%name") name)
+	    (js:set (js:get-property %interned-keywords name) keyword)
+	    keyword))))))
 
-(define-method as ((type (singleton <string>)) (keyword <keyword>))
-  (js:get-property keyword "%name"))
-
-(define-method as ((type (singleton <keyword>)) (string <string>))
-  ((%get-defintion "_k") string))
+;;;; non-local exit
 
 ;; TODO: replace with proper define-class with slot
 ;; (superclass: condition?)
 (define <non-local-exit>
   (%function js:null (name values)
-    (js:set (js:get-property js:this "name") name)
-    (js:set (js:get-property js:this "values") values)))
+    (begin
+     (js:set (js:get-property js:this "name") name)
+     (js:set (js:get-property js:this "values") values)
+     (js:return js:this))))
 
 ;; TODO: replace with proper initialization method
 (define-function %make-non-local-exit-function (name)
