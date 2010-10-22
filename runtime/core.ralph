@@ -312,6 +312,28 @@
 (define-function %as-lowercase (string)
   ((js:get-property string "toLowerCase")))
 
+;;;; functional primitives
+
+(define-function %apply (function #rest arguments)
+  (js:set (js:get-property %apply "%skip") #t)
+  ((js:get-property function "apply") js:null
+   (if (js:> (%size arguments) 1)
+       (%concatenate (%but-last arguments)
+		     (%last arguments))
+       (%first arguments))))
+
+(define-function %curry (function #rest curried-args)
+  (method (#rest args)
+    (%apply function (%concatenate curried-args args))))
+
+(define-function %rcurry (function #rest curried-args)
+  (method (#rest args)
+    (%apply function (%concatenate args curried-args))))
+
+(define-function %always (value)
+  (method (#rest args)
+    value))
+
   (js:set (js:get-property source-type "%internal-type")
 	  target-type))
 
