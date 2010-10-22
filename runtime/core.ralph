@@ -5,13 +5,13 @@
 	   %define-getter
 	   %define-setter
 	   setter
-	   empty?
 	   %interned-keywords
 	   (js:identifier "_k")
 	   <object>
-	   <non-local-exit>))
+	   <non-local-exit>
+	   values))
 
-;;;; utility functions
+;;;; define
 
 (%%define %define
   (%function js:null (name value)
@@ -36,6 +36,27 @@
   (%function js:null (name)
     (js:return (and (js:has-property? *module* name)
 		    (js:get-property *module* name)))))
+
+
+;;;; boolean primitives
+
+(define js:constructor?
+  (%function js:null (object constructor)
+    (js:return (js:=== (js:get-property object "constructor")
+		       constructor))))
+
+(define %true?
+  (%function js:null (value)
+    (js:return
+     (js:and (js:not (js:=== value js:null))
+	     (js:not (js:=== value js:undefined))
+	     (js:or (js:constructor? value (js:identifier "Number"))
+		    (js:constructor? value (js:identifier "String"))
+		    (js:not (js:not value)))))))
+
+(define %not
+  (%function js:null (value)
+    (js:return (js:not (%true? value)))))
 
 (define %define-getter
   (%function js:null (name function)
