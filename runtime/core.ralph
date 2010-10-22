@@ -164,357 +164,142 @@
 		    "slice" "call")
    arguments skip))
 
-(define-function setter (function)
-  (when (js:has-property? function "%setter")
-    (js:get-property function "%setter")))
-
-;;;; object
-
-(define-class <object> ())
-
-(define-method make ((type <type>))
-  (bind ((actual-type (if (js:has-property? type "%internal-type")
-			  (js:get-property type "%internal-type")
-			  type))
-	 (instance (js:new actual-type)))
-    (initialize instance)
-    instance))
-
-;; default doesn't do anything
-(define-method initialize (instance))
-
-;;;; keyword
-
-(define-class <keyword> (<object>))
-
-;;;; collection
-
-;; every subclass needs to define:
-;; * key-sequence
-;; * size
-;; * element
-;; * (setter element)
-
-(define-class <collection> (<object>))
-
-(define-function elements ((collection <collection>))
-  (map (curry element collection)
-       (key-sequence collection)))
-
-(define-method empty? ((collection <collection>))
-  "Returns true if the collection has zero elements."
-  (= (size collection) 0))
-
-(define-method find-key ((collection <collection>) (predicate <function>)
-			 #key (skip 0) failure)
-  "Returns the key in a collection such that the corresponding collection
-element satisfies a predicate."
-  (bind ((keys (choose (method (element)
-		         (true? (predicate element)))
-		       (elements collection))))
-    (or (element keys skip) failure)))
-
-(define-method binary= ((collection1 <collection>) (collection2 <collection>))
-  (and (== (size collection1) (size collection2))
-       (bind ((keys1 (key-sequence collection1))
-	      (keys2 (key-sequence collection2)))
-         (and (every? == keys1 keys2)
-	      (every? =
-		      (map (curry element collection1) keys1)
-		      (map (curry element collection2) keys2))))))
-
-(define-function any? ((function <function>) (collection <collection>)
-		       #rest more-collections)
-  "Returns true if a predicate returns true at least
-once for the elements of the collection."
-  ;; TODO: return as soon as #t
-  (reduce (method (previous current)
-	    (or previous (function current)))
-	  #f (elements collection)))
-
-(define-function every? ((function <function>) (collection <collection>)
-			 #rest more-collections)
-  "Returns true if a predicate returns true for every
-element of the collection."
-  (reduce (method (previous current)
-	    (and previous (function current)))
-	  #t (elements collection)))
-
-;;;; comparison
-
-(define-class <boolean> (<object>))
-
-(define-function true? (value)
-  (or (js:=== value 0)
-      (js:not (js:not value))))
-
-(define-function not (value)
-  (js:not (true? value)))
-
-(define-method binary= (object1 object2)
-  (js:== object1 object2))
-
-(define-method binary= ((number <number>) (string <string>))
-  #f)
-
-(define-method binary= ((string <string>) (number <number>))
-  #f)
-
-(define-method = (object1 object2 #rest objects)
-  "Compares objects for equality."
-  (cond
-    ;; TODO: implement as 2 methods with singletons
-    ((or (and (js:== object1 0) (js:== object2 #f))
-	 (and (js:== object1 #f) (js:== object2 0)))
-     #f)
-    (else: (true? (reduce1 (method (object1 object2)
-			     (when (binary= object1 object2)
-			       object2))
-			   (concatenate (list object1 object2)
-					objects))))))
-
-(define-function == (object1 object2 #rest objects)
-  "Compares objects for identity."
-  (true? (reduce1 (method (object1 object2)
-		    (when (js:== object1 object2)
-		      object2))
-		  (concatenate (list object1 object2)
-			       objects))))
-
-(define-method < (object1 object2 #rest objects)
-  (true? (reduce1 (method (object1 object2)
-		    (when (js:< object1 object2)
-		      object2))
-	       (concatenate (list object1 object2)
-			    objects))))
-
-(define-method > (object1 object2 #rest objects)
-  (true? (reduce1 (method (object1 object2)
-		    (when (js:> object1 object2)
-		      object2))
-	       (concatenate (list object1 object2)
-			    objects))))
-
-(define-method <= (object1 object2 #rest objects)
-  (true? (reduce1 (method (object1 object2)
-		    (when (js:<= object1 object2)
-		      object2))
-	       (concatenate (list object1 object2)
-			    objects))))
-
-(define-method >= (object1 object2 #rest objects)
-  (true? (reduce1 (method (object1 object2)
-		    (when (js:>= object1 object2)
-		      object2))
-	       (concatenate (list object1 object2)
-			    objects))))
-
-;;;; arithmetic
-
-(define-class <number> (<object>))
-
-(define-function + ((number <number>) #rest more-numbers)
-  "Returns the sum of its arguments."
-  (apply js:add number more-numbers))
-
-(define-function - (object1 #rest objects)
-  "Returns the difference of its arguments."
-  (if (empty? objects)
-      (js:negative object1)
-      (reduce (method (object1 object2)
-	        (js:- object1 object2))
-	      object1 objects)))
-
-
-;;;; reflection
-
-(define-function object-class (object)
-  "Returns the class of an object."
-  ;; Object.getPrototypeOf on primitives only works in FireFox:
-  ;; ((js:get-property "Object" "getPrototypeOf") object))
-  (bind ((constructor (js:get-property object "__proto__" "constructor")))
-    (or (element *type-mapping* constructor)
-	constructor)))
-
-(define-function check-type (value (type <type>))
-  "Checks an object to ensure that it is an instance of a specified type."
-  (when (not (instance? value type))
-    (signal (make <type-error>
-		  value: value
-		  type: type))))
-
-(define-function instance? (object (type <type>))
-  "Tests wether an object is an instance of a type."
-  ((js:get-property (if (js:has-property? type "%internal-type")
-			(js:get-property type "%internal-type")
-		        type)
-		    "prototype" "isPrototypeOf")
-   object))
-
-;;;; functional
-
-;; unlike the specification, doesn't require any arguments
-(define-function apply ((function <function>) #rest arguments)
-  "Applies a function to arguments."
-  (js:set (js:get-property apply "%skip") #t)
-  ((js:get-property function "apply") js:null
-   (if (js:> (size arguments) 1)
-       (concatenate (but-last arguments)
-		    (last arguments))
-       (first arguments))))
-
-(define-function curry ((function <function>) #rest curried-args)
-  "Returns a function based on an exisiting function
-and a number of default initial arguments."
-  (method (#rest args)
-    (apply function (concatenate curried-args args))))
-
-(define-function rcurry ((function <function>) #rest curried-args)
-  "Returns a function based on an exisiting function
-and a number of default final arguments."
-  (method (#rest args)
-    (apply function (concatenate args curried-args))))
-
-(define-function always (value)
-  "Returns a function that always returns a particular object."
-  (method (#rest args)
-    value))
-
-
-;;;; sequence
-
-;; every subclass needs to implement
-;; * copy-sequence
-;; * reverse(!)
-;; * sort(!)
-
-(define-class <sequence> (<collection>))
-
-(define-function first ((sequence <sequence>))
-  "Returns the first element of a sequence."
-  (element sequence 0))
-
-(define-function second ((sequence <sequence>))
-  "Returns the second element of a sequence."
-  (element sequence 1))
-
-(define-function third ((sequence <sequence>))
-  "Returns the third element of a sequence."
-  (element sequence 2))
-
-;; unlike specification, defined as function
-(define-function last ((sequence <sequence>))
-  "Returns the last element of a sequence."
-  (element sequence (- (size sequence) 1)))
-
-(define-method replace-subsequence
-    ((target-sequence <sequence>) (insert-sequence <sequence>)
-     #key (start 0) (end (size target-sequence)))
-  "Returns a sequence where a portion of the sequence is replaced with
-the elements of another sequence."
-  (concatenate (copy-sequence target-sequence end: start)
-	       insert-sequence
-	       (copy-sequence target-sequence start: end)))
-
-(define-method but-last ((sequence <sequence>))
-  (copy-sequence sequence end: (- (size sequence) 1)))
-
-(define-method choose-by ((predicate <function>) (test-sequence <sequence>)
-			  (value-sequence <sequence>))
-  "Returns those elments of a sequence that correspond to those in another
-sequence that satisfy a predicate."
-  (bind ((test-keys (choose (method (test-key)
-			      (predicate (element test-sequence test-key)))
-			    (key-sequence test-sequence))))
-    (map (curry element value-sequence) test-keys)))
-
-;;;; table
-
-(define-class <table> (<collection>))
-
-(define-method make ((class (singleton <deque>)) #key (size 0))
-  ;; size ignored
+(define-function js:make-object ()
   (js:new (js:identifier "Object")))
 
-(define-method element ((table <table>) key #key default)
-  "Returns the element associated with a particular key."
-  (or (when (js:has-property? table key)
-	(js:get-property table key))
-      default))
+;;;; collection primitives
+;; (only work on JavaScript arrays)
 
-(define-method (setter element) ((table <table>) key new-value)
-  "Sets the element associated with a particular key."
-  (js:set-property table key new-value))
+(define-function %array (#rest elements)
+  elements)
 
-(define-method key-sequence ((table <table>))
-  "Returns a sequence containing the keys of its collection argument."
-  (js:property-sequence table))
+(define-function %push (array new-value)
+  ((js:get-property array "unshift") new-value)
+  array)
 
-(define-method size ((table <table>))
-  "Returns the size of table."
-  (js:length table))
+(define-function %push-last (array new-value)
+  ((js:get-property array "push") new-value)
+  array)
 
-(define-function table (#rest elements)
-  (bind ((table (make <table>)))
-    (reduce (method (key current)
-	      (if key
-		  (begin
-		    (set! (element table key) current)
-		    #f)
-		  current))
-	    #f elements)))
+(define-function %pop (array)
+  ((js:get-property array "shift"))
+  array)
 
-;;;; deque
+(define-function %pop-last (array)
+  ((js:get-property array "pop"))
+  array)
 
-(define-class <deque> (<sequence>))
+(define-function %add! (array new-value)
+  (%push array new-value))
 
-(define-method make ((class (singleton <deque>)) #key (size 0) fill)
-  (bind ((deque (js:new (js:identifier "Array") size)))
-    (do (rcurry (curry (setter element) deque) fill)
-        (key-sequence deque))
-    deque))
+(define-function %copy-sequence (array #key (start 0) (end (%size array)))
+  (js:slice array start end))
 
-(define-method push ((deque <deque>) new-value)
-  "Adds an element to the front of a deque."
-  ((js:get-property deque "unshift") new-value))
+(define-function %concatenate (first-array #rest more-arrays)
+  ((js:get-property "Array" "prototype" "concat" "apply")
+   first-array more-arrays))
 
-(define-method push-last ((deque <deque>) new-value)
-  "Adds an element to the end of a deque."
-  ((js:get-property deque "push") new-value))
+(define-function %reverse! (array)
+  ((js:get-property array "reverse")))
 
-(define-method pop ((sequence <sequence>))
-  "Removes and returns the first element of a deque."
-  ((js:get-property deque "shift")))
+(define-function %reverse (array)
+  ((js:get-property (%copy-sequence array) "reverse")))
 
-(define-method pop-last ((sequence <sequence>))
-  "Removes and returns an element from the end of a deque."
-  ((js:get-property sequence "pop")))
+(define-function %sort! (array #key (test <))
+  ((js:get-property array "sort") test))
 
-(define-method add! ((deque <deque>) new-value)
-  "Adds an element at the beginning of the deque."
-  (push deque new-value))
+(define-function %sort (array #key (test <))
+  (%sort! (%copy-sequence array) test: test))
 
-(define-method copy-sequence ((deque <deque>)
-			      #key (start 0) (end (size deque)))
-  "Returns a new deque containing the elements of deque
-between start and end."
-  (js:slice deque start end))
+(define-function %element (array key #key default)
+  (or (js:get-property array key) default))
 
-(define-method element ((deque <deque>) key #key default)
-  "Returns the element associated with a particular key."
-  (or (js:get-property deque key) default))
+(define-function (setter %element) (array key new-value)
+  (js:set (js:get-property array key) new-value))
 
-(define-method (setter element) ((deque <deque>) key new-value)
-  "Sets the element associated with a particular key."
-  (js:set-property deque key new-value))
+(define-function %key-sequence (array)
+  (js:property-sequence array))
 
-(define-method key-sequence ((deque <deque>))
-  "Returns a sequence containing the keys of its collection argument."
-  (js:property-sequence deque))
+(define-function %size (array)
+  (js:length array))
 
-(define-method size ((deque <deque>))
-  "Returns the size of deque."
-  (js:length deque))
+(define-function %empty? (array)
+  (js:== (%size array) 0))
+
+(define-function %do (function array)
+  (js:for-each function array))
+
+(define-function %map (function array)
+  ((js:get-property array "map") function))
+
+(define-function %reduce1 (function array)
+  ((js:get-property array "reduce") function))
+
+(define-function %reduce (function initial-value array)
+  (%reduce1 function
+	    (%concatenate (%array initial-value)
+			  array)))
+
+(define-function %every? (function array)
+  ((js:get-property array "every")
+   (method (element)
+     (%true? (function element)))))
+
+(define-function %choose (function array)
+  ((js:get-property array "filter")
+   (method (element)
+     (%true? (function element)))))
+
+(define %not-found (js:make-object))
+
+(define-function %find-key (array predicate #key (skip 0) failure)
+  (bind ((keys (%choose (method (index)
+			  (%true? (predicate (%element array index))))
+			(%key-sequence array))))
+    (or (%element keys skip) failure)))
+
+(define-function %any? (function array)
+  (block (return)
+    (js:for-in (i array)
+      (js:var result (function (%element array i)))
+      (when result
+	(return result)))
+    #f))
+
+(define-function %member? (value array)
+  (%true? (%any? (method (other-value)
+		   (%== value other-value))
+		 array)))
+
+(define-function %replace-subsequence (target-array insert-array
+				       #key (start 0) (end (%size target-array)))
+  (%concatenate (%copy-sequence target-array end: start)
+		insert-array
+		(%copy-sequence target-array start: end)))
+
+(define-function %first (array)
+  (%element array 0))
+
+(define-function %second (array)
+  (%element array 1))
+
+(define-function %third (array)
+  (%element array 2))
+
+(define-function %last (array)
+  (%element array (js:- (%size array) 1)))
+
+(define-function %rest (array)
+  (js:slice array 1))
+
+(define-function %but-last (array)
+  (js:slice array 0 -1))
+
+(define-function %choose-by (predicate test-array value-array)
+  (bind ((test-keys (%choose (method (test-key)
+			       (predicate (%element test-array test-key)))
+			     (%key-sequence test-array))))
+    (%map (%curry %element value-array) test-keys)))
 
 ;;;; string
 
