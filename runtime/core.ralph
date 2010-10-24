@@ -9,7 +9,6 @@
 	   (js:identifier "_k")
 	   <object>
 	   <non-local-exit>
-	   values))
 
 ;;;; define
 
@@ -105,40 +104,18 @@
 ;; TODO: replace with proper define-class with slot
 ;; (superclass: condition?)
 (define <non-local-exit>
-  (%function js:null (name values)
+  (%function js:null (name value)
     (begin
      (js:set (js:get-property js:this "name") name)
-     (js:set (js:get-property js:this "values") values)
+     (set! (js:get-property js:this "value") value)
      (js:return js:this))))
 
 ;; TODO: replace with proper initialization method
 (define-function %make-non-local-exit-function (name)
-  (method (#rest values)
+  (method (value)
     ;; TODO: use signal and proper make call
     (js:throw (js:new <non-local-exit>
-		      name values))))
-
-;;;; multiple return values
-
-(define-function values (#rest values)
-  (when (%empty? values)
-    (js:set values (%array #f)))
-  (when (js:> (%size values) 1)
-    ;; function who called 'values'
-    (js:var callee (js:get-property js:arguments "callee" "caller"))
-    ;; skip 'scope functions'
-    (js:var caller
-	    (for ((caller callee (js:get-property caller "caller"))
-		  (caller2 #f caller))
-		 ((or (%not caller)
-		      (and (js:has-property? caller "%top")
-			   (%not (js:has-property? caller "%skip"))))
-		  caller2)))
-    ;; set values on the function
-    ;; that called the function which returns values
-    (js:set (js:get-property caller "otherValues")
-	    ((js:get-property values "slice") 1)))
-  (js:get-property values 0))
+		      name value))))
 
 ;;;; JS utilities
 
@@ -315,7 +292,6 @@
 ;;;; functional primitives
 
 (define-function %apply (function #rest arguments)
-  (js:set (js:get-property %apply "%skip") #t)
   ((js:get-property function "apply") js:null
    (if (js:> (%size arguments) 1)
        (%concatenate (%but-last arguments)

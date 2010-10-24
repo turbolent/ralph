@@ -59,16 +59,12 @@ function addReturn (forms) {
     return forms;
 }
 
-function functionDeclaration (args, body) {
+function functionDeclaration (name, args, body) {
     var documentation = [];
     if (typeof body[0] == 'string' && body.length > 1) {
 	documentation.push([S('js:documentation'), body.shift()]);
     }
-    var functionSymbol = Symbol.generate();
     var restAndKey = [];
-    if (searchHead(body, S('values')))
-	// named function access better than using arguments.callee
-	restAndKey.push([S('js:set'), [S('js:get-property'), functionSymbol, "%top"], S('#t')]);
     var rest = [S('js:argument-list'), S('js:arguments'), requiredArguments(args).length];
     var restPosition = args.indexOf(HashSymbol.rest);
     if (restPosition >= 0) {
@@ -113,7 +109,7 @@ function functionDeclaration (args, body) {
 			 [S('js:var'), valueVar, [S('js:get-property'), restVar, [S('js:+'), indexVar, 1]]],
 			 [S('when'), [S('js:==='), [S('js:get-property'), keyVar, "constructor"], S('<keyword>')], setter]]);
     }
-    return [S('%function'), functionSymbol, argumentNames(requiredArguments(args)),
+    return [S('%function'), name ? name : S('js:null'), argumentNames(requiredArguments(args)),
 	    [S('begin')].concat(restAndKey).concat(addReturn(body))];
 }
 
@@ -135,53 +131,20 @@ var macros = {
     },
     'method': function (args) {
 	var body = arguments.toArray().slice(1);
-	return functionDeclaration(args, body);
+	return functionDeclaration(S('js:null'), args, body);
     },
     'bind': function (bindings) {
 	var body = arguments.toArray().slice(1);
 	var declarations = [];
-	bindings.forEach(function (binding) {
-	    var value = binding[binding.length - 1];
-	    var variables = binding.slice(0, -1);
-	    var restPosition = variables.indexOf(HashSymbol.rest);
-	    var normalVariables = binding.slice(0, (restPosition >= 0 ?
-						    restPosition : variables.length));
-	    var valueSymbol = null;
-	    declarations.push([S('js:var'),
-			       (normalVariables.length > 0 ? normalVariables[0] :
-				(valueSymbol = Symbol.generate())),
-			       value]);
-	    if (normalVariables.length > 1 || restPosition >= 0) {
-		var otherValuesSymbol = Symbol.generate();
-		var otherValues = [S('js:get-property'), 'arguments', 'callee', 'otherValues'];
-		var i = 0;
-		var setters = normalVariables.slice(1)
-		    .map(function (variable) {
-			return [S('js:var'), variable,
-				[S('or'), [S('js:get-property'), otherValuesSymbol, i++], S('#f')]];
-		    });
-		declarations.push([S('js:try'),
-				   [S('begin'),
-				    [S('js:var'), otherValuesSymbol, [S('or'), otherValues, [S('js:array')]]]]
-				   .concat(setters)
-				   .concat(restPosition >= 0 ?
-				    	   [[S('js:var'), variables[restPosition + 1],
-				    	     (normalVariables.length == 0 ?
-					      [[S('js:get-property'), [S('js:array'), valueSymbol], 'concat'],
-					       otherValuesSymbol]
-					      : (normalVariables.length == 1 ? otherValuesSymbol
-						 : [[S('js:get-property'), otherValuesSymbol, 'slice'],
-						    normalVariables.length - 1]))]]
-					   : []),
-				   // catch variable, and catch block
-				   null, null,
-				   [S('js:set'), otherValues, S('js:undefined')]]);
-	    }
-	});
-	return [[S('%function'), S('js:null'), [],
-		 [S('begin')]
-		 .concat(declarations)
-		 .concat(addReturn(body))]];
+	var binding = bindings[0]
+	var variable = binding[0];
+	var value = binding[1];
+	return [[S('%function'), S('js:null'), [variable],
+		 bindings.length > 1 ?
+		 [S('js:return'),
+		  [S('bind'), bindings.slice(1)].concat(body)]
+		 : [S('begin')].concat(addReturn(body))],
+		value];
     },
     'when': function (test) {
 	var body = arguments.toArray().slice(1);
@@ -333,7 +296,7 @@ var macros = {
 		      [S('and'),
 		       [S('js:==='), [S('js:get-property'), conditionSymbol, 'constructor'], S('<non-local-exit>')],
 		       [S('js:==='), [S('js:get-property'), conditionSymbol, 'name'], returnSymbol.name]],
- 		      [S('%apply'), S('values'), [S('js:get-property'), conditionSymbol, 'values']]]]];
+ 		      [S('js:get-property'), conditionSymbol, 'value']]]];
 	} else
 	    // TODO:
 	    return [S('begin'), body];
