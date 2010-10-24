@@ -261,7 +261,8 @@ var macros = {
 	return [S('js:if'), [S('%true?'), test], then, _else];
     },
     'set!': function (expression, value) {
-	if (expression instanceof Array)
+	if (expression instanceof Array
+	    && expression[0] != S('js:get-property'))
 	    return ([[S('setter'), expression[0]]]
 		    .concat(expression.slice(1))
 		    .concat([value]));

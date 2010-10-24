@@ -8,21 +8,21 @@
 	   %interned-keywords
 	   (js:identifier "_k")
 	   <object>
-	   <non-local-exit>
+	   <non-local-exit>))
 
 ;;;; define
 
 (%%define %define
   (%function js:null (name value)
     (begin
-      (js:set (js:get-property *module* name) value)
+      (set! (js:get-property *module* name) value)
       (js:if (js:>= ((js:get-property *module* "%exports" "indexOf") name) 0)
              (%export name value)
 	     #f))))
 
 (define %export
   (%function js:null (name value)
-     (js:set (js:get-property exports name) value)))
+     (set! (js:get-property exports name) value)))
 
 ;; manual export necessary
 (%export (js:escape %define) %define)
@@ -67,20 +67,27 @@
 			(js:get-property getter "%setter"))))
       (%define name function)
       (when setter
-	(js:set (js:get-property function "%setter") setter)))))
+	(set! (js:get-property function "%setter") setter)))))
 
 ;;;; setter
 
 (define %define-setter
   (%function js:null (name function)
     (begin
-      (when (%not (%get-definition name))
+      (unless (%get-definition name)
 	(%define name (js:new (js:identifier "Function"))))
-      (js:set (js:get-property (%get-definition name) "%setter") function))))
+      (set! (js:get-property (%get-definition name) "%setter") function))))
 
 (define-function setter (function)
   (when (js:has-property? function "%setter")
     (js:get-property function "%setter")))
+
+;;;;
+
+(define-function %make (class)
+  (js:var object (js:make-object))
+  (set! (js:get-property object "%class") class)
+  object)
 
 ;;;; keywords
 
@@ -94,9 +101,9 @@
        (if (js:has-property? %interned-keywords name)
 	   (js:get-property %interned-keywords name)
 	   (begin
-	    (js:set keyword (js:new <keyword>))
-	    (js:set (js:get-property keyword "%name") name)
-	    (js:set (js:get-property %interned-keywords name) keyword)
+	    (set! keyword (%make <keyword>))
+	    (set! (js:get-property keyword "%name") name)
+	    (set! (js:get-property %interned-keywords name) keyword)
 	    keyword))))))
 
 ;;;; non-local exit
@@ -106,7 +113,7 @@
 (define <non-local-exit>
   (%function js:null (name value)
     (begin
-     (js:set (js:get-property js:this "name") name)
+     (set! (js:get-property js:this "name") name)
      (set! (js:get-property js:this "value") value)
      (js:return js:this))))
 
@@ -192,7 +199,7 @@
   (or (js:get-property array key) default))
 
 (define-function (setter %element) (array key new-value)
-  (js:set (js:get-property array key) new-value))
+  (set! (js:get-property array key) new-value))
 
 (define-function %key-sequence (array)
   (js:property-sequence array))
