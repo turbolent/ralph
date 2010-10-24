@@ -214,7 +214,11 @@
   (js:for-each function array))
 
 (define-function %map (function array)
-  ((js:get-property array "map") function))
+  ((js:get-property array "map")
+   ;; JS map also additionally passes the index and
+   ;; traversed array - might clash when using curry/rcurry
+   (method (element)
+     (function element))))
 
 (define-function %reduce1 (function array)
   ((js:get-property array "reduce") function))
