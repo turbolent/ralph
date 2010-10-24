@@ -187,7 +187,8 @@ var macros = {
     'bind-methods': function (bindings) {
 	var body = arguments.toArray().slice(1);
 	var methodBindings = bindings.map(function (binding) {
-	    return [binding[0], [S('method')].concat(binding.slice(1))];
+	    return [binding[0], functionDeclaration(binding[0], binding[1],
+						    binding.slice(2))];
 	});
 	return [S('bind'), methodBindings].concat(body);
     },
