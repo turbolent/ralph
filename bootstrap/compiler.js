@@ -343,6 +343,18 @@ var macros = {
 			 .concat(nextClauses)]),
     		end.length == 1 ? S('#f') : end[1]];
     },
+    'dotimes': function (varCountResult) {
+	var body = arguments.toArray().slice(1);
+	var variable = varCountResult[0];
+	var count = varCountResult[1];
+	var result = varCountResult[2];
+	if (result === undefined)
+	    result = S('#f');
+	return [S('for'),
+		[[variable, 0, [S('js:+'), variable, 1]]],
+		[[S('js:>='), variable, count], result]]
+	    .concat(body);
+    },
     'and': function () {
 	var expressions = arguments.toArray();
 	if (expressions.length === 0)
