@@ -154,6 +154,13 @@
 ;;;; collection primitives
 ;; (only work on JavaScript arrays)
 
+;; creates a JS array, ie. dimension is 1
+(define-function %make-array (#key (size 0) (fill #f))
+  (bind ((array (js:new (js:identifier "Array") size)))
+    (for ((i 0 (%+ i 1)))
+	 ((%>= i (%size array)) array)
+      (js:set (js:get-property array i) fill))))
+
 (define-function %array (#rest elements)
   elements)
 
@@ -397,7 +404,7 @@
 	type)))
 
 (define-function %check-type (value type)
-  (when (%not (%instance? value type))
+  (unless (%instance? value type)
     (error "check-type failed")))
 
 (define-function %instance? (object type)
