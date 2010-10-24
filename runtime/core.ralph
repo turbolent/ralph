@@ -459,23 +459,30 @@
 		   (%concatenate (%map compute-class-linearization c-direct-superclasses)
 				 (%array c-direct-superclasses))))))
 
+(define *classes* (%array))
 
-(define-function %make-object ()
-  (js:var object (js:make-object))
-;;  (js:set (js:get-property object "%class") <object>)
-  object)
+(define-function class-count ()
+  (%size *classes*))
 
-(define-function %make-class (name direct-superclasses)
+(define-function class-for-id (id)
+  (%element *classes* id))
+
+(define-function %make-class (name direct-superclasses slots)
   (js:var class (js:make-object))
-;;  (js:set (js:get-property object "%class") <class>)
+;;  (set! (js:get-property object "%class") <class>)
 ;; TODO: remove
-  (js:set (js:get-property class "toString")
-	  (method ()
-	    (js:+ "{class " name "}")))
-  (js:set (js:get-property class "class-name") name)
-  (js:set (js:get-property class "class-direct-superclasses")
-	  direct-superclasses)
+  (set! (js:get-property class "toString")
+	(method ()
+	  (js:+ "{class " name "}")))
+  (set! (js:get-property class "class-name") name)
+  (set! (js:get-property class "class-direct-superclasses")
+	direct-superclasses)
+  (set! (js:get-property class "class-id") (class-count))
+  (%push-last *classes* class)
   class)
+
+(define-function class-id (class)
+  (js:get-property class "class-id"))
 
 (%define-class <object> ())
 (%define-class <type> (<object>))
@@ -503,3 +510,94 @@
 (%map-types <string> (js:identifier "String"))
 (%map-types <number> (js:identifier "Number"))
 (%map-types <boolean> (js:identifier "Boolean"))
+
+;; TODO: replace with proper class defintion
+(define-function %make-generic-function ()
+  (bind ((generic-function (method () (print "GF"))))
+    (set! (js:get-property generic-function "methods")
+	  (%array))
+    generic-function))
+
+(define-function methods (generic-function)
+  (js:get-property generic-function "methods"))
+
+(define-function add-method (generic-function specializers method)
+  (set! (js:get-property method "specializers")	specializers)
+  (%add! (methods generic-function) method))
+
+(define-function specializers (method)
+  (js:get-property method "specializers"))
+
+(define-function specializer-classes (generic-function position)
+  (%map (%rcurry %element position)
+	(%map specializers (methods generic-function))))
+
+(define-function single-closest-pole (id pole-table pole-classes)
+  (bind ((superclasses (%map class-id
+			     (direct-superclasses (class-for-id id))))
+	 (first-pole (and (%not (%empty? superclasses))
+			  (%element pole-table (%first superclasses)))))
+    (if (%== (%size superclasses) 1)
+	;; case 1: only one superclass
+	first-pole
+        ;; scan over our superclasses, checking to see if our poles
+        ;; are identical, and finding our largest pole
+        (bind ((all-poles-identical? #t)
+	       (current-largest first-pole))
+	  (%do (method (superclass)
+	         (bind ((pole (%element pole-table superclass)))
+		   (unless (%= pole first-pole)
+		     (set! all-poles-identical? #f))
+		   (when (%> pole current-largest)
+		     (set! current-largest pole))))
+	       superclasses)
+	  (if all-poles-identical?
+	      ;; case 2: all superclasses share the same pole
+	      first-pole
+	      ;; return #f if largest pole doesn’t hide the rest
+	      (block (return)
+	        (bind ((candidate (class-for-id (%element pole-classes
+							  current-largest))))
+		  (%do (method (superclass)
+		         (bind ((pole (class-for-id (%element pole-classes
+							      (%element pole-table superclass)))))
+			   (unless (or (%= candidate pole)
+				       (subclass? candidate pole))
+			     ;; case 3b: At least two close poles
+			     (return #f))))
+		       superclasses)
+		  ;; case 3a: one pole "hides" the rest
+		  current-largest)))))))
+
+(define-function compute-pole-table (generic-function position)
+  (bind ((specializers (specializer-classes generic-function position))
+	 (pole-table (%make-array size: (class-count) fill: 0))
+	 (next-pole-id 0)
+	 (pole-classes (%array)))
+    (bind-methods ((create-pole (id)
+		     (set! (%element pole-table id) next-pole-id)
+		     (set! next-pole-id (%+ next-pole-id 1))
+		     (%push-last pole-classes id)))
+      ;; mark specializers
+      (%do (method (specializer)
+	     (set! (%element pole-table (class-id specializer)) #f))
+	  specializers)
+      ;; entry 0 will always correspond to <object>,
+      ;; the ultimate parent of all classes
+      (create-pole 0)
+      ;; assign poles to all other classes
+      (for ((i 1 (%+ i 1)))
+	   ((%>= i (class-count)))
+        (if (%element pole-table i)
+	    (bind ((closest (single-closest-pole i pole-table pole-classes)))
+	       (if closest
+		   ;; copy down the closest i-pole
+		   (set! (%element pole-table i)
+			 (%element pole-table closest))
+		   ;; create a secondary pole
+		   (create-pole i)))
+	    ;; there’s a specializer on this class,
+	    ;; so create a new primary pole
+	    (create-pole i)))
+      pole-table)))
+
