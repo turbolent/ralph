@@ -253,11 +253,13 @@
 
 (define %not-found (js:make-object))
 
-(define-function %find-key (array predicate #key (skip 0) failure)
-  (bind ((keys (%choose (method (index)
-			  (%true? (predicate (%element array index))))
-			(%key-sequence array))))
-    (or (%element keys skip) failure)))
+(define-function %find-key (array predicate #key (skip 0) failure from-end)
+  (bind ((keys (%key-sequence array))
+	 (satisfying-keys
+	  (%choose (method (index)
+		     (%true? (predicate (%element array index))))
+		   (if from-end (%reverse keys) keys))))
+    (or (%element satisfying-keys skip) failure)))
 
 (define-function %any? (function array)
   (block (return)
