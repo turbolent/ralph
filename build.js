@@ -28,7 +28,9 @@ function compileFile (path) {
 			   + basename(path) + '.js'),
 			  'w');
     var code = source.readWhole();
-    target.write(compiler.compile(code) + '\n');
+    target.write("(function () {\n"
+		 + compiler.compile(code)
+		 + '\n})();\n');
     source.close();
     target.close();
 }

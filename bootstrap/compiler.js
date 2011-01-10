@@ -395,10 +395,6 @@ var specialForms = {
 	    name = null;
 	return [S('js:function'), name, args, macroexpand(body)];
     },
-    '%%define': function (name, value) {
-	return [S('js:set'), [S('js:get-property'), S('*module*'), name.toString()],
-		macroexpand(value)];
-    },
     'define': function (name, value) {
 	return [S('%define'), name.toString(), macroexpand(value)];
     },

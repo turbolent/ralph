@@ -12,13 +12,12 @@
 
 ;;;; define
 
-(%%define %define
-  (%function js:null (name value)
-    (begin
-      (set! (js:get-property *module* name) value)
-      (js:if (js:>= ((js:get-property *module* "%exports" "indexOf") name) 0)
-             (%export name value)
-	     #f))))
+(%function %define (name value)
+  (begin
+    (set! (js:get-property *module* name) value)
+    (js:if (js:>= ((js:get-property *module* "%exports" "indexOf") name) 0)
+	   (%export name value)
+	   #f)))
 
 (define %export
   (%function js:null (name value)
