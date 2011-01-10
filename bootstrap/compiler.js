@@ -301,7 +301,7 @@ var macros = {
  		      [S('js:get-property'), conditionSymbol, 'value']]]];
 	} else
 	    // TODO:
-	    return [S('begin'), body];
+	    return [S('begin')].concat(body);
     },
     'while': function (test) {
 	var body = arguments.toArray().slice(1);
