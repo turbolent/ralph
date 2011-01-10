@@ -608,7 +608,10 @@
 	       (if closest
 		   ;; copy down the closest i-pole
 		   (set! (%element pole-table i)
-			 (%element pole-table closest))
+			 ;; CHANGED
+			 ;; Kidd's pseudo-code does a pole-table lookup
+			 ;; which is obviously wrong
+			 closest)
 		   ;; create a secondary pole
 		   (create-pole i)))
 	    ;; there’s a specializer on this class,
