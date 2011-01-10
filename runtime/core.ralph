@@ -139,9 +139,15 @@
 
 (define-function js:property-sequence (object)
   (bind ((keys (js:new (js:identifier "Array"))))
-    (js:for-in (key object)
-      ((js:get-property keys "push") key))
-    keys))
+    (if (%instance? object (js:identifier "Array"))
+	;; TODO: replace with %range
+	(for ((i 0 (%+ i 1)))
+	     ((%>= i (%size object)) keys)
+	  ((js:get-property keys "push") i))
+        (begin
+	 (js:for-in (key object)
+	   ((js:get-property keys "push") key))
+	 keys))))
 
 (define-function js:argument-list (arguments skip)
   ((js:get-property "Array" "prototype"
