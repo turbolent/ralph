@@ -354,14 +354,14 @@
 ;;;; comparison primitives
 
 (define-function %binary= (object1 object2)
-  ;; TODO:
-  (js:and (js:=== (%object-class object1)
-		  (%object-class object2))
+  (js:and (js:=== (object-class object1)
+		  (object-class object2))
 	  (js:== object1 object2)))
 
 (define-function %binary< (object1 object2)
-  ;; TODO:
-  (js:< object1 object2))
+  (js:and (js:=== (object-class object1)
+		  (object-class object2))
+	  (js:< object1 object2)))
 
 (define-function %compare (function object1 object2 more-objects)
   (block (return)
