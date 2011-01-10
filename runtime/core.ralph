@@ -335,6 +335,10 @@
   (method (#rest args)
     value))
 
+(define-function %complement (function)
+  (method (#rest arguments)
+    (%not (%apply function arguments))))
+
 ;;;; arithmetic primitives
 ;; (only work on JavaScript numbers)
 
