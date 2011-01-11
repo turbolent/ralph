@@ -216,11 +216,6 @@ var macros = {
 		   conditionVariable,
 		   [S('cond')].concat(cases)]]]];
     },
-    // TODO: define-method
-    'define-method': function () {
-	return [S('js:statements'),
-		[S('define-function')].concat(arguments.toArray())];
-    },
     'define-module': function (name) {
 	var keyArgs = arguments.toArray().slice(1);
 	var imports = [];
