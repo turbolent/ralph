@@ -32,7 +32,7 @@ var decimalNumberExpression = /^[+-]?\d+\.?\d*(?:e-?\d*(?:\d\.?|\.?\d)\d*)?/i;
 
 Reader.prototype.readAtom = function () {
     var c = this.stream.peekChar();
-    var rest = this.stream.rest()
+    var rest = this.stream.rest();
     if ([hexNumberExpression,
 	 octalNumberExpression,
 	 decimalNumberExpression]
