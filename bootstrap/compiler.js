@@ -212,7 +212,8 @@ var macros = {
 	});
 	return [[S('%function'), S('js:null'), [],
 		 [S('begin'),
-		  [S('js:try'), addReturn(body),
+		  [S('js:try'),
+		   [S('js:return'), body],
 		   conditionVariable,
 		   [S('cond')].concat(cases)]]]];
     },
