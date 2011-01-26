@@ -8,7 +8,9 @@
 	   %interned-keywords
 	   (js:identifier "_k")
 	   <object>
-	   <non-local-exit>))
+	   <non-local-exit>
+	   not
+	   true?))
 
 ;;;; define
 
@@ -26,35 +28,34 @@
 ;; manual export necessary
 (%export (js:escape %define) %define)
 
-(define js:has-property?
+(define %has-property?
   (%function js:null (object name)
     (js:return ((js:get-property object "hasOwnProperty") name))))
 
 (define %get-definition
   (%function js:null (name)
-    (js:return (and (js:has-property? *module* name)
+    (js:return (and (%has-property? *module* name)
 		    (js:get-property *module* name)))))
 
-
-;;;; boolean primitives
-
-(define js:constructor?
+(define %has-constructor?
   (%function js:null (object constructor)
     (js:return (js:=== (js:get-property object "constructor")
 		       constructor))))
 
-(define %true?
+;;;; boolean primitives
+
+(define true?
   (%function js:null (value)
     (js:return
      (js:and (js:not (js:=== value js:null))
 	     (js:not (js:=== value js:undefined))
-	     (js:or (js:constructor? value (js:identifier "Number"))
-		    (js:constructor? value (js:identifier "String"))
+	     (js:or (%has-constructor? value (js:identifier "Number"))
+		    (%has-constructor? value (js:identifier "String"))
 		    (js:not (js:not value)))))))
 
-(define %not
+(define not
   (%function js:null (value)
-    (js:return (js:not (%true? value)))))
+    (js:return (js:not (true? value)))))
 
 ;;;; getter
 
@@ -62,7 +63,7 @@
   (%function js:null (name function)
     (bind ((getter (%get-definition name))
 	   (setter (and getter
-			(js:has-property? getter "%setter")
+			(%has-property? getter "%setter")
 			(js:get-property getter "%setter"))))
       (%define name function)
       (when setter
@@ -77,44 +78,51 @@
 	(%define name (js:new (js:identifier "Function"))))
       (set! (js:get-property (%get-definition name) "%setter") function))))
 
-(define-function setter (function)
-  (when (js:has-property? function "%setter")
+(define-function setter ((function <function>))
+  (when (%has-property? function "%setter")
     (js:get-property function "%setter")))
-
-;;;;
-
-(define-function %make (class)
-  (js:var object (js:make-object))
-  (set! (js:get-property object "%class") class)
-  object)
 
 ;;;; keywords
 
-(define %interned-keywords (js:new (js:identifier "Object")))
+(define-function make (type)
+  (js:new type))
+
+(define-function make-object ()
+  (make (js:identifier "Object")))
+
+(define %interned-keywords (make-object))
+
+(define <keyword> (js:new (js:identifier "Function")))
+
+(define-function keyword? (keyword)
+  (instance? keyword <keyword>))
 
 (%define "_k"
   (%function js:null (name)
     (begin
       (js:var keyword js:null)
       (js:return
-       (if (js:has-property? %interned-keywords name)
+       (if (%has-property? %interned-keywords name)
 	   (js:get-property %interned-keywords name)
 	   (begin
-	    (set! keyword (%make <keyword>))
+	    (set! keyword (make <keyword>))
 	    (set! (js:get-property keyword "%name") name)
 	    (set! (js:get-property %interned-keywords name) keyword)
 	    keyword))))))
 
 ;;;; non-local exit
 
-;; TODO: replace with proper define-class with slot
-;; (superclass: condition?)
+;; TODO: should be a type that conforms to condition protocol
+
 (define <non-local-exit>
   (%function js:null (name value)
     (begin
      (set! (js:get-property js:this "name") name)
      (set! (js:get-property js:this "value") value)
      (js:return js:this))))
+
+(define-function %non-local-exit? (condition)
+  (instance? condition <non-local-exit>))
 
 ;; TODO: replace with proper initialization method
 (define-function %make-non-local-exit-function (name)
@@ -123,501 +131,325 @@
     (js:throw (js:new <non-local-exit>
 		      name value))))
 
-;;;; JS utilities
-
-(define-function js:length (array)
-  (js:get-property array "length"))
-
-(define-function js:for-each (function objects)
-  ((js:get-property objects "forEach") function))
-
-(define-function js:slice (array start end)
-  ((js:get-property array "slice")
-   (or start 0)
-   (or end (js:length array))))
-
-(define-function js:property-sequence (object)
-  (bind ((keys (js:new (js:identifier "Array"))))
-    (if (%instance? object (js:identifier "Array"))
-	;; TODO: replace with %range
-	(for ((i 0 (%+ i 1)))
-	     ((%>= i (%size object)) keys)
-	  ((js:get-property keys "push") i))
-        (begin
-	 (js:for-in (key object)
-	   ((js:get-property keys "push") key))
-	 keys))))
-
-(define-function js:argument-list (arguments skip)
+(define-function %as-array (arguments skip)
   ((js:get-property "Array" "prototype"
 		    "slice" "call")
    arguments skip))
 
-(define-function js:make-object ()
-  (js:new (js:identifier "Object")))
+(define-function get (object (key <string>) #rest other-keys)
+  (bind ((result (get object key)))
+    (if (empty? other-keys)
+	result
+	(apply get object other-keys))))
+	 
+(define-function size ((array <array>))
+  (js:get-property array "length"))
 
-;;;; collection primitives
-;; (only work on JavaScript arrays)
+(define-function do ((function <function>) (array <array>))
+  ((js:get-property array "forEach") function))
 
-;; creates a JS array, ie. dimension is 1
-(define-function %make-array (#key (size 0) (fill #f))
-  (bind ((array (js:new (js:identifier "Array") size)))
-    (for ((i 0 (%+ i 1)))
-	 ((%>= i (%size array)) array)
-      (js:set (js:get-property array i) fill))))
+(define-function copy-sequence ((array <array>) #key (start 0) (end (size array)))
+  ((js:get-property array "slice")
+   (or start 0)
+   (or end (js:length array))))
 
-(define-function %array (#rest elements)
-  elements)
-
-(define-function %push (array new-value)
-  ((js:get-property array "unshift") new-value)
-  array)
-
-(define-function %push-last (array new-value)
+(define-function push-last ((array <array>) new-value)
   ((js:get-property array "push") new-value)
   array)
 
-(define-function %pop (array)
+(define-function inc ((number <number>))
+  (js:+ number 1))
+
+(define-function dec ((number <number>))
+  (js:- number 1))
+
+(define-function + ((number <number>) #rest more-numbers)
+  (reduce (method (number1 number2)
+	    (js:+ number1 number2))
+	  number more-numbers))
+
+(define-function - ((number <number>) #rest more-numbers)
+  (if (empty? more-numbers)
+      (js:negative number)
+      (reduce (method (number1 number2)
+	        (js:- number1 number2))
+	      number more-numbers)))
+
+(define-function * ((number1 <number>) (number2 <number>)
+		    #rest more-numbers)
+  (reduce1 (method (number1 number2)
+	     (js:* number1 number2))
+	   (concatenate (make-array number1
+				    number2)
+			more-numbers)))
+
+(define-function keys (object)
+  (bind ((keys (js:new (js:identifier "Array"))))
+    (if (instance? object (js:identifier "Array"))
+	;; TODO: replace with range
+	(for ((i 0 (inc i)))
+	     ((>= i (size object)) keys)
+	  (push-last keys i))
+        (begin
+	 (js:for-in (key object)
+	   (push-last keys key))
+	 keys))))
+
+(define-function make-array (#rest elements)
+  elements)
+
+(define-function push ((array <array>) new-value)
+  ((js:get-property array "unshift") new-value)
+  array)
+
+(define-function pop ((array <array>))
   ((js:get-property array "shift"))
   array)
 
-(define-function %pop-last (array)
+(define-function pop-last ((array <array>))
   ((js:get-property array "pop"))
   array)
 
-(define-function %add! (array new-value)
-  (%push array new-value))
+(define-function add! ((array <array>) new-value)
+  (push array new-value))
 
-(define-function %copy-sequence (array #key (start 0) (end (%size array)))
-  (js:slice array start end))
-
-(define-function %concatenate (first-array #rest more-arrays)
+(define-function concatenate ((first-array <array>) #rest more-arrays)
   ((js:get-property "Array" "prototype" "concat" "apply")
    first-array more-arrays))
 
-(define-function %reverse! (array)
+(define-function reverse! ((array <array>))
   ((js:get-property array "reverse")))
 
-(define-function %reverse (array)
-  ((js:get-property (%copy-sequence array) "reverse")))
+(define-function reverse ((array <array>))
+  (reverse! (copy-sequence array)))
 
-(define-function %sort! (array #key (test <))
+(define-function sort! ((array <array>) #key (test <))
   ((js:get-property array "sort") test))
 
-(define-function %sort (array #key (test <))
-  (%sort! (%copy-sequence array) test: test))
+(define-function sort ((array <array>) #key (test <))
+  (sort! (copy-sequence array) test: test))
 
-(define-function %element (array key #key default)
+(define-function element ((array <array>) (key <string>)
+			  #key default)
   (or (js:get-property array key) default))
 
-(define-function (setter %element) (array key new-value)
+(define-function (setter element) ((array <array>) key new-value)
   (set! (js:get-property array key) new-value))
 
-(define-function %key-sequence (array)
-  (js:property-sequence array))
+(define-function empty? ((array <array>))
+  (== (size array) 0))
 
-(define-function %size (array)
-  (js:length array))
-
-(define-function %empty? (array)
-  (js:== (%size array) 0))
-
-(define-function %do (function array)
-  (js:for-each function array))
-
-(define-function %map (function array)
+(define-function map ((function <function>) (array <array>))
   ((js:get-property array "map")
-   ;; JS map also additionally passes the index and
-   ;; traversed array - might clash when using curry/rcurry
+   ;; wrap in additional method, as JS map
+   ;; also additionally passes the index and
+   ;; the traversed array - might clash when
+   ;; using curry/rcurry
    (method (element)
      (function element))))
 
-(define-function %reduce1 (function array)
+(define-function reduce1 ((function <function>) (array <array>))
   ((js:get-property array "reduce") function))
 
-(define-function %reduce (function initial-value array)
-  (%reduce1 function
-	    (%concatenate (%array initial-value)
-			  array)))
+(define-function reduce ((function <function>) initial-value (array <array>))
+  (reduce1 function
+	   (concatenate (make-array initial-value)
+			array)))
 
-(define-function %every? (function array)
+(define-function every? ((function <function>) (array <array>))
   ((js:get-property array "every")
    (method (element)
-     (%true? (function element)))))
+     (true? (function element)))))
 
-(define-function %choose (function array)
+(define-function choose ((function <function>) (array <array>))
   ((js:get-property array "filter")
    (method (element)
-     (%true? (function element)))))
+     (true? (function element)))))
 
-(define %not-found (js:make-object))
+(define %not-found (make-object))
 
-(define-function %find-key (array predicate #key (skip 0) failure from-end)
-  (bind ((keys (%key-sequence array))
+(define-function find-key ((array <array>) (predicate <function>)
+			   #key (skip 0) failure from-end)
+  (bind ((keys (keys array))
 	 (satisfying-keys
-	  (%choose (method (index)
-		     (%true? (predicate (%element array index))))
-		   (if from-end (%reverse keys) keys))))
-    (or (%element satisfying-keys skip) failure)))
+	  (choose (method (index)
+		    (true? (predicate (element array index))))
+		  (if from-end
+		      (reverse keys)
+		      keys))))
+    (or (element satisfying-keys skip)
+	failure)))
 
-(define-function %any? (function array)
+(define-function any? ((function <function>) (array <array>))
   (block (return)
-    (js:for-in (i array)
-      (js:var result (function (%element array i)))
-      (when result
-	(return result)))
+    (do (method (element)
+	  (bind ((result (function element)))
+	    (when result
+	      (return result))))
+	array)
     #f))
 
-(define-function %member? (value array)
-  (%true? (%any? (method (other-value)
-		   (%== value other-value))
-		 array)))
+(define-function member? (value (array <array>))
+  (true? (any? (method (other-value)
+		 (== value other-value))
+	       array)))
 
-(define-function %replace-subsequence (target-array insert-array
-				       #key (start 0) (end (%size target-array)))
-  (%concatenate (%copy-sequence target-array end: start)
-		insert-array
-		(%copy-sequence target-array start: end)))
+(define-function choose-by ((predicate <function>)
+			    (test-array <array>)
+			    (value-array <array>))
+  (bind ((test-keys (choose (method (test-key)
+			      (predicate (element test-array test-key)))
+			    (keys test-array))))
+    (map (curry element value-array)
+	 test-array)))
 
-(define-function %first (array)
-  (%element array 0))
+(define-function first ((array <array>))
+  (element array 0))
 
-(define-function %second (array)
-  (%element array 1))
+(define-function second ((array <array>))
+  (element array 1))
 
-(define-function %third (array)
-  (%element array 2))
+(define-function third ((array <array>))
+  (element array 2))
 
-(define-function %last (array)
-  (%element array (js:- (%size array) 1)))
+(define-function last ((array <array>))
+  (element array (dec (size array))))
 
-(define-function %rest (array)
-  (js:slice array 1))
+(define-function rest ((array <array>))
+  (copy-sequence array start: 1))
 
-(define-function %but-last (array)
-  (js:slice array 0 -1))
+(define-function but-last ((array <array>))
+  (copy-sequence array end: -1))
 
-(define-function %choose-by (predicate test-array value-array)
-  (bind ((test-keys (%choose (method (test-key)
-			       (predicate (%element test-array test-key)))
-			     (%key-sequence test-array))))
-    (%map (%curry %element value-array) test-keys)))
+(define-function replace-subsequence (target-array insert-array
+				      #key (start 0) (end (size target-array)))
+  (concatenate (copy-sequence target-array end: start)
+	       insert-array
+	       (copy-sequence target-array start: end)))
 
-;;;; string primitives
+;;;; string
 
 ;; * as-uppercase! and as-lowercase! impossible,
 ;;   as strings in JavaScript are immutable
 
-(define-function %as-uppercase (string)
+(define-function as-uppercase ((string <string>))
   ((js:get-property string "toUpperCase")))
 
-(define-function %as-lowercase (string)
+(define-function as-lowercase ((string <string>))
   ((js:get-property string "toLowerCase")))
 
-;;;; functional primitives
+;;;; functional
 
-(define-function %apply (function #rest arguments)
+(define-function apply ((function <function>) #rest arguments)
   ((js:get-property function "apply") js:null
-   (if (js:> (%size arguments) 1)
-       (%concatenate (%but-last arguments)
-		     (%last arguments))
-       (%first arguments))))
+   (concatenate (but-last arguments)
+		(last arguments))))
 
-(define-function %curry (function #rest curried-args)
+(define-function curry ((function <function>) #rest curried-args)
   (method (#rest args)
-    (%apply function (%concatenate curried-args args))))
+    (apply function (concatenate curried-args args))))
 
-(define-function %rcurry (function #rest curried-args)
+(define-function rcurry ((function <function>) #rest curried-args)
   (method (#rest args)
-    (%apply function (%concatenate args curried-args))))
+    (apply function (concatenate args curried-args))))
 
-(define-function %always (value)
+(define-function always (value)
   (method (#rest args)
     value))
 
-(define-function %complement (function)
+(define-function complement ((function <function>))
   (method (#rest arguments)
-    (%not (%apply function arguments))))
+    (not (apply function arguments))))
 
-;;;; arithmetic primitives
-;; (only work on JavaScript numbers)
+;;;; comparison
 
-(define-function %+ (number #rest more-numbers)
-  (%reduce (method (number1 number2)
-	     (js:+ number1 number2))
-	   number more-numbers))
-
-(define-function %- (number #rest more-numbers)
-  (if (%empty? more-numbers)
-      (js:negative number)
-      (%reduce (method (number1 number2)
-	        (js:- number1 number2))
-	      number more-numbers)))
-
-;;;; comparison primitives
-
-(define-function %binary= (object1 object2)
-  (js:and (js:=== (%object-class object1)
-		  (%object-class object2))
+(define-function binary= (object1 object2)
+  (js:and (js:=== (type object1)
+		  (type object2))
 	  (js:== object1 object2)))
 
-(define-function %binary< (object1 object2)
-  (js:and (js:=== (%object-class object1)
-		  (%object-class object2))
+(define-function binary< (object1 object2)
+  (js:and (js:=== (type object1)
+		  (type object2))
 	  (js:< object1 object2)))
 
-(define-function %compare (function object1 object2 more-objects)
+(define-function compare ((function <function>) object1 object2 more-objects)
   (block (return)
-    (%reduce1 (method (object1 object2)
-	        (if (function object1 object2)
-		    object2
-		    (return #f)))
-	      (%concatenate (%array object1 object2)
-			    more-objects))
+    (reduce1 (method (object1 object2)
+	       (if (function object1 object2)
+		   object2
+		   (return #f)))
+	     (concatenate (make-array object1 object2)
+			  more-objects))
     #t))
 
-(define-function %= (object1 object2 #rest more-objects)
-  (%compare %binary= object1 object2 more-objects))
+(define-function = (object1 object2 #rest more-objects)
+  (compare binary= object1 object2 more-objects))
 
-(define-function %== (object1 object2 #rest more-objects)
-  (%compare (method (object1 object2)
-	      (js:=== object1 object2))
-	    object1 object2 more-objects))
+(define-function == (object1 object2 #rest more-objects)
+  (compare (method (object1 object2)
+	     (js:=== object1 object2))
+	   object1 object2 more-objects))
 
-(define-function %< (object1 object2 #rest more-objects)
-  (%compare %binary< object1 object2 more-objects))
+(define-function < (object1 object2 #rest more-objects)
+  (compare binary< object1 object2 more-objects))
 
-(define-function %> (object1 object2 #rest more-objects)
-  (%compare (%complement %binary<)
-	    object1 object2 more-objects))
+(define-function <= (object1 object2 #rest more-objects)
+  (compare (method (object1 object2)
+	     (or (binary< object1 object2)
+		 (binary= object1 object2)))
+	   object1 object2 more-objects))
 
-(define-function %<= (object1 object2 #rest more-objects)
-  (%compare (method (object1 object2)
-	      (or (%binary< object1 object2)
-		  (%binary= object1 object2)))
-	    object1 object2 more-objects))
+(define-function > (object1 object2 #rest more-objects)
+  (compare (method (object1 object2)
+	     (and (not (binary< object1 object2))
+		  (not (binary= object1 object2))))
+	   object1 object2 more-objects))
 
-(define-function %>= (object1 object2 #rest more-objects)
-  (%compare (method (object1 object2)
-	      (or (%not (%binary< object1 object2))
-		  (%binary= object1 object2)))
-	    object1 object2 more-objects))
+(define-function >= (object1 object2 #rest more-objects)
+  (compare (method (object1 object2)
+	     (or (not (binary< object1 object2))
+		 (binary= object1 object2)))
+	   object1 object2 more-objects))
 
 ;;;; reflection primitives
 
-(define-function %object-class (object)
+(define-function type (object)
   ;; Object.getPrototypeOf on primitives only works in FireFox:
   ;; ((js:get-property "Object" "getPrototypeOf") object))
   (bind ((type (js:get-property object "constructor")))
-    (if (js:has-property? type "%mapped-type")
-	(js:get-property type "%mapped-type")
+    (if (%has-property? type "%ralph-type")
+	(js:get-property type "%ralph-type")
 	type)))
 
-(define-function %check-type (value type)
-  (unless (%instance? value type)
+(define-function instance? (object type)
+  (bind ((actual-type
+	  (if (%has-property? type "%js-type")
+	      (js:get-property type "%js-type")
+	      type)))
+    (or
+     ;; primitive
+     (%has-constructor? object actual-type)
+     ;; object
+     ((js:get-property actual-type "prototype"
+		       "isPrototypeOf")
+      object))))
+
+(define-function check-type (value type)
+  (unless (instance? value type)
+    ;; TODO: throw condition
     (error "check-type failed")))
 
-(define-function %instance? (object type)
-  (js:var actual-type
-	  (if (js:has-property? type "%internal-type")
-	      (js:get-property type "%internal-type")
-	      type))
-  (js:or
-   ;; primitive
-   (js:constructor? object actual-type)
-   ;; object
-   ((js:get-property actual-type "prototype"
-		     "isPrototypeOf")
-    object)))
-;; TODO:
-;;   (subclass? (object-class object) type)
+;; TODO: set %ralph-type of JS built-ins
 
+(define-type <string>)
+(define-type <number>)
 
-;;;; object
+(define-function alias-type (ralph-type javascript-type)
+  (set! (js:get-property ralph-type "%js-type") javascript-type)
+  (set! (js:get-property javascript-type "%ralph-type") ralph-type))
 
-(define-function direct-superclasses ((class <class>))
-  (js:get-property class "class-direct-superclasses"))
+(alias-type <string> (js:identifier "String"))
+(alias-type <number> (js:identifier "Number"))
 
-(define-function subclass? (class1 class2)
-  (or (%== class1 class2)
-      (block (return)
-        (for ((classes-left
-	       (direct-superclasses class1)
-	       (%concatenate (direct-superclasses (%first classes-left))
-			     (%rest classes-left))))
-	     ((%empty? classes-left) #f)
-	  (when (%== class2 (%first classes-left))
-	    (return #t))))))
-
-(define-function compute-class-linearization ((c <class>))
-  (bind-methods ((merge-lists (reversed-partial-result
-			       remaining-inputs)
-		   (if (%every? %empty? remaining-inputs)
-		       (%reverse! reversed-partial-result)
-		       (bind-methods ((candidate ((c <class>))
-                                        (bind-methods ((rest? (l)
-                                                         (%member? c (%rest l))))
-					  (unless (%any? rest? remaining-inputs)
-					    c)))
-				      (candidate-at-head (l)
-                                        (unless (%empty? l)
-					  (candidate (%first l)))))
-                         (bind ((next (%any? candidate-at-head remaining-inputs)))
-                           (if next
-                               (bind-methods ((remove-next ((l <list>))
-                                                (if (%== (%first l) next)
-						    (%rest l)
-                                                    l)))
-                                 (merge-lists (%add! reversed-partial-result next)
-					      (%map remove-next remaining-inputs)))
-			       (error "Inconsistent precedence graph")))))))
-    (bind ((c-direct-superclasses (direct-superclasses c)))
-      (merge-lists (%array c)
-		   (%concatenate (%map compute-class-linearization c-direct-superclasses)
-				 (%array c-direct-superclasses))))))
-
-(define *classes* (%array))
-
-(define-function class-count ()
-  (%size *classes*))
-
-(define-function class-for-id (id)
-  (%element *classes* id))
-
-(define-function %make-class (name direct-superclasses slots)
-  (js:var class (js:make-object))
-;;  (set! (js:get-property object "%class") <class>)
-;; TODO: remove
-  (set! (js:get-property class "toString")
-	(method ()
-	  (js:+ "{class " name "}")))
-  (set! (js:get-property class "class-name") name)
-  (set! (js:get-property class "class-direct-superclasses")
-	direct-superclasses)
-  (set! (js:get-property class "class-id") (class-count))
-  (%push-last *classes* class)
-  class)
-
-(define-function class-id (class)
-  (js:get-property class "class-id"))
-
-(%define-class <object> ())
-(%define-class <type> (<object>))
-(%define-class <class> (<type>))
-(%define-class <singleton> (<type>))
-(%define-class <function> (<object>))
-(%define-class <number> (<object>))
-(%define-class <boolean> (<object>))
-(%define-class <collection> (<object>))
-(%define-class <keyword> (<object>))
-(%define-class <table> (<collection>))
-(%define-class <sequence> (<collection>))
-(%define-class <string> (<sequence>))
-(%define-class <array> (<sequence>))
-(%define-class <vector> (<array>))
-
-(define-function %map-types (source-type target-type)
-  (js:set (js:get-property source-type "%internal-type")
-	  target-type)
-  (js:set (js:get-property target-type "%mapped-type")
-	  source-type))
-
-(%map-types <vector> (js:identifier "Array"))
-(%map-types <object> (js:identifier "Object"))
-(%map-types <string> (js:identifier "String"))
-(%map-types <number> (js:identifier "Number"))
-(%map-types <boolean> (js:identifier "Boolean"))
-
-;; TODO: replace with proper class defintion
-(define-function %make-generic-function ()
-  (bind ((generic-function (method () (print "GF"))))
-    (set! (js:get-property generic-function "methods")
-	  (%array))
-    generic-function))
-
-(define-function methods (generic-function)
-  (js:get-property generic-function "methods"))
-
-(define-function add-method (generic-function specializers method)
-  (set! (js:get-property method "specializers")	specializers)
-  (%add! (methods generic-function) method))
-
-(define-function specializers (method)
-  (js:get-property method "specializers"))
-
-(define-function specializer-classes (generic-function position)
-  (%map (%rcurry %element position)
-	(%map specializers (methods generic-function))))
-
-(define-function single-closest-pole (id pole-table pole-classes)
-  (bind ((superclasses (%map class-id
-			     (direct-superclasses (class-for-id id))))
-	 (first-pole (and (%not (%empty? superclasses))
-			  (%element pole-table (%first superclasses)))))
-    (if (%== (%size superclasses) 1)
-	;; case 1: only one superclass
-	first-pole
-        ;; scan over our superclasses, checking to see if our poles
-        ;; are identical, and finding our largest pole
-        (bind ((all-poles-identical? #t)
-	       (current-largest first-pole))
-	  (%do (method (superclass)
-	         (bind ((pole (%element pole-table superclass)))
-		   (unless (%= pole first-pole)
-		     (set! all-poles-identical? #f))
-		   (when (%> pole current-largest)
-		     (set! current-largest pole))))
-	       superclasses)
-	  (if all-poles-identical?
-	      ;; case 2: all superclasses share the same pole
-	      first-pole
-	      ;; return #f if largest pole doesn’t hide the rest
-	      (block (return)
-	        (bind ((candidate (class-for-id (%element pole-classes
-							  current-largest))))
-		  (%do (method (superclass)
-		         (bind ((pole (class-for-id (%element pole-classes
-							      (%element pole-table superclass)))))
-			   (unless (or (%= candidate pole)
-				       (subclass? candidate pole))
-			     ;; case 3b: At least two close poles
-			     (return #f))))
-		       superclasses)
-		  ;; case 3a: one pole "hides" the rest
-		  current-largest)))))))
-
-(define-function compute-pole-table (generic-function position)
-  (bind ((specializers (specializer-classes generic-function position))
-	 (pole-table (%make-array size: (class-count) fill: 0))
-	 (next-pole-id 0)
-	 (pole-classes (%array)))
-    (bind-methods ((create-pole (id)
-		     (set! (%element pole-table id) next-pole-id)
-		     (set! next-pole-id (%+ next-pole-id 1))
-		     (%push-last pole-classes id)))
-      ;; mark specializers
-      (%do (method (specializer)
-	     (set! (%element pole-table (class-id specializer)) #f))
-	  specializers)
-      ;; entry 0 will always correspond to <object>,
-      ;; the ultimate parent of all classes
-      (create-pole 0)
-      ;; assign poles to all other classes
-      (for ((i 1 (%+ i 1)))
-	   ((%>= i (class-count)))
-        (if (%element pole-table i)
-	    (bind ((closest (single-closest-pole i pole-table pole-classes)))
-	       (if closest
-		   ;; copy down the closest i-pole
-		   (set! (%element pole-table i)
-			 ;; CHANGED
-			 ;; Kidd's pseudo-code does a pole-table lookup
-			 ;; which is obviously wrong
-			 closest)
-		   ;; create a secondary pole
-		   (create-pole i)))
-	    ;; there’s a specializer on this class,
-	    ;; so create a new primary pole
-	    (create-pole i)))
-      pole-table)))
 
