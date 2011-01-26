@@ -42,7 +42,9 @@ Symbol.prototype.escape = function () {
 	return '_CL_'
 	    + (Symbol.prototype.escape
 	       .call(new Symbol(this.name.slice(1, -1))));
-    } else if (first == '*' && last == '*') {
+    } else if (first == '*' && last == '*'
+	       && this.name.length > 2)
+    {
 	return Symbol.prototype.escape
 	    .call(new Symbol(this.name.slice(1, -1)))
 	    .toUpperCase();
