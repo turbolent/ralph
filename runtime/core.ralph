@@ -239,22 +239,27 @@
 (define-function empty? ((array <array>))
   (== (size array) 0))
 
+;; the functions passed to map and reduce are
+;; wraped in additional method, as the JS version
+;; also additionally passes the index and
+;; the traversed array - might clash when
+;; using curry/rcurry
+
 (define-function map ((function <function>) (array <array>))
   ((js:get-property array "map")
-   ;; wrap in additional method, as JS map
-   ;; also additionally passes the index and
-   ;; the traversed array - might clash when
-   ;; using curry/rcurry
    (method (element)
      (function element))))
 
 (define-function reduce1 ((function <function>) (array <array>))
-  ((js:get-property array "reduce") function))
+  ((js:get-property array "reduce")
+   (method (previous current)
+     (function previous current))))
 
 (define-function reduce ((function <function>) initial-value (array <array>))
-  (reduce1 function
-	   (concatenate (make-array initial-value)
-			array)))
+  ((js:get-property array "reduce")
+   (method (previous current)
+     (function previous current))
+   initial-value))
 
 (define-function every? ((function <function>) (array <array>))
   ((js:get-property array "every")
