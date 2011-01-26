@@ -217,6 +217,10 @@ var macros = {
 		   conditionVariable,
 		   [S('cond')].concat(cases)]]]];
     },
+    // TODO:
+    'define-type': function (name) {
+	return [S('define'), name, [S('make-object')]];
+    },
     'define-module': function (name) {
 	var keyArgs = arguments.toArray().slice(1);
 	var imports = [];
