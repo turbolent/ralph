@@ -154,7 +154,7 @@ var macros = {
     'unless': function (test) {
 	var body = arguments.toArray().slice(1);
 	body.unshift(S('begin'));
-	return [S('if'), [S('%not'), test], body, S('#f')];
+	return [S('if'), [S('not'), test], body, S('#f')];
     },
     'cond': function () {
 	var cases = arguments.toArray();
@@ -207,7 +207,7 @@ var macros = {
 			binding.push([S('js:var'), _if[i + 1], conditionVariable]);
 		}
 	    }
-	    return ([[S('%instance?'), conditionVariable, type]]
+	    return ([[S('instance?'), conditionVariable, type]]
 		    .concat(binding).concat(addReturn(condition.slice(1))));
 	});
 	return [[S('%function'), S('js:null'), [],
@@ -254,7 +254,7 @@ var macros = {
 	    .concat(imports);
     },
     'if': function (test, then, _else) {
-	return [S('js:if'), [S('%true?'), test], then, _else];
+	return [S('js:if'), [S('true?'), test], then, _else];
     },
     'set!': function (expression, value) {
 	if (expression instanceof Array
@@ -334,7 +334,7 @@ var macros = {
 	    nextClauses.push(clause[2]);
     	});
     	return [S('bind'), initClauses,
-    		[S('while'), [S('%not'), end[0]]]
+    		[S('while'), [S('not'), end[0]]]
 		.concat(body)
 		.concat([[S('%parallel-set')]
 			 .concat(nextClauses)]),
@@ -359,7 +359,7 @@ var macros = {
 	else {
 	    var butLast = expressions.slice(0, -1)
 		.map(function (expression) {
-		    return [S('%true?'), expression];
+		    return [S('true?'), expression];
 		});
 	    return [S('when'), [S('js:and')].concat(butLast),
 		    expressions[expressions.length - 1]];
@@ -374,7 +374,7 @@ var macros = {
 	    bindings.push([tmp, S('js:undefined')]);
 	    clauses.push([[S('begin'),
 			   [S('js:set'), tmp, expression],
-			   [S('%true?'), tmp]],
+			   [S('true?'), tmp]],
 			  tmp]);
 	});
 	return [S('bind'), bindings,
