@@ -590,7 +590,7 @@ var writers = {
     'js:function': function (allowStatements, name, args, body) {
 	return 'function ' + (name ? name + ' ': '')
 	    + '(' + args.join(', ') + ') '
-	    + '{\n' + writeStatements(body) + '\n}';
+	    + '{' + (body ? '\n' + writeStatements(body) + '\n' : "") + '}';
     },
     'js:documentation': function (allowStatements, documentation) {
 	return '/** \n'
