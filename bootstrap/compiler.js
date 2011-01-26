@@ -219,7 +219,8 @@ var macros = {
     },
     // TODO:
     'define-type': function (name) {
-	return [S('define'), name, [S('make-object')]];
+	return [S('define'), name, 
+		[S('%function'), S('js:null'), []]];
     },
     'define-module': function (name) {
 	var keyArgs = arguments.toArray().slice(1);
