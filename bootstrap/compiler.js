@@ -288,12 +288,12 @@ var macros = {
 			[S('%make-non-local-exit-function'), returnSymbol.name]]]]
 		     .concat(body)],
  		    conditionSymbol,
-		    [S('js:return'),
-		     [S('when'),
-		      [S('and'),
-		       [S('js:==='), [S('js:get-property'), conditionSymbol, 'constructor'], S('<non-local-exit>')],
-		       [S('js:==='), [S('js:get-property'), conditionSymbol, 'name'], returnSymbol.name]],
- 		      [S('js:get-property'), conditionSymbol, 'value']]]];
+		    [S('if'),
+		     [S('and'),
+		      [S('%non-local-exit?'), conditionSymbol],
+		      [S('js:==='), [S('js:get-property'), conditionSymbol, 'name'], returnSymbol.name]],		     
+ 		     [S('js:return'), [S('js:get-property'), conditionSymbol, 'value']],
+		     [S('js:throw'), conditionSymbol]]];
 	} else
 	    // TODO:
 	    return [S('begin')].concat(body);
