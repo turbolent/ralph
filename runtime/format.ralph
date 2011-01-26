@@ -27,7 +27,8 @@ This function effectively calls format and returns the result as a string."
 		     ;; TODO: make condition
 		     (else: (error "Unknown format dispatch character, %c" char)))))
     (reduce (method (skip? char)
-	      (if (and (not skip?) (= char "%"))
+	      (if (and (not skip?)
+		       (= char "%"))
 		  (begin
 		   (dispatch char)
 		   #t)
@@ -38,8 +39,5 @@ This function effectively calls format and returns the result as a string."
 
 ;; print
 
-(define-method print-message ((object <string>) (stream <stream>))
+(define-function print-message (object stream)
   (write stream object))
-
-(define-method print-message ((object <symbol>) (stream <stream>))
-  (write stream (as <string> object)))

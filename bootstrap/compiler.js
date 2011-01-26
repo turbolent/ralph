@@ -296,7 +296,7 @@ var macros = {
 		    [S('if'),
 		     [S('and'),
 		      [S('%non-local-exit?'), conditionSymbol],
-		      [S('js:==='), [S('js:get-property'), conditionSymbol, 'name'], returnSymbol.name]],		     
+		      [S('js:==='), [S('js:get-property'), conditionSymbol, 'name'], returnSymbol.name]],
  		     [S('js:return'), [S('js:get-property'), conditionSymbol, 'value']],
 		     [S('js:throw'), conditionSymbol]]];
 	} else
