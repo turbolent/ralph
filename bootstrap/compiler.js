@@ -237,17 +237,8 @@ var macros = {
     'define-protocol': function (protocol) {
 	function declare (f) {
 	    var name = f[0];
-	    return [S('define-function'), name,
-		    [HashSymbol.rest, S('arguments')],
-
-		    [S('bind'), [[S('type'), [S('type'), [S('first'), S('arguments')]]],
-				 [S('name'), [S('get'), S('type'), '%name']]],
-		     [S('if-bind'), [S('implementation'),
-				     [S('get'), protocol, '%imp', S('name'), name.name]],
-		      [S('apply'), S('implementation'), S('arguments')],
-		      // TODO: throw error
-		      [S('print'), "No method of '" + name
-		       + "' for type '", S('name'), "'"]]]];
+	    return [S('define'), name,
+		    [S('%make-protocol-dispatcher'), protocol, name.name]];
 	}
 	var functions = arguments.toArray().slice(1);
 	return [S('begin'),

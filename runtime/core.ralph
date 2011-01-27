@@ -472,10 +472,18 @@
 (alias-type <string> (js:identifier "String"))
 (alias-type <number> (js:identifier "Number"))
 
+;; protocols
+
+(define-function %make-protocol-dispatcher (protocol function-name)
+  (method (#rest arguments)
+    (bind ((type (type (first arguments)))
+	   (type-name (get type "%name")))
+      (if-bind (implementation (get protocol "%imp" type-name function-name))
+        (apply implementation arguments)
+	(print "No method of " function-name " for type " type-name)))))
+
 (define-type <protocol>)
 
-;; (define-protocol <instantiation>
-;;     (make (type)))
+(define-protocol <initialization>
+    (initialize (object #rest)))
 
-;; (define-protocol <initialization>
-;;     (initialize (object #rest)))
