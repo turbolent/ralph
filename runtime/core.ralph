@@ -136,12 +136,27 @@
 		    "slice" "call")
    arguments skip))
 
-(define-function get (object (key <string>) #rest other-keys)
-  (bind ((result (get object key)))
-    (if (empty? other-keys)
-	result
-	(apply get object other-keys))))
-	 
+(define-function get (object #rest keys)
+  (block (return)
+    (reduce (method (object key)
+	      (if (%has-property? object key)
+		  (js:get-property object key)
+		  (return #f)))
+	    object keys)))
+
+(define-function (setter get) (object #rest properties/value)
+  (if (<= (size properties/value) 2)
+      (set! (js:get-property object (first properties/value))
+	    (second properties/value))
+      (bind ((property (first properties/value))
+	     (object2 (if (%has-property? object property)
+			  (get object property)
+			  (bind ((new (make-object)))
+			    (set! (js:get-property object property) new)
+			    new))))
+        (apply (setter get) object2
+	       (rest properties/value)))))
+
 (define-function size ((array <array>))
   (js:get-property array "length"))
 

@@ -307,3 +307,7 @@
   (print "test block with exit variable")
   (print (== (block2) 1)))
 
+(print "test get")
+(bind ((x (make-object)))
+  (set! (get x "1" "2" "3") 4)
+  (print (== (get x "1" "2" "3") 4)))
