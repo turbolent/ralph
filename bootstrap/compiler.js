@@ -227,10 +227,13 @@ var macros = {
 		   conditionVariable,
 		   [S('cond')].concat(cases)]]]];
     },
-    // TODO:
-    'define-type': function (name) {
-	return [S('define'), name, 
-		[S('%function'), S('js:null'), []]];
+    // TODO: slots
+    'define-type': function (type) {
+	return [S('begin'),
+		[S('define'), type,
+		 [S('%function'), S('js:null'), []]],
+		[S('set!'), [S('get'), type, '%name'], type.name]];
+    },
     },
     'define-module': function (name) {
 	var keyArgs = arguments.toArray().slice(1);
