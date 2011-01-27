@@ -317,3 +317,37 @@
 (bind ((x (make-object)))
   (set! (get x "1" "2" "3") 4)
   (print (== (get x "1" "2" "3") 4)))
+
+(print "test if-bind")
+(if-bind (a #t)
+  (print (true? a))
+  (handler-case
+      (begin
+       a
+       #f)
+    (((js:identifier "Error") condition: condition)
+	#t)))
+(if-bind (a #f)
+  (print #f)
+  (handler-case
+      (begin
+       a
+       #f)
+    (((js:identifier "Error") condition: condition)
+	#t)))
+
+(define-protocol <test-protocol>
+  (test (this)))
+
+(extend-protocol <test-protocol>
+  <string>
+  (test (string)
+    1))
+
+(extend-protocol <test-protocol>
+  <number>
+  (test (number)
+    2))
+
+(print (== 1 (test "test")))
+(print (== 2 (test 1)))
