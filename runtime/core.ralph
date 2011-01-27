@@ -460,8 +460,6 @@
     ;; TODO: throw condition
     (error "check-type failed")))
 
-;; TODO: set %ralph-type of JS built-ins
-
 (define-type <string>)
 (define-type <number>)
 

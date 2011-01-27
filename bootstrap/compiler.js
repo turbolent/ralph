@@ -136,7 +136,7 @@ var macros = {
     'bind': function (bindings) {
 	var body = arguments.toArray().slice(1);
 	var declarations = [];
-	var binding = bindings[0]
+	var binding = bindings[0];
 	var variable = binding[0];
 	var value = binding[1];
 	return [[S('%function'), S('js:null'), [variable],

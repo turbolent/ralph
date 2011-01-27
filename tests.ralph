@@ -7,7 +7,6 @@
 (print (not (block (return)
 	      (return #f))))
 
-
 (print (handler-case
 	(not (block (return)
 	       (js:throw (js:new (js:identifier "Error") "!"))
