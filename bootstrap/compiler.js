@@ -146,6 +146,16 @@ var macros = {
 		 : [S('begin')].concat(addReturn(body))],
 		value];
     },
+    'if-bind': function (binding, _then, _else) {
+	var variable = binding[0];
+	var value = binding[1];
+	var temp = Symbol.generate();
+	return [S('bind'), [[temp, value]],
+		[S('if'), temp,
+		 [S('bind'), [[variable, temp]],
+		  _then],
+		 _else]];
+    },
     'when': function (test) {
 	var body = arguments.toArray().slice(1);
 	body.unshift(S('begin'));
