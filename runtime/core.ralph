@@ -460,6 +460,7 @@
     ;; TODO: throw condition
     (error "check-type failed")))
 
+(define-type <object>)
 (define-type <string>)
 (define-type <number>)
 
@@ -467,7 +468,14 @@
   (set! (js:get-property ralph-type "%js-type") javascript-type)
   (set! (js:get-property javascript-type "%ralph-type") ralph-type))
 
+(alias-type <object> (js:identifier "Object"))
 (alias-type <string> (js:identifier "String"))
 (alias-type <number> (js:identifier "Number"))
 
+(define-type <protocol>)
 
+;; (define-protocol <instantiation>
+;;     (make (type)))
+
+;; (define-protocol <initialization>
+;;     (initialize (object #rest)))
