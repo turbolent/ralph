@@ -29,6 +29,12 @@
 (print (<= 1 2))
 (print (not (<= 2 1)))
 
+(print "test keywords")
+(print (== test: test:))
+(define-function foobar (#key (test 2))
+  test)
+(print (== 2 (foobar)))
+(print (== 3 (foobar test: 3)))
 
 (print "test %parallel-set:")
 (bind ((i 0)
