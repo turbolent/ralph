@@ -89,7 +89,7 @@
 (print (js:=== 3 (element (make-array 1 2 3) 2)))
 
 (print "test but-last")
-(print (not (element (but-last (make-array 1 2 3)) 2)))
+(print (== (last (but-last (make-array 1 2 3 4) n: 2)) 2))
 
 (print "test block (non-local exit)")
 (print (js:=== 2
