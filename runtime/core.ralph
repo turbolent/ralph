@@ -84,9 +84,9 @@
 
 ;;;; objects
 
-(define-function make (type)
+(define-function make (type #rest arguments)
   (bind ((object (js:new type)))
-    (initialize object)
+    (apply initialize object arguments)
     object))
 
 (define-function make-object ()
