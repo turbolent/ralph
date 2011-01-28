@@ -422,6 +422,10 @@ var macros = {
 	});
 	return [S('bind'), bindings,
 		[S('cond')].concat(clauses)];
+    },
+    'inc!': function (object) {
+	return [S('set!'), object,
+		[S('inc'), object]];
     }
 }
 
