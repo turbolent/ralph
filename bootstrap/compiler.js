@@ -250,19 +250,6 @@ var macros = {
 		 [S('%make-protocol')]]]
 	    .concat(functions.map(declare));
     },
-    'extend-protocol': function (protocol, type) {
-	function setImplementation (f) {
-	    var functionName = f[0];
-	    var args = f[1];
-	    var body = f.slice(2);
-	    return [S('set!'),
-		    [S('get'), protocol, '%imp', type.name, functionName.name],
-		    [S('method'), args].concat(body)];
-	}
-	var functions = arguments.toArray().slice(2);
-	return [S('begin')]
-	    .concat(functions.map(setImplementation));
-    },
     'define-module': function (name) {
 	var keyArgs = arguments.toArray().slice(1);
 	var imports = [];
