@@ -32,10 +32,14 @@
   (%function js:null (object name)
     (js:return ((js:get-property object "hasOwnProperty") name))))
 
+(define %get-property
+  (%function js:null (object name)
+    (js:return (when (%has-property? object name)
+		 (js:get-property object name)))))
+
 (define %get-definition
   (%function js:null (name)
-    (js:return (and (%has-property? *module* name)
-		    (js:get-property *module* name)))))
+    (js:return (%get-property *module* name))))
 
 (define %has-constructor?
   (%function js:null (object constructor)
