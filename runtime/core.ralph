@@ -106,12 +106,9 @@
     (apply initialize object arguments)
     object))
 
-(define-function make-object ()
-  (js:new (js:identifier "Object")))
-
 ;;;; keywords
 
-(define %interned-keywords (make-object))
+(define %interned-keywords (%make-object))
 
 (define <keyword> (js:new (js:identifier "Function")))
 
@@ -172,7 +169,7 @@
       (bind ((property (first properties/value))
 	     (object2 (if (%has-property? object property)
 			  (get object property)
-			  (bind ((new (make-object)))
+			  (bind ((new (%make-object)))
 			    (set! (js:get-property object property) new)
 			    new))))
         (apply (setter get) object2
@@ -307,7 +304,7 @@
    (method (element)
      (true? (function element)))))
 
-(define %not-found (make-object))
+(define %not-found (%make-object))
 
 (define-function find-key ((array <array>) (predicate <function>)
 			   #key (skip 0) failure from-end)
@@ -452,6 +449,7 @@
 	     (or (not (binary< object1 object2))
 		 (binary= object1 object2)))
 	   object1 object2 more-objects))
+
 
 ;;;; reflection primitives
 
