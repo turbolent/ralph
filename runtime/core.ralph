@@ -46,6 +46,14 @@
     (js:return (js:=== (js:get-property object "constructor")
 		       constructor))))
 
+(define %make-object
+  (%function js:null ()
+    (js:return (js:new (js:identifier "Object")))))
+
+(define %make-function
+  (%function js:null (name function)
+    (js:return (js:new (js:identifier "Function")))))
+
 ;;;; boolean primitives
 
 (define true?
@@ -85,6 +93,11 @@
 (define-function setter ((function <function>))
   (when (%has-property? function "%setter")
     (js:get-property function "%setter")))
+;;;;
+
+(define-function %describe (object)
+  ((js:identifier "JSON.stringify")
+   object))
 
 ;;;; objects
 
