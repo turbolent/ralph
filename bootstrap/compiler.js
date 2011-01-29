@@ -247,7 +247,7 @@ var macros = {
 	var functions = arguments.toArray().slice(1);
 	return [S('begin'),
 		[S('define'), protocol,
-		 [S('js:new'), S('<protocol>')]]]
+		 [S('%make-protocol')]]]
 	    .concat(functions.map(declare));
     },
     'extend-protocol': function (protocol, type) {

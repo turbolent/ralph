@@ -529,15 +529,26 @@
 
 ;; protocols
 
-(define-function %make-protocol-dispatcher (protocol function-name)
-  (method (#rest arguments)
-    (bind ((type (type (first arguments)))
-	   (type-name (get type "%name")))
-      (if-bind (implementation (get protocol "%imp" type-name function-name))
-        (apply implementation arguments)
-	(print "No method of " function-name " for type " type-name)))))
-
 (define-type <protocol>)
+
+(define-function %make-protocol ()
+  (bind ((protocol (js:new <protocol>)))
+    (set! (js:get-property protocol "%imp")
+	  (%make-object))
+    protocol))
+
+(define-function %make-protocol-dispatcher (protocol function-name)
+  (bind-methods ((dispatcher (#rest arguments)
+		  (bind ((type (type (first arguments)))
+			 (type-name (get type "%name")))
+		    (if-bind (implementation (get protocol "%imp" type-name function-name))
+			     (apply implementation arguments)
+			     (print "No method of " function-name " for type " type-name)))))
+    (set! (js:get-property dispatcher "%protocol")
+	  protocol)
+    (set! (js:get-property dispatcher "%name")
+	  function-name)
+    dispatcher))
 
 (define-protocol <initialization>
     (initialize (object #rest)))
