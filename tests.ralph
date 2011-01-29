@@ -361,3 +361,12 @@
   (set! (get x "y") 0)
   (inc! (get x "y"))
   (print (== 1 (get x "y"))))
+
+(print "test default initializer")
+(define-type <test>
+  foo
+  bar)
+
+(bind ((test (make <test> foo: 1 bar: 2)))
+  (print (== (get test "foo") 1))
+  (print (== (get test "bar") 2)))

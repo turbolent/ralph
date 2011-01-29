@@ -231,12 +231,25 @@ var macros = {
 		   conditionVariable,
 		   [S('cond')].concat(cases)]]]];
     },
-    // TODO: slots
     'define-type': function (type) {
+	var slots = arguments.toArray().slice(1);
+	var initializer = [];
+	if (slots.length > 0) {
+	    initializer =
+		[[S('define-function'), S('initialize'),
+		  [[S('object'), type], HashSymbol.key]
+		  .concat(slots)]
+		 .concat(slots.map(function (slot) {
+				       return [S('set!'),
+					       [S('get'), S('object'), slot.name],
+					       slot];
+				   }))];
+	}
 	return [S('begin'),
 		[S('define'), type,
 		 [S('%function'), S('js:null'), []]],
-		[S('set!'), [S('get'), type, '%name'], type.name]];
+		[S('set!'), [S('get'), type, '%name'], type.name]]
+	    .concat(initializer);
     },
     'define-protocol': function (protocol) {
 	function declare (f) {
