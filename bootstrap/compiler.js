@@ -306,10 +306,11 @@ var macros = {
     'set!': function (expression, value) {
 	if (expression instanceof Array
 	    && expression[0] != S('js:get-property'))
-	    return ([[S('setter'), expression[0]]]
-		    .concat(expression.slice(1))
+	{
+	    return ([S('%set')]
+		    .concat(expression)
 		    .concat([value]));
-	else
+	} else
 	    return [S('js:set'), expression, value];
     },
     '%define-class': function (name, superclasses) {

@@ -117,10 +117,18 @@
 	     (%define name (%make-function)))
 	   (set! (js:get-property (%get-definition name) "%setter") function))))))
 
+(define-function %set ((function <function>) #rest arguments)
+  (bind ((protocol (%get-property function "%protocol"))
+	 (name (%get-property function "%name"))
+	 (getter (if protocol
+		     (bind ((type (%get-property (type (first arguments)) "%name"))
+			    (types (js:get-property protocol "%imp"))
+			    (functions (js:get-property types type)))
+		       (%get-property functions name))
+		     function))
+	 (setter (%get-property getter "%setter")))
+    (apply setter arguments)))
 
-(define-function setter ((function <function>))
-  (when (%has-property? function "%setter")
-    (js:get-property function "%setter")))
 ;;;;
 
 (define-function %describe (object)
@@ -200,7 +208,7 @@
 			  (bind ((new (%make-object)))
 			    (set! (js:get-property object property) new)
 			    new))))
-        (apply (setter get) object2
+        (apply %set get object2
 	       (rest properties/value)))))
 
 (define-function size ((array <array>))
