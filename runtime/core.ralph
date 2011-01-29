@@ -72,23 +72,51 @@
 ;;;; getter
 
 (define %define-getter
-  (%function js:null (name function)
+  (%function js:null (name function type)
     (bind ((getter (%get-definition name))
-	   (setter (and getter
-			(%has-property? getter "%setter")
-			(js:get-property getter "%setter"))))
-      (%define name function)
-      (when setter
-	(set! (js:get-property function "%setter") setter)))))
+	   (protocol (when getter
+		       (%get-property getter "%protocol")))
+	   (setter (if protocol
+		       (bind ((types (js:get-property protocol "%imp"))
+			      (functions (or (js:get-property types type)
+					     (bind ((new (%make-object)))
+					       (set! (js:get-property types type) new)
+					       new)))
+			      (getter (%get-property functions name)))
+			     (set! (js:get-property function "%type") type)
+			     (set! (js:get-property functions name) function)
+			     (%get-property getter "%setter"))
+		       (begin
+			(%define name function)
+			(%get-property getter "%setter")))))
+	  (set! (js:get-property function "%name") name)
+	  (when setter
+	    (set! (js:get-property function "%setter") setter)))))
 
 ;;;; setter
 
 (define %define-setter
-  (%function js:null (name function)
-    (begin
-      (unless (%get-definition name)
-	(%define name (js:new (js:identifier "Function"))))
-      (set! (js:get-property (%get-definition name) "%setter") function))))
+  (%function js:null (name function type)
+    (bind ((getter (%get-definition name))
+ 	   (protocol (when getter
+ 		       (%get-property getter "%protocol"))))
+      (if protocol
+ 	  (bind ((types (js:get-property protocol "%imp"))
+ 		 (functions (or (js:get-property types type)
+ 				(bind ((new (%make-object)))
+ 				  (set! (js:get-property types type) new)
+ 				  new)))
+		 (getter (or (%get-property functions name)
+			     (bind ((temp (%make-function)))
+			       (set! (js:get-property functions name)
+				     temp)
+			       temp))))
+		(set! (js:get-property getter "%setter") function))
+	  (begin
+	   (unless (%get-definition name)
+	     (%define name (%make-function)))
+	   (set! (js:get-property (%get-definition name) "%setter") function))))))
+
 
 (define-function setter ((function <function>))
   (when (%has-property? function "%setter")
