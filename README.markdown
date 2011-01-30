@@ -1,15 +1,20 @@
 # Ralph
 
-Ralph aims to be able to compile prefix-syntax Dylan to JavaScript. The Syntax is defined in [Dylan - An object-oriented dynamic language](http://lispm.dyndns.org/documentation/prefix-dylan/book.annotated/annotated-manual.html), the semantics are based on both this older draft and the successor specification [The Dylan Reference Manual](http://www.opendylan.org/books/drm/Index).
+Ralph is a Lisp-1 dialect that compiled to JavaScript. It is inspired by
+[Dylan - An object-oriented dynamic language](http://lispm.dyndns.org/documentation/prefix-dylan/book.annotated/annotated-manual.html), but features no classes and multi-methods. Instead it borrows the concept of types and protocols from Clojure.
 
 ## Status
 
-The bootstraping compiler is able to read the S-expression syntax and produces valid JavaScript. A lot of the macros defined in the original specification are implemented and the runtime provides the primitives necessary to further implement a full runtime.
+The bootstraping compiler is almost complete and the runtime has matured.
+The test suite is passing all tests.
 
 ## Getting started
 
-The bootstraping compiler runs with any CommonJS-compatible JavaScript engine. Currently flusspferd is the only environment that was tested.
+The bootstraping compiler runs with any CommonJS-compatible JavaScript engine.
+Currently flusspferd is the only environment that was tested.
 
-The runtime can be bootstrapped using:
- $ flusspferd build.js bootstrapRuntime
-After that the resulting .js files can be found in runtime/.
+- Bootstrap the runtime and compile: 
+  `$ flusspferd build.js bootstrapRuntime compileTests`
+
+- Run the tests: 
+  `$ flusspferd -Iruntime tests.js`
