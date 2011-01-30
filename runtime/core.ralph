@@ -138,7 +138,10 @@
 ;;;; objects
 
 (define-function make (type #rest arguments)
-  (bind ((object (js:new type)))
+  (bind ((actual-type
+	  (or (%get-property type "%js-type")
+	      type))
+	 (object (js:new actual-type)))
     (apply initialize object arguments)
     object))
 
