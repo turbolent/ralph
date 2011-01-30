@@ -381,7 +381,7 @@ var macros = {
 	    // initial value
     	    initClauses.push([clause[0], clause[1]]);
 	    // next value
-	    nextClauses.push(clause[0])
+	    nextClauses.push(clause[0]);
 	    nextClauses.push(clause[2]);
     	});
     	return [S('bind'), initClauses,
@@ -406,7 +406,7 @@ var macros = {
     'and': function () {
 	var expressions = arguments.toArray();
 	if (expressions.length === 0)
-	    return S('#t')
+	    return S('#t');
 	else {
 	    var butLast = expressions.slice(0, -1)
 		.map(function (expression) {
@@ -454,11 +454,11 @@ var specialForms = {
 		clauses.map(function (clause) {
 		    return [[clause[0][0], macroexpand(clause[0][1])],
 			    macroexpand(clause[1]),
-			    macroexpand(clause[2])]
+			    macroexpand(clause[2])];
 		})]
 	    .concat(macroexpand(body));
-    },
-}
+    }
+};
 
 function macroexpand (form) {
     if (form instanceof Array) {
@@ -490,7 +490,7 @@ var infix = {
     'js:>=': '>=', 'js:<=': '<=',
     'js:==': '==', 'js:===': '===',
     'js:instanceof': 'instanceof'
-}
+};
 
 var symbolValues = {
     'js:null': 'null',
@@ -498,8 +498,8 @@ var symbolValues = {
     'js:undefined': 'undefined',
     'js:arguments': 'arguments',
     '#f': 'false',
-    '#t': 'true',
-}
+    '#t': 'true'
+};
 
 function wrapBlock (code) {
     return '(function () {\n' + code + '\n})()';
