@@ -255,7 +255,7 @@ var macros = {
 	function declare (f) {
 	    var name = f[0];
 	    return [S('define'), name,
-		    [S('%make-protocol-dispatcher'), protocol, name.name]];
+		    [S('%make-protocol-dispatcher'), protocol, name.toString()]];
 	}
 	var functions = arguments.toArray().slice(1);
 	return [S('begin'),
