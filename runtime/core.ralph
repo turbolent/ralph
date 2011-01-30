@@ -554,3 +554,47 @@
 
 (define-protocol <initialization>
     (initialize (object #rest)))
+
+;; error
+
+(define-type <error>
+  message)
+
+(alias-type <error> (js:identifier "Error"))
+
+;;
+
+(define-protocol <concatenatable>
+  (concatenate (first #rest more)))
+
+(define-function concatenate ((first-string <string>) #rest more-strings)
+  (reduce (method (current next)
+	    (js:+ current next))
+	  first-string
+	  more-strings))
+
+(define-function concatenate ((first-array <array>) #rest more-arrays)
+  (reduce %concat first-array more-arrays))
+
+;;
+
+(define-protocol <describable>
+  (description))
+
+(define-function description ((string <string>))
+  (concatenate "\"" string "\""))
+
+(define-function description ((number <number>))
+  (js:+ "" number))
+
+(define-function description ((boolean <boolean>))
+  (js:+ "" boolean))
+
+;;
+
+(define-protocol <condition>
+  (signal))
+
+(define-function signal ((error <error>))
+  (js:throw error))
+
