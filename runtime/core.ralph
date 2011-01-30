@@ -137,12 +137,21 @@
 
 ;;;; objects
 
+(define-function specialized? (function type)
+  (if-bind (protocol (%get-property function "%protocol"))
+    (bind ((types (%get-property protocol "%imp"))
+	   (functions (%get-property types
+				     (%get-property type "%name"))))
+      (and functions (%get-property functions
+				    (%get-property function "%name"))))))
+
 (define-function make (type #rest arguments)
   (bind ((actual-type
 	  (or (%get-property type "%js-type")
 	      type))
 	 (object (js:new actual-type)))
-    (apply initialize object arguments)
+    (when (specialized? initialize type)
+      (apply initialize object arguments))
     object))
 
 ;;;; keywords
