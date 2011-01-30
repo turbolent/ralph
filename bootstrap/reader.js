@@ -85,7 +85,7 @@ Reader.prototype.readString = function () {
     var c, result = "";
     while ((c = this.stream.readChar()) != '"') {
 	if (c == '\\')
-	    result += this.stream.readChar();
+	  result += '\\' + this.stream.readChar();
 	else if (c == '\n')
 	    result += '\\n\\\n';
 	else
