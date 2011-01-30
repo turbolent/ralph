@@ -1,0 +1,64 @@
+
+(define-module format
+  import: (core)
+  export: (<stream>
+	   <string-stream>	   
+	   *standard-out*
+	   write
+	   read))
+
+;; <stream>
+
+(define-protocol <stream>
+  (at-end?)
+  (peek)
+  (read)
+  (write)
+  (contents))
+
+;; <string-stream>
+
+(define-type <string-stream>
+  (string "")
+  (index 0))
+
+(define-function at-end? ((stream <string-stream>))
+  (>= (get stream "index")
+      (dec (size (get stream "string")))))
+
+(define-function peek ((stream <string-stream>))
+  (get stream "string"
+       (get stream "index")))
+    
+(define-function read ((stream <string-stream>))
+  (bind ((char (get (get stream "string")
+		    (get stream "index"))))
+	(inc! (get stream "index"))
+	char))
+
+(define-function write ((stream <string-stream>) object)
+  ;; TODO: should write at position and advance index
+  ;;       by length of object
+  (set! (get stream "string")
+	(concatenate (get stream "string")
+		     object))
+  (inc! (get stream "index")
+	(size object)))
+
+(define-function contents ((stream <string-stream>))
+  (get stream "string"))
+
+;; <file-stream>
+
+(define-type <file-stream>
+    file)
+
+(define-function write ((stream <file-stream>) object)
+  ((js:get-property (js:get-property stream "file") "write")
+   object))
+
+(define *standard-out* (make <file-stream>
+			     file: (get (require "system") "stdout")))
+   
+   
+
