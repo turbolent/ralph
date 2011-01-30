@@ -23,7 +23,16 @@
 					expected-value test-value))
       (report-failure description
 		      (format-to-string "Values should be equal: %=, %="
-					expected-value test-vaulue))))
+					expected-value test-value))))
+
+(define-function check-unequal ((description <string>) expected-value test-value)
+  (if (not (= expected-value test-value))
+      (report-success description
+		      (format-to-string "Values aren't equal: %=, %="
+					expected-value test-value))
+      (report-failure description
+		      (format-to-string "Values shouldn't be equal: %=, %="
+					expected-value test-value))))
 
 
 (define-function check-true ((description <string>) expression)
