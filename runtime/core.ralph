@@ -232,7 +232,7 @@
 (define-function copy-sequence ((array <array>) #key (start 0) (end (size array)))
   ((js:get-property array "slice")
    (or start 0)
-   (or end (js:length array))))
+   (or end (size array))))
 
 (define-function push-last ((array <array>) new-value)
   ((js:get-property array "push") new-value)
