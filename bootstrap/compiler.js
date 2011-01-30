@@ -627,7 +627,7 @@ var writers = {
     },
     'js:var': function (allowStatements, name, value) {
 	var result = "var " + name;
-	if (value && value != S('js:undefined'))
+	if (value != undefined && value != S('js:undefined'))
 	    result += " = " + write(value);
 	return result;
     },
