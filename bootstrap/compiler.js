@@ -240,9 +240,12 @@ var macros = {
 		  [[S('object'), type], HashSymbol.key]
 		  .concat(slots)]
 		 .concat(slots.map(function (slot) {
+				       var slotName = slot instanceof Array
+					   ? slot[0] : slot;
 				       return [S('set!'),
-					       [S('get'), S('object'), slot.name],
-					       slot];
+					       [S('get'), S('object'),
+						slotName.name],
+					       slotName];
 				   }))];
 	}
 	return [S('begin'),
