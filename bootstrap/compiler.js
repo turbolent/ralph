@@ -431,11 +431,11 @@ var macros = {
 	return [S('bind'), bindings,
 		[S('cond')].concat(clauses)];
     },
-    'inc!': function (object) {
+    'inc!': function (object, value) {
 	return [S('set!'), object,
-		[S('inc'), object]];
+		[S('js:+'), object, value ? value : 1]];
     }
-}
+};
 
 var symbolMacros = {};
 
