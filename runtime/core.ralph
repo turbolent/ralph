@@ -517,6 +517,8 @@
 (define-type <object>)
 (define-type <string>)
 (define-type <number>)
+(define-type <array>)
+(define-type <boolean>)
 
 (define-function alias-type (ralph-type javascript-type)
   (set! (js:get-property ralph-type "%js-type") javascript-type)
@@ -525,6 +527,8 @@
 (alias-type <object> (js:identifier "Object"))
 (alias-type <string> (js:identifier "String"))
 (alias-type <number> (js:identifier "Number"))
+(alias-type <array> (js:identifier "Array"))
+(alias-type <boolean> (js:identifier "Boolean"))
 
 ;; protocols
 
