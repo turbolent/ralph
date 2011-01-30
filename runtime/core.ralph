@@ -300,9 +300,8 @@
 (define-function sort ((array <array>) #key (test <))
   (sort! (copy-sequence array) test: test))
 
-(define-function element ((array <array>) (key <string>)
-			  #key default)
-  (or (js:get-property array key) default))
+(define-function element ((array <array>) key #key default)
+  (or (%get-property array key) default))
 
 (define-function (setter element) ((array <array>) key new-value)
   (set! (js:get-property array key) new-value))
@@ -495,14 +494,12 @@
   ;; Object.getPrototypeOf on primitives only works in FireFox:
   ;; ((js:get-property "Object" "getPrototypeOf") object))
   (bind ((type (js:get-property object "constructor")))
-    (if (%has-property? type "%ralph-type")
-	(js:get-property type "%ralph-type")
+    (or (%get-property type "%ralph-type")
 	type)))
 
 (define-function instance? (object type)
   (bind ((actual-type
-	  (if (%has-property? type "%js-type")
-	      (js:get-property type "%js-type")
+	  (or (%get-property type "%js-type")
 	      type)))
     (or
      ;; primitive
