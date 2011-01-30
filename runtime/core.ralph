@@ -364,6 +364,12 @@
     (or (element satisfying-keys skip)
 	failure)))
 
+(define-function string-position ((target-string <string>) (search-string <string>))
+  (bind ((position ((js:get-property target-string "indexOf")
+		    search-string)))
+    (when (> position -1)
+      position)))
+
 (define-function any? ((function <function>) (array <array>))
   (block (return)
     (do (method (element)
