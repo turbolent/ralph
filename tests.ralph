@@ -1,136 +1,194 @@
 (define-module tests
-  import: (core test))
+  import: (core test stream))
 
-;; TODO: test get
+;; true?
+(check-false "true?: null isn't true"
+	     (true? js:null))
+(check-false "true?: undefined isn't true"
+	     (true? js:undefined))
+(check-true "true?: 0 is true"
+	    (true? 0))
+(check-true "true?: \"0\" is true"
+	    (true? "0"))
+(check-true "true?: \"\" is true"
+	    (true? ""))
 
-(print (not (block () #f)))
-(print (not (block (return)
-	      (return #f))))
+;; equality
+(check-false "equality: 0 not false"
+	     (= 0 #f))
+(check-true "equality: 1 and 1 are equal"
+	    (= 1 1 1))
+(check-false "equality: 1 and 2 are unequal"
+	     (= 1 2 1))
+(check-false "equality: #f and 0 are unequal"
+	     (= #f #f 0))
 
-(print (handler-case
-	(not (block (return)
-	       (js:throw (js:new (js:identifier "Error") "!"))
-	       (return #t)))
-	(((js:identifier "Error") condition: condition)
-	 #t)))
+;; or
+(check-equal "or: \"\" is true"
+	     "" (or "" 1))
+(check-equal "or: \"0\" is true"
+	     "0" (or "0" 1))
+(check-equal "or: 0 is true"
+	     0 (or 0 1))
 
-(print (not ((complement (method (a b)
-			   (and a b)))
-	     #t #t)))
+;; and
+(check-false "and: #f is false"
+	     (and #f 1))
+(check-equal "and: \"\" is true"
+	     1 (and "" 1))
+(check-equal "and: \"\" is true"
+	     1 (and "0" 1))
+(check-equal "and: \"\" is true"
+	     "" (and #t ""))
+(check-equal "and: \"0\" is true"
+	     "0" (and #t "0"))
+(check-equal "and: 0 is true"
+	     0 (and #t 0))
+(check-false "and: #f is false"
+	     (and #t #f))
+(check-true "and: #t is true"
+	     (and #t #t))
 
-(print (binary< 0 1))
-(print ((complement binary<) 1 0))
+;; when
+(check-true "when: and of \"\", \"0\" and 0 is true"
+	    (when (and "" "0" 0)
+	      #t))
 
-(print (> 1 0))
-(print (not (> 1 1)))
-(print (not (> 2 3 4)))
-(print (> 4 3 2))
-(print (<= 1 1))
-(print (<= 1 2))
-(print (not (<= 2 1)))
+;; rest
+(check-equal "#rest: #1"
+	     1 (+ 1))
+(check-equal "#rest: #2"
+	     3 (+ 1 2))
+(check-equal "#rest: #3"
+	     10 (+ 1 2 3 4))
 
-(print "test keywords")
-(print (== test: test:))
+;; kewords
+(check-equal "keywords: equality"
+	     test: test:)
 (define-function foobar (#key (test 2))
   test)
-(print (== 2 (foobar)))
-(print (== 3 (foobar test: 3)))
+(check-equal "keyword arguments: default value"
+	     2 (foobar))
+(check-equal "keyword arguments: passed value"
+	     3 (foobar test: 3))
 
-(print "test %parallel-set:")
+;; bind
+(check-equal "bind: nested"
+	     2 (bind ((x 0)
+		      (y (+ x 1)))
+	         (bind ((y (+ y 1)))
+		   y)))
+
+;; %parallel-set
 (bind ((i 0)
        (v 0))
   (%parallel-set
    i 1
    v (inc i))
-  (print (== i 1))
-  (print (== v 1)))
+  (check-equal "%parallel-set: i = 0 set to 1"
+	       1 i)
+  (check-equal "%parallel-set: v = 0 set to incremented i still 1"
+	       1 v))
 
-(print "test for")
-(print (== 11
-	   (for ((i 0 (inc i)))
-		((> i 10) i))))
-(print (== 3628800
-	   (for ((i 10 (dec i))
-		 (v 1 (* v i)))
-		((<= i 0) v))))
-
-
-(print "test true?")
-(print (not (true? js:null)))
-(print (not (true? js:undefined)))
-
-(print "test or")
-(print (js:=== "" (or "" 1)))
-(print (js:=== "0" (or "0" 1)))
-(print (js:=== 0 (or 0 1)))
-(print (js:=== "" (or "" #f)))
-(print (js:=== "0" (or "0" #f)))
-(print (js:=== 0 (or 0 #f)))
-
-(print "test and")
-(print (not (and #f 1)))
-(print (js:=== 1 (and "" 1)))
-(print (js:=== 1 (and "0" 1)))
-(print (js:=== "" (and #t "")))
-(print (js:=== "0" (and #t "0")))
-(print (js:=== 0 (and #t 0)))
-(print (not (and #t #f)))
-(print (and #t #t))
-(print (js:=== 23
-	       (when (and "" "0" 0)
-		 23)))
-
-(print "test #rest arguments")
-(print (js:=== 1 (+ 1)))
-(print (js:=== 3 (+ 1 2)))
-(print (js:=== 10 (+ 1 2 3 4)))
-
-(print "test apply")
-(print (js:=== 10 (apply + 1 2 (make-array 3 4))))
-
-(print "test element")
-(print (js:=== 1 (element (make-array 1 2 3) 0)))
-(print (js:=== 2 (element (make-array 1 2 3) 1)))
-(print (js:=== 3 (element (make-array 1 2 3) 2)))
-
-(print "test but-last")
-(print (== 2 (last (but-last (make-array 1 2 3)))))
-(print (== 2 (last (but-last (make-array 1 2 3 4) n: 2))))
-
-(print "test block (non-local exit)")
-(print (js:=== 2
-	       (block (foo)
+;; block
+(check-true "block: without non-local-exit function"
+	    (block () #t))
+(check-true "block: with non-local-exit function"
+	    (block (return)
+	      (return #t)
+	      #f))
+(check-equal "block: invoke non-local-exit function with value"
+	     2 (block (foo)
 	         1
 		 (foo 2)
-		 3)))
+		 3))
 
-(print "test ==")
-(print (== #f #f))
-(print (== 0 0))
-(print (not (== "0" 0)))
-(print (not (== "1" 1)))
-(print (not (== "" #f)))
+;; TODO: not working
+(check-condition "signal <error>" <error>
+		 (method ()
+		   (signal (make <error> message: "!"))
+		   #f))
 
-(print "test =")
-(print (not (= #f "")))
-(print (not (= #f "0")))
-(print (not (= #f 0)))
-(print (not (= #t "")))
-(print (not (= #t "0")))
-(print (not (= #t 0)))
-(print (not (= #t "1")))
-(print (not (= 1 "1")))
-(print (not (= 0 "0")))
-(print (= 1 1))
-(print (= (js:new (js:identifier "Number") 1) 1))
 
-(print "test instance?")
-(print (instance? "test" (js:identifier "String")))
-(print (instance? 1 (js:identifier "Number")))
-(print (instance? "test" <string>))
-(print (instance? 1 <number>))
+(check-true "binary<: 0 < 1"
+	    (binary< 0 1))
+(check-true "<: 1 < 2 < 3 < 4"
+	    (< 1 2 3 4))
+(check-false "<: 2 > 1"
+	     (< 2 1 3 4))
+(check-false "<: 3 > 2"
+	     (< 3 2 1 4))
+(check-false "<: 4 > 3"
+	     (< 4 3 2 1))
+(check-true ">: 1 > 0"
+	    (> 1 0))
+(check-false ">: 1 = 1"
+	     (> 1 1))
+(check-false ">: 2 < 3"
+	     (> 2 3 4))
+(check-true ">: 4 > 3"
+	    (> 4 3 2))
+(check-true "<=: 1 <= 1"
+	    (<= 1 1))
+(check-true "<=: 1 <= 2"
+	    (<= 1 2))
+(check-false "<=: 2 > 1"
+	     (<= 2 1))
 
-(print "test definition of setter before getter")
+;; reduce
+(check-equal "reduce: + on 1, 2, 3, 4, 5"
+	     15 (reduce1 + (make-array 1 2 3 4 5)))
+(check-equal "reduce1: + with 1 on 2, 3, 4, 5"
+	     15 (reduce + 1 (make-array 2 3 4 5)))
+
+;; apply
+(check-equal "apply: + with 1 and 2, 3, 4, 5"
+	     15 (apply + 1 (make-array 2 3 4 5)))
+(check-equal "apply: + with 1, 2, 3 and 4, 5"
+	     15 (apply + 1 2 3 (make-array 4 5)))
+
+;; complement
+(check-true "complement: binary<"
+	    ((complement binary<) 1 0))
+(check-false "complement: and"
+	     ((complement (method (a b)
+			    (and a b)))
+	     #t #t))
+
+;; for
+(check-equal "for: increment until i = 0 > 10"
+	     11 (for ((i 0 (inc i)))
+		     ((> i 10) i)))
+(check-equal "for: 10!"
+	     3628800 (for ((i 10 (dec i))
+			   (v 1 (* v i)))
+			  ((<= i 0) v)))
+
+
+;; element
+(check-equal "element: 1st element is 1"
+	     1 (element (make-array 1 2 3) 0))
+(check-equal "element: 2nd element is 2"
+	     2 (element (make-array 1 2 3) 1))
+
+;; but-last
+(check-equal "but-last: second last element of 1, 2, 3 is 2"
+	     2 (last (but-last (make-array 1 2 3))))
+(check-equal "but-last: third last element of 1, 2, 3, 4 is 2"
+	     2 (last (but-last (make-array 1 2 3 4) n: 2)))
+
+
+;; instance?
+(check-true "instance?: mapped type: \"test\" is a String"
+	    (instance? "test" (js:identifier "String")))
+(check-true "instance?: mapped type: 1 is a Number"
+	    (instance? 1 (js:identifier "Number")))
+(check-true "instance?: \"test\" is a <string>"
+	    (instance? "test" <string>))
+(check-true "instance?: 1 is a <number>"
+	    (instance? 1 <number>))
+
+;; setter definition before getter
 
 (define-function (setter foo) (object new-value)
   (set! (js:get-property object "foo") new-value))
@@ -140,24 +198,18 @@
 
 (bind ((bar (make <object>)))
   (set! (foo bar) 1)
-  (print (== 1 (foo bar))))
+  (check-equal "function: setter before getter"
+	       1 (foo bar)))
 
-(print "test any? and rcurry")
-(print (any? (rcurry > 2)
-	     (make-array 1 2 3 4)))
+;; any? and rcurry
+(check-equal "rcurry: (element x 1) on 0, 1, 2"
+	     1 ((rcurry element 1)
+		(make-array 0 1 2)))
+(check-true "any? and rcurry: x > 2 on 1, 2, 3, 4"
+	    (any? (rcurry > 2)
+		  (make-array 1 2 3 4)))
 
-(print "test bind")
-(print (== 2 (bind ((x 0)
-		    (y (+ x 1)))
-		   (bind ((y (+ y 1)))
-			 y))))
-
-(print "test complement")
-(print (not ((complement (method (x y)
-			   (and x y)))
-	      #t #t)))
-
-(print "test scope")
+;; scope
 (bind ((elements (make-array 0 1 2 3 4 5 6 7 8 9))
        (fns (make-array)))
   (for ((i 0 (+ i 1)))
@@ -165,68 +217,42 @@
     (bind ((el (element elements i)))
       (push-last fns (method ()
 			el))))
-  (print (== 2 ((element fns 2)))))
+  (check-equal "scope: bind in for loop builds closures"
+	       2 ((element fns 2))))
 
-(print "test rcurry")
-(print (== 1 ((rcurry element 1)
-	      (make-array 0 1 2))))
+(check-equal "dotimes: push 0..9 into array"
+	     9 (last (bind ((numbers (make <array>)))
+		       (dotimes (i 10 numbers)
+			 (push-last numbers i)))))
 
-(print "test dotimes")
-(print (true?
-	(dotimes (i 10 #t)
-	  (print i))))
+;; find-key
+(bind ((array (make-array 0 0 0 1 0 0 1 0 0)))
+  (check-equal "find-key: from start: first element > 0"
+	       3 (find-key array
+			   (rcurry > 0)))
+  (check-equal "find-key: from start: second element > 0"
+	     6 (find-key array
+			 (rcurry > 0)
+			 skip: 1))
+  (check-false "find-key: from start: no third element > 0"
+	       (find-key array
+			 (rcurry > 0)
+			 skip: 2));
+  (check-equal "find-key: from end: first element > 0"
+	       6 (find-key array
+			   (rcurry > 0)
+			   from-end: #t))
+  (check-equal "find-key: from end: second element > 0"
+	       3 (find-key array
+			   (rcurry > 0)
+			   from-end: #t
+			   skip: 1))
+  (check-false "find-ley: from end: no third element > 0"
+	       (find-key array
+			 (rcurry > 0)
+			 from-end: #t
+			 skip: 2)))
 
-(print "test find-key")
-;; from start
-(print (= 3 (find-key (make-array 0 0 0 1 0 0 1 0 0)
-		      (rcurry > 0))))
-(print (= 6 (find-key (make-array 0 0 0 1 0 0 1 0 0)
-		      (rcurry > 0)
-		      skip: 1)))
-(print (= #f (find-key (make-array 0 0 0 1 0 0 1 0 0)
-		       (rcurry > 0)
-		       skip: 2)))
-;; from end
-(print (= 6 (find-key (make-array 0 0 0 1 0 0 1 0 0)
-		      (rcurry > 0)
-		      from-end: #t)))
-(print (= 3 (find-key (make-array 0 0 0 1 0 0 1 0 0)
-		      (rcurry > 0)
-		      from-end: #t
-		      skip: 1)))
-(print (= #f (find-key (make-array 0 0 0 1 0 0 1 0 0)
-		       (rcurry > 0)
-		       from-end: #t
-		       skip: 2)))
-
-(print "test <")
-(print (true? (< 1 2 3 4)))
-(print (not (true? (< 2 1 3 4))))
-(print (not (true? (< 3 2 1 4))))
-(print (not (true? (< 4 3 2 1))))
-
-(print "test truth values")
-(print (not (= 0 #f)))
-(print (true? 0))
-(print (= 1 1 1))
-(print (not (= 1 2 1)))
-(print (not (= #f #f 0)))
-
-(print "test reduce")
-(print (== (reduce1 + (make-array 1 2 3 4 5)) 15))
-(print (== (reduce + 1 (make-array 2 3 4 5)) 15))
-
-(print "test apply")
-(print (== (apply + 1 (make-array 2 3 4 5)) 15))
-(print (== (apply + 1 2 3 (make-array 4 5)) 15))
-
-;; (define-function test-format-to-string ()
-;;   (check-equal "" (format-to-string "%d%%%d" 1 2) "1%2")
-;;   (check-equal "" (format-to-string "x%mx"
-;; 				    (method (stream)
-;; 				      (write stream "%test%")))
-;; 	       "x%test%x"))
-;;
 ;; test every?
 ;; (bind ((table (make <table>))
 ;;        (list (make <list> size: 2)))
@@ -297,44 +323,42 @@
 ;; 				  list)
 ;; 		(any? false? list)))
 
-;; test block
-(bind-methods ((block1 ()
-		 (block ()
-		   (bind ((a 1))
-		     a
-		     2)))
-	       (block2 ()
-	         (block (success)
-		   (bind ((a 1))
-		     (success a)
-	             2))))
-  (print "test block without exit-variable")
-  (print (== (block1) 2))
-  (print "test block with exit variable")
-  (print (== (block2) 1)))
+;; bind-methods
+(bind-methods ((test1 (a)
+	         (+ a 1))
+	       (test2 (b)
+		 (+ b 2)))
+  (check-equal "bind-methods: 1"
+	       2 (test1 1))
+  (check-equal "bind-methods: 2"
+	       3 (test2 1)))
 
-(print "test get")
+;; get
 (bind ((x (make <object>)))
   (set! (get x "1" "2" "3") 4)
-  (print (== (get x "1" "2" "3") 4)))
+  (check-equal "get: '1' -> '2' -> '3' = 4"
+	       4 (get x "1" "2" "3")))
 
-(print "test if-bind")
-(if-bind (a #t)
-  (print (true? a))
-  (handler-case
-      (begin
-       a
-       #f)
-    (((js:identifier "Error") condition: condition)
-	#t)))
-(if-bind (a #f)
-  (print #f)
-  (handler-case
-      (begin
-       a
-       #f)
-    (((js:identifier "Error") condition: condition)
-	#t)))
+;; if-bind
+(check-true "if-bind: test is true, shouldn't be visible in then"
+	    (if-bind (a #t)
+	      a
+	      (handler-case
+		  (begin
+		   a
+		   #f)
+		((<error> condition: condition)
+		    #f))))
+
+(check-true "if-bind: test is false, shouldn't be visible in then"
+	    (if-bind (a #f)
+		     a
+		     (handler-case
+			 (begin
+			  a
+			  #f)
+		       ((<error> condition: condition)
+			   #t))))
 
 (define-protocol <test-protocol>
   (test))
@@ -351,22 +375,66 @@
 (define-function test ((object <object>))
   3)
 
-(print (== 1 (test "test")))
-(print (== 2 (test 1)))
+(check-equal "protocol: specialized on <string>"
+	     1 (test "test"))
+(check-equal "protocol: specialized on <number>"
+	     2 (test 1))
 (bind ((x (make <object>)))
-  (print (== 3 (test x)))
-  (print (== 4 (set! (test x) 0))))
+  (check-equal "protocol: setter before getter, get"
+	       3 (test x))
+  (check-equal "protocol: setter before getter, set"
+	       4 (set! (test x) 0)))
 
+;; inc!
 (bind ((x (make <object>)))
   (set! (get x "y") 0)
   (inc! (get x "y"))
-  (print (== 1 (get x "y"))))
+  (check-equal "inc!: 0 -> 1"
+	       1 (get x "y")))
 
-(print "test default initializer")
+;; default initializer
 (define-type <test>
   foo
   bar)
 
 (bind ((test (make <test> foo: 1 bar: 2)))
-  (print (== (get test "foo") 1))
-  (print (== (get test "bar") 2)))
+  (check-equal "type: default initializer for slot 1"
+	       1 (get test "foo"))
+  (check-equal "type: default initializer for slot 2"
+	       2 (get test "bar")))
+
+;; <string-stream>
+(bind ((stream (make <string-stream> string: "test")))
+  (check-false "<string-stream>: not at end when starting"
+	       (at-end? stream))
+  (check-true "<string-stream>: peeking doesn't advance the stream"
+	      (and (== "t" (peek stream))
+		   (== "t" (peek stream))))
+  (check-true "<string-stream>: reading advances the stream"
+	      (and (== "t" (read stream))
+		   (== "e" (read stream))))
+  (read stream)
+  (read stream)
+  (check-true "<string-stream>: at end when done"
+	      (at-end? stream)))
+(bind ((stream (make <string-stream>)))
+  (check-equal "<string-stream>: empty contents when starting"
+	       "" (contents stream))
+  (write stream "FOO")
+  (check-equal "<string-stream>: simple write"
+	       "FOO" (contents stream))
+  (check-true "<string-stream>: writing advances, always at end"
+	      (at-end? stream))
+  (write stream "BAR")
+  (check-equal "<string-stream>: another write, check contents"
+	       "FOOBAR" (contents stream)))
+
+;; format
+(check-equal "format-to-string: numbers and escaping"
+	     "1%2" (format-to-string "%d%%%d" 1 2))
+(check-equal "format-to-string: method"
+	     "x%test%x" (format-to-string "x%mx"
+			  (method (stream)
+				  (write stream "%test%"))))
+(check-equal "format-to-string: description of <string>"
+	     "\"TEST\"" (format-to-string "%=" "TEST"))
