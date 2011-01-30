@@ -1,43 +1,60 @@
 
-;; format
+(define-module format
+  import: (core stream)
+  export: (format-out
+	   format-to-string
+	   format))
+
+(define-function format-integer ((number <number>))
+  ;; TODO:
+  (js:+ "" number))
 
 (define-function format-out ((control-string <string>) #rest args)
   "Formats arguments to *standard-output*."
-  (apply format *standard-output* control-string args))
+  (apply format *standard-out* control-string args))
 
 (define-function format-to-string ((control-string <string>) #rest args)
   "Process a format string and return the result as another string.
 This function effectively calls format and returns the result as a string."
   (bind ((stream (make <string-stream>)))
     (apply format stream control-string args)
-    (stream-contents stream)))
+    (contents stream)))
 
 (define-function format ((stream <stream>) (control-string <string>) #rest args)
   "Format a string and write it to a stream."
-  (bind-methods ((dispatch (char)
+  (bind-methods ((dispatch (char arg)
 		   (select char ==
-		     (("s" "S" "c" "C") (print-message arg stream))
-		     (("=") (print arg stream))
-		     (("b" "B") (format-integer arg 2 stream))
-		     (("o" "O") (format-integer arg 8 stream))
-		     (("d" "D") (format-integer arg 10 stream))
-		     (("x" "X") (format-integer arg 16 stream))
-		     (("m" "M") (arg stream))
-		     (("%") (write-element stream "%"))
+		     (("s" "S" "c" "C")
+		      arg)
+		     (("=")
+		      (description arg))
+		     (("b" "B")
+		      (format-integer arg 2))
+		     (("o" "O")
+		      (format-integer arg 8))
+		     (("d" "D")
+		      (format-integer arg 10))
+		     (("x" "X")
+		      (format-integer arg 16))
+		     (("m" "M")
+		      (arg stream)
+		      "")
 		     ;; TODO: make condition
 		     (else: (error "Unknown format dispatch character, %c" char)))))
-    (reduce (method (skip? char)
-	      (if (and (not skip?)
-		       (= char "%"))
-		  (begin
-		   (dispatch char)
-		   #t)
-		  (begin
-		   (write-element stream char)
-		   #f)))
-	    #f control-string)))
-
-;; print
-
-(define-function print-message (object stream)
-  (write stream object))
+    (reduce (method (index/dispatch? char)
+	      ;; TODO: replace with destructuring-bind
+	      (bind ((index (get index/dispatch? 0))
+		     (dispatch? (get index/dispatch? 1))
+		     (arg (get args index)))
+	        (if dispatch?
+		    (bind ((percent (= char "%")))
+		     (write stream
+			    (if percent "%" (dispatch char arg)))
+		     (make-array (+ index (if percent 0 1) #f)))
+		    (if (= char "%")
+			(make-array index #t)
+			(begin
+			 (write stream char)
+			 (make-array index #f))))))
+	    (make-array 0 #f)
+	    (as-array control-string))))
