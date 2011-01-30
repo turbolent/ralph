@@ -65,7 +65,7 @@ function functionDeclaration (name, args, body) {
 	documentation.push([S('js:documentation'), body.shift()]);
     }
     var restAndKey = [];
-    var rest = [S('%as-array'), S('js:arguments'), requiredArguments(args).length];
+    var rest = [S('as-array'), S('js:arguments'), requiredArguments(args).length];
     var restPosition = args.indexOf(HashSymbol.rest);
     if (restPosition >= 0) {
 	restAndKey.push([S('js:var'), args[restPosition + 1], rest]);

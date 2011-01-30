@@ -185,7 +185,7 @@
     (js:throw (js:new <non-local-exit>
 		      name value))))
 
-(define-function %as-array (arguments skip)
+(define-function as-array (arguments skip)
   ((js:get-property "Array" "prototype"
 		    "slice" "call")
    arguments skip))
