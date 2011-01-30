@@ -285,9 +285,8 @@
 (define-function add! ((array <array>) new-value)
   (push array new-value))
 
-(define-function concatenate ((first-array <array>) #rest more-arrays)
-  ((js:get-property "Array" "prototype" "concat" "apply")
-   first-array more-arrays))
+(define-function %concat (array1 array2 )
+  ((js:get-property array1 "concat") array2))
 
 (define-function reverse! ((array <array>))
   ((js:get-property array "reverse")))
@@ -419,8 +418,8 @@
 
 (define-function apply ((function <function>) #rest arguments)
   ((js:get-property function "apply") js:null
-   (concatenate (but-last arguments)
-		(last arguments))))
+   (%concat (but-last arguments)
+	    (last arguments))))
 
 (define-function curry ((function <function>) #rest curried-args)
   (method (#rest args)
@@ -456,8 +455,8 @@
 	       (if (function object1 object2)
 		   object2
 		   (return #f)))
-	     (concatenate (make-array object1 object2)
-			  more-objects))
+	     (%concat (make-array object1 object2)
+		      more-objects))
     #t))
 
 (define-function = (object1 object2 #rest more-objects)
