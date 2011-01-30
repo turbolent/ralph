@@ -394,7 +394,7 @@
   (copy-sequence array start: 1))
 
 (define-function but-last ((array <array>) #key (n 1))
-  (copy-sequence array end: (* n -1)))
+  (copy-sequence array end: (js:* n -1)))
 
 (define-function replace-subsequence (target-array insert-array
 				      #key (start 0) (end (size target-array)))
