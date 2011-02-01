@@ -27,7 +27,7 @@ This function effectively calls format and returns the result as a string."
 		     (("s" "S" "c" "C")
 		      arg)
 		     (("=")
-		      (description arg))
+		      (or (description arg) ""))
 		     (("b" "B")
 		      (format-integer arg 2))
 		     (("o" "O")
@@ -41,20 +41,28 @@ This function effectively calls format and returns the result as a string."
 		      "")
 		     ;; TODO: make condition
 		     (else: (error "Unknown format dispatch character, %c" char)))))
-    (reduce (method (index/dispatch? char)
-	      ;; TODO: replace with destructuring-bind
-	      (bind ((index (get index/dispatch? 0))
-		     (dispatch? (get index/dispatch? 1))
-		     (arg (get args index)))
-	        (if dispatch?
-		    (bind ((percent (= char "%")))
-		     (write stream
-			    (if percent "%" (dispatch char arg)))
-		     (make-array (+ index (if percent 0 1) #f)))
-		    (if (= char "%")
-			(make-array index #t)
-			(begin
-			 (write stream char)
-			 (make-array index #f))))))
-	    (make-array 0 #f)
-	    (as-array control-string))))
+    (bind ((index 0))
+      (while (not (empty? control-string))
+        (bind ((next-dispatch (string-position control-string "%")))
+          (if (> next-dispatch 0)
+	      ;; write part upto next dispatch
+	      (begin
+	       (write stream (copy-sequence control-string
+					    end: next-dispatch))
+	       (set! control-string
+		     (copy-sequence control-string
+				    start: next-dispatch)))
+	      (if next-dispatch
+		  ;; dispatch
+		  (bind ((arg (get args index))
+			 (char (second control-string))
+			 (percent (= char "%")))
+		    (write stream (if percent "%" (dispatch char arg)))
+		    (set! control-string
+			  (copy-sequence control-string
+					 start: 2))
+		    (unless percent
+		      (inc! index)))
+		  (begin
+		   (write stream control-string)
+		   (set! control-string "")))))))))
