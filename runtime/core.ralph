@@ -489,20 +489,26 @@
 
 (define-function <= (object1 object2 #rest more-objects)
   (compare (method (object1 object2)
-	     (or (binary< object1 object2)
-		 (binary= object1 object2)))
+	     (and object1
+		  object2
+		  (or (binary< object1 object2)
+		      (binary= object1 object2))))
 	   object1 object2 more-objects))
 
 (define-function > (object1 object2 #rest more-objects)
   (compare (method (object1 object2)
-	     (and (not (binary< object1 object2))
-		  (not (binary= object1 object2))))
+	      (and object1
+		   object2
+		   (not (binary< object1 object2))
+		   (not (binary= object1 object2))))
 	   object1 object2 more-objects))
 
 (define-function >= (object1 object2 #rest more-objects)
   (compare (method (object1 object2)
-	     (or (not (binary< object1 object2))
-		 (binary= object1 object2)))
+	     (and object1
+		  object2
+		  (or (not (binary< object1 object2))
+		      (binary= object1 object2))))
 	   object1 object2 more-objects))
 
 
