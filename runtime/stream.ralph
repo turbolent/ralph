@@ -2,7 +2,7 @@
 (define-module format
   import: (core)
   export: (<stream>
-	   <string-stream>	   
+	   <string-stream>
 	   *standard-out*
 	   write
 	   read))
@@ -29,7 +29,7 @@
 (define-function peek ((stream <string-stream>))
   (get stream "string"
        (get stream "index")))
-    
+
 (define-function read ((stream <string-stream>))
   (bind ((char (get (get stream "string")
 		    (get stream "index"))))
@@ -37,13 +37,16 @@
 	char))
 
 (define-function write ((stream <string-stream>) object)
-  ;; TODO: should write at position and advance index
-  ;;       by length of object
-  (set! (get stream "string")
-	(concatenate (get stream "string")
-		     object))
-  (inc! (get stream "index")
-	(size object)))
+  (bind ((string (as-string object))
+	 (position (get stream "index"))
+	 (contents (get stream "string"))
+	 (length (size string)))
+    (set! (get stream "string")
+	  (replace-subsequence contents string
+			       start: position
+			       end: (+ position length)))
+    (inc! (get stream "index")
+	  length)))
 
 (define-function contents ((stream <string-stream>))
   (get stream "string"))
@@ -59,6 +62,6 @@
 
 (define *standard-out* (make <file-stream>
 			     file: (get (require "system") "stdout")))
-   
-   
+
+
 
