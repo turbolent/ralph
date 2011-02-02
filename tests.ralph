@@ -257,6 +257,44 @@
 			 from-end: #t
 			 skip: 2)))
 
+
+;; replace-subsequence
+(bind ((array (make-array 0 1 2 3 4 5 6 7 8 9))
+       (xs (make-array "X" "X" "X")))
+  (check-equal "replace-subsequence: array: 2..4"
+	       (copy-sequence
+		(replace-subsequence array xs start: 2 end: 4)
+		start: 2
+		end: 5)
+	       xs)
+
+  (check-equal "replace-subsequence: array: 2.."
+	       (copy-sequence
+		(replace-subsequence array xs start: 2)
+		start: 2)
+	       xs)
+
+  (check-equal "replace-subsequence: array: ..2"
+	       (copy-sequence
+		(replace-subsequence array xs end: 2)
+		end: 3)
+	       xs)
+
+  (check-equal "replace-subsequence: array: insert at 2"
+	       (copy-sequence
+		(replace-subsequence array xs start: 2 end: 2)
+		start: 2
+		end: 5)
+	       xs)
+
+  (check-equal "replace-subsequence: string"
+	       (copy-sequence
+		(replace-subsequence "ABCDEFG" "XXX"
+				     start: 5 end: 8)
+		start: 5)
+	       "XXX"))
+
+
 ;; test every?
 ;; (bind ((table (make <table>))
 ;;        (list (make <list> size: 2)))
