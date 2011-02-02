@@ -126,10 +126,14 @@ var macros = {
 	if (!(name instanceof Symbol || setter))
 	    throw new Error('function\'s name should be a symbol or (setter name): '
 			    + JSON.stringify(name));
-	var type = (args.length > 0
-		    && args[0] instanceof Array
-		    && args[0].length > 1)
-	     ? args[0][1].name : S('js:null');
+	var type = S('js:null');
+	if (args.length > 0) {
+	    if (args[0] instanceof Array
+		&& args[0].length > 1)
+		type = args[0][1].name;
+	    else
+		type = "<object>";
+	}
 	return [setter ? S('%define-setter') : S('%define-getter'),
 		name.toString(), [S('method'), args].concat(body), type];
     },

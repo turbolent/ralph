@@ -566,10 +566,15 @@
 
 (define-function %make-protocol-dispatcher (protocol function-name)
   (bind-methods ((dispatcher (#rest arguments)
-		   (bind ((type-name (get (type (first arguments)) "%name")))
-		     (if-bind (implementation (get protocol "%imp" type-name function-name))
+		   (bind ((type-name (get (type (first arguments)) "%name"))
+			  (implementations (get protocol "%imp")))
+		     (if-bind (implementation (or (get implementations
+						       type-name function-name)
+						  (get implementations
+						       "<object>" function-name)))
 			      (apply implementation arguments)
-			      (print "No method of " function-name " for type " type-name)))))
+			      (print "No method of " function-name
+				     " for type " type-name)))))
     (set! (js:get-property dispatcher "%protocol")
 	  protocol)
     (set! (js:get-property dispatcher "%name")
