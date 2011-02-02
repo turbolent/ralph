@@ -22,6 +22,10 @@
 	     (= 1 2 1))
 (check-false "equality: #f and 0 are unequal"
 	     (= #f #f 0))
+(check-true "equality: array with same contents"
+	    (= (make-array 1 3 4 2) (make-array 1 3 4 2)))
+(check-false "equality: array with different contents"
+	     (= (make-array 1 3 4 2) (make-array 4 2 1 3)))
 
 ;; or
 (check-equal "or: \"\" is true"
