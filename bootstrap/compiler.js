@@ -17,16 +17,6 @@ Object.prototype.toArray = function () {
 
 //// expansion
 
-function searchHead (form, symbol) {
-    if (form instanceof Array) {
-	return form[0] == symbol ||
-	    form.some(function (form) {
-		return searchHead(form, symbol);
-	    });
-    } else
-	return false;
-}
-
 function argumentNames (args) {
     return args.map(function (arg) {
 	return (arg instanceof Array ? arg[0] : arg);
@@ -135,7 +125,7 @@ var macros = {
 		type = "<object>";
 	}
 	return [setter ? S('%define-setter') : S('%define-getter'),
-		name.toString(), [S('method'), args].concat(body), type];
+		[S('js:escape'), name], [S('method'), args].concat(body), type];
     },
     'method': function (args) {
 	var body = arguments.toArray().slice(1);
@@ -243,14 +233,13 @@ var macros = {
 		[[S('define-function'), S('initialize'),
 		  [[S('object'), type], HashSymbol.key]
 		  .concat(slots)]
-		 .concat(slots.map(function (slot) {
-				       var slotName = slot instanceof Array
-					   ? slot[0] : slot;
-				       return [S('set!'),
-					       [S('get'), S('object'),
-						slotName.name],
-					       slotName];
-				   }))];
+		 .concat(argumentNames(slots)
+			 .map(function (slot) {
+				  return [S('set!'),
+					  [S('get'), S('object'),
+					   slot.name],
+					  slot];
+			      }))];
 	}
 	return [S('begin'),
 		[S('define'), type,
@@ -262,7 +251,8 @@ var macros = {
 	function declare (f) {
 	    var name = f[0];
 	    return [S('define'), name,
-		    [S('%make-protocol-dispatcher'), protocol, name.toString()]];
+		    [S('%make-protocol-dispatcher'),
+		     protocol, [S('js:escape'), name]]];
 	}
 	var functions = arguments.toArray().slice(1);
 	return [S('begin'),
@@ -283,7 +273,8 @@ var macros = {
 		    imports = value.map(function (name) {
 			var importSymbol = Symbol.generate();
 			return [S('begin'),
-				[S('js:var'), importSymbol, [S('require'), name.toString()]],
+				[S('js:var'), importSymbol,
+				 [S('require'), [S('js:escape'), name]]],
 				[S('js:for-in'),
 				 [propertySymbol, importSymbol],
 				 [S('js:set'),
@@ -300,7 +291,7 @@ var macros = {
 		}
 	    }
 	}
-	return [S('js:statements'),
+	return [S('begin'),
 		[S('js:var'), S('*module*'), S('js:this')],
 		[S('js:set'),
 		 [S('js:get-property'), S('*module*'), '%exports'],
@@ -438,7 +429,7 @@ var macros = {
     'inc!': function (object, value) {
 	return [S('set!'), object,
 		[S('js:+'), object, value ? value : 1]];
-    }
+    },
 };
 
 var symbolMacros = {};
@@ -450,7 +441,9 @@ var specialForms = {
 	return [S('js:function'), name, args, macroexpand(body)];
     },
     'define': function (name, value) {
-	return [S('%define'), name.toString(), macroexpand(value)];
+	return [S('%define'),
+		[S('js:escape'), name],
+		macroexpand(value)];
     },
     'js:for': function (clauses) {
 	var body = arguments.toArray().slice(1);
@@ -653,10 +646,6 @@ var writers = {
 	    }).join('\n')
 	    + '\n */\n';
     },
-    'js:statements': function (allowStatements) {
-	var body = arguments.toArray().slice(1);
-	return body.map(writeStatements).join(';\n');
-    },
     'js:escape': function (allowStatements, symbol) {
 	return write(symbol.toString());
     },
@@ -682,14 +671,17 @@ function write (form, allowStatements) {
 	var head = form[0];
 	var rest = form.slice(1);
 	if (head instanceof Symbol
-	    && infix.hasOwnProperty(head.name)) {
+	    && infix.hasOwnProperty(head.name))
+	{
 	    return '(' + rest.map(writeExpressions).join(' ' + infix[head.name] + ' ') + ')';
 	} else if (head instanceof Symbol
-		   && writers.hasOwnProperty(head.name)) {
+		   && writers.hasOwnProperty(head.name))
+	{
 	    return writers[head.name].apply(this, [allowStatements].concat(rest));
 	} else if (head instanceof Array
 		   && head[0] instanceof Symbol
-		   && head[0].name == 'js:function') {
+		   && head[0].name == 'js:function')
+	{
 	    return '(' + write(head) + ')(' + rest.map(writeExpressions).join(', ') + ')';
 	} else {
 	    return write(head) + '(' + rest.map(writeExpressions).join(', ') + ')';
