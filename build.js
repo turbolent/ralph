@@ -22,6 +22,8 @@ function dirname (path) {
 
 var compiler = require('./bootstrap/compiler');
 
+var async = false;
+
 function compileFile (path) {
     var source = fs.openRaw(path, 'r');
     var target = fs.openRaw((dirname(path) + '/'
@@ -29,13 +31,16 @@ function compileFile (path) {
 			  'w');
     var code = source.readWhole();
     target.write("(function () {\n"
-		 + compiler.compile(code)
+		 + compiler.compile(code, async)
 		 + '\n})();\n');
     source.close();
     target.close();
 }
 
 var commands = {
+    '--async': function () {
+	async = true;
+    },
     clean: function () {
 	commands.cleanRuntime();
 	commands.cleanTests();
@@ -74,7 +79,8 @@ var commands = {
     }
 }
 
-system.args.slice(1).forEach(function (command) {
-    if (commands.hasOwnProperty(command))
-	commands[command]();
-});
+system.args.slice(1)
+    .forEach(function (argument) {
+		 if (commands.hasOwnProperty(argument))
+		     commands[argument]();
+	     });
