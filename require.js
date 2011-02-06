@@ -22,22 +22,20 @@ var require;
 			 var exports = {};
 			 e(exports, req.responseText);
 			 modules[name] = exports;
-			 if (currentRequests == requests) {
-			     callback(exports);
-			     requests--;
-			     deferredCallbacks.forEach(function (callback, i) {
-							   if (callback())
-							       deferredCallbacks.splice(i, 1);
-						       });
-			 } else {
-			     deferredCallbacks.unshift(function() {
-							   if (currentRequests == requests) {
-							       callback(exports);
-							       requests--;
-							       return true;
-							   } else
-							       return false;
-						    });
+			 deferredCallbacks
+			     .unshift(function() {
+					  if (currentRequests == requests) {
+					      callback(exports);
+					      requests--;
+					      return true;
+					  } else
+					      return false;
+				      });
+			 for (var i = 0; i < deferredCallbacks.length; i++) {
+			     if (deferredCallbacks[0]()) {
+				 deferredCallbacks.splice(i, 1);
+				 i--;
+			     }
 			 }
 		     } else {
 			 // alternatives left?
