@@ -60,8 +60,23 @@
   ((js:get-property (js:get-property stream "file") "write")
    object))
 
-(define *standard-out* (make <file-stream>
-			     file: (get (require "system") "stdout")))
+;; <document-stream>
+
+(define-type <document-stream>)
+
+(define-function write ((stream <document-stream>) object)
+  ((js:get-property "document" "write")
+   object))
+
+(define *standard-out* (select *environment* ==
+		         (("commonjs")
+			  (begin
+			   (js:var system (require "system"))
+			   (make <file-stream>
+				 file: (get system "stdout"))))
+			  (("browser")
+			   (make <document-stream>))))
+
 
 
 

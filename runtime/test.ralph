@@ -8,13 +8,18 @@
 	   check-no-error
 	   check-instance?))
 
-
-(Define-function report-success ((description <string>) (explanation <string>))
-  (format-out " \033[32m✓\033[0m %s: %s\n" description explanation))
+(define-function report-success ((description <string>) (explanation <string>))
+  (format-out (if (= *environment* "commonjs")
+		  " \033[32m✓\033[0m %s: %s\n"
+		  " <span style=\"color:green\">✓</span> %s: %s<br/>")
+	      description explanation))
 
 
 (define-function report-failure ((description <string>) (explanation <string>))
-  (format-out " \033[31m✘\033[0m %s: %s\n" description explanation))
+  (format-out (if (= *environment* "commonjs")
+		  " \033[31m✘\033[0m %s: %s\n"
+		  " <span style=\"color:red\">✘</span> %s: %s<br/>")
+	      description explanation))
 
 (define-function check-equal ((description <string>) expected-value test-value)
   (if (= expected-value test-value)
