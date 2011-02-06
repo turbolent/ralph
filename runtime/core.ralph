@@ -10,7 +10,8 @@
 	   <object>
 	   <non-local-exit>
 	   not
-	   true?))
+	   true?
+	   *environment*))
 
 ;;;; define
 
@@ -134,6 +135,11 @@
 (define-function %describe (object)
   ((js:identifier "JSON.stringify")
    object))
+
+(define *environment*
+    (if (js:defined window)
+	"browser"
+	"commonjs"))
 
 ;;;; objects
 
