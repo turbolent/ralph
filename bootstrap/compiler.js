@@ -539,10 +539,11 @@ var writers = {
     'begin': function (allowStatements) {
 	var forms = arguments.toArray().slice(1);
 	if (allowStatements) {
-	    var separator = ';\n';
-	    var result = forms.map(writeStatements).join(separator);
-	    if (forms.length > 1)
-		result += '\n';
+	    var result = forms.map(writeStatements);
+	    if (result.length > 1)
+		result = result.join(';\n');
+	    else
+		result = result[0];
 	    return result;
 	} else if (forms.length > 1)
 	    return '(' + forms.map(writeExpressions).join(', ') + ')';
