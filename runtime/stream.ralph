@@ -1,6 +1,6 @@
 
 (define-module format
-  import: (core)
+  import: (core system)
   export: (<stream>
 	   <string-stream>
 	   *standard-out*
@@ -70,12 +70,10 @@
 
 (define *standard-out* (select *environment* ==
 		         (("commonjs")
-			  (begin
-			   (js:var system (require "system"))
-			   (make <file-stream>
-				 file: (get system "stdout"))))
-			  (("browser")
-			   (make <document-stream>))))
+			  (make <file-stream>
+				file: stdout))
+			 (("browser")
+			  (make <document-stream>))))
 
 
 
