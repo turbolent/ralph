@@ -430,6 +430,33 @@ var macros = {
 	return [S('set!'), object,
 		[S('js:+'), object, value ? value : 1]];
     },
+    'destructuring-bind': function (pattern, value) {
+	var body = arguments.toArray().slice(2);
+	var target;
+	function destructure (p, v) {
+	    var nested = [];
+	    var simpleP = p.map(function (o) {
+				    if (o instanceof Array) {
+					var temp = Symbol.generate();
+					nested.push([o, temp]);
+					return temp;
+				    } else
+					return o;
+				});
+	    var inner = [S('method'), simpleP];
+	    var wrapper = [S('apply'), inner, v];
+	    target = inner;
+	    nested.forEach(function (n) {
+			       var subWrapper = destructure.apply(null, n);
+			       inner.push(subWrapper);
+			       inner = subWrapper[1];
+			   });
+	    return wrapper;
+	}
+	var wrapping = destructure(pattern, value);
+	Array.prototype.splice.apply(target, [target.length, body.length].concat(body));
+	return wrapping;
+    }
 };
 
 var symbolMacros = {};
