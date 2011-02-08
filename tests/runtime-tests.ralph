@@ -1,4 +1,4 @@
-(define-module tests
+(define-module runtime-tests
   import: (core test stream))
 
 ;; true?
@@ -302,76 +302,26 @@
 	      (and (= a 1) (= b 2) (= c 3)
 		   (= d 4) (= e 5) (= f 6) (= g 7))))
 
+(check-true "every?"
+	    (every? (method (x)
+		      (> x 0))
+		    (make-array 1 2 3 4)))
 
-;; test every?
-;; (bind ((table (make <table>))
-;;        (list (make <list> size: 2)))
-;;   (set! (element table "0") #t)
-;;   (set! (element table "1") #t)
-;;   (check-true (format-to-string "every? true? on table %="
-;; 				table)
-;; 	      (every? true? table))
-;;   (set! (element table "0") #f)
-;;     (set! (element table "1") #f)
-;;     (check-true (format-to-string "every? false? on table %="
-;; 				  table)
-;; 		(every? false? table))
-;;     (set! (element table "0") #t)
-;;     (check-false (format-to-string "every? false? on table %="
-;; 				   table)
-;; 		 (every? false? table))
-;;     (set! (element list 0) #t)
-;;     (set! (element list 1) #t)
-;;     (check-true (format-to-string "every? true? on list %="
-;; 				  list)
-;; 		(every? true? list))
-;;     (set! (element list 0) #f)
-;;     (set! (element list 1) #f)
-;;     (check-true (format-to-string "every? false? on list %="
-;; 				  list)
-;; 		(every? false? list))
-;;     (set! (element list 0) #t)
-;;     (check-false (format-to-string "every? false? on list %="
-;; 				   list)
-;; 		 (every? false? list)))
-;;
-;; test any?
-;; (bind ((table (make <table>))
-;;        (list (make <list> size: 2)))
-;;   (set! (element table "0") #t)
-;;   (set! (element table "1") #t)
-;;   (check-true (format-to-string "any? true? on table %="
-;; 				table)
-;; 	      (any? true? table))
-;;   (set! (element table "0") #f)
-;;   (set! (element table "1") #f)
-;;   (check-true (format-to-string "any? false? on table %="
-;; 				table)
-;; 	      (any? false? table))
-;;   (set! (element table "0") #t)
-;;     (check-true (format-to-string "any? true? on table %="
-;; 				  table)
-;; 		(any? true? table))
-;;     (check-true (format-to-string "any? false? on table %="
-;; 				  table)
-;; 		(any? false? table))
-;;     (set! (element list 0) #t)
-;;     (set! (element list 1) #t)
-;;     (check-true (format-to-string "any? true? on list %="
-;; 				  list)
-;; 		(any? true? list))
-;;     (set! (element list 0) #f)
-;;     (set! (element list 1) #f)
-;;     (check-true (format-to-string "any? false? on list %="
-;; 				  list)
-;; 		(any? false? list))
-;;     (set! (element list 0) #t)
-;;     (check-true (format-to-string "any? true? on list %="
-;; 				  list)
-;; 		(any? true? list))
-;;     (check-true (format-to-string "any? false? on list %="
-;; 				  list)
-;; 		(any? false? list)))
+(check-true "every? true"
+	    (every? true?
+		    (make-array #t #t #t #t)))
+
+(check-false "every? false"
+	     (every? true?
+		     (make-array #t #t #t #f)))
+
+(check-true "any? true"
+	    (any? true?
+		  (make-array #f #t #t #f)))
+
+(check-false "any? false"
+	     (any? true?
+		   (make-array #f #f #f #f)))
 
 ;; bind-methods
 (bind-methods ((test1 (a)
