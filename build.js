@@ -38,49 +38,55 @@ function compileFile (path) {
 }
 
 var commands = {
-    '--async': function () {
+    'async': function () {
 	async = true;
     },
-    clean: function () {
-	commands.cleanRuntime();
-	commands.cleanTests();
+    'cleanDirectories': function () {
+	Array.prototype.slice.call(arguments)
+	    .forEach(function (directory) {
+			 print("Cleaning '" + directory + "'");
+			 var root = "./" + directory + "/";
+			 fs.list(root)
+			     .forEach(function (path) {
+					  path = root + path;
+					  if (extension(path) == '.js') {
+					      print(' - ' + path);
+					      fs.remove(path);
+					  }
+				      });
+		     });
     },
-    cleanRuntime: function () {
-	print('Cleaning runtime ...');
-	fs.list('./runtime/').forEach(function (path) {
-	    path = './runtime/' + path;
-	    if (extension(path) == '.js') {
-		print(' - ' + path);
-		fs.remove(path);
-	    }
-	});
-    },
-    cleanTests: function () {
-	print('Cleaning tests ...');
-	try {
-	    fs.remove('./tests.js');
-	} catch (e) {};
-    },
-    bootstrapRuntime: function () {
-	print('Bootstraping runtime ...');
-	fs.list('./runtime/').forEach(function (path) {
-	    path = './runtime/' + path;
-	    if (extension(path) == '.ralph' &&
-		basename(path)[0] != '.')
-	    {
-		print(' - ' + path);
-		compileFile(path);
-	    }
-	});
-    },
-    compileTests: function () {
-	print('Compiling tests ...');
-	compileFile('./tests.ralph');
+    'compileDirectories': function () {
+	Array.prototype.slice.call(arguments)
+	    .forEach(function (directory) {
+			 print("Compiling '" + directory + "'");
+			 var root = "./" + directory + "/";
+			 fs.list(root)
+			     .forEach(function (path) {
+					  path = root + path;
+					  if (extension(path) == '.ralph' &&
+					      basename(path)[0] != '.')
+					  {
+					      print(' - ' + path);
+					      compileFile(path);
+					  }
+				      });
+
+		     });
     }
 }
 
+var actions = [];
+var options;
 system.args.slice(1)
     .forEach(function (argument) {
-		 if (commands.hasOwnProperty(argument))
-		     commands[argument]();
+		 if (argument.substr(0, 2) == "--") {
+		     options = [];
+		     actions.push([argument.substr(2),
+				   options]);
+		 } else
+		     options.push(argument);
 	     });
+actions.forEach(function (action) {
+		    commands[action[0]].apply(null, action[1]);
+		});
