@@ -14,6 +14,7 @@
   (peek)
   (read)
   (write)
+  (advance)
   (contents))
 
 ;; <string-stream>
@@ -45,11 +46,17 @@
 	  (replace-subsequence contents string
 			       start: position
 			       end: (+ position length)))
-    (inc! (get stream "index")
-	  length)))
+    (advance stream count: length)))
+
+(define-function advance ((stream <string-stream>) #key (count 1))
+  (inc! (get stream "index") count))
 
 (define-function contents ((stream <string-stream>))
   (get stream "string"))
+
+(define-function remaining-contents ((stream <string-stream>))
+  (copy-sequence (get stream "string")
+		 start: (get stream "index")))
 
 ;; <file-stream>
 
