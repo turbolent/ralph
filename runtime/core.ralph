@@ -238,9 +238,6 @@
 (define-function size ((array <array>))
   (js:get-property array "length"))
 
-(define-function do ((function <function>) (array <array>))
-  ((js:get-property array "forEach") function))
-
 (define-function copy-sequence ((array <array>) #key (start 0) (end (size array)))
   ((js:get-property array "slice")
    (or start 0)
@@ -338,6 +335,11 @@
 
 (define-function map ((function <function>) (array <array>))
   ((js:get-property array "map")
+   (method (element)
+     (function element))))
+
+(define-function do ((function <function>) (array <array>))
+  ((js:get-property array "forEach")
    (method (element)
      (function element))))
 
