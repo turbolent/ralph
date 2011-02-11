@@ -562,6 +562,12 @@
 (define-function description ((string <string>))
   (concatenate "\"" string "\""))
 
+(define-function description ((array <array>))
+  (bind ((content (map description array)))
+    (js:+ "(" (reduce1 (method (current item)
+		         (js:+ current " " item))
+		       content)
+	  ")")))
 ;;
 
 (define-protocol <condition>
