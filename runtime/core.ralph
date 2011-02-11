@@ -4,7 +4,6 @@
 	   %export
 	   %define-getter
 	   %define-setter
-	   setter
 	   %interned-keywords
 	   (js:identifier "_k")
 	   <object>

@@ -125,7 +125,9 @@ var macros = {
 		type = "<object>";
 	}
 	return [setter ? S('%define-setter') : S('%define-getter'),
-		[S('js:escape'), name], [S('method'), args].concat(body), type];
+		[S('js:escape'), name],
+		[S('method'), args].concat(body),
+		type];
     },
     'method': function (args) {
 	var body = arguments.toArray().slice(1);
