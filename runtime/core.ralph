@@ -496,7 +496,6 @@
 (define-type <number>)
 (define-type <array>)
 (define-type <boolean>)
-(define-type <regexp>)
 
 (define-function alias-type (ralph-type javascript-type)
   (set! (js:get-property ralph-type "%js-type") javascript-type)
@@ -507,7 +506,6 @@
 (alias-type <number> (js:identifier "Number"))
 (alias-type <array> (js:identifier "Array"))
 (alias-type <boolean> (js:identifier "Boolean"))
-(alias-type <regexp> (js:identifier "RegExp"))
 
 ;; protocols
 
@@ -545,6 +543,16 @@
   message)
 
 (alias-type <error> (js:identifier "Error"))
+
+;; regexp
+
+(define-type <regexp>)
+
+(alias-type <regexp> (js:identifier "RegExp"))
+
+(define-function initialize ((regexp <regexp>) #key source)
+  (when source
+    ((js:get-property regexp "compile") source)))
 
 ;;
 
