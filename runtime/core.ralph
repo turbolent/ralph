@@ -640,3 +640,10 @@
 		     (get array2 i))
 	    (return #f)))
 	 #t)))
+
+(define-function make-object (#rest key-vals)
+  (bind ((object (%make-object)))
+    (for ((i 0 (+ i 2)))
+	 ((>= i (size key-vals)) object)
+      (set! (get object (get key-vals i))
+	    (get key-vals (inc i))))))
