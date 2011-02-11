@@ -1,7 +1,7 @@
 (define-module compiler-tests
   import: (core test stream reader))
 
-(bind ((source "(this is (a foo: #rest simple #key test \"string\" 23.42))")
+(bind ((source "(this is (foo #t blub #f foo: #rest simple #key test \"string\" 23.42))")
        (stream (make <string-stream> string: source))
        (code (read stream)))
   (format-out "%=" code))
