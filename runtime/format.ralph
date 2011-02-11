@@ -23,20 +23,20 @@ This function effectively calls format and returns the result as a string."
 (define-function format ((stream <stream>) (control-string <string>) #rest args)
   "Format a string and write it to a stream."
   (bind-methods ((dispatch (char arg)
-		   (select char ==
-		     (("s" "S" "c" "C")
+		   (select (as-lowercase char) ==
+		     (("s" "c")
 		      arg)
 		     (("=")
 		      (or (description arg) ""))
-		     (("b" "B")
+		     (("b")
 		      (format-integer arg 2))
-		     (("o" "O")
+		     (("o")
 		      (format-integer arg 8))
-		     (("d" "D")
+		     (("d")
 		      (format-integer arg 10))
-		     (("x" "X")
+		     (("x")
 		      (format-integer arg 16))
-		     (("m" "M")
+		     (("m")
 		      (arg stream)
 		      "")
 		     ;; TODO: make condition
