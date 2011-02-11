@@ -1,0 +1,11 @@
+(define-module regexp
+    import: (core))
+
+(define-function find ((regexp <regexp>) (string <string>))
+  (bind ((position ((js:get-property string "search")
+		    regexp)))
+    (when (> position -1)
+      position)))
+
+(define-function match ((regexp <regexp>) (string <string>))
+  ((js:get-property string "match") regexp))
