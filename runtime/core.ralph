@@ -4,8 +4,8 @@
 	   %export
 	   %define-getter
 	   %define-setter
-	   %interned-keywords
 	   (js:identifier "_k")
+	   (js:identifier "_s")
 	   <object>
 	   <non-local-exit>
 	   not
@@ -144,9 +144,9 @@
 
 ;;;; keywords
 
-(define %interned-keywords (%make-object))
+(define %keywords (%make-object))
 
-(define <keyword> (js:new (js:identifier "Function")))
+(define <keyword> (%make-function))
 
 (define-function keyword? (keyword)
   (instance? keyword <keyword>))
@@ -156,12 +156,12 @@
     (begin
       (js:var keyword js:null)
       (js:return
-       (if (%has-property? %interned-keywords name)
-	   (js:get-property %interned-keywords name)
+       (if (%has-property? %keywords name)
+	   (js:get-property %keywords name)
 	   (begin
 	    (set! keyword (js:new <keyword>))
-	    (set! (js:get-property keyword "%name") name)
-	    (set! (js:get-property %interned-keywords name) keyword)
+	    (set! (js:get-property keyword "name") name)
+	    (set! (js:get-property %keywords name) keyword)
 	    keyword))))))
 
 ;;;; non-local exit
@@ -647,3 +647,36 @@
 	 ((>= i (size key-vals)) object)
       (set! (get object (get key-vals i))
 	    (get key-vals (inc i))))))
+
+;; symbols
+
+(define-type <hash-symbol>
+    name)
+
+(define %hash-symbols (%make-object))
+
+(do (method (name)
+      (set! (get %hash-symbols name)
+	    (make <hash-symbol> name: name)))
+    (make-array "key" "rest" "values"))
+
+(define-type <symbol>
+    name)
+
+(define %symbols (%make-object))
+
+(%define "_s"
+  (%function js:null (name)
+    (js:return
+      (or (get %symbols name)
+	  (set! (get %symbols name)
+		(make <symbol> name: name))))))
+
+(define-function description ((symbol <symbol>))
+  (get symbol "name"))
+
+(define-function description ((keyword <keyword>))
+  (js:+ (get keyword "name") ":"))
+
+(define-function description ((symbol <hash-symbol>))
+  (js:+ "#" (get symbol "name")))
