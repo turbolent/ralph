@@ -408,13 +408,13 @@
   (check-false "<string-stream>: not at end when starting"
 	       (at-end? stream))
   (check-true "<string-stream>: peeking doesn't advance the stream"
-	      (and (== "t" (peek stream))
-		   (== "t" (peek stream))))
+	      (and (== "t" (peek-char stream))
+		   (== "t" (peek-char stream))))
   (check-true "<string-stream>: reading advances the stream"
-	      (and (== "t" (read stream))
-		   (== "e" (read stream))))
-  (read stream)
-  (read stream)
+	      (and (== "t" (read-char stream))
+		   (== "e" (read-char stream))))
+  (read-char stream)
+  (read-char stream)
   (check-true "<string-stream>: at end when done"
 	      (at-end? stream)))
 (bind ((stream (make <string-stream>)))

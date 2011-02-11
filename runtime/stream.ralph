@@ -5,14 +5,17 @@
 	   <string-stream>
 	   *standard-out*
 	   write
-	   read))
+	   read-char
+	   peek-char
+	   advance
+	   contents))
 
 ;; <stream>
 
 (define-protocol <stream>
   (at-end?)
-  (peek)
-  (read)
+  (peek-char)
+  (read-char)
   (write)
   (advance)
   (contents))
@@ -27,11 +30,11 @@
   (>= (get stream "index")
       (dec (size (get stream "string")))))
 
-(define-function peek ((stream <string-stream>))
+(define-function peek-char ((stream <string-stream>))
   (get stream "string"
        (get stream "index")))
 
-(define-function read ((stream <string-stream>))
+(define-function read-char ((stream <string-stream>))
   (bind ((char (get (get stream "string")
 		    (get stream "index"))))
 	(inc! (get stream "index"))
