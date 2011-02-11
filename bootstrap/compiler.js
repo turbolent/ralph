@@ -35,7 +35,6 @@ function requiredArguments (args) {
 	[HashSymbol.key, HashSymbol.rest, HashSymbol.values].map(position);
     var end = Math.min.apply(null, [args.length].concat(hashSymbolPositions));
     return args.slice(0, end);
-
 }
 
 function addReturn (forms) {
@@ -92,7 +91,7 @@ function functionDeclaration (name, args, body) {
 	else
 	    restVar = args[restPosition + 1];
 
-	restAndKey.push([S('js:for'), [[[indexVar, 0],
+	restAndKey.push([S('%for'), [[[indexVar, 0],
 					[S('js:<'), indexVar, [S('js:get-property'), restVar, 'length']],
 					[S('js:+'), indexVar, 2]]],
 			 [S('js:var'), keyVar, [S('js:get-property'), restVar, indexVar]],
@@ -104,6 +103,26 @@ function functionDeclaration (name, args, body) {
 }
 
 var macros = {
+    '%function': function (name, args, body) {
+	if (name == S('js:null'))
+	    name = null;
+	return [S('js:function'), name, args, macroexpand(body)];
+    },
+    'define': function (name, value) {
+	return [S('%define'),
+		[S('js:escape'), name],
+		macroexpand(value)];
+    },
+    '%for': function (clauses) {
+	var body = arguments.toArray().slice(1);
+	return [S('js:for'),
+		clauses.map(function (clause) {
+		    return [[clause[0][0], macroexpand(clause[0][1])],
+			    macroexpand(clause[1]),
+			    macroexpand(clause[2])];
+		})]
+	    .concat(macroexpand(body));
+    },
     'define-function': function (name, args) {
 	var body = arguments.toArray().slice(2);
 	var setter = false;
@@ -465,29 +484,6 @@ var macros = {
 
 var symbolMacros = {};
 
-var specialForms = {
-    '%function': function (name, args, body) {
-	if (name == S('js:null'))
-	    name = null;
-	return [S('js:function'), name, args, macroexpand(body)];
-    },
-    'define': function (name, value) {
-	return [S('%define'),
-		[S('js:escape'), name],
-		macroexpand(value)];
-    },
-    'js:for': function (clauses) {
-	var body = arguments.toArray().slice(1);
-	return [S('js:for'),
-		clauses.map(function (clause) {
-		    return [[clause[0][0], macroexpand(clause[0][1])],
-			    macroexpand(clause[1]),
-			    macroexpand(clause[2])];
-		})]
-	    .concat(macroexpand(body));
-    }
-};
-
 function macroexpand (form) {
     if (form instanceof Array) {
 	while (form instanceof Array
@@ -495,10 +491,7 @@ function macroexpand (form) {
 	       && macros.hasOwnProperty(form[0].name))
 	    form = macros[form[0].name].apply(this, form.slice(1));
 	if (form instanceof Array) {
-	    if (form[0] instanceof Symbol && specialForms.hasOwnProperty(form[0].name))
-		return specialForms[form[0].name].apply(this, form.splice(1));
-	    else
-		return form.map(macroexpand);
+	    return form.map(macroexpand);
 	} else
 	    return macroexpand(form);
     } else if (form instanceof Symbol
