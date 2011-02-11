@@ -211,6 +211,9 @@
 (define-function as-string (object)
   ((js:get-property object "toString")))
 
+(define-function as-number (object)
+  ((js:identifier "Number") object))
+
 (define-function get (object #rest keys)
   (block (return)
     (reduce (method (object key)
