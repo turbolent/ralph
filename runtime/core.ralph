@@ -34,7 +34,7 @@
 
 (define %get-property
   (%function js:null (object name)
-    (js:return (when (%has-property? object name)
+    (js:return (when (and object (%has-property? object name))
 		 (js:get-property object name)))))
 
 (define %get-definition
@@ -72,20 +72,17 @@
 ;;;; getter
 
 (define %define-getter
-  (%function js:null (name function type)
+  (%function js:null (name function type-name)
     (bind ((getter (%get-definition name))
 	   (protocol (when getter
 		       (%get-property getter "%protocol")))
 	   (setter (if protocol
-		       (bind ((types (js:get-property protocol "%imp"))
-			      (functions (or (js:get-property types type)
-					     (bind ((new (%make-object)))
-					       (set! (js:get-property types type) new)
-					       new)))
-			      (getter (%get-property functions name)))
-			     (set! (js:get-property function "%type") type)
-			     (set! (js:get-property functions name) function)
-			     (%get-property getter "%setter"))
+		       (bind ((type (%actual-type (%get-definition type-name)))
+			      (prototype (js:get-property type "prototype"))
+			      (getter (%get-property prototype name)))
+		         (set! (js:get-property function "%type") type)
+			 (set! (js:get-property prototype name) function)
+			 (%get-property getter "%setter"))
 		       (begin
 			(%define name function)
 			(%get-property getter "%setter")))))
@@ -96,22 +93,19 @@
 ;;;; setter
 
 (define %define-setter
-  (%function js:null (name function type)
+  (%function js:null (name function type-name)
     (bind ((getter (%get-definition name))
  	   (protocol (when getter
  		       (%get-property getter "%protocol"))))
       (if protocol
- 	  (bind ((types (js:get-property protocol "%imp"))
- 		 (functions (or (js:get-property types type)
- 				(bind ((new (%make-object)))
- 				  (set! (js:get-property types type) new)
- 				  new)))
-		 (getter (or (%get-property functions name)
+ 	  (bind ((type (%actual-type (%get-definition type-name)))
+		 (prototype (js:get-property type "prototype"))
+		 (getter (or (%get-property prototype name)
 			     (bind ((temp (%make-function)))
-			       (set! (js:get-property functions name)
+			       (set! (js:get-property prototype name)
 				     temp)
 			       temp))))
-		(set! (js:get-property getter "%setter") function))
+	    (set! (js:get-property getter "%setter") function))
 	  (begin
 	   (unless (%get-definition name)
 	     (%define name (%make-function)))
@@ -121,10 +115,10 @@
   (bind ((protocol (%get-property function "%protocol"))
 	 (name (%get-property function "%name"))
 	 (getter (if protocol
-		     (bind ((type (%get-property (type (first arguments)) "%name"))
-			    (types (js:get-property protocol "%imp"))
-			    (functions (js:get-property types type)))
-		       (%get-property functions name))
+		     (bind ((type (%actual-type (type (first arguments))))
+			    (prototype (js:get-property type "prototype"))
+			    (getter (%get-property prototype name)))
+		       getter)
 		     function))
 	 (setter (%get-property getter "%setter")))
     (apply setter arguments)))
@@ -142,21 +136,10 @@
 
 ;;;; objects
 
-(define-function specialized? (function type)
-  (if-bind (protocol (%get-property function "%protocol"))
-    (bind ((types (%get-property protocol "%imp"))
-	   (functions (%get-property types
-				     (%get-property type "%name"))))
-      (and functions (%get-property functions
-				    (%get-property function "%name"))))))
-
 (define-function make (type #rest arguments)
-  (bind ((actual-type
-	  (or (%get-property type "%js-type")
-	      type))
-	 (object (js:new actual-type)))
-    (when (specialized? initialize type)
-      (apply initialize object arguments))
+  (bind ((type (%actual-type type))
+	 (object (js:new type)))
+    (apply initialize object arguments)
     object))
 
 ;;;; keywords
@@ -466,22 +449,29 @@
 
 ;;;; reflection primitives
 
+(define-function %constructor (object)
+  (and object
+       (js:get-property object "constructor")))
+
 (define-function type (object)
   ;; Object.getPrototypeOf on primitives only works in FireFox:
   ;; ((js:get-property "Object" "getPrototypeOf") object))
-  (bind ((type (js:get-property object "constructor")))
+  (bind ((type (%constructor object)))
     (or (%get-property type "%ralph-type")
 	type)))
 
+(define %actual-type
+  (%function js:null (type)
+    (js:return (or (%get-property type "%js-type")
+		   type))))
+
 (define-function instance? (object type)
-  (bind ((actual-type
-	  (or (%get-property type "%js-type")
-	      type)))
+  (bind ((type (%actual-type type)))
     (or
      ;; primitive
-     (%has-constructor? object actual-type)
+     (%has-constructor? object type)
      ;; object
-     ((js:get-property actual-type "prototype"
+     ((js:get-property type "prototype"
 		       "isPrototypeOf")
       object))))
 
@@ -512,21 +502,15 @@
 
 (define-function %make-protocol ()
   (bind ((protocol (js:new <protocol>)))
-    (set! (js:get-property protocol "%imp")
-	  (%make-object))
+    ;; TODO: add slots
     protocol))
 
-(define-function %make-protocol-dispatcher (protocol function-name)
+(define-function %make-dispatcher (protocol function-name)
   (bind-methods ((dispatcher (#rest arguments)
-		   (bind ((type-name (get (type (first arguments)) "%name"))
-			  (implementations (get protocol "%imp")))
-		     (if-bind (implementation (or (get implementations
-						       type-name function-name)
-						  (get implementations
-						       "<object>" function-name)))
-			      (apply implementation arguments)
-			      (print "No method of " function-name
-				     " for type " type-name)))))
+		   (if-bind (fn (js:get-property
+				 (first arguments)
+				 function-name))
+		     (apply fn arguments))))
     (set! (js:get-property dispatcher "%protocol")
 	  protocol)
     (set! (js:get-property dispatcher "%name")

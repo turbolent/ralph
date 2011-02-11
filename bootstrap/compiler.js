@@ -120,9 +120,9 @@ var macros = {
 	if (args.length > 0) {
 	    if (args[0] instanceof Array
 		&& args[0].length > 1)
-		type = args[0][1].name;
+		type = args[0][1].toString();
 	    else
-		type = "<object>";
+		type = "Object";
 	}
 	return [setter ? S('%define-setter') : S('%define-getter'),
 		[S('js:escape'), name],
@@ -253,7 +253,7 @@ var macros = {
 	function declare (f) {
 	    var name = f[0];
 	    return [S('define'), name,
-		    [S('%make-protocol-dispatcher'),
+		    [S('%make-dispatcher'),
 		     protocol, [S('js:escape'), name]]];
 	}
 	var functions = arguments.toArray().slice(1);
@@ -279,9 +279,11 @@ var macros = {
 				 [S('require'), [S('js:escape'), name]]],
 				[S('js:for-in'),
 				 [propertySymbol, importSymbol],
-				 [S('js:set'),
-				  [S('js:get-property'), S('*module*'), propertySymbol],
-				  [S('js:get-property'), importSymbol, propertySymbol]]]];
+				 [S('if'), [[S('js:get-property'), importSymbol,
+					     "hasOwnProperty"], propertySymbol],
+				  [S('js:set'),
+				   [S('js:get-property'), S('*module*'), propertySymbol],
+				   [S('js:get-property'), importSymbol, propertySymbol]]]]];
 		    });
 		} else if (key.name == 'export') {
 		    exports = value.map(function (name) {
