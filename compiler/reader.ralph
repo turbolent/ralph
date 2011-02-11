@@ -28,6 +28,8 @@
 (define-function read-symbol ((stream <stream>))
   (bind ((value (first (match-stream *non-whitespace-pattern* stream))))
     (cond
+      ((= value "#t") #t)
+      ((= value "#f") #f)
       ((= (first value) "#")
        (get %hash-symbols (rest value)))
       ((= (last value) ":")
