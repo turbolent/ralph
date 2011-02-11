@@ -14,7 +14,7 @@ The bootstraping compiler runs with any CommonJS-compatible JavaScript engine.
 Currently flusspferd is the only environment that was tested.
 
 - Bootstrap the runtime and compile: 
-  `$ flusspferd build.js bootstrapRuntime compileTests`
+  `$ flusspferd build.js --compileDirectories runtime compiler tests`
 
 - Run the tests: 
-  `$ flusspferd -Iruntime tests.js`
+  `$ flusspferd -Iruntime tests/runtime-tests.js`
