@@ -1,0 +1,73 @@
+(define-module reader
+    import: (core stream regexp))
+
+(define *string-pattern*
+    (make <regexp> source: "\"([^\"]*)\""))
+(define *whitespace-pattern*
+    (make <regexp> source: "[\t\n ]*"))
+(define *non-whitespace-pattern*
+    (make <regexp> source: "[^()\n\t ]+"))
+(define *line-pattern*
+    (make <regexp> source: "(.*)[\n]"))
+(define *number-patterns*
+    (map (curry make <regexp> source:)
+	 (make-array "^[+-]?0x[0-9a-fA-F]+"
+		     "^[+-]?0[0-7]+"
+		     "^[+-]?\\d+\\.?\\d*(?:[eE]-?\\d*(?:\\d\\.?|\\.?\\d)\\d*)?")))
+
+(define-function match-stream ((regexp <regexp>) (stream <stream>))
+  (if-bind (result (match regexp (remaining-contents stream)))
+    (begin
+     (advance stream count: (size (first result)))
+     result)))
+
+(define-function read-string ((stream <stream>))
+  (if-bind (result (match-stream *string-pattern* stream))
+    (second result)))
+
+(define-function read-symbol ((stream <stream>))
+  (bind ((value (first (match-stream *non-whitespace-pattern* stream))))
+    (cond
+      ((= (first value) "#")
+       (get %hash-symbols (rest value)))
+      ((= (last value) ":")
+       ((js:identifier "_k")
+	(as-lowercase (but-last value))))
+      (else:
+       ((js:identifier "_s")
+	(as-lowercase value))))))
+
+(define-function read-line ((stream <stream>))
+  (match-stream *line-pattern* stream))
+
+(define-function read-whitespace ((stream <stream>))
+  (match-stream *whitespace-pattern* stream))
+
+(define-function read-list ((stream <stream>))
+  (bind ((result (make-array)))
+    (read-char stream)
+    (read-whitespace stream)
+    (while (not (= (peek-char stream) ")"))
+      (when (at-end? stream)
+	(error (make <error> "Unbalanced parans")))
+      (push-last result (read stream))
+      (read-whitespace stream))
+    (read-char stream)
+    result))
+
+(define-function read ((stream <stream>))
+  (read-whitespace stream)
+  (unless (at-end? stream)
+    (select (peek-char stream) ==
+      ((";")
+       (read-line stream)
+       (read stream))
+      (("\"")
+       (read-string stream))
+      (("(")
+       (read-list stream))
+      (else:
+       (if-bind (number (any? (rcurry match-stream stream)
+			      *number-patterns*))
+         (as-number (first number))
+	 (read-symbol stream))))))
