@@ -682,10 +682,13 @@
   (get symbol "name"))
 
 (define-function description ((keyword <keyword>))
-  (concatenate (get keyword "name") ":"))
+  (concatenate (symbol-name keyword) ":"))
 
 (define-function description ((symbol <hash-symbol>))
-  (concatenate "#" (get symbol "name")))
+  (concatenate "#" (symbol-name symbol)))
 
 (define-function description ((value <boolean>))
   (if value "#t" "#f"))
+
+(define-function symbol-name (symbol)
+  (get symbol "name"))
