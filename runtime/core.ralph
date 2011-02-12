@@ -155,6 +155,8 @@
   (%function js:null (name)
     (begin
       (js:var keyword js:null)
+      (js:set name ((js:get-property name "toLowerCase")
+		    name))
       (js:return
        (if (%has-property? %keywords name)
 	   (js:get-property %keywords name)
