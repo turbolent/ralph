@@ -620,10 +620,6 @@ var writers = {
 		       return '[' + write(element) + ']';
 	       }).join(''));
     },
-    'js:call': function (allowStatements, name) {
-	var args = arguments.toArray().slice(2);
-	return name + '(' + args.map(writeExpressions).join(', ') + ')';
-    },
     'js:new': function (allowStatements, name) {
 	var args = arguments.toArray().slice(2);
 	return 'new ' + write(name) +
