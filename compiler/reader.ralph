@@ -33,11 +33,9 @@
       ((= (first value) "#")
        (get %hash-symbols (rest value)))
       ((= (last value) ":")
-       ((js:identifier "_k")
-	(as-lowercase (but-last value))))
+       (keyword (but-last value)))
       (else:
-       ((js:identifier "_s")
-	(as-lowercase value))))))
+       (symbol value)))))
 
 (define-function read-line ((stream <stream>))
   (match-stream *line-pattern* stream))
