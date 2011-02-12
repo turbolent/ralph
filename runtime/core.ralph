@@ -559,14 +559,16 @@
   (js:+ "" number))
 
 (define-function description ((string <string>))
-  (concatenate "\"" string "\""))
+  (js:var escaped ((js:get-property string "replace")
+		   "\"" "\\\"" "g"))
+  (js:+ "\"" escaped "\""))
 
 (define-function description ((array <array>))
-  (bind ((content (map description array)))
-    (js:+ "(" (reduce1 (method (current item)
-		         (js:+ current " " item))
-		       content)
-	  ")")))
+  (js:+ "(" (join (map description array) " ") ")"))
+
+(define-function description ((value <boolean>))
+  (if value "#t" "#f"))
+
 ;;
 
 (define-protocol <condition>
