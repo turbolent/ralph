@@ -642,7 +642,7 @@ var writers = {
 	return 'return ' + write(body);
     },
     'js:function': function (allowStatements, name, args, body) {
-	return 'function ' + (name ? name + ' ': '')
+	return 'function ' + (name && name != S('js:null') ? name + ' ': '')
 	    + '(' + args.join(', ') + ') '
 	    + '{' + (body ? '\n' + writeStatements(body) + '\n' : "") + '}';
     },
