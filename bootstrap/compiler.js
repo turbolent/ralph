@@ -94,16 +94,12 @@ function functionDeclaration (name, args, body) {
 			 [S('js:var'), valueVar, [S('js:get-property'), restVar, [S('js:+'), indexVar, 1]]],
 			 [S('when'), [S('keyword?'), keyVar], setter]]);
     }
-    return [S('%function'), name ? name : S('js:null'), argumentNames(requiredArguments(args)),
+    return [S('js:function'), name ? name : S('js:null'), argumentNames(requiredArguments(args)),
 	    [S('begin')].concat(restAndKey).concat(addReturn(body))];
 }
 
+
 var macros = {
-    '%function': function (name, args, body) {
-	if (name == S('js:null'))
-	    name = null;
-	return [S('js:function'), name, args, macroexpand(body)];
-    },
     'define': function (name, value) {
 	return [S('%define'),
 		[S('js:escape'), name],
@@ -154,7 +150,7 @@ var macros = {
 	var binding = bindings[0];
 	var variable = binding[0];
 	var value = binding[1];
-	return [[S('%function'), S('js:null'), [variable],
+	return [[S('js:function'), S('js:null'), [variable],
 		 bindings.length > 1 ?
 		 [S('js:return'),
 		  [S('bind'), bindings.slice(1)].concat(body)]
@@ -235,7 +231,7 @@ var macros = {
 	    return ([[S('instance?'), conditionVariable, type]]
 		    .concat(binding).concat(addReturn(condition.slice(1))));
 	});
-	return [[S('%function'), S('js:null'), [],
+	return [[S('js:function'), S('js:null'), [],
 		 [S('begin'),
 		  [S('js:try'),
 		   [S('js:return'), body],
@@ -260,7 +256,7 @@ var macros = {
 	}
 	return [S('begin'),
 		[S('define'), type,
-		 [S('%function'), S('js:null'), []]],
+		 [S('js:function'), S('js:null'), []]],
 		[S('set!'), [S('get'), type, '%name'], type.name]]
 	    .concat(initializer);
     },
@@ -365,7 +361,7 @@ var macros = {
     },
     'while': function (test) {
 	var body = arguments.toArray().slice(1);
-	return [[S('%function'), S('js:null'), [],
+	return [[S('js:function'), S('js:null'), [],
 		 [S('begin'),
 		  [S('js:while'), test].concat(body),
 		  [S('js:return'), S('#f')]]]];
@@ -742,7 +738,7 @@ function transformAsync (form) {
     for (variable in modules) {
 	if (modules.hasOwnProperty(variable)) {
 	    form = [S('require'), modules[variable],
-		    [S('%function'), S('js:null'), [variable],
+		    [S('js:function'), S('js:null'), [variable],
 		     form]];
 	}
     }

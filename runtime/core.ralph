@@ -15,7 +15,7 @@
 
 ;;;; define
 
-(%function %define (name value)
+(js:function %define (name value)
   (begin
     (set! (js:get-property *module* name) value)
     (js:if (js:>= ((js:get-property *module* "%exports" "indexOf") name) 0)
@@ -23,42 +23,42 @@
 	   #f)))
 
 (define %export
-  (%function js:null (name value)
+  (js:function js:null (name value)
      (set! (js:get-property exports name) value)))
 
 ;; manual export necessary
 (%export (js:escape %define) %define)
 
 (define %has-property?
-  (%function js:null (object name)
+  (js:function js:null (object name)
     (js:return ((js:get-property object "hasOwnProperty") name))))
 
 (define %get-property
-  (%function js:null (object name)
+  (js:function js:null (object name)
     (js:return (when (and object (%has-property? object name))
 		 (js:get-property object name)))))
 
 (define %get-definition
-  (%function js:null (name)
+  (js:function js:null (name)
     (js:return (%get-property *module* name))))
 
 (define %has-constructor?
-  (%function js:null (object constructor)
+  (js:function js:null (object constructor)
     (js:return (js:=== (js:get-property object "constructor")
 		       constructor))))
 
 (define %make-object
-  (%function js:null ()
+  (js:function js:null ()
     (js:return (js:new (js:identifier "Object")))))
 
 (define %make-function
-  (%function js:null (name function)
+  (js:function js:null (name function)
     (js:return (js:new (js:identifier "Function")))))
 
 ;;;; boolean primitives
 
 (define true?
-  (%function js:null (value)
+  (js:function js:null (value)
     (js:return
      (js:and (js:not (js:=== value js:null))
 	     (js:not (js:=== value js:undefined))
@@ -67,13 +67,13 @@
 		    (js:not (js:not value)))))))
 
 (define not
-  (%function js:null (value)
+  (js:function js:null (value)
     (js:return (js:not (true? value)))))
 
 ;;;; getter
 
 (define %define-getter
-  (%function js:null (name function type-name)
+  (js:function js:null (name function type-name)
     (bind ((getter (%get-definition name))
 	   (protocol (when getter
 		       (%get-property getter "%protocol")))
@@ -94,7 +94,7 @@
 ;;;; setter
 
 (define %define-setter
-  (%function js:null (name function type-name)
+  (js:function js:null (name function type-name)
     (bind ((getter (%get-definition name))
  	   (protocol (when getter
  		       (%get-property getter "%protocol"))))
@@ -153,7 +153,7 @@
   (instance? keyword <keyword>))
 
 (%define "_k"
-  (%function js:null (name)
+  (js:function js:null (name)
     (begin
       (js:var keyword js:null)
       (js:set name ((js:get-property name "toLowerCase")
@@ -174,7 +174,7 @@
 ;; TODO: should be a type that conforms to condition protocol
 
 (define <non-local-exit>
-  (%function js:null (name value)
+  (js:function js:null (name value)
     (begin
      (set! (js:get-property js:this "name") name)
      (set! (js:get-property js:this "value") value)
@@ -470,7 +470,7 @@
 	type)))
 
 (define %actual-type
-  (%function js:null (type)
+  (js:function js:null (type)
     (js:return (or (%get-property type "%js-type")
 		   type))))
 
