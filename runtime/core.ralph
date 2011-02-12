@@ -429,6 +429,10 @@
 (define-function as-lowercase ((string <string>))
   ((js:get-property string "toLowerCase")))
 
+;; TODO: generic interpose, interleave
+(define-function join ((array <array>) (string <string>))
+  ((js:get-property array "join") string))
+
 ;;;; functional
 
 (define-function apply ((function <function>) #rest arguments)
