@@ -695,7 +695,7 @@ var specialForms = {
 			    macroexpand(clause[1]),
 			    macroexpand(clause[2])];
 		})]
-	    .concat(macroexpand(body));
+	    .concat(body.map(macroexpand));
     },
     'js:try': function (body, conditionVariable, _catch, _finally) {
 	return [S('js:try'),
