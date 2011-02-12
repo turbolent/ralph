@@ -5,7 +5,8 @@
 	   %define-getter
 	   %define-setter
 	   (js:identifier "_k")
-	   (js:identifier "_s")
+	   keyword
+	   symbol
 	   <object>
 	   <non-local-exit>
 	   not
@@ -165,6 +166,8 @@
 	    (set! (js:get-property keyword "name") name)
 	    (set! (js:get-property %keywords name) keyword)
 	    keyword))))))
+
+(define keyword (js:identifier "_k"))
 
 ;;;; non-local exit
 
@@ -673,12 +676,14 @@
 
 (define %symbols (%make-object))
 
-(%define "_s"
-  (%function js:null (name)
-    (js:return
-      (or (get %symbols name)
-	  (set! (get %symbols name)
-		(make <symbol> name: name))))))
+(define-function symbol (name)
+  (bind ((name (as-lowercase name)))
+    (or (get %symbols name)
+	(set! (get %symbols name)
+	      (make <symbol> name: name)))))
+
+(define-function symbol-name (symbol)
+  (get symbol "name"))
 
 (define-function description ((symbol <symbol>))
   (get symbol "name"))
@@ -688,9 +693,3 @@
 
 (define-function description ((symbol <hash-symbol>))
   (concatenate "#" (symbol-name symbol)))
-
-(define-function description ((value <boolean>))
-  (if value "#t" "#f"))
-
-(define-function symbol-name (symbol)
-  (get symbol "name"))
