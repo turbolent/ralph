@@ -468,12 +468,27 @@ var symbolMacros = {};
 
 function macroexpand (form) {
     if (form instanceof Array) {
+	// apply macros
 	while (form instanceof Array
 	       && form[0] instanceof Symbol
 	       && macros.hasOwnProperty(form[0].name))
 	    form = macros[form[0].name].apply(this, form.slice(1));
 	if (form instanceof Array) {
-	    return form.map(macroexpand);
+	    // special?
+	    if (form[0] instanceof Symbol
+		&& specialExpanders.hasOwnProperty(form[0].name))
+	    {
+		var expander = specialExpanders[form[0].name];
+		if (expander === false)  {
+		    return form;
+		} else if (typeof hander == 'function') {
+		    return expander.apply(this, form.slice(1));
+		} else
+		    return (form.slice(0, ++expander)
+			    .concat(form.slice(expander)
+				    .map(macroexpand)));
+	    } else
+		return form.map(macroexpand);
 	} else
 	    return macroexpand(form);
     } else if (form instanceof Symbol
@@ -650,6 +665,44 @@ var writers = {
 	if (!allowStatements)
 	    _throw = wrapBlock(_throw);
 	return _throw;
+    }
+}
+
+var specialExpanders = {
+    'js:array': 0,
+    'js:defined': 0,
+    'js:negative': 0,
+    'js:not': 0,
+    'begin': 0,
+    'js:if': 0,
+    'js:throw': 0,
+    'js:return': 0,
+    'js:while': 0,
+    'js:new': 1,
+    'js:var': 1,
+    'js:set': 1,
+    'js:for-in': 1,
+    'js:function': 2,
+    'js:var': false,
+    'js:escape': false,
+    'js:identifier': false,
+    'js:get-property': false,
+    'js:for': function (clauses) {
+	var body = arguments.toArray().slice(1);
+	return [S('js:for'),
+		clauses.map(function (clause) {
+		    return [[clause[0][0], macroexpand(clause[0][1])],
+			    macroexpand(clause[1]),
+			    macroexpand(clause[2])];
+		})]
+	    .concat(macroexpand(body));
+    },
+    'js:try': function (body, conditionVariable, _catch, _finally) {
+	return [S('js:try'),
+		macroexpand(body),
+		conditionVariable,
+		macroexpand(_catch),
+		macroexpand(_finally)];
     }
 }
 
