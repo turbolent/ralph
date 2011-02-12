@@ -476,12 +476,12 @@ function macroexpand (form) {
 	if (form instanceof Array) {
 	    // special?
 	    if (form[0] instanceof Symbol
-		&& specialExpanders.hasOwnProperty(form[0].name))
+		&& specialForms.hasOwnProperty(form[0].name))
 	    {
-		var expander = specialExpanders[form[0].name];
+		var expander = specialForms[form[0].name];
 		if (expander === false)  {
 		    return form;
-		} else if (typeof hander == 'function') {
+		} else if (typeof expander == 'function') {
 		    return expander.apply(this, form.slice(1));
 		} else
 		    return (form.slice(0, ++expander)
@@ -668,7 +668,7 @@ var writers = {
     }
 }
 
-var specialExpanders = {
+var specialForms = {
     'js:array': 0,
     'js:defined': 0,
     'js:negative': 0,
