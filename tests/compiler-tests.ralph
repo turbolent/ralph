@@ -1,7 +1,14 @@
 (define-module compiler-tests
-  import: (core test stream reader))
+  import: (core test stream reader compiler))
 
 (bind ((source "(this is (foo #t blub #f foo: #rest simple #key test \"string\" 23.42))")
        (stream (make <string-stream> string: source))
-       (code (read stream)))
-  (format-out "%=" code))
+       (form (read stream)))
+  (format-out "%=\n\n" form))
+
+(bind ((source "(define foo (make-array (js:== (js:negative 23.42) (js:not 0)) <class> some-hyphen-symbol))")
+       (stream (make <string-stream> string: source))
+       (form (read stream))
+       (compiled (compile form)))
+  (format-out "%=\n\n" compiled))
+
