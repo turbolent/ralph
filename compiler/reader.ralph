@@ -2,18 +2,18 @@
     import: (core stream regexp))
 
 (define *string-pattern*
-    (make <regexp> source: "\"([^\"]*)\""))
+    (make <regexp> pattern: "\"([^\"]*)\""))
 (define *whitespace-pattern*
-    (make <regexp> source: "[\t\n ]*"))
+    (make <regexp> pattern: "[\t\n ]*"))
 (define *non-whitespace-pattern*
-    (make <regexp> source: "[^()\n\t ]+"))
+    (make <regexp> pattern: "[^()\n\t ]+"))
 (define *line-pattern*
-    (make <regexp> source: "(.*)[\n]"))
+    (make <regexp> pattern: "(.*)[\n]"))
 (define *number-patterns*
-    (map (curry make <regexp> source:)
-	 (make-array "^[+-]?0x[0-9a-fA-F]+"
+    (map (curry make <regexp> ignore-case?: #t pattern:)
+	 (make-array "^[+-]?0x[0-9a-f]+"
 		     "^[+-]?0[0-7]+"
-		     "^[+-]?\\d+\\.?\\d*(?:[eE]-?\\d*(?:\\d\\.?|\\.?\\d)\\d*)?")))
+		     "^[+-]?\\d+\\.?\\d*(?:e-?\\d*(?:\\d\\.?|\\.?\\d)\\d*)?")))
 
 (define-function match-stream ((regexp <regexp>) (stream <stream>))
   (if-bind (result (match regexp (remaining-contents stream)))
