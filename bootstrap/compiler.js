@@ -49,10 +49,6 @@ function addReturn (forms) {
 }
 
 function functionDeclaration (name, args, body) {
-    var documentation = [];
-    if (typeof body[0] == 'string' && body.length > 1) {
-	documentation.push([S('js:documentation'), body.shift()]);
-    }
     var restAndKey = [];
     var rest = [S('as-array'), S('js:arguments'), requiredArguments(args).length];
     var restPosition = args.indexOf(HashSymbol.rest);
@@ -663,13 +659,6 @@ var writers = {
 	return 'function ' + (name ? name + ' ': '')
 	    + '(' + args.join(', ') + ') '
 	    + '{' + (body ? '\n' + writeStatements(body) + '\n' : "") + '}';
-    },
-    'js:documentation': function (allowStatements, documentation) {
-	return '/** \n'
-	    + documentation.split('\n').map(function (line) {
-		return ' * ' + line;
-	    }).join('\n')
-	    + '\n */\n';
     },
     'js:escape': function (allowStatements, symbol) {
 	return write(symbol.toString());
