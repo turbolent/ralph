@@ -1,6 +1,19 @@
 (define-module regexp
     import: (core))
 
+(define-type <regexp>)
+
+(%alias-type <regexp> (js:identifier "RegExp"))
+
+(define-function initialize ((regexp <regexp>)
+			     #key pattern global? ignore-case? multiline?)
+  (when pattern
+    ((js:get-property regexp "compile")
+     pattern (concatenate
+	      (if global? "g" "")
+	      (if ignore-case? "i" "")
+	      (if multiline? "m" "")))))
+
 (define-function find ((regexp <regexp>) (string <string>))
   (bind ((position ((js:get-property string "search")
 		    regexp)))
