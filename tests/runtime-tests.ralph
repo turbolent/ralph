@@ -1,6 +1,12 @@
 (define-module runtime-tests
   import: (core test stream))
 
+;; test expansion
+(define-function foo (if)
+  23)
+(check-equal "macroexpansion: (if .. ) mustn't be expanded"
+	     23 (foo 23))
+
 ;; true?
 (check-false "true?: null isn't true"
 	     (true? js:null))

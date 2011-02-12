@@ -2,9 +2,6 @@
     import: (core reader))
 
 (define S symbol)
-
-(define-function foo (if)
-  1)
   
 (define *macros*
     (make-object
