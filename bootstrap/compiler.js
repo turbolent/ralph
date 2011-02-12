@@ -627,7 +627,7 @@ var writers = {
 	    + (elements.slice(1)
 	       .map(function (element) {
 		   if (typeof element == 'string' &&
-		       /^[a-zA-Z_]+$/.exec(element))
+		       /^[a-zA-Z_]+[a-zA-Z0-9]*$/.exec(element))
 		   {
 		       return '.' + element;
 		   } else
