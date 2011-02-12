@@ -87,7 +87,7 @@ function functionDeclaration (name, args, body) {
 	else
 	    restVar = args[restPosition + 1];
 
-	restAndKey.push([S('%for'), [[[indexVar, 0],
+	restAndKey.push([S('js:for'), [[[indexVar, 0],
 					[S('js:<'), indexVar, [S('js:get-property'), restVar, 'length']],
 					[S('js:+'), indexVar, 2]]],
 			 [S('js:var'), keyVar, [S('js:get-property'), restVar, indexVar]],
@@ -103,17 +103,7 @@ var macros = {
     'define': function (name, value) {
 	return [S('%define'),
 		[S('js:escape'), name],
-		macroexpand(value)];
-    },
-    '%for': function (clauses) {
-	var body = arguments.toArray().slice(1);
-	return [S('js:for'),
-		clauses.map(function (clause) {
-		    return [[clause[0][0], macroexpand(clause[0][1])],
-			    macroexpand(clause[1]),
-			    macroexpand(clause[2])];
-		})]
-	    .concat(macroexpand(body));
+		value];
     },
     'define-function': function (name, args) {
 	var body = arguments.toArray().slice(2);
