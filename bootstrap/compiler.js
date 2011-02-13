@@ -102,6 +102,8 @@ function functionDeclaration (name, args, body) {
 var macros = {
     'define': function (name, value) {
 	return [S('%define'),
+		S('*module*'),
+		S('exports'),
 		[S('js:escape'), name],
 		value];
     },
@@ -126,6 +128,8 @@ var macros = {
 		type = "Object";
 	}
 	return [setter ? S('%define-setter') : S('%define-getter'),
+		S('*module*'),
+		S('exports'),
 		[S('js:escape'), name],
 		[S('method'), args].concat(body),
 		type];
