@@ -1,6 +1,6 @@
 
 (define-module format
-  import: (core system)
+  import: (core)
   export: (<stream>
 	   <string-stream>
 	   *standard-out*
