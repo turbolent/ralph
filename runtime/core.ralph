@@ -1,33 +1,45 @@
 
 (define-module dylan
-  export: (%define
-	   %export
-	   %define-getter
-	   %define-setter
-	   (js:identifier "_k")
-	   keyword
-	   symbol
-	   <object>
-	   <non-local-exit>
-	   not
-	   true?
-	   *environment*))
+  export: (%define %export %define-getter %define-setter
+           (js:identifier "_k") keyword keyword? symbol
+           <object> <string> <number> <boolean> <array> <symbol>
+           not true?
+           *environment*
+           %make-protocol %make-dispatcher
+           <non-local-exit> <error>
+           %non-local-exit? %make-non-local-exit-function
+           get %set
+           make initialize type instance?
+           as-string as-array
+           apply reduce reduce1 map
+           any? every? member? choose-by find-key
+           complement curry rcurry
+           string-position
+           as-lowercase as-uppercase
+           make-array element first second third last rest
+           size empty? but-last copy-sequence replace-subsequence
+           reverse reverse! sort sort!
+           push push-last pop pop-last
+           = == > < >= <=
+           + - * /
+           inc dec
+           description))
 
 ;;;; define
 
-(js:function %define (name value)
+(js:function %define (module exports name value)
   (begin
-    (set! (js:get-property *module* name) value)
-    (js:if (js:>= ((js:get-property *module* "%exports" "indexOf") name) 0)
-	   (%export name value)
-	   #f)))
+    (set! (js:get-property module name) value)
+    (js:if (js:>= ((js:get-property module "%exports" "indexOf") name) 0)
+           (%export exports name value)
+           #f)))
 
 (define %export
-  (js:function js:null (name value)
+  (js:function js:null (exports name value)
      (set! (js:get-property exports name) value)))
 
 ;; manual export necessary
-(%export (js:escape %define) %define)
+(%export exports (js:escape %define) %define)
 
 (define %has-property?
   (js:function js:null (object name)
@@ -36,16 +48,16 @@
 (define %get-property
   (js:function js:null (object name)
     (js:return (when (and object (%has-property? object name))
-		 (js:get-property object name)))))
+                 (js:get-property object name)))))
 
 (define %get-definition
-  (js:function js:null (name)
-    (js:return (%get-property *module* name))))
+  (js:function js:null (module name)
+    (js:return (js:get-property module name))))
 
 (define %has-constructor?
   (js:function js:null (object constructor)
     (js:return (js:=== (js:get-property object "constructor")
-		       constructor))))
+                       constructor))))
 
 (define %make-object
   (js:function js:null ()
@@ -61,10 +73,10 @@
   (js:function js:null (value)
     (js:return
      (js:and (js:not (js:=== value js:null))
-	     (js:not (js:=== value js:undefined))
-	     (js:or (%has-constructor? value (js:identifier "Number"))
-		    (%has-constructor? value (js:identifier "String"))
-		    (js:not (js:not value)))))))
+             (js:not (js:=== value js:undefined))
+             (js:or (%has-constructor? value (js:identifier "Number"))
+                    (%has-constructor? value (js:identifier "String"))
+                    (js:not (js:not value)))))))
 
 (define not
   (js:function js:null (value)
@@ -73,55 +85,57 @@
 ;;;; getter
 
 (define %define-getter
-  (js:function js:null (name function type-name)
-    (bind ((getter (%get-definition name))
-	   (protocol (when getter
-		       (%get-property getter "%protocol")))
-	   (setter (if protocol
-		       (bind ((type (%actual-type (%get-definition type-name)))
-			      (prototype (js:get-property type "prototype"))
-			      (getter (%get-property prototype name)))
-		         (set! (js:get-property function "%type") type)
-			 (set! (js:get-property prototype name) function)
-			 (%get-property getter "%setter"))
-		       (begin
-			(%define name function)
-			(%get-property getter "%setter")))))
-	  (set! (js:get-property function "%name") name)
-	  (when setter
-	    (set! (js:get-property function "%setter") setter)))))
+  (js:function js:null (module exports name function type-name)
+    (bind ((getter (%get-definition module name))
+           (protocol (when getter
+                       (%get-property getter "%protocol")))
+           (setter (if protocol
+                       (bind ((type (%actual-type
+                                     (%get-definition module type-name)))
+                              (prototype (js:get-property type "prototype"))
+                              (getter (%get-property prototype name)))
+                         (set! (js:get-property function "%type") type)
+                         (set! (js:get-property prototype name) function)
+                         (%get-property getter "%setter"))
+                       (begin
+                        (%define module exports name function)
+                        (%get-property getter "%setter")))))
+          (set! (js:get-property function "%name") name)
+          (when setter
+            (set! (js:get-property function "%setter") setter)))))
 
 ;;;; setter
 
 (define %define-setter
-  (js:function js:null (name function type-name)
-    (bind ((getter (%get-definition name))
- 	   (protocol (when getter
- 		       (%get-property getter "%protocol"))))
+  (js:function js:null (module exports name function type-name)
+    (bind ((getter (%get-definition module name))
+           (protocol (when getter
+                       (%get-property getter "%protocol"))))
       (if protocol
- 	  (bind ((type (%actual-type (%get-definition type-name)))
-		 (prototype (js:get-property type "prototype"))
-		 (getter (or (%get-property prototype name)
-			     (bind ((temp (%make-function)))
-			       (set! (js:get-property prototype name)
-				     temp)
-			       temp))))
-	    (set! (js:get-property getter "%setter") function))
-	  (begin
-	   (unless (%get-definition name)
-	     (%define name (%make-function)))
-	   (set! (js:get-property (%get-definition name) "%setter") function))))))
+          (bind ((type (%actual-type (%get-definition module type-name)))
+                 (prototype (js:get-property type "prototype"))
+                 (getter (or (%get-property prototype name)
+                             (bind ((temp (%make-function)))
+                               (set! (js:get-property prototype name)
+                                     temp)
+                               temp))))
+            (set! (js:get-property getter "%setter") function))
+          (begin
+           (unless (%get-definition module name)
+             (%define module exports name (%make-function)))
+           (set! (js:get-property (%get-definition module name) "%setter")
+                 function))))))
 
 (define-function %set ((function <function>) #rest arguments)
   (bind ((protocol (%get-property function "%protocol"))
-	 (name (%get-property function "%name"))
-	 (getter (if protocol
-		     (bind ((type (%actual-type (type (first arguments))))
-			    (prototype (js:get-property type "prototype"))
-			    (getter (%get-property prototype name)))
-		       getter)
-		     function))
-	 (setter (%get-property getter "%setter")))
+         (name (%get-property function "%name"))
+         (getter (if protocol
+                     (bind ((type (%actual-type (type (first arguments))))
+                            (prototype (js:get-property type "prototype"))
+                            (getter (%get-property prototype name)))
+                       getter)
+                     function))
+         (setter (%get-property getter "%setter")))
     (apply setter arguments)))
 
 ;;;;
@@ -132,14 +146,14 @@
 
 (define *environment*
     (if (js:defined window)
-	"browser"
-	"commonjs"))
+        "browser"
+        "commonjs"))
 
 ;;;; objects
 
 (define-function make (type #rest arguments)
   (bind ((type (%actual-type type))
-	 (object (js:new type)))
+         (object (js:new type)))
     (apply initialize object arguments)
     object))
 
@@ -152,20 +166,20 @@
 (define-function keyword? (keyword)
   (instance? keyword <keyword>))
 
-(%define "_k"
+(%define *module* exports "_k"
   (js:function js:null (name)
     (begin
       (js:var keyword js:null)
       (js:set name ((js:get-property name "toLowerCase")
-		    name))
+                    name))
       (js:return
        (if (%has-property? %keywords name)
-	   (js:get-property %keywords name)
-	   (begin
-	    (set! keyword (js:new <keyword>))
-	    (set! (js:get-property keyword "name") name)
-	    (set! (js:get-property %keywords name) keyword)
-	    keyword))))))
+           (js:get-property %keywords name)
+           (begin
+            (set! keyword (js:new <keyword>))
+            (set! (js:get-property keyword "name") name)
+            (set! (js:get-property %keywords name) keyword)
+            keyword))))))
 
 (define keyword (js:identifier "_k"))
 
@@ -188,11 +202,11 @@
   (method (value)
     ;; TODO: use signal and proper make call
     (js:throw (js:new <non-local-exit>
-		      name value))))
+                      name value))))
 
 (define-function as-array (arguments skip)
   ((js:get-property "Array" "prototype"
-		    "slice" "call")
+                    "slice" "call")
    arguments (or skip 0)))
 
 (define-function as-string (object)
@@ -204,28 +218,29 @@
 (define-function get (object #rest keys)
   (block (return)
     (reduce (method (object key)
-	      (if (%has-property? object key)
-		  (js:get-property object key)
-		  (return #f)))
-	    object keys)))
+              (if (%has-property? object key)
+                  (js:get-property object key)
+                  (return #f)))
+            object keys)))
 
 (define-function (setter get) (object #rest properties/value)
   (if (js:<= (size properties/value) 2)
       (set! (js:get-property object (first properties/value))
-	    (second properties/value))
+            (second properties/value))
       (bind ((property (first properties/value))
-	     (object2 (if (%has-property? object property)
-			  (get object property)
-			  (bind ((new (%make-object)))
-			    (set! (js:get-property object property) new)
-			    new))))
+             (object2 (if (%has-property? object property)
+                          (get object property)
+                          (bind ((new (%make-object)))
+                            (set! (js:get-property object property) new)
+                            new))))
         (apply %set get object2
-	       (rest properties/value)))))
+               (rest properties/value)))))
 
 (define-function size ((array <array>))
   (js:get-property array "length"))
 
-(define-function copy-sequence ((array <array>) #key (start 0) (end (size array)))
+(define-function copy-sequence ((array <array>)
+                                #key (start 0) (end (size array)))
   ((js:get-property array "slice")
    (or start 0)
    (or end (size array))))
@@ -242,35 +257,35 @@
 
 (define-function + ((number <number>) #rest more-numbers)
   (reduce (method (number1 number2)
-	    (js:+ number1 number2))
-	  number more-numbers))
+            (js:+ number1 number2))
+          number more-numbers))
 
 (define-function - ((number <number>) #rest more-numbers)
   (if (empty? more-numbers)
       (js:negative number)
       (reduce (method (number1 number2)
-	        (js:- number1 number2))
-	      number more-numbers)))
+                (js:- number1 number2))
+              number more-numbers)))
 
 (define-function * ((number1 <number>) (number2 <number>)
-		    #rest more-numbers)
+                    #rest more-numbers)
   (reduce1 (method (number1 number2)
-	     (js:* number1 number2))
-	   (concatenate (make-array number1
-				    number2)
-			more-numbers)))
+             (js:* number1 number2))
+           (concatenate (make-array number1
+                                    number2)
+                        more-numbers)))
 
 (define-function keys (object)
   (bind ((keys (js:new (js:identifier "Array"))))
     (if (instance? object (js:identifier "Array"))
-	;; TODO: replace with range
-	(for ((i 0 (inc i)))
-	     ((>= i (size object)) keys)
-	  (push-last keys i))
+        ;; TODO: replace with range
+        (for ((i 0 (inc i)))
+             ((>= i (size object)) keys)
+          (push-last keys i))
         (begin
-	 (js:for-in (key object)
-	   (push-last keys key))
-	 keys))))
+         (js:for-in (key object)
+           (push-last keys key))
+         keys))))
 
 (define-function make-array (#rest elements)
   elements)
@@ -306,7 +321,7 @@
   (sort! (copy-sequence array) test: test))
 
 (define-function element ((array <array>) key #key default)
-  (or (%get-property array key) default))
+  (or (js:get-property array key) default))
 
 (define-function (setter element) ((array <array>) key new-value)
   (set! (js:get-property array key) new-value))
@@ -354,45 +369,46 @@
 (define %not-found (%make-object))
 
 (define-function find-key ((array <array>) (predicate <function>)
-			   #key (skip 0) failure from-end)
+                           #key (skip 0) failure from-end)
   (bind ((keys (keys array))
-	 (satisfying-keys
-	  (choose (method (index)
-		    (true? (predicate (element array index))))
-		  (if from-end
-		      (reverse keys)
-		      keys))))
+         (satisfying-keys
+          (choose (method (index)
+                    (true? (predicate (element array index))))
+                  (if from-end
+                      (reverse keys)
+                      keys))))
     (or (element satisfying-keys skip)
-	failure)))
+        failure)))
 
-(define-function string-position ((target-string <string>) (search-string <string>))
+(define-function string-position ((target-string <string>)
+                                  (search-string <string>))
   (bind ((position ((js:get-property target-string "indexOf")
-		    search-string)))
+                    search-string)))
     (when (> position -1)
       position)))
 
 (define-function any? ((function <function>) (array <array>))
   (block (return)
     (do (method (element)
-	  (bind ((result (function element)))
-	    (when result
-	      (return result))))
-	array)
+          (bind ((result (function element)))
+            (when result
+              (return result))))
+        array)
     #f))
 
 (define-function member? (value (array <array>))
   (true? (any? (method (other-value)
-		 (== value other-value))
-	       array)))
+                 (== value other-value))
+               array)))
 
 (define-function choose-by ((predicate <function>)
-			    (test-array <array>)
-			    (value-array <array>))
+                            (test-array <array>)
+                            (value-array <array>))
   (bind ((test-keys (choose (method (test-key)
-			      (predicate (element test-array test-key)))
-			    (keys test-array))))
+                              (predicate (element test-array test-key)))
+                            (keys test-array))))
     (map (curry element value-array)
-	 test-array)))
+         test-array)))
 
 (define-function first ((array <array>))
   (element array 0))
@@ -413,10 +429,10 @@
   (copy-sequence array end: (js:* n -1)))
 
 (define-function replace-subsequence (target-array insert-array
-				      #key (start 0) (end (size target-array)))
+                                      #key (start 0) (end (size target-array)))
   (concatenate (copy-sequence target-array end: start)
-	       insert-array
-	       (copy-sequence target-array start: end)))
+               insert-array
+               (copy-sequence target-array start: end)))
 
 ;;;; string
 
@@ -438,7 +454,7 @@
 (define-function apply ((function <function>) #rest arguments)
   ((js:get-property function "apply") js:null
    (%concat (but-last arguments)
-	    (last arguments))))
+            (last arguments))))
 
 (define-function curry ((function <function>) #rest curried-args)
   (method (#rest args)
@@ -467,12 +483,12 @@
   ;; ((js:get-property "Object" "getPrototypeOf") object))
   (bind ((type (%constructor object)))
     (or (%get-property type "%ralph-type")
-	type)))
+        type)))
 
 (define %actual-type
   (js:function js:null (type)
     (js:return (or (%get-property type "%js-type")
-		   type))))
+                   type))))
 
 (define-function instance? (object type)
   (bind ((type (%actual-type type)))
@@ -481,7 +497,7 @@
      (%has-constructor? object type)
      ;; object
      ((js:get-property type "prototype"
-		       "isPrototypeOf")
+                       "isPrototypeOf")
       object))))
 
 (define-function check-type (value type)
@@ -518,14 +534,14 @@
 
 (define-function %make-dispatcher (protocol function-name)
   (bind-methods ((dispatcher (#rest arguments)
-		   (if-bind (fn (js:get-property
-				 (first arguments)
-				 function-name))
-		     (apply fn arguments))))
+                   (if-bind (fn (js:get-property
+                                 (first arguments)
+                                 function-name))
+                     (apply fn arguments))))
     (set! (js:get-property dispatcher "%protocol")
-	  protocol)
+          protocol)
     (set! (js:get-property dispatcher "%name")
-	  function-name)
+          function-name)
     dispatcher))
 
 (define-protocol <initialization>
@@ -545,9 +561,9 @@
 
 (define-function concatenate ((first-string <string>) #rest more-strings)
   (reduce (method (current next)
-	    (js:+ current next))
-	  first-string
-	  more-strings))
+            (js:+ current next))
+          first-string
+          more-strings))
 
 (define-function concatenate ((first-array <array>) #rest more-arrays)
   (reduce %concat first-array more-arrays))
@@ -562,7 +578,7 @@
 
 (define-function description ((string <string>))
   (js:var escaped ((js:get-property string "replace")
-		   "\"" "\\\"" "g"))
+                   "\"" "\\\"" "g"))
   (js:+ "\"" escaped "\""))
 
 (define-function description ((array <array>))
@@ -587,22 +603,22 @@
 
 (define-function binary= (object1 object2)
   (js:and (js:=== (type object1)
-		  (type object2))
-	  (js:== object1 object2)))
+                  (type object2))
+          (js:== object1 object2)))
 
 (define-function binary< (object1 object2)
   (js:and (js:=== (type object1)
-		  (type object2))
-	  (js:< object1 object2)))
+                  (type object2))
+          (js:< object1 object2)))
 
 (define-function compare ((function <function>) object1 object2 more-objects)
   (block (return)
     (reduce1 (method (object1 object2)
-	       (if (function object1 object2)
-		   object2
-		   (return #f)))
-	     (%concat (make-array object1 object2)
-		      more-objects))
+               (if (function object1 object2)
+                   object2
+                   (return #f)))
+             (%concat (make-array object1 object2)
+                      more-objects))
     #t))
 
 (define-function = (object1 object2 #rest more-objects)
@@ -610,52 +626,52 @@
 
 (define-function == (object1 object2 #rest more-objects)
   (compare (method (object1 object2)
-	     (js:=== object1 object2))
-	   object1 object2 more-objects))
+             (js:=== object1 object2))
+           object1 object2 more-objects))
 
 (define-function < (object1 object2 #rest more-objects)
   (compare binary< object1 object2 more-objects))
 
 (define-function <= (object1 object2 #rest more-objects)
   (compare (method (object1 object2)
-	     (and object1
-		  object2
-		  (or (binary< object1 object2)
-		      (binary= object1 object2))))
-	   object1 object2 more-objects))
+             (and object1
+                  object2
+                  (or (binary< object1 object2)
+                      (binary= object1 object2))))
+           object1 object2 more-objects))
 
 (define-function > (object1 object2 #rest more-objects)
   (compare (method (object1 object2)
-	      (and object1
-		   object2
-		   (not (binary< object1 object2))
-		   (not (binary= object1 object2))))
-	   object1 object2 more-objects))
+              (and object1
+                   object2
+                   (not (binary< object1 object2))
+                   (not (binary= object1 object2))))
+           object1 object2 more-objects))
 
 (define-function >= (object1 object2 #rest more-objects)
   (compare (method (object1 object2)
-	     (and object1
-		  object2
-		  (or (not (binary< object1 object2))
-		      (binary= object1 object2))))
-	   object1 object2 more-objects))
+             (and object1
+                  object2
+                  (or (not (binary< object1 object2))
+                      (binary= object1 object2))))
+           object1 object2 more-objects))
 
 (define-function binary= ((array1 <array>) (array2 <array>))
   (and (= (size array1)
-	  (size array2))
+          (size array2))
        (block (return)
-	 (dotimes (i (size array1))
-	  (unless (= (get array1 i)
-		     (get array2 i))
-	    (return #f)))
-	 #t)))
+         (dotimes (i (size array1))
+          (unless (= (get array1 i)
+                     (get array2 i))
+            (return #f)))
+         #t)))
 
 (define-function make-object (#rest key-vals)
   (bind ((object (%make-object)))
     (for ((i 0 (+ i 2)))
-	 ((>= i (size key-vals)) object)
+         ((>= i (size key-vals)) object)
       (set! (get object (get key-vals i))
-	    (get key-vals (inc i))))))
+            (get key-vals (inc i))))))
 
 ;; symbols
 
@@ -666,7 +682,7 @@
 
 (do (method (name)
       (set! (get %hash-symbols name)
-	    (make <hash-symbol> name: name)))
+            (make <hash-symbol> name: name)))
     (make-array "key" "rest" "values"))
 
 (define-type <symbol>
@@ -677,8 +693,8 @@
 (define-function symbol (name)
   (bind ((name (as-lowercase name)))
     (or (get %symbols name)
-	(set! (get %symbols name)
-	      (make <symbol> name: name)))))
+        (set! (get %symbols name)
+              (make <symbol> name: name)))))
 
 (define-function symbol-name (symbol)
   (get symbol "name"))

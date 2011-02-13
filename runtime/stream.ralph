@@ -1,14 +1,15 @@
 
 (define-module format
-  import: (core system)
+  import: (core)
   export: (<stream>
-	   <string-stream>
-	   *standard-out*
-	   write
-	   read-char
-	   peek-char
-	   advance
-	   contents))
+           <string-stream>
+           *standard-out*
+           write
+           read-char
+           peek-char
+           advance
+           at-end?
+           contents))
 
 ;; <stream>
 
@@ -31,24 +32,23 @@
       (dec (size (get stream "string")))))
 
 (define-function peek-char ((stream <string-stream>))
-  (get stream "string"
-       (get stream "index")))
+  (element (get stream "string")
+           (get stream "index")))
 
 (define-function read-char ((stream <string-stream>))
-  (bind ((char (get (get stream "string")
-		    (get stream "index"))))
-	(inc! (get stream "index"))
-	char))
+  (bind ((char (peek-char stream)))
+    (inc! (get stream "index"))
+    char))
 
 (define-function write ((stream <string-stream>) object)
   (bind ((string (as-string object))
-	 (position (get stream "index"))
-	 (contents (get stream "string"))
-	 (length (size string)))
+         (position (get stream "index"))
+         (contents (get stream "string"))
+         (length (size string)))
     (set! (get stream "string")
-	  (replace-subsequence contents string
-			       start: position
-			       end: (+ position length)))
+          (replace-subsequence contents string
+                               start: position
+                               end: (+ position length)))
     (advance stream count: length)))
 
 (define-function advance ((stream <string-stream>) #key (count 1))
@@ -59,7 +59,7 @@
 
 (define-function remaining-contents ((stream <string-stream>))
   (copy-sequence (get stream "string")
-		 start: (get stream "index")))
+                 start: (get stream "index")))
 
 ;; <file-stream>
 
@@ -79,12 +79,9 @@
    object))
 
 (define *standard-out* (select *environment* ==
-		         (("commonjs")
-			  (make <file-stream>
-				file: stdout))
-			 (("browser")
-			  (make <document-stream>))))
-
-
-
-
+                         (("commonjs")
+                          (make <file-stream>
+                                file: (js:get-property (require "system")
+                                                       "stdout")))
+                         (("browser")
+                          (make <document-stream>))))
