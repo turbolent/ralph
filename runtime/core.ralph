@@ -1,17 +1,29 @@
 
 (define-module dylan
-  export: (%define
-	   %export
-	   %define-getter
-	   %define-setter
-	   (js:identifier "_k")
-	   keyword
-	   symbol
-	   <object>
-	   <non-local-exit>
-	   not
-	   true?
-	   *environment*))
+  export: (%define %export %define-getter %define-setter
+	   (js:identifier "_k") keyword keyword? symbol
+	   <object> <string> <number> <boolean> <array> <symbol>
+	   not true?
+	   *environment*
+	   %make-protocol %make-dispatcher
+           <non-local-exit> <error>
+           %non-local-exit? %make-non-local-exit-function
+	   get %set
+	   make initialize type instance?
+	   as-string as-array
+	   apply reduce reduce1 map
+           any? every? member? choose-by find-key
+           complement curry rcurry
+	   string-position
+           as-lowercase as-uppercase
+           make-array element first second third last rest
+           size empty? but-last copy-sequence replace-subsequence
+           reverse reverse! sort sort!
+           push push-last pop pop-last
+           = == > < >= <=
+           + - * /
+           inc dec
+           description))
 
 ;;;; define
 
