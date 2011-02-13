@@ -35,10 +35,9 @@
            (get stream "index")))
 
 (define-function read-char ((stream <string-stream>))
-  (bind ((char (get (get stream "string")
-		    (get stream "index"))))
-	(inc! (get stream "index"))
-	char))
+  (bind ((char (peek-char stream)))
+    (inc! (get stream "index"))
+    char))
 
 (define-function write ((stream <string-stream>) object)
   (bind ((string (as-string object))
