@@ -284,7 +284,7 @@ var macros = {
 				 [S('require'), [S('js:escape'), name]]],
 				[S('js:for-in'),
 				 [propertySymbol, importSymbol],
-				 [S('if'), [[S('js:get-property'), importSymbol,
+				 [S('js:if'), [[S('js:get-property'), importSymbol,
 					     "hasOwnProperty"], propertySymbol],
 				  [S('js:set'),
 				   [S('js:get-property'), S('*module*'), propertySymbol],
