@@ -31,8 +31,8 @@
       (dec (size (get stream "string")))))
 
 (define-function peek-char ((stream <string-stream>))
-  (get stream "string"
-       (get stream "index")))
+  (element (get stream "string")
+           (get stream "index")))
 
 (define-function read-char ((stream <string-stream>))
   (bind ((char (get (get stream "string")
