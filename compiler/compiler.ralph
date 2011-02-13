@@ -218,12 +218,12 @@
      (method (statements? test then else)
        (if statements?
 	   (format-to-string
-	    "if (%s) {\n%s}\n%s"
+	    "if (%s) {\n%s\n}%s"
 	    (write test)
 	    (write-statements then)
 	    (if else
 		(format-to-string
-		 "else {%s\n}"
+		 " else {%s\n}"
 		 (write-statements else))
 		""))
 	   (apply format-to-string
