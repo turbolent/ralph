@@ -2,13 +2,14 @@
 (define-module format
   import: (core)
   export: (<stream>
-	   <string-stream>
-	   *standard-out*
-	   write
-	   read-char
-	   peek-char
-	   advance
-	   contents))
+           <string-stream>
+           *standard-out*
+           write
+           read-char
+           peek-char
+           advance
+           at-end?
+           contents))
 
 ;; <stream>
 
@@ -41,13 +42,13 @@
 
 (define-function write ((stream <string-stream>) object)
   (bind ((string (as-string object))
-	 (position (get stream "index"))
-	 (contents (get stream "string"))
-	 (length (size string)))
+         (position (get stream "index"))
+         (contents (get stream "string"))
+         (length (size string)))
     (set! (get stream "string")
-	  (replace-subsequence contents string
-			       start: position
-			       end: (+ position length)))
+          (replace-subsequence contents string
+                               start: position
+                               end: (+ position length)))
     (advance stream count: length)))
 
 (define-function advance ((stream <string-stream>) #key (count 1))
@@ -58,7 +59,7 @@
 
 (define-function remaining-contents ((stream <string-stream>))
   (copy-sequence (get stream "string")
-		 start: (get stream "index")))
+                 start: (get stream "index")))
 
 ;; <file-stream>
 
@@ -84,7 +85,3 @@
                                                        "stdout")))
                          (("browser")
                           (make <document-stream>))))
-
-
-
-
