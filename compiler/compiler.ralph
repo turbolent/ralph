@@ -13,7 +13,27 @@
      (method (name value)
        (make-array (S "%define")
      		   (make-array (S "js:escape") name)
-     		   (macroexpand value)))))
+     		   (macroexpand value)))
+     "if"
+     (method (test then else)
+       (make-array (S "js:if")
+		   (make-array (S "true?") test)
+		   then
+		   else))
+     "when"
+     (method (test #rest body)
+       (make-array (S "if")
+		   test
+		   (concatenate (make-array (S "begin"))
+				body)
+		   #f))
+     "unless"
+     (method (test #rest body)
+       (make-array (S "if")
+		   (make-array (S "not") test)
+		   (concatenate (make-array (S "begin"))
+				body)
+		   #f))))
 
 (define *symbol-macros* (make-object))
 
