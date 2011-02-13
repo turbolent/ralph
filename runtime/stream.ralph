@@ -78,11 +78,12 @@
    object))
 
 (define *standard-out* (select *environment* ==
-		         (("commonjs")
-			  (make <file-stream>
-				file: stdout))
-			 (("browser")
-			  (make <document-stream>))))
+                         (("commonjs")
+                          (make <file-stream>
+                                file: (js:get-property (require "system")
+                                                       "stdout")))
+                         (("browser")
+                          (make <document-stream>))))
 
 
 
