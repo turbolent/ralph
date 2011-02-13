@@ -6,9 +6,12 @@
        (form (read stream)))
   (format-out "%=\n\n" form))
 
-(bind ((source "(define foo (make-array (js:== (js:negative 23.42) (js:not 0)) <class> some-hyphen-symbol))")
+(bind ((source "(begin
+(define foo (and 1 2 3))
+(when 1 2)
+(make-array (js:== (js:negative 23.42) (js:not 0)) <class> some-hyphen-symbol))")
        (stream (make <string-stream> string: source))
        (form (read stream))
-       (compiled (compile form)))
+       (compiled (compile form statements?: #t)))
   (format-out "%=\n\n" compiled))
 

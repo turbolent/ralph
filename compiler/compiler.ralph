@@ -360,8 +360,9 @@
 		 result
 		 (wrap-block result))))))
 
-(define-function compile (form)
-  (write (macroexpand form)))
+(define-function compile (form #key statements?)
+  (write (macroexpand form)
+	 statements?: statements?))
 
 (define-function macroexpand (form)
   (select form instance?
