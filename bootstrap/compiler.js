@@ -342,11 +342,6 @@ var macros = {
         } else
             return [S('js:set'), expression, value];
     },
-    '%define-class': function (name, superclasses) {
-        return [S('define'), name,
-                [S('%make-class'), name.name,
-                 [S('js:array')].concat(superclasses)]];
-    },
     'block': function (name) {
         var body = arguments.toArray().slice(1);
         var returnSymbol = name;
