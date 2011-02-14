@@ -66,6 +66,12 @@
        (read-string stream))
       (("(")
        (read-list stream))
+      (("`")
+       (read-char stream)
+       `(%backquote ,(read-list stream)))
+      ((",")
+       (read-char stream)
+       `(%comma ,(read stream)))
       (else:
        (if-bind (number (any? (rcurry match-stream stream)
 			      *number-patterns*))

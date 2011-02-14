@@ -18,6 +18,25 @@
 
 (define *macros*
     (make-object
+     "%backquote"
+     (method (form)
+       (bind-methods ((transform (form)
+                        (cond
+                          ((and (instance? form <array>)
+                                (not (empty? form)))
+                           (if (= (first form)
+                                  (S "%comma"))
+                               (second form)
+                               (concatenate `(make-array)
+                                            (map transform
+                                                 form))))
+                          ((instance? form <symbol>)
+                           `(symbol ,(symbol-name form)))
+                          (else:
+                           form))))
+         (transform form)))
+     "%comma"
+     identity
      "%function"
      (method (name arguments body)
        (make-array (S "js:function") name args
