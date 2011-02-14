@@ -49,6 +49,8 @@ function addReturn (forms) {
 }
 
 function functionDeclaration (name, args, body) {
+    if (body.length > 1 && typeof body[0] == 'string')
+	body.shift();
     var restAndKey = [];
     var rest = [S('as-array'), S('js:arguments'), requiredArguments(args).length];
     var restPosition = args.indexOf(HashSymbol.rest);
