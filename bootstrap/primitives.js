@@ -8,8 +8,9 @@ exports.Symbol = Symbol;
 Symbol.escaped = {
     '-': '_M_', '+': '_PL_', '!': '_B_', '?': '_W_', '%': '_PE_',
     '#': '_H_', '@': '_A_', '*': '_ST_', '/': '_SL_', '=': '_E_',
-    ':': '_C_', '<': '_LT_', '>': '_GT_', '_': '__'
-}
+    ':': '_C_', '<': '_LT_', '>': '_GT_', '_': '__', '{': '_BRO_',
+    '}': '_BRC_'
+};
 
 Symbol.counter = 0;
 
@@ -17,7 +18,7 @@ Symbol.generate = function () {
     var result = new Symbol('_' + Symbol.counter++);
     result.generated = true;
     return result;
-}
+};
 
 Symbol.reserved = [
     "break", "case", "catch", "continue", "default", "delete", "do", "else",

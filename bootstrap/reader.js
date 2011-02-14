@@ -24,7 +24,7 @@ Reader.prototype.read = function () {
 	    return this.readAtom();
 	}
     }
-}
+};
 
 var hexNumberExpression = /^[+-]?0x[0-9a-f]+/i;
 var octalNumberExpression = /^[+-]?0[0-7]+/;
@@ -44,7 +44,7 @@ Reader.prototype.readAtom = function () {
 	return this.readNumber();
     } else
 	return this.readSymbol();
-}
+};
 
 Reader.prototype.readList = function () {
     var result = new Array();
@@ -65,7 +65,7 @@ Reader.prototype.readList = function () {
 
     this.stream.readChar();
     return result;
-}
+};
 
 Reader.prototype.readSymbol = function () {
     var match = /[^()\n\t ]+/.exec(this.stream.rest());
@@ -84,7 +84,7 @@ Reader.prototype.readSymbol = function () {
 	return K(name.slice(0, -1).toLowerCase());
     } else
 	return S(name.toLowerCase());
-}
+};
 
 Reader.prototype.readString = function () {
     this.stream.readChar();
@@ -98,10 +98,10 @@ Reader.prototype.readString = function () {
 	    result += c;
     }
     return result;
-}
+};
 
 Reader.prototype.readNumber = function () {
     var match = /[^()\n\t ]+/.exec(this.stream.rest());
     this.stream.index += match[0].length;
     return new Number(match[0]);
-}
+};
