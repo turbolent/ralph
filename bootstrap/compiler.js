@@ -102,6 +102,25 @@ function functionDeclaration (name, args, body) {
 
 
 var macros = {
+    '%backquote': function (form) {
+	function transform (form) {
+	    if (form instanceof Array) {
+		if (form[0].name == '%comma')
+		    return form[1];
+		else
+		    return ([S('make-array')]
+			    .concat(form.map(transform)));
+	    } else if (form instanceof Symbol) {
+		return [S("symbol"), form.name];
+	    } else {
+		return form;
+	    }
+	}
+	return transform(form);
+    },
+    '%comma': function (value) {
+	return value;
+    },
     'define': function (name, value) {
         return [S('%define'),
                 S('*module*'),

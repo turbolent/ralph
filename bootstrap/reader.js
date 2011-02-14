@@ -20,6 +20,14 @@ Reader.prototype.read = function () {
 	    return this.readString();
 	case '(':
 	    return this.readList();
+	case '`':
+	    this.stream.readChar();
+	    return [S('%backquote'),
+		    this.readList()];
+	case ',':
+	    this.stream.readChar();
+	    return [S('%comma'),
+		    this.read()];
 	default:
 	    return this.readAtom();
 	}
