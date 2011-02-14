@@ -3,6 +3,18 @@
 
 (define S symbol)
 
+(define-function prepend-return (forms)
+  (concatenate
+   (but-last forms)
+   (make-array
+    (bind ((last (last forms)))
+      (if (= (first last)
+             (S "js:return"))
+          (last forms)
+          (make-array (S "js:return")
+                      ;; TODO: maybe needs to be
+                      ;;       wrapped in a 'begin'
+                      last))))))
 (define *macros*
     (make-object
      "%function"
