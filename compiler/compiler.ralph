@@ -42,10 +42,22 @@
      "unless"
      (method (test #rest body)
        (make-array (S "if")
-		   (make-array (S "not") test)
-		   (concatenate (make-array (S "begin"))
-				body)
-		   #f))))
+                   (make-array (S "not") test)
+                   (concatenate (make-array (S "begin"))
+                                body)
+                   #f))
+     "bind"
+     (method (bindings #rest body)
+       (destructuring-bind ((var value) #rest other) bindings
+         (make-array
+          (make-array (S "js:function") (S "js:null")
+                      (make-array var)
+                      (if (empty? other)
+                          (concatenate (make-array (S "begin"))
+                                       (prepend-return body))
+                          (concatenate (make-array (S "bind") other)
+                                       body)))
+          value)))))
 
 (define *symbol-macros* (make-object))
 
