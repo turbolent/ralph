@@ -11,10 +11,11 @@ The test suite is passing all tests.
 ## Getting started
 
 The bootstraping compiler runs with any CommonJS-compatible JavaScript engine.
-Currently flusspferd is the only environment that was tested.
+Currently Flusspferd and RingoJS are tested and supported environments.
 
-- Bootstrap the runtime and compile: 
+- Bootstrap the runtime and compiler (replace flusspferd with ringo if necessary):
   `$ flusspferd build.js --compileDirectories runtime compiler tests`
 
-- Run the tests: 
-  `$ flusspferd -Iruntime tests/runtime-tests.js`
+- Run the tests:
+  either: `$ flusspferd -Iruntime tests/runtime-tests.js`
+  or: `$ ringo -b paths.js tests/runtime-tests.js`
