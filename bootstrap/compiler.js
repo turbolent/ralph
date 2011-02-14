@@ -72,7 +72,7 @@ function functionDeclaration (name, args, body) {
         // declarations with defaults, setters
         var setter = [S('select'), keyVar, S('js:==')];
         args.slice(keyPosition + 1).forEach(function (key) {
-            var name, _default = S('#f');
+            var name, _default = false;
             if (key instanceof Array) {
                 name = key[0];
                 _default = key[1];
@@ -165,17 +165,17 @@ var macros = {
     'when': function (test) {
         var body = arguments.toArray().slice(1);
         body.unshift(S('begin'));
-        return [S('if'), test, body, S('#f')];
+        return [S('if'), test, body, false];
     },
     'unless': function (test) {
         var body = arguments.toArray().slice(1);
         body.unshift(S('begin'));
-        return [S('if'), [S('not'), test], body, S('#f')];
+        return [S('if'), [S('not'), test], body, false];
     },
     'cond': function () {
         var cases = arguments.toArray();
         if (cases.length == 0)
-            return S('#f');
+            return false;
         else {
             var _case = cases[0];
             var then = _case.slice(1);
@@ -359,7 +359,7 @@ var macros = {
         return [[S('js:function'), S('js:null'), [],
                  [S('begin'),
                   [S('js:while'), test].concat(body),
-                  [S('js:return'), S('#f')]]]];
+                  [S('js:return'), false]]]];
 
     },
     '%parallel-set': function () {
@@ -394,7 +394,7 @@ var macros = {
                 .concat(body)
                 .concat([[S('%parallel-set')]
                          .concat(nextClauses)]),
-                end.length == 1 ? S('#f') : end[1]];
+                end.length == 1 ? false : end[1]];
     },
     'dotimes': function (varCountResult) {
         var body = arguments.toArray().slice(1);
@@ -402,7 +402,7 @@ var macros = {
         var count = varCountResult[1];
         var result = varCountResult[2];
         if (result === undefined)
-            result = S('#f');
+            result = false;
         return [S('for'),
                 [[variable, 0, [S('js:+'), variable, 1]]],
                 [[S('js:>='), variable, count], result]]
@@ -411,7 +411,7 @@ var macros = {
     'and': function () {
         var expressions = arguments.toArray();
         if (expressions.length === 0)
-            return S('#t');
+            return true;
         else {
             var butLast = expressions.slice(0, -1)
                 .map(function (expression) {
@@ -519,9 +519,7 @@ var symbolValues = {
     'js:null': 'null',
     'js:this': 'this',
     'js:undefined': 'undefined',
-    'js:arguments': 'arguments',
-    '#f': 'false',
-    '#t': 'true'
+    'js:arguments': 'arguments'
 };
 
 function wrapBlock (code) {

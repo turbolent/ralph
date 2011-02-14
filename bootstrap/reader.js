@@ -71,12 +71,18 @@ Reader.prototype.readSymbol = function () {
     var match = /[^()\n\t ]+/.exec(this.stream.rest());
     var name = match[0];
     this.stream.index += name.length;
-    // TODO: keywords
-    if (name[0] == '#' && HashSymbol.names.indexOf(name.substring(1)) >= 0)
+    if (name == "#t") {
+	return true;
+    } else if (name == "#f") {
+	return false;
+    } else if (name[0] == '#'
+	     && (HashSymbol.names
+		 .indexOf(name.substring(1)) >= 0))
+    {
 	return HashSymbol[name.substring(1)];
-    else if (name[name.length - 1] == ":")
+    } else if (name[name.length - 1] == ":") {
 	return K(name.slice(0, -1).toLowerCase());
-    else
+    } else
 	return S(name.toLowerCase());
 }
 
