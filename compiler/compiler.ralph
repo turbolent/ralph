@@ -471,6 +471,8 @@
      (if-bind (symbol (get *symbols* (symbol-name form)))
        symbol
        (escape-symbol form)))
+    ((<boolean>)
+     (if form "true" "false"))
     (else:
      (description form))))
 
