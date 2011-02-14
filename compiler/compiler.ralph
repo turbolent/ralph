@@ -60,6 +60,24 @@
 		  (bind ((,var ,temp))
 		    ,then)
 		  ,else)))))))
+     "set!"
+     (method (expression value)
+       (if (and (instance? expression <array>)
+                (not (= (first expression)
+                        (S "js:get-property"))))
+           (concatenate `(%set)
+                        expression
+                        `(value))
+           `(js:set ,expression ,value)))
+     "while"
+     (method (test #rest body)
+       `((js:function js:null ()
+           ,(concatenate `(begin)
+                         (concatenate
+                          `(js:while ,test)
+                          body)
+                         `(js:return #f)))))))
+
 
 (define *symbol-macros* (make-object))
 
