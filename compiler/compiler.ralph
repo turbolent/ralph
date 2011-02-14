@@ -44,17 +44,6 @@
      "bind"
      (method (bindings #rest body)
        (destructuring-bind ((var value) #rest other) bindings
-
-    ;; 'if-bind': function (binding, _then, _else) {
-    ;;  var variable = binding[0];
-    ;;  var value = binding[1];
-    ;;  var temp = Symbol.generate();
-    ;;  return [S('bind'), [[temp, value]],
-    ;;          [S('if'), temp,
-    ;;           [S('bind'), [[variable, temp]],
-    ;;            _then],
-    ;;           _else]];
-
          `(,(concatenate `(js:function js:null (,var))
 			 `(,(if (empty? other)
 				(concatenate `(begin)
@@ -63,6 +52,14 @@
 					     body))))
 	    ,value)))
      "if-bind"
+     (method (binding then else)
+       (destructuring-bind (var value) binding
+	 (bind ((temp (generate-symbol)))
+	   `(bind ((,temp ,value))
+	      (if ,temp
+		  (bind ((,var ,temp))
+		    ,then)
+		  ,else)))))))
 
 (define *symbol-macros* (make-object))
 
