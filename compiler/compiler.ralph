@@ -24,41 +24,26 @@
                    (macroexpand body)))
      "define"
      (method (name value)
-       (make-array (S "%define")
-                   (make-array (S "js:escape") name)
-                   (macroexpand value)))
+       `(%define (js:escape ,name)
+         ,value))
      "if"
      (method (test then else)
-       (make-array (S "js:if")
-                   (make-array (S "true?") test)
-                   then
-                   else))
+       `(js:if (true? ,test)
+	       ,then
+	       ,else))
      "when"
      (method (test #rest body)
-       (make-array (S "if")
-                   test
-                   (concatenate (make-array (S "begin"))
-                                body)
-                   #f))
+       `(if ,test
+	    ,(concatenate `(begin) body)
+	    #f))
      "unless"
      (method (test #rest body)
-       (make-array (S "if")
-                   (make-array (S "not") test)
-                   (concatenate (make-array (S "begin"))
-                                body)
-                   #f))
+       `(if (not ,test)
+	    ,(concatenate `(begin) body)
+	    #f))
      "bind"
      (method (bindings #rest body)
        (destructuring-bind ((var value) #rest other) bindings
-         (make-array
-          (make-array (S "js:function") (S "js:null")
-                      (make-array var)
-                      (if (empty? other)
-                          (concatenate (make-array (S "begin"))
-                                       (prepend-return body))
-                          (concatenate (make-array (S "bind") other)
-                                       body)))
-          value)))))
 
     ;; 'if-bind': function (binding, _then, _else) {
     ;;  var variable = binding[0];
@@ -70,6 +55,14 @@
     ;;            _then],
     ;;           _else]];
 
+         `(,(concatenate `(js:function js:null (,var))
+			 `(,(if (empty? other)
+				(concatenate `(begin)
+					     (prepend-return body))
+				(concatenate `(bind ,other)
+					     body))))
+	    ,value)))
+     "if-bind"
 
 (define *symbol-macros* (make-object))
 
