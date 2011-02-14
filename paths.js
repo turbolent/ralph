@@ -1,0 +1,1 @@
+require.paths.splice(0, 0, "./runtime/", "./compiler/");
