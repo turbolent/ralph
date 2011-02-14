@@ -15,30 +15,31 @@
                       ;; TODO: maybe needs to be
                       ;;       wrapped in a 'begin'
                       last))))))
+
 (define *macros*
     (make-object
      "%function"
      (method (name arguments body)
        (make-array (S "js:function") name args
-		   (macroexpand body)))
+                   (macroexpand body)))
      "define"
      (method (name value)
        (make-array (S "%define")
-     		   (make-array (S "js:escape") name)
-     		   (macroexpand value)))
+                   (make-array (S "js:escape") name)
+                   (macroexpand value)))
      "if"
      (method (test then else)
        (make-array (S "js:if")
-		   (make-array (S "true?") test)
-		   then
-		   else))
+                   (make-array (S "true?") test)
+                   then
+                   else))
      "when"
      (method (test #rest body)
        (make-array (S "if")
-		   test
-		   (concatenate (make-array (S "begin"))
-				body)
-		   #f))
+                   test
+                   (concatenate (make-array (S "begin"))
+                                body)
+                   #f))
      "unless"
      (method (test #rest body)
        (make-array (S "if")
@@ -59,12 +60,23 @@
                                        body)))
           value)))))
 
+    ;; 'if-bind': function (binding, _then, _else) {
+    ;;  var variable = binding[0];
+    ;;  var value = binding[1];
+    ;;  var temp = Symbol.generate();
+    ;;  return [S('bind'), [[temp, value]],
+    ;;          [S('if'), temp,
+    ;;           [S('bind'), [[variable, temp]],
+    ;;            _then],
+    ;;           _else]];
+
+
 (define *symbol-macros* (make-object))
 
 ;; (set! (get *macros* "define-macro")
 ;;       (method (name arguments #rest body)
 ;;         (set! (get *macros* name)
-;; 	      (method
+;;            (method
 
 (define *special-forms*
     (make-object
@@ -89,20 +101,20 @@
      "js:for"
      (method (clauses #rest body)
        (concatenate
-	(make-array (S "js:for")
-		    (map (method (clause)
-			   (destructuring-bind ((var value) #rest rest) clause
-			     (concatenate (make-array var (macroexpand value))
-			 		  (map macroexpand rest))))
-			 clauses))
-	(macroexpand body)))
+        (make-array (S "js:for")
+                    (map (method (clause)
+                           (destructuring-bind ((var value) #rest rest) clause
+                             (concatenate (make-array var (macroexpand value))
+                                          (map macroexpand rest))))
+                         clauses))
+        (macroexpand body)))
      "js:try"
      (method (body var catch finally)
        (make-array (S "js:try")
-		   (macroexpand body)
-		   var
-		   (macroexpand catch)
-		   (macroexpand finally)))))
+                   (macroexpand body)
+                   var
+                   (macroexpand catch)
+                   (macroexpand finally)))))
 
 (define *infix*
     (make-object
@@ -163,25 +175,26 @@
 (define *symbol-count* 0)
 
 (define-function generate-symbol ()
-  (bind ((symbol (make <symbol> name: (concatenate "_" (as-string *symbol-count*)))))
+  (bind ((symbol (make <symbol> name:
+                       (concatenate "_" (as-string *symbol-count*)))))
     (inc! *symbol-count*)
     (set! (get symbol "generated") #t)
     symbol))
 
 (define *hyphen-pattern*
     (make <regexp>
-	  pattern: "-(.)"
-	  global?: #t))
+          pattern: "-(.)"
+          global?: #t))
 
 (define-function escape (name)
   (join (map (method (char)
-	       (if-bind (replacement (get *symbol-escapes* char))
-	         replacement
-		 char))
-	     (as-array
-	      (replace-all *hyphen-pattern* name
-			   (method (match)
-			     (as-uppercase (second match)))))) ""))
+               (if-bind (replacement (get *symbol-escapes* char))
+                 replacement
+                 char))
+             (as-array
+              (replace-all *hyphen-pattern* name
+                           (method (match)
+                             (as-uppercase (second match)))))) ""))
 
 (define-function escape-symbol (symbol)
   (bind ((name (symbol-name symbol)))
@@ -191,21 +204,21 @@
       ((member? name *reserved*)
        (concatenate "_" name))
       ((and (= (first name) "<")
-	    (= (last name) ">")
-	    (> (size name) 2))
+            (= (last name) ">")
+            (> (size name) 2))
        (concatenate "_CL_"
-		    (escape (but-last (rest name)))))
+                    (escape (but-last (rest name)))))
       ((and (= (first name) "*")
-	    (= (last name) "*")
-	    (> (size name) 2))
+            (= (last name) "*")
+            (> (size name) 2))
        (as-uppercase
-	(escape (but-last (rest name)))))
+        (escape (but-last (rest name)))))
       (else:
        (escape name)))))
 
 (define-function wrap-block (code)
   (format-to-string "(function(){\n%s\n})()"
-		    code))
+                    code))
 
 (define-function write-body (body)
   (write-statements
@@ -215,8 +228,8 @@
 
 (define *property-pattern*
     (make <regexp>
-	  pattern: "^[a-z_]+[a-z0-9]*$"
-	  ignore-case?: #t))
+          pattern: "^[a-z_]+[a-z0-9]*$"
+          ignore-case?: #t))
 
 (define *writers*
     (make-object
@@ -229,134 +242,134 @@
      "begin"
      (method (statements? #rest forms)
        (cond
-	 (statements?
-	  (join (map write-statements
-		     forms)
-		";\n"))
-	 ((> (size forms) 1)
-	  (concatenate
-	   "(" (join (map write forms) ", ") ")"))
-	 (else:
-	  (write (first forms)))))
+         (statements?
+          (join (map write-statements
+                     forms)
+                ";\n"))
+         ((> (size forms) 1)
+          (concatenate
+           "(" (join (map write forms) ", ") ")"))
+         (else:
+          (write (first forms)))))
      "js:if"
      (method (statements? test then else)
        (if statements?
-	   (format-to-string
-	    "if (%s) {\n%s\n}%s"
-	    (write test)
-	    (write-statements then)
-	    (if else
-		(format-to-string
-		 " else {%s\n}"
-		 (write-statements else))
-		""))
-	   (apply format-to-string
-		  "(%s ? %s : %s)"
-		  (map write
-		       (make-array test then else)))))
+           (format-to-string
+            "if (%s) {\n%s\n}%s"
+            (write test)
+            (write-statements then)
+            (if else
+                (format-to-string
+                 " else {%s\n}"
+                 (write-statements else))
+                ""))
+           (apply format-to-string
+                  "(%s ? %s : %s)"
+                  (map write
+                       (make-array test then else)))))
      "js:array"
      (method (_ #rest elements)
        (format-to-string "[%s]" (join (map write elements) ", ")))
      "js:defined"
      (method (_ expression)
        (format-to-string "(typeof (%s) != 'undefined')"
-			 (write expression)))
+                         (write expression)))
      "js:try"
      (method (statements? body condition catch finally)
        (bind ((result
-	       (format-to-string
-		"try {\n%s\n}%s%s"
-		(write-statements body)
-		(if catch
-		    (format-to-string
-		     " catch (%s) {\n%s\n}"
-		     (write condition)
-		     (write-statements catch))
-		    "")
-		(if finally
-		    (format-to-string
-		     " finally {\n%s\n}"
-		     (write-statements finally))
-		    ""))))
+               (format-to-string
+                "try {\n%s\n}%s%s"
+                (write-statements body)
+                (if catch
+                    (format-to-string
+                     " catch (%s) {\n%s\n}"
+                     (write condition)
+                     (write-statements catch))
+                    "")
+                (if finally
+                    (format-to-string
+                     " finally {\n%s\n}"
+                     (write-statements finally))
+                    ""))))
          (if statements?
-	     result
-	     (wrap-block result))))
+             result
+             (wrap-block result))))
      "js:for-in"
      (method (statements? variable/expression #rest body)
-	(destructuring-bind (variable expression) variable/expression
-	  (bind ((result
-		  (format-to-string "for (var %s in %s) {\n%s\n}"
-				    variable
-				    (write expression)
-				    (write-body body))))
-	    (if statements?
-		result
-		(wrap-block result)))))
+        (destructuring-bind (variable expression) variable/expression
+          (bind ((result
+                  (format-to-string "for (var %s in %s) {\n%s\n}"
+                                    variable
+                                    (write expression)
+                                    (write-body body))))
+            (if statements?
+                result
+                (wrap-block result)))))
      "js:for"
      (method (statements? clauses #rest body) {
        (bind ((inits (make-array))
-	      (tests (make-array))
-	      (nexts (make-array)))
+              (tests (make-array))
+              (nexts (make-array)))
          (do (method (clause)
-	       (destructuring-bind ((var value) test next) clause
-		 (bind ((set (S "js:set")))
-		   (push-last
-		    inits (write (make-array set var value)))
-		   (push-last
-		    tests (write test))
-		   (push-last
-		    nexts (write (make-array set var next))))))
-	     clauses)
-	 (bind ((result
-		 (format-to-string
-		  "for (var %s) {\n%s\n}"
-		  (join (map (method (parts)
-			       (join parts ", "))
-			     (make-array inits tests nexts))
-			"; ")
-		  (write-body body))))
-	 (if statements?
-	     result
-	     (wrap-block result)))))
+               (destructuring-bind ((var value) test next) clause
+                 (bind ((set (S "js:set")))
+                   (push-last
+                    inits (write (make-array set var value)))
+                   (push-last
+                    tests (write test))
+                   (push-last
+                    nexts (write (make-array set var next))))))
+             clauses)
+         (bind ((result
+                 (format-to-string
+                  "for (var %s) {\n%s\n}"
+                  (join (map (method (parts)
+                               (join parts ", "))
+                             (make-array inits tests nexts))
+                        "; ")
+                  (write-body body))))
+         (if statements?
+             result
+             (wrap-block result)))))
      "js:while"
      (method (statements? test #rest body)
        (bind ((result
-	       (format-to-string
-		"while (%s) {\n%s\n}"
-		(write test)
-		(write-body body))))
+               (format-to-string
+                "while (%s) {\n%s\n}"
+                (write test)
+                (write-body body))))
          (if statements?
-	     result
-	     (wrap-block result))))
+             result
+             (wrap-block result))))
      "js:identifier"
      (method (_ identifier)
        (as-string identifier))
      "js:get-property"
      (method (_ object #rest elements)
        (concatenate
-	(if (instance? object <string>)
-	    string
-	    (write string))
-	(apply concatenate
-	       (method (element)
-	         (if (and (instance? element <string>)
-			  (match *property-pattern* element))
-		     (concatenate "." element)
-		     (concatenate "[" (write element) "]")))
-	       elements)))
+        (if (instance? object <string>)
+            string
+            (write string))
+        (apply concatenate
+               (method (element)
+                 (if (and (instance? element <string>)
+                          (match *property-pattern* element))
+                     (concatenate "." element)
+                     (concatenate "[" (write element) "]")))
+               elements)))
      "js:new"
      (method (_ name #rest arguments)
        (format-to-string "new %s (%s)"
-			 (write name)
-			 (join (map write arguments) ", ")))
+                         (write name)
+                         (join (map write arguments) ", ")))
      "js:var"
      (method (_ name value)
        (concatenate
-	"var " name
-	(if (and value
-		 (not (= value (S "js:undefined"))))
-	    (concatenate " = " value)
-	    "")))
+        "var " name
+        (if (and value
+                 (not (= value (S "js:undefined"))))
+            (concatenate " = " value)
+            "")))
      "js:set"
      (method (_ name value)
        (concatenate (write name) " = " (write value)))
@@ -382,49 +395,49 @@
      (method (statements? error)
        (bind ((result (concatenate "throw " (write error))))
              (if statements?
-		 result
-		 (wrap-block result))))))
+                 result
+                 (wrap-block result))))))
 
 (define-function compile (form #key statements?)
   (write (macroexpand form)
-	 statements?: statements?))
+         statements?: statements?))
 
 (define-function macroexpand (form)
   (select form instance?
     ((<array>)
      ;; apply macros
      (while (and (instance? form <array>)
-		 (instance? (first form) <symbol>)
-		 (get *macros* (symbol-name (first form))))
+                 (instance? (first form) <symbol>)
+                 (get *macros* (symbol-name (first form))))
        (bind ((macro (get *macros* (symbol-name (first form)))))
          (set! form (apply macro (rest form)))))
      ;; still array?
      (if (instance? form <array>)
-	 (bind ((head (first form)))
-	   ;; special?
-	   (if-bind (expander (and (instance? head <symbol>)
-				   (get *special-forms*
-					(symbol-name head))))
-	     (select expander instance?
-	       ((<number>)
-		(concatenate
-		 ;; skip n arguments, macroexpand rest
-		 (copy-sequence form end: (inc expander))
-		 (map macroexpand (copy-sequence form start: (inc expander)))))
-	       ((<function>)
-		;; custom expander
-		(apply expander (rest form)))
-	       (else:
-		;; form mustn't be expanded
-		form))
-	     ;; not special
-	     (map macroexpand form)))
-	 ;; not a macro
-	 (macroexpand form)))
+         (bind ((head (first form)))
+           ;; special?
+           (if-bind (expander (and (instance? head <symbol>)
+                                   (get *special-forms*
+                                        (symbol-name head))))
+             (select expander instance?
+               ((<number>)
+                (concatenate
+                 ;; skip n arguments, macroexpand rest
+                 (copy-sequence form end: (inc expander))
+                 (map macroexpand (copy-sequence form start: (inc expander)))))
+               ((<function>)
+                ;; custom expander
+                (apply expander (rest form)))
+               (else:
+                ;; form mustn't be expanded
+                form))
+             ;; not special
+             (map macroexpand form)))
+         ;; not a macro
+         (macroexpand form)))
     ((<symbol>)
      ;; symbol-macro?
      (if-bind (symbol-macro (get *symbol-macros*
-				 (symbol-name form)))
+                                 (symbol-name form)))
        (macroexpand (symbol-macro))
        form))
     (else: form)))
@@ -434,42 +447,39 @@
     ;; array?
     ((<array>)
      (bind ((head (first form))
-	    (head-name (symbol-name head))
-	    (tail (rest form)))
+            (head-name (symbol-name head))
+            (tail (rest form)))
        (cond
-	 ;; infix?
-	 ((and (instance? head <symbol>)
-	       (get *infix* head-name))
-	  (bind ((infix (get *infix* head-name))
-		 (inside (join (map write tail)
-			       (concatenate " " infix " "))))
-	    (concatenate "(" inside ")")))
-	 ;; writer?
-	 ((and (instance? head <symbol>)
-	       (get *writers* head-name))
-	  (apply (get *writers* head-name)
-		 statements?
-		 tail))
-	 ((and (instance? head <array>)
-	       (instance? (first head) <symbol>)
-	       (= (symbol-name (first head))
-		  "js:function"))
-	  (concatenate "(" (write head) ")"
-		       "(" (join (map write tail) ", ") ")"))
-	 (else:
-	  (concatenate
-	   (write head)
-	   "(" (join (map write tail) ", ") ")")))))
-    ;; string?
-    ((<string>)
-     (description form))
+         ;; infix?
+         ((and (instance? head <symbol>)
+               (get *infix* head-name))
+          (bind ((infix (get *infix* head-name))
+                 (inside (join (map write tail)
+                               (concatenate " " infix " "))))
+            (concatenate "(" inside ")")))
+         ;; writer?
+         ((and (instance? head <symbol>)
+               (get *writers* head-name))
+          (apply (get *writers* head-name)
+                 statements?
+                 tail))
+         ;; anonymous function call?
+         ((and (instance? head <array>)
+               (instance? (first head) <symbol>)
+               (= (symbol-name (first head))
+                  "js:function"))
+          (concatenate "(" (write head) ")"
+                       "(" (join (map write tail) ", ") ")"))
+         (else:
+          (concatenate
+           (write head)
+           "(" (join (map write tail) ", ") ")")))))
     ((<symbol>)
-      (if-bind (symbol (get *symbols* (symbol-name form)))
-        symbol
-	(begin
-	 (escape-symbol form))))
+     (if-bind (symbol (get *symbols* (symbol-name form)))
+       symbol
+       (escape-symbol form)))
     (else:
-       form)))
+     (description form))))
 
 (define write-statements
     (rcurry write statements?: #t))
