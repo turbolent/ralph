@@ -366,14 +366,15 @@
      "js:function"
      (method (_ name arguments body)
        (format-to-string "function %s(%s) {%s}"
-			 (if name
-			     (concatenate name " ")
-			     "")
-			 (join (map write arguments) ", ")
-			 (if body
-			     (format-to-string
-			      "\n%s\n" (write-statements body))
-			     "")))
+                         (if (and name
+                                  (not (= name (S "js:null"))))
+                             (concatenate (escape-symbol name) " ")
+                             "")
+                         (join (map write arguments) ", ")
+                         (if body
+                             (format-to-string
+                              "\n%s\n" (write-statements body))
+                             "")))
      "js:escape"
      (method (_ symbol)
        (write (escape-symbol symbol)))
