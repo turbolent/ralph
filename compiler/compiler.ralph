@@ -29,37 +29,37 @@
      "if"
      (method (test then else)
        `(js:if (true? ,test)
-	       ,then
-	       ,else))
+               ,then
+               ,else))
      "when"
      (method (test #rest body)
        `(if ,test
-	    ,(concatenate `(begin) body)
-	    #f))
+            ,(concatenate `(begin) body)
+            #f))
      "unless"
      (method (test #rest body)
        `(if (not ,test)
-	    ,(concatenate `(begin) body)
-	    #f))
+            ,(concatenate `(begin) body)
+            #f))
      "bind"
      (method (bindings #rest body)
        (destructuring-bind ((var value) #rest other) bindings
          `(,(concatenate `(js:function js:null (,var))
-			 `(,(if (empty? other)
-				(concatenate `(begin)
-					     (prepend-return body))
-				(concatenate `(bind ,other)
-					     body))))
-	    ,value)))
+                         `(,(if (empty? other)
+                                (concatenate `(begin)
+                                             (prepend-return body))
+                                (concatenate `(bind ,other)
+                                             body))))
+            ,value)))
      "if-bind"
      (method (binding then else)
        (destructuring-bind (var value) binding
-	 (bind ((temp (generate-symbol)))
-	   `(bind ((,temp ,value))
-	      (if ,temp
-		  (bind ((,var ,temp))
-		    ,then)
-		  ,else)))))))
+         (bind ((temp (generate-symbol)))
+           `(bind ((,temp ,value))
+              (if ,temp
+                  (bind ((,var ,temp))
+                    ,then)
+                  ,else)))))
      "set!"
      (method (expression value)
        (if (and (instance? expression <array>)
