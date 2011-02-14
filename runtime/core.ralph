@@ -52,7 +52,8 @@
 
 (define %get-definition
   (js:function js:null (module name)
-    (js:return (js:get-property module name))))
+    (js:return (js:and (js:defined (js:get-property module name))
+		       (js:get-property module name)))))
 
 (define %has-constructor?
   (js:function js:null (object constructor)
