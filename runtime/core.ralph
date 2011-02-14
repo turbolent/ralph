@@ -23,7 +23,8 @@
            = == > < >= <=
            + - * /
            inc dec
-           description))
+           description
+           identity))
 
 ;;;; define
 
@@ -708,3 +709,6 @@
 
 (define-function description ((symbol <hash-symbol>))
   (concatenate "#" (symbol-name symbol)))
+
+(define-function identity (value)
+  value)
