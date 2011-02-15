@@ -95,8 +95,41 @@
                          (concatenate
                           `(js:while ,test)
                           body)
-                         `(js:return #f)))))))
-
+                         `(js:return #f)))))
+     "define-protocol"
+     (method (protocol #rest functions)
+       (bind-methods ((declare (f)
+                        (bind ((name (first f)))
+                          `(define ,name
+                               (%make-dispatcher ,protocol
+                                 (js:escape ,name))))))
+         (concatenate `(begin
+                        (define ,protocol (%make-protocol)))
+                      (map declare functions))))
+     "and"
+     (method (#rest expressions)
+       (or (empty? expressions)
+           `(when ,(concatenate `(js:and)
+                                (map (method (expression)
+                                       `(true? ,expression))
+                                     (but-last expressions)))
+              ,(last expressions))))
+     "or"
+     (method (#rest expression)
+       (and (not (empty? expression))
+            (bind ((bindings (make-array))
+                   (clauses (map (method (expression)
+                                   (bind ((temp (generate-symbol)))
+                                     (push-last bindings
+                                                `(,tmp js:undefined))
+                                     `((begin
+                                        (set! ,tmp ,expression)
+                                        (true? ,tmp))
+                                       ,tmp)))
+                                 expressions)))
+              `(bind ,bindings
+                 ,(concatenate `(cond)
+                               clauses)))))))
 
 (define *symbol-macros* (make-object))
 
