@@ -107,9 +107,11 @@ var macros = {
             if (form instanceof Array
                 && form.length > 0)
             {
-                if (form[0].name == '%comma')
+                if (form[0] instanceof Symbol
+                    && form[0].name == '%comma')
+                {
                     return form[1];
-                else
+                } else
                     return ([S('make-array')]
                             .concat(form.map(transform)));
             } else if (form instanceof Symbol) {
