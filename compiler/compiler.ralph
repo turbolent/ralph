@@ -129,7 +129,36 @@
                                  expressions)))
               `(bind ,bindings
                  ,(concatenate `(cond)
-                               clauses)))))))
+                               clauses)))))
+     "define-function"
+     (method (name arguments #rest body)
+       (destructuring-bind (setter? name)
+           (if (and (instance? name <array>)
+                    (= (size name) 2)
+                    (first name)
+                    (= (first name) (S "setter")))
+               (make-array #t (first name))
+               (make-array #f name))
+         (when (not (or (instance? name <symbol>)
+                        setter?))
+           (signal (make <error> message:
+                         "define-function: name => symbol or (setter name)")))
+         (bind ((type (if (empty? arguments)
+                          (S "js:null")
+                          (bind ((head (first arguments)))
+                            (if (and (instance? head <array>)
+                                     (> (size (first head)) 1))
+                                (symbol-name (second head))
+                                "Object")))))
+           `(,(if setter?
+                  (S "%define-setter")
+                  (S "%define-getter"))
+              *module*
+              exports
+              (js:escape ,name)
+              ,(concatenate `(method ,arguments)
+                            body)
+              ,type))))))
 
 (define *symbol-macros* (make-object))
 
