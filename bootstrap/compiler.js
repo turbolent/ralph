@@ -104,10 +104,9 @@ function functionDeclaration (name, args, body) {
 var macros = {
     '%backquote': function (form) {
         function transform (form) {
-            if (form instanceof Array
-                && form.length > 0)
-            {
-                if (form[0] instanceof Symbol
+            if (form instanceof Array) {
+                if (form.length > 0
+                    && form[0] instanceof Symbol
                     && form[0].name == '%comma')
                 {
                     return form[1];
