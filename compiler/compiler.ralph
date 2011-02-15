@@ -115,17 +115,17 @@
                                      (but-last expressions)))
               ,(last expressions))))
      "or"
-     (method (#rest expression)
-       (and (not (empty? expression))
+     (method (#rest expressions)
+       (and (not (empty? expressions))
             (bind ((bindings (make-array))
                    (clauses (map (method (expression)
                                    (bind ((temp (generate-symbol)))
                                      (push-last bindings
-                                                `(,tmp js:undefined))
+                                                `(,temp js:undefined))
                                      `((begin
-                                        (set! ,tmp ,expression)
-                                        (true? ,tmp))
-                                       ,tmp)))
+                                        (set! ,temp ,expression)
+                                        (true? ,temp))
+                                       ,temp)))
                                  expressions)))
               `(bind ,bindings
                  ,(concatenate `(cond)
