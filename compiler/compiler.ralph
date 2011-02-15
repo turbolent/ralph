@@ -158,7 +158,37 @@
               (js:escape ,name)
               ,(concatenate `(method ,arguments)
                             body)
-              ,type))))))
+              ,type))))
+     "inc!"
+     (method (object value)
+       `(set! ,object
+              (js:+ ,object ,(or value 1))))
+     "dotimes"
+     (method (binding #rest body)
+       (destructuring-bind (var count result) binding
+         (concatenate `(for ((,var 0 (js:+ ,var 1)))
+                            ((js:>= ,var ,count) (or result #f)))
+                      body)))
+     "for"
+     (method (clauses end #rest body)
+       (bind ((init-clauses (make-array))
+              (next-clauses (make-array)))
+         (do (method (clause)
+               (push-last init-clauses
+                          (copy-sequence clause end: 2))
+               (push-last next-clauses
+                          (first clause))
+               (push-last next-clauses
+                          (third clause)))
+             clauses)
+         `(bind ,init-clauses
+            ,(concatenate `(while (not ,(first end)))
+                          body
+                          `(,(concatenate `(%parallel-set)
+                                          next-clauses)))
+            ,(if (empty? (rest end))
+                 #f
+                 (second end)))))))
 
 (define *symbol-macros* (make-object))
 
