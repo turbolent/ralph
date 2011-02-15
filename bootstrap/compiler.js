@@ -401,7 +401,7 @@ var macros = {
         var nextClauses = [];
         clauses.forEach(function (clause) {
             // initial value
-            initClauses.push([clause[0], clause[1]]);
+            initClauses.push(clause.slice(0, 2));
             // next value
             nextClauses.push(clause[0]);
             nextClauses.push(clause[2]);
@@ -457,7 +457,8 @@ var macros = {
     },
     'inc!': function (object, value) {
         return [S('set!'), object,
-                [S('js:+'), object, value ? value : 1]];
+                [S('js:+'), object,
+                 value !== undefined ? value : 1]];
     },
     'destructuring-bind': function (pattern, value) {
         var body = arguments.toArray().slice(2);
