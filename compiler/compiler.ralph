@@ -183,7 +183,6 @@
      "js:set" 1
      "js:for-in" 1
      "js:function" 2
-     "js:var" #f
      "js:escape" #f
      "js:identifier" #f
      "js:get-property" #f

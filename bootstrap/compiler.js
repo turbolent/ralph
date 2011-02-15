@@ -706,7 +706,6 @@ var specialForms = {
     'js:set': 1,
     'js:for-in': 1,
     'js:function': 2,
-    'js:var': false,
     'js:escape': false,
     'js:identifier': false,
     'js:get-property': false,
