@@ -441,6 +441,8 @@ var macros = {
     },
     'or': function () {
         var expressions = arguments.toArray();
+        if (expressions.length === 0)
+            return false;
         var bindings = [];
         var clauses = [];
         expressions.forEach(function (expression) {
