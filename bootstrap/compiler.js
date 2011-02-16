@@ -169,8 +169,10 @@ var macros = {
                  bindings.length > 1 ?
                  [S('js:return'),
                   [S('bind'), bindings.slice(1)].concat(body)]
-                 : [S('begin')].concat(addReturn(body))],
-                value];
+                 : [S('begin')].concat(addReturn(body))]]
+            .concat(value !== undefined
+                    && value != S('js:undefined')
+                    ? [value] : []);
     },
     'if-bind': function (binding, _then, _else) {
         var variable = binding[0];
