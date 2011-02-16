@@ -719,3 +719,8 @@
 
 (define-function identity (value)
   value)
+
+(define-function repeatedly ((function <function>) (count <integer>))
+  (bind ((result (make-array)))
+    (dotimes (i count result)
+      (push-last result (function)))))
