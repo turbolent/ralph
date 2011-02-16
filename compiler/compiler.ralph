@@ -24,7 +24,7 @@
        arguments))
 
 (define-function required-arguments (arguments)
-  (bind ((length (size arguments))
+  (bind ((length (size arguments)))
     (bind-methods ((position (hash-symbol)
                      (find-key arguments (curry = hash-symbol)
                                failure: length)))
@@ -444,7 +444,7 @@
                 result
                 (wrap-block result)))))
      "js:for"
-     (method (statements? clauses #rest body) {
+     (method (statements? clauses #rest body)
        (bind ((inits (make-array))
               (tests (make-array))
               (nexts (make-array)))
