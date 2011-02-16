@@ -1,7 +1,8 @@
 
 (define-module dylan
   export: (%define %export %define-getter %define-setter
-           (js:identifier "_k") keyword keyword? symbol
+	   (js:identifier "_k") (js:identifier "_key") (js:identifier "_rest")
+	   keyword keyword? symbol
            <object> <string> <number> <boolean> <array> <symbol>
            not true?
            *environment*
@@ -167,6 +168,12 @@
 
 (define-function keyword? (keyword)
   (instance? keyword <keyword>))
+
+(%define *module* exports "_key"
+	 (%make-object))
+
+(%define *module* exports "_rest"
+	 (%make-object))
 
 (%define *module* exports "_k"
   (js:function js:null (name)
