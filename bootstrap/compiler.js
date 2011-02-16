@@ -442,18 +442,21 @@ var macros = {
         var expressions = arguments.toArray();
         if (expressions.length === 0)
             return false;
-        var bindings = [];
+        var vars = [];
         var clauses = [];
         expressions.forEach(function (expression) {
             var tmp = Symbol.generate();
-            bindings.push([tmp, S('js:undefined')]);
+            vars.push([S('js:var'), tmp]);
             clauses.push([[S('begin'),
                            [S('js:set'), tmp, expression],
                            [S('true?'), tmp]],
                           tmp]);
         });
-        return [S('bind'), bindings,
-                [S('cond')].concat(clauses)];
+        return [[S('js:function'), S('js:null'), [],
+		 [S('begin')]
+		 .concat(vars)
+		 .concat([[S('js:return'),
+			   [S('cond')].concat(clauses)]])]];
     },
     'inc!': function (object, value) {
         return [S('set!'), object,
