@@ -118,19 +118,22 @@
      "or"
      (method (#rest expressions)
        (and (not (empty? expressions))
-            (bind ((bindings (make-array))
+            (bind ((variables (make-array))
                    (clauses (map (method (expression)
                                    (bind ((temp (generate-symbol)))
-                                     (push-last bindings
-                                                `(,temp js:undefined))
+				     (push-last variables
+						`(js:var ,temp))
                                      `((begin
                                         (set! ,temp ,expression)
                                         (true? ,temp))
                                        ,temp)))
                                  expressions)))
-              `(bind ,bindings
-                 ,(concatenate `(cond)
-                               clauses)))))
+		  `((js:function js:null ()
+		      ,(concatenate `(begin)
+				    variables
+				    `((js:return
+					,(concatenate `(cond)
+						      clauses)))))))))
      "define-function"
      (method (name arguments #rest body)
        (destructuring-bind (setter? name)
