@@ -251,16 +251,16 @@
   (check-equal "find-key: from end: first element > 0"
 	       6 (find-key array
 			   (rcurry > 0)
-			   from-end: #t))
+			   from-end?: #t))
   (check-equal "find-key: from end: second element > 0"
 	       3 (find-key array
 			   (rcurry > 0)
-			   from-end: #t
+			   from-end?: #t
 			   skip: 1))
   (check-false "find-ley: from end: no third element > 0"
 	       (find-key array
 			 (rcurry > 0)
-			 from-end: #t
+			 from-end?: #t
 			 skip: 2)))
 
 

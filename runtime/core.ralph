@@ -378,12 +378,12 @@
 (define %not-found (%make-object))
 
 (define-function find-key ((array <array>) (predicate <function>)
-                           #key (skip 0) failure from-end)
+                           #key (skip 0) failure from-end?)
   (bind ((keys (keys array))
          (satisfying-keys
           (choose (method (index)
                     (true? (predicate (element array index))))
-                  (if from-end
+                  (if from-end?
                       (reverse keys)
                       keys))))
     (or (element satisfying-keys skip)
