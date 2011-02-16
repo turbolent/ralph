@@ -49,6 +49,7 @@ function addReturn (forms) {
 }
 
 function functionDeclaration (name, args, body) {
+    // strip documentation
     if (body.length > 1 && typeof body[0] == 'string')
         body.shift();
     var restAndKey = [];

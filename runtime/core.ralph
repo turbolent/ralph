@@ -664,9 +664,9 @@
           (size array2))
        (block (return)
          (dotimes (i (size array1))
-          (unless (= (get array1 i)
-                     (get array2 i))
-            (return #f)))
+           (unless (= (get array1 i)
+                      (get array2 i))
+             (return #f)))
          #t)))
 
 (define-function make-object (#rest key-vals)
