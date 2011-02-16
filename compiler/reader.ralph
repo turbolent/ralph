@@ -27,15 +27,15 @@
 
 (define-function read-symbol ((stream <stream>))
   (bind ((value (first (match-stream *non-whitespace-pattern* stream))))
-    (cond
-      ((= value "#t") #t)
-      ((= value "#f") #f)
-      ((= (first value) "#")
-       (get %hash-symbols (rest value)))
-      ((= (last value) ":")
-       (keyword (but-last value)))
+    (select value =
+      (("#t") #t)
+      (("#f") #f)
+      (("#key") #key)
+      (("#rest") #rest)
       (else:
-       (symbol value)))))
+       (if (= (last value) ":")
+	   (keyword (but-last value))
+	   (symbol value))))))
 
 (define-function read-line ((stream <stream>))
   (match-stream *line-pattern* stream))
