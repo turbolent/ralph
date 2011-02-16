@@ -169,12 +169,6 @@
 (define-function keyword? (keyword)
   (instance? keyword <keyword>))
 
-(%define *module* exports "_key"
-	 (%make-object))
-
-(%define *module* exports "_rest"
-	 (%make-object))
-
 (%define *module* exports "_k"
   (js:function js:null (name)
     (begin
@@ -687,12 +681,12 @@
 (define-type <hash-symbol>
     name)
 
-(define %hash-symbols (%make-object))
+(%define *module* exports "_key"
+	 (make <hash-symbol> name: "key"))
 
-(do (method (name)
-      (set! (get %hash-symbols name)
-            (make <hash-symbol> name: name)))
-    (make-array "key" "rest" "values"))
+(%define *module* exports "_rest"
+	 (make <hash-symbol> name: "rest"))
+
 
 (define-type <symbol>
     name)
