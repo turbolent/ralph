@@ -1,23 +1,24 @@
 
 (define-module dylan
   export: (%define %export %define-getter %define-setter
-	   (js:identifier "_k") (js:identifier "_key") (js:identifier "_rest")
-	   keyword keyword? symbol
-           <object> <string> <number> <boolean> <array> <symbol>
+           (js:identifier "_k") (js:identifier "_key") (js:identifier "_rest")
+           keyword keyword? symbol symbol-name
+           <object> <string> <number> <boolean> <array> <function>
+           <symbol> <non-local-exit> <error>
            not true?
            *environment*
-           %make-protocol %make-dispatcher
-           <non-local-exit> <error>
+           %make-protocol %make-dispatcher %alias-type
            %non-local-exit? %make-non-local-exit-function
            get %set
            make initialize type instance?
-           as-string as-array
-           apply reduce reduce1 map
+           as-string as-array as-number
+           apply reduce reduce1 map do repeatedly
            any? every? member? choose-by find-key
            complement curry rcurry
-           string-position
+           string-position join
            as-lowercase as-uppercase
-           make-array element first second third last rest
+           make-array make-object
+           element first second third last rest concatenate
            size empty? but-last copy-sequence replace-subsequence
            reverse reverse! sort sort!
            push push-last pop pop-last
@@ -25,7 +26,8 @@
            + - * /
            inc dec
            description
-           identity))
+           identity
+           min max))
 
 ;;;; define
 
@@ -682,10 +684,10 @@
     name)
 
 (%define *module* exports "_key"
-	 (make <hash-symbol> name: "key"))
+         (make <hash-symbol> name: "key"))
 
 (%define *module* exports "_rest"
-	 (make <hash-symbol> name: "rest"))
+         (make <hash-symbol> name: "rest"))
 
 
 (define-type <symbol>
@@ -730,7 +732,7 @@
 (define-function max ((x <number>) #rest more)
   (bind ((result x))
     (do (method (other)
-	  (when (> other result)
-	    (set! result other)))
-	more)
+          (when (> other result)
+            (set! result other)))
+        more)
     result))

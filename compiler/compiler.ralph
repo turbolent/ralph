@@ -1,5 +1,6 @@
 (define-module compiler
-    import: (core reader))
+    import: (core reader format regexp)
+    export: (compile))
 
 (define S symbol)
 

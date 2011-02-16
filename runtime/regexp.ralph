@@ -1,5 +1,6 @@
 (define-module regexp
-    import: (core))
+    import: (core)
+    export: (<regexp> match replace-all))
 
 (define-type <regexp>)
 

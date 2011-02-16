@@ -9,7 +9,8 @@
            peek-char
            advance
            at-end?
-           contents))
+           contents
+           remaining-contents))
 
 ;; <stream>
 

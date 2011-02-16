@@ -1,5 +1,6 @@
 (define-module reader
-    import: (core stream regexp))
+    import: (core stream regexp)
+    export: (read))
 
 (define *string-pattern*
     (make <regexp> pattern: "\"([^\"]*)\""))
