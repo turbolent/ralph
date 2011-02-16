@@ -92,11 +92,11 @@
      "while"
      (method (test #rest body)
        `((js:function js:null ()
-           ,(concatenate `(begin)
-                         (concatenate
-                          `(js:while ,test)
-                          body)
-                         `(js:return #f)))))
+           ,(concatenate
+             `(begin)
+             `(,(concatenate `(js:while ,test)
+                             body)
+                (js:return #f))))))
      "define-protocol"
      (method (protocol #rest functions)
        (bind-methods ((declare (f)
