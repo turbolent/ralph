@@ -94,7 +94,7 @@ var HashSymbol = function (name) {
 }
 exports.HashSymbol = HashSymbol;
 
-HashSymbol.names = ['key', 'rest', 'values'];
+HashSymbol.names = ['key', 'rest'];
 
 HashSymbol.names.forEach(function (hashSymbol) {
     HashSymbol[hashSymbol] = new HashSymbol(hashSymbol);

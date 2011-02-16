@@ -32,7 +32,7 @@ function requiredArguments (args) {
         return result;
     }
     var hashSymbolPositions =
-        [HashSymbol.key, HashSymbol.rest, HashSymbol.values].map(position);
+        [HashSymbol.key, HashSymbol.rest].map(position);
     var end = Math.min.apply(null, [args.length].concat(hashSymbolPositions));
     return args.slice(0, end);
 }
