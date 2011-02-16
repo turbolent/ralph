@@ -71,19 +71,17 @@ function functionDeclaration (name, args, body) {
 
         // declarations with defaults, setters
         var setter = [S('select'), keyVar, S('js:==')];
-        args.slice(keyPosition + 1).forEach(function (key) {
-            var name, _default = false;
-            if (key instanceof Array) {
-                name = key[0];
-                _default = key[1];
-            } else if (key instanceof Symbol) {
-                name = key;
-            }
-            if (name) {
-                restAndKey.push([S('js:var'), name, _default]);
-                setter.push([[K(name.name)], [S('js:set'), name, valueVar]]);
-            }
-        });
+        args.slice(keyPosition + 1)
+            .forEach(function (key) {
+                         var name = key;
+                         var _default = false;
+                         if (key instanceof Array) {
+                             name = key[0];
+                             _default = key[1];
+                         }
+                         restAndKey.push([S('js:var'), name, _default]);
+                         setter.push([[K(name.name)], [S('js:set'), name, valueVar]]);
+                     });
         if (restPosition == -1)
             restAndKey.push([S('js:var'), restVar, rest]);
         else
