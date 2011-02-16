@@ -16,6 +16,22 @@
                       ;;       wrapped in a 'begin'
                       last))))))
 
+(define-function argument-names (arguments)
+  (map (method (argument)
+         (if (instance? argument <array>)
+             (first argument)
+             arugment))
+       arguments))
+
+(define-function required-arguments (arguments)
+  (bind ((length (size arguments))
+    (bind-methods ((position (hash-symbol)
+                     (find-key arguments (curry = hash-symbol)
+                               failure: length)))
+      (copy-sequence arguments
+                     end: (apply min size
+                                 (map position
+                                      (make-array #key #rest))))))))
 (define *macros*
     (make-object
      "%backquote"
