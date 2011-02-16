@@ -63,13 +63,14 @@
      "bind"
      (method (bindings #rest body)
        (destructuring-bind ((var value) #rest other) bindings
-         `(,(concatenate `(js:function js:null (,var))
-                         `(,(if (empty? other)
-                                (concatenate `(begin)
-                                             (prepend-return body))
-                                (concatenate `(bind ,other)
-                                             body))))
-            ,value)))
+         (concatenate
+          `(,(concatenate `(js:function js:null (,var))
+                          `(,(if (empty? other)
+                                 (concatenate `(begin)
+                                              (prepend-return body))
+                                 (concatenate `(bind ,other)
+                                              body)))))
+          (if value `(,value) `()))))
      "if-bind"
      (method (binding then else)
        (destructuring-bind (var value) binding
