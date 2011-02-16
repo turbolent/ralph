@@ -100,11 +100,9 @@ HashSymbol.names.forEach(function (hashSymbol) {
     HashSymbol[hashSymbol] = new HashSymbol(hashSymbol);
 });
 
-/* TODO: into own namespace?
 HashSymbol.prototype.toString = function () {
-    return 'HashSymbol.' + this.name;
-}
-*/
+    return '_' + this.name;
+};
 
 // keywords
 
