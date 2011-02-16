@@ -8,10 +8,28 @@
 
 (bind ((source "(begin
 (define foo (and 1 2 3))
+(define-function foo ((bar <blub>) baz #key a b)
+  1)
+(define-function (setter foo) ((bar <blub>) baz #key a b)
+  2)
+(set! a 1)
+(or 1 2 3)
 (when 1 2)
+(print #t)
+(for ((i 10 (dec i))
+      (v 1 (* v i)))
+     ((<= i 0) v))
+(bind ((a 1)
+       (b 2))
+  (+ a b))
+(if-bind (a (foo))
+  (begin 
+   1
+   2)
+  3)
 (make-array (js:== (js:negative 23.42) (js:not 0)) <class> some-hyphen-symbol))")
        (stream (make <string-stream> string: source))
        (form (read stream))
        (compiled (compile form statements?: #t)))
-  (format-out "%=\n\n" compiled))
+(format-out "%=\n\n" compiled))
 
