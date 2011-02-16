@@ -187,6 +187,17 @@
 (check-equal "but-last: third last element of 1, 2, 3, 4 is 2"
 	     2 (last (but-last (make-array 1 2 3 4) n: 2)))
 
+;; repeatedly
+(bind ((i 0))
+  (check-equal "repeatedly: number generation"
+	       (repeatedly (method ()
+			     (inc! i))
+			   5)
+	       (make-array 1 2 3 4 5)))
+
+;; max/min
+(check-equal "max:" (max 4 2 -1 6 3) 6)
+(check-equal "min:" (min 4 2 -1 6 3) -1)
 
 ;; instance?
 (check-true "instance?: mapped type: \"test\" is a String"
