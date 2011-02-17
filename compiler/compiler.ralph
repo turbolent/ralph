@@ -553,15 +553,15 @@
      (method (_ object #rest elements)
        (concatenate
         (if (instance? object <string>)
-            string
-            (write string))
+            object
+            (write object))
         (apply concatenate
-               (method (element)
-                 (if (and (instance? element <string>)
-                          (match *property-pattern* element))
-                     (concatenate "." element)
-                     (concatenate "[" (write element) "]")))
-               elements)))
+               (map (method (element)
+                      (if (and (instance? element <string>)
+                               (match *property-pattern* element))
+                          (concatenate "." element)
+                        (concatenate "[" (write element) "]")))
+                    elements))))
      "js:new"
      (method (_ name #rest arguments)
        (format-to-string "new %s (%s)"
