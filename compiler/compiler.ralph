@@ -30,69 +30,69 @@
                      (find-key arguments (curry = hash-symbol)
                                failure: length)))
       (copy-sequence arguments
-		     end: (apply min size
-				 (map position
-				      (make-array #key #rest)))))))
+                     end: (apply min size
+                                 (map position
+                                      (make-array #key #rest)))))))
 
 (define-function function-declaration (name arguments body)
   (bind-methods ((position (symbol)
-		  (find-key arguments (curry = symbol))))
+                  (find-key arguments (curry = symbol))))
     (bind ((required (required-arguments arguments))
-	   (body (if (and (> (size body) 1)
-			  (instance? (first body) <string>))
-		     ;; strip documentation
-		     (copy-sequence body start: 1)
-		     body))
-	   (rest-position (position #rest))
-	   (key-position (position #key))
-	   (rest/key-code (make-array)))
+           (body (if (and (> (size body) 1)
+                          (instance? (first body) <string>))
+                     ;; strip documentation
+                     (copy-sequence body start: 1)
+                     body))
+           (rest-position (position #rest))
+           (key-position (position #key))
+           (rest/key-code (make-array)))
       ;; key
       (when (or rest-position
-		key-position)
-	(bind ((rest-var (if rest-position
-			     (element arguments
-				      (inc rest-position))
-			     (generate-symbol))))
-	  (push-last rest/key-code
-		     `(js:var ,rest-var
-			      (as-array js:arguments
-					,(size required))))
-	  (when key-position
-	    ;; check #rest and #key are in order
-	    (when (and rest-position
-		       (< key-position rest-position))
-	      (signal (make <error>
-			    message: "#key should appear after #rest")))
-	    (destructuring-bind (key-var value-var index-var)
-		(repeatedly generate-symbol 3)
-	      (bind ((setter-code `(select ,key-var js:==)))
-	        (do (method (key)
-		      (destructuring-bind (name default)
-			  (if (instance? key <array>)
-			      key
-			      (make-array key #f))
-			(push-last rest/key-code
-				   `(js:var ,name ,default))
-			(push-last setter-code
-				   `((,(keyword (symbol-name name)))
-				     (js:set ,name ,value-var)))))
-		    (copy-sequence arguments
-				   start: (inc key-position)))
-		(push-last rest/key-code
-			   `(js:for (((,index-var 0)
-				      (js:< ,index-var (js:get-property ,rest-var "length"))
-				      (js:+ ,index-var 2)))
-				    (js:var ,key-var (js:get-property ,rest-var ,index-var))
-				    (js:var ,value-var (js:get-property ,rest-var (js:+ ,index-var 1)))
-				    (when (keyword? ,key-var)
-				      ,setter-code))))))))
+                key-position)
+        (bind ((rest-var (if rest-position
+                             (element arguments
+                                      (inc rest-position))
+                             (generate-symbol))))
+          (push-last rest/key-code
+                     `(js:var ,rest-var
+                              (as-array js:arguments
+                                        ,(size required))))
+          (when key-position
+            ;; check #rest and #key are in order
+            (when (and rest-position
+                       (< key-position rest-position))
+              (signal (make <error>
+                            message: "#key should appear after #rest")))
+            (destructuring-bind (key-var value-var index-var)
+                (repeatedly generate-symbol 3)
+              (bind ((setter-code `(select ,key-var js:==)))
+                (do (method (key)
+                      (destructuring-bind (name default)
+                          (if (instance? key <array>)
+                              key
+                              (make-array key #f))
+                        (push-last rest/key-code
+                                   `(js:var ,name ,default))
+                        (push-last setter-code
+                                   `((,(keyword (symbol-name name)))
+                                     (js:set ,name ,value-var)))))
+                    (copy-sequence arguments
+                                   start: (inc key-position)))
+                (push-last rest/key-code
+                           `(js:for (((,index-var 0)
+                                      (js:< ,index-var (js:get-property ,rest-var "length"))
+                                      (js:+ ,index-var 2)))
+                                    (js:var ,key-var (js:get-property ,rest-var ,index-var))
+                                    (js:var ,value-var (js:get-property ,rest-var (js:+ ,index-var 1)))
+                                    (when (keyword? ,key-var)
+                                      ,setter-code))))))))
       ;; function
       `(js:function ,(or name (S "js:null"))
-		    ,(argument-names required)
-		    ,(concatenate `(begin)
-				  rest/key-code
-				  ;; body
-				  (prepend-return body))))))
+                    ,(argument-names required)
+                    ,(concatenate `(begin)
+                                  rest/key-code
+                                  ;; body
+                                  (prepend-return body))))))
 
 
 (define *macros*
@@ -200,19 +200,19 @@
             (bind ((variables (make-array))
                    (clauses (map (method (expression)
                                    (bind ((temp (generate-symbol)))
-				     (push-last variables
-						`(js:var ,temp))
+                                     (push-last variables
+                                                `(js:var ,temp))
                                      `((begin
                                         (set! ,temp ,expression)
                                         (true? ,temp))
                                        ,temp)))
                                  expressions)))
-		  `((js:function js:null ()
-		      ,(concatenate `(begin)
-				    variables
-				    `((js:return
-					,(concatenate `(cond)
-						      clauses)))))))))
+                  `((js:function js:null ()
+                      ,(concatenate `(begin)
+                                    variables
+                                    `((js:return
+                                        ,(concatenate `(cond)
+                                                      clauses)))))))))
      "define-function"
      (method (name arguments #rest body)
        (destructuring-bind (setter? name)
@@ -275,7 +275,7 @@
      "method"
      (method (arguments #rest body)
        (function-declaration (S "js:null")
-			     arguments body))))
+                             arguments body))))
 
 (define *symbol-macros* (make-object))
 
