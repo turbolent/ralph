@@ -497,14 +497,15 @@
                    type))))
 
 (define-function instance? (object type)
-  (bind ((type (%actual-type type)))
-    (or
-     ;; primitive
-     (%has-constructor? object type)
-     ;; object
-     ((js:get-property type "prototype"
-                       "isPrototypeOf")
-      object))))
+  (when object
+    (bind ((type (%actual-type type)))
+      (or
+       ;; primitive
+       (%has-constructor? object type)
+       ;; object
+       ((js:get-property type "prototype"
+                         "isPrototypeOf")
+        object)))))
 
 (define-function check-type (value type)
   (unless (instance? value type)
