@@ -301,8 +301,67 @@
                                      `(,(concatenate `(or)
                                                      (map test-expression tests)))
                                      ,then))))
-                            cases))))))
-
+                            cases))))
+     "handler-case"
+     (method (body #rest conditions)
+       (bind ((condition-var (generate-symbol)))
+         `((js:function js:null ()
+             (begin
+               (js:try
+                (js:return ,body)
+                ,condition-var
+                ,(concatenate
+                  `(cond)
+                  (map (method (condition)
+                         (destructuring-bind ((type #rest arguments) #rest body)
+                             condition
+                           (concatenate `((instance? ,condition-var ,type))
+                                        ,(destructuring-bind (#key condition)
+                                             arguments
+                                           (if condition
+                                               `((js:var ,condition ,condition-var))
+                                               `()))
+                                        (prepend-return body))))
+                       conditions))))))))
+     "define-type"
+     (method (type #rest slots)
+       (concatenate `(begin
+                      (define ,type
+                        (js:function js:null ())
+                        (set! (js:get-property type "%name")
+                              ,(symbol-name type))))
+                    (if (empty? slots)
+                        `()
+                        `(,(concatenate `(define-function initialize
+                                           ,(concatenate `((object ,type) #key)
+                                                         slots))
+                                        (map (method (slot)
+                                              `(set! (js:get-property object
+                                                                      ,(symbol-name slot))
+                                                     ,slot))
+                                             (argument-names slots)))))))
+     "define-module"
+     (method (name #key (import `()) (export `()))
+       (bind ((property (generate-symbol))
+              (module (generate-symbol)))
+         (concatenate `(begin
+                        (js:var *module* js:this)
+                        (js:set (js:get-property *module* "%exports")
+                                ,(concatenate `(js:array)
+                                              (map (method (name)
+                                                     (if (instance? name <symbol>)
+                                                         (write name)
+                                                         name))
+                                                   export))))
+                      (map (method (name)
+                             `(begin
+                                (js:var ,module (require (js:escape ,name)))
+                                (js:for-in (,property ,module)
+                                  (js:if ((js:get-property ,module "hasOwnProperty")
+                                          property)
+                                    (js:set (js:get-property *module* ,property)
+                                            (js:get-property ,module ,property))))))
+                           import))))))
 
 (define *symbol-macros* (make-object))
 
