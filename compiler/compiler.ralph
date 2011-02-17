@@ -309,8 +309,9 @@
         (make-array (S "js:for")
                     (map (method (clause)
                            (destructuring-bind ((var value) #rest rest) clause
-                             (concatenate (make-array var (macroexpand value))
-                                          (map macroexpand rest))))
+                             (concatenate
+                              (make-array (make-array var (macroexpand value)))
+                              (map macroexpand rest))))
                          clauses))
         (macroexpand body)))
      "js:try"
