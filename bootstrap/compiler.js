@@ -113,7 +113,7 @@ var macros = {
                     return ([S('make-array')]
                             .concat(form.map(transform)));
             } else if (form instanceof Symbol) {
-                return [S("symbol"), form.name];
+                return [[S("js:identifier"), "_s"], form.name];
             } else {
                 return form;
             }
