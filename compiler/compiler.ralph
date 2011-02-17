@@ -275,7 +275,34 @@
      "method"
      (method (arguments #rest body)
        (function-declaration (S "js:null")
-                             arguments body))))
+                             arguments body))
+     "cond"
+     (method (#rest cases)
+       (if (empty? cases)
+           #f
+           (destructuring-bind (test #rest then) (first cases)
+             (bind ((then (concatenate `(begin) then)))
+               (if (= test else:)
+                   then
+                   `(if ,test
+                        ,then
+                        ,(concatenate `(cond)
+                                      (rest cases))))))))
+     "select"
+     (method (value test #rest cases)
+        (bind-methods ((test-expression (test-value)
+                         `(,test ,value ,test-value)))
+          (concatenate `(cond)
+                       (map (method (case)
+                              (destructuring-bind (tests #rest then) case
+                                (if (= tests else:)
+                                    case
+                                    (concatenate
+                                     `(,(concatenate `(or)
+                                                     (map test-expression tests)))
+                                     ,then))))
+                            cases))))))
+
 
 (define *symbol-macros* (make-object))
 
