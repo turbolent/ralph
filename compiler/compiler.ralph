@@ -647,7 +647,7 @@
                       (if (and (instance? element <string>)
                                (match *property-pattern* element))
                           (concatenate "." element)
-                        (concatenate "[" (write element) "]")))
+                          (concatenate "[" (write element) "]")))
                     elements))))
      "js:new"
      (method (_ name #rest arguments)
