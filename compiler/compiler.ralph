@@ -686,6 +686,8 @@
        (escape-symbol form)))
     ((<boolean>)
      (if form "true" "false"))
+    ((<keyword>)
+     (concatenate "_k('" (symbol-name form) "')"))
     (else:
      (description form))))
 
