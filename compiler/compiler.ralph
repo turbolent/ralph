@@ -120,6 +120,24 @@
      (method (name arguments body)
        (make-array (S "js:function") name args
                    (macroexpand body)))
+     "%parallel-set"
+     (method (#rest clauses)
+       (bind ((temp-clauses (make-array))
+              (set-clauses (make-array)))
+         (if (> (size clauses) 2)
+             (begin
+              (for ((i 0 (+ i 2)))
+                   ((>= i (size clauses)))
+               (bind ((temp (generate-symbol)))
+                  (push-last temp-clauses
+                             `(js:var ,temp ,(element clauses (inc i))))
+                  (push-last set-clauses
+                             `(js:set ,(element clauses i) ,temp))))
+              (concatenate `(begin)
+                           temp-clauses
+                           set-clauses))
+             (concatenate `(js:set)
+                          clauses))))
      "define"
      (method (name value)
        `(%define (js:escape ,name)
@@ -361,7 +379,25 @@
                                           property)
                                     (js:set (js:get-property *module* ,property)
                                             (js:get-property ,module ,property))))))
-                           import))))))
+                           import))))
+     "block"
+     (method (argument #rest body)
+        (destructuring-bind ((name)) argument
+          (if name
+              (bind ((condition (generate-symbol)))
+                `(js:try
+                  (js:return
+                   ,(concatenate `(bind ((,name (%make-non-non-local-exit-function
+                                                 ,(symbol-name name)))))
+                                 body))
+                  ,condition
+                  (if (and (%non-local-exit? ,condition)
+                           (js:=== (js:get-property ,condition "name")
+                                   ,(symbol-name name)))
+                      (js:return (js:get-property ,condition "value"))
+                      (js:throw ,condition))))
+              (concatenate `(begin) body))))))
+
 
 (define *symbol-macros* (make-object))
 
