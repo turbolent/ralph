@@ -532,7 +532,7 @@
         (destructuring-bind (variable expression) variable/expression
           (bind ((result
                   (format-to-string "for (var %s in %s) {\n%s\n}"
-                                    variable
+                                    (write variable)
                                     (write expression)
                                     (write-body body))))
             (if statements?
