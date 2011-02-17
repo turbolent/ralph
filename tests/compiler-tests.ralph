@@ -7,6 +7,9 @@
   (format-out "%=\n\n" form))
 
 (bind ((source "(begin
+(define-module foo
+  import: (core format)
+  export: (blub (js:identifier \"baz\")))
 (define foo (and 1 2 3))
 (define-function foo ((bar <blub>) baz #key a b)
   1)
@@ -15,6 +18,9 @@
 (set! a 1)
 (or 1 2 3)
 (when 1 2)
+(%parallel-set
+ i 1
+ v (inc i))
 (print #t)
 (for ((i 10 (dec i))
       (v 1 (* v i)))
@@ -27,6 +33,10 @@
    1
    2)
   3)
+(block (return)
+  (return #t))
+(block ()
+  23)
 (make-array (js:== (js:negative 23.42) (js:not 0)) <class> some-hyphen-symbol))")
        (stream (make <string-stream> string: source))
        (form (read stream))
