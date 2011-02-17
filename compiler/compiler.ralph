@@ -570,10 +570,10 @@
      "js:var"
      (method (_ name value)
        (concatenate
-        "var " name
+        "var " (write name)
         (if (and value
                  (not (= value (S "js:undefined"))))
-            (concatenate " = " value)
+            (concatenate " = " (write value))
             "")))
      "js:set"
      (method (_ name value)
