@@ -208,9 +208,20 @@
             (instance? "test" <string>))
 (check-true "instance?: 1 is a <number>"
             (instance? 1 <number>))
+(check-true "instance?: a: is a <keyword>"
+            (instance? a: <keyword>))
+(check-true "instance?: #t is a <boolean>"
+            (instance? #t <boolean>))
+(check-true "instance?: #f is a <boolean>"
+            (instance? #f <boolean>))
+
+;;
+(check-equal "type: js:null is <boolean>"
+             (type js:null) <boolean>)
+(check-equal "type: js:undefined is <boolean>"
+             (type js:undefined) <boolean>)
 
 ;; setter definition before getter
-
 (define-function (setter foo) (object new-value)
   (set! (js:get-property object "foo") new-value))
 
