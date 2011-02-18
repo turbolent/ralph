@@ -145,7 +145,7 @@ var macros = {
         if (args.length > 0) {
             if (args[0] instanceof Array
                 && args[0].length > 1)
-                type = args[0][1].toString();
+                type = [S('js:escape'), args[0][1]];
             else
                 type = "Object";
         }
