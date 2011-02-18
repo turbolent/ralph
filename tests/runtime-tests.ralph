@@ -279,7 +279,7 @@
                            (rcurry > 0)
                            from-end?: #t
                            skip: 1))
-  (check-false "find-ley: from end: no third element > 0"
+  (check-false "find-key: from end: no third element > 0"
                (find-key array
                          (rcurry > 0)
                          from-end?: #t

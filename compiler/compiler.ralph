@@ -629,7 +629,7 @@
             (write-statements then)
             (if else
                 (format-to-string
-                 " else {%s\n}"
+                 " else {\n%s\n}"
                  (write-statements else))
                 ""))
            (apply format-to-string
