@@ -403,7 +403,42 @@
            var/count/result
          (concatenate `(for ((,var 0 (js:+ ,var 1)))
                             ((js:>= ,var ,count) ,(or result #f)))
-                      body)))))
+                      body)))
+     "bind-methods"
+     (method (bindings #rest body)
+        (concatenate `(bind
+                       ,(map (method (binding)
+                               (destructuring-bind (name arguments #rest body)
+                                   binding
+                               `(,name ,(function-declaration
+                                         name arguments body))))
+                             bindings))
+                     body))
+     "destructuring-bind"
+     (method (pattern value #rest body)
+       (bind ((target))
+         (bind-methods ((destructure (pattern value)
+                          (bind ((nested (make-array))
+                                 (inner
+                                  `(method ,(map (method (var)
+                                                   (if (instance? var <array>)
+                                                       (bind ((temp (generate-symbol)))
+                                                         (push-last nested
+                                                                    `(,var ,temp))
+                                                         temp)
+                                                       var))
+                                                 pattern)))
+                                 (wrapper `(apply ,inner ,value)))
+                            (set! target inner)
+                            (do (method (n)
+                                  (bind ((sub-wrapper (apply destructure n)))
+                                    (push-last inner sub-wrapper)
+                                    (set! inner (second sub-wrapper))))
+                                nested)
+                            wrapper)))
+         (bind ((wrapping (destructure pattern value)))
+           (replace-subsequence! target body start: (size target))
+           wrapping))))))
 
 (define *symbol-macros* (make-object))
 
