@@ -32,6 +32,19 @@ Symbol.reserved = [
     "arguments", "object", "number", "string", "array"
 ];
 
+function escape (name) {
+    var dehyphenated = name.replace(/-(.)/g, function (match) {
+					return match[1].toUpperCase();
+				    });
+    return Array.prototype.slice.call(dehyphenated)
+	.map(function (c) { if (Symbol.escaped.hasOwnProperty(c)) {
+				return Symbol.escaped[c];
+			    } else
+				return c;
+			  })
+	.join("");
+}
+
 Symbol.prototype.escape = function () {
     var first = this.name[0];
     var last = this.name[this.name.length - 1];
@@ -40,33 +53,14 @@ Symbol.prototype.escape = function () {
     } else if (Symbol.reserved.indexOf(this.name) >= 0) {
 	return '_' + this.name;
     } else if (first == '<' && last == '>') {
-	return '_CL_'
-	    + (Symbol.prototype.escape
-	       .call(new Symbol(this.name.slice(1, -1))));
+	return '_CL_' + escape(this.name.slice(1, -1));
     } else if (first == '*' && last == '*'
 	       && this.name.length > 2)
     {
-	return Symbol.prototype.escape
-	    .call(new Symbol(this.name.slice(1, -1)))
+	return escape(this.name.slice(1, -1))
 	    .toUpperCase();
     } else {
-	var result = '';
-	var up = false;
-	for (var i = 0; i < this.name.length; i++) {
-	    var c = this.name[i];
-	    if (c != '-') {
-		if (Symbol.escaped.hasOwnProperty(c))
-		    result += Symbol.escaped[c];
-		else if (up)
-		    result += c.toUpperCase();
-		else
-		    result += c;
-	    } else if (i == (this.name.length - 1)) {
-		result += Symbol.escaped[c];
-	    }
-	    up = (c == '-');
-	}
-	return result;
+	return escape(this.name);
     }
 }
 
