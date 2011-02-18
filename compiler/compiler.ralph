@@ -249,7 +249,7 @@
                           (bind ((head (first arguments)))
                             (if (and (instance? head <array>)
                                      (> (size head) 1))
-                                (symbol-name (second head))
+                                `(js:escape ,(second head))
                                 "Object")))))
            `(,(if setter?
                   (S "%define-setter")
