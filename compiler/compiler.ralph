@@ -345,9 +345,9 @@
      (method (type #rest slots)
        (concatenate `(begin
                       (define ,type
-                        (js:function js:null ())
-                        (set! (js:get-property type "%name")
-                              ,(symbol-name type))))
+                        (js:function js:null ()))
+                      (set! (js:get-property ,type "%name")
+                            ,(symbol-name type)))
                     (if (empty? slots)
                         `()
                         `(,(concatenate `(define-function initialize
@@ -368,8 +368,8 @@
                                 ,(concatenate `(js:array)
                                               (map (method (name)
                                                      (if (instance? name <symbol>)
-                                                         (write name)
-                                                         name))
+                                                         (escape-symbol name)
+                                                         (write name)))
                                                    export))))
                       (map (method (name)
                              `(begin
