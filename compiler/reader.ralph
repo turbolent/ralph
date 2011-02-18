@@ -23,8 +23,21 @@
      result)))
 
 (define-function read-string ((stream <stream>))
-  (if-bind (result (match-stream *string-pattern* stream))
-    (second result)))
+  (read-char stream)
+  (bind ((result (make <string-stream>))
+         (char (read-char stream)))
+    (while (not (= char "\""))
+      (write result
+             (select char =
+               (("\\")
+                (write result "\\")
+                (read-char stream))
+               (("\n")
+                "\\n\\\n")
+               (else:
+                char)))
+      (set! char (read-char stream)))
+    (contents result)))
 
 (define-function read-symbol ((stream <stream>))
   (bind ((value (first (match-stream *non-whitespace-pattern* stream))))

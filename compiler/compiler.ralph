@@ -851,6 +851,8 @@
      (if form "true" "false"))
     ((<keyword>)
      (concatenate "_k('" (symbol-name form) "')"))
+    ((<string>)
+     (concatenate "\"" form "\""))
     (else:
      (description form))))
 
