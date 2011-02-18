@@ -2,8 +2,6 @@
     import: (core stream regexp)
     export: (read))
 
-(define *string-pattern*
-    (make <regexp> pattern: "\"([^\"]*)\""))
 (define *whitespace-pattern*
     (make <regexp> pattern: "[\t\n ]*"))
 (define *non-whitespace-pattern*
@@ -12,9 +10,9 @@
     (make <regexp> pattern: "(.*)[\n]"))
 (define *number-patterns*
     (map (curry make <regexp> ignore-case?: #t pattern:)
-	 (make-array "^[+-]?0x[0-9a-f]+"
-		     "^[+-]?0[0-7]+"
-		     "^[+-]?\\d+\\.?\\d*(?:e-?\\d*(?:\\d\\.?|\\.?\\d)\\d*)?")))
+         (make-array "^[+-]?0x[0-9a-f]+"
+                     "^[+-]?0[0-7]+"
+                     "^[+-]?\\d+\\.?\\d*(?:e-?\\d*(?:\\d\\.?|\\.?\\d)\\d*)?")))
 
 (define-function match-stream ((regexp <regexp>) (stream <stream>))
   (if-bind (result (match regexp (remaining-contents stream)))
@@ -48,8 +46,8 @@
       (("#rest") #rest)
       (else:
        (if (= (last value) ":")
-	   (keyword (but-last value))
-	   (symbol value))))))
+           (keyword (but-last value))
+           (symbol value))))))
 
 (define-function read-line ((stream <stream>))
   (match-stream *line-pattern* stream))
@@ -63,7 +61,7 @@
     (read-whitespace stream)
     (while (not (= (peek-char stream) ")"))
       (when (at-end? stream)
-	(error (make <error> "Unbalanced parans")))
+        (error (make <error> "Unbalanced parans")))
       (push-last result (read stream))
       (read-whitespace stream))
     (read-char stream)
@@ -88,6 +86,6 @@
        `(%comma ,(read stream)))
       (else:
        (if-bind (number (any? (rcurry match-stream stream)
-			      *number-patterns*))
+                              *number-patterns*))
          (as-number (first number))
-	 (read-symbol stream))))))
+         (read-symbol stream))))))
