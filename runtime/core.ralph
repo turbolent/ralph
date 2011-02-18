@@ -485,11 +485,14 @@
        (js:get-property object "constructor")))
 
 (define-function type (object)
-  ;; Object.getPrototypeOf on primitives only works in FireFox:
-  ;; ((js:get-property "Object" "getPrototypeOf") object))
-  (bind ((type (%constructor object)))
-    (or (%get-property type "%ralph-type")
-        type)))
+  (if (or (js:=== object js:undefined)
+          (js:=== object js:null))
+      <boolean>
+      ;; Object.getPrototypeOf on primitives only works in FireFox:
+      ;; ((js:get-property "Object" "getPrototypeOf") object))
+      (bind ((type (%constructor object)))
+        (or (%get-property type "%ralph-type")
+            type))))
 
 (define %actual-type
   (js:function js:null (type)
@@ -497,15 +500,18 @@
                    type))))
 
 (define-function instance? (object type)
-  (when object
-    (bind ((type (%actual-type type)))
-      (or
-       ;; primitive
-       (%has-constructor? object type)
-       ;; object
-       ((js:get-property type "prototype"
-                         "isPrototypeOf")
-        object)))))
+  (if (and (js:defined object)
+           (not (js:=== object js:null)))
+      (bind ((type (%actual-type type)))
+        (or
+         ;; primitive
+         (%has-constructor? object type)
+         ;; object
+         ((js:get-property type "prototype"
+                           "isPrototypeOf")
+          object)))
+      (or (js:=== type <boolean>)
+          (js:=== type (js:identifier "Boolean")))))
 
 (define-function check-type (value type)
   (unless (instance? value type)
