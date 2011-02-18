@@ -125,8 +125,7 @@ var macros = {
     },
     'define': function (name, value) {
         return [S('%define'),
-                S('*module*'),
-                S('exports'),
+                S('*module*'), S('exports'),
                 [S('js:escape'), name],
                 value];
     },
@@ -369,7 +368,6 @@ var macros = {
                      [S('js:return'), [S('js:get-property'), conditionSymbol, 'value']],
                      [S('js:throw'), conditionSymbol]]];
         } else
-            // TODO:
             return [S('begin')].concat(body);
     },
     'while': function (test) {

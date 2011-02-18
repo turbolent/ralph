@@ -8,14 +8,14 @@
   (concatenate
    (but-last forms)
    (make-array
-    (bind ((last (last forms)))
-      (if (= (first last)
+    (bind ((tail (last forms)))
+      (if (= (first tail)
              (S "js:return"))
           (last forms)
           (make-array (S "js:return")
                       ;; TODO: maybe needs to be
                       ;;       wrapped in a 'begin'
-                      last))))))
+                      tail))))))
 
 (define-function argument-names (arguments)
   (map (method (argument)
