@@ -12,16 +12,13 @@
       (if (= (first tail)
              (S "js:return"))
           (last forms)
-          (make-array (S "js:return")
-                      ;; TODO: maybe needs to be
-                      ;;       wrapped in a 'begin'
-                      tail))))))
+          `(js:return ,tail))))))
 
 (define-function argument-names (arguments)
   (map (method (argument)
          (if (instance? argument <array>)
              (first argument)
-             arugment))
+             argument))
        arguments))
 
 (define-function required-arguments (arguments)
@@ -30,7 +27,7 @@
                      (find-key arguments (curry = hash-symbol)
                                failure: length)))
       (copy-sequence arguments
-                     end: (apply min size
+                     end: (apply min length
                                  (map position
                                       (make-array #key #rest)))))))
 
@@ -140,8 +137,9 @@
                           clauses))))
      "define"
      (method (name value)
-       `(%define (js:escape ,name)
-         ,value))
+       `(%define *module* exports
+                 (js:escape ,name)
+                 ,value))
      "if"
      (method (test then else)
        `(js:if (true? ,test)
@@ -165,8 +163,10 @@
                           `(,(if (empty? other)
                                  (concatenate `(begin)
                                               (prepend-return body))
-                                 (concatenate `(bind ,other)
-                                              body)))))
+                                 (concatenate `(js:return
+                                                ,(concatenate
+                                                  `(bind ,other)
+                                                  body)))))))
           (if value `(,value) `()))))
      "if-bind"
      (method (binding then else)
@@ -184,7 +184,7 @@
                         (S "js:get-property"))))
            (concatenate `(%set)
                         expression
-                        `(value))
+                        `(,value))
            `(js:set ,expression ,value)))
      "while"
      (method (test #rest body)
@@ -238,7 +238,7 @@
                     (= (size name) 2)
                     (first name)
                     (= (first name) (S "setter")))
-               (make-array #t (first name))
+               (make-array #t (second name))
                (make-array #f name))
          (when (not (or (instance? name <symbol>)
                         setter?))
@@ -248,7 +248,7 @@
                           (S "js:null")
                           (bind ((head (first arguments)))
                             (if (and (instance? head <array>)
-                                     (> (size (first head)) 1))
+                                     (> (size head) 1))
                                 (symbol-name (second head))
                                 "Object")))))
            `(,(if setter?
@@ -376,7 +376,7 @@
                                 (js:var ,module (require (js:escape ,name)))
                                 (js:for-in (,property ,module)
                                   (js:if ((js:get-property ,module "hasOwnProperty")
-                                          property)
+                                          ,property)
                                     (js:set (js:get-property *module* ,property)
                                             (js:get-property ,module ,property))))))
                            import))))
@@ -387,7 +387,7 @@
               (bind ((condition (generate-symbol)))
                 `(js:try
                   (js:return
-                   ,(concatenate `(bind ((,name (%make-non-non-local-exit-function
+                   ,(concatenate `(bind ((,name (%make-non-local-exit-function
                                                  ,(symbol-name name)))))
                                  body))
                   ,condition
