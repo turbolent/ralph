@@ -467,15 +467,15 @@ var macros = {
         var target;
         function destructure (p, v) {
             var nested = [];
-            var simpleP = p.map(function (o) {
-                                    if (o instanceof Array) {
-                                        var temp = Symbol.generate();
-                                        nested.push([o, temp]);
-                                        return temp;
-                                    } else
-                                        return o;
-                                });
-            var inner = [S('method'), simpleP];
+            var inner = [S('method'),
+                         p.map(function (o) {
+                                   if (o instanceof Array) {
+                                       var temp = Symbol.generate();
+                                       nested.push([o, temp]);
+                                       return temp;
+                                   } else
+                                       return o;
+                               })];
             var wrapper = [S('apply'), inner, v];
             target = inner;
             nested.forEach(function (n) {
@@ -486,7 +486,7 @@ var macros = {
             return wrapper;
         }
         var wrapping = destructure(pattern, value);
-        Array.prototype.splice.apply(target, [target.length, body.length].concat(body));
+        Array.prototype.splice.apply(target, [target.length, 0].concat(body));
         return wrapping;
     }
 };
