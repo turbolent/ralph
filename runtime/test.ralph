@@ -44,10 +44,10 @@
 (define-function check-true ((description <string>) expression)
   (if expression
       (report-success description
-                      (format-to-string "Expression is true: %s"
+                      (format-to-string "Expression is true: %="
                                         expression))
       (report-failure description
-                      (format-to-string "Expression should be true: %s"
+                      (format-to-string "Expression should be true: %="
                                         expression))))
 
 
