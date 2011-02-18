@@ -20,7 +20,8 @@
            as-lowercase as-uppercase
            make-array make-object
            element first second third last rest concatenate
-           size empty? but-last copy-sequence replace-subsequence
+           size empty? but-last copy-sequence
+           replace-subsequence replace-subsequence!
            reverse reverse! sort sort!
            push push-last pop pop-last
            = == > < >= <=
@@ -434,11 +435,18 @@
 (define-function but-last ((array <array>) #key (n 1))
   (copy-sequence array end: (js:* n -1)))
 
-(define-function replace-subsequence (target-array insert-array
+(define-function replace-subsequence ((target-array <array>) (insert-array <array>)
                                       #key (start 0) (end (size target-array)))
   (concatenate (copy-sequence target-array end: start)
                insert-array
                (copy-sequence target-array start: end)))
+
+(define-function replace-subsequence! ((target-array <array>) (insert-array <array>)
+                                       #key (start 0) end)
+  ((js:get-property "Array" "prototype" "splice" "apply")
+   target-array (concatenate (make-array start (js:- (or end start) start))
+                             insert-array))
+  target-array)
 
 ;;;; string
 
