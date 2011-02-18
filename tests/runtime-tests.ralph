@@ -322,6 +322,20 @@
                 start: 5)
                "XXX"))
 
+;; replace-subsequence!
+(bind ((generate-array (method ()
+                         (make-array 0 1 2 3 4 5)))
+       (xs (make-array "X" "X" "X")))
+  (bind ((x (generate-array)))
+    (replace-subsequence! x xs start: 2)
+    (check-equal "replace-subsequence!"
+                 (make-array 0 1 "X" "X" "X" 2 3 4 5) x))
+  (bind ((x (generate-array)))
+    (replace-subsequence! x xs start: 2 end: 4)
+    (check-equal "replace-subsequence!"
+                 (make-array 0 1 "X" "X" "X" 4 5) x)))
+
+;; destructuring-bind
 (destructuring-bind (a (b c) d ((e f) g))
     (make-array 1 (make-array 2 3)
                 4 (make-array (make-array 5 6)
@@ -330,6 +344,7 @@
               (and (= a 1) (= b 2) (= c 3)
                    (= d 4) (= e 5) (= f 6) (= g 7))))
 
+;; every?
 (check-true "every?"
             (every? (method (x)
                       (> x 0))
@@ -343,6 +358,7 @@
              (every? true?
                      (make-array #t #t #t #f)))
 
+;; any?
 (check-true "any? true"
             (any? true?
                   (make-array #f #t #t #f)))
