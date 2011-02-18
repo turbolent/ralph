@@ -396,8 +396,14 @@
                                    ,(symbol-name name)))
                       (js:return (js:get-property ,condition "value"))
                       (js:throw ,condition))))
-              (concatenate `(begin) body))))))
-
+              (concatenate `(begin) body))))
+     "dotimes"
+     (method (var/count/result #rest body)
+       (destructuring-bind (var count result)
+           var/count/result
+         (concatenate `(for ((,var 0 (js:+ ,var 1)))
+                            ((js:>= ,var ,count) ,(or result #f)))
+                      body)))))
 
 (define *symbol-macros* (make-object))
 
