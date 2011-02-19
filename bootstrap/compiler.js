@@ -101,6 +101,10 @@ function functionDeclaration (name, args, body) {
 
 
 var macros = {
+    'make-array': function () {
+        var elements = arguments.toArray();
+        return [S('js:array')].concat(elements);
+    },
     '%backquote': function (form) {
         function transform (form) {
             if (form instanceof Array) {

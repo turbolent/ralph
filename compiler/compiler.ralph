@@ -94,6 +94,10 @@
 
 (define *macros*
     (make-object
+     "make-array"
+     (method (#rest elements)
+       (concatenate `(js:array)
+                    elements))
      "%backquote"
      (method (form)
        (bind-methods ((transform (form)
