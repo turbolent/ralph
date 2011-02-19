@@ -1,5 +1,5 @@
 
-(define-module dylan
+(define-module core
   export: (%define %export %define-getter %define-setter
            (js:identifier "_s") (js:identifier "_k")
            (js:identifier "_key") (js:identifier "_rest")
