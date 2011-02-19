@@ -101,6 +101,11 @@ function functionDeclaration (name, args, body) {
 
 
 var macros = {
+    '%has-property?': function (object, property) {
+        return [[S('js:get-property'), object,
+                 "hasOwnProperty"],
+                property];
+    },
     'make-array': function () {
         var elements = arguments.toArray();
         return [S('js:array')].concat(elements);
