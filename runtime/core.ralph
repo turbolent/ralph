@@ -59,7 +59,7 @@
 (define %get-definition
   (js:function js:null (module name)
     (js:return (js:and (js:defined (js:get-property module name))
-		       (js:get-property module name)))))
+                       (js:get-property module name)))))
 
 (define %has-constructor?
   (js:function js:null (object constructor)
@@ -81,7 +81,7 @@
     (js:return
      (js:and (js:not (js:=== value js:null))
              (js:not (js:=== value js:undefined))
-	     (js:not (js:=== value #f))))))
+             (js:not (js:=== value #f))))))
 
 (define not
   (js:function js:null (value)
@@ -212,7 +212,7 @@
 (define-function as-array (arguments skip)
   ((js:get-property "Array" "prototype"
                     "slice" "call")
-   arguments (or skip 0)))
+   arguments (js:or skip 0)))
 
 (define-function as-string (object)
   ((js:get-property object "toString")))
