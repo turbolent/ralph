@@ -81,9 +81,7 @@
     (js:return
      (js:and (js:not (js:=== value js:null))
              (js:not (js:=== value js:undefined))
-             (js:or (%has-constructor? value (js:identifier "Number"))
-                    (%has-constructor? value (js:identifier "String"))
-                    (js:not (js:not value)))))))
+	     (js:not (js:=== value #f))))))
 
 (define not
   (js:function js:null (value)
