@@ -598,8 +598,8 @@
        (escape name)))))
 
 (define-function wrap-block (code)
-  (format-to-string "(function(){\n%s\n})()"
-                    code))
+  (concatenate
+   "(function(){\n" code "\n})()"))
 
 (define-function write-body (body)
   (write-statements
@@ -616,10 +616,12 @@
     (make-object
      "js:negative"
      (method (_ object)
-       (format-to-string "(- %s)" (write object)))
+       (concatenate
+        "(- " (write object) ")"))
      "js:not"
      (method (_ expression)
-       (concatenate "!" (write expression)))
+       (concatenate
+        "!" (write expression)))
      "begin"
      (method (statements? #rest forms)
        (cond
@@ -635,43 +637,45 @@
      "js:if"
      (method (statements? test then else)
        (if statements?
-           (format-to-string
-            "if (%s) {\n%s\n}%s"
-            (write test)
+           (concatenate
+            "if (" (write test) ") {\n"
             (write-statements then)
+            "\n}"
             (if else
-                (format-to-string
-                 " else {\n%s\n}"
-                 (write-statements else))
+                (concatenate
+                 " else {\n" (write-statements else) "\n}")
                 ""))
-           (apply format-to-string
-                  "(%s ? %s : %s)"
-                  (map write
-                       (make-array test then else)))))
+           (concatenate
+            "(" (write test)
+            " ? " (write then)
+            " : " (write else)
+            ")")))
      "js:array"
      (method (_ #rest elements)
-       (format-to-string "[%s]" (join (map write elements) ", ")))
+       (concatenate
+        "[" (join (map write elements) ", ") "]"))
      "js:defined"
      (method (_ expression)
-       (format-to-string "(typeof (%s) != 'undefined')"
-                         (write expression)))
+       (concatenate
+        "(typeof (" (write expression) ") != 'undefined')"))
      "js:try"
      (method (statements? body condition catch finally)
        (bind ((result
-               (format-to-string
-                "try {\n%s\n}%s%s"
+               (concatenate
+                "try {\n"
                 (write-statements body)
+                "\n}"
                 (if catch
-                    (format-to-string
-                     " catch (%s) {\n%s\n}"
-                     (write condition)
-                     (write-statements catch))
+                    (concatenate
+                     " catch (" (write condition) ") {\n"
+                     (write-statements catch) "\n}")
                     "")
                 (if finally
-                    (format-to-string
-                     " finally {\n%s\n}"
-                     (write-statements finally))
-                    ""))))
+                    (concatenate
+                     " finally {\n"
+                     (write-statements finally)
+                     "\n}")
+                  ""))))
          (if statements?
              result
              (wrap-block result))))
@@ -679,10 +683,10 @@
      (method (statements? variable/expression #rest body)
         (destructuring-bind (variable expression) variable/expression
           (bind ((result
-                  (format-to-string "for (var %s in %s) {\n%s\n}"
-                                    (write variable)
-                                    (write expression)
-                                    (write-body body))))
+                  (concatenate
+                   "for (var " (write variable)
+                   " in " (write expression) ") {\n"
+                   (write-body body) "\n}")))
             (if statements?
                 result
                 (wrap-block result)))))
@@ -702,23 +706,22 @@
                     nexts (write (make-array set var next))))))
              clauses)
          (bind ((result
-                 (format-to-string
-                  "for (var %s) {\n%s\n}"
+                 (concatenate
+                  "for (var "
                   (join (map (method (parts)
                                (join parts ", "))
                              (make-array inits tests nexts))
                         "; ")
-                  (write-body body))))
+                  ") {\n" (write-body body) "\n}")))
          (if statements?
              result
              (wrap-block result)))))
      "js:while"
      (method (statements? test #rest body)
        (bind ((result
-               (format-to-string
-                "while (%s) {\n%s\n}"
-                (write test)
-                (write-body body))))
+               (concatenate
+                "while (" (write test) ") {\n"
+                (write-body body) "\n}")))
          (if statements?
              result
              (wrap-block result))))
@@ -740,9 +743,9 @@
                     elements))))
      "js:new"
      (method (_ name #rest arguments)
-       (format-to-string "new %s (%s)"
-                         (write name)
-                         (join (map write arguments) ", ")))
+       (concatenate
+        "new " (write name)
+        " (" (join (map write arguments) ", ") ")"))
      "js:var"
      (method (_ name value)
        (concatenate
@@ -759,16 +762,16 @@
        (concatenate "return " (write body)))
      "js:function"
      (method (_ name arguments body)
-       (format-to-string "function %s(%s) {%s}"
-                         (if (and name
-                                  (not (= name (S "js:null"))))
-                             (concatenate (escape-symbol name) " ")
-                             "")
-                         (join (map write arguments) ", ")
-                         (if body
-                             (format-to-string
-                              "\n%s\n" (write-statements body))
-                             "")))
+       (concatenate
+        "function " (if (and name
+                             (not (= name (S "js:null"))))
+                        (concatenate (escape-symbol name) " ")
+                      "")
+        "(" (join (map write arguments) ", ") ") {"
+        (if body
+            (concatenate "\n" (write-statements body) "\n")
+            "")
+        "}"))
      "js:escape"
      (method (_ symbol)
        (write (escape-symbol symbol)))
