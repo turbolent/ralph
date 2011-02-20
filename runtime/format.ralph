@@ -2,8 +2,8 @@
 (define-module format
   import: (core stream)
   export: (format-out
-	   format-to-string
-	   format))
+           format-to-string
+           format))
 
 (define-function format-integer ((number <number>))
   ;; TODO:
@@ -23,46 +23,46 @@ This function effectively calls format and returns the result as a string."
 (define-function format ((stream <stream>) (control-string <string>) #rest args)
   "Format a string and write it to a stream."
   (bind-methods ((dispatch (char arg)
-		   (select (as-lowercase char) ==
-		     (("s" "c")
-		      arg)
-		     (("=")
-		      (or (description arg) ""))
-		     (("b")
-		      (format-integer arg 2))
-		     (("o")
-		      (format-integer arg 8))
-		     (("d")
-		      (format-integer arg 10))
-		     (("x")
-		      (format-integer arg 16))
-		     (("m")
-		      (arg stream)
-		      "")
-		     ;; TODO: make condition
-		     (else: (error "Unknown format dispatch character, %c" char)))))
+                   (select (as-lowercase char) ==
+                     (("s" "c")
+                      arg)
+                     (("=")
+                      (or (description arg) ""))
+                     (("b")
+                      (format-integer arg 2))
+                     (("o")
+                      (format-integer arg 8))
+                     (("d")
+                      (format-integer arg 10))
+                     (("x")
+                      (format-integer arg 16))
+                     (("m")
+                      (arg stream)
+                      "")
+                     ;; TODO: make condition
+                     (else: (error "Unknown format dispatch character, %c" char)))))
     (bind ((index 0))
       (while (not (empty? control-string))
         (bind ((next-dispatch (string-position control-string "%")))
           (if (> next-dispatch 0)
-	      ;; write part upto next dispatch
-	      (begin
-	       (write stream (copy-sequence control-string
-					    end: next-dispatch))
-	       (set! control-string
-		     (copy-sequence control-string
-				    start: next-dispatch)))
-	      (if next-dispatch
-		  ;; dispatch
-		  (bind ((arg (get args index))
-			 (char (second control-string))
-			 (percent (= char "%")))
-		    (write stream (if percent "%" (dispatch char arg)))
-		    (set! control-string
-			  (copy-sequence control-string
-					 start: 2))
-		    (unless percent
-		      (inc! index)))
-		  (begin
-		   (write stream control-string)
-		   (set! control-string "")))))))))
+              ;; write part upto next dispatch
+              (begin
+               (write stream (copy-sequence control-string
+                                            end: next-dispatch))
+               (set! control-string
+                     (copy-sequence control-string
+                                    start: next-dispatch)))
+              (if next-dispatch
+                  ;; dispatch
+                  (bind ((arg (get args index))
+                         (char (second control-string))
+                         (percent (= char "%")))
+                    (write stream (if percent "%" (dispatch char arg)))
+                    (set! control-string
+                          (copy-sequence control-string
+                                         start: 2))
+                    (unless percent
+                      (inc! index)))
+                  (begin
+                   (write stream control-string)
+                   (set! control-string "")))))))))

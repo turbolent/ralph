@@ -290,37 +290,37 @@
 (bind ((array (make-array 0 1 2 3 4 5 6 7 8 9))
        (xs (make-array "X" "X" "X")))
   (check-equal "replace-subsequence: array: 2..4"
+               xs
                (copy-sequence
                 (replace-subsequence array xs start: 2 end: 4)
                 start: 2
-                end: 5)
-               xs)
+                end: 5))
 
   (check-equal "replace-subsequence: array: 2.."
+               xs
                (copy-sequence
                 (replace-subsequence array xs start: 2)
-                start: 2)
-               xs)
+                start: 2))
 
   (check-equal "replace-subsequence: array: ..2"
+               xs
                (copy-sequence
                 (replace-subsequence array xs end: 2)
-                end: 3)
-               xs)
+                end: 3))
 
   (check-equal "replace-subsequence: array: insert at 2"
+               xs
                (copy-sequence
                 (replace-subsequence array xs start: 2 end: 2)
                 start: 2
-                end: 5)
-               xs)
+                end: 5))
 
   (check-equal "replace-subsequence: string"
+               "XXX"
                (copy-sequence
                 (replace-subsequence "ABCDEFG" "XXX"
                                      start: 5 end: 8)
-                start: 5)
-               "XXX"))
+                start: 5)))
 
 ;; replace-subsequence!
 (bind ((generate-array (method ()
