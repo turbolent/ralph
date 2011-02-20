@@ -111,6 +111,11 @@ var macros = {
                 [S('js:get-property'), object, 'constructor'],
                 constructor];
     },
+    '%actual-type': function (type) {
+        return [S('js:or'),
+                [S('%get-property'), type, "%js-type"],
+                type];
+    },
     'make-array': function () {
         var elements = arguments.toArray();
         return [S('js:array')].concat(elements);
