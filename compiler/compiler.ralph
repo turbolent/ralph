@@ -98,6 +98,14 @@
      (method (#rest elements)
        (concatenate `(js:array)
                     elements))
+     "%has-property?"
+     (method (object property)
+       `((js:get-property ,object "hasOwnProperty")
+         ,property))
+     "%has-constructor?"
+     (method (object constructor)
+       `(js:=== (js:get-property ,object "constructor")
+                ,constructor))
      "%backquote"
      (method (form)
        (bind-methods ((transform (form)
