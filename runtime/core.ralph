@@ -209,12 +209,16 @@
   ((js:identifier "Number") object))
 
 (define-function get (object #rest keys)
-  (block (return)
-    (reduce (method (object key)
-              (if (%has-property? object key)
-                  (js:get-property object key)
-                  (return #f)))
-            object keys)))
+  (js:var result)
+  (js:while (not (empty? keys))
+    (js:var key (first keys))
+    (if (%has-property? object key)
+        (begin
+         (set! result (js:get-property object key))
+         (set! object result)
+         (set! keys (rest keys)))
+        (js:return #f)))
+  result)
 
 (define-function (setter get) (object #rest properties/value)
   (if (js:<= (size properties/value) 2)
@@ -234,9 +238,7 @@
 
 (define-function copy-sequence ((array <array>)
                                 #key (start 0) (end (size array)))
-  ((js:get-property array "slice")
-   (or start 0)
-   (or end (size array))))
+  ((js:get-property array "slice") start end))
 
 (define-function push-last ((array <array>) new-value)
   ((js:get-property array "push") new-value)
@@ -320,7 +322,7 @@
   (set! (js:get-property array key) new-value))
 
 (define-function empty? ((array <array>))
-  (== (size array) 0))
+  (js:== (size array) 0))
 
 ;; the functions passed to map and reduce are
 ;; wraped in additional method, as the JS version
@@ -609,14 +611,16 @@
           (js:< object1 object2)))
 
 (define-function compare ((function <function>) object1 object2 more-objects)
-  (block (return)
-    (reduce1 (method (object1 object2)
-               (if (function object1 object2)
-                   object2
-                   (return #f)))
-             (%concat (make-array object1 object2)
-                      more-objects))
-    #t))
+  (js:var object object1)
+  (js:var remaining (%concat (make-array object2)
+                             more-objects))
+  (js:while (not (empty? remaining))
+    (js:var next (first remaining))
+    (js:if (not (function object next))
+      (js:return #f))
+    (set! object next)
+    (set! remaining (rest remaining)))
+  #t)
 
 (define-function = (object1 object2 #rest more-objects)
   (compare binary= object1 object2 more-objects))
@@ -717,9 +721,9 @@
 (define-function min ((x <number>) #rest more)
   (bind ((result x))
     (do (method (other)
-	  (when (< other result)
-	    (set! result other)))
-	more)
+          (when (< other result)
+            (set! result other)))
+        more)
     result))
 
 (define-function max ((x <number>) #rest more)
