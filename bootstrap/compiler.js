@@ -106,6 +106,11 @@ var macros = {
                  "hasOwnProperty"],
                 property];
     },
+    '%has-constructor?': function (object, constructor) {
+        return [S('js:==='),
+                [S('js:get-property'), object, 'constructor'],
+                constructor];
+    },
     'make-array': function () {
         var elements = arguments.toArray();
         return [S('js:array')].concat(elements);
