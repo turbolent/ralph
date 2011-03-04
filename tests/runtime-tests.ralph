@@ -492,14 +492,19 @@
 
 (define-class <b> <a>)
 
+(define-class <c> <b>)
+
 (define-function foo ((object <a>))
   1)
 
 (define-function foo ((object <b>))
   2)
 
+(check-equal "classes: <b> inherits <a>: foo on <a>"
+             1 (foo (make <a>)))
+
 (check-equal "classes: <b> inherits <a>: foo on <b>"
              2 (foo (make <b>)))
 
-(check-equal "classes: <b> inherits <a>: foo on <a>"
-             1 (foo (make <a>)))
+(check-equal "classes: <c> inherits <b>: foo on <c>"
+             2 (foo (make <c>)))
