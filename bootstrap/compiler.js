@@ -101,6 +101,13 @@ function functionDeclaration (name, args, body) {
 
 
 var macros = {
+    'as-array': function (_arguments, skip) {
+        return [[S('js:get-property'), "Array", "prototype",
+                 "slice", "call"], _arguments, skip || 0];
+    },
+    'size': function (object) {
+        return [S('js:get-property'), object, 'length'];
+    },
     '%has-property?': function (object, property) {
         return [[S('js:get-property'), object,
                  "hasOwnProperty"],
