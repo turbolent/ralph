@@ -353,23 +353,26 @@
                                                `()))
                                         (prepend-return body))))
                        conditions))))))))
-     "define-type"
-     (method (type #rest slots)
+     "define-class"
+     (method (class superclass #rest slots)
        (concatenate `(begin
-                      (define ,type
+                      (define ,class
                         (js:function js:null ()))
-                      (set! (js:get-property ,type "%name")
-                            ,(symbol-name type)))
+                      (set! (js:get-property ,class "%name")
+                            ,(symbol-name class)))
                     (if (empty? slots)
                         `()
                         `(,(concatenate `(define-function initialize
-                                           ,(concatenate `((object ,type) #key)
+                                           ,(concatenate `((object ,class) #key)
                                                          slots))
                                         (map (method (slot)
                                               `(set! (js:get-property object
                                                                       ,(symbol-name slot))
                                                      ,slot))
-                                             (argument-names slots)))))))
+                                             (argument-names slots)))))
+                    (if (empty? superclass)
+                        `()
+                        `((%inherit ,class ,superclass)))))
      "define-module"
      (method (name #key (import `()) (export `()))
        (bind ((property (generate-symbol))
@@ -463,6 +466,7 @@
     (make-object
      "js:array" 0
      "js:defined" 0
+     "js:delete" 0
      "js:negative" 0
      "js:not" 0
      "begin" 0
@@ -658,6 +662,9 @@
      (method (_ expression)
        (concatenate
         "(typeof (" (write expression) ") != 'undefined')"))
+     "js:delete"
+     (method (_ expression)
+       (concatenate "(delete (" (write expression) "))"))
      "js:try"
      (method (statements? body condition catch finally)
        (bind ((result

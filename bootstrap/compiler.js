@@ -281,13 +281,13 @@ var macros = {
                    conditionVariable,
                    [S('cond')].concat(cases)]]]];
     },
-    'define-type': function (type) {
-        var slots = arguments.toArray().slice(1);
+    'define-class': function (_class, superclass) {
+        var slots = arguments.toArray().slice(2);
         var initializer = [];
         if (slots.length > 0) {
             initializer =
                 [[S('define-function'), S('initialize'),
-                  [[S('object'), type], HashSymbol.key]
+                  [[S('object'), _class], HashSymbol.key]
                   .concat(slots)]
                  .concat(argumentNames(slots)
                          .map(function (slot) {
@@ -298,10 +298,13 @@ var macros = {
                               }))];
         }
         return [S('begin'),
-                [S('define'), type,
+                [S('define'), _class,
                  [S('js:function'), S('js:null'), []]],
-                [S('set!'), [S('get'), type, '%name'], type.name]]
-            .concat(initializer);
+                [S('set!'), [S('js:get-property'), _class, '%name'],
+                 _class.name]]
+            .concat(initializer)
+            .concat(superclass.length > 0 ?
+                    [[S('%inherit'), _class, superclass[0]]] : []);
     },
     'define-protocol': function (protocol) {
         function declare (f) {
@@ -615,6 +618,9 @@ var writers = {
     'js:defined': function (allowStatements, expression) {
         return '(typeof (' + write(expression) + ') != "undefined")';
     },
+    'js:delete': function (allowStatements, expression) {
+        return '(delete (' + write(expression) + '))';
+    },
     'js:try': function (allowStatements, body, conditionVariable, _catch, _finally) {
         var result = 'try {\n' + writeStatements(body) + '\n}';
         if (_catch) {
@@ -722,6 +728,7 @@ var writers = {
 var specialForms = {
     'js:array': 0,
     'js:defined': 0,
+    'js:delete': 0,
     'js:negative': 0,
     'js:not': 0,
     'begin': 0,

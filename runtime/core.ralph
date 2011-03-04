@@ -11,7 +11,7 @@
            %make-protocol %make-dispatcher %alias-type
            %non-local-exit? %make-non-local-exit-function
            get %set
-           make initialize type instance?
+           %inherit make initialize type instance?
            as-string as-array as-number
            apply reduce reduce1 map do repeatedly
            any? every? member? choose-by find-key
@@ -149,6 +149,13 @@
   (js:var object (js:new type))
   (apply initialize object arguments)
   object)
+
+(define-function %inherit (class superclass)
+  (set! (js:get-property class "prototype" "__proto__")
+        (js:get-property superclass "prototype"))
+  (set! (js:get-property class "prototype" "__super__")
+        superclass)
+  class)
 
 ;;;; keywords
 
@@ -499,12 +506,12 @@
     ;; TODO: throw condition
     (error "check-type failed")))
 
-(define-type <object>)
-(define-type <string>)
-(define-type <number>)
-(define-type <array>)
-(define-type <boolean>)
-(define-type <function>)
+(define-class <object> ())
+(define-class <string> ())
+(define-class <number> ())
+(define-class <array> ())
+(define-class <boolean> ())
+(define-class <function> ())
 
 (define-function %alias-type (ralph-type javascript-type)
   (set! (js:get-property ralph-type "%js-type") javascript-type)
@@ -519,7 +526,7 @@
 
 ;; protocols
 
-(define-type <protocol>)
+(define-class <protocol> ())
 
 (define-function %make-protocol ()
   (bind ((protocol (js:new <protocol>)))
@@ -543,7 +550,7 @@
 
 ;; error
 
-(define-type <error>
+(define-class <error> ()
   message)
 
 (%alias-type <error> (js:identifier "Error"))
@@ -671,7 +678,7 @@
 
 ;; symbols
 
-(define-type <hash-symbol>
+(define-class <hash-symbol> ()
     name)
 
 (%define *module* exports "_key"
@@ -681,7 +688,7 @@
          (make <hash-symbol> name: "rest"))
 
 
-(define-type <symbol>
+(define-class <symbol> ()
     name)
 
 (define %symbols (%make-object))
@@ -728,3 +735,12 @@
             (set! result other)))
         more)
     result))
+
+(define-function remove! ((array <array>) value)
+  (js:var key (find-key array (curry = value)))
+  (when key
+    ((js:get-property array "splice") key 1))
+  array)
+
+(define-function remove ((array <array>) value)
+  (remove! (copy-sequence array) value))

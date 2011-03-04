@@ -1,5 +1,5 @@
 (define-module runtime-tests
-  import: (core test format stream))
+  import: (core test format stream watch))
 
 ;; test expansion
 (define-function foo (if)
@@ -24,7 +24,7 @@
              (= 0 #f))
 (check-true "equality: 1 and 1 are equal"
             (= 1 1 1))
-(check-false "equality: 1 and 2 are unequal"
+(Check-false "equality: 1 and 2 are unequal"
              (= 1 2 1))
 (check-false "equality: #f and 0 are unequal"
              (= #f #f 0))
@@ -437,7 +437,7 @@
                1 (get x "y")))
 
 ;; default initializer
-(define-type <test>
+(define-class <test> (<object>)
   foo
   bar)
 
@@ -482,3 +482,54 @@
                                   (write stream "%test%"))))
 (check-equal "format-to-string: description of <string>"
              "\"TEST\"" (format-to-string "%=" "TEST"))
+
+;; classes
+
+(define-protocol <foo>
+    (foo))
+
+(define-class <a> ())
+
+(define-class <b> (<a>))
+
+(define-class <c> (<b>))
+
+(define-function foo ((object <a>))
+  1)
+
+(define-function foo ((object <b>))
+  2)
+
+(check-equal "classes: <b> inherits <a>: foo on <a>"
+             1 (foo (make <a>)))
+
+(check-equal "classes: <b> inherits <a>: foo on <b>"
+             2 (foo (make <b>)))
+
+(check-equal "classes: <c> inherits <b>: foo on <c>"
+             2 (foo (make <c>)))
+
+;; remove
+(bind ((array (make-array 1 2 3)))
+  (remove! array 2)
+  (check-equal "remove!: 2 from (1 2 3)"
+               (make-array 1 3) array))
+
+(check-equal "remove: 2 from (1 2 3)"
+             (make-array 1 3)
+             (remove (make-array 1 2 3) 2))
+
+;; watch
+(bind ((fired? #f)
+       (foo (make-object "a" 1)))
+  (watch foo "a"
+         (method (property old-value new-value)
+           (check-equal "watch: old-value"
+                        1 old-value)
+           (check-equal "watch: new-value"
+                        2 new-value)
+           (check-equal "watch: property"
+                        "a" property)
+           (set! fired? #t)))
+  (set! (get foo "a") 2)
+  (check-true "watch: handler should be called" fired?))
