@@ -94,6 +94,19 @@
 
 (define *macros*
     (make-object
+     "define-macro"
+     (method (name arguments #rest body)
+       (bind ((compiled (compile
+                         (concatenate `(method ,arguments)
+                                      body))))
+         (print "MACRO:" compiled)))
+
+
+
+       ;; (set! (get *macros* name)
+       ;;       macro
+
+
      "make-array"
      (method (#rest elements)
        (concatenate `(js:array)
@@ -456,11 +469,6 @@
            wrapping))))))
 
 (define *symbol-macros* (make-object))
-
-;; (set! (get *macros* "define-macro")
-;;       (method (name arguments #rest body)
-;;         (set! (get *macros* name)
-;;            (method
 
 (define *special-forms*
     (make-object

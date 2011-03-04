@@ -533,3 +533,11 @@
            (set! fired? #t)))
   (set! (get foo "a") 2)
   (check-true "watch: handler should be called" fired?))
+
+;; macros
+(define-macro with (function #rest body)
+  `(,function ,(concatenate `(method ())
+                            body)))
+
+(with test
+  (+ 1 2))
