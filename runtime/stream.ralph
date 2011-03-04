@@ -29,38 +29,38 @@
   (index 0))
 
 (define-function at-end? ((stream <string-stream>))
-  (>= (get stream "index")
-      (dec (size (get stream "string")))))
+  (js:>= (js:get-property stream "index")
+         (js:- (size (js:get-property stream "string")) 1)))
 
 (define-function peek-char ((stream <string-stream>))
-  (element (get stream "string")
-           (get stream "index")))
+  (js:get-property stream "string"
+                   (js:get-property stream "index")))
 
 (define-function read-char ((stream <string-stream>))
-  (bind ((char (peek-char stream)))
-    (inc! (get stream "index"))
-    char))
+  (js:var char (peek-char stream))
+  (inc! (js:get-property stream "index"))
+  char)
 
 (define-function write ((stream <string-stream>) object)
   (bind ((string (as-string object))
-         (position (get stream "index"))
-         (contents (get stream "string"))
+         (position (js:get-property stream "index"))
+         (contents (js:get-property stream "string"))
          (length (size string)))
-    (set! (get stream "string")
+    (set! (js:get-property stream "string")
           (replace-subsequence contents string
                                start: position
                                end: (+ position length)))
     (advance stream count: length)))
 
 (define-function advance ((stream <string-stream>) #key (count 1))
-  (inc! (get stream "index") count))
+  (inc! (js:get-property stream "index") count))
 
 (define-function contents ((stream <string-stream>))
-  (get stream "string"))
+  (js:get-property stream "string"))
 
 (define-function remaining-contents ((stream <string-stream>))
-  (copy-sequence (get stream "string")
-                 start: (get stream "index")))
+  ((js:get-property stream "string" "substring")
+   (js:get-property stream "index")))
 
 ;; <file-stream>
 
