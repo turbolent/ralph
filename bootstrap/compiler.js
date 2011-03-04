@@ -274,13 +274,13 @@ var macros = {
                    conditionVariable,
                    [S('cond')].concat(cases)]]]];
     },
-    'define-type': function (type) {
-        var slots = arguments.toArray().slice(1);
+    'define-class': function (_class, superclass) {
+        var slots = arguments.toArray().slice(2);
         var initializer = [];
         if (slots.length > 0) {
             initializer =
                 [[S('define-function'), S('initialize'),
-                  [[S('object'), type], HashSymbol.key]
+                  [[S('object'), _class], HashSymbol.key]
                   .concat(slots)]
                  .concat(argumentNames(slots)
                          .map(function (slot) {
@@ -291,10 +291,13 @@ var macros = {
                               }))];
         }
         return [S('begin'),
-                [S('define'), type,
+                [S('define'), _class,
                  [S('js:function'), S('js:null'), []]],
-                [S('set!'), [S('get'), type, '%name'], type.name]]
-            .concat(initializer);
+                [S('set!'), [S('js:get-property'), _class, '%name'],
+                 _class.name]]
+            .concat(initializer)
+            .concat(superclass ?
+                    [[S('%inherit'), _class, superclass]] : []);
     },
     'define-protocol': function (protocol) {
         function declare (f) {

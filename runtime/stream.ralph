@@ -1,7 +1,7 @@
 
 (define-module format
   import: (core)
-  export: (<stream>
+  export: (<streamable>
            <string-stream>
            *standard-out*
            write
@@ -12,9 +12,9 @@
            contents
            remaining-contents))
 
-;; <stream>
+;; <streamable>
 
-(define-protocol <stream>
+(define-protocol <streamable>
   (at-end?)
   (peek-char)
   (read-char)
@@ -22,9 +22,11 @@
   (advance)
   (contents))
 
+(define-class <stream>)
+
 ;; <string-stream>
 
-(define-type <string-stream>
+(define-class <string-stream> <stream>
   (string "")
   (index 0))
 
@@ -64,7 +66,7 @@
 
 ;; <file-stream>
 
-(define-type <file-stream>
+(define-class <file-stream> <stream>
     file)
 
 (define-function write ((stream <file-stream>) object)
@@ -73,7 +75,7 @@
 
 ;; <document-stream>
 
-(define-type <document-stream>)
+(define-class <document-stream> <stream>)
 
 (define-function write ((stream <document-stream>) object)
   ((js:get-property "document" "write")

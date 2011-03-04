@@ -437,7 +437,7 @@
                1 (get x "y")))
 
 ;; default initializer
-(define-type <test>
+(define-class <test> <object>
   foo
   bar)
 
@@ -482,3 +482,24 @@
                                   (write stream "%test%"))))
 (check-equal "format-to-string: description of <string>"
              "\"TEST\"" (format-to-string "%=" "TEST"))
+
+;; classes
+
+(define-protocol <foo>
+    (foo))
+
+(define-class <a>)
+
+(define-class <b> <a>)
+
+(define-function foo ((object <a>))
+  1)
+
+(define-function foo ((object <b>))
+  2)
+
+(check-equal "classes: <b> inherits <a>: foo on <b>"
+             2 (foo (make <b>)))
+
+(check-equal "classes: <b> inherits <a>: foo on <a>"
+             1 (foo (make <a>)))
