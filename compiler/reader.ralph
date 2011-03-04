@@ -59,7 +59,7 @@
   (bind ((result (make-array)))
     (read-char stream)
     (read-whitespace stream)
-    (while (not (= (peek-char stream) ")"))
+    (js:while (not (js:=== (peek-char stream) ")"))
       (when (at-end? stream)
         (error (make <error> "Unbalanced parans")))
       (push-last result (read stream))
@@ -70,7 +70,7 @@
 (define-function read ((stream <stream>))
   (read-whitespace stream)
   (unless (at-end? stream)
-    (select (peek-char stream) ==
+    (select (peek-char stream) js:===
       ((";")
        (read-line stream)
        (read stream))
