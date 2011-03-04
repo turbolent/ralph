@@ -466,6 +466,7 @@
     (make-object
      "js:array" 0
      "js:defined" 0
+     "js:delete" 0
      "js:negative" 0
      "js:not" 0
      "begin" 0
@@ -657,6 +658,10 @@
      "js:defined"
      (method (_ expression)
        (format-to-string "(typeof (%s) != 'undefined')"
+                         (write expression)))
+     "js:delete"
+     (method (_ expression)
+       (format-to-string "(delete (%s))"
                          (write expression)))
      "js:try"
      (method (statements? body condition catch finally)

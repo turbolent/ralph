@@ -611,6 +611,9 @@ var writers = {
     'js:defined': function (allowStatements, expression) {
         return '(typeof (' + write(expression) + ') != "undefined")';
     },
+    'js:delete': function (allowStatements, expression) {
+        return '(delete (' + write(expression) + '))';
+    },
     'js:try': function (allowStatements, body, conditionVariable, _catch, _finally) {
         var result = 'try {\n' + writeStatements(body) + '\n}';
         if (_catch) {
@@ -718,6 +721,7 @@ var writers = {
 var specialForms = {
     'js:array': 0,
     'js:defined': 0,
+    'js:delete': 0,
     'js:negative': 0,
     'js:not': 0,
     'begin': 0,
