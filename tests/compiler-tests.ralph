@@ -1,45 +1,42 @@
 (define-module compiler-tests
   import: (core test stream reader compiler format))
 
-(bind ((source "(this is (foo #t blub #f foo: #rest simple #key test \"string\" 23.42))")
-       (stream (make <string-stream> string: source))
-       (form (read stream)))
-  (format-out "%=\n\n" form))
+;; (js:var profiler (require "ringo/profiler"))
+;; (define-function profile (function)
+;;   (print "STARTING")
+;;   (bind ((result ((js:get-property profiler "profile")
+;;                   function)))
+;;     (print result)
+;;     ((js:get-property result "profiler" "formatResult") 30)))
 
-(bind ((source "(begin
-(define-module foo
-  import: (core format)
-  export: (blub (js:identifier \"baz\")))
-(define foo (and 1 2 3))
-(define-function foo ((bar <blub>) baz #key a b)
-  1)
-(define-function (setter foo) ((bar <blub>) baz #key a b)
-  2)
-(set! a 1)
-(or 1 2 3)
-(when 1 2)
-(%parallel-set
- i 1
- v (inc i))
-(print #t)
-(for ((i 10 (dec i))
-      (v 1 (* v i)))
-     ((<= i 0) v))
-(bind ((a 1)
-       (b 2))
-  (+ a b))
-(if-bind (a (foo))
-  (begin
-   1
-   2)
-  3)
-(block (return)
-  (return #t))
-(block ()
-  23)
-(make-array (js:== (js:negative 23.42) (js:not 0)) <class> some-hyphen-symbol))")
-       (stream (make <string-stream> string: source))
+;; (bind ((source "(this is (foo #t blub #f foo: #rest simple #key test \"string with \\\"this\\\" embedded  \" 23.42))")
+;;        (stream (make <string-stream> string: source)))
+
+;;   (profile (method ()
+;;              (read stream))))
+
+
+;;
+;;   (format-out "%=\n\n" form))
+
+(js:var fs (require "fs"))
+(define-function read-file (path)
+  (bind ((file ((js:get-property fs "open")
+                path
+                (make-object "read" #t)))
+         (result ((js:get-property file "read"))))
+    ((js:get-property file "close"))
+    result))
+
+(bind ((source (read-file "./tests/runtime-tests.ralph"))
+       (stream (make <string-stream>
+                     string: (concatenate "(begin\n" source "\n)")))
+       (start-time (js:new (js:identifier "Date")))
        (form (read stream))
-       (compiled (compile form statements?: #t)))
-(format-out "%=\n\n" compiled))
+       (read-time (js:new (js:identifier "Date")))
+       (compiled (compile form statements?: #t))
+       (compile-time (js:new (js:identifier "Date"))))
+  (print compiled)
+  (print "READ TIME:" (- read-time start-time))
+  (print "COMPILE TIME:" (- compile-time read-time)))
 

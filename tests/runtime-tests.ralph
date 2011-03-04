@@ -482,3 +482,10 @@
                                   (write stream "%test%"))))
 (check-equal "format-to-string: description of <string>"
              "\"TEST\"" (format-to-string "%=" "TEST"))
+
+(define-macro with (function #rest body)
+  `(,function ,(concatenate `(method ())
+                            body)))
+
+(with test
+  (+ 1 2))
