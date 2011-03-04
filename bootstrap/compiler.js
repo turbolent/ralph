@@ -296,8 +296,8 @@ var macros = {
                 [S('set!'), [S('js:get-property'), _class, '%name'],
                  _class.name]]
             .concat(initializer)
-            .concat(superclass ?
-                    [[S('%inherit'), _class, superclass]] : []);
+            .concat(superclass.length > 0 ?
+                    [[S('%inherit'), _class, superclass[0]]] : []);
     },
     'define-protocol': function (protocol) {
         function declare (f) {

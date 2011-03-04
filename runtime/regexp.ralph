@@ -2,7 +2,7 @@
     import: (core)
     export: (<regexp> match replace-all))
 
-(define-class <regexp>)
+(define-class <regexp> ())
 
 (%alias-type <regexp> (js:identifier "RegExp"))
 

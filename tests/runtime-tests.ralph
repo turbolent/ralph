@@ -437,7 +437,7 @@
                1 (get x "y")))
 
 ;; default initializer
-(define-class <test> <object>
+(define-class <test> (<object>)
   foo
   bar)
 
@@ -488,11 +488,11 @@
 (define-protocol <foo>
     (foo))
 
-(define-class <a>)
+(define-class <a> ())
 
-(define-class <b> <a>)
+(define-class <b> (<a>))
 
-(define-class <c> <b>)
+(define-class <c> (<b>))
 
 (define-function foo ((object <a>))
   1)

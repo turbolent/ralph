@@ -511,12 +511,12 @@
     ;; TODO: throw condition
     (error "check-type failed")))
 
-(define-class <object>)
-(define-class <string>)
-(define-class <number>)
-(define-class <array>)
-(define-class <boolean>)
-(define-class <function>)
+(define-class <object> ())
+(define-class <string> ())
+(define-class <number> ())
+(define-class <array> ())
+(define-class <boolean> ())
+(define-class <function> ())
 
 (define-function %alias-type (ralph-type javascript-type)
   (set! (js:get-property ralph-type "%js-type") javascript-type)
@@ -531,7 +531,7 @@
 
 ;; protocols
 
-(define-class <protocol>)
+(define-class <protocol> ())
 
 (define-function %make-protocol ()
   (bind ((protocol (js:new <protocol>)))
@@ -555,7 +555,7 @@
 
 ;; error
 
-(define-class <error> <object>
+(define-class <error> ()
   message)
 
 (%alias-type <error> (js:identifier "Error"))
@@ -683,7 +683,7 @@
 
 ;; symbols
 
-(define-class <hash-symbol> <object>
+(define-class <hash-symbol> ()
     name)
 
 (%define *module* exports "_key"
@@ -693,7 +693,7 @@
          (make <hash-symbol> name: "rest"))
 
 
-(define-class <symbol> <object>
+(define-class <symbol> ()
     name)
 
 (define %symbols (%make-object))

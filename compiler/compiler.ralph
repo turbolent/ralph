@@ -370,9 +370,9 @@
                                                                       ,(symbol-name slot))
                                                      ,slot))
                                              (argument-names slots)))))
-                    (if superclass
-                        `((%inherit ,class ,superclass))
-                        `())))
+                    (if (empty? superclass)
+                        `()
+                        `((%inherit ,class ,superclass)))))
      "define-module"
      (method (name #key (import `()) (export `()))
        (bind ((property (generate-symbol))
