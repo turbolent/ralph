@@ -61,7 +61,7 @@
     (read-whitespace stream)
     (js:while (not (js:=== (peek-char stream) ")"))
       (when (at-end? stream)
-        (error (make <error> "Unbalanced parans")))
+        (signal (make <error> "Unbalanced parens")))
       (push-last result (read stream))
       (read-whitespace stream))
     (read-char stream)
