@@ -6,7 +6,7 @@
            keyword keyword? symbol symbol-name
            <object> <string> <number> <boolean> <array> <function>
            <symbol> <keyword> <non-local-exit> <error>
-           not true?
+           not true? signal
            *environment*
            %make-protocol %make-dispatcher %alias-type
            %non-local-exit? %make-non-local-exit-function
