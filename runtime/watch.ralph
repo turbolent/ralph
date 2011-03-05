@@ -20,7 +20,7 @@
                          (handler property old-value current-value)
                          current-value))
           ;; can't watch constants
-          (when (js:delete object property)
+          (when (js:delete (js:get-property object property))
             ;; ECMAScript 5 Object.defineProperty available?
             (cond
               ((js:get-property "Object" "defineProperty")
