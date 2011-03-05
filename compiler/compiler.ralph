@@ -816,24 +816,26 @@
      (if (instance? form <array>)
          (bind ((head (first form)))
            ;; special?
-           (if-bind (expander (and (instance? head <symbol>)
-                                   (has? *special-forms*
-                                         (symbol-name head))))
-             (select expander instance?
-               ((<number>)
-                (concatenate
-                 ;; skip n arguments, macroexpand rest
-                 (copy-sequence form end: (inc expander))
-                 (map macroexpand (copy-sequence form start: (inc expander)))))
-               ((<function>)
-                ;; custom expander
-                (apply expander (rest form)))
-               (else:
-                ;; form mustn't be expanded
-                form))
+           (if (and (instance? head <symbol>)
+                    (has? *special-forms*
+                          (symbol-name head)))
+               (bind ((expander (get *special-forms*
+                                     (symbol-name head))))
+                 (select expander instance?
+                   ((<number>)
+                    (concatenate
+                     ;; skip n arguments, macroexpand rest
+                     (copy-sequence form end: (inc expander))
+                     (map macroexpand (copy-sequence form start: (inc expander)))))
+                   ((<function>)
+                    ;; custom expander
+                    (apply expander (rest form)))
+                   (else:
+                    ;; form mustn't be expanded
+                    form)))
              ;; not special
              (map macroexpand form)))
-         ;; not a macro
+         ;; not an array
          (macroexpand form)))
     ((<symbol>)
      ;; symbol-macro?
