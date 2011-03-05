@@ -343,7 +343,7 @@
                                     (concatenate
                                      `(,(concatenate `(or)
                                                      (map test-expression tests)))
-                                     ,then))))
+                                     then))))
                             cases))))
      "handler-case"
      (method (body #rest conditions)
@@ -359,11 +359,11 @@
                          (destructuring-bind ((type #rest arguments) #rest body)
                              condition
                            (concatenate `((instance? ,condition-var ,type))
-                                        ,(destructuring-bind (#key condition)
-                                             arguments
-                                           (if condition
-                                               `((js:var ,condition ,condition-var))
-                                               `()))
+                                        (destructuring-bind (#key condition)
+                                            arguments
+                                          (if condition
+                                              `((js:var ,condition ,condition-var))
+                                              `()))
                                         (prepend-return body))))
                        conditions))))))))
      "define-class"
