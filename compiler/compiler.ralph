@@ -138,10 +138,6 @@
          (transform form)))
      "%comma"
      identity
-     "%function"
-     (method (name arguments body)
-       (make-array (S "js:function") name args
-                   (macroexpand body)))
      "%parallel-set"
      (method (#rest clauses)
        (bind ((temp-clauses (make-array))
