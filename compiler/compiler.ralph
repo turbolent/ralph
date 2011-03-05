@@ -871,10 +871,12 @@
                   "js:function"))
           (concatenate "(" (write head) ")"
                        "(" (join (map write tail) ", ") ")"))
-         (else:
+         (head
           (concatenate
            (write head)
-           "(" (join (map write tail) ", ") ")")))))
+           "(" (join (map write tail) ", ") ")"))
+         (else:
+          "[]"))))
     ((<symbol>)
      (if-bind (symbol (get *symbols* (symbol-name form)))
        symbol
