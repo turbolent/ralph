@@ -843,7 +843,7 @@ function transformAsync (form) {
                      });
     }
     walk(form);
-    for (variable in modules) {
+    for (var variable in modules) {
         if (modules.hasOwnProperty(variable)) {
             form = [S('require'), modules[variable],
                     [S('js:function'), S('js:null'), [variable],
