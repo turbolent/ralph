@@ -109,6 +109,10 @@
      (method (#rest elements)
        (concatenate `(js:array)
                     elements))
+     "slice"
+     (method (array start end)
+       (concatenate `((js:get-property ,array "slice") start)
+                    (if end `(,end) `())))
      "as-array"
      (method (arguments skip)
        `((js:get-property "Array" "prototype" "slice" "call")

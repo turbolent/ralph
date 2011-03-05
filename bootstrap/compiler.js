@@ -101,6 +101,10 @@ function functionDeclaration (name, args, body) {
 
 
 var macros = {
+    'slice': function (array, start, end) {
+        return [[S('js:get-property'), array, "slice"], start]
+            .concat(end ? [end] : []);
+    },
     'as-array': function (_arguments, skip) {
         return [[S('js:get-property'), "Array", "prototype",
                  "slice", "call"], _arguments, skip || 0];
