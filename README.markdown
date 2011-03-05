@@ -18,4 +18,4 @@ Currently Flusspferd and RingoJS are tested and supported environments.
 
 - Run the tests:
   either: `$ flusspferd -Iruntime tests/runtime-tests.js`
-  or: `$ ringo -b paths.js tests/runtime-tests.js`
+  or: `$ ringo -l -b paths.js tests/runtime-tests.js`
