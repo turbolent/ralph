@@ -50,7 +50,7 @@
 (define %get-property
   (js:function js:null (object name)
     (js:return (js:and object
-                       (%has-property? object name)
+                       (has? object name)
                        (js:get-property object name)))))
 
 (define %get-definition
@@ -174,7 +174,7 @@
       (js:set name ((js:get-property name "toLowerCase")
                     name))
       (js:return
-       (if (%has-property? %keywords name)
+       (if (has? %keywords name)
            (js:get-property %keywords name)
            (begin
             (set! keyword (js:new <keyword>))
@@ -211,11 +211,14 @@
 (define-function as-number (object)
   ((js:identifier "Number") object))
 
+(define-function has? (object property)
+  ((js:get-property object "hasOwnProperty") property))
+
 (define-function get (object #rest keys)
   (js:var result)
   (js:while (not (empty? keys))
     (js:var key (first keys))
-    (if (%has-property? object key)
+    (if (has? object key)
         (begin
          (set! result (js:get-property object key))
          (set! object result)
@@ -228,7 +231,7 @@
       (set! (js:get-property object (first properties/value))
             (second properties/value))
       (bind ((property (first properties/value))
-             (object2 (if (%has-property? object property)
+             (object2 (if (has? object property)
                           (get object property)
                           (bind ((new (%make-object)))
                             (set! (js:get-property object property) new)

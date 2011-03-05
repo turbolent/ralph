@@ -108,7 +108,7 @@ var macros = {
     'size': function (object) {
         return [S('js:get-property'), object, 'length'];
     },
-    '%has-property?': function (object, property) {
+    'has?': function (object, property) {
         return [[S('js:get-property'), object,
                  "hasOwnProperty"],
                 property];
