@@ -113,6 +113,18 @@
      (method (array start end)
        (concatenate `((js:get-property ,array "slice") start)
                     (if end `(,end) `())))
+     "first"
+     (method (array)
+       `(js:get-property ,array 0))
+     "second"
+     (method (array)
+       `(js:get-property ,array 1))
+     "third"
+     (method (array)
+       `(js:get-property ,array 2))
+     "rest"
+     (method (array)
+       `((js:get-property ,array "slice") 1))
      "as-array"
      (method (arguments skip)
        `((js:get-property "Array" "prototype" "slice" "call")
@@ -479,6 +491,7 @@
 
 (define *special-forms*
     (make-object
+     "element" 0
      "js:array" 0
      "js:defined" 0
      "js:delete" 0
@@ -802,7 +815,13 @@
        (bind ((result (concatenate "throw " (write error))))
              (if statements?
                  result
-                 (wrap-block result))))))
+                 (wrap-block result))))
+     "element"
+     (method (statements? #rest rest)
+       (if (> (size length) 2)
+           (concatenate "element(" (join (map write rest) ", ") ")")
+           (concatenate (write (first rest))
+                        "[" (write (second rest)) "]")))))
 
 (define-function compile (form #key statements?)
   (write (macroexpand form)

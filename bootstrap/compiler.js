@@ -101,6 +101,18 @@ function functionDeclaration (name, args, body) {
 
 
 var macros = {
+    'first': function (array) {
+        return [S('js:get-property'), array, 0];
+    },
+    'second': function (array) {
+        return [S('js:get-property'), array, 1];
+    },
+    'third': function (array) {
+        return [S('js:get-property'), array, 2];
+    },
+    'rest': function (array) {
+        return [[S('js:get-property'), array, "slice"], 1];
+    },
     'slice': function (array, start, end) {
         return [[S('js:get-property'), array, "slice"], start]
             .concat(end ? [end] : []);
@@ -728,16 +740,23 @@ var writers = {
         return _throw;
     },
     'make-object': function (allowStatements) {
-	var kvs = arguments.toArray().slice(1);
-	var entries = [];
-	for (var i = 0; i < kvs.length; i++)
-	    entries.push(write(kvs[i++]) + ":" + write(kvs[i]));
-	return "{" + entries.join(',\n') + "}";
+        var kvs = arguments.toArray().slice(1);
+        var entries = [];
+        for (var i = 0; i < kvs.length; i++)
+            entries.push(write(kvs[i++]) + ":" + write(kvs[i]));
+        return "{" + entries.join(',\n') + "}";
+    },
+    'element': function (allowStatements) {
+        var rest = arguments.toArray().slice(1);
+        return rest.length > 2
+            ? "element(" + rest.map(write).join(', ') + ")"
+            : write(rest[0]) + '[' + write(rest[1]) + ']';
     }
 }
 
 var specialForms = {
     'make-object': 0,
+    'element': 0,
     'js:array': 0,
     'js:defined': 0,
     'js:delete': 0,
