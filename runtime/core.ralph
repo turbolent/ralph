@@ -389,18 +389,18 @@
       position)))
 
 (define-function any? ((function <function>) (array <array>))
-  (block (return)
-    (do (method (element)
-          (bind ((result (function element)))
-            (when result
-              (return result))))
-        array)
-    #f))
+  (bind ((match #f)
+         (found? ((js:get-property array "some")
+                  (method (element)
+                   (set! match element)
+                   (function element)))))
+    (when found?
+      match)))
 
 (define-function member? (value (array <array>))
-  (true? (any? (method (other-value)
-                 (== value other-value))
-               array)))
+  (any? (method (other-value)
+                (== value other-value))
+        array))
 
 (define-function choose-by ((predicate <function>)
                             (test-array <array>)
