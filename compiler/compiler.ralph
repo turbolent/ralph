@@ -103,14 +103,9 @@
        (bind ((compiled (compile
                          (concatenate `(method ,arguments)
                                       body))))
-         (print "MACRO:" compiled)))
-
-
-
-       ;; (set! (get *macros* name)
-       ;;       macro
-
-
+         (set! (get *macros* (symbol-name name))
+               (eval compiled)))
+       #f)
      "make-array"
      (method (#rest elements)
        (concatenate `(js:array)
