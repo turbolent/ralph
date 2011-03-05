@@ -592,7 +592,7 @@
 (define-function escape-symbol (symbol)
   (bind ((name (symbol-name symbol)))
     (cond
-      ((get symbol "generated")
+      ((has? symbol "generated")
        name)
       ((member? name *reserved*)
        (concatenate "_" name))
@@ -807,7 +807,7 @@
      ;; apply macros
      (while (and (instance? form <array>)
                  (instance? (first form) <symbol>)
-                 (get *macros* (symbol-name (first form))))
+                 (has? *macros* (symbol-name (first form))))
        (bind ((macro (get *macros* (symbol-name (first form)))))
          (set! form (apply macro (rest form)))))
      ;; still array?
@@ -851,14 +851,14 @@
        (cond
          ;; infix?
          ((and (instance? head <symbol>)
-               (get *infix* head-name))
+               (has? *infix* head-name))
           (bind ((infix (get *infix* head-name))
                  (inside (join (map write tail)
                                (concatenate " " infix " "))))
             (concatenate "(" inside ")")))
          ;; writer?
          ((and (instance? head <symbol>)
-               (get *writers* head-name))
+               (has? *writers* head-name))
           (apply (get *writers* head-name)
                  statements?
                  tail))
