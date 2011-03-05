@@ -381,7 +381,7 @@
                                              (argument-names slots)))))
                     (if (empty? superclass)
                         `()
-                        `((%inherit ,class ,superclass)))))
+                        `((%inherit ,class ,(first superclass))))))
      "define-module"
      (method (name #key (import `()) (export `()))
        (bind ((property (generate-symbol))
