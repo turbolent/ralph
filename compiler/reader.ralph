@@ -83,7 +83,8 @@
        `(%backquote ,(read stream)))
       ((",")
        (read-char stream)
-       `(%comma ,(read stream)))
+       (make-array (symbol "%comma")
+                   (read stream)))
       (else:
        (if-bind (number (any? (rcurry match-stream stream)
                               *number-patterns*))
