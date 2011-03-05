@@ -22,7 +22,7 @@
            element first second third last rest concatenate
            size empty? but-last copy-sequence
            replace-subsequence replace-subsequence!
-           reverse reverse! sort sort!
+           reverse reverse! sort sort! remove remove!
            push push-last pop pop-last
            = == > < >= <=
            + - * /
@@ -156,6 +156,7 @@
   (set! (js:get-property class "prototype" "__super__")
         superclass)
   class)
+
 
 ;;;; keywords
 
