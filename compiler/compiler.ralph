@@ -115,6 +115,13 @@
      (method (#rest elements)
        (concatenate `(js:array)
                     elements))
+     "as-array"
+     (method (arguments skip)
+       `((js:get-property "Array" "prototype" "slice" "call")
+         ,arguments ,(or skip 0)))
+     "size"
+     (method (object)
+       `(js:get-property ,object "length"))
      "has?"
      (method (object property)
        `((js:get-property ,object "hasOwnProperty")

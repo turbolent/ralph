@@ -211,6 +211,11 @@
 (define-function as-number (object)
   ((js:identifier "Number") object))
 
+(define-function as-array (arguments skip)
+  ((js:get-property "Array" "prototype"
+                    "slice" "call")
+   arguments (js:or skip 0)))
+
 (define-function has? (object property)
   ((js:get-property object "hasOwnProperty") property))
 
