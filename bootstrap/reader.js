@@ -23,7 +23,7 @@ Reader.prototype.read = function () {
 	case '`':
 	    this.stream.readChar();
 	    return [S('%backquote'),
-		    this.readList()];
+		    this.read()];
 	case ',':
 	    this.stream.readChar();
 	    return [S('%comma'),

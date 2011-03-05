@@ -80,7 +80,7 @@
        (read-list stream))
       (("`")
        (read-char stream)
-       `(%backquote ,(read-list stream)))
+       `(%backquote ,(read stream)))
       ((",")
        (read-char stream)
        `(%comma ,(read stream)))
