@@ -815,8 +815,8 @@
          (bind ((head (first form)))
            ;; special?
            (if-bind (expander (and (instance? head <symbol>)
-                                   (get *special-forms*
-                                        (symbol-name head))))
+                                   (has? *special-forms*
+                                         (symbol-name head))))
              (select expander instance?
                ((<number>)
                 (concatenate
