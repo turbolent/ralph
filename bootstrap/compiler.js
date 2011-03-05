@@ -726,10 +726,18 @@ var writers = {
         if (!allowStatements)
             _throw = wrapBlock(_throw);
         return _throw;
+    },
+    'make-object': function (allowStatements) {
+	var kvs = arguments.toArray().slice(1);
+	var entries = [];
+	for (var i = 0; i < kvs.length; i++)
+	    entries.push(write(kvs[i++]) + ":" + write(kvs[i]));
+	return "{" + entries.join(',\n') + "}";
     }
 }
 
 var specialForms = {
+    'make-object': 0,
     'js:array': 0,
     'js:defined': 0,
     'js:delete': 0,
