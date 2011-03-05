@@ -140,8 +140,10 @@
                           (else:
                            form))))
          (transform form)))
-     "%comma"
-     identity
+;; TODO:
+;;     "%comma"
+;;     (method (value)
+;;       (signal (make <error> message: "comma not inside backquote")))
      "%parallel-set"
      (method (#rest clauses)
        (bind ((temp-clauses (make-array))
