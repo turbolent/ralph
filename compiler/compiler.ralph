@@ -77,10 +77,14 @@
                                    start: (inc key-position)))
                 (push-last rest/key-code
                            `(js:for (((,index-var 0)
-                                      (js:< ,index-var (js:get-property ,rest-var "length"))
+                                      (js:< ,index-var
+                                            (js:get-property ,rest-var "length"))
                                       (js:+ ,index-var 2)))
-                                    (js:var ,key-var (js:get-property ,rest-var ,index-var))
-                                    (js:var ,value-var (js:get-property ,rest-var (js:+ ,index-var 1)))
+                                    (js:var ,key-var
+                                            (js:get-property ,rest-var ,index-var))
+                                    (js:var ,value-var
+                                            (js:get-property ,rest-var
+                                                             (js:+ ,index-var 1)))
                                     (when (keyword? ,key-var)
                                       ,setter-code))))))))
       ;; function
