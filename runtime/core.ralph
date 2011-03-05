@@ -20,7 +20,7 @@
            as-lowercase as-uppercase
            make-array make-object
            element first second third last rest concatenate
-           size empty? but-last copy-sequence
+           size empty? but-last copy-sequence slice
            replace-subsequence replace-subsequence!
            reverse reverse! sort sort! remove remove!
            push push-last pop pop-last
@@ -247,9 +247,15 @@
 (define-function size ((array <array>))
   (js:get-property array "length"))
 
+(define-function slice (array start end)
+  ;; workaround for ringo: slice(undefined, undefined) -> undefined
+  (js:if (js:defined end)
+         ((js:get-property array "slice") start end)
+         ((js:get-property array "slice") start)))
+
 (define-function copy-sequence ((array <array>)
                                 #key (start 0) (end (size array)))
-  ((js:get-property array "slice") start end))
+  (slice array start end))
 
 (define-function push-last ((array <array>) new-value)
   ((js:get-property array "push") new-value)
@@ -318,13 +324,13 @@
   ((js:get-property array "reverse")))
 
 (define-function reverse ((array <array>))
-  (reverse! (copy-sequence array)))
+  (reverse! (slice array)))
 
 (define-function sort! ((array <array>) #key (test <))
   ((js:get-property array "sort") test))
 
 (define-function sort ((array <array>) #key (test <))
-  (sort! (copy-sequence array) test: test))
+  (sort! (slice array) test: test))
 
 (define-function element ((array <array>) key #key default)
   (or (js:get-property array key) default))
@@ -429,16 +435,16 @@
   (element array (dec (size array))))
 
 (define-function rest ((array <array>))
-  (copy-sequence array start: 1))
+  (slice array 1))
 
 (define-function but-last ((array <array>) #key (n 1))
-  (copy-sequence array end: (js:* n -1)))
+  (slice array 0 (js:* n -1)))
 
 (define-function replace-subsequence ((target-array <array>) (insert-array <array>)
                                       #key (start 0) (end (size target-array)))
-  (concatenate (copy-sequence target-array end: start)
+  (concatenate (slice target-array 0 start)
                insert-array
-               (copy-sequence target-array start: end)))
+               (slice target-array end)))
 
 (define-function replace-subsequence! ((target-array <array>) (insert-array <array>)
                                        #key (start 0) end)
@@ -752,4 +758,4 @@
   array)
 
 (define-function remove ((array <array>) value)
-  (remove! (copy-sequence array) value))
+  (remove! (slice array) value))
