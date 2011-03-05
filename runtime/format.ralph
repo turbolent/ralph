@@ -47,11 +47,9 @@ This function effectively calls format and returns the result as a string."
           (if (> next-dispatch 0)
               ;; write part upto next dispatch
               (begin
-               (write stream (copy-sequence control-string
-                                            end: next-dispatch))
+               (write stream (slice control-string 0 next-dispatch))
                (set! control-string
-                     (copy-sequence control-string
-                                    start: next-dispatch)))
+                     (slice control-string next-dispatch)))
               (if next-dispatch
                   ;; dispatch
                   (bind ((arg (get args index))
@@ -59,8 +57,7 @@ This function effectively calls format and returns the result as a string."
                          (percent (= char "%")))
                     (write stream (if percent "%" (dispatch char arg)))
                     (set! control-string
-                          (copy-sequence control-string
-                                         start: 2))
+                          (slice control-string 2))
                     (unless percent
                       (inc! index)))
                   (begin
