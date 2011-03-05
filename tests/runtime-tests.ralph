@@ -185,7 +185,7 @@
 (check-equal "but-last: second last element of 1, 2, 3 is 2"
              2 (last (but-last (make-array 1 2 3))))
 (check-equal "but-last: third last element of 1, 2, 3, 4 is 2"
-             2 (last (but-last (make-array 1 2 3 4) n: 2)))
+             2 (last (but-last (make-array 1 2 3 4) 2)))
 
 ;; repeatedly
 (bind ((i 0))

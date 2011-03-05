@@ -437,8 +437,8 @@
 (define-function rest ((array <array>))
   (slice array 1))
 
-(define-function but-last ((array <array>) #key (n 1))
-  (slice array 0 (js:* n -1)))
+(define-function but-last ((array <array>) n)
+  (slice array 0 (js:* (js:or n 1) -1)))
 
 (define-function replace-subsequence ((target-array <array>) (insert-array <array>)
                                       #key (start 0) (end (size target-array)))
