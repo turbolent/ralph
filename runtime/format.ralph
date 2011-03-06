@@ -40,7 +40,10 @@ This function effectively calls format and returns the result as a string."
                       (arg stream)
                       "")
                      ;; TODO: make condition
-                     (else: (error "Unknown format dispatch character, %c" char)))))
+                     (else:
+                      (signal (make <error> message:
+                                    (concatenate "Unknown format dispatch character "
+                                                 char)))))))
     (bind ((index 0))
       (while (not (empty? control-string))
         (bind ((next-dispatch (string-position control-string "%")))
