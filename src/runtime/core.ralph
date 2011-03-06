@@ -5,7 +5,7 @@
            (js:identifier "_key") (js:identifier "_rest")
            keyword keyword? symbol symbol-name
            <object> <string> <number> <boolean> <array> <function>
-           <symbol> <keyword> <non-local-exit> <error>
+           <symbol> <hash-symbol> <keyword> <non-local-exit> <error>
            not true? signal
            *environment*
            %make-protocol %make-dispatcher %alias-type

@@ -901,10 +901,12 @@
      (if-bind (symbol (get *symbols* (symbol-name form)))
        symbol
        (escape-symbol form)))
-    ((<boolean>)
-     (if form "true" "false"))
+    ((<hash-symbol>)
+     (concatenate "_" (symbol-name form)))
     ((<keyword>)
      (concatenate "_k('" (symbol-name form) "')"))
+    ((<boolean>)
+     (if form "true" "false"))
     ((<string>)
      (concatenate "\"" form "\""))
     (else:
