@@ -1,24 +1,6 @@
 (define-module compiler-tests
   import: (core test stream reader compiler format))
 
-;; (js:var profiler (require "ringo/profiler"))
-;; (define-function profile (function)
-;;   (print "STARTING")
-;;   (bind ((result ((js:get-property profiler "profile")
-;;                   function)))
-;;     (print result)
-;;     ((js:get-property result "profiler" "formatResult") 30)))
-
-;; (bind ((source "(this is (foo #t blub #f foo: #rest simple #key test \"string with \\\"this\\\" embedded  \" 23.42))")
-;;        (stream (make <string-stream> string: source)))
-
-;;   (profile (method ()
-;;              (read stream))))
-
-
-;;
-;;   (format-out "%=\n\n" form))
-
 (js:var fs (require "fs"))
 (define-function read-file (path)
   (bind ((file ((js:get-property fs "open")
