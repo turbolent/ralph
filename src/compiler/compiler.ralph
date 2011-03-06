@@ -111,7 +111,7 @@
                     elements))
      "slice"
      (method (array start end)
-       (concatenate `((js:get-property ,array "slice") start)
+       (concatenate `((js:get-property ,array "slice") ,start)
                     (if end `(,end) `())))
      "first"
      (method (array)
