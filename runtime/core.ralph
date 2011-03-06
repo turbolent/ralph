@@ -400,13 +400,14 @@
       position)))
 
 (define-function any? ((function <function>) (array <array>))
-  (bind ((match #f)
-         (found? ((js:get-property array "some")
-                  (method (element)
-                   (set! match element)
-                   (function element)))))
-    (when found?
-      match)))
+  (js:var match #f)
+  (js:var found?
+          ((js:get-property array "some")
+           (method (element)
+             (js:var result (function element))
+             (set! match result)
+             result)))
+  (js:if found? match #f))
 
 (define-function member? (value (array <array>))
   (any? (method (other-value)
