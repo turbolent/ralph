@@ -79,6 +79,10 @@
   (js:function js:null (value)
     (js:return (js:not (true? value)))))
 
+(define %actual-type
+  (js:function js:null (type)
+    (js:return (js:or (%get-property type "%js-type") type))))
+
 ;;;; getter
 
 (define %define-getter
