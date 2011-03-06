@@ -54,25 +54,73 @@ function dirname (path) {
     return path.replace(/\/[^\/]*$/, '');
 }
 
-var compiler = require('./bootstrap/compiler');
+var bootstrapCompiler = require('./src/bootstrap/compiler');
+var core, stream, reader, compiler;
 
 var async = false;
+var buildPath = "build";
+var srcPath = "src";
 
-function compileFile (path) {
-    var source = openRead(path);
-    var target = openWrite((dirname(path) + '/'
-                            + basename(path, '.ralph') + '.js'));
+function compileFile (path, bootstrap) {
+    if (!bootstrap && !compiler) {
+        core = require("core");
+        stream = require("stream");
+        reader = require("reader");
+        compiler = require("compiler");
+    }
+
+    var sourcePath = srcPath + '/' + path;
+    var targetDirectory = buildPath + '/' + dirname(path) + '/';
+    var targetPath = targetDirectory + basename(path, '.ralph') + '.js';
+
+    if (!fs.isDirectory(targetDirectory))
+        fs.makeTree(targetDirectory);
+
+    var source = openRead(sourcePath);
+    var target = openWrite(targetPath);
     var code = read(source);
-    target.write("(function () {\n"
-                 + compiler.compile(code, async)
-                 + '\n})();\n');
+    var compiled;
+    if (bootstrap)
+        compiled = bootstrapCompiler.compile(code, async);
+    else {
+        var sourceStream = core.make(stream._CL_stringStream,
+                                     core._k("string"), "(begin\n" + code + "\n)");
+        var form = reader.read(sourceStream);
+        compiled = compiler.compile(form, core._k('statements?'), true);
+    }
+    target.write("(function () {\n" + compiled + '\n})();\n');
     source.close();
     target.close();
+}
+
+function compileDirectories (directories, bootstrap) {
+    directories
+        .forEach(function (directory) {
+                     print((bootstrap ? "Bootstrapping" : "Compiling")
+                           + " '" + directory + "'");
+                     var root = "./" + srcPath + '/' + directory + "/";
+                     fs.list(root)
+                         .forEach(function (path) {
+                                      path = directory + '/' + path;
+                                      if (extension(path) == '.ralph' &&
+                                          basename(path)[0] != '.')
+                                      {
+                                          print(' - ' + path);
+                                          compileFile(path, bootstrap);
+                                      }
+                                  });
+                 });
 }
 
 var commands = {
     'async': function () {
         async = true;
+    },
+    'src': function (path) {
+        srcPath = path;
+    },
+    'build': function (path) {
+        buildPath = path;
     },
     'cleanDirectories': function () {
         Array.prototype.slice.call(arguments)
@@ -90,22 +138,10 @@ var commands = {
                      });
     },
     'compileDirectories': function () {
-        Array.prototype.slice.call(arguments)
-            .forEach(function (directory) {
-                         print("Compiling '" + directory + "'");
-                         var root = "./" + directory + "/";
-                         fs.list(root)
-                             .forEach(function (path) {
-                                          path = root + path;
-                                          if (extension(path) == '.ralph' &&
-                                              basename(path)[0] != '.')
-                                          {
-                                              print(' - ' + path);
-                                              compileFile(path);
-                                          }
-                                      });
-
-                     });
+        compileDirectories(Array.prototype.slice.call(arguments), false);
+    },
+    'bootstrapDirectories': function () {
+        compileDirectories(Array.prototype.slice.call(arguments), true);
     }
 };
 
