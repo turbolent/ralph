@@ -550,16 +550,13 @@
     protocol))
 
 (define-function %make-dispatcher (protocol function-name)
-  (bind-methods ((dispatcher (#rest arguments)
-                   (if-bind (fn (js:get-property
-                                 (first arguments)
-                                 function-name))
-                     (apply fn arguments))))
-    (set! (js:get-property dispatcher "%protocol")
-          protocol)
-    (set! (js:get-property dispatcher "%name")
-          function-name)
-    dispatcher))
+  (js:var dispatcher (method (#rest arguments)
+                       (js:var fn (js:get-property (first arguments)
+                                                   function-name))
+                       (js:if fn (apply fn arguments) #f)))
+  (set! (js:get-property dispatcher "%protocol") protocol)
+  (set! (js:get-property dispatcher "%name") function-name)
+  dispatcher)
 
 (define-protocol <initialization>
     (initialize (object #rest)))
