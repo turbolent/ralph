@@ -46,7 +46,7 @@ This function effectively calls format and returns the result as a string."
                                                  char)))))))
     (bind ((index 0))
       (while (not (empty? control-string))
-        (bind ((next-dispatch (string-position control-string "%")))
+        (bind ((next-dispatch (position control-string "%")))
           (if (> next-dispatch 0)
               ;; write part upto next dispatch
               (begin

@@ -16,7 +16,7 @@
            apply reduce reduce1 map do repeatedly
            any? every? member? choose-by find-key
            complement curry rcurry
-           string-position join
+           position join
            as-lowercase as-uppercase
            make-array make-object
            element first second third last rest concatenate
@@ -396,12 +396,9 @@
     (or (element satisfying-keys skip)
         failure)))
 
-(define-function string-position ((target-string <string>)
-                                  (search-string <string>))
-  (bind ((position ((js:get-property target-string "indexOf")
-                    search-string)))
-    (when (> position -1)
-      position)))
+(define-function position ((array <array>) element)
+  (js:var position ((js:get-property array "indexOf") element))
+  (js:if (js:> position -1) position #f))
 
 (define-function any? ((function <function>) (array <array>))
   (js:var match #f)

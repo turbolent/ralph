@@ -436,6 +436,10 @@
   (check-equal "inc!: 0 -> 1"
                1 (get x "y")))
 
+;; position
+(check-equal "position: find 2 in (1 2 3)"
+             1 (position (make-array 1 2 3) 2))
+
 ;; default initializer
 (define-class <test> (<object>)
   foo
