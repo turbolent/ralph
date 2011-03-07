@@ -588,7 +588,7 @@
 (define-protocol <describable>
   (description))
 
-(define-function description (number)
+(define-function description ((number <number>))
   (js:+ "" number))
 
 (define-function description ((string <string>))
