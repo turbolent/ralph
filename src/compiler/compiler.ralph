@@ -1,6 +1,6 @@
 (define-module compiler
     import: (core reader format regexp)
-    export: (compile))
+    export: (compile macroexpand transform-asynchronous))
 
 (define S symbol)
 
@@ -914,3 +914,35 @@
 
 (define write-statements
     (rcurry write statements?: #t))
+
+(define-function transform-asynchronous (form)
+  (bind ((modules (make-array)))
+    (bind-methods ((walk (current parent)
+                     (bind ((proceed? (instance? current <array>)))
+                       (when (and proceed?
+                                  (== (size current) 3))
+                         (destructuring-bind (var variable-name value) current
+                           (when (== var (S "js:var"))
+                             (destructuring-bind (require module-name) value
+                               (when (== require (S "require"))
+                                  (push-last modules (make-array variable-name
+                                                                module-name))
+                                 (bind ((index (position parent current)))
+                                   (replace-subsequence! parent (make-array)
+                                                         start: index
+                                                         end: (inc index)))
+                                 (set! proceed? #f))))))
+                       (when proceed?
+                         (do (method (form)
+                               (walk form current))
+                             (rest current))))))
+    (walk form)
+    (do (method (binding)
+          (destructuring-bind (variable module) binding
+              (set! form
+                    `(require ,module
+                              (js:function js:null (,variable)
+                                 ,form)))))
+        modules)
+    form)))
+

@@ -86,6 +86,8 @@ function compileFile (path, bootstrap) {
         var sourceStream = core.make(stream._CL_stringStream,
                                      core._k("string"), "(begin\n" + code + "\n)");
         var form = reader.read(sourceStream);
+	if (async)
+	    form = compiler.transformAsynchronous(compiler.macroexpand(form));
         compiled = compiler.compile(form, core._k('statements?'), true);
     }
     target.write("(function () {\n" + compiled + '\n})();\n');
