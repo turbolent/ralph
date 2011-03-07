@@ -407,8 +407,7 @@
                         `((%inherit ,class ,(first superclass))))))
      "define-module"
      (method (name #key (import `()) (export `()))
-       (bind ((property (generate-symbol))
-              (module (generate-symbol)))
+       (bind ((property (generate-symbol)))
          (concatenate `(begin
                         (js:var *module* js:this)
                         (js:set (js:get-property *module* "%exports")
@@ -419,13 +418,14 @@
                                                          (write name)))
                                                    export))))
                       (map (method (name)
-                             `(begin
-                                (js:var ,module (require (js:escape ,name)))
-                                (js:for-in (,property ,module)
-                                  (js:if ((js:get-property ,module "hasOwnProperty")
-                                          ,property)
-                                    (js:set (js:get-property *module* ,property)
-                                            (js:get-property ,module ,property))))))
+                             (bind ((module (generate-symbol)))
+                               `(begin
+                                 (js:var ,module (require (js:escape ,name)))
+                                 (js:for-in (,property ,module)
+                                   (js:if ((js:get-property ,module "hasOwnProperty")
+                                           ,property)
+                                          (js:set (js:get-property *module* ,property)
+                                                  (js:get-property ,module ,property)))))))
                            import))))
      "block"
      (method (argument #rest body)
