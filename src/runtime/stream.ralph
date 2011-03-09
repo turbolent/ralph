@@ -14,13 +14,17 @@
 
 ;; <streamable>
 
-(define-protocol <streamable>
-  (at-end?)
-  (peek-char)
-  (read-char)
-  (write)
-  (advance)
-  (contents))
+(define-generic at-end? ((stream <stream>)))
+
+(define-generic peek-char ((stream <stream>)))
+
+(define-generic read-char ((stream <stream>)))
+
+(define-generic write ((stream <stream>)))
+
+(define-generic advance ((stream <stream>)))
+
+(define-generic contents ((stream <stream>)))
 
 (define-class <stream> ())
 

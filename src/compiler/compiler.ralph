@@ -238,16 +238,10 @@
              `(,(concatenate `(js:while ,test)
                              body)
                 (js:return #f))))))
-     "define-protocol"
-     (method (protocol #rest functions)
-       (bind-methods ((declare (f)
-                        (bind ((name (first f)))
-                          `(define ,name
-                               (%make-dispatcher ,protocol
-                                 (js:escape ,name))))))
-         (concatenate `(begin
-                        (define ,protocol (%make-protocol)))
-                      (map declare functions))))
+     "define-generic"
+     (method (name arguments)
+       `(define ,name
+          (%make-generic (js:escape ,name))))
      "and"
      (method (#rest expressions)
        (or (empty? expressions)

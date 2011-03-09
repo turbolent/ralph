@@ -8,7 +8,7 @@
            <symbol> <hash-symbol> <keyword> <non-local-exit> <error>
            not true? signal
            *environment*
-           %make-protocol %make-dispatcher %alias-type
+           %make-generic %alias-type
            %non-local-exit? %make-non-local-exit-function
            get %set
            %inherit make initialize type instance?
@@ -88,20 +88,20 @@
 (define %define-getter
   (js:function js:null (module exports name function type-name)
     (bind ((getter (%get-definition module name))
-           (protocol (when getter
-                       (%get-property getter "%protocol")))
-           (setter (if protocol
-                       (bind ((type (%actual-type
-                                     (%get-definition module type-name)))
+           (generic? (when getter
+                       (%get-property getter "%generic")))
+           ;; define new getter and return (possibly) existing setter
+           (setter (if generic?
+                       (bind ((type (%actual-type (%get-definition module type-name)))
                               (prototype (js:get-property type "prototype"))
-                              (getter (%get-property prototype name)))
-                         (set! (js:get-property function "%type") type)
+                              (existing-getter (%get-property prototype name)))
                          (set! (js:get-property prototype name) function)
-                         (%get-property getter "%setter"))
+                         (%get-property existing-getter "%setter"))
                        (begin
                         (%define module exports name function)
                         (%get-property getter "%setter")))))
           (set! (js:get-property function "%name") name)
+          ;; re-define setter if it was existing
           (when setter
             (set! (js:get-property function "%setter") setter)))))
 
@@ -110,12 +110,13 @@
 (define %define-setter
   (js:function js:null (module exports name function type-name)
     (bind ((getter (%get-definition module name))
-           (protocol (when getter
-                       (%get-property getter "%protocol"))))
-      (if protocol
+           (generic? (when getter
+                       (%get-property getter "%generic"))))
+      (if generic?
           (bind ((type (%actual-type (%get-definition module type-name)))
                  (prototype (js:get-property type "prototype"))
                  (getter (or (%get-property prototype name)
+                             ;; create temporary getter
                              (bind ((temp (%make-function)))
                                (set! (js:get-property prototype name)
                                      temp)
@@ -123,14 +124,15 @@
             (set! (js:get-property getter "%setter") function))
           (begin
            (unless (%get-definition module name)
+             ;; creare temporary getter
              (%define module exports name (%make-function)))
            (set! (js:get-property (%get-definition module name) "%setter")
                  function))))))
 
 (define-function %set ((function <function>) #rest arguments)
-  (bind ((protocol (%get-property function "%protocol"))
+  (bind ((generic? (%get-property function "%generic"))
          (name (%get-property function "%name"))
-         (getter (if protocol
+         (getter (if generic?
                      (bind ((type (%actual-type (type (first arguments))))
                             (prototype (js:get-property type "prototype"))
                             (getter (%get-property prototype name)))
@@ -189,8 +191,6 @@
 (define keyword (js:identifier "_k"))
 
 ;;;; non-local exit
-
-;; TODO: should be a type that conforms to condition protocol
 
 (define <non-local-exit>
   (js:function js:null (name value)
@@ -541,26 +541,18 @@
 (%alias-type <boolean> (js:identifier "Boolean"))
 (%alias-type <function> (js:identifier "Function"))
 
-;; protocols
+;; generic
 
-(define-class <protocol> ())
-
-(define-function %make-protocol ()
-  (bind ((protocol (js:new <protocol>)))
-    ;; TODO: add slots
-    protocol))
-
-(define-function %make-dispatcher (protocol function-name)
+(define-function %make-generic (function-name)
   (js:var dispatcher (method (#rest arguments)
                        (js:var fn (js:get-property (first arguments)
                                                    function-name))
                        (js:if fn (apply fn arguments) #f)))
-  (set! (js:get-property dispatcher "%protocol") protocol)
+  (set! (js:get-property dispatcher "%generic") #t)
   (set! (js:get-property dispatcher "%name") function-name)
   dispatcher)
 
-(define-protocol <initialization>
-    (initialize (object #rest)))
+(define-generic initialize (object #rest))
 
 ;; error
 
@@ -571,8 +563,7 @@
 
 ;;
 
-(define-protocol <concatenatable>
-  (concatenate (first #rest more)))
+(define-generic concatenate (first #rest more))
 
 (define-function concatenate ((first-string <string>) #rest more-strings)
   (reduce (method (current next)
@@ -585,8 +576,7 @@
 
 ;;
 
-(define-protocol <describable>
-  (description))
+(define-generic description (object))
 
 (define-function description ((number <number>))
   (js:+ "" number))
@@ -604,17 +594,13 @@
 
 ;;
 
-(define-protocol <condition>
-  (signal))
-
 (define-function signal ((error <error>))
   (js:throw error))
 
 ;;;; comparison
 
-(define-protocol <comparable>
-  (binary= (object1 object2))
-  (binary< (object1 object2)))
+(define-generic binary= (object1 object2))
+(define-generic binary< (object1 object2))
 
 (define-function binary= (object1 object2)
   (js:and (js:=== (type object1)

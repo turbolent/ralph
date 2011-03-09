@@ -322,18 +322,9 @@ var macros = {
             .concat(superclass.length > 0 ?
                     [[S('%inherit'), _class, superclass[0]]] : []);
     },
-    'define-protocol': function (protocol) {
-        function declare (f) {
-            var name = f[0];
-            return [S('define'), name,
-                    [S('%make-dispatcher'),
-                     protocol, [S('js:escape'), name]]];
-        }
-        var functions = arguments.toArray().slice(1);
-        return [S('begin'),
-                [S('define'), protocol,
-                 [S('%make-protocol')]]]
-            .concat(functions.map(declare));
+    'define-generic': function (name, _arguments) {
+        return [S('define'), name,
+                [S('%make-generic'), [S('js:escape'), name]]];
     },
     'define-module': function (name) {
         var keyArgs = arguments.toArray().slice(1);
