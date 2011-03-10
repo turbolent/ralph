@@ -1,5 +1,5 @@
 (define-module watch
-    import: (core)
+    import: (runtime/core)
     export: (watch unwatch))
 
 ;; port of Eli Grey's watch and unwatch

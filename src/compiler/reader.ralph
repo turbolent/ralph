@@ -1,5 +1,5 @@
 (define-module reader
-    import: (core stream regexp)
+    import: (runtime/core runtime/stream runtime/regexp)
     export: (read))
 
 (define *whitespace-pattern*

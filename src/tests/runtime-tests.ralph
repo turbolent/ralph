@@ -1,5 +1,6 @@
 (define-module runtime-tests
-  import: (core test format stream watch))
+  import: (runtime/core runtime/test runtime/format
+           runtime/stream runtime/watch))
 
 ;; test expansion
 (define-function foo (if)

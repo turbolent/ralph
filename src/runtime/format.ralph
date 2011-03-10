@@ -1,6 +1,6 @@
 
 (define-module format
-  import: (core stream)
+  import: (runtime/core runtime/stream)
   export: (format-out
            format-to-string
            format))

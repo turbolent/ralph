@@ -1,5 +1,5 @@
 (define-module regexp
-    import: (core)
+    import: (runtime/core)
     export: (<regexp> match replace-all))
 
 (define-class <regexp> ())

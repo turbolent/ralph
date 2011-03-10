@@ -1,6 +1,5 @@
-
 (define-module test
-  import: (core format)
+  import: (runtime/core runtime/format)
   export: (check-equal
            check-true
            check-false

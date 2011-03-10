@@ -1,5 +1,6 @@
 (define-module compiler-tests
-  import: (core test stream reader compiler format))
+  import: (runtime/core runtime/test runtime/stream runtime/format
+           compiler/reader compiler/compiler))
 
 (js:var fs (require "fs"))
 (define-function read-file (path)
