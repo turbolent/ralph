@@ -414,7 +414,7 @@
                       (map (method (name)
                              (bind ((module (generate-symbol)))
                                `(begin
-                                 (js:var ,module (require (js:escape ,name)))
+                                 (js:var ,module (require ,(symbol-name name)))
                                  (js:for-in (,property ,module)
                                    (js:if ((js:get-property ,module "hasOwnProperty")
                                            ,property)

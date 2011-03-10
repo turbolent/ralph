@@ -340,7 +340,7 @@ var macros = {
                         var importSymbol = Symbol.generate();
                         return [S('begin'),
                                 [S('js:var'), importSymbol,
-                                 [S('require'), [S('js:escape'), name]]],
+                                 [S('require'), name.name]],
                                 [S('js:for-in'),
                                  [propertySymbol, importSymbol],
                                  [S('js:if'), [[S('js:get-property'), importSymbol,
