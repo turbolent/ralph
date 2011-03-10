@@ -24,11 +24,3 @@
 (define-function match ((regexp <regexp>) (string <string>))
   ((js:get-property string "match")
    regexp))
-
-(define-function replace ((regexp <regexp>) (string <string>) replacement)
-  ((js:get-property string "replace")
-   regexp replacement))
-
-(define-function replace-all ((regexp <regexp>) (string <string>) replacement)
-  ((js:get-property string "replace")
-   regexp replacement "g"))

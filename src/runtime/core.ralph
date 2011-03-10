@@ -470,6 +470,17 @@
 (define-function join ((array <array>) (string <string>))
   ((js:get-property array "join") string))
 
+(define-function trim ((string <string>))
+  ((js:get-property string "trim")))
+
+(define-function replace (pattern (string <string>) replacement)
+  ((js:get-property string "replace")
+   pattern replacement))
+
+(define-function replace-all (pattern (string <string>) replacement)
+  ((js:get-property string "replace")
+   pattern replacement "g"))
+
 ;;;; functional
 
 (define-function apply ((function <function>) #rest arguments)
