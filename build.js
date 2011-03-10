@@ -51,7 +51,8 @@ try {
 }
 
 function dirname (path) {
-    return path.replace(/\/[^\/]*$/, '');
+    var result = path.replace(/\/[^\/]*$/, '');
+    return (result == path) ? "" : result;
 }
 
 var bootstrapCompiler = require('./src/bootstrap/compiler');
@@ -86,8 +87,8 @@ function compileFile (path, bootstrap) {
         var sourceStream = core.make(stream._CL_stringStream,
                                      core._k("string"), "(begin\n" + code + "\n)");
         var form = reader.read(sourceStream);
-	if (async)
-	    form = compiler.transformAsynchronous(compiler.macroexpand(form));
+        if (async)
+            form = compiler.transformAsynchronous(compiler.macroexpand(form));
         compiled = compiler.compile(form, core._k('statements?'), true);
     }
     target.write("(function () {\n" + compiled + '\n})();\n');
@@ -112,6 +113,16 @@ function compileDirectories (directories, bootstrap) {
                                       }
                                   });
                  });
+}
+
+function compileFiles (files, bootstrap) {
+    print(bootstrap ? "Bootstrapping" : "Compiling");
+    files.forEach(function (file) {
+                      if (extension(file) == '.ralph') {
+                          print(' - ' + file);
+                          compileFile(file, bootstrap);
+                      }
+                  });
 }
 
 var commands = {
@@ -144,6 +155,13 @@ var commands = {
     },
     'bootstrapDirectories': function () {
         compileDirectories(Array.prototype.slice.call(arguments), true);
+    },
+
+    'compile': function () {
+        compileFiles(Array.prototype.slice.call(arguments), false);
+    },
+    'bootstrap': function () {
+        compileFiles(Array.prototype.slice.call(arguments), true);
     }
 };
 
