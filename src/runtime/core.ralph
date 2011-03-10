@@ -556,9 +556,9 @@
 
 (define-function %make-generic (function-name)
   (js:var dispatcher (method (#rest arguments)
-                       (js:var fn (js:get-property (first arguments)
-                                                   function-name))
-                       (js:if fn (apply fn arguments) #f)))
+                       (js:var object (first arguments))
+                       (js:var fn (js:get-property object function-name))
+                       (js:if fn ((js:get-property fn "apply") object arguments) #f)))
   (set! (js:get-property dispatcher "%generic") #t)
   (set! (js:get-property dispatcher "%name") function-name)
   dispatcher)
