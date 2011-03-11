@@ -29,7 +29,7 @@
            inc dec
            description
            identity
-           min max))
+           min max abs round))
 
 ;;;; define
 
@@ -287,9 +287,15 @@
                     #rest more-numbers)
   (reduce1 (method (number1 number2)
              (js:* number1 number2))
-           (concatenate (make-array number1
-                                    number2)
-                        more-numbers)))
+           (%concat (make-array number1 number2)
+                    more-numbers)))
+
+(define-function / ((number1 <number>) (number2 <number>)
+                    #rest more-numbers)
+  (reduce1 (method (number1 number2)
+             (js:/ number1 number2))
+           (%concat (make-array number1 number2)
+                    more-numbers)))
 
 (define-function keys (object)
   (bind ((keys (js:new (js:identifier "Array"))))
@@ -746,6 +752,12 @@
             (set! result other)))
         more)
     result))
+
+(define-function abs (number)
+  ((js:get-property "Math" "abs") number))
+
+(define-function round (number)
+  ((js:get-property "Math" "round") number))
 
 (define-function remove! ((array <array>) value)
   (js:var key (find-key array (curry = value)))
