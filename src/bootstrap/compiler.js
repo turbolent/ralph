@@ -101,15 +101,6 @@ function functionDeclaration (name, args, body) {
 
 
 var macros = {
-    'first': function (array) {
-        return [S('element'), array, 0];
-    },
-    'second': function (array) {
-        return [S('element'), array, 1];
-    },
-    'third': function (array) {
-        return [S('element'), array, 2];
-    },
     'rest': function (array) {
         return [[S('js:get-property'), array, "slice"], 1];
     },

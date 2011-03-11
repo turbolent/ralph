@@ -114,15 +114,6 @@
      (method (array start end)
        (concatenate `((js:get-property ,array "slice") ,start)
                     (if end `(,end) `())))
-     "first"
-     (method (array)
-       `(element ,array 0))
-     "second"
-     (method (array)
-       `(element ,array 1))
-     "third"
-     (method (array)
-       `(element ,array 2))
      "rest"
      (method (array)
        `((js:get-property ,array "slice") 1))
