@@ -64,10 +64,10 @@ var srcPath = "src";
 
 function compileFile (path, bootstrap) {
     if (!bootstrap && !compiler) {
-        core = require("core");
-        stream = require("stream");
-        reader = require("reader");
-        compiler = require("compiler");
+        core = require("runtime/core");
+        stream = require("runtime/stream");
+        reader = require("compiler/reader");
+        compiler = require("compiler/compiler");
     }
 
     var sourcePath = srcPath + '/' + path;
