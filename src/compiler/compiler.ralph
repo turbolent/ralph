@@ -287,8 +287,9 @@
               *module*
               exports
               (js:escape ,name)
-              ,(concatenate `(method ,arguments)
-                            body)
+              ,(function-declaration
+                `(js:identifier "__method__")
+                arguments body)
               ,type))))
      "inc!"
      (method (object value)
@@ -473,7 +474,11 @@
            (replace-subsequence! target body start: (size target))
            wrapping))))))
 
-(define *symbol-macros* (make-object))
+(define *symbol-macros*
+  (make-object
+   "next-method"
+   `(js:get-property (js:identifier "__method__")
+                     "%next-method")))
 
 (define *special-forms*
     (make-object
@@ -784,10 +789,14 @@
      "js:function"
      (method (_ name arguments body)
        (concatenate
-        "function " (if (and name
-                             (not (= name (S "js:null"))))
-                        (concatenate (escape-symbol name) " ")
-                      "")
+        "function "
+        (if (and name
+                 (not (= name (S "js:null"))))
+            (concatenate (if (instance? name <array>)
+                             (write name)
+                           (escape-symbol name))
+                           " ")
+            "")
         "(" (join (map write arguments) ", ") ") {"
         (if body
             (concatenate "\n" (write-statements body) "\n")
@@ -845,7 +854,7 @@
      ;; symbol-macro?
      (if-bind (symbol-macro (get *symbol-macros*
                                  (symbol-name form)))
-       (macroexpand (symbol-macro))
+       (macroexpand symbol-macro)
        form))
     (else: form)))
 

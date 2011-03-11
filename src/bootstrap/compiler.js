@@ -186,7 +186,8 @@ var macros = {
                 S('*module*'),
                 S('exports'),
                 [S('js:escape'), name],
-                [S('method'), args].concat(body),
+                functionDeclaration([S('js:identifier'), '__method__'],
+                                    args, body),
                 type];
     },
     'method': function (args) {
@@ -518,7 +519,11 @@ var macros = {
     }
 };
 
-var symbolMacros = {};
+var symbolMacros = {
+    'next-method': [S('js:get-property'),
+                    [S('js:identifier'), '__method__'],
+                    '%next-method']
+};
 
 function macroexpand (form) {
     if (form instanceof Array) {
@@ -547,7 +552,7 @@ function macroexpand (form) {
             return macroexpand(form);
     } else if (form instanceof Symbol
                && symbolMacros.hasOwnProperty(form.name)) {
-        return macroexpand(symbolMacros[form.name]());
+        return macroexpand(symbolMacros[form.name]);
     } else
         return form;
 }
@@ -708,7 +713,9 @@ var writers = {
         return 'return ' + write(body);
     },
     'js:function': function (allowStatements, name, args, body) {
-        return 'function ' + (name && name != S('js:null') ? name + ' ': '')
+        return 'function ' + (name && name != S('js:null')
+                              ? (name instanceof Array ? write(name) : name) + ' '
+                              : '')
             + '(' + args.join(', ') + ') '
             + '{' + (body ? '\n' + writeStatements(body) + '\n' : "") + '}';
     },

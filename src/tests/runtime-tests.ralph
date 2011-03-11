@@ -497,6 +497,8 @@
 
 (define-class <c> (<b>))
 
+(define-class <d> (<c>))
+
 (define-function foo ((object <a>))
   1)
 
@@ -511,6 +513,31 @@
 
 (check-equal "classes: <c> inherits <b>: foo on <c>"
              2 (foo (make <c>)))
+
+;; next-method
+(define-generic bar (object x))
+
+(define-function bar ((object <a>) a)
+  (set! (get object "next")
+        next-method)
+  (set! (get object "a") a))
+
+(define-function bar ((object <b>) b)
+  (next-method object "a")
+  (set! (get object "b") b))
+
+(define-function bar ((object <d>) d)
+  (next-method object "b")
+  (set! (get object "d") d))
+
+(bind ((d (make <d>)))
+  (bar d "d")
+  (check-false "next-method: last method shouldn't have a next"
+               (get d "next"))
+  (check-true "next-method: all methods visited"
+              (and (== (get d "d") "d")
+                   (== (get d "b") "b")
+                   (== (get d "a") "a"))))
 
 ;; remove
 (bind ((array (make-array 1 2 3)))
