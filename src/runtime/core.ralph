@@ -16,7 +16,7 @@
            apply reduce reduce1 map do repeatedly
            any? every? member? choose-by find-key
            complement curry rcurry
-           position join
+           position join trim replace replace-all
            as-lowercase as-uppercase
            make-array make-object
            element first second third last rest concatenate
