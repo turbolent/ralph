@@ -287,15 +287,13 @@
                     #rest more-numbers)
   (reduce1 (method (number1 number2)
              (js:* number1 number2))
-           (%concat (make-array number1 number2)
-                    more-numbers)))
+           (%concat [number1 number2] more-numbers)))
 
 (define-function / ((number1 <number>) (number2 <number>)
                     #rest more-numbers)
   (reduce1 (method (number1 number2)
              (js:/ number1 number2))
-           (%concat (make-array number1 number2)
-                    more-numbers)))
+           (%concat [number1 number2] more-numbers)))
 
 (define-function keys (object)
   (bind ((keys (js:new (js:identifier "Array"))))
@@ -457,8 +455,8 @@
 (define-function replace-subsequence! ((target-array <array>) (insert-array <array>)
                                        #key (start 0) end)
   ((js:get-property "Array" "prototype" "splice" "apply")
-   target-array (concatenate (make-array start (js:- (or end start) start))
-                             insert-array))
+   target-array (%concat [start (js:- (or end start) start)]
+                         insert-array))
   target-array)
 
 ;;;; string
@@ -563,7 +561,7 @@
 (define-function %make-generic (function-name)
   (js:var dispatcher (method (#rest arguments)
                        (js:var object (first arguments))
-                       (js:var methods (make-array))
+                       (js:var methods [])
                        (js:if (has? (js:get-property object "constructor" "prototype")
                                     function-name)
                               (push-last methods
@@ -649,8 +647,7 @@
 
 (define-function compare ((function <function>) object1 object2 more-objects)
   (js:var object object1)
-  (js:var remaining (%concat (make-array object2)
-                             more-objects))
+  (js:var remaining (%concat [object2] more-objects))
   (js:while (not (empty? remaining))
     (js:var next (first remaining))
     (js:if (not (function object next))
@@ -751,7 +748,7 @@
   value)
 
 (define-function repeatedly ((function <function>) (count <integer>))
-  (bind ((result (make-array)))
+  (bind ((result []))
     (dotimes (i count result)
       (push-last result (function)))))
 
