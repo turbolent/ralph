@@ -29,8 +29,7 @@
                                failure: length)))
       (slice arguments 0
              (apply min length
-                    (map position
-                         (make-array #key #rest)))))))
+                    (map position [#key #rest]))))))
 
 (define-function function-declaration (name arguments body)
   (bind-methods ((position (symbol)
@@ -43,7 +42,7 @@
                      body))
            (rest-position (position #rest))
            (key-position (position #key))
-           (rest/key-code (make-array)))
+           (rest/key-code []))
       ;; key
       (when (or rest-position
                 key-position)
@@ -68,7 +67,7 @@
                       (destructuring-bind (name default)
                           (if (instance? key <array>)
                               key
-                              (make-array key #f))
+                              [key #f])
                         (push-last rest/key-code
                                    `(js:var ,name ,default))
                         (push-last setter-code
@@ -155,8 +154,8 @@
 ;;       (signal (make <error> message: "comma not inside backquote")))
      "%parallel-set"
      (method (#rest clauses)
-       (bind ((temp-clauses (make-array))
-              (set-clauses (make-array)))
+       (bind ((temp-clauses [])
+              (set-clauses []))
          (if (> (size clauses) 2)
              (begin
               (for ((i 0 (+ i 2)))
@@ -245,7 +244,7 @@
      "or"
      (method (#rest expressions)
        (and (not (empty? expressions))
-            (bind ((variables (make-array))
+            (bind ((variables [])
                    (clauses (map (method (expression)
                                    (bind ((temp (generate-symbol)))
                                      (push-last variables
@@ -268,8 +267,8 @@
                     (= (size name) 2)
                     (first name)
                     (= (first name) (S "setter")))
-               (make-array #t (second name))
-               (make-array #f name))
+               [#t (second name)]
+               [#f name])
          (when (not (or (instance? name <symbol>)
                         setter?))
            (signal (make <error> message:
@@ -303,8 +302,8 @@
                       body)))
      "for"
      (method (clauses end #rest body)
-       (bind ((init-clauses (make-array))
-              (next-clauses (make-array)))
+       (bind ((init-clauses [])
+              (next-clauses []))
          (do (method (clause)
                (push-last init-clauses
                           (slice clause 0 2))
@@ -452,7 +451,7 @@
      (method (pattern value #rest body)
        (bind ((target))
          (bind-methods ((destructure (pattern value)
-                          (bind ((nested (make-array))
+                          (bind ((nested [])
                                  (inner
                                   `(method ,(map (method (var)
                                                    (if (instance? var <array>)
@@ -504,21 +503,21 @@
      "js:for"
      (method (clauses #rest body)
        (concatenate
-        (make-array (S "js:for")
-                    (map (method (clause)
-                           (destructuring-bind ((var value) #rest rest) clause
-                             (concatenate
-                              (make-array (make-array var (macroexpand value)))
-                              (map macroexpand rest))))
-                         clauses))
+        `(js:for
+          ,(map (method (clause)
+                  (destructuring-bind ((var value) #rest rest) clause
+                    (concatenate
+                     [[var (macroexpand value)]]
+                     (map macroexpand rest))))
+                clauses))
         (macroexpand body)))
      "js:try"
      (method (body var catch finally)
-       (make-array (S "js:try")
-                   (macroexpand body)
-                   var
-                   (macroexpand catch)
-                   (macroexpand finally)))))
+       `(js:try
+         ,(macroexpand body)
+         ,var
+         ,(macroexpand catch)
+         ,(macroexpand finally)))))
 
 (define *infix*
     (make-object
@@ -626,9 +625,7 @@
 
 (define-function write-body (body)
   (write-statements
-   (concatenate
-    (make-array (S "begin"))
-    body)))
+   (concatenate `(begin) body)))
 
 (define *property-pattern*
     (make <regexp>
@@ -718,25 +715,22 @@
                 (wrap-block result)))))
      "js:for"
      (method (statements? clauses #rest body)
-       (bind ((inits (make-array))
-              (tests (make-array))
-              (nexts (make-array)))
+       (bind ((inits [])
+              (tests [])
+              (nexts []))
          (do (method (clause)
                (destructuring-bind ((var value) test next) clause
                  (bind ((set (S "js:set")))
-                   (push-last
-                    inits (write (make-array set var value)))
-                   (push-last
-                    tests (write test))
-                   (push-last
-                    nexts (write (make-array set var next))))))
+                   (push-last inits (write [set var value]))
+                   (push-last tests (write test))
+                   (push-last nexts (write [set var next])))))
              clauses)
          (bind ((result
                  (concatenate
                   "for (var "
                   (join (map (method (parts)
                                (join parts ", "))
-                             (make-array inits tests nexts))
+                             [inits tests nexts])
                         "; ")
                   ") {\n" (write-body body) "\n}")))
          (if statements?
@@ -911,7 +905,7 @@
     (rcurry write statements?: #t))
 
 (define-function transform-asynchronous (form)
-  (bind ((modules (make-array)))
+  (bind ((modules []))
     (bind-methods ((walk (current parent)
                      (bind ((proceed? (instance? current <array>)))
                        (when (and proceed?
@@ -920,10 +914,9 @@
                            (when (== var (S "js:var"))
                              (destructuring-bind (require module-name) value
                                (when (== require (S "require"))
-                                  (push-last modules (make-array variable-name
-                                                                module-name))
+                                 (push-last modules [variable-name module-name])
                                  (bind ((index (position parent current)))
-                                   (replace-subsequence! parent (make-array)
+                                   (replace-subsequence! parent []
                                                          start: index
                                                          end: (inc index)))
                                  (set! proceed? #f))))))

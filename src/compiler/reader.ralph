@@ -10,9 +10,9 @@
     (make <regexp> pattern: "(.*)[\n]"))
 (define *number-patterns*
     (map (curry make <regexp> ignore-case?: #t pattern:)
-         (make-array "^[+-]?0x[0-9a-f]+"
-                     "^[+-]?0[0-7]+"
-                     "^[+-]?\\d+\\.?\\d*(?:e-?\\d*(?:\\d\\.?|\\.?\\d)\\d*)?")))
+         ["^[+-]?0x[0-9a-f]+"
+         "^[+-]?0[0-7]+"
+         "^[+-]?\\d+\\.?\\d*(?:e-?\\d*(?:\\d\\.?|\\.?\\d)\\d*)?"]))
 
 (define-function match-stream ((regexp <regexp>) (stream <stream>))
   (if-bind (result (match regexp (remaining-contents stream)))
@@ -56,7 +56,7 @@
   (match-stream *whitespace-pattern* stream))
 
 (define-function read-list ((stream <stream>) end)
-  (bind ((result (make-array)))
+  (bind ((result []))
     (read-char stream)
     (read-whitespace stream)
     (js:while (not (js:=== (peek-char stream) end))
@@ -86,8 +86,8 @@
        `(%backquote ,(read stream)))
       ((",")
        (read-char stream)
-       (make-array (symbol "%comma")
-                   (read stream)))
+       [(symbol "%comma")
+        (read stream)])
       (else:
        (if-bind (number (any? (rcurry match-stream stream)
                               *number-patterns*))
