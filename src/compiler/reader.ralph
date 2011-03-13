@@ -5,7 +5,7 @@
 (define *whitespace-pattern*
     (make <regexp> pattern: "[\t\n ]*"))
 (define *non-whitespace-pattern*
-    (make <regexp> pattern: "[^()\n\t ]+"))
+    (make <regexp> pattern: "[^\\[\\]()\n\t ]+"))
 (define *line-pattern*
     (make <regexp> pattern: "(.*)[\n]"))
 (define *number-patterns*
@@ -55,11 +55,11 @@
 (define-function read-whitespace ((stream <stream>))
   (match-stream *whitespace-pattern* stream))
 
-(define-function read-list ((stream <stream>))
+(define-function read-list ((stream <stream>) end)
   (bind ((result (make-array)))
     (read-char stream)
     (read-whitespace stream)
-    (js:while (not (js:=== (peek-char stream) ")"))
+    (js:while (not (js:=== (peek-char stream) end))
       (when (at-end? stream)
         (signal (make <error> "Unbalanced parens")))
       (push-last result (read stream))
@@ -77,7 +77,10 @@
       (("\"")
        (read-string stream))
       (("(")
-       (read-list stream))
+       (read-list stream ")"))
+      (("[")
+       (concatenate `(js:array)
+                    (read-list stream "]")))
       (("`")
        (read-char stream)
        `(%backquote ,(read stream)))

@@ -19,7 +19,10 @@ Reader.prototype.read = function () {
 	case '"':
 	    return this.readString();
 	case '(':
-	    return this.readList();
+	    return this.readList(')');
+	case '[':
+	    return [S('js:array')]
+		.concat(this.readList(']'));
 	case '`':
 	    this.stream.readChar();
 	    return [S('%backquote'),
@@ -54,12 +57,12 @@ Reader.prototype.readAtom = function () {
 	return this.readSymbol();
 };
 
-Reader.prototype.readList = function () {
+Reader.prototype.readList = function (end) {
     var result = new Array();
     this.stream.readChar();
     this.stream.skipWhitespace();
 
-    while (this.stream.peekChar() != ')') {
+    while (this.stream.peekChar() != end) {
 	if (this.stream.eof())
 	    throw new Error('Unbalanced parens');
 	if (this.stream.peekChar() == ';')
@@ -76,7 +79,7 @@ Reader.prototype.readList = function () {
 };
 
 Reader.prototype.readSymbol = function () {
-    var match = /[^()\n\t ]+/.exec(this.stream.rest());
+    var match = /[^()\[\]\n\t ]+/.exec(this.stream.rest());
     var name = match[0];
     this.stream.index += name.length;
     if (name == "#t") {
@@ -109,7 +112,7 @@ Reader.prototype.readString = function () {
 };
 
 Reader.prototype.readNumber = function () {
-    var match = /[^()\n\t ]+/.exec(this.stream.rest());
+    var match = /[^\[\]()\n\t ]+/.exec(this.stream.rest());
     this.stream.index += match[0].length;
     return new Number(match[0]);
 };
