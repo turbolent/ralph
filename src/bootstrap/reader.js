@@ -12,28 +12,28 @@ exports.Reader = Reader;
 Reader.prototype.read = function () {
     this.stream.skipWhitespace();
     if (!this.stream.eof()) {
-	switch (this.stream.peekChar()) {
-	case ';':
-	    this.stream.skipLine();
-	    return this.read();
-	case '"':
-	    return this.readString();
-	case '(':
-	    return this.readList(')');
-	case '[':
-	    return [S('js:array')]
-		.concat(this.readList(']'));
-	case '`':
-	    this.stream.readChar();
-	    return [S('%backquote'),
-		    this.read()];
-	case ',':
-	    this.stream.readChar();
-	    return [S('%comma'),
-		    this.read()];
-	default:
-	    return this.readAtom();
-	}
+        switch (this.stream.peekChar()) {
+        case ';':
+            this.stream.skipLine();
+            return this.read();
+        case '"':
+            return this.readString();
+        case '(':
+            return this.readList(')');
+        case '[':
+            return [S('js:array')]
+                .concat(this.readList(']'));
+        case '`':
+            this.stream.readChar();
+            return [S('%backquote'),
+                    this.read()];
+        case ',':
+            this.stream.readChar();
+            return [S('%comma'),
+                    this.read()];
+        default:
+            return this.readAtom();
+        }
     }
 };
 
@@ -45,16 +45,16 @@ Reader.prototype.readAtom = function () {
     var c = this.stream.peekChar();
     var rest = this.stream.rest();
     if ([hexNumberExpression,
-	 octalNumberExpression,
-	 decimalNumberExpression]
-	.some(function (expression) {
-	    var match = expression.exec(rest);
-	    return match && match[0] != '';
-	}))
+         octalNumberExpression,
+         decimalNumberExpression]
+        .some(function (expression) {
+            var match = expression.exec(rest);
+            return match && match[0] != '';
+        }))
     {
-	return this.readNumber();
+        return this.readNumber();
     } else
-	return this.readSymbol();
+        return this.readSymbol();
 };
 
 Reader.prototype.readList = function (end) {
@@ -63,15 +63,15 @@ Reader.prototype.readList = function (end) {
     this.stream.skipWhitespace();
 
     while (this.stream.peekChar() != end) {
-	if (this.stream.eof())
-	    throw new Error('Unbalanced parens');
-	if (this.stream.peekChar() == ';')
-	    this.stream.skipLine();
-	else {
-	    var next = this.read();
-	    result.push(next);
-	}
-	this.stream.skipWhitespace();
+        if (this.stream.eof())
+            throw new Error('Unbalanced parens');
+        if (this.stream.peekChar() == ';')
+            this.stream.skipLine();
+        else {
+            var next = this.read();
+            result.push(next);
+        }
+        this.stream.skipWhitespace();
     }
 
     this.stream.readChar();
