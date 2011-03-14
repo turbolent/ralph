@@ -15,12 +15,12 @@ The compiler and runtime run with any CommonJS-compatible JavaScript engine and 
 Currently Flusspferd and RingoJS are tested and supported environments.
 
 - Bootstrap the runtime and compiler:
-  `$ ringo -l -b path.js --bootstrapDirectories runtime compiler tests`
+  `$ ringo -l -b paths.js build.js --bootstrapDirectories runtime compiler tests`
 
 - Run the runtime tests:
   either: `$ flusspferd -Iruntime tests/runtime-tests.js`
   or: `$ ringo -l -b paths.js tests/runtime-tests.js`
 
 - Compile the runtime and compiler:
-  `$ ringo -l -b path.js --compileDirectories runtime compiler tests`
+  `$ ringo -l -b paths.js build.js --compileDirectories runtime compiler tests`
 
