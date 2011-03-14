@@ -18,8 +18,8 @@ Currently Flusspferd and RingoJS are tested and supported environments.
   `$ ringo -l -b paths.js build.js --bootstrapDirectories runtime compiler tests`
 
 - Run the runtime tests:
-  either: `$ flusspferd -Iruntime tests/runtime-tests.js`
-  or: `$ ringo -l -b paths.js tests/runtime-tests.js`
+  either: `$ flusspferd -Iruntime build/tests/runtime-tests.js`
+  or: `$ ringo -l -b paths.js build/tests/runtime-tests.js`
 
 - Compile the runtime and compiler:
   `$ ringo -l -b paths.js build.js --compileDirectories runtime compiler tests`
