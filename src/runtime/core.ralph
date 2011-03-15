@@ -11,7 +11,7 @@
            %make-generic %alias-type
            %non-local-exit? %make-non-local-exit-function
            get %set
-           %inherit make initialize type instance?
+           %inherit make initialize type instance? superclass
            as-string as-array as-number
            apply reduce reduce1 map do repeatedly
            any? every? member? choose-by find-key
@@ -162,6 +162,9 @@
   (set! (js:get-property class "prototype" "__super__")
         superclass)
   class)
+
+(define-function superclass (class)
+  (js:get-property class "prototype" "__super__"))
 
 
 ;;;; keywords
