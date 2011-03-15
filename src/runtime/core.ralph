@@ -8,7 +8,7 @@
            <symbol> <hash-symbol> <keyword> <non-local-exit> <error>
            not true? signal
            *environment*
-           %make-generic %alias-type
+           %make-generic %alias-type %recompute-slots
            %non-local-exit? %make-non-local-exit-function
            get %set
            %inherit make initialize type instance? superclass
@@ -78,10 +78,6 @@
 (define not
   (js:function js:null (value)
     (js:return (js:not (true? value)))))
-
-(define %actual-type
-  (js:function js:null (type)
-    (js:return (js:or (%get-property type "%js-type") type))))
 
 ;;;; getter
 
@@ -166,6 +162,18 @@
 (define-function superclass (class)
   (js:get-property class "prototype" "__super__"))
 
+(define %actual-type
+  (js:function js:null (type)
+    (js:return (js:or (%get-property type "%js-type") type))))
+
+(define-function %recompute-slots (class)
+  (js:var slots (js:get-property class "%own-slots"))
+  (js:var super class)
+  (js:while (set! super (superclass super))
+      (set! slots
+            (%concat slots (js:or (js:get-property super "%own-slots") []))))
+  (set! (js:get-property class "%slots")
+        slots))
 
 ;;;; keywords
 
@@ -589,6 +597,17 @@
   dispatcher)
 
 (define-generic initialize (object #rest))
+
+(define-function initialize ((object <object>) #rest arguments)
+  (js:var slots (js:get-property (type object) "%slots"))
+  (js:if slots
+         (js:for (((i 0)
+                   (js:< i (js:get-property arguments "length"))
+                   (js:+ i 2)))
+           (js:var key (js:get-property arguments i))
+           (js:if (js:>= ((js:get-property slots "indexOf") key) 0)
+                  (set! (js:get-property object (js:get-property key "name"))
+                        (js:get-property arguments (js:+ i 1)))))))
 
 ;; error
 

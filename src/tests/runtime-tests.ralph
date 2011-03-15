@@ -559,6 +559,20 @@
   (set! (get foo "a") 2)
   (check-true "watch: handler should be called" fired?))
 
+(define-class <x> ()
+  x)
+
+(define-class <y> (<x>))
+
+(define-class <z> (<y>)
+  z)
+
+(bind ((z (make <z> x: 1 z: 2)))
+  (check-equal "slots: keyword initializer (1)"
+               1 (get z "x"))
+  (check-equal "slots: keyword initializer (2)"
+               2 (get z "z")))
+
 ;; macros
 (define-macro with (function #rest body)
   `(,function ,(concatenate `(method ())
