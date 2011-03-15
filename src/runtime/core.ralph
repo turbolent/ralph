@@ -8,7 +8,7 @@
            <symbol> <hash-symbol> <keyword> <non-local-exit> <error>
            not true? signal
            *environment*
-           %make-generic %alias-type %recompute-slots
+           %define-class %make-generic %alias-type %recompute-slots
            %non-local-exit? %make-non-local-exit-function
            get %set
            %inherit make initialize type instance? superclass
@@ -78,6 +78,17 @@
 (define not
   (js:function js:null (value)
     (js:return (js:not (true? value)))))
+
+;; class
+
+(define %define-class
+  (js:function js:null (module exports name superclass slots)
+    (bind ((class (js:function js:null ())))
+      (%define module exports name class)
+      (js:if superclass
+             (%inherit class superclass))
+      (set! (js:get-property class "%own-slots") slots)
+      (%recompute-slots class))))
 
 ;;;; getter
 

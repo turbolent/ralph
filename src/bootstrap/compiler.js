@@ -308,18 +308,13 @@ var macros = {
                  .concat([[S('apply'), S('next-method'), S('object'), rest]])];
         }
         return [S('begin'),
-                [S('define'), _class,
-                 [S('js:function'), S('js:null'), []]],
-                [S('set!'), [S('js:get-property'), _class, '%name'], _class.name]]
-            .concat(superclass.length > 0 ?
-                    [[S('%inherit'), _class, superclass[0]]] : [])
-            .concat(initializer)
-            .concat([[S('set!'), [S('js:get-property'), _class, '%own-slots'],
-                      [S('make-array')].concat(argumentNames(slots)
-                                               .map(function (slot) {
-                                                   return slot.name
-                                               }))],
-                     [S('%recompute-slots'), _class]]);
+                [S('%define-class'), S('*module*'), S('exports'),
+                 [S('js:escape'), _class], superclass[0] || false,
+                 [S('make-array')].concat(argumentNames(slots)
+                                          .map(function (slot) {
+                                              return slot.name
+                                          }))]]
+            .concat(initializer);
     },
     'define-generic': function (name, _arguments) {
         return [S('define'), name,
