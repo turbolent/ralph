@@ -320,13 +320,13 @@
 (define-function keys (object)
   (bind ((keys (js:new (js:identifier "Array"))))
     (if (instance? object (js:identifier "Array"))
-        ;; TODO: replace with range
         (for ((i 0 (inc i)))
              ((>= i (size object)) keys)
           (push-last keys i))
         (begin
          (js:for-in (key object)
-           (push-last keys key))
+           (js:if (has? object key)
+                  (push-last keys key)))
          keys))))
 
 (define-function make-array (#rest elements)
