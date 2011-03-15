@@ -615,9 +615,9 @@
          (js:for (((i 0)
                    (js:< i (js:get-property arguments "length"))
                    (js:+ i 2)))
-           (js:var key (js:get-property arguments i))
+           (js:var key (js:get-property arguments i "name"))
            (js:if (js:>= ((js:get-property slots "indexOf") key) 0)
-                  (set! (js:get-property object (js:get-property key "name"))
+                  (set! (js:get-property object key)
                         (js:get-property arguments (js:+ i 1)))))))
 
 ;; error
