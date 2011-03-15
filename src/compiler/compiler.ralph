@@ -374,23 +374,24 @@
      "define-class"
      (method (class superclass #rest slots)
        (concatenate `(begin
-                      (define ,class
-                        (js:function js:null ()))
-                      (set! (js:get-property ,class "%name")
-                            ,(symbol-name class)))
+                      (%define-class
+                       *module* exports
+                       (js:escape ,class)
+                       ,(first superclass)
+                       ,(concatenate `(make-array)
+                                     (map symbol-name
+                                          (argument-names slots)))))
                     (if (empty? slots)
                         `()
-                        `(,(concatenate `(define-function initialize
-                                           ,(concatenate `((object ,class) #key)
-                                                         slots))
-                                        (map (method (slot)
-                                              `(set! (js:get-property object
-                                                                      ,(symbol-name slot))
-                                                     ,slot))
-                                             (argument-names slots)))))
-                    (if (empty? superclass)
-                        `()
-                        `((%inherit ,class ,(first superclass))))))
+                        `(,(bind ((rest (generate-symbol)))
+                             (concatenate `(define-function initialize
+                                             ,(concatenate `((object ,class) #rest ,rest #key) slots))
+                                          (map (method (slot)
+                                                 `(set! (js:get-property object
+                                                                         ,(symbol-name slot))
+                                                        ,slot))
+                                             (argument-names slots))
+                                          `((apply next-method object ,rest))))))))
      "define-module"
      (method (name #key (import `()) (export `()))
        (bind ((property (generate-symbol)))
