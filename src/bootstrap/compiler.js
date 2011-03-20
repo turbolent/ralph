@@ -312,7 +312,7 @@ var macros = {
                  [S('js:escape'), _class], superclass[0] || false,
                  [S('make-array')].concat(argumentNames(slots)
                                           .map(function (slot) {
-                                              return slot.name
+                                                   return slot.name
                                           }))]]
             .concat(initializer);
     },
@@ -482,10 +482,10 @@ var macros = {
                           tmp]);
         });
         return [[S('js:function'), S('js:null'), [],
-		 [S('begin')]
-		 .concat(vars)
-		 .concat([[S('js:return'),
-			   [S('cond')].concat(clauses)]])]];
+                 [S('begin')]
+                 .concat(vars)
+                 .concat([[S('js:return'),
+                           [S('cond')].concat(clauses)]])]];
     },
     'inc!': function (object, value) {
         return [S('set!'), object,
