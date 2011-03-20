@@ -379,8 +379,14 @@
                        (js:escape ,class)
                        ,(first superclass)
                        ,(concatenate `(make-array)
-                                     (map symbol-name
-                                          (argument-names slots)))))
+                                     (map (method (slot)
+                                            (concatenate
+                                             `(make-array)
+                                             (if (instance? slot <array>)
+                                                 [(symbol-name (first slot))
+                                                  (second slot)]
+                                                 [(symbol-name slot)])))
+                                          slots))))
                     (if (empty? slots)
                         `()
                         `(,(bind ((rest (generate-symbol)))
