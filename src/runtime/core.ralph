@@ -16,7 +16,7 @@
            apply reduce reduce1 map do repeatedly
            any? every? member? choose-by find-key
            complement curry rcurry
-           position join trim replace replace-all
+           position join trim replace
            as-lowercase as-uppercase
            make-array make-object
            element first second third last rest concatenate
@@ -499,13 +499,9 @@
 (define-function trim ((string <string>))
   ((js:get-property string "trim")))
 
-(define-function replace (pattern (string <string>) replacement)
+(define-function replace ((string <string>) pattern replacement)
   ((js:get-property string "replace")
    pattern replacement))
-
-(define-function replace-all (pattern (string <string>) replacement)
-  ((js:get-property string "replace")
-   pattern replacement "g"))
 
 ;;;; functional
 

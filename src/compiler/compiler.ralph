@@ -596,9 +596,9 @@
                  replacement
                  char))
              (as-array
-              (replace-all *hyphen-pattern* name
-                           (method (match)
-                             (as-uppercase (second match)))))) ""))
+              (replace name *hyphen-pattern*
+                       (method (match)
+                         (as-uppercase (second match)))))) ""))
 
 (define-function escape-symbol (symbol)
   (bind ((name (symbol-name symbol)))
