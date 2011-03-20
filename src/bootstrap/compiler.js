@@ -310,9 +310,17 @@ var macros = {
         return [S('begin'),
                 [S('%define-class'), S('*module*'), S('exports'),
                  [S('js:escape'), _class], superclass[0] || false,
-                 [S('make-array')].concat(argumentNames(slots)
+                 [S('make-array')].concat(slots
                                           .map(function (slot) {
-                                                   return slot.name
+                                                   var name, value;
+                                                   if (slot instanceof Array) {
+                                                       name = slot[0].name;
+                                                       value = slot[1];
+                                                   } else {
+                                                       name = slot.name;
+                                                   }
+                                                   return [S('make-array'),
+                                                           name, value];
                                           }))]]
             .concat(initializer);
     },

@@ -87,7 +87,15 @@
       (%define module exports name class)
       (js:if superclass
              (%inherit class superclass))
-      (set! (js:get-property class "%own-slots") slots)
+      (set! (js:get-property class "%own-slots")
+            (map first slots))
+      (js:var defaults (make-object))
+      (set! (js:get-property class "%slot-defaults")
+            defaults)
+      (do (method (slot)
+            (set! (js:get-property defaults (first slot))
+                  (second slot)))
+          slots)
       (%recompute-slots class))))
 
 ;;;; getter
@@ -160,6 +168,11 @@
 (define-function make (type #rest arguments)
   (js:var type (%actual-type type))
   (js:var object (js:new type))
+  (js:var defaults (js:get-property type "%slot-defaults"))
+  (do (method (name)
+        (set! (js:get-property object name)
+              (js:get-property defaults name)))
+      (keys defaults))
   (apply initialize object arguments)
   object)
 
