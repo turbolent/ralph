@@ -560,18 +560,28 @@
   (check-true "watch: handler should be called" fired?))
 
 (define-class <x> ()
-  x)
+  x
+  (a 1))
 
 (define-class <y> (<x>))
 
 (define-class <z> (<y>)
-  z)
+  z
+  (c 3))
 
-(bind ((z (make <z> x: 1 z: 2)))
+(define-function initialize ((object <z>) #rest rest)
+  (apply next-method object rest))
+
+(bind ((z (make <z> x: 1 z: 2))
+       (x (make <x>)))
   (check-equal "slots: keyword initializer (1)"
                1 (get z "x"))
   (check-equal "slots: keyword initializer (2)"
-               2 (get z "z")))
+               2 (get z "z"))
+  (check-equal "slots: default value (1)"
+               1 (get x "a"))
+  (check-equal "slots: default value (2)"
+               3 (get z "c")))
 
 ;; macros
 (define-macro with (function #rest body)
