@@ -159,8 +159,8 @@ var macros = {
     'define': function (name, value) {
         return [S('%define'),
                 S('*module*'), S('exports'),
-                [S('js:escape'), name],
-                value];
+                [S('js:escape'), name]]
+            .concat(value ? [value] : []);
     },
     'define-function': function (name, args) {
         var body = arguments.toArray().slice(2);

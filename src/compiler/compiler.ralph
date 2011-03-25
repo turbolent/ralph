@@ -172,9 +172,9 @@
                           clauses))))
      "define"
      (method (name value)
-       `(%define *module* exports
-                 (js:escape ,name)
-                 ,value))
+       (concatenate `(%define *module* exports
+                              (js:escape ,name))
+                    (if value `(,value) `())))
      "if"
      (method (test then else)
        `(js:if (true? ,test)
