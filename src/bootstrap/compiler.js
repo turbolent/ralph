@@ -312,7 +312,7 @@ var macros = {
                  [S('js:escape'), _class], superclass[0] || false,
                  [S('make-array')].concat(slots
                                           .map(function (slot) {
-                                                   var name, value;
+                                                   var name, value = false;
                                                    if (slot instanceof Array) {
                                                        name = slot[0].name;
                                                        value = slot[1];
