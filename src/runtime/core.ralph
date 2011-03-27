@@ -24,6 +24,7 @@
            replace-subsequence replace-subsequence!
            reverse reverse! sort sort! remove remove!
            push push-last pop pop-last
+           keys values
            = == > < >= <=
            + - * /
            inc dec
@@ -327,16 +328,23 @@
            (%concat [number1 number2] more-numbers)))
 
 (define-function keys (object)
-  (bind ((keys (js:new (js:identifier "Array"))))
-    (if (instance? object (js:identifier "Array"))
-        (for ((i 0 (inc i)))
-             ((>= i (size object)) keys)
-          (push-last keys i))
-        (begin
-         (js:for-in (key object)
-           (js:if (has? object key)
-                  (push-last keys key)))
-         keys))))
+  (js:var keys [])
+  (if (instance? object (js:identifier "Array"))
+      (for ((i 0 (inc i)))
+           ((>= i (size object)) keys)
+        (push-last keys i))
+      (begin
+       (js:for-in (key object)
+         (js:if (has? object key)
+           (push-last keys key)))
+       keys)))
+
+(define-function values (object)
+  (js:var values [])
+  (js:for-in (key object)
+    (js:if (has? object key)
+      (push-last values (js:get-property object key))))
+  values)
 
 (define-function make-array (#rest elements)
   elements)
