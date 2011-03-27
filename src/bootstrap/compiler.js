@@ -576,7 +576,8 @@ var infix = {
     'js:>': '>', 'js:<': '<',
     'js:>=': '>=', 'js:<=': '<=',
     'js:==': '==', 'js:===': '===',
-    'js:instanceof': 'instanceof'
+    'js:instanceof': 'instanceof',
+    'js:&': '&', 'js:|': '|'
 };
 
 var symbolValues = {

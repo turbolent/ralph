@@ -540,7 +540,9 @@
      "js:<=" "<="
      "js:==" "=="
      "js:===" "==="
-     "js:instanceof" "instanceof"))
+     "js:instanceof" "instanceof"
+     "js:&" "&"
+     "js:|" "|"))
 
 (define *symbols*
     (make-object
