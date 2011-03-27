@@ -112,10 +112,11 @@
                        (begin
                         (%define module exports name function)
                         (%get-property getter "%setter")))))
-          (set! (js:get-property function "%name") name)
-          ;; re-define setter if it was existing
-          (when setter
-            (set! (js:get-property function "%setter") setter)))))
+      (set! (js:get-property function "%name") name)
+      (set! (js:get-property function "displayName") name)
+      ;; re-define setter if it was existing
+      (when setter
+        (set! (js:get-property function "%setter") setter)))))
 
 ;;;; setter
 
@@ -124,6 +125,9 @@
     (bind ((getter (%get-definition module name))
            (generic? (when getter
                        (%get-property getter "%generic"))))
+      (set! (js:get-property function "%name") name)
+      (set! (js:get-property function "displayName")
+            (js:+ "(setter " name ")"))
       (if generic?
           (bind ((type (%actual-type (%get-definition module type-name)))
                  (prototype (js:get-property type "prototype"))
