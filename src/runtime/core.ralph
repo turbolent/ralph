@@ -832,3 +832,9 @@
 
 (define-function remove ((array <array>) value)
   (remove! (slice array) value))
+
+(define-function extend ((object1 <object>) (object2 <object>))
+  (do (method (key)
+        (set! (get object1 key)
+              (get object2 key)))
+      (keys object2)))
