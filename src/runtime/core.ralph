@@ -82,6 +82,8 @@
   (js:function js:null (module exports name superclass slots)
     (bind ((class (js:function js:null ())))
       (%define module exports name class)
+      (set! (js:get-property class "%name")
+            name)
       (js:if superclass
              (%inherit class superclass))
       (set! (js:get-property class "%own-slots")
