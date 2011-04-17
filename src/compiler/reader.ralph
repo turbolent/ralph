@@ -3,11 +3,11 @@
     export: (read))
 
 (define *whitespace-pattern*
-    (make <regexp> pattern: "[\t\n ]*"))
+    (make <regexp> pattern: "[\t\n\r ]*"))
 (define *non-whitespace-pattern*
-    (make <regexp> pattern: "[^\\[\\]()\n\t ]+"))
+    (make <regexp> pattern: "[^\\[\\]()\n\r\t ]+"))
 (define *line-pattern*
-    (make <regexp> pattern: "(.*)[\n]"))
+    (make <regexp> pattern: "(.*)[\n\r]"))
 (define *number-patterns*
     (map (curry make <regexp> ignore-case?: #t pattern:)
          ["^[+-]?0x[0-9a-f]+"

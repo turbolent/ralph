@@ -14,12 +14,12 @@ Stream.prototype.rest = function () {
 }
 
 Stream.prototype.skipLine = function () {
-    var result = /(.*)[\n]/.exec(this.rest());
+    var result = /(.*)[\n\r]/.exec(this.rest());
     this.index += result[1].length;
 }
 
 Stream.prototype.skipWhitespace = function () {
-    var result = /[ \t\n]*/.exec(this.rest());
+    var result = /[ \t\n\r]*/.exec(this.rest());
     this.index += result[0].length;
 }
 

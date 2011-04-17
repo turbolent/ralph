@@ -79,7 +79,7 @@ Reader.prototype.readList = function (end) {
 };
 
 Reader.prototype.readSymbol = function () {
-    var match = /[^()\[\]\n\t ]+/.exec(this.stream.rest());
+    var match = /[^()\[\]\n\r\t ]+/.exec(this.stream.rest());
     var name = match[0];
     this.stream.index += name.length;
     if (name == "#t") {
@@ -112,7 +112,7 @@ Reader.prototype.readString = function () {
 };
 
 Reader.prototype.readNumber = function () {
-    var match = /[^\[\]()\n\t ]+/.exec(this.stream.rest());
+    var match = /[^\[\]()\n\r\t ]+/.exec(this.stream.rest());
     this.stream.index += match[0].length;
     return new Number(match[0]);
 };
