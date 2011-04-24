@@ -489,7 +489,7 @@
                                           (js:get-property ,object*
                                                            ,(symbol-name property))))
                                properties)
-                          body))
+                          (prepend-return body)))
           ,object)))))
 
 (define *symbol-macros*

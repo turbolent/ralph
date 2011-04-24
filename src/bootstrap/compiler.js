@@ -535,7 +535,7 @@ var macros = {
         }
         var objectSymbol = Symbol.generate();
         return [[S('js:function'), S('js:null'), [objectSymbol],
-                 [S('begin')].concat(properties.map(bind)).concat(body)],
+                 [S('begin')].concat(properties.map(bind)).concat(addReturn(body))],
                 object];
     }
 };
