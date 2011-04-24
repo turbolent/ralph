@@ -478,7 +478,19 @@
                             wrapper)))
          (bind ((wrapping (destructure pattern value)))
            (replace-subsequence! target body start: (size target))
-           wrapping))))))
+           wrapping))))
+     "bind-properties"
+     (method (properties object #rest body)
+       (bind ((object* (generate-symbol)))
+         `((js:function js:null (,object*)
+            ,(concatenate `(begin)
+                          (map (method (property)
+                                 `(js:var ,property
+                                          (js:get-property ,object*
+                                                           ,(symbol-name property))))
+                               properties)
+                          body))
+          ,object)))))
 
 (define *symbol-macros*
   (make-object

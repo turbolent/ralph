@@ -583,6 +583,13 @@
   (check-equal "slots: default value (2)"
                3 (get z "c")))
 
+(bind ((object (make-object
+                "a" 4 "b" 3
+                "c" 2 "d" 1)))
+  (bind-properties (a d) object
+    (check-equal "bind-properties: a = 4" a 4)
+    (check-equal "bind-properties: d = 4" d 1)))
+
 ;; macros
 (define-macro with (function #rest body)
   `(,function ,(concatenate `(method ())

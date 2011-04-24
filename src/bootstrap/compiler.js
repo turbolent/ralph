@@ -526,6 +526,17 @@ var macros = {
         var wrapping = destructure(pattern, value);
         Array.prototype.splice.apply(target, [target.length, 0].concat(body));
         return wrapping;
+    },
+    'bind-properties': function (properties, object) {
+        var body = arguments.toArray().slice(2);
+        function bind (property) {
+            return [S('js:var'), property,
+                    [S('js:get-property'), objectSymbol, property.name]];
+        }
+        var objectSymbol = Symbol.generate();
+        return [[S('js:function'), S('js:null'), [objectSymbol],
+                 [S('begin')].concat(properties.map(bind)).concat(body)],
+                object];
     }
 };
 
