@@ -30,7 +30,8 @@
            inc dec
            description
            identity
-           min max abs round))
+           min max abs round
+           extend! as-property-list))
 
 ;;;; define
 
@@ -835,8 +836,19 @@
 (define-function remove ((array <array>) value)
   (remove! (slice array) value))
 
-(define-function extend ((object1 <object>) (object2 <object>))
+(define-function extend! ((object1 <object>) (object2 <object>))
   (do (method (key)
         (set! (get object1 key)
               (get object2 key)))
       (keys object2)))
+
+(define-function as-property-list (object #key keywords?)
+  (js:var result [])
+  (do (method (key)
+        (push-last result
+                   (if keywords?
+                       (keyword (as-string key))
+                       key))
+        (push-last result (get object key)))
+      (keys object))
+  result)

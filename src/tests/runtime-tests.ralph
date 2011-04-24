@@ -586,9 +586,26 @@
 (bind ((object (make-object
                 "a" 4 "b" 3
                 "c" 2 "d" 1)))
+  ;; bind-properties
   (bind-properties (a d) object
     (check-equal "bind-properties: a = 4" a 4)
-    (check-equal "bind-properties: d = 4" d 1)))
+    (check-equal "bind-properties: d = 4" d 1))
+  ;; as-property-list
+  (check-equal "as-property-list: strings"
+               (as-property-list object)
+               ["a" 4 "b" 3 "c" 2 "d" 1])
+  (check-equal "as-property-list: strings"
+               (as-property-list object
+                                 keywords?: #t)
+               [a: 4 b: 3 c: 2 d: 1])
+  ;; extend!
+  (extend! object
+           (make-object "b" 8
+                        "d" 0))
+  (check-equal "extend: a = 4" (get object "a") 4)
+  (check-equal "extend: b = 8" (get object "b") 8)
+  (check-equal "extend: c = 2" (get object "c") 2)
+  (check-equal "extend: d = 0" (get object "d") 0))
 
 ;; macros
 (define-macro with (function #rest body)
