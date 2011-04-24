@@ -2,6 +2,8 @@
 var system = require('system');
 try {
     // flusspferd
+    var byteString = false;
+
     var fs = require('fs-base');
 
     function extension (path) {
@@ -33,6 +35,8 @@ try {
 
 } catch (x) {
     // ringojs
+    var byteString = true;
+
     var fs = require('fs');
     var extension = fs.extension;
     var basename = fs.base;
@@ -91,7 +95,8 @@ function compileFile (path, bootstrap) {
             form = compiler.transformAsynchronous(compiler.macroexpand(form));
         compiled = compiler.compile(form, core._k('statements?'), true);
     }
-    target.write("(function () {\n" + compiled + '\n})();\n');
+    var result = "(function () {\n" + compiled + "\n})();\n";
+    target.write(byteString ? result.toByteString() : result);
     source.close();
     target.close();
 }
