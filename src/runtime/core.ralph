@@ -840,7 +840,8 @@
   (do (method (key)
         (set! (get object1 key)
               (get object2 key)))
-      (keys object2)))
+      (keys object2))
+  object1)
 
 (define-function as-property-list (object #key keywords?)
   (js:var result [])
