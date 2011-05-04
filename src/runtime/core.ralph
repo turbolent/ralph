@@ -1,6 +1,6 @@
 
 (define-module core
-  export: (%define %export %define-getter %define-setter
+  export: (%define %export %get-definition %define-getter %define-setter
            (js:identifier "_s") (js:identifier "_k")
            (js:identifier "_key") (js:identifier "_rest")
            keyword keyword? symbol symbol-name
