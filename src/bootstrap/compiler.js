@@ -547,8 +547,9 @@ var macros = {
 
 var symbolMacros = {
     'next-method': [S('js:get-property'),
-                    [S('js:identifier'), '__method__'],
-                    '%next-method']
+		    [S('js:identifier'), '__method__'],
+		    '%next-method'],
+    'this-method': [S('js:identifier'), '__method__']
 };
 
 function macroexpand (form) {

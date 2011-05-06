@@ -498,9 +498,8 @@
 
 (define *symbol-macros*
   (make-object
-   "next-method"
-   `(js:get-property (js:identifier "__method__")
-                     "%next-method")))
+   "this-method" (js:identifier "__method__")
+   "next-method" `(js:get-property  (js:identifier "__method__") "%next-method")))
 
 (define *special-forms*
     (make-object
