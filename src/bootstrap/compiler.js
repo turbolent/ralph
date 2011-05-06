@@ -416,6 +416,11 @@ var macros = {
                   [S('js:return'), false]]]];
 
     },
+    'until': function (test) {
+	var body = arguments.toArray().slice(1);
+	return [S('js:while'), [S('not'), test]]
+	    .concat(body);
+    },
     '%parallel-set': function () {
         var clauses = arguments.toArray();
         if (clauses.length > 2) {

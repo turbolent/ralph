@@ -229,6 +229,10 @@
              `(,(concatenate `(js:while ,test)
                              body)
                 (js:return #f))))))
+     "until"
+     (method (test #rest body)
+       (concatenate `(while (not ,test))
+                    body))
      "define-generic"
      (method (name arguments)
        `(define ,name
