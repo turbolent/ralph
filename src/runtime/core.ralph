@@ -31,7 +31,7 @@
            description
            identity
            min max abs round
-           extend! as-property-list))
+           extend! as-property-list as-object))
 
 ;;;; define
 
@@ -361,12 +361,10 @@
   array)
 
 (define-function pop ((array <array>))
-  ((js:get-property array "shift"))
-  array)
+  ((js:get-property array "shift")))
 
 (define-function pop-last ((array <array>))
-  ((js:get-property array "pop"))
-  array)
+  ((js:get-property array "pop")))
 
 (define-function add! ((array <array>) new-value)
   (push array new-value))
@@ -853,3 +851,16 @@
         (push-last result (get object key)))
       (keys object))
   result)
+
+(define-function as-object (property-list)
+  (bind ((list (copy-sequence property-list))
+         (result (make-object)))
+    (until (empty? list)
+      (bind ((key (pop list))
+             (value (pop list)))
+        (set! (get result
+                   (if (instance? key <keyword>)
+                       (symbol-name key)
+                       (as-string key)))
+              value)))
+    result))
