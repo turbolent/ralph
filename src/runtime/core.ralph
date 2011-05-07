@@ -30,7 +30,7 @@
            inc dec
            description
            identity
-           min max abs round
+           min max abs round floor expt sqrt cos sin atan2 as-radiant mod
            extend! as-property-list as-object))
 
 ;;;; define
@@ -824,6 +824,30 @@
 
 (define-function round (number)
   ((js:get-property "Math" "round") number))
+
+(define-function floor (number)
+  ((js:get-property "Math" "floor") number))
+
+(define-function sin (number)
+  ((js:get-property "Math" "sin") number))
+
+(define-function cos (number)
+  ((js:get-property "Math" "cos") number))
+
+(define-function atan2 (x y)
+  ((js:get-property "Math" "atan2") x y))
+
+(define-function expt (base power)
+  ((js:get-property "Math" "pow") base power))
+
+(define-function sqrt (number)
+  ((js:get-property "Math" "sqrt") number))
+
+(define-function mod (number1 number2)
+  (js:% number1 number2))
+
+(define-function as-radiant (number)
+  (js:* number (js:/ (js:get-property "Math" "PI") 180)))
 
 (define-function remove! ((array <array>) value)
   (js:var key (find-key array (curry = value)))
