@@ -118,7 +118,7 @@
        `((js:get-property ,array "slice") 1))
      "as-array"
      (method (arguments skip)
-       `((js:get-property "Array" "prototype" "slice" "call")
+       `((js:get-property [] "slice" "call")
          ,arguments ,(or skip 0)))
      "size"
      (method (object)

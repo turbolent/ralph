@@ -12,7 +12,7 @@ var Stream = require('./stream').Stream;
 //// utils
 
 Object.prototype.toArray = function () {
-    return Array.prototype.slice.call(this);
+    return [].slice.call(this);
 };
 
 //// expansion
@@ -109,7 +109,7 @@ var macros = {
             .concat(end ? [end] : []);
     },
     'as-array': function (_arguments, skip) {
-        return [[S('js:get-property'), "Array", "prototype",
+        return [[S('js:get-property'), [S('js:array')],
                  "slice", "call"], _arguments, skip || 0];
     },
     'size': function (object) {
@@ -529,7 +529,7 @@ var macros = {
             return wrapper;
         }
         var wrapping = destructure(pattern, value);
-        Array.prototype.splice.apply(target, [target.length, 0].concat(body));
+        [].splice.apply(target, [target.length, 0].concat(body));
         return wrapping;
     },
     'bind-properties': function (properties, object) {

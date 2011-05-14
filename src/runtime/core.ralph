@@ -255,8 +255,7 @@
   ((js:identifier "Number") object))
 
 (define-function as-array (arguments skip)
-  ((js:get-property "Array" "prototype"
-                    "slice" "call")
+  ((js:get-property [] "slice" "call")
    arguments (js:or skip 0)))
 
 (define-function has? (object property)
@@ -498,7 +497,7 @@
 
 (define-function replace-subsequence! ((target-array <array>) (insert-array <array>)
                                        #key (start 0) end)
-  ((js:get-property "Array" "prototype" "splice" "apply")
+  ((js:get-property [] "splice" "apply")
    target-array (%concat [start (js:- (or end start) start)]
                          insert-array))
   target-array)
