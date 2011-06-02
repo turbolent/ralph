@@ -85,10 +85,11 @@
   ((js:get-property "document" "write")
    object))
 
-(define *standard-out* (select *environment* ==
-                         (("commonjs")
-                          (make <file-stream>
-                                file: (js:get-property (require "system")
-                                                       "stdout")))
-                         (("browser")
-                          (make <document-stream>))))
+(define *standard-out*
+  (if (== *environment* "browser")
+      (make <document-stream>)
+      (bind ((object (if (== *environment* "commonjs")
+                         (require "system")
+                         process)))
+        (make <file-stream>
+              file: (js:get-property object "stdout")))))

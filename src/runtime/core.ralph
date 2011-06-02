@@ -160,13 +160,6 @@
          (setter (%get-property getter "%setter")))
     (apply setter arguments)))
 
-;;;;
-
-(define *environment*
-    (if (js:defined window)
-        "browser"
-        "commonjs"))
-
 ;;;; objects
 
 (define-function make (type #rest arguments)
@@ -285,6 +278,16 @@
                             new))))
         (apply %set get object2
                (rest properties/value)))))
+
+;;;;
+
+(define *environment*
+  (cond
+   ((js:defined window) "browser")
+   ((js:defined process) "nodejs")
+   (otherwise: "commonjs")))
+
+;;;;
 
 (define-function size ((array <array>))
   (js:get-property array "length"))
