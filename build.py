@@ -2,25 +2,40 @@ import fnmatch
 import os
 import shutil
 import subprocess
+import optparse
 
-src = 'src'
-build = 'build'
-prefix = len(src)
+parser = optparse.OptionParser()
+parser.add_option("-s", "--source", dest="src", default="src",
+                  help="directory containing source files", metavar="PATH")
+parser.add_option("-d", "--destination", dest="dest", default="build",
+                  help="directory containing source files", metavar="PATH")
+parser.add_option("-b", "--bootstrap",
+                  action="store_true", dest="bootstrap", default=False,
+                  help="use bootstraping compiler")
+parser.add_option("-a", "--async",
+                  action="store_true", dest="async", default=False,
+                  help="asynchronous module loading")
 
-for srcroot, dirnames, filenames in os.walk(src):
-    buildroot = build + srcroot[prefix:]
-    if not os.path.exists(buildroot):
-        os.mkdir(buildroot)
+(options, args) = parser.parse_args()
+prefix = len(options.src)
+arguments = ['--async'] if options.async else []
+if options.bootstrap:
+    arguments.append('--bootstrap')
+
+for srcroot, dirnames, filenames in os.walk(options.src):
+    destroot = options.dest + srcroot[prefix:]
+    if not os.path.exists(destroot):
+        os.mkdir(destroot)
     for filename in filenames:
         srcpath = os.path.join(srcroot, filename)
         print '*', srcpath
         if fnmatch.fnmatch(filename, '*.ralph'):
-            buildfilename = os.path.splitext(filename)[0] + '.js'
-            buildpath = os.path.join(buildroot, buildfilename)
+            destfilename = os.path.splitext(filename)[0] + '.js'
+            destpath = os.path.join(destroot, destfilename)
             input = open(srcpath, 'r')
-            output = open(buildpath, 'w')
-            process = subprocess.Popen(['node', 'compile.js', '--bootstrap'],
+            output = open(destpath, 'w')
+            process = subprocess.Popen(['node', 'compile.js'] + arguments,
                                        stdin=input, stdout=output)
         else:
-            buildpath = os.path.join(buildroot, filename)
-            shutil.copy(srcpath, buildpath)
+            destpath = os.path.join(destroot, filename)
+            shutil.copy(srcpath, destpath)
