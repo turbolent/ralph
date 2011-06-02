@@ -24,7 +24,9 @@ function _e (exports, _code) {
                  {
                      var currentRequests = requests;
                      var exports = {};
-                     _e(exports, req.responseText);
+                    var location = "//@ sourceURL="
+                         + path.replace(/\//g, "_").replace(/\.js$/, "") + "\n";
+                     _e(exports, location + req.responseText);
                      modules[name] = exports;
                      deferredCallbacks
                          .unshift(function() {
