@@ -103,7 +103,7 @@
                          (concatenate `(method ,arguments)
                                       body))))
          (set! (get *macros* (symbol-name name))
-               (eval compiled)))
+               (eval (concatenate "(" compiled ")"))))
        #f)
      "make-array"
      (method (#rest elements)
