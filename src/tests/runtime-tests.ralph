@@ -613,11 +613,3 @@
                (get object "a") 1)
   (check-equal "as-object: b = 2"
                (get object "b") 2))
-
-;; macros
-(define-macro with (function #rest body)
-  `(,function ,(concatenate `(method ())
-                            body)))
-
-(with test
-  (+ 1 2))
