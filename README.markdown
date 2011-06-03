@@ -1,7 +1,7 @@
 # Ralph
 
 Ralph is a Lisp-1 dialect that compiles to JavaScript. It is inspired by
-[Dylan - An object-oriented dynamic language](http://lispm.dyndns.org/documentation/prefix-dylan/book.annotated/annotated-manual.html), but doesn't feature multiple-inheritance and multi-methods. Instead it borrows the concept of protocols from Clojure.
+[Dylan - An object-oriented dynamic language](http://lispm.dyndns.org/documentation/prefix-dylan/book.annotated/annotated-manual.html), but doesn't feature multiple-inheritance and multi-methods.
 
 ## Status
 
