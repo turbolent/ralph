@@ -35,6 +35,9 @@
 
 ;;;; define
 
+(js:function %export (exports name value)
+  (set! (js:get-property exports name) value))
+
 (js:function %define (module exports name value)
   (begin
     (set! (js:get-property module name) value)
@@ -42,12 +45,10 @@
            (%export exports name value)
            #f)))
 
-(define %export
-  (js:function js:null (exports name value)
-     (set! (js:get-property exports name) value)))
 
 ;; manual export necessary
 (%export exports (js:escape %define) %define)
+(%export exports (js:escape %export) %export)
 
 (define %get-property
   (js:function js:null (object name)
