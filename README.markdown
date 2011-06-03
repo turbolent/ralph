@@ -12,15 +12,16 @@ The test suite is passing all tests.
 ## Getting started
 
 The compiler and runtime run with any CommonJS-compatible JavaScript engine and in modern browsers.
-Currently Flusspferd and RingoJS are tested and supported environments.
+Install node and python, then:
 
-- Bootstrap the runtime and compiler:
-  `$ ringo -l -b paths.js build.js --bootstrapDirectories runtime compiler tests`
+- Bootstrap the compiler:
+  `$ python build.py --bootstrap --dest stage1`
 
-- Run the runtime tests:
-  either: `$ flusspferd -Iruntime build/tests/runtime-tests.js`
-  or: `$ ringo -l -b paths.js build/tests/runtime-tests.js`
+- Run the bootstrapped runtime tests:
+  `$ NODE_PATH=stage1 node stage1/tests/runtime-tests.js`
 
-- Compile the runtime and compiler:
-  `$ ringo -l -b paths.js build.js --compileDirectories runtime compiler tests`
+- Compile using the bootstrapped compiler:
+  `$ NODE_PATH=stage1 python build.py`
 
+- Run the compiled runtime tests:
+  `$ NODE_PATH=build node build/tests/runtime-tests.js`
