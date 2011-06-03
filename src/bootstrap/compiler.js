@@ -362,12 +362,13 @@ var macros = {
             }
         }
         return [S('begin'),
-                [S('js:var'), S('*module*'), S('js:this')],
-                [S('js:set'),
-                 [S('js:get-property'), S('*module*'), '%exports'],
-                 [S('js:array')].concat(exports)]]
-            .concat(imports);
-    },
+                [S('js:var'), S('*module*'),
+                 [S('js:if'), [S('js:defined'), S('GLOBAL')], S('GLOBAL'), S('js:this')]]]
+            .concat(imports)
+			.concat([[S('js:set'),
+					  [S('js:get-property'), S('*module*'), '%exports'],
+					  [S('js:array')].concat(exports)]]);
+	},
     'if': function (test, then, _else) {
         return [S('js:if'), [S('true?'), test], then, _else];
     },
@@ -589,7 +590,7 @@ function macroexpand (form) {
 var infix = {
     'js:and': '&&', 'js:or': '||',
     'js:+': '+', 'js:-': '-',
-    'js:*': '*', 'js:/': '/', 
+    'js:*': '*', 'js:/': '/',
     'js:%': '%',
     'js:>': '>', 'js:<': '<',
     'js:>=': '>=', 'js:<=': '<=',

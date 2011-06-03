@@ -406,14 +406,10 @@
      (method (name #key (import `()) (export `()))
        (bind ((property (generate-symbol)))
          (concatenate `(begin
-                        (js:var *module* js:this)
-                        (js:set (js:get-property *module* "%exports")
-                                ,(concatenate `(js:array)
-                                              (map (method (name)
-                                                     (if (instance? name <symbol>)
-                                                         (escape-symbol name)
-                                                         (write name)))
-                                                   export))))
+                        (js:var *module*
+                                (js:if (js:defined (js:identifier "GLOBAL"))
+                                       (js:identifier "GLOBAL")
+                                       js:this)))
                       (map (method (name)
                              (bind ((module (generate-symbol)))
                                `(begin
@@ -423,7 +419,14 @@
                                            ,property)
                                           (js:set (js:get-property *module* ,property)
                                                   (js:get-property ,module ,property)))))))
-                           import))))
+                           import)
+                      `((js:set (js:get-property *module* "%exports")
+                                ,(concatenate `(js:array)
+                                              (map (method (name)
+                                                     (if (instance? name <symbol>)
+                                                         (escape-symbol name)
+                                                         (write name)))
+                                                   export)))))))
      "block"
      (method (argument #rest body)
         (destructuring-bind ((name)) argument
