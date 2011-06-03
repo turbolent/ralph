@@ -36,6 +36,8 @@ for srcroot, dirnames, filenames in os.walk(options.src):
             output = open(destpath, 'w')
             process = subprocess.Popen(['node', 'compile.js'] + arguments,
                                        stdin=input, stdout=output)
+            if process.wait() != 0:
+                exit(1)
         else:
             destpath = os.path.join(destroot, filename)
             shutil.copy(srcpath, destpath)
