@@ -1,7 +1,17 @@
+(defvar ralph-mode-font-lock-keywords
+  '(("<\\(\\sw\\|\\s_\\)+>" . font-lock-type-face)
+	("\\*\\(\\sw\\|\\s_\\)+\\*" . font-lock-constant-face)
+	"#rest\\|#key"
+	"define-\\(function\\|class\\|module\\)"
+	"bind" "define" "set!" "get" "when"))
+
 (define-derived-mode
   ralph-mode lisp-mode "Ralph"
   "Major mode"
-  (set (make-local-variable 'lisp-indent-function) 'ralph-indent-function))
+  (set (make-local-variable 'lisp-indent-function)
+	   'ralph-indent-function)
+  (set (make-local-variable 'font-lock-defaults)
+	   '(ralph-mode-font-lock-keywords nil t)))
 
 ;; ralph specific offsets here
 (put 'when 'ralph-indent-function 1)
