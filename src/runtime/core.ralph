@@ -31,7 +31,8 @@
            description
            identity
            min max abs round floor expt sqrt cos sin atan2 as-radiant mod
-           extend! as-property-list as-object))
+           extend! as-property-list as-object
+           starts-with?))
 
 ;;;; define
 
@@ -891,3 +892,14 @@
                        (as-string key)))
               value)))
     result))
+
+(define-function starts-with? ((string <string>) (prefix <string>))
+  (js:var equal #t)
+  (js:var prefix-length (size prefix))
+  (for ((i 0 (+ i 1)))
+       ((or (not equal)
+            (= i prefix-length))
+        equal)
+    (set! equal (= (get string i)
+                   (get prefix i)))))
+

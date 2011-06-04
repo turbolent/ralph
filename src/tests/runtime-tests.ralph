@@ -613,3 +613,14 @@
                (get object "a") 1)
   (check-equal "as-object: b = 2"
                (get object "b") 2))
+
+(bind ((string "this is a test")
+       (prefix1 "this")
+       (prefix2 "thus")
+       (prefix3 "foo"))
+  (check-true "starts-with?: 1"
+              (starts-with? string prefix1))
+  (check-false "starts-with?: 2"
+               (starts-with? string prefix2))
+  (check-false "starts-with?: 3"
+               (starts-with? string prefix3)))
