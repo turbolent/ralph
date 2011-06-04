@@ -1,9 +1,14 @@
 (defvar ralph-mode-font-lock-keywords
   '(("<\\(\\sw\\|\\s_\\)+>" . font-lock-type-face)
 	("\\*\\(\\sw\\|\\s_\\)+\\*" . font-lock-constant-face)
+	("define-function\\s-\\(\\(\\sw\\|\\s_\\)+\\)"
+	 1 font-lock-function-name-face)
 	"#rest\\|#key"
 	"define-\\(function\\|class\\|module\\)"
-	"bind" "define" "set!" "get" "when"))
+	"method" "block"
+	"bind" "define"
+	"set!" "get"
+	"when" "if" "unless" "and" "or" "not"))
 
 (define-derived-mode
   ralph-mode lisp-mode "Ralph"
