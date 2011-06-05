@@ -25,7 +25,7 @@ function handler (req, res) {
                    res.end(result);                                    
                } catch (e) {
                    res.writeHead(500);
-                   res.end();
+                   res.end(e.stack.toString());
                }
            });
 }
