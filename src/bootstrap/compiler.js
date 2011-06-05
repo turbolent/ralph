@@ -244,8 +244,11 @@ var macros = {
         }
     },
     'select': function (value, test) {
+		var valueSymbol = Symbol.generate();
+		var isInfix = test instanceof Symbol && infix.hasOwnProperty(test.name);
+		var testSymbol = isInfix ? test : Symbol.generate();
         function testExpression (testValue) {
-            return [test, value, testValue];
+            return [testSymbol, valueSymbol, testValue];
         }
         var cases = arguments.toArray().slice(2).map(function (_case) {
             if (_case[0] instanceof Keyword && _case[0].name == 'else')
@@ -254,7 +257,11 @@ var macros = {
                 return ([[S('or')].concat(_case[0].map(testExpression))]
                         .concat(_case.slice(1)));
         });
-        return [S('cond')].concat(cases);
+        return [[S('js:function'), S('js:null'), [],
+				 [S('begin'),
+				  [S('js:var'), valueSymbol, value]]
+				 .concat(isInfix ? [] : [[S('js:var'), testSymbol, test]])
+				 .concat([[S('js:return'), [S('cond')].concat(cases)]])]];
     },
     'bind-methods': function (bindings) {
         var body = arguments.toArray().slice(1);

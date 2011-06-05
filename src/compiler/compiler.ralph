@@ -342,18 +342,31 @@
                                       (rest cases))))))))
      "select"
      (method (value test #rest cases)
-        (bind-methods ((test-expression (test-value)
-                         `(,test ,value ,test-value)))
-          (concatenate `(cond)
-                       (map (method (case)
-                              (destructuring-bind (tests #rest then) case
-                                (if (= tests else:)
-                                    case
-                                    (concatenate
-                                     `(,(concatenate `(or)
-                                                     (map test-expression tests)))
-                                     then))))
-                            cases))))
+       (bind ((value-var (generate-symbol))
+              (infix? (and (instance? test <symbol>)
+                           (has? *infix* (symbol-name test))))
+              (test-var (if infix?
+                            test
+                            (generate-symbol))))
+         (bind-methods ((test-expression (test-value)
+                          `(,test-var ,value-var ,test-value)))
+           `((js:function js:null ()
+               ,(concatenate `(begin
+                               (js:var ,value-var ,value))
+                             (if infix? `() `((js:var ,test-var ,test)))
+                             `((js:return
+                                ,(concatenate
+                                  `(cond)
+                                  (map (method (case)
+                                         (destructuring-bind (tests #rest then) case
+                                           (if (= tests else:)
+                                               case
+                                               (concatenate
+                                                `(,(concatenate
+                                                    `(or)
+                                                    (map test-expression tests)))
+                                                then))))
+                                       cases))))))))))
      "handler-case"
      (method (body #rest conditions)
        (bind ((condition-var (generate-symbol)))
