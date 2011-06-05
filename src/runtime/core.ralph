@@ -394,8 +394,11 @@
 (define-function (setter element) ((array <array>) key new-value)
   (set! (js:get-property array key) new-value))
 
-(define-function empty? ((array <array>))
-  (js:== (size array) 0))
+(define-function empty? (sequence)
+  (if (or (instance? sequence <array>)
+          (instance? sequence <string>))
+      (js:=== (size sequence) 0)
+      #t))
 
 ;; the functions passed to map and reduce are
 ;; wraped in additional method, as the JS version
