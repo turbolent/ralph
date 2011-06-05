@@ -624,3 +624,10 @@
                (starts-with? string prefix2))
   (check-false "starts-with?: 3"
                (starts-with? string prefix3)))
+
+;; select
+(check-true "select: test expression"
+ (select 1 (method (a b)
+             (== "a" b))
+   ((1) #f)
+   (("a") #t)))
