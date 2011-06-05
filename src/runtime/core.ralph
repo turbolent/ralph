@@ -287,7 +287,7 @@
   (cond
    ((js:defined window) "browser")
    ((js:defined process) "nodejs")
-   (otherwise: "commonjs")))
+   (else: "commonjs")))
 
 ;;;;
 
