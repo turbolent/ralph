@@ -23,7 +23,7 @@ This function effectively calls format and returns the result as a string."
 (define-function format ((stream <stream>) (control-string <string>) #rest args)
   "Format a string and write it to a stream."
   (bind-methods ((dispatch (char arg)
-                   (select (as-lowercase char) ==
+                   (select (as-lowercase char) js:===
                      (("s" "c")
                       arg)
                      (("=")
