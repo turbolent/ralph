@@ -631,3 +631,9 @@
              (== "a" b))
    ((1) #f)
    (("a") #t)))
+
+(bind ((object (make-object)))
+  (check-true "select: primitive test"
+              (select object js:===
+                      (((make-object)) #f)
+                      ((object) #t))))
