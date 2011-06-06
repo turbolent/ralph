@@ -8,7 +8,7 @@
            <symbol> <hash-symbol> <keyword> <non-local-exit> <error>
            not true? signal
            *environment*
-           %define-class %make-generic %alias-type %recompute-slots
+           %define-class %make-generic %alias-type
            %non-local-exit? %make-non-local-exit-function
            get %set
            %inherit make initialize type instance? superclass
@@ -87,18 +87,13 @@
       (%define module exports name class)
       (set! (js:get-property class "%name")
             name)
+      (set! (js:get-property class "%slots")
+            slots)
       (js:if superclass
-             (%inherit class superclass))
-      (set! (js:get-property class "%own-slots")
-            (map first slots))
-      (js:var defaults (make-object))
-      (set! (js:get-property class "%slot-defaults")
-            defaults)
-      (do (method (slot)
-            (set! (js:get-property defaults (first slot))
-                  (second slot)))
-          slots)
-      (%recompute-slots class))))
+             (begin
+              (%inherit class superclass)
+              (set! (js:get-property slots "__proto__")
+                    (js:get-property superclass "%slots")))))))
 
 ;;;; getter
 
@@ -188,15 +183,6 @@
 (define %actual-type
   (js:function js:null (type)
     (js:return (js:or (%get-property type "%js-type") type))))
-
-(define-function %recompute-slots (class)
-  (js:var slots (js:get-property class "%own-slots"))
-  (js:var super class)
-  (js:while (set! super (superclass super))
-      (set! slots
-            (%concat slots (js:or (js:get-property super "%own-slots") []))))
-  (set! (js:get-property class "%slots")
-        slots))
 
 ;;;; keywords
 
@@ -290,6 +276,22 @@
    (else: "commonjs")))
 
 ;;;;
+
+(define-function symbol-name (symbol)
+  (get symbol "name"))
+
+(define-function as-object (property-list)
+  (bind ((list (copy-sequence property-list))
+         (result (make-object)))
+    (until (empty? list)
+      (bind ((key (pop list))
+             (value (pop list)))
+        (set! (get result
+                   (if (instance? key <keyword>)
+                       (symbol-name key)
+                       (as-string key)))
+              value)))
+    result))
 
 (define-function size ((array <array>))
   (js:get-property array "length"))
@@ -634,16 +636,21 @@
 
 (define-generic initialize (object #rest))
 
-(define-function initialize ((object <object>) #rest arguments)
+(define-function initialize ((object <object>))
   (js:var slots (js:get-property (type object) "%slots"))
+  (js:var arguments (as-object (rest (as-array js:arguments))))
+  (js:var value)
   (js:if slots
-         (js:for (((i 0)
-                   (js:< i (js:get-property arguments "length"))
-                   (js:+ i 2)))
-           (js:var key (js:get-property arguments i "name"))
-           (js:if (js:>= ((js:get-property slots "indexOf") key) 0)
+         (js:for-in (key slots)
+           (js:if (not (has? (js:identifier "Object.prototype") key))
                   (set! (js:get-property object key)
-                        (js:get-property arguments (js:+ i 1)))))))
+                        (js:if (has? arguments key)
+                               (js:get-property arguments key)
+                               (begin
+                                (set! value (js:get-property slots key))
+                                (js:if (js:=== value #f)
+                                       value
+                                       (value)))))))))
 
 ;; error
 
@@ -790,9 +797,6 @@
               (make <symbol> name: name)))))
 (%define *module* exports "_s" symbol)
 
-(define-function symbol-name (symbol)
-  (get symbol "name"))
-
 (define-function description ((symbol <symbol>))
   (get symbol "name"))
 
@@ -882,19 +886,6 @@
         (push-last result (get object key)))
       (keys object))
   result)
-
-(define-function as-object (property-list)
-  (bind ((list (copy-sequence property-list))
-         (result (make-object)))
-    (until (empty? list)
-      (bind ((key (pop list))
-             (value (pop list)))
-        (set! (get result
-                   (if (instance? key <keyword>)
-                       (symbol-name key)
-                       (as-string key)))
-              value)))
-    result))
 
 (define-function starts-with? ((string <string>) (prefix <string>))
   (js:var equal #t)

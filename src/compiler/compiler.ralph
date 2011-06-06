@@ -390,31 +390,22 @@
                        conditions))))))))
      "define-class"
      (method (class superclass #rest slots)
-       (concatenate `(begin
-                      (%define-class
-                       *module* exports
-                       (js:escape ,class)
-                       ,(first superclass)
-                       ,(concatenate `(make-array)
-                                     (map (method (slot)
-                                            (concatenate
-                                             `(make-array)
-                                             (if (instance? slot <array>)
-                                                 [(symbol-name (first slot))
-                                                  (second slot)]
-                                                 [(symbol-name slot) #f])))
-                                          slots))))
-                    (if (empty? slots)
-                        `()
-                        `(,(bind ((rest (generate-symbol)))
-                             (concatenate `(define-function initialize
-                                             ,(concatenate `((object ,class) #rest ,rest #key) slots))
-                                          (map (method (slot)
-                                                 `(set! (js:get-property object
-                                                                         ,(symbol-name slot))
-                                                        ,slot))
-                                             (argument-names slots))
-                                          `((apply next-method object ,rest))))))))
+       `(%define-class
+         *module* exports
+         (js:escape ,class)
+         ,(first superclass)
+         ,(bind ((object `(make-object)))
+            (do (method (slot)
+                  (if (instance? slot <array>)
+                      (begin
+                       (push-last object (symbol-name (first slot)))
+                       (push-last object `(method ()
+                                            ,(second slot))))
+                      (begin
+                       (push-last object (symbol-name slot))
+                       (push-last object #f))))
+                slots)
+            object)))
      "define-module"
      (method (name #key (import `()) (export `()))
        (bind ((property (generate-symbol)))

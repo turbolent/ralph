@@ -436,17 +436,6 @@
 (check-equal "position: find 2 in (1 2 3)"
              1 (position [1 2 3] 2))
 
-;; default initializer
-(define-class <test> (<object>)
-  foo
-  bar)
-
-(bind ((test (make <test> foo: 1 bar: 2)))
-  (check-equal "type: default initializer for slot 1"
-               1 (get test "foo"))
-  (check-equal "type: default initializer for slot 2"
-               2 (get test "bar")))
-
 ;; <string-stream>
 (bind ((stream (make <string-stream> string: "test")))
   (check-false "<string-stream>: not at end when starting"
@@ -583,6 +572,30 @@
   (check-equal "slots: default value (2)"
                3 (get z "c")))
 
+
+;; default initializer
+(define-class <test> (<object>)
+  foo
+  bar
+  (baz 3)
+  blub)
+
+(define-function initialize ((test <test>) #rest rest)
+  (apply next-method test rest)
+  (set! (get test "blub") 4))
+
+(bind ((test (make <test> foo: 1 bar: 2)))
+  (check-equal "type: default initializer for slot 1"
+               1 (get test "foo"))
+  (check-equal "type: default initializer for slot 2"
+               2 (get test "bar"))
+  (check-equal "type: default initializer for slot 3"
+               3 (get test "baz"))
+  (check-equal "type: default initializer for slot 4"
+               4 (get test "blub")))
+
+
+;;
 (bind ((object (make-object
                 "a" 4 "b" 3
                 "c" 2 "d" 1)))

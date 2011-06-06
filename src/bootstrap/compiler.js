@@ -298,38 +298,20 @@ var macros = {
     },
     'define-class': function (_class, superclass) {
         var slots = arguments.toArray().slice(2);
-        var initializer = [];
-        if (slots.length > 0) {
-            var rest = Symbol.generate();
-            initializer =
-                [[S('define-function'), S('initialize'),
-                  [[S('object'), _class], HashSymbol.rest, rest,
-                   HashSymbol.key].concat(slots)]
-                 .concat(argumentNames(slots)
-                         .map(function (slot) {
-                             return [S('set!'),
-                                     [S('js:get-property'), S('object'),
-                                      slot.name],
-                                     slot];
-                         }))
-                 .concat([[S('apply'), S('next-method'), S('object'), rest]])];
-        }
-        return [S('begin'),
-                [S('%define-class'), S('*module*'), S('exports'),
-                 [S('js:escape'), _class], superclass[0] || false,
-                 [S('make-array')].concat(slots
-                                          .map(function (slot) {
-                                                   var name, value = false;
-                                                   if (slot instanceof Array) {
-                                                       name = slot[0].name;
-                                                       value = slot[1];
-                                                   } else {
-                                                       name = slot.name;
-                                                   }
-                                                   return [S('make-array'),
-                                                           name, value];
-                                          }))]]
-            .concat(initializer);
+		var slotsObject = [S('make-object')];
+		slots.forEach(function (slot) {
+                          if (slot instanceof Array) {
+                              slotsObject.push(slot[0].name);
+                              slotsObject.push([S('method'), [],
+												slot[1]]);
+                          } else {
+                              slotsObject.push(slot.name);
+							  slotsObject.push(false);
+                          }
+					  });
+        return [S('%define-class'), S('*module*'), S('exports'),
+                [S('js:escape'), _class], superclass[0] || false,
+				slotsObject];
     },
     'define-generic': function (name, _arguments) {
         return [S('define'), name,
