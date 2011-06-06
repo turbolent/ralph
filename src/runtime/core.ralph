@@ -98,13 +98,13 @@
 ;;;; getter
 
 (define %define-getter
-  (js:function js:null (module exports name function type-name)
+  (js:function js:null (module exports name function type)
     (bind ((getter (%get-definition module name))
            (generic? (when getter
                        (%get-property getter "%generic")))
            ;; define new getter and return (possibly) existing setter
            (setter (if generic?
-                       (bind ((type (%actual-type (%get-definition module type-name)))
+                       (bind ((type (%actual-type type))
                               (prototype (js:get-property type "prototype"))
                               (existing-getter (%get-property prototype name)))
                          (set! (js:get-property prototype name) function)
@@ -121,7 +121,7 @@
 ;;;; setter
 
 (define %define-setter
-  (js:function js:null (module exports name function type-name)
+  (js:function js:null (module exports name function type)
     (bind ((getter (%get-definition module name))
            (generic? (when getter
                        (%get-property getter "%generic"))))
@@ -129,7 +129,7 @@
       (set! (js:get-property function "displayName")
             (js:+ "(setter " name ")"))
       (if generic?
-          (bind ((type (%actual-type (%get-definition module type-name)))
+          (bind ((type (%actual-type type))
                  (prototype (js:get-property type "prototype"))
                  (getter (or (%get-property prototype name)
                              ;; create temporary getter
@@ -145,7 +145,7 @@
            (set! (js:get-property (%get-definition module name) "%setter")
                  function))))))
 
-(define-function %set ((function <function>) #rest arguments)
+(define-function %set (function #rest arguments)
   (bind ((generic? (%get-property function "%generic"))
          (name (%get-property function "%name"))
          (getter (if generic?
@@ -294,6 +294,28 @@
                    (as-string key)))
           value))
   result)
+
+;;;;
+
+(define-class <object> ())
+(define-class <string> ())
+(define-class <number> ())
+(define-class <array> ())
+(define-class <boolean> ())
+(define-class <function> ())
+
+(define-function %alias-type (ralph-type javascript-type)
+  (set! (js:get-property ralph-type "%js-type") javascript-type)
+  (set! (js:get-property javascript-type "%ralph-type") ralph-type))
+
+(%alias-type <object> (js:identifier "Object"))
+(%alias-type <string> (js:identifier "String"))
+(%alias-type <number> (js:identifier "Number"))
+(%alias-type <array> (js:identifier "Array"))
+(%alias-type <boolean> (js:identifier "Boolean"))
+(%alias-type <function> (js:identifier "Function"))
+
+;;;;
 
 (define-function size ((array <array>))
   (js:get-property array "length"))
@@ -588,24 +610,6 @@
   (unless (instance? value type)
     ;; TODO: throw condition
     (error "check-type failed")))
-
-(define-class <object> ())
-(define-class <string> ())
-(define-class <number> ())
-(define-class <array> ())
-(define-class <boolean> ())
-(define-class <function> ())
-
-(define-function %alias-type (ralph-type javascript-type)
-  (set! (js:get-property ralph-type "%js-type") javascript-type)
-  (set! (js:get-property javascript-type "%ralph-type") ralph-type))
-
-(%alias-type <object> (js:identifier "Object"))
-(%alias-type <string> (js:identifier "String"))
-(%alias-type <number> (js:identifier "Number"))
-(%alias-type <array> (js:identifier "Array"))
-(%alias-type <boolean> (js:identifier "Boolean"))
-(%alias-type <function> (js:identifier "Function"))
 
 ;; generic
 

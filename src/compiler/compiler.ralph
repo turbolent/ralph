@@ -278,11 +278,11 @@
            (signal (make <error> message:
                          "define-function: name => symbol or (setter name)")))
          (bind ((type (if (empty? arguments)
-                          (S "js:null")
+                          "null"
                           (bind ((head (first arguments)))
                             (if (and (instance? head <array>)
                                      (> (size head) 1))
-                                `(js:escape ,(second head))
+                                (escape-symbol (second head))
                                 "Object")))))
            `(,(if setter?
                   (S "%define-setter")
@@ -293,7 +293,7 @@
               ,(function-declaration
                 `(js:identifier "__method__")
                 arguments body)
-              ,type))))
+              (js:identifier ,type)))))
      "inc!"
      (method (object value)
        `(set! ,object

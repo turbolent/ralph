@@ -174,13 +174,13 @@ var macros = {
         if (!(name instanceof Symbol || setter))
             throw new Error('function\'s name should be a symbol or (setter name): '
                             + JSON.stringify(name));
-        var type = S('js:null');
+        var type = 'null';
         if (args.length > 0) {
             if (args[0] instanceof Array
                 && args[0].length > 1)
-                type = [S('js:escape'), args[0][1]];
+                type = args[0][1].toString();
             else
-                type = "Object";
+                type = 'Object';
         }
         return [setter ? S('%define-setter') : S('%define-getter'),
                 S('*module*'),
@@ -188,7 +188,7 @@ var macros = {
                 [S('js:escape'), name],
                 functionDeclaration([S('js:identifier'), '__method__'],
                                     args, body),
-                type];
+                [S('js:identifier'), type]];
     },
     'method': function (args) {
         var body = arguments.toArray().slice(1);
