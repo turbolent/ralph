@@ -536,9 +536,7 @@ var macros = {
 };
 
 var symbolMacros = {
-    'next-method': [S('js:get-property'),
-		    [S('js:identifier'), '__method__'],
-		    '%next-method'],
+    'next-method': [S('%next-method'), S('this-method')],
     'this-method': [S('js:identifier'), '__method__']
 };
 

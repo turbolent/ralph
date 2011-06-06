@@ -108,7 +108,7 @@
                               (prototype (js:get-property type "prototype"))
                               (existing-getter (%get-property prototype name)))
                          (set! (js:get-property prototype name) function)
-                         (%recompute-methods type name)
+                         (set! (js:get-property function "%type") type)
                          (%get-property existing-getter "%setter"))
                        (begin
                         (%define module exports name function)
@@ -119,18 +119,9 @@
       (when setter
         (set! (js:get-property function "%setter") setter)))))
 
-
-(define-function %recompute-methods (type name)
-  (js:var methods [(js:get-property type "prototype" name)])
-  (js:var proto (js:get-property type "prototype"))
-  (js:while (set! proto (js:get-property proto "__proto__"))
-            (js:if (has? proto name)
-                   (push-last methods (js:get-property proto name))))
-  (js:for (((i 0)
-            (js:< i (js:get-property methods "length"))
-            (js:+ i 1)))
-          (set! (js:get-property methods i "%next-method")
-                (js:get-property methods (js:+ i 1)))))
+(define-function %next-method (function)
+  (js:get-property function "%type" "prototype" "__proto__"
+                   (js:get-property function "%name")))
 
 ;;;; setter
 

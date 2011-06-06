@@ -506,7 +506,7 @@
 (define *symbol-macros*
   (make-object
    "this-method" `(js:identifier "__method__")
-   "next-method" `(js:get-property  (js:identifier "__method__") "%next-method")))
+   "next-method" `(%next-method this-method)))
 
 (define *special-forms*
     (make-object
