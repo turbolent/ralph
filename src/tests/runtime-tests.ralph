@@ -524,6 +524,17 @@
                    (== (get d "b") "b")
                    (== (get d "a") "a"))))
 
+;; next-method for setters
+(define-function (setter bar) ((a <a>) value)
+  (set! (get a "value") value))
+
+(define-function (setter bar) ((c <c>) value)
+  (next-method c 1))
+
+(bind ((d (make <d>)))
+  (set! (bar d) 2)
+  (check-equal "next-method: setter" 1 (get d "value")))
+
 ;; remove
 (bind ((array [1 2 3]))
   (remove! array 2)

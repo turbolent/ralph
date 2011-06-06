@@ -119,11 +119,22 @@
       (when setter
         (set! (js:get-property function "%setter") setter)))))
 
-(define-function %next-method (function)
-  (js:get-property function "%type" "prototype" "__proto__"
-                   (js:get-property function "%name")))
+(define-function %search-setter (prototype name)
+  (js:var setter)
+  (js:while (and prototype (not setter))
+    ;; find next getter
+    (js:var getter (js:get-property prototype name))
+    (set! setter (%get-property getter "%setter"))
+    (set! prototype (js:get-property prototype "__proto__")))
+  setter)
 
-;;;; setter
+(define-function %next-method (function)
+  (js:var name (js:get-property function "%name"))
+  (js:var proto (js:get-property function "%type"
+                                 "prototype" "__proto__"))
+  (js:if (not (js:get-property function "%setter?"))
+         (js:return (js:get-property proto name)))
+  (%search-setter proto name))
 
 (define %define-setter
   (js:function js:null (module exports name function type)
@@ -131,6 +142,7 @@
            (generic? (when getter
                        (%get-property getter "%generic"))))
       (set! (js:get-property function "%name") name)
+      (set! (js:get-property function "%setter?") #t)
       (set! (js:get-property function "displayName")
             (js:+ "(setter " name ")"))
       (if generic?
@@ -142,6 +154,7 @@
                                (set! (js:get-property prototype name)
                                      temp)
                                temp))))
+            (set! (js:get-property function "%type") type)
             (set! (js:get-property getter "%setter") function))
           (begin
            (unless (%get-definition module name)
@@ -151,16 +164,16 @@
                  function))))))
 
 (define-function %set (function #rest arguments)
-  (bind ((generic? (%get-property function "%generic"))
-         (name (%get-property function "%name"))
-         (getter (if generic?
-                     (bind ((type (%actual-type (type (first arguments))))
-                            (prototype (js:get-property type "prototype"))
-                            (getter (%get-property prototype name)))
-                       getter)
-                     function))
-         (setter (%get-property getter "%setter")))
-    (apply setter arguments)))
+  (js:var generic? (%get-property function "%generic"))
+  (js:var name (%get-property function "%name"))
+  (js:if (js:not generic?)
+         (js:return (apply (%get-property function "%setter")
+                           arguments)))
+  ;; generic
+  (js:var actual-type (%actual-type (type (first arguments))))
+  (js:var prototype (js:get-property actual-type "prototype"))
+  (js:var setter (%search-setter prototype name))
+  (apply setter arguments))
 
 ;;;; objects
 
