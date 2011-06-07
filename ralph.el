@@ -1,9 +1,9 @@
 (defvar ralph-mode-font-lock-keywords
   '(("<\\(\\sw\\|\\s_\\)+>" . font-lock-type-face)
-	("define\\s-\\(\\(\\sw\\|\\s_\\)+\\)"
+	("define\\s-+\\(\\(\\sw\\|\\s_\\)+\\)"
 	 1 font-lock-variable-name-face)
-	("define-\\(function\\|generic\\)\\s-\\(\\(\\sw\\|\\s_\\)+\\)"
-	 1 font-lock-function-name-face)
+	("define-\\(function\\|generic\\)\\s-+\\(\\(\\sw\\|\\s_\\)+\\)"
+	 2 font-lock-function-name-face)
 	"#rest\\|#key"
 	"define-\\(function\\|class\\|module\\|generic\\)"
 	"method" "block"
