@@ -535,6 +535,16 @@
   (set! (bar d) 2)
   (check-equal "next-method: setter" 1 (get d "value")))
 
+
+;; keyword arguments for setters
+
+(define-function (setter special-foo) (object value #key test)
+  (and (js:=== value "a")
+       (js:=== test "b")))
+
+(check-true "setters: keyword arguments"
+            (set! (special-foo #f) "a" test: "b"))
+
 ;; remove
 (bind ((array [1 2 3]))
   (remove! array 2)

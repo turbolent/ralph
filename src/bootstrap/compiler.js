@@ -361,15 +361,16 @@ var macros = {
     'if': function (test, then, _else) {
         return [S('js:if'), [S('true?'), test], then, _else];
     },
-    'set!': function (expression, value) {
+    'set!': function (expression) {
+        var valueRest = arguments.toArray().slice(1);
         if (expression instanceof Array
             && expression[0] != S('js:get-property'))
         {
             return ([S('%set')]
                     .concat(expression)
-                    .concat([value]));
+                    .concat(valueRest));
         } else
-            return [S('js:set'), expression, value];
+            return [S('js:set'), expression, valueRest[0]];
     },
     'block': function (name) {
         var body = arguments.toArray().slice(1);

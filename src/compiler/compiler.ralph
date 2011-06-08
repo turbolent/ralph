@@ -213,14 +213,14 @@
                     ,then)
                   ,else)))))
      "set!"
-     (method (expression value)
+     (method (expression #rest value-rest)
        (if (and (instance? expression <array>)
                 (not (= (first expression)
                         (S "js:get-property"))))
            (concatenate `(%set)
                         expression
-                        `(,value))
-           `(js:set ,expression ,value)))
+                        value-rest)
+           `(js:set ,expression ,(first value-rest))))
      "while"
      (method (test #rest body)
        `((js:function js:null ()
