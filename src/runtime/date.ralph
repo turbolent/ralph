@@ -1,0 +1,26 @@
+(define-module date
+  import: (runtime/core)
+  export: (<date>))
+
+(define-class <date> ())
+
+(%alias-type <date> (js:identifier "Date"))
+
+(define-function initialize ((date <date>) #rest rest)
+  (bind ((arguments (as-object rest)))
+    (do (method (setter)
+          (destructuring-bind (keyword function) setter
+            (if-bind (value (get arguments keyword))
+              ((js:get-property date function) value))))
+        [["timestamp" "setTime"]
+         ["day" "setDate"]
+         ["month" "setMonth"]
+         ["year" "setYear"]
+         ["minutes" "setMinutes"]
+         ["seconds" "setSeconds"]
+         ["hours" "setHours"]
+         ["milliseconds" "setMilliseconds"]])))
+
+(define-function locale-time-string (date)
+  ((js:get-property date "toLocaleTimeString")))
+
