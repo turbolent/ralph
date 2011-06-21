@@ -8,8 +8,11 @@
 	"define-\\(function\\|class\\|module\\|generic\\)"
 	"method" "block"
 	"bind" "define"
+	"bind-properties" "destructuring-bind"
 	"set!" "get"
-	"when" "if" "unless" "and" "or" "not"))
+	"when" "if" "unless"
+	"and" "or" "not"
+	"while" "unil" "dotimes"))
 
 (define-derived-mode
   ralph-mode lisp-mode "Ralph"
@@ -19,15 +22,20 @@
   (set (make-local-variable 'font-lock-defaults)
 	   '(ralph-mode-font-lock-keywords nil t)))
 
-;; ralph specific offsets here
+;; indentation offsets
 (put 'when 'ralph-indent-function 1)
 (put 'unless 'ralph-indent-function 1)
+(put 'while 'ralph-indent-function 1)
+(put 'until 'ralph-indent-function 1)
+(put 'dotimes 'ralph-indent-function 1)
 (put 'bind 'ralph-indent-function 1)
 (put 'if 'ralph-indent-function nil)
 (put 'for 'ralph-indent-function 2)
 (put 'method 'ralph-indent-function 1)
 (put 'block 'ralph-indent-function 1)
 (put 'bind 'ralph-indent-function 2)
+(put 'bind-properties 'ralph-indent-function 2)
+(put 'destructuring-bind 'ralph-indent-function 2)
 
 (defun ralph-indent-function (indent-point state)
   "Same as 'lisp-indent-function but uses 'ralph-indent-function symbol
