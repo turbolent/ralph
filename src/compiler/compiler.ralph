@@ -214,12 +214,22 @@
                   ,else)))))
      "set!"
      (method (expression #rest value-rest)
-       (if (and (instance? expression <array>)
-                (not (= (first expression)
-                        (S "js:get-property"))))
-           (concatenate `(%set)
-                        expression
-                        value-rest)
+       (if (instance? expression <array>)
+           (cond
+            ((== (first expression)
+                 (S "js:get-property"))
+             `(js:set ,expression
+                      ,(first value-rest)))
+            ((and (== (first expression)
+                      (S "get"))
+                  (== (size expression) 3))
+             `(js:set ,(concatenate `(js:get-property)
+                                    (rest expression))
+                      ,(first value-rest)))
+            (else:
+             (concatenate `(%set)
+                          expression
+                          value-rest)))
            `(js:set ,expression ,(first value-rest))))
      "while"
      (method (test #rest body)
@@ -545,12 +555,12 @@
      "js:while" 0
      "js:new" 1
      "js:var" 1
-     "js:set" 1
+     "js:set" 0
      "js:for-in" 1
      "js:function" 2
      "js:escape" #f
      "js:identifier" #f
-     "js:get-property" #f
+     "js:get-property" 0
      "js:for"
      (method (clauses #rest body)
        (concatenate
