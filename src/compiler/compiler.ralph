@@ -700,7 +700,18 @@
           ignore-case?: #t))
 
 (define *writers*
-    (make-object
+  (make-object
+   "js:call"
+   (method (_ head #rest tail)
+     (concatenate
+      ;; anonymous function call?
+      (if (and (instance? head <array>)
+               (instance? (first head) <symbol>)
+               (== (first head)
+                   (S "js:function")))
+          (concatenate "(" (write head) ")")
+          (write head))
+      "(" (join (map write tail) ", ") ")"))
      "js:negative"
      (method (_ object)
        (concatenate
@@ -950,17 +961,9 @@
           (apply (get *writers* head-name)
                  statements?
                  tail))
-         ;; anonymous function call?
-         ((and (instance? head <array>)
-               (instance? (first head) <symbol>)
-               (= (symbol-name (first head))
-                  "js:function"))
-          (concatenate "(" (write head) ")"
-                       "(" (join (map write tail) ", ") ")"))
          (head
-          (concatenate
-           (write head)
-           "(" (join (map write tail) ", ") ")"))
+          (apply (get *writers* "js:call")
+                 statements? head tail))
          (else:
           "[]"))))
     ((<symbol>)
