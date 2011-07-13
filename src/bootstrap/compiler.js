@@ -496,6 +496,11 @@ var macros = {
                 [S('js:+'), object,
                  value !== undefined ? value : 1]];
     },
+    'dec!': function (object, value) {
+        return [S('set!'), object,
+                [S('js:-'), object,
+                 value !== undefined ? value : 1]];
+    },
     'destructuring-bind': function (pattern, value) {
         var body = arguments.toArray().slice(2);
         var target;
