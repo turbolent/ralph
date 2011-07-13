@@ -317,6 +317,12 @@
      (method (object value)
        `(set! ,object
               (js:- ,object ,(or value 1))))
+     "inc"
+     (method (object)
+       `(js:+ ,object 1))
+     "dec"
+     (method (object)
+       `(js:- ,object 1))
      "dotimes"
      (method (binding #rest body)
        (destructuring-bind (var count result) binding
