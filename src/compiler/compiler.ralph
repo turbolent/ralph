@@ -538,13 +538,31 @@
      (method (object property)
        `((js:get-property ,object "hasOwnProperty")
          ,property))
-     "="
+     "=="
      (method (#rest arguments)
        (concatenate
         (if (== (size arguments) 2)
-            `(binary=)
-            `(js:call =))
+            `(js:===)
+            `(js:call ==))
         arguments))))
+
+(do (method (comparison)
+      (set! (get *macros* comparison)
+            (method (#rest arguments)
+              (concatenate
+               (if (== (size arguments) 2)
+                   `(,(S (concatenate "binary" comparison)))
+                   `(js:call ,(S comparison)))
+               arguments))))
+    ["=" "<" ">" "<=" ">="])
+
+(do (method (op)
+      (set! (get *macros* op)
+            (method (#rest arguments)
+              (concatenate
+               `(,(S (concatenate "js:" op)))
+               arguments))))
+    ["-" "+" "*" "/"])
 
 (define *symbol-macros*
   (make-object
