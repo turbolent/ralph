@@ -192,17 +192,20 @@
             #f))
      "bind"
      (method (bindings #rest body)
-       (destructuring-bind ((var value) #rest other) bindings
-         (concatenate
-          `(,(concatenate `(js:function js:null (,var))
-                          `(,(if (empty? other)
-                                 (concatenate `(begin)
-                                              (prepend-return body))
-                                 (concatenate `(js:return
-                                                ,(concatenate
-                                                  `(bind ,other)
-                                                  body)))))))
-          (if value `(,value) `()))))
+       (bind ((vars (map first bindings)))
+           (concatenate
+            `((js:function js:null ,vars
+                           ,(concatenate `(begin)
+                                         (map (method (binding)
+                                                (destructuring-bind (var value)
+                                                    binding
+                                                  `(js:set ,var ,value)))
+                                              bindings)
+                                         (prepend-return body))))
+            (map (method (binding)
+                   (destructuring-bind (var value) binding
+                     `(js:and (js:defined ,var) ,var)))
+                 bindings))))
      "if-bind"
      (method (binding then else)
        (destructuring-bind (var value) binding
