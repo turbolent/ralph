@@ -632,11 +632,13 @@
 ;; generic
 
 (define-function %make-generic (function-name)
-  (js:var dispatcher (method (#rest arguments)
-                       (js:var object (first arguments))
-                       (js:var function (js:get-property object function-name))
-                       (js:and function
-                               ((js:get-property function "apply") object arguments))))
+  (js:function dispatcher ()
+    (begin
+     (js:var object (js:get-property js:arguments 0))
+     (js:var function (js:and (js:defined object)
+                              (js:get-property object function-name)))
+     (js:return (js:and function
+                        ((js:get-property function "apply") object js:arguments)))))
   (set! (js:get-property dispatcher "%generic") #t)
   (set! (js:get-property dispatcher "%name") function-name)
   dispatcher)
