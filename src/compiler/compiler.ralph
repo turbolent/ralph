@@ -287,17 +287,39 @@
            `(,(if setter?
                   (S "%define-setter")
                   (S "%define-getter"))
-              *module*
-              exports
-              (js:escape ,name)
-              ,(function-declaration
-                `(js:identifier "__method__")
-                arguments body)
-              (js:identifier ,type)))))
+             *module*
+             exports
+             (js:escape ,name)
+             ,(function-declaration
+               `(js:identifier "__method__")
+               arguments body)
+             (js:identifier ,type)
+             ,(concatenate
+               "(" (if setter?
+                       (concatenate "(setter " (symbol-name name) ")")
+                       (symbol-name name))
+               (bind ((specializers? #t))
+                 (join (map (method (argument)
+                              (when (or (== argument #key)
+                                        (== argument #rest))
+                                (set! specializers? #f))
+                              (if specializers?
+                                  (concatenate
+                                   " " (if (instance? argument <array>)
+                                           (symbol-name (second argument))
+                                           "<object>"))
+                                  ""))
+                            arguments)
+                       ""))
+               ")")))))
      "inc!"
      (method (object value)
        `(set! ,object
               (js:+ ,object ,(or value 1))))
+     "dec!"
+     (method (object value)
+       `(set! ,object
+              (js:- ,object ,(or value 1))))
      "dotimes"
      (method (binding #rest body)
        (destructuring-bind (var count result) binding
