@@ -105,28 +105,6 @@
          (set! (get *macros* (symbol-name name))
                (eval (concatenate "(" compiled ")"))))
        #f)
-     "make-array"
-     (method (#rest elements)
-       (concatenate `(js:array)
-                    elements))
-     "slice"
-     (method (array start end)
-       (concatenate `((js:get-property ,array "slice") ,start)
-                    (if end `(,end) `())))
-     "rest"
-     (method (array)
-       `((js:get-property ,array "slice") 1))
-     "as-array"
-     (method (arguments skip)
-       `((js:get-property [] "slice" "call")
-         ,arguments ,(or skip 0)))
-     "size"
-     (method (object)
-       `(js:get-property ,object "length"))
-     "has?"
-     (method (object property)
-       `((js:get-property ,object "hasOwnProperty")
-         ,property))
      "%has-constructor?"
      (method (object constructor)
        `(js:=== (js:get-property ,object "constructor")
@@ -536,7 +514,37 @@
                                                            ,(symbol-name property))))
                                properties)
                           (prepend-return body)))
-          ,object)))))
+           ,object)))
+     ;; optimizations / "inlining"
+     "make-array"
+     (method (#rest elements)
+       (concatenate `(js:array)
+                    elements))
+     "slice"
+     (method (array start end)
+       (concatenate `((js:get-property ,array "slice") ,start)
+                    (if end `(,end) `())))
+     "rest"
+     (method (array)
+       `((js:get-property ,array "slice") 1))
+     "as-array"
+     (method (arguments skip)
+       `((js:get-property [] "slice" "call")
+         ,arguments ,(or skip 0)))
+     "size"
+     (method (object)
+       `(js:get-property ,object "length"))
+     "has?"
+     (method (object property)
+       `((js:get-property ,object "hasOwnProperty")
+         ,property))
+     "="
+     (method (#rest arguments)
+       (concatenate
+        (if (== (size arguments) 2)
+            `(binary=)
+            `(js:call =))
+        arguments))))
 
 (define *symbol-macros*
   (make-object
