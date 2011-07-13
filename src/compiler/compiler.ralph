@@ -94,6 +94,26 @@
                                   ;; body
                                   (prepend-return body))))))
 
+(define-function display-name (name arguments #key setter?)
+  (concatenate
+   "(" (if setter?
+           (concatenate "(setter " (symbol-name name) ")")
+           (symbol-name name))
+   (bind ((specializers? #t))
+       (join (map (method (argument)
+                    (when (or (== argument #key)
+                              (== argument #rest))
+                      (set! specializers? #f))
+                    (if specializers?
+                        (concatenate
+                         " " (if (instance? argument <array>)
+                                 (symbol-name (second argument))
+                                 "<object>"))
+                        ""))
+                  arguments)
+             ""))
+   ")"))
+
 
 (define *macros*
     (make-object
@@ -233,7 +253,8 @@
      "define-generic"
      (method (name arguments)
        `(define ,name
-          (%make-generic (js:escape ,name))))
+          (%make-generic (js:escape ,name)
+                         ,(display-name name arguments))))
      "and"
      (method (#rest expressions)
        (or (empty? expressions)
@@ -291,24 +312,7 @@
                `(js:identifier "__method__")
                arguments body)
              (js:identifier ,type)
-             ,(concatenate
-               "(" (if setter?
-                       (concatenate "(setter " (symbol-name name) ")")
-                       (symbol-name name))
-               (bind ((specializers? #t))
-                 (join (map (method (argument)
-                              (when (or (== argument #key)
-                                        (== argument #rest))
-                                (set! specializers? #f))
-                              (if specializers?
-                                  (concatenate
-                                   " " (if (instance? argument <array>)
-                                           (symbol-name (second argument))
-                                           "<object>"))
-                                  ""))
-                            arguments)
-                       ""))
-               ")")))))
+             ,(display-name name arguments setter?: setter?)))))
      "inc!"
      (method (object value)
        `(set! ,object

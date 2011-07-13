@@ -76,9 +76,16 @@
              (js:not (js:=== value js:undefined))
              (js:not (js:=== value #f))))))
 
+(set! (js:get-property true? "displayName")
+      "(true? <object>)")
+
 (define not
   (js:function js:null (value)
     (js:return (js:not (true? value)))))
+
+(set! (js:get-property not "displayName")
+      "(not <object>)")
+
 
 ;; class
 
@@ -631,7 +638,7 @@
 
 ;; generic
 
-(define-function %make-generic (function-name)
+(define-function %make-generic (function-name display-name)
   (js:function dispatcher ()
     (begin
      (js:var object (js:get-property js:arguments 0))
@@ -641,6 +648,7 @@
                         ((js:get-property function "apply") object js:arguments)))))
   (set! (js:get-property dispatcher "%generic") #t)
   (set! (js:get-property dispatcher "%name") function-name)
+  (set! (js:get-property dispatcher "displayName") display-name)
   dispatcher)
 
 (define-generic initialize (object #rest))
