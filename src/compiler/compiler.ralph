@@ -212,6 +212,12 @@
                           expression
                           value-rest)))
            `(js:set ,expression ,(first value-rest))))
+     "get"
+     (method (object #rest keys)
+       (if (== (size keys) 1)
+           `(%get-property ,object ,(first keys))
+           (concatenate `(js:call get ,object)
+                        keys)))
      "while"
      (method (test #rest body)
        `((js:function js:null ()

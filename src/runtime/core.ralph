@@ -10,7 +10,7 @@
            *environment*
            %define-class %make-generic %alias-type
            %non-local-exit? %make-non-local-exit-function
-           get %set
+           %get-property get %set
            %inherit make initialize type instance? superclass
            as-string as-array as-number
            apply reduce reduce1 map do repeatedly
@@ -26,6 +26,7 @@
            push push-last pop pop-last
            keys values
            = == > < >= <=
+           binary= binary< binary> binary<= binary>=
            + - * /
            inc dec
            description
