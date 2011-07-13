@@ -10,8 +10,8 @@
    (but-last forms)
    (make-array
     (bind ((tail (last forms)))
-      (if (= (first tail)
-             (S "js:return"))
+      (if (== (first tail)
+              (S "js:return"))
           (last forms)
           `(js:return ,tail))))))
 
@@ -137,8 +137,8 @@
                         (cond
                           ((and (instance? form <array>)
                                 (not (empty? form)))
-                           (if (= (first form)
-                                  (S "%comma"))
+                           (if (== (first form)
+                                   (S "%comma"))
                                (second form)
                                (concatenate `(make-array)
                                             (map transform
@@ -281,9 +281,9 @@
      (method (name arguments #rest body)
        (destructuring-bind (setter? name)
            (if (and (instance? name <array>)
-                    (= (size name) 2)
+                    (== (size name) 2)
                     (first name)
-                    (= (first name) (S "setter")))
+                    (== (first name) (S "setter")))
                [#t (second name)]
                [#f name])
          (when (not (or (instance? name <symbol>)
@@ -369,7 +369,7 @@
            #f
            (destructuring-bind (test #rest then) (first cases)
              (bind ((then (concatenate `(begin) then)))
-               (if (= test else:)
+               (if (== test else:)
                    then
                    `(if ,test
                         ,then
@@ -394,7 +394,7 @@
                                   `(cond)
                                   (map (method (case)
                                          (destructuring-bind (tests #rest then) case
-                                           (if (= tests else:)
+                                           (if (== tests else:)
                                                case
                                                (concatenate
                                                 `(,(concatenate
@@ -673,13 +673,13 @@
        name)
       ((member? name *reserved*)
        (concatenate "_" name))
-      ((and (= (first name) "<")
-            (= (last name) ">")
+      ((and (== (first name) "<")
+            (== (last name) ">")
             (> (size name) 2))
        (concatenate "_CL_"
                     (escape (but-last (rest name)))))
-      ((and (= (first name) "*")
-            (= (last name) "*")
+      ((and (== (first name) "*")
+            (== (last name) "*")
             (> (size name) 2))
        (as-uppercase
         (escape (but-last (rest name)))))
@@ -838,7 +838,7 @@
        (concatenate
         "var " (write name)
         (if (and value
-                 (not (= value (S "js:undefined"))))
+                 (not (== value (S "js:undefined"))))
             (concatenate " = " (write value))
             "")))
      "js:set"
@@ -852,7 +852,7 @@
        (concatenate
         "function "
         (if (and name
-                 (not (= name (S "js:null"))))
+                 (not (== name (S "js:null"))))
             (if (instance? name <array>)
                 (write name)
                 (escape-symbol name))
