@@ -850,12 +850,12 @@
         "function "
         (if (and name
                  (not (= name (S "js:null"))))
-            (concatenate (if (instance? name <array>)
-                             (write name)
-                           (escape-symbol name))
-                           " ")
-            "")
-        "(" (join (map write arguments) ", ") ") {"
+            (if (instance? name <array>)
+                (write name)
+                (escape-symbol name))
+            (concatenate (escape-symbol (generate-symbol))
+                         "__lambda"))
+        " (" (join (map write arguments) ", ") ") {"
         (if body
             (concatenate "\n" (write-statements body) "\n")
             "")
