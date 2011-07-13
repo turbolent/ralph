@@ -463,9 +463,12 @@
      (function element))))
 
 (define-function do ((function <function>) (array <array>))
-  ((js:get-property array "forEach")
-   (method (element)
-     (function element))))
+  (js:var len (js:get-property array "length"))
+  (js:for (((i 0)
+            (js:< i len)
+            (js:+ i 1)))
+          (function (js:get-property array i)))
+  js:null)
 
 (define-function reduce1 ((function <function>) (array <array>))
   ((js:get-property array "reduce")
