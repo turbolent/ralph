@@ -703,6 +703,22 @@
 
 ;;;; comparison
 
+(define-function == (object1 object2 #rest more-objects)
+  (compare (method (object1 object2)
+             (js:=== object1 object2))
+           object1 object2 more-objects))
+
+(define-function compare ((function <function>) object1 object2 more-objects)
+  (js:var object object1)
+  (js:var remaining (%concat [object2] more-objects))
+  (js:while (not (empty? remaining))
+    (js:var next (first remaining))
+    (js:if (not (function object next))
+      (js:return #f))
+    (set! object next)
+    (set! remaining (rest remaining)))
+  #t)
+
 (define-generic binary= (object1 object2))
 (define-generic binary< (object1 object2))
 
@@ -716,52 +732,6 @@
                   (type object2))
           (js:< object1 object2)))
 
-(define-function compare ((function <function>) object1 object2 more-objects)
-  (js:var object object1)
-  (js:var remaining (%concat [object2] more-objects))
-  (js:while (not (empty? remaining))
-    (js:var next (first remaining))
-    (js:if (not (function object next))
-      (js:return #f))
-    (set! object next)
-    (set! remaining (rest remaining)))
-  #t)
-
-(define-function = (object1 object2 #rest more-objects)
-  (compare binary= object1 object2 more-objects))
-
-(define-function == (object1 object2 #rest more-objects)
-  (compare (method (object1 object2)
-             (js:=== object1 object2))
-           object1 object2 more-objects))
-
-(define-function < (object1 object2 #rest more-objects)
-  (compare binary< object1 object2 more-objects))
-
-(define-function <= (object1 object2 #rest more-objects)
-  (compare (method (object1 object2)
-             (and object1
-                  object2
-                  (or (binary< object1 object2)
-                      (binary= object1 object2))))
-           object1 object2 more-objects))
-
-(define-function > (object1 object2 #rest more-objects)
-  (compare (method (object1 object2)
-              (and object1
-                   object2
-                   (not (binary< object1 object2))
-                   (not (binary= object1 object2))))
-           object1 object2 more-objects))
-
-(define-function >= (object1 object2 #rest more-objects)
-  (compare (method (object1 object2)
-             (and object1
-                  object2
-                  (or (not (binary< object1 object2))
-                      (binary= object1 object2))))
-           object1 object2 more-objects))
-
 (define-function binary= ((array1 <array>) (array2 <array>))
   (and (= (size array1)
           (size array2))
@@ -771,6 +741,40 @@
                       (get array2 i))
              (return #f)))
          #t)))
+
+(define-function = (object1 object2 #rest more-objects)
+  (compare binary= object1 object2 more-objects))
+
+(define-function < (object1 object2 #rest more-objects)
+  (compare binary< object1 object2 more-objects))
+
+(define-function binary<= (object1 object2)
+  (and object1
+       object2
+       (or (binary< object1 object2)
+           (binary= object1 object2))))
+
+(define-function <= (object1 object2 #rest more-objects)
+  (compare binary<= object1 object2 more-objects))
+
+(define-function binary> (object1 object2)
+  (and object1
+       object2
+       (not (binary< object1 object2))
+       (not (binary= object1 object2))))
+
+(define-function > (object1 object2 #rest more-objects)
+  (compare binary> object1 object2 more-objects))
+
+(define-function binary>= (object1 object2)
+  (and object1
+       object2
+       (or (not (binary< object1 object2))
+           (binary= object1 object2))))
+
+(define-function >= (object1 object2 #rest more-objects)
+  (compare binary>= object1 object2 more-objects))
+
 
 (define-function make-object (#rest key-vals)
   (bind ((object (make-object)))
