@@ -317,6 +317,10 @@ var macros = {
         return [S('define'), name,
                 [S('%make-generic'), [S('js:escape'), name]]];
     },
+	'define-macro': function () {
+		// ignore - only available in full compiler
+		return null;
+	},
     'define-module': function (name) {
         var keyArgs = arguments.toArray().slice(1);
         var imports = [];
