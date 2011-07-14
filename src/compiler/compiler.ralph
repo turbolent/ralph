@@ -562,6 +562,34 @@
      (method (object property)
        `((js:get-property ,object "hasOwnProperty")
          ,property))
+     "but-last"
+     (method (array n)
+       `(slice ,array 0 (js:* (js:or ,n 1) -1)))
+     "push-last"
+     (method (array value)
+       `(begin
+         ((js:get-property ,array "push") ,value)
+         ,array))
+     "push"
+     (method (array value)
+       `(begin
+         ((js:get-property ,array "unshift") ,value)
+         ,array))
+     "pop"
+     (method (array)
+       `((js:get-property ,array "shift")))
+     "pop-last"
+     (method (array)
+       `((js:get-property ,array "pop")))
+     "reverse!"
+     (method (array)
+       `((js:get-property ,array "reverse")))
+     "as-string"
+     (method (object)
+       `((js:get-property ,object "toString")))
+     "as-number"
+     (method (object)
+       `((js:identifier "Number") ,object))
      "=="
      (method (#rest arguments)
        (concatenate
