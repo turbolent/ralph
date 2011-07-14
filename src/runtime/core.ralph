@@ -748,8 +748,8 @@
           (js:< object1 object2)))
 
 (define-function binary= ((array1 <array>) (array2 <array>))
-  (and (= (size array1)
-          (size array2))
+  (and (== (size array1)
+           (size array2))
        (block (return)
          (dotimes (i (size array1))
            (unless (= (get array1 i)
@@ -917,8 +917,8 @@
   (js:var prefix-length (size prefix))
   (for ((i 0 (+ i 1)))
        ((or (not equal)
-            (= i prefix-length))
+            (== i prefix-length))
         equal)
-    (set! equal (= (get string i)
-                   (get prefix i)))))
+    (set! equal (== (get string i)
+                    (get prefix i)))))
 

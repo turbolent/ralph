@@ -8,14 +8,14 @@
            check-instance?))
 
 (define-function report-success ((description <string>) (explanation <string>))
-  (format-out (if (= *environment* "browser")
+  (format-out (if (== *environment* "browser")
                   " <span style=\"color:green\">✓</span> %s: %s<br/>"
                   " \033[32m✓\033[0m %s: %s\n")
               description explanation))
 
 
 (define-function report-failure ((description <string>) (explanation <string>))
-  (format-out (if (= *environment* "browser")
+  (format-out (if (== *environment* "browser")
                   " <span style=\"color:red\">✘</span> %s: %s<br/>"
                   " \033[31m✘\033[0m %s: %s\n")
               description explanation))

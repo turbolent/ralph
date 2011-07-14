@@ -57,7 +57,7 @@ This function effectively calls format and returns the result as a string."
                   ;; dispatch
                   (bind ((arg (get args index))
                          (char (second control-string))
-                         (percent (= char "%")))
+                         (percent (== char "%")))
                     (write stream (if percent "%" (dispatch char arg)))
                     (set! control-string
                           (slice control-string 2))

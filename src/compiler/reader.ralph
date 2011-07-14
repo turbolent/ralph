@@ -24,7 +24,7 @@
   (read-char stream)
   (bind ((result (make <string-stream>))
          (char (read-char stream)))
-    (while (not (= char "\""))
+    (while (not (== char "\""))
       (write result
              (select char =
                (("\\")
@@ -45,7 +45,7 @@
       (("#key") #key)
       (("#rest") #rest)
       (else:
-       (if (= (last value) ":")
+       (if (== (last value) ":")
            (keyword (but-last value))
            (symbol value))))))
 
