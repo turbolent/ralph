@@ -468,7 +468,7 @@
             (js:< i len)
             (js:+ i 1)))
           (function (js:get-property array i)))
-  js:null)
+  #f)
 
 (define-function reduce1 ((function <function>) (array <array>))
   ((js:get-property array "reduce")
