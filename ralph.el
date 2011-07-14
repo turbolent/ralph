@@ -5,7 +5,7 @@
 	("define-\\(function\\|generic\\)\\s-+\\(\\(\\sw\\|\\s_\\)+\\)"
 	 2 font-lock-function-name-face)
 	"#rest\\|#key"
-	"define-\\(function\\|class\\|module\\|generic\\)"
+	"define-\\(function\\|class\\|module\\|generic\\|macro\\)"
 	"method" "block"
 	"bind" "define"
 	"bind-properties" "destructuring-bind"
