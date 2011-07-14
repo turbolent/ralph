@@ -451,16 +451,14 @@
       (js:=== (size sequence) 0)
       #t))
 
-;; the functions passed to map and reduce are
-;; wraped in additional method, as the JS version
-;; also additionally passes the index and
-;; the traversed array - might clash when
-;; using curry/rcurry
-
 (define-function map ((function <function>) (array <array>))
-  ((js:get-property array "map")
-   (method (element)
-     (function element))))
+  (js:var res [])
+  (js:var len (js:get-property array "length"))
+  (js:for (((i 0)
+            (js:< i len)
+            (js:+ i 1)))
+          (push-last res (function (js:get-property array i))))
+  res)
 
 (define-function do ((function <function>) (array <array>))
   (js:var len (js:get-property array "length"))
