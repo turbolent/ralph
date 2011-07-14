@@ -306,11 +306,11 @@
   (get symbol "name"))
 
 (define-function as-object (property-list)
-  (js:var list ((js:get-property property-list "slice")))
+  (js:var list (slice property-list))
   (js:var result (make-object))
   (js:var key)
   (js:var value)
-  (js:while (js:> (js:get-property list "length") 0)
+  (js:while (js:> (size list) 0)
     (set! key (pop list))
     (set! value (pop list))
     (set! (get result
