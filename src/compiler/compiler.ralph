@@ -313,14 +313,6 @@
                arguments body)
              (js:identifier ,type)
              ,(display-name name arguments setter?: setter?)))))
-     "inc!"
-     (method (object value)
-       `(set! ,object
-              (js:+ ,object ,(or value 1))))
-     "dec!"
-     (method (object value)
-       `(set! ,object
-              (js:- ,object ,(or value 1))))
      "inc"
      (method (object)
        `(js:+ ,object 1))
@@ -616,6 +608,32 @@
                arguments))))
     ["-" "+" "*" "/"])
 
+
+(do (method (name/op)
+      (destructuring-bind (name op) name/op
+        (set! (get *macros* name)
+              (method (object value)
+                (if (or (not (instance? object <array>))
+                        (and (instance? object <array>)
+                             (or (== (first object)
+                                     (S "js:get-property"))
+                                 (and (== (first object)
+                                          (S "get"))
+                                      (== (size object) 3)))))
+                    `(,(S (concatenate "js:" op "="))
+                      ,(if (and (instance? object <array>)
+                                (== (first object)
+                                    (S "get")))
+                           (concatenate `(js:get-property)
+                                        (rest object))
+                           object)
+                      ,(or value 1))
+                    `(set! ,object
+                           (,(S (concatenate "js:" op))
+                            ,object ,(or value 1))))))))
+     [["inc!" "+"]
+      ["dec!" "-"]])
+
 (define *symbol-macros*
   (make-object
    "this-method" `(js:identifier "__method__")
@@ -670,7 +688,9 @@
      "js:and" "&&"
      "js:or" "||"
      "js:+" "+"
+     "js:+=" "+="
      "js:-" "-"
+     "js:-=" "-="
      "js:*" "*"
      "js:/" "/"
      "js:%" "%"
