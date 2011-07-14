@@ -644,9 +644,8 @@
 ;; generic
 
 (define-function %make-generic (function-name display-name)
-  (js:function dispatcher ()
+  (js:function dispatcher (object)
     (begin
-     (js:var object (js:get-property js:arguments 0))
      (js:var function (js:and (js:defined object)
                               (js:get-property object function-name)))
      (js:return (js:and function
