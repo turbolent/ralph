@@ -545,15 +545,16 @@
                     elements))
      "slice"
      (method (array start end)
-       (concatenate `((js:get-property ,array "slice") ,start)
+       (concatenate `((js:get-property ,array "slice"))
+                    (if start `(,start) `())
                     (if end `(,end) `())))
      "rest"
      (method (array)
-       `((js:get-property ,array "slice") 1))
+       `(slice ,array 1))
      "as-array"
      (method (arguments skip)
        `((js:get-property [] "slice" "call")
-         ,arguments ,(or skip 0)))
+         ,arguments ,(js:or skip 0)))
      "size"
      (method (object)
        `(js:get-property ,object "length"))
