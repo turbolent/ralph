@@ -534,16 +534,20 @@
          test-array)))
 
 (define-function first ((array <array>))
-  (element array 0))
+  (js:var item (js:get-property array 0))
+  (js:if (true? item) item #f))
 
 (define-function second ((array <array>))
-  (element array 1))
+  (js:var item (js:get-property array 1))
+  (js:if (true? item) item #f))
 
 (define-function third ((array <array>))
-  (element array 2))
+  (js:var item (js:get-property array 2))
+  (js:if (true? item) item #f))
 
 (define-function last ((array <array>))
-  (element array (dec (size array))))
+  (js:var item (js:get-property array (js:- (size array) 1)))
+  (js:if (true? item) item #f))
 
 (define-function rest ((array <array>))
   (slice array 1))
