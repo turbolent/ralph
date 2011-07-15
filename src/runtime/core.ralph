@@ -617,32 +617,32 @@
 ;;;; reflection primitives
 
 (define-function type (object)
-  (if (or (js:=== object js:undefined)
-          (js:=== object js:null))
+  (js:var type)
+  (js:var ralph-type)
+  (js:if (js:or (js:=== object js:undefined)
+                (js:=== object js:null))
       <boolean>
       ;; Object.getPrototypeOf on primitives only works in FireFox:
       ;; ((js:get-property "Object" "getPrototypeOf") object))
-      (bind ((type (and object (js:get-property object "constructor"))))
-        (or (%get-property type "%ralph-type")
-            type))))
+      (begin
+       (set! type (js:get-property object "constructor"))
+       (set! ralph-type (js:get-property type "%ralph-type"))
+       (js:or ralph-type type))))
 
 (define-function instance? (object type)
+  (js:var actual)
   (if object
-      (bind ((type (%actual-type type)))
-        (js:or
-         ;; primitive
-         (%has-constructor? object type)
-         ;; object
-         ((js:get-property type "prototype"
-                           "isPrototypeOf")
-          object)))
+      (begin
+       (set! actual (%actual-type type))
+       (js:or
+        ;; primitive
+        (%has-constructor? object actual)
+        ;; object
+        ((js:get-property actual "prototype"
+                          "isPrototypeOf")
+         object)))
       (js:or (js:=== type <boolean>)
              (js:=== type (js:identifier "Boolean")))))
-
-(define-function check-type (value type)
-  (unless (instance? value type)
-    ;; TODO: throw condition
-    (error "check-type failed")))
 
 ;; generic
 
@@ -829,10 +829,10 @@
   (get symbol "name"))
 
 (define-function description ((keyword <keyword>))
-  (concatenate (symbol-name keyword) ":"))
+  (js:+ (symbol-name keyword) ":"))
 
 (define-function description ((symbol <hash-symbol>))
-  (concatenate "#" (symbol-name symbol)))
+  (js:+ "#" (symbol-name symbol)))
 
 (define-function identity (value)
   value)
