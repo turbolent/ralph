@@ -58,7 +58,10 @@
 (check-false "and: #f is false"
              (and #t #f))
 (check-true "and: #t is true"
-             (and #t #t))
+            (and #t #t))
+(check-true "and: 0 and 0"
+            (and 0 0))
+
 
 ;; when
 (check-true "when: and of \"\", \"0\" and 0 is true"
@@ -145,6 +148,12 @@
             (<= 1 2))
 (check-false "<=: 2 > 1"
              (<= 2 1))
+(check-true ">=: 1 <= 1"
+            (>= 1 1))
+(check-true ">=: 2 >= 1"
+            (>= 2 1))
+(check-false ">=: 1 < 2"
+             (>= 1 2))
 
 ;; reduce
 (check-equal "reduce: + on 1, 2, 3, 4, 5"
