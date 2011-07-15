@@ -591,17 +591,20 @@
 ;;;; functional
 
 (define-function apply ((function <function>) #rest arguments)
+  (js:var actual (but-last arguments))
+  (js:var last (js:get-property arguments (js:- (size arguments) 1)))
   ((js:get-property function "apply") js:null
-   (%concat (but-last arguments)
-            (last arguments))))
+   (js:if last
+          (%concat actual last)
+          actual)))
 
 (define-function curry ((function <function>) #rest curried-args)
   (method (#rest args)
-    (apply function (concatenate curried-args args))))
+    (apply function (%concat curried-args args))))
 
 (define-function rcurry ((function <function>) #rest curried-args)
   (method (#rest args)
-    (apply function (concatenate args curried-args))))
+    (apply function (%concat args curried-args))))
 
 (define-function always (value)
   (method (#rest args)
