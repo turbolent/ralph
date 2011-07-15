@@ -600,7 +600,8 @@ var symbolValues = {
     'js:null': 'null',
     'js:this': 'this',
     'js:undefined': 'undefined',
-    'js:arguments': 'arguments'
+    'js:arguments': 'arguments',
+	'js:typeof': 'typeof'
 };
 
 function wrapBlock (code) {

@@ -720,7 +720,8 @@
      "js:null" "null"
      "js:this" "this"
      "js:undefined" "undefined"
-     "js:arguments" "arguments"))
+     "js:arguments" "arguments"
+     "js:typeof" "typeof"))
 
 (define *symbol-escapes*
     (make-object
