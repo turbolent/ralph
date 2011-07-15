@@ -243,7 +243,7 @@
        `((js:function js:null ()
            ,(concatenate
              `(begin)
-             `(,(concatenate `(js:while ,test)
+             `(,(concatenate `(js:while (true? ,test))
                              body)
                 (js:return #f))))))
      "until"
