@@ -529,6 +529,11 @@
                           (prepend-return body)))
            ,object)))
      ;; optimizations / "inlining"
+     "instance?"
+     (method (object type)
+       (if (== type (S "<array>"))
+           `((js:identifier "Array.isArray") ,object)
+           `(js:call instance? ,object ,type)))
      "make-array"
      (method (#rest elements)
        (concatenate `(js:array)
