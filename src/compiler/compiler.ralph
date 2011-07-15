@@ -258,30 +258,25 @@
      "and"
      (method (#rest expressions)
        (or (empty? expressions)
-           `(when ,(concatenate `(js:and)
-                                (map (method (expression)
-                                       `(true? ,expression))
-                                     (but-last expressions)))
-              ,(last expressions))))
+           `(js:if ,(concatenate `(js:and)
+                                 (map (method (expression)
+                                        `(true? ,expression))
+                                      (but-last expressions)))
+                   ,(last expressions)
+                   #f)))
      "or"
      (method (#rest expressions)
-       (and (not (empty? expressions))
-            (bind ((variables [])
-                   (clauses (map (method (expression)
-                                   (bind ((temp (generate-symbol)))
-                                     (push-last variables
-                                                `(js:var ,temp))
-                                     `((begin
-                                        (set! ,temp ,expression)
-                                        (true? ,temp))
-                                       ,temp)))
-                                 expressions)))
-                  `((js:function js:null ()
-                      ,(concatenate `(begin)
-                                    variables
-                                    `((js:return
-                                        ,(concatenate `(cond)
-                                                      clauses)))))))))
+       (bind ((temp (generate-symbol)))
+         (bind-methods ((test (expressions)
+                          (if (empty? expressions)
+                              #f
+                              `(begin
+                                (set! ,temp ,(first expressions))
+                                (js:if (true? ,temp)
+                                       (js:return ,temp)
+                                       ,(test (rest expressions)))))))
+           `((js:function js:null (,temp)
+               ,(test expressions))))))
      "define-function"
      (method (name arguments #rest body)
        (destructuring-bind (setter? name)
