@@ -590,13 +590,13 @@
 
 ;;;; functional
 
-(define-function apply ((function <function>) #rest arguments)
-  (js:var actual (but-last arguments))
-  (js:var last (js:get-property arguments (js:- (size arguments) 1)))
+(define-function apply ((function <function>))
+  (js:var actual ((js:get-property [] "slice" "call") js:arguments 1 -1))
+  (js:var last (js:get-property js:arguments (js:- (size js:arguments) 1)))
   ((js:get-property function "apply") js:null
-   (js:if last
-          (%concat actual last)
-          actual)))
+   (js:if (== last function)
+          actual
+          (%concat actual last))))
 
 (define-function curry ((function <function>) #rest curried-args)
   (method (#rest args)
