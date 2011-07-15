@@ -255,6 +255,9 @@
        `(define ,name
           (%make-generic (js:escape ,name)
                          ,(display-name name arguments))))
+     "not"
+     (method (value)
+       `(js:not (true? ,value)))
      "and"
      (method (#rest expressions)
        (or (empty? expressions)
@@ -551,7 +554,10 @@
          ,property))
      "but-last"
      (method (array n)
-       `(slice ,array 0 (js:* (js:or ,n 1) -1)))
+       (bind ((n (or n 1)))
+         `(slice ,array 0 ,(if (instance? n <number>)
+                               (* n -1)
+                               `(js:* ,n -1)))))
      "push-last"
      (method (array value)
        `(begin
@@ -577,6 +583,9 @@
      "as-number"
      (method (object)
        `((js:identifier "Number") ,object))
+     "%concat"
+     (method (array1 array2)
+       `((js:get-property ,array1 "concat") ,array2))
      "=="
      (method (#rest arguments)
        (concatenate
