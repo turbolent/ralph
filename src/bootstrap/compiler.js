@@ -549,7 +549,6 @@ var macros = {
 			clauses.map(function (clause) {
 							return [Symbol.generate()].concat(clause);
 						});
-		var bindings = Symbol.generate();
 		return [[S('js:function'), S('js:null'), [],
 				 [S('begin')]
 				 .concat(clauses.map(function (clause) {
@@ -560,13 +559,12 @@ var macros = {
 											 return [S('js:var'),
 													 temp[0], temp[2]];
 										 }))
-				 .concat([[S('js:var'), bindings,
-						   [S('js:array')]
-						   .concat(temporaries.map(function (temp) {
-													   return temp[0];
-												   }))],
-						  [S('js:while'), true,
-						   [S('js:if'), [S('any?'), S('empty?'), bindings],
+				 .concat([[S('js:while'), true,
+						   [S('js:if'), [S('any?'), S('empty?'),
+										 [S('js:array')]
+										 .concat(temporaries.map(function (temp) {
+																	 return temp[0];
+																 }))],
 							[S('js:return'), false]]]
 						  .concat(temporaries
 								  .map(function (temp) {
