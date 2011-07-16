@@ -31,7 +31,8 @@
            inc dec
            description
            identity
-           min max abs round floor expt sqrt cos sin atan2 as-radiant mod
+           min max abs round floor expt sqrt cos sin atan2 as-radiant
+           mod even? odd?
            extend! as-property-list as-object
            starts-with?))
 
@@ -914,3 +915,9 @@
 
 (define-function starts-with? ((string <string>) (prefix <string>))
   (== ((js:get-property string "indexOf") prefix) 0))
+
+(define-function even? (number)
+  (== (mod number 2) 0))
+
+(define-function odd? (number)
+  (== (mod number 2) 1))
