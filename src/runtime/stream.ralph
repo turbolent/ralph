@@ -82,7 +82,7 @@
 (define-class <document-stream> (<stream>))
 
 (define-function write ((stream <document-stream>) object)
-  ((js:get-property "document" "write")
+  ((js:identifier "document.write")
    object))
 
 (define *standard-out*

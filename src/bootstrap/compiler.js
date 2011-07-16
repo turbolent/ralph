@@ -710,9 +710,8 @@ var writers = {
     'js:get-property': function (allowStatements) {
         var elements = arguments.toArray().slice(1);
         var object = elements[0];
-        if (typeof object != 'string')
-            object = write(object);
-        return object
+		var num = object.constructor == Number;
+        return (num ? "(" + write(object) + ")" : write(object))
             + (elements.slice(1)
                .map(function (element) {
                    if (typeof element == 'string' &&

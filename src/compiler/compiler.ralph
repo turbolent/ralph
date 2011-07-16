@@ -943,8 +943,8 @@
      "js:get-property"
      (method (_ object #rest elements)
        (concatenate
-        (if (instance? object <string>)
-            object
+        (if (instance? object <number>)
+            (concatenate "(" (write object) ")")
             (write object))
         (apply concatenate
                (map (method (element)
