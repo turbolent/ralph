@@ -546,9 +546,9 @@
          (((S "<string>")
            (S "<number>")
            (S "<boolean>"))
-          `(== (js:get-property ,object "constructor")
-               (js:identifier ,(get *type-name->constructor-name*
-                                    (symbol-name type)))))
+          `(%has-constructor? ,object
+            (js:identifier ,(get *type-name->constructor-name*
+                                 (symbol-name type)))))
          (else:
           `(js:call instance? ,object ,type))))
      "make-array"
