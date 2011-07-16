@@ -5,6 +5,13 @@
 
 (define S symbol)
 
+
+(define *type-name->constructor-name*
+  (make-object
+   "<string>" "String"
+   "<number>" "Number"
+   "<boolean>" "Boolean"))
+
 (define-function prepend-return (forms)
   (concatenate
    (but-last forms)
@@ -533,9 +540,17 @@
      ;; optimizations / "inlining"
      "instance?"
      (method (object type)
-       (if (== type (S "<array>"))
-           `((js:identifier "Array.isArray") ,object)
-           `(js:call instance? ,object ,type)))
+       (select type ==
+         (((S "<array>"))
+          `((js:identifier "Array.isArray") ,object))
+         (((S "<string>")
+           (S "<number>")
+           (S "<boolean>"))
+          `(== (js:get-property ,object "constructor")
+               (js:identifier ,(get *type-name->constructor-name*
+                                    (symbol-name type)))))
+         (else:
+          `(js:call instance? ,object ,type))))
      "make-array"
      (method (#rest elements)
        (concatenate `(js:array)
