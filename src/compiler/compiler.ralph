@@ -512,7 +512,10 @@
                                              (js:< ,index ,length)
                                              (js:+ ,index 1)))
                                            (js:var ,item (js:get-property ,array ,index)))
-                                  body))))
+                                  `(((js:function js:null (,item)
+                                       ,(concatenate `(begin)
+                                                     body))
+                                     ,item))))))
            (bind ((temporaries (map (method (clause)
                                       (concatenate [(generate-symbol)]
                                                    clause))
@@ -541,8 +544,11 @@
                                                  #f
                                                  (concatenate `(begin)
                                                               (rest end))))
-                                           ,(concatenate `(begin)
-                                                         body)))
+                                           ,(bind ((vars (map first clauses)))
+                                              (concatenate `((js:function js:null ,vars
+                                                               ,(concatenate `(begin)
+                                                                             body)))
+                                                           vars))))
                                   (map (method (temporary)
                                          `(set! ,(first temporary)
                                                 (rest ,(first temporary))))
