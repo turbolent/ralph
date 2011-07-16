@@ -265,6 +265,13 @@
      "not"
      (method (value)
        `(js:not (true? ,value)))
+     "true?"
+     (method (value)
+       (if (and (instance? value <array>)
+                (any? (curry == (first value))
+                      [(S "not") (S "js:not")]))
+           value
+           `(js:call true? ,value)))
      "and"
      (method (#rest expressions)
        (or (empty? expressions)
