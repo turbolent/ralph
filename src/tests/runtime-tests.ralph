@@ -683,6 +683,15 @@
                       ((object) #t))))
 
 ;; for-each
+
+(bind ((a [1 2 3])
+       (b []))
+  (for-each ((item a))
+            ()
+    (push b item))
+  (check-equal "for-each: simple without condition"
+               [3 2 1] b))
+
 (bind ((s [5 7 9 10])
        (uneven []))
   (check-equal "for-each: find even? in [5 7 9 10]"
