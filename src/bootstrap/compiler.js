@@ -542,8 +542,49 @@ var macros = {
         return [[S('js:function'), S('js:null'), [objectSymbol],
                  [S('begin')].concat(properties.map(bind)).concat(addReturn(body))],
                 object];
-    }
-};
+    },
+    'for-each': function (clauses, end) {
+		var body = arguments.toArray().slice(2);
+		var temporaries =
+			clauses.map(function (clause) {
+							return [Symbol.generate()].concat(clause);
+						});
+		var bindings = Symbol.generate();
+		return [[S('js:function'), S('js:null'), [],
+				 [S('begin')]
+				 .concat(clauses.map(function (clause) {
+										 return [S('js:var'),
+												 clause[0]];
+									 }))
+				 .concat(temporaries.map(function (temp) {
+											 return [S('js:var'),
+													 temp[0], temp[2]];
+										 }))
+				 .concat([[S('js:var'), bindings,
+						   [S('js:array')]
+						   .concat(temporaries.map(function (temp) {
+													   return temp[0];
+												   }))],
+						  [S('js:while'), true,
+						   [S('js:if'), [S('any?'), S('empty?'), bindings],
+							[S('js:return'), false]]]
+						  .concat(temporaries
+								  .map(function (temp) {
+										   return [S('set!'),
+												   temp[1], [S('first'), temp[0]]];
+									   }))
+						  .concat([[S('js:if'), end[0],
+									[S('js:return'),
+									 end.length === 1
+									 ? false
+									 : [S('begin')].concat(end.slice(1))],
+									[S('begin')].concat(body)]])
+						  .concat(temporaries.map(function (temp) {
+													  return [S('set!'), temp[0],
+															  [S('rest'), temp[0]]];
+												  }))])]];
+	}
+}
 
 var symbolMacros = {
     'next-method': [S('%next-method'), S('this-method')],
