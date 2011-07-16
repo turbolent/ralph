@@ -1077,30 +1077,30 @@
             (head-name (symbol-name head))
             (tail (rest form)))
        (cond
-        ;; unary?
-        ((and (instance? head <symbol>)
-              (has? *unary* head-name)
-              (== (size form) 2))
-         (concatenate "(" (get *unary* head-name) " "
-                      (write (second form)) ")"))
-        ;; infix?
-        ((and (instance? head <symbol>)
-              (has? *infix* head-name))
-         (bind ((infix (get *infix* head-name))
-                (inside (join (map write tail)
-                              (concatenate " " infix " "))))
-             (concatenate "(" inside ")")))
-        ;; writer?
-        ((and (instance? head <symbol>)
-              (has? *writers* head-name))
+         ;; unary?
+         ((and (instance? head <symbol>)
+               (has? *unary* head-name)
+               (== (size form) 2))
+          (concatenate "(" (get *unary* head-name) " "
+                       (write (second form)) ")"))
+         ;; infix?
+         ((and (instance? head <symbol>)
+               (has? *infix* head-name))
+          (bind ((infix (get *infix* head-name))
+                 (inside (join (map write tail)
+                               (concatenate " " infix " "))))
+              (concatenate "(" inside ")")))
+         ;; writer?
+         ((and (instance? head <symbol>)
+               (has? *writers* head-name))
           (apply (get *writers* head-name)
                  statements?
                  tail))
-        (head
-         (apply (get *writers* "js:call")
-                statements? head tail))
-        (else:
-         "[]"))))
+         (head
+          (apply (get *writers* "js:call")
+                 statements? head tail))
+         (else:
+          "[]"))))
     ((<symbol>)
      (if-bind (symbol (get *symbols* (symbol-name form)))
        symbol
