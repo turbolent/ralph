@@ -680,3 +680,13 @@
               (select object js:===
                       (((make-object)) #f)
                       ((object) #t))))
+
+;; for-each
+(bind ((s [5 7 9 10])
+       (uneven []))
+  (check-equal "for-each: find even? in [5 7 9 10]"
+               10 (for-each ((number s))
+                            ((even? number) number)
+                    (push-last uneven number)))
+  (check-equal "for-each: uneven are [5 7 9]"
+               [5 7 9] uneven))
