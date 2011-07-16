@@ -356,7 +356,8 @@
                                           next-clauses)))
             ,(if (empty? (rest end))
                  #f
-                 (second end)))))
+                 (concatenate `(begin)
+                              (rest end))))))
      "method"
      (method (arguments #rest body)
        (function-declaration (S "js:null")
