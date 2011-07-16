@@ -4,7 +4,7 @@
 
 (define-class <date> ())
 
-(%alias-type <date> (js:identifier "Date"))
+(%alias-type <date> (js:inline "Date"))
 
 (define-function initialize ((date <date>) #rest rest)
   (bind ((arguments (as-object rest)))

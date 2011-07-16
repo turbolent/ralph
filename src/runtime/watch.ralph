@@ -6,7 +6,7 @@
 
 (define-function watch (object property handler)
   ;; built-in watch method available?
-  (if (js:identifier "Object.prototype.watch")
+  (if (js:inline "Object.prototype.watch")
       ;; use built-in watch
       ((js:get-property object "watch") property handler)
       ;; define getter and setter for property
@@ -23,12 +23,12 @@
           (when (js:delete (js:get-property object property))
             ;; ECMAScript 5 Object.defineProperty available?
             (cond
-              ((js:identifier "Object.defineProperty")
-               ((js:identifier "Object.defineProperty")
+              ((js:inline "Object.defineProperty")
+               ((js:inline "Object.defineProperty")
                 object property (make-object
                                  "get" getter
                                  "set" setter)))
-              ((and (js:identifier "Object.prototype.__defineGetter__")
+              ((and (js:inline "Object.prototype.__defineGetter__")
                     (js:idenfifier "Object.prototype.__defineSetter__"))
                ((js:get-property object "__defineGetter__") property getter)
                ((js:get-property object "__defineSetter__") property setter)))))))
@@ -36,7 +36,7 @@
 
 (define-function unwatch (object property)
   ;; built-in unwatch method available?
-  (if (js:identifier "Object.prototype.unwatch")
+  (if (js:inline "Object.prototype.unwatch")
       ;; use built-in unwatch
       ((js:get-property object "unwatch") property)
       ;; remove accessors

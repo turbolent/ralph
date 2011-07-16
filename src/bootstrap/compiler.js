@@ -146,7 +146,7 @@ var macros = {
                     return ([S('make-array')]
                             .concat(form.map(transform)));
             } else if (form instanceof Symbol) {
-                return [[S("js:identifier"), "_s"], form.name];
+                return [[S("js:inline"), "_s"], form.name];
             } else {
                 return form;
             }
@@ -186,9 +186,9 @@ var macros = {
                 S('*module*'),
                 S('exports'),
                 [S('js:escape'), name],
-                functionDeclaration([S('js:identifier'), '__method__'],
+                functionDeclaration([S('js:inline'), '__method__'],
                                     args, body),
-                [S('js:identifier'), type]];
+                [S('js:inline'), type]];
     },
     'method': function (args) {
         var body = arguments.toArray().slice(1);
@@ -547,7 +547,7 @@ var macros = {
 
 var symbolMacros = {
     'next-method': [S('%next-method'), S('this-method')],
-    'this-method': [S('js:identifier'), '__method__']
+    'this-method': [S('js:inline'), '__method__']
 };
 
 function macroexpand (form) {
@@ -704,7 +704,7 @@ var writers = {
             loop = wrapBlock(loop);
         return loop;
     },
-    'js:identifier': function (allowStatements, name) {
+    'js:inline': function (allowStatements, name) {
         return ('' + name);
     },
     'js:get-property': function (allowStatements) {
@@ -782,7 +782,7 @@ var specialForms = {
     'js:for-in': 1,
     'js:function': 2,
     'js:escape': false,
-    'js:identifier': false,
+    'js:inline': false,
     'js:get-property': false,
     'js:for': function (clauses) {
         var body = arguments.toArray().slice(1);

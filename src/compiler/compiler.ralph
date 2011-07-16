@@ -314,9 +314,9 @@
              exports
              (js:escape ,name)
              ,(function-declaration
-               `(js:identifier "__method__")
+               `(js:inline "__method__")
                arguments body)
-             (js:identifier ,type)
+             (js:inline ,type)
              ,(display-name name arguments setter?: setter?)))))
      "inc"
      (method (object)
@@ -440,8 +440,8 @@
               (modules []))
          (concatenate `(begin
                         (js:var *module*
-                                (js:if (js:defined (js:identifier "GLOBAL"))
-                                       (js:identifier "GLOBAL")
+                                (js:if (js:defined (js:inline "GLOBAL"))
+                                       (js:inline "GLOBAL")
                                        js:this)))
                       (map (method (name)
                              (bind ((module (generate-symbol)))
@@ -542,12 +542,12 @@
      (method (object type)
        (select type ==
          (((S "<array>"))
-          `((js:identifier "Array.isArray") ,object))
+          `((js:inline "Array.isArray") ,object))
          (((S "<string>")
            (S "<number>")
            (S "<boolean>"))
           `(%has-constructor? ,object
-            (js:identifier ,(get *type-name->constructor-name*
+            (js:inline ,(get *type-name->constructor-name*
                                  (symbol-name type)))))
          (else:
           `(js:call instance? ,object ,type))))
@@ -604,7 +604,7 @@
        `((js:get-property ,object "toString")))
      "as-number"
      (method (object)
-       `((js:identifier "Number") ,object))
+       `((js:inline "Number") ,object))
      "%concat"
      (method (array1 array2)
        `((js:get-property ,array1 "concat") ,array2))
@@ -662,7 +662,7 @@
 
 (define *symbol-macros*
   (make-object
-   "this-method" `(js:identifier "__method__")
+   "this-method" `(js:inline "__method__")
    "next-method" `(%next-method this-method)))
 
 (define *special-forms*
@@ -684,7 +684,7 @@
      "js:for-in" 1
      "js:function" 2
      "js:escape" #f
-     "js:identifier" #f
+     "js:inline" #f
      "js:get-property" 0
      "js:for"
      (method (clauses #rest body)
@@ -952,7 +952,7 @@
          (if statements?
              result
              (wrap-block result))))
-     "js:identifier"
+     "js:inline"
      (method (_ identifier)
        (as-string identifier))
      "js:get-property"

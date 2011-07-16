@@ -1,8 +1,8 @@
 
 (define-module core
   export: (%define %export %get-definition %define-getter %define-setter
-           (js:identifier "_s") (js:identifier "_k")
-           (js:identifier "_key") (js:identifier "_rest")
+           (js:inline "_s") (js:inline "_k")
+           (js:inline "_key") (js:inline "_rest")
            keyword keyword? symbol symbol-name
            <object> <string> <number> <boolean> <array> <function>
            <symbol> <hash-symbol> <keyword> <non-local-exit> <error>
@@ -65,7 +65,7 @@
 
 (define %make-function
   (js:function js:null (name function)
-    (js:return (js:new (js:identifier "Function")))))
+    (js:return (js:new (js:inline "Function")))))
 
 ;;;; boolean primitives
 
@@ -233,7 +233,7 @@
             (set! (js:get-property %keywords name) keyword)
             keyword))))))
 
-(define keyword (js:identifier "_k"))
+(define keyword (js:inline "_k"))
 
 ;;;; non-local exit
 
@@ -258,7 +258,7 @@
   ((js:get-property object "toString")))
 
 (define-function as-number (object)
-  ((js:identifier "Number") object))
+  ((js:inline "Number") object))
 
 (define-function as-array (arguments skip)
   ((js:get-property [] "slice" "call")
@@ -333,12 +333,12 @@
   (set! (js:get-property ralph-type "%js-type") javascript-type)
   (set! (js:get-property javascript-type "%ralph-type") ralph-type))
 
-(%alias-type <object> (js:identifier "Object"))
-(%alias-type <string> (js:identifier "String"))
-(%alias-type <number> (js:identifier "Number"))
-(%alias-type <array> (js:identifier "Array"))
-(%alias-type <boolean> (js:identifier "Boolean"))
-(%alias-type <function> (js:identifier "Function"))
+(%alias-type <object> (js:inline "Object"))
+(%alias-type <string> (js:inline "String"))
+(%alias-type <number> (js:inline "Number"))
+(%alias-type <array> (js:inline "Array"))
+(%alias-type <boolean> (js:inline "Boolean"))
+(%alias-type <function> (js:inline "Function"))
 
 ;;;;
 
@@ -390,8 +390,9 @@
            (%concat [number1 number2] more-numbers)))
 
 (define-function keys (object)
+  ;; TODO: use of Object.keys generates errors ...
   (js:var keys [])
-  (if (instance? object (js:identifier "Array"))
+  (if (instance? object (js:inline "Array"))
       (for ((i 0 (inc i)))
            ((>= i (size object)) keys)
         (push-last keys i))
@@ -623,7 +624,7 @@
                 (js:=== object js:null))
       <boolean>
       ;; Object.getPrototypeOf on primitives only works in FireFox:
-      ;; ((js:identifier "Object.getPrototypeOf") object))
+      ;; ((js:inline "Object.getPrototypeOf") object))
       (begin
        (set! type (js:get-property object "constructor"))
        (set! ralph-type (js:get-property type "%ralph-type"))
@@ -642,7 +643,7 @@
                           "isPrototypeOf")
          object)))
       (js:or (js:=== type <boolean>)
-             (js:=== type (js:identifier "Boolean")))))
+             (js:=== type (js:inline "Boolean")))))
 
 ;; generic
 
@@ -666,7 +667,7 @@
   (js:var value)
   (js:if slots
          (js:for-in (key slots)
-           (js:if (not (has? (js:identifier "Object.prototype") key))
+           (js:if (not (has? (js:inline "Object.prototype") key))
                   (set! (js:get-property object key)
                         (js:if (has? arguments key)
                                (js:get-property arguments key)
@@ -681,7 +682,7 @@
 (define-class <error> ()
   message)
 
-(%alias-type <error> (js:identifier "Error"))
+(%alias-type <error> (js:inline "Error"))
 
 ;;
 
@@ -855,34 +856,34 @@
     result))
 
 (define-function abs (number)
-  ((js:identifier "Math.abs") number))
+  ((js:inline "Math.abs") number))
 
 (define-function round (number)
-  ((js:identifier "Math.round") number))
+  ((js:inline "Math.round") number))
 
 (define-function floor (number)
-  ((js:identifier "Math.floor") number))
+  ((js:inline "Math.floor") number))
 
 (define-function sin (number)
-  ((js:identifier "Math.sin") number))
+  ((js:inline "Math.sin") number))
 
 (define-function cos (number)
-  ((js:identifier "Math.cos") number))
+  ((js:inline "Math.cos") number))
 
 (define-function atan2 (x y)
-  ((js:identifier "Math.atan2") x y))
+  ((js:inline "Math.atan2") x y))
 
 (define-function expt (base power)
-  ((js:identifier "Math.pow") base power))
+  ((js:inline "Math.pow") base power))
 
 (define-function sqrt (number)
-  ((js:identifier "Math.sqrt") number))
+  ((js:inline "Math.sqrt") number))
 
 (define-function mod (number1 number2)
   (js:% number1 number2))
 
 (define-function as-radiant (number)
-  (js:* number (js:/ (js:identifier "Math.PI") 180)))
+  (js:* number (js:/ (js:inline "Math.PI") 180)))
 
 (define-function remove! ((array <array>) value)
   (js:var key (find-key array (curry = value)))

@@ -4,7 +4,7 @@
 
 (define-class <regexp> ())
 
-(%alias-type <regexp> (js:identifier "RegExp"))
+(%alias-type <regexp> (js:inline "RegExp"))
 
 (define-function initialize ((regexp <regexp>)
 			     #key pattern global? ignore-case? multiline?)
