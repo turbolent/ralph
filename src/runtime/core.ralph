@@ -883,21 +883,21 @@
   (remove! (slice array) value))
 
 (define-function extend! ((object1 <object>) (object2 <object>))
-  (do (method (key)
-        (set! (get object1 key)
-              (get object2 key)))
-      (keys object2))
+  (for-each ((key (keys object2)))
+            ()
+    (set! (get object1 key)
+          (get object2 key)))
   object1)
 
 (define-function as-property-list (object #key keywords?)
   (js:var result [])
-  (do (method (key)
-        (push-last result
-                   (if keywords?
-                       (keyword (as-string key))
-                       key))
-        (push-last result (get object key)))
-      (keys object))
+  (for-each ((key (keys object)))
+            ()
+    (push-last result
+               (if keywords?
+                   (keyword (as-string key))
+                   key))
+    (push-last result (get object key)))
   result)
 
 (define-function starts-with? ((string <string>) (prefix <string>))

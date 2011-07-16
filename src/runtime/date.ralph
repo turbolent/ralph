@@ -8,18 +8,19 @@
 
 (define-function initialize ((date <date>) #rest rest)
   (bind ((arguments (as-object rest)))
-    (do (method (setter)
-          (destructuring-bind (keyword function) setter
-            (if-bind (value (get arguments keyword))
-              ((js:get-property date function) value))))
-        [["timestamp" "setTime"]
-         ["day" "setDate"]
-         ["month" "setMonth"]
-         ["year" "setYear"]
-         ["minutes" "setMinutes"]
-         ["seconds" "setSeconds"]
-         ["hours" "setHours"]
-         ["milliseconds" "setMilliseconds"]])))
+    (for-each ((setter [["timestamp" "setTime"]
+                        ["day" "setDate"]
+                        ["month" "setMonth"]
+                        ["year" "setYear"]
+                        ["minutes" "setMinutes"]
+                        ["seconds" "setSeconds"]
+                        ["hours" "setHours"]
+                        ["milliseconds" "setMilliseconds"]]))
+              ()
+      (destructuring-bind (keyword function) setter
+        (if-bind (value (get arguments keyword))
+          ((js:get-property date function) value))))))
+
 
 (define-function locale-time-string (date)
   ((js:get-property date "toLocaleTimeString")))

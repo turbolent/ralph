@@ -70,17 +70,17 @@
             (destructuring-bind (key-var value-var index-var)
                 (repeatedly generate-symbol 3)
               (bind ((setter-code `(select ,key-var js:==)))
-                (do (method (key)
-                      (destructuring-bind (name default)
-                          (if (instance? key <array>)
-                              key
-                              [key #f])
-                        (push-last rest/key-code
-                                   `(js:var ,name ,default))
-                        (push-last setter-code
-                                   `((,(keyword (symbol-name name)))
-                                     (js:set ,name ,value-var)))))
-                    (slice arguments (inc key-position)))
+                (for-each ((key (slice arguments (inc key-position))))
+                          ()
+                  (destructuring-bind (name default)
+                      (if (instance? key <array>)
+                          key
+                          [key #f])
+                    (push-last rest/key-code
+                               `(js:var ,name ,default))
+                    (push-last setter-code
+                               `((,(keyword (symbol-name name)))
+                                 (js:set ,name ,value-var)))))
                 (push-last rest/key-code
                            `(js:for (((,index-var 0)
                                       (js:< ,index-var
@@ -341,14 +341,14 @@
      (method (clauses end #rest body)
        (bind ((init-clauses [])
               (next-clauses []))
-         (do (method (clause)
-               (push-last init-clauses
-                          (slice clause 0 2))
-               (push-last next-clauses
-                          (first clause))
-               (push-last next-clauses
-                          (third clause)))
-             clauses)
+         (for-each ((clause clauses))
+                   ()
+           (push-last init-clauses
+                      (slice clause 0 2))
+           (push-last next-clauses
+                      (first clause))
+           (push-last next-clauses
+                      (third clause)))
          `(bind ,init-clauses
             ,(concatenate `(while (not ,(first end)))
                           body
@@ -429,16 +429,16 @@
          (js:escape ,class)
          ,(first superclass)
          ,(bind ((object `(make-object)))
-            (do (method (slot)
-                  (if (instance? slot <array>)
-                      (begin
-                       (push-last object (symbol-name (first slot)))
-                       (push-last object `(method ()
-                                            ,(second slot))))
-                      (begin
-                       (push-last object (symbol-name slot))
-                       (push-last object #f))))
-                slots)
+            (for-each ((slot slots))
+                      ()
+              (if (instance? slot <array>)
+                  (begin
+                   (push-last object (symbol-name (first slot)))
+                   (push-last object `(method ()
+                                        ,(second slot))))
+                  (begin
+                   (push-last object (symbol-name slot))
+                   (push-last object #f))))
             object)))
      "define-module"
      (method (name #key (import `()) (export `()))
@@ -573,11 +573,11 @@
                                                  pattern)))
                                  (wrapper `(apply ,inner ,value)))
                             (set! target inner)
-                            (do (method (n)
-                                  (bind ((sub-wrapper (apply destructure n)))
-                                    (push-last inner sub-wrapper)
-                                    (set! inner (second sub-wrapper))))
-                                nested)
+                            (for-each ((n nested))
+                                      ()
+                              (bind ((sub-wrapper (apply destructure n)))
+                                (push-last inner sub-wrapper)
+                                (set! inner (second sub-wrapper))))
                             wrapper)))
          (bind ((wrapping (destructure pattern value)))
            (replace-subsequence! target body start: (size target))
