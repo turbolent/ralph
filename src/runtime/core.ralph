@@ -514,9 +514,9 @@
              result)))
   (js:if found? match #f))
 
-(define-function member? (value (array <array>))
+(define-function member? (value (array <array>) #key (test ==))
   (any? (method (other-value)
-                (== value other-value))
+          (test value other-value))
         array))
 
 (define-function choose-by ((predicate <function>)
