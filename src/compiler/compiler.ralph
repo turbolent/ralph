@@ -668,15 +668,21 @@
                                (* n -1)
                                `(js:* ,n -1)))))
      "push-last"
-     (method (_ array value)
+     (method (environment array value)
+       (destructuring-bind (temp)
+           (request-temporaries environment 1)
        `(begin
-         ((js:get-property ,array "push") ,value)
-         ,array))
+         (set! ,temp ,array)
+         ((js:get-property ,temp "push") ,value)
+         ,temp)))
      "push"
-     (method (_ array value)
+     (method (environment array value)
+       (destructuring-bind (temp)
+           (request-temporaries environment 1)
        `(begin
-         ((js:get-property ,array "unshift") ,value)
-         ,array))
+         (set! ,temp ,array)
+         ((js:get-property ,temp "unshift") ,value)
+         ,temp)))
      "pop"
      (method (_ array)
        `((js:get-property ,array "shift")))
