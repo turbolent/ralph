@@ -1091,6 +1091,11 @@
              (if statements?
                  result
                  (wrap-block result))))
+     "js:comment"
+     (method (_ comment)
+       (if (position comment "\n")
+           (concatenate "/*" comment "*/")
+           (concatenate "//" comment)))
      "make-object"
      (method (_ #rest key-values)
        (bind ((entries []))
