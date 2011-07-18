@@ -125,7 +125,7 @@
 (define *macros*
     (make-object
      "define-macro"
-     (method (name arguments #rest body)
+     (method (_ name arguments #rest body)
        (bind ((compiled (compile
                          (concatenate `(method ,arguments)
                                       body))))
@@ -133,11 +133,11 @@
                (eval (concatenate "(" compiled ")"))))
        #f)
      "%has-constructor?"
-     (method (object constructor)
+     (method (_ object constructor)
        `(js:=== (js:get-property ,object "constructor")
                 ,constructor))
      "%backquote"
-     (method (form)
+     (method (_ form)
        (bind-methods ((transform (form)
                         (cond
                           ((and (instance? form <array>)
@@ -155,10 +155,10 @@
          (transform form)))
 ;; TODO:
 ;;     "%comma"
-;;     (method (value)
+;;     (method (_ value)
 ;;       (signal (make <error> message: "comma not inside backquote")))
      "%parallel-set"
-     (method (#rest clauses)
+     (method (_ #rest clauses)
        (bind ((temp-clauses [])
               (set-clauses []))
          (if (> (size clauses) 2)
@@ -176,27 +176,27 @@
              (concatenate `(js:set)
                           clauses))))
      "define"
-     (method (name value)
+     (method (_ name value)
        (concatenate `(%define *module* exports
                               (js:escape ,name))
                     (if value `(,value) `())))
      "if"
-     (method (test then else)
+     (method (_ test then else)
        `(js:if (true? ,test)
                ,then
                ,else))
      "when"
-     (method (test #rest body)
+     (method (_ test #rest body)
        `(if ,test
             ,(concatenate `(begin) body)
             #f))
      "unless"
-     (method (test #rest body)
+     (method (_ test #rest body)
        `(if (not ,test)
             ,(concatenate `(begin) body)
             #f))
      "bind"
-     (method (bindings #rest body)
+     (method (_ bindings #rest body)
        (bind ((vars (map first bindings)))
            (concatenate
             `((js:function js:null ,vars
@@ -212,7 +212,7 @@
                      `(js:and (js:defined ,var) ,var)))
                  bindings))))
      "if-bind"
-     (method (binding then else)
+     (method (_ binding then else)
        (destructuring-bind (var value) binding
          (bind ((temp (generate-symbol)))
            `(bind ((,temp ,value))
@@ -221,7 +221,7 @@
                     ,then)
                   ,else)))))
      "set!"
-     (method (expression #rest value-rest)
+     (method (_ expression #rest value-rest)
        (if (instance? expression <array>)
            (cond
             ((== (first expression)
@@ -240,13 +240,13 @@
                           value-rest)))
            `(js:set ,expression ,(first value-rest))))
      "get"
-     (method (object #rest keys)
+     (method (_ object #rest keys)
        (if (== (size keys) 1)
            `(%get-property ,object ,(first keys))
            (concatenate `(js:call get ,object)
                         keys)))
      "while"
-     (method (test #rest body)
+     (method (_ test #rest body)
        `((js:function js:null ()
            ,(concatenate
              `(begin)
@@ -254,26 +254,26 @@
                              body)
                 (js:return #f))))))
      "until"
-     (method (test #rest body)
+     (method (_ test #rest body)
        (concatenate `(while (not ,test))
                     body))
      "define-generic"
-     (method (name arguments)
+     (method (_ name arguments)
        `(define ,name
           (%make-generic (js:escape ,name)
                          ,(display-name name arguments))))
      "not"
-     (method (value)
+     (method (_ value)
        `(js:not (true? ,value)))
      "true?"
-     (method (value)
+     (method (_ value)
        (if (and (instance? value <array>)
                 (any? (curry == (first value))
                       [(S "not") (S "js:not")]))
            value
            `(js:call true? ,value)))
      "and"
-     (method (#rest expressions)
+     (method (_ #rest expressions)
        (or (empty? expressions)
            `(js:if ,(concatenate `(js:and)
                                  (map (method (expression)
@@ -282,7 +282,7 @@
                    ,(last expressions)
                    #f)))
      "or"
-     (method (#rest expressions)
+     (method (_ #rest expressions)
        (bind ((temp (generate-symbol)))
          (bind-methods ((test (expressions)
                           (if (empty? expressions)
@@ -295,7 +295,7 @@
            `((js:function js:null (,temp)
                ,(test expressions))))))
      "define-function"
-     (method (name arguments #rest body)
+     (method (_ name arguments #rest body)
        (destructuring-bind (setter? name)
            (if (and (instance? name <array>)
                     (== (size name) 2)
@@ -326,19 +326,19 @@
              (js:inline ,type)
              ,(display-name name arguments setter?: setter?)))))
      "inc"
-     (method (object)
+     (method (_ object)
        `(js:+ ,object 1))
      "dec"
-     (method (object)
+     (method (_ object)
        `(js:- ,object 1))
      "dotimes"
-     (method (binding #rest body)
+     (method (_ binding #rest body)
        (destructuring-bind (var count result) binding
          (concatenate `(for ((,var 0 (js:+ ,var 1)))
                             ((js:>= ,var ,count) (or result #f)))
                       body)))
      "for"
-     (method (clauses end #rest body)
+     (method (_ clauses end #rest body)
        (bind ((init-clauses [])
               (next-clauses []))
          (for-each ((clause clauses))
@@ -359,11 +359,11 @@
                  (concatenate `(begin)
                               (rest end))))))
      "method"
-     (method (arguments #rest body)
+     (method (_ arguments #rest body)
        (function-declaration (S "js:null")
                              arguments body))
      "cond"
-     (method (#rest cases)
+     (method (_ #rest cases)
        (if (empty? cases)
            #f
            (destructuring-bind (test #rest then) (first cases)
@@ -375,7 +375,7 @@
                         ,(concatenate `(cond)
                                       (rest cases))))))))
      "select"
-     (method (value test #rest cases)
+     (method (_ value test #rest cases)
        (bind ((value-var (generate-symbol))
               (infix? (and (instance? test <symbol>)
                            (has? *infix* (symbol-name test))))
@@ -402,7 +402,7 @@
                                                 then))))
                                        cases))))))))))
      "handler-case"
-     (method (body #rest conditions)
+     (method (_ body #rest conditions)
        (bind ((condition-var (generate-symbol)))
          `((js:function js:null ()
              (begin
@@ -423,7 +423,7 @@
                                         (prepend-return body))))
                        conditions))))))))
      "define-class"
-     (method (class superclass #rest slots)
+     (method (_ class superclass #rest slots)
        `(%define-class
          *module* exports
          (js:escape ,class)
@@ -441,41 +441,48 @@
                    (push-last object #f))))
             object)))
      "define-module"
-     (method (name #key (import `()) (export `()))
-       (bind ((property (generate-symbol))
-              (module (generate-symbol))
-              (i (generate-symbol))
-              (modules []))
-         (concatenate `(begin
-                        (js:var *module*
-                                (js:if (js:defined (js:inline "GLOBAL"))
-                                       (js:inline "GLOBAL")
-                                       js:this)))
-                      (map (method (name)
-                             (bind ((module (generate-symbol)))
-                                 (push-last modules module)
-                                 `(js:var ,module (require ,(symbol-name name)))))
-                           import)
-                      (if (empty? modules)
-                          `()
-                          `((js:for (((,i 0)
-                                      (js:< ,i ,(size modules))
-                                      (js:+ ,i 1)))
-                              (js:var ,module (js:get-property ,(concatenate `(js:array) modules) ,i))
-                              (js:for-in (,property ,module)
-                                (js:if ((js:get-property ,module "hasOwnProperty")
-                                        ,property)
-                                       (js:set (js:get-property *module* ,property)
-                                               (js:get-property ,module ,property)))))))
-                      `((js:set (js:get-property *module* "%exports")
-                                ,(concatenate `(js:array)
-                                              (map (method (name)
-                                                     (if (instance? name <symbol>)
-                                                         (escape-symbol name)
-                                                         (write name)))
-                                                   export)))))))
+     (method (environment name #key (import `()) (export `()))
+       (concatenate
+        `(begin
+          (js:var *module*
+                  (js:if (js:defined (js:inline "GLOBAL"))
+                         (js:inline "GLOBAL")
+                         js:this)))
+         (if (get environment "asynchronous?")
+             (begin
+              (push (get environment "post-process")
+                    (method (form)
+                      `(define ,(symbol-name name)
+                         ,(concatenate `(js:array)
+                                       (map symbol-name import))
+                         (js:function js:null (exports) ,form))))
+              `())
+             (bind ((property (generate-symbol))
+                    (module (generate-symbol))
+                    (i (generate-symbol))
+                    (modules (generate-symbol)))
+               (concatenate
+                (if (empty? import)
+                    `()
+                    `((js:var ,modules ,(concatenate `(js:array)
+                                                     (map symbol-name import)))
+                      (js:for (((,i 0)
+                                (js:< ,i ,(size import))
+                                (js:+ ,i 1)))
+                        (js:var ,module (require (js:get-property ,modules ,i)))
+                        (js:for-in (,property ,module)
+                          (js:if ((js:get-property ,module "hasOwnProperty") ,property)
+                                 (js:set (js:get-property *module* ,property)
+                                         (js:get-property ,module ,property))))))))))
+         `((set! (js:get-property *module* "%exports")
+                 ,(concatenate `(js:array)
+                               (map (method (name)
+                                      (if (instance? name <symbol>)
+                                          (escape-symbol name)
+                                          (write name)))
+                                    export))))))
      "block"
-     (method (argument #rest body)
+     (method (_ argument #rest body)
         (destructuring-bind ((name)) argument
           (if name
               (bind ((condition (generate-symbol)))
@@ -492,14 +499,14 @@
                       (js:throw ,condition))))
               (concatenate `(begin) body))))
      "dotimes"
-     (method (var/count/result #rest body)
+     (method (_ var/count/result #rest body)
        (destructuring-bind (var count result)
            var/count/result
          (concatenate `(for ((,var 0 (js:+ ,var 1)))
                             ((js:>= ,var ,count) ,(or result #f)))
                       body)))
      "for-each"
-     (method (clauses end #rest body)
+     (method (_ clauses end #rest body)
        (if (and (== (size clauses) 1)
                 (empty? end))
            (destructuring-bind (item x) (first clauses)
@@ -554,7 +561,7 @@
                                                 (rest ,(first temporary))))
                                        temporaries)))))))))
      "bind-methods"
-     (method (bindings #rest body)
+     (method (_ bindings #rest body)
         (concatenate `(bind
                        ,(map (method (binding)
                                (destructuring-bind (name arguments #rest body)
@@ -564,7 +571,7 @@
                              bindings))
                      body))
      "destructuring-bind"
-     (method (pattern value #rest body)
+     (method (_ pattern value #rest body)
        (bind ((target))
          (bind-methods ((destructure (pattern value)
                           (bind ((nested [])
@@ -589,7 +596,7 @@
            (replace-subsequence! target body start: (size target))
            wrapping))))
      "bind-properties"
-     (method (properties object #rest body)
+     (method (_ properties object #rest body)
        (bind ((object* (generate-symbol)))
          `((js:function js:null (,object*)
             ,(concatenate `(begin)
@@ -602,7 +609,7 @@
            ,object)))
      ;; optimizations / "inlining"
      "instance?"
-     (method (object type)
+     (method (_ object type)
        (select type ==
          (((S "<array>"))
           `((js:inline "Array.isArray") ,object))
@@ -615,64 +622,70 @@
          (else:
           `(js:call instance? ,object ,type))))
      "make-array"
-     (method (#rest elements)
+     (method (_ #rest elements)
        (concatenate `(js:array)
                     elements))
      "slice"
-     (method (array start end)
+     (method (_ array start end)
        (concatenate `((js:get-property ,array "slice"))
                     (if start `(,start) `())
                     (if end `(,end) `())))
      "rest"
-     (method (array)
+     (method (_ array)
        `(slice ,array 1))
      "as-array"
-     (method (arguments skip)
+     (method (_ arguments skip)
        `((js:get-property [] "slice" "call")
          ,arguments ,(js:or skip 0)))
      "size"
-     (method (object)
+     (method (_ object)
        `(js:get-property ,object "length"))
      "has?"
-     (method (object property)
+     (method (_ object property)
        `((js:get-property ,object "hasOwnProperty")
          ,property))
      "but-last"
-     (method (array n)
+     (method (_ array n)
        (bind ((n (or n 1)))
          `(slice ,array 0 ,(if (instance? n <number>)
                                (* n -1)
                                `(js:* ,n -1)))))
      "push-last"
-     (method (array value)
+     (method (_ array value)
        `(begin
          ((js:get-property ,array "push") ,value)
          ,array))
      "push"
-     (method (array value)
+     (method (_ array value)
        `(begin
          ((js:get-property ,array "unshift") ,value)
          ,array))
      "pop"
-     (method (array)
+     (method (_ array)
        `((js:get-property ,array "shift")))
      "pop-last"
-     (method (array)
+     (method (_ array)
        `((js:get-property ,array "pop")))
      "reverse!"
-     (method (array)
+     (method (_ array)
        `((js:get-property ,array "reverse")))
      "as-string"
-     (method (object)
+     (method (_ object)
        `((js:get-property ,object "toString")))
      "as-number"
-     (method (object)
+     (method (_ object)
        `((js:inline "Number") ,object))
      "%concat"
-     (method (array1 array2)
+     (method (_ array1 array2)
        `((js:get-property ,array1 "concat") ,array2))
+     "concatenate"
+     (method (_ object #rest rest)
+       (concatenate (if (instance? object <string>)
+                        `(js:+ ,object)
+                        `(js:call concatenate ,object))
+                    rest))
      "=="
-     (method (#rest arguments)
+     (method (_ #rest arguments)
        (concatenate
         (if (== (size arguments) 2)
             `(js:===)
@@ -681,7 +694,7 @@
 
 (do (method (comparison)
       (set! (get *macros* comparison)
-            (method (#rest arguments)
+            (method (_ #rest arguments)
               (concatenate
                (if (== (size arguments) 2)
                    `(,(S (concatenate "binary" comparison)))
@@ -691,7 +704,7 @@
 
 (do (method (op)
       (set! (get *macros* op)
-            (method (#rest arguments)
+            (method (_ #rest arguments)
               (concatenate
                `(,(S (concatenate "js:" op)))
                arguments))))
@@ -701,7 +714,7 @@
 (do (method (name/op)
       (destructuring-bind (name op) name/op
         (set! (get *macros* name)
-              (method (object value)
+              (method (_ object value)
                 (if (or (not (instance? object <array>))
                         (and (instance? object <array>)
                              (or (== (first object)
@@ -750,23 +763,24 @@
      "js:inline" #f
      "js:get-property" 0
      "js:for"
-     (method (clauses #rest body)
+     (method (environment clauses #rest body)
        (concatenate
         `(js:for
           ,(map (method (clause)
                   (destructuring-bind ((var value) #rest rest) clause
                     (concatenate
-                     [[var (macroexpand value)]]
-                     (map macroexpand rest))))
+                     [[var (macroexpand environment value)]]
+                     (map (curry macroexpand environment)
+                          rest))))
                 clauses))
-        (macroexpand body)))
+        (macroexpand environment body)))
      "js:try"
-     (method (body var catch finally)
+     (method (environment body var catch finally)
        `(js:try
-         ,(macroexpand body)
+         ,(macroexpand environment body)
          ,var
-         ,(macroexpand catch)
-         ,(macroexpand finally)))))
+         ,(macroexpand environment catch)
+         ,(macroexpand environment finally)))))
 
 (define *unary*
     (make-object
@@ -901,17 +915,17 @@
                (instance? (first head) <symbol>)
                (== (first head)
                    (S "js:function")))
-          (concatenate "(" (write head) ")")
-          (write head))
+          (concatenate "(" (write-expressions head) ")")
+          (write-expressions head))
       "(" (join (map write tail) ", ") ")"))
      "js:negative"
      (method (_ object)
        (concatenate
-        "(- " (write object) ")"))
+        "(- " (write-expressions object) ")"))
      "js:not"
      (method (_ expression)
        (concatenate
-        "!" (write expression)))
+        "!" (write-expressions expression)))
      "begin"
      (method (statements? #rest forms)
        (cond
@@ -923,12 +937,12 @@
           (concatenate
            "(" (join (map write forms) ", ") ")"))
          (else:
-          (write (first forms)))))
+          (write-expressions (first forms)))))
      "js:if"
      (method (statements? test then else)
        (if statements?
            (concatenate
-            "if (" (write test) ") {\n"
+            "if (" (write-expressions test) ") {\n"
             (write-statements then)
             "\n}"
             (if else
@@ -936,9 +950,9 @@
                  " else {\n" (write-statements else) "\n}")
                 ""))
            (concatenate
-            "(" (write test)
-            " ? " (write then)
-            " : " (write else)
+            "(" (write-expressions test)
+            " ? " (write-expressions then)
+            " : " (write-expressions else)
             ")")))
      "js:array"
      (method (_ #rest elements)
@@ -947,10 +961,10 @@
      "js:defined"
      (method (_ expression)
        (concatenate
-        "(typeof (" (write expression) ") !== 'undefined')"))
+        "(typeof (" (write-expressions expression) ") !== 'undefined')"))
      "js:delete"
      (method (_ expression)
-       (concatenate "(delete (" (write expression) "))"))
+       (concatenate "(delete (" (write-expressions expression) "))"))
      "js:try"
      (method (statements? body condition catch finally)
        (bind ((result
@@ -960,7 +974,7 @@
                 "\n}"
                 (if catch
                     (concatenate
-                     " catch (" (write condition) ") {\n"
+                     " catch (" (write-expressions condition) ") {\n"
                      (write-statements catch) "\n}")
                     "")
                 (if finally
@@ -977,8 +991,8 @@
         (destructuring-bind (variable expression) variable/expression
           (bind ((result
                   (concatenate
-                   "for (var " (write variable)
-                   " in " (write expression) ") {\n"
+                   "for (var " (write-expressions variable)
+                   " in " (write-expressions expression) ") {\n"
                    (write-body body) "\n}")))
             (if statements?
                 result
@@ -991,9 +1005,9 @@
          (do (method (clause)
                (destructuring-bind ((var value) test next) clause
                  (bind ((set (S "js:set")))
-                   (push-last inits (write [set var value]))
-                   (push-last tests (write test))
-                   (push-last nexts (write [set var next])))))
+                   (push-last inits (write-expressions [set var value]))
+                   (push-last tests (write-expressions test))
+                   (push-last nexts (write-expressions [set var next])))))
              clauses)
          (bind ((result
                  (concatenate
@@ -1010,7 +1024,7 @@
      (method (statements? test #rest body)
        (bind ((result
                (concatenate
-                "while (" (write test) ") {\n"
+                "while (" (write-expressions test) ") {\n"
                 (write-body body) "\n}")))
          (if statements?
              result
@@ -1022,34 +1036,37 @@
      (method (_ object #rest elements)
        (concatenate
         (if (instance? object <number>)
-            (concatenate "(" (write object) ")")
-            (write object))
+            (concatenate "(" (write-expressions object) ")")
+            (write-expressions object))
         (apply concatenate
                (map (method (element)
                       (if (and (instance? element <string>)
                                (match *property-pattern* element))
                           (concatenate "." element)
-                          (concatenate "[" (write element) "]")))
+                          (concatenate "[" (write-expressions element) "]")))
                     elements))))
      "js:new"
      (method (_ name #rest arguments)
        (concatenate
-        "new " (write name)
+        "new " (write-expressions name)
         " (" (join (map write arguments) ", ") ")"))
      "js:var"
      (method (_ name value)
        (concatenate
-        "var " (write name)
+        "var " (write-expressions name)
         (if (and value
                  (not (== value (S "js:undefined"))))
-            (concatenate " = " (write value))
+            (concatenate " = " (write-expressions value))
             "")))
      "js:set"
      (method (_ name value)
-       (concatenate (write name) " = " (write value)))
+       (concatenate
+        (write-expressions name) " = "
+        (write-expressions value)))
      "js:return"
      (method (_ body)
-       (concatenate "return " (write body)))
+       (concatenate
+        "return " (write-expressions body)))
      "js:function"
      (method (_ name arguments body)
        (concatenate
@@ -1057,7 +1074,7 @@
         (if (and name
                  (not (== name (S "js:null"))))
             (if (instance? name <array>)
-                (write name)
+                (write-expressions name)
                 (escape-symbol name))
             (concatenate (escape-symbol (generate-symbol))
                          "__lambda"))
@@ -1068,10 +1085,10 @@
         "}"))
      "js:escape"
      (method (_ symbol)
-       (write (escape-symbol symbol)))
+       (write-expressions (escape-symbol symbol)))
      "js:throw"
      (method (statements? error)
-       (bind ((result (concatenate "throw " (write error))))
+       (bind ((result (concatenate "throw " (write-expressions error))))
              (if statements?
                  result
                  (wrap-block result))))
@@ -1082,15 +1099,24 @@
               ((>= i (size key-values)))
            (push-last entries
                       (concatenate
-                       (write (element key-values i)) ":"
-                       (write (element key-values (+ i 1))))))
+                       (write-expressions (element key-values i)) ":"
+                       (write-expressions (element key-values (+ i 1))))))
          (concatenate "{" (join entries ",\n") "}")))))
 
-(define-function compile (form #key statements?)
-  (write (macroexpand form)
-         statements?: statements?))
+(define-function compile (form #key statements? asynchronous?)
+  (bind ((post-process [])
+         (environment (make-object
+                       "post-process" post-process
+                       "asynchronous?" asynchronous?))
+         (expanded (macroexpand environment form)))
+    (unless (empty? post-process)
+      (for-each ((processor post-process))
+                ()
+        (set! expanded (processor expanded))))
+    (write expanded statements?)))
 
-(define-function macroexpand (form)
+
+(define-function macroexpand (environment form)
   (select form instance?
     ((<array>)
      ;; apply macros
@@ -1098,7 +1124,7 @@
                  (instance? (first form) <symbol>)
                  (has? *macros* (symbol-name (first form))))
        (bind ((macro (get *macros* (symbol-name (first form)))))
-         (set! form (apply macro (rest form)))))
+         (set! form (apply macro environment (rest form)))))
      ;; still array?
      (if (instance? form <array>)
          (bind ((head (first form)))
@@ -1113,26 +1139,29 @@
                     (concatenate
                      ;; skip n arguments, macroexpand rest
                      (slice form 0 (inc expander))
-                     (map macroexpand (slice form (inc expander)))))
+                     (map (curry macroexpand environment)
+                          (slice form (inc expander)))))
                    ((<function>)
                     ;; custom expander
-                    (apply expander (rest form)))
+                    (apply expander environment
+                           (rest form)))
                    (else:
                     ;; form mustn't be expanded
                     form)))
-             ;; not special
-             (map macroexpand form)))
+               ;; not special
+               (map (curry macroexpand environment)
+                    form)))
          ;; not an array
-         (macroexpand form)))
+         (macroexpand environment form)))
     ((<symbol>)
      ;; symbol-macro?
      (if-bind (symbol-macro (get *symbol-macros*
                                  (symbol-name form)))
-       (macroexpand symbol-macro)
+       (macroexpand environment symbol-macro)
        form))
     (else: form)))
 
-(define-function write (form #key statements?)
+(define-function write (form statements?)
   (select form instance?
     ;; array?
     ((<array>)
@@ -1145,7 +1174,7 @@
                (has? *unary* head-name)
                (== (size form) 2))
           (concatenate "(" (get *unary* head-name) " "
-                       (write (second form)) ")"))
+                       (write-expressions (second form)) ")"))
          ;; infix?
          ((and (instance? head <symbol>)
                (has? *infix* head-name))
@@ -1180,35 +1209,7 @@
      (description form))))
 
 (define write-statements
-    (rcurry write statements?: #t))
+    (rcurry write #t))
 
-(define-function transform-asynchronous (form)
-  (bind ((modules []))
-    (bind-methods ((walk (current parent)
-                     (bind ((proceed? (instance? current <array>)))
-                       (when (and proceed?
-                                  (== (size current) 3))
-                         (destructuring-bind (var variable-name value) current
-                           (when (== var (S "js:var"))
-                             (destructuring-bind (require module-name) value
-                               (when (== require (S "require"))
-                                 (push-last modules [variable-name module-name])
-                                 (bind ((index (position parent current)))
-                                   (replace-subsequence! parent []
-                                                         start: index
-                                                         end: (inc index)))
-                                 (set! proceed? #f))))))
-                       (when proceed?
-                         (do (method (form)
-                               (walk form current))
-                             (rest current))))))
-    (walk form)
-    (do (method (binding)
-          (destructuring-bind (variable module) binding
-              (set! form
-                    `(require ,module
-                              (js:function js:null (,variable)
-                                 ,form)))))
-        modules)
-    form)))
-
+(define write-expressions
+    (rcurry write #f))
