@@ -883,53 +883,11 @@ function write (form, allowStatements) {
         return form;
 }
 
-function transformAsync (form) {
-    var modules = {};
-    function walk (current, parent) {
-        var proceed = current instanceof Array;
-        if (proceed &&
-            current.length == 3) {
-            var head = current[0];
-            var value = current[2];
-            if (head instanceof Symbol
-                && head.name == 'js:var'
-                && value instanceof Array
-                && value[0] instanceof Symbol
-                && value[0].name == 'require')
-            {
-                // note module
-                modules[current[1]] = value[1];
-                // remove synchronous require
-                parent.splice(parent.indexOf(current), 1);
-                proceed = false;
-            }
-        }
-
-        if (proceed)
-            // walk rest of the form
-            current.slice(1)
-            .forEach(function (r) {
-                         walk(r, current);
-                     });
-    }
-    walk(form);
-    for (var variable in modules) {
-        if (modules.hasOwnProperty(variable)) {
-            form = [S('require'), modules[variable],
-                    [S('js:function'), S('js:null'), [variable],
-                     form]];
-        }
-    }
-    return form;
-}
-
 //// interface
 
-exports.compile = function (code, async) {
+exports.compile = function (code) {
     var stream = new Stream("(begin\n" + code + "\n)");
     var reader = new Reader(stream);
     var form = reader.read();
-    if (async)
-        form = transformAsync(macroexpand(form));
     return write(macroexpand(form), true);
 };
