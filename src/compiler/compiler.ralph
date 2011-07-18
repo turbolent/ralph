@@ -153,10 +153,9 @@
                           (else:
                            form))))
          (transform form)))
-;; TODO:
-;;     "%comma"
-;;     (method (_ value)
-;;       (signal (make <error> message: "comma not inside backquote")))
+     "%comma"
+     (method (_ value)
+       (signal (make <error> message: "comma not inside backquote")))
      "%parallel-set"
      (method (_ #rest clauses)
        (bind ((temp-clauses [])
