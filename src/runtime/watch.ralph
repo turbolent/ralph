@@ -1,4 +1,4 @@
-(define-module watch
+(define-module runtime/watch
     import: (runtime/core)
     export: (watch unwatch))
 

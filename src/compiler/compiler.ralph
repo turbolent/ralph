@@ -1,4 +1,4 @@
-(define-module compiler
+(define-module compiler/compiler
     import: (runtime/core runtime/format runtime/regexp
              compiler/reader)
     export: (compile macroexpand transform-asynchronous))

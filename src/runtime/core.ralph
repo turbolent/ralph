@@ -1,5 +1,5 @@
 
-(define-module core
+(define-module runtime/core
   export: (%define %export %get-definition %define-getter %define-setter
            (js:inline "_s") (js:inline "_k")
            (js:inline "_key") (js:inline "_rest")

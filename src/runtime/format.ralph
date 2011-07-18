@@ -1,5 +1,4 @@
-
-(define-module format
+(define-module runtime/format
   import: (runtime/core runtime/stream)
   export: (format-out
            format-to-string

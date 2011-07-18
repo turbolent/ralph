@@ -1,4 +1,4 @@
-(define-module reader
+(define-module compiler/reader
     import: (runtime/core runtime/stream runtime/regexp)
     export: (read))
 

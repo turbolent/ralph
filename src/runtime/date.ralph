@@ -1,4 +1,4 @@
-(define-module date
+(define-module runtime/date
   import: (runtime/core)
   export: (<date>))
 

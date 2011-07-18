@@ -1,4 +1,4 @@
-(define-module regexp
+(define-module runtime/regexp
     import: (runtime/core)
     export: (<regexp> match replace-all))
 

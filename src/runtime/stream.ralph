@@ -1,5 +1,4 @@
-
-(define-module format
+(define-module runtime/stream
   import: (runtime/core)
   export: (<streamable>
            <string-stream>

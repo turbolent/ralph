@@ -1,4 +1,4 @@
-(define-module test
+(define-module runtime/test
   import: (runtime/core runtime/format)
   export: (check-equal
            check-true
