@@ -1,8 +1,10 @@
 var http = require('http'),
+  url = require('url'),
   core = require("runtime/core"),
   stream = require("runtime/stream"),
   reader = require("compiler/reader"),
   compiler = require("compiler/compiler");
+
 
 function handler (req, res) {
     var code = "";
@@ -16,13 +18,12 @@ function handler (req, res) {
                        core.make(stream._CL_stringStream, core._k("string"),
                                  "(begin\n" + code + "\n)");
                    var form = reader.read(sourceStream);
-                   if (req.url == '/async')
-                       form = compiler.transformAsynchronous(compiler.macroexpand(form));
-                   var compiled = compiler.compile(form, core._k('statements?'), true);
-                   var result = "(function(){\n" + compiled + "\n})();\n";
-                   
+				   var options = url.parse(req.url, true).query;
+                   var compiled = compiler.compile(form, 
+												   core._k('statements?'), true,
+												   core._k('asynchronous?'), !!options.asynchronous);
                    res.writeHead(200, {'Content-Type': 'text/javascript'});
-                   res.end(result);                                    
+                   res.end(compiled);
                } catch (e) {
                    res.writeHead(500);
                    res.end(e.stack.toString());
@@ -31,4 +32,4 @@ function handler (req, res) {
 }
 
 http.createServer(handler).listen(5000, "127.0.0.1");
-console.log('POST Ralph code to http://127.0.0.1:5000/ or /async');
+console.log('POST Ralph code to http://127.0.0.1:5000/');
