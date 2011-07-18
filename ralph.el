@@ -9,9 +9,9 @@
 	"method" "block"
 	"bind" "define"
 	"bind-properties" "destructuring-bind"
-	"set!" "get"
-	"when" "if" "unless"
-	"select" "cond"
+	"set!" "get" "inc!" "dec!"
+	"when" "if" "unless" "if-bind"
+	"select" "cond" "for" "for-each"
 	"and" "or" "not"
 	"while" "unil" "dotimes"))
 
@@ -31,7 +31,9 @@
 (put 'dotimes 'ralph-indent-function 1)
 (put 'bind 'ralph-indent-function 1)
 (put 'if 'ralph-indent-function nil)
+(put 'if-bind 'ralph-indent-function 1)
 (put 'for 'ralph-indent-function 2)
+(put 'for-each 'ralph-indent-function 2)
 (put 'select 'ralph-indent-function 2)
 (put 'method 'ralph-indent-function 1)
 (put 'block 'ralph-indent-function 1)
