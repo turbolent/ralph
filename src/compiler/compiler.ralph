@@ -126,6 +126,16 @@
              ""))
    ")"))
 
+(define-function request-temporaries (environment count)
+  (bind-properties (temporaries post-processors) environment
+    (when (empty? temporaries)
+      (push post-processors
+            (method (form)
+              `((js:function js:null ,temporaries ,form)))))
+    (when (< (size temporaries) count)
+      (dotimes (_ (- count (size temporaries)))
+        (push-last temporaries (generate-symbol))))
+    temporaries))
 
 (define *macros*
     (make-object
@@ -286,18 +296,18 @@
                    ,(last expressions)
                    #f)))
      "or"
-     (method (_ #rest expressions)
-       (bind ((temp (generate-symbol)))
+     (method (environment #rest expressions)
+       (destructuring-bind (temp)
+           (request-temporaries environment 1)
          (bind-methods ((test (expressions)
                           (if (empty? expressions)
                               #f
                               `(begin
                                 (set! ,temp ,(first expressions))
                                 (js:if (true? ,temp)
-                                       (js:return ,temp)
+                                       ,temp
                                        ,(test (rest expressions)))))))
-           `((js:function js:null (,temp)
-               ,(test expressions))))))
+           (test expressions))))
      "define-function"
      (method (_ name arguments #rest body)
        (destructuring-bind (setter? name)
@@ -454,7 +464,7 @@
                          js:this)))
          (if (get environment "asynchronous?")
              (begin
-              (push (get environment "post-process")
+              (push (get environment "post-processors")
                     (bind ((module-name (symbol-name name)))
                       (method (form)
                         `(begin
@@ -1123,13 +1133,15 @@
          (concatenate "{" (join entries ",\n") "}")))))
 
 (define-function compile (form #key statements? asynchronous?)
-  (bind ((post-process [])
+  (bind ((post-processors [])
+         (temporaries [])
          (environment (make-object
-                       "post-process" post-process
+                       "temporaries" temporaries
+                       "post-processors" post-processors
                        "asynchronous?" asynchronous?))
          (expanded (macroexpand environment form)))
-    (unless (empty? post-process)
-      (for-each ((processor post-process))
+    (unless (empty? post-processors)
+      (for-each ((processor post-processors))
                 ()
         (set! expanded (processor expanded))))
     (write expanded statements?)))
