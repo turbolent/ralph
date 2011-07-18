@@ -929,9 +929,16 @@
      (method (statements? #rest forms)
        (cond
          (statements?
-          (join (map write-statements
+          (join (map (method (form)
+                       (concatenate
+                        (write-statements form)
+                        (if (and (instance? form <array>)
+                                 (== (first form)
+                                     (S "js:comment")))
+                            ""
+                            ";")))
                      forms)
-                ";\n"))
+                "\n"))
          ((> (size forms) 1)
           (concatenate
            "(" (join (map write forms) ", ") ")"))
