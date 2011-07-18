@@ -206,9 +206,9 @@
             #f))
      "unless"
      (method (_ test #rest body)
-       `(if (not ,test)
-            ,(concatenate `(begin) body)
-            #f))
+       `(js:if (js:not (true? ,test))
+               ,(concatenate `(begin) body)
+               #f))
      "bind"
      (method (_ bindings #rest body)
        (bind ((vars (map first bindings)))
