@@ -108,15 +108,20 @@
            (symbol-name name))
    (bind ((specializers? #t))
        (join (map (method (argument)
-                    (when (or (== argument #key)
-                              (== argument #rest))
-                      (set! specializers? #f))
-                    (if specializers?
-                        (concatenate
-                         " " (if (instance? argument <array>)
-                                 (symbol-name (second argument))
-                                 "<object>"))
-                        ""))
+                    (concatenate
+                     " " (if specializers?
+                             (if (or (== argument #key)
+                                     (== argument #rest))
+                                 (begin
+                                  (set! specializers? #f)
+                                  (concatenate "#" (symbol-name argument)))
+                                 (if (instance? argument <array>)
+                                     (symbol-name (second argument))
+                                     "<object>"))
+                             (symbol-name
+                              (if (instance? argument <array>)
+                                  (first argument)
+                                  argument)))))
                   arguments)
              ""))
    ")"))
