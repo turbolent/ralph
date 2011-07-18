@@ -24,16 +24,15 @@ else {
 
 var compiled;
 if (bootstrap)
-    compiled = bootstrapCompiler.compile(code, async);
+    compiled = bootstrapCompiler.compile(code);
 else {
     var sourceStream = core.make(stream._CL_stringStream, core._k("string"),
 								 "(begin\n" + code + "\n)");
     var form = reader.read(sourceStream);
-    if (async)
-        form = compiler.transformAsynchronous(compiler.macroexpand(form));
-    compiled = compiler.compile(form, core._k('statements?'), true);
+    compiled = compiler.compile(form, 
+								core._k('statements?'), true, 
+								core._k('asynchronous?'), async);
 }
 
-var result = "(function(){\n" + compiled + "\n})();\n";
-(typeof process === "undefined" ? system : process).stdout.write(result);
+(typeof process === "undefined" ? system : process).stdout.write(compiled);
 	
