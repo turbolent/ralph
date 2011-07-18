@@ -49,9 +49,9 @@
            #f)))
 
 
-;; manual export necessary
-(%export exports (js:escape %define) %define)
-(%export exports (js:escape %export) %export)
+;; manual definition
+(%define *module* exports (js:escape %define) %define)
+(%define *module* exports (js:escape %export) %export)
 
 (define %get-property
   (js:function js:null (object name)
