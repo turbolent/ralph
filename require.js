@@ -1,64 +1,62 @@
-var require;
 
-function _e (exports, _code) {
-    eval(_code);
-}
+// define('module-name', [dependeny, ...], function (exports) { ... })
+// require(['module-name', ...], function (exports) { ... })
+
+var require, define;
 
 (function () {
-     var modules = {};
-     var requests = 0;
-     var deferredCallbacks = [];
+    var modules = {};
+    var requests = 0;
+    var callbacks = {};
+	var head = document.getElementsByTagName('head')[0];
+	var href = document.location.href;
+	var root = href.substring(0, href.lastIndexOf('/') + 1);
 
-     function dirname (path) {
-         return path.substring(0, path.lastIndexOf('/') + 1);
-     }
+	function load (name, callback) {
+		if (!callbacks[name]) {
+			callbacks[name] = [callback];
 
-     function request (name, callback) {
-         var req = new XMLHttpRequest();
-         var path = name + ".js";
-         req.open("GET", dirname(document.location.href) + path, true);
-         req.onreadystatechange = function () {
-             if (req.readyState == 4) {
-                 if ((req.status == 200)
-                     || (req.status == 0))
-                 {
-                     var currentRequests = requests;
-                     var exports = {};
-                    var location = "//@ sourceURL="
-                         + path.replace(/\//g, "_").replace(/\.js$/, "") + "\n";
-                     _e(exports, location + req.responseText);
-                     modules[name] = exports;
-                     deferredCallbacks
-                         .unshift(function() {
-                                      if (currentRequests == requests) {
-                                          callback(exports);
-                                          requests--;
-                                          return true;
-                                      } else
-                                          return false;
-                                  });
-                     for (var i = 0; i < deferredCallbacks.length; i++) {
-                         if (deferredCallbacks[0]()) {
-                             deferredCallbacks.splice(i, 1);
-                             i--;
-                         }
-                     }
-                 } else {
-                     callback();
-                     requests--;
+			console.log("load", name, +new Date());
+			var script = document.createElement('script');
+			script.setAttribute('src', root + name + '.js');
+			head.appendChild(script);
+		} else
+			callbacks[name].push(callback);
+	};
 
-                 }
-             }
-         };
-         req.send(null);
-     }
+	function ensureLoaded (dependencies, callback) {
+		var result = true;
+		for (var i = 0, n = dependencies.length; i < n; i++) {
+			var dependency = dependencies[i];
+			if (!modules.hasOwnProperty(dependency)) {
+				result = false;
+				load(dependency, callback);
+			}
+		};
+		return result;
+	}
 
-     require = function (name, callback) {
-         if (modules.hasOwnProperty(name))
-             callback(modules[name]);
-         else {
-             requests++;
-             request(name, callback);
-         }
-     };
- })();
+	require = function (dependencies, body) {
+		(function check () {
+			if (ensureLoaded(dependencies, check)) {
+  				body.apply(null, dependencies.map(function (name) {
+					return modules[name];
+				}));
+			}
+		})();
+	};
+
+	define = function (name, dependencies, factory) {
+		(function check () {
+			if (ensureLoaded(dependencies, check)) {
+				var module = {};
+				factory(module);
+				modules[name] = module;
+				callbacks[name].forEach(function (callback) {
+					callback();
+				});
+				callbacks[name] = [];
+			}
+		})();
+	};
+})();
