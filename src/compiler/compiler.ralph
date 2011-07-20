@@ -12,6 +12,11 @@
    "<number>" "Number"
    "<boolean>" "Boolean"))
 
+(define-function source (form)
+  (bind-properties (source start-index end-index)
+      form
+    (slice source start-index end-index)))
+
 (define-function prepend-return (forms)
   (concatenate
    (but-last forms)
@@ -898,13 +903,13 @@
        name)
       ((member? name *reserved*)
        (concatenate "_" name))
-      ((and (== (first name) "<")
-            (== (last name) ">")
+      ((and (= (first name) "<")
+            (= (last name) ">")
             (> (size name) 2))
        (concatenate "_CL_"
                     (escape (but-last (rest name)))))
-      ((and (== (first name) "*")
-            (== (last name) "*")
+      ((and (= (first name) "*")
+            (= (last name) "*")
             (> (size name) 2))
        (as-uppercase
         (escape (but-last (rest name)))))

@@ -16,13 +16,14 @@ function handler (req, res) {
                try {
                    var sourceStream =
                        core.make(stream._CL_stringStream, core._k("string"),
-                                 "(begin\n" + code + "\n)");
+                                 "(begin " + code + ")");
+				   sourceStream.line = 1;
                    var form = reader.read(sourceStream);
-				   var options = url.parse(req.url, true).query;
+                   var options = url.parse(req.url, true).query;
                    var compiled = compiler.compile(form,
-												   core._k('statements?'), ((options && options.hasOwnProperty('statements'))
-																			? !!options.statements : true),
-												   core._k('asynchronous?'), options && !!options.asynchronous);
+                                                   core._k('statements?'), ((options && options.hasOwnProperty('statements'))
+                                                                            ? !!options.statements : true),
+                                                   core._k('asynchronous?'), options && !!options.asynchronous);
                    res.writeHead(200, {'Content-Type': 'text/javascript'});
                    res.end(compiled);
                } catch (e) {

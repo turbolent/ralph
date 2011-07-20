@@ -27,12 +27,13 @@ if (bootstrap)
     compiled = bootstrapCompiler.compile(code);
 else {
     var sourceStream = core.make(stream._CL_stringStream, core._k("string"),
-								 "(begin\n" + code + "\n)");
+                                 "(begin " + code + ")");
+    sourceStream.line = 1;
     var form = reader.read(sourceStream);
-    compiled = compiler.compile(form, 
-								core._k('statements?'), true, 
-								core._k('asynchronous?'), async);
+    compiled = compiler.compile(form,
+                                core._k('statements?'), true,
+                                core._k('asynchronous?'), async);
 }
 
 (typeof process === "undefined" ? system : process).stdout.write(compiled);
-	
+
