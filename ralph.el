@@ -8,7 +8,7 @@
 		"set!" "get" "inc!" "dec!"
 		"when" "if" "unless" "if-bind" "select" "cond"
 		"and" "or" "not"
-		"while" "unil" "dotimes" "for" "for-each")
+		"while" "until" "dotimes" "for" "for-each")
 	  'words)
 	("\\<<\\(\\sw\\|\\s_\\)+>\\>" . font-lock-type-face)
 	("\\<define\\>\\s-+\\(\\(\\sw\\|\\s_\\)+\\)"
@@ -16,7 +16,11 @@
 	("\\<define-\\(function\\|generic\\)\\>\\s-+\\(\\(\\sw\\|\\s_\\)+\\)"
 	 2 font-lock-function-name-face)
 	("\\<define-module\\>\\s-+\\(\\(\\sw\\|\\s_\\)+\\)"
-	 1 font-lock-function-name-face)))
+	 1 font-lock-function-name-face)
+	(,(regexp-opt
+	   '("bind-method" "signal")
+	   'words)
+	 . font-lock-warning-face)))
 
 (defvar ralph-mode-syntax-table
   (let ((table (copy-syntax-table lisp-mode-syntax-table)))
@@ -39,6 +43,7 @@
 (put 'until 'ralph-indent-function 1)
 (put 'dotimes 'ralph-indent-function 1)
 (put 'bind 'ralph-indent-function 1)
+(put 'bind-methods 'ralph-indent-function 1)
 (put 'if 'ralph-indent-function nil)
 (put 'if-bind 'ralph-indent-function 1)
 (put 'for 'ralph-indent-function 2)
