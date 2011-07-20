@@ -75,7 +75,9 @@
     (js:return
      (js:and (js:not (js:=== value js:null))
              (js:not (js:=== value js:undefined))
-             (js:not (js:=== value #f))))))
+             (js:not (js:=== ((js:get-property value "valueOf"))
+                             #f))))))
+
 
 (set! (js:get-property true? "displayName")
       "(true? <object>)")
