@@ -265,6 +265,16 @@
            `(%get-property ,object ,(first keys))
            (concatenate `(js:call get ,object)
                         keys)))
+     "%get-property"
+     (method (environment object name)
+       (destructuring-bind (temp1 temp2)
+           (request-temporaries environment 2)
+         `(begin
+           (set! ,temp1 ,object)
+           (set! ,temp2 ,name)
+           (js:and ,temp1
+                   (has? ,temp1 ,temp2)
+                   (js:get-property ,temp1 ,temp2)))))
      "while"
      (method (_ test #rest body)
        `((js:function js:null ()
@@ -672,18 +682,18 @@
      (method (environment array value)
        (destructuring-bind (temp)
            (request-temporaries environment 1)
-       `(begin
-         (set! ,temp ,array)
-         ((js:get-property ,temp "push") ,value)
-         ,temp)))
+         `(begin
+           (set! ,temp ,array)
+           ((js:get-property ,temp "push") ,value)
+           ,temp)))
      "push"
      (method (environment array value)
        (destructuring-bind (temp)
            (request-temporaries environment 1)
-       `(begin
-         (set! ,temp ,array)
-         ((js:get-property ,temp "unshift") ,value)
-         ,temp)))
+         `(begin
+           (set! ,temp ,array)
+           ((js:get-property ,temp "unshift") ,value)
+           ,temp)))
      "pop"
      (method (_ array)
        `((js:get-property ,array "shift")))
