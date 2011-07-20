@@ -171,7 +171,10 @@
          (transform form)))
      "%comma"
      (method (_ value)
-       (signal (make <error> message: "comma not inside backquote")))
+       (signal (make <error> message:
+                     (format-to-string "comma not inside backquote: %d:%d"
+                                       (get value "start-line")
+                                       (get value "start-column")))))
      "%parallel-set"
      (method (_ #rest clauses)
        (bind ((temp-clauses [])
