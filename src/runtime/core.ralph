@@ -640,7 +640,8 @@
        (set! actual (%actual-type type))
        (js:or
         ;; primitive
-        (%has-constructor? object actual)
+        (js:=== (js:get-property object "constructor")
+                actual)
         ;; object
         ((js:get-property actual "prototype"
                           "isPrototypeOf")

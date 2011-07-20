@@ -120,11 +120,6 @@ var macros = {
                  "hasOwnProperty"],
                 property];
     },
-    '%has-constructor?': function (object, constructor) {
-        return [S('js:==='),
-                [S('js:get-property'), object, 'constructor'],
-                constructor];
-    },
     '%actual-type': function (type) {
         return [S('js:or'),
                 [S('%get-property'), type, "%js-type"],

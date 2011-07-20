@@ -147,10 +147,6 @@
          (set! (get *macros* (symbol-name name))
                (eval (concatenate "(" compiled ")"))))
        #f)
-     "%has-constructor?"
-     (method (_ object constructor)
-       `(js:=== (js:get-property ,object "constructor")
-                ,constructor))
      "%backquote"
      (method (_ form)
        (bind-methods ((transform (form)
@@ -633,9 +629,9 @@
          (((S "<string>")
            (S "<number>")
            (S "<boolean>"))
-          `(%has-constructor? ,object
-            (js:inline ,(get *type-name->constructor-name*
-                                 (symbol-name type)))))
+          `(js:=== (js:get-property ,object "constructor")
+                   (js:inline ,(get *type-name->constructor-name*
+                                    (symbol-name type)))))
          (else:
           `(js:call instance? ,object ,type))))
      "make-array"
