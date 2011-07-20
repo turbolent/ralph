@@ -1,27 +1,29 @@
 (defvar ralph-mode-font-lock-keywords
-  '(("<\\(\\sw\\|\\s_\\)+>" . font-lock-type-face)
-	("define\\s-+\\(\\(\\sw\\|\\s_\\)+\\)"
+  `(,(regexp-opt
+	  '("#rest" "#key"
+		"method" "block"
+		"define-function" "define-class" "define-module"
+		"define-generic" "define-macro" "define"
+		"bind-properties" "bind-methods" "bind" "destructuring-bind"
+		"set!" "get" "inc!" "dec!"
+		"when" "if" "unless" "if-bind" "select" "cond"
+		"and" "or" "not"
+		"while" "unil" "dotimes" "for" "for-each")
+	  'words)
+	("\\<<\\(\\sw\\|\\s_\\)+>\\>" . font-lock-type-face)
+	("\\<define\\>\\s-+\\(\\(\\sw\\|\\s_\\)+\\)"
 	 1 font-lock-variable-name-face)
-	("define-\\(function\\|generic\\)\\s-+\\(\\(\\sw\\|\\s_\\)+\\)"
+	("\\<define-\\(function\\|generic\\)\\>\\s-+\\(\\(\\sw\\|\\s_\\)+\\)"
 	 2 font-lock-function-name-face)
-	"#rest\\|#key"
-	"define-\\(function\\|class\\|module\\|generic\\|macro\\)"
-	"method" "block"
-	"bind" "define"
-	"bind-properties" "destructuring-bind"
-	"set!" "get" "inc!" "dec!"
-	"when" "if" "unless" "if-bind"
-	"select" "cond" "for" "for-each"
-	"and" "or" "not"
-	"while" "unil" "dotimes"))
+	("\\<define-module\\>\\s-+\\(\\(\\sw\\|\\s_\\)+\\)"
+	 1 font-lock-function-name-face)))
 
 (define-derived-mode
   ralph-mode lisp-mode "Ralph"
   "Major mode"
+  (setq font-lock-defaults '((ralph-mode-font-lock-keywords) nil nil))
   (set (make-local-variable 'lisp-indent-function)
-	   'ralph-indent-function)
-  (set (make-local-variable 'font-lock-defaults)
-	   '(ralph-mode-font-lock-keywords nil t)))
+	   'ralph-indent-function))
 
 ;; indentation offsets
 (put 'when 'ralph-indent-function 1)
