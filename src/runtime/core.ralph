@@ -13,6 +13,7 @@
            %get-property get %set
            %inherit make initialize type instance? superclass
            as-string as-array as-number
+           make-string make-number make-boolean
            apply reduce reduce1 map do repeatedly
            any? every? member? choose-by find-key
            complement curry rcurry
@@ -253,15 +254,19 @@
                       name value))))
 
 (define-function as-string (object)
-  (js:new (js:inline "String")
-          ((js:get-property object "toString"))))
+  ((js:get-property object "toString")))
 
 (define-function as-number (object)
-  (js:new (js:inline "Number") object))
+  ((js:inline "Number") object))
 
-(define-function as-boolean (object)
-  (js:new (js:inline "Boolean")
-          (true? object)))
+(define-function make-string (value)
+  (js:new (js:inline "String") value))
+
+(define-function make-number (value)
+  (js:new (js:inline "Number") value))
+
+(define-function make-boolean (value)
+  (js:new (js:inline "Boolean") value))
 
 (define-function as-array (arguments skip)
   ((js:get-property [] "slice" "call")
