@@ -18,12 +18,19 @@
 	("\\<define-module\\>\\s-+\\(\\(\\sw\\|\\s_\\)+\\)"
 	 1 font-lock-function-name-face)))
 
+(defvar ralph-mode-syntax-table
+  (let ((table (copy-syntax-table lisp-mode-syntax-table)))
+    (modify-syntax-entry ?\[ "(]" table)
+    (modify-syntax-entry ?\] ")[" table)
+    table))
+
 (define-derived-mode
   ralph-mode lisp-mode "Ralph"
   "Major mode"
   (setq font-lock-defaults '((ralph-mode-font-lock-keywords) nil nil))
   (set (make-local-variable 'lisp-indent-function)
-	   'ralph-indent-function))
+	   'ralph-indent-function)
+  (set-syntax-table ralph-mode-syntax-table))
 
 ;; indentation offsets
 (put 'when 'ralph-indent-function 1)
