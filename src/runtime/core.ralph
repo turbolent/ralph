@@ -251,10 +251,15 @@
                       name value))))
 
 (define-function as-string (object)
-  ((js:get-property object "toString")))
+  (js:new (js:inline "String")
+          ((js:get-property object "toString"))))
 
 (define-function as-number (object)
-  ((js:inline "Number") object))
+  (js:new (js:inline "Number") object))
+
+(define-function as-boolean (object)
+  (js:new (js:inline "Boolean")
+          (true? object)))
 
 (define-function as-array (arguments skip)
   ((js:get-property [] "slice" "call")
