@@ -17,7 +17,7 @@
            apply reduce reduce1 map do repeatedly
            any? every? member? choose-by find-key
            complement curry rcurry
-           position join trim replace
+           position last-position join trim replace
            as-lowercase as-uppercase
            make-array make-object
            element first second third last rest concatenate
@@ -363,10 +363,6 @@
                                 #key (start 0) (end (size array)))
   (slice array start end))
 
-(define-function push-last ((array <array>) new-value)
-  ((js:get-property array "push") new-value)
-  array)
-
 (define-function inc ((number <number>))
   (js:+ number 1))
 
@@ -422,6 +418,10 @@
 
 (define-function push ((array <array>) new-value)
   ((js:get-property array "unshift") new-value)
+  array)
+
+(define-function push-last ((array <array>) new-value)
+  ((js:get-property array "push") new-value)
   array)
 
 (define-function pop ((array <array>))
@@ -514,6 +514,10 @@
 
 (define-function position ((array <array>) element)
   (js:var position ((js:get-property array "indexOf") element))
+  (js:if (js:> position -1) position #f))
+
+(define-function last-position ((array <array>) element)
+  (js:var position ((js:get-property array "lastIndexOf") element))
   (js:if (js:> position -1) position #f))
 
 (define-function any? ((function <function>) (array <array>))
