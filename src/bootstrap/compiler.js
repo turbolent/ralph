@@ -449,13 +449,15 @@ var macros = {
         var body = arguments.toArray().slice(1);
         var variable = varCountResult[0];
         var count = varCountResult[1];
+		var countSymbol = Symbol.generate();
         var result = varCountResult[2];
         if (result === undefined)
             result = false;
         return [S('for'),
-                [[variable, 0, [S('js:+'), variable, 1]]],
-                [[S('js:>='), variable, count], result]]
-            .concat(body);
+                [[variable, 0, [S('js:+'), variable, 1]],
+				 [countSymbol, count, countSymbol]],
+                [[S('js:>='), variable, countSymbol], result]]
+			.concat(body);
     },
     'and': function () {
         var expressions = arguments.toArray();

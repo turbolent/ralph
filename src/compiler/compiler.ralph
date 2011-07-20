@@ -131,6 +131,7 @@
              ""))
    ")"))
 
+;; NB: don't use for loops!
 (define-function request-temporaries (environment count)
   (bind-properties (temporaries post-processors) environment
     (when (empty? temporaries)
@@ -139,7 +140,8 @@
               `((js:function js:null ,temporaries ,form)))))
     (when (< (size temporaries) count)
       (dotimes (_ (- count (size temporaries)))
-        (push-last temporaries (generate-symbol))))
+        (push-last temporaries
+                   (generate-symbol))))
     temporaries))
 
 (define *macros*
@@ -350,11 +352,13 @@
      (method (_ object)
        `(js:- ,object 1))
      "dotimes"
-     (method (_ binding #rest body)
-       (destructuring-bind (var count result) binding
-         (concatenate `(for ((,var 0 (js:+ ,var 1)))
-                            ((js:>= ,var ,count) (or result #f)))
-                      body)))
+     (method (environment binding #rest body)
+       (bind ((temp (generate-symbol)))
+         (destructuring-bind (var count result) binding
+           (concatenate `(for ((,var 0 (js:+ ,var 1))
+                               (,temp ,count ,temp))
+                              ((js:>= ,var ,temp) ,(or result #f)))
+                        body))))
      "for"
      (method (_ clauses end #rest body)
        (bind ((init-clauses [])
@@ -519,13 +523,6 @@
                       (js:return (js:get-property ,condition "value"))
                       (js:throw ,condition))))
               (concatenate `(begin) body))))
-     "dotimes"
-     (method (_ var/count/result #rest body)
-       (destructuring-bind (var count result)
-           var/count/result
-         (concatenate `(for ((,var 0 (js:+ ,var 1)))
-                            ((js:>= ,var ,count) ,(or result #f)))
-                      body)))
      "for-each"
      (method (_ clauses end #rest body)
        (if (and (== (size clauses) 1)

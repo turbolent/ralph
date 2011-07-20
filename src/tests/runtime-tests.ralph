@@ -260,9 +260,9 @@
   (check-equal "scope: bind in for loop builds closures"
                2 ((element fns 2))))
 
-(check-equal "dotimes: push 0..9 into array"
+(check-equal "dotimes: count form only evaluated at beginning"
              9 (last (bind ((numbers (make <array>)))
-                       (dotimes (i 10 numbers)
+                       (dotimes (i (- 10 (size numbers)) numbers)
                          (push-last numbers i)))))
 
 ;; find-key
