@@ -718,3 +718,15 @@
                                         number))))
   (check-equal "for-each: uneven are [5 7 9]"
                [5 7 9] (map apply uneven)))
+
+(bind ((object (make-object
+                "a" (make-object
+                     "b" 23)))
+       (x []))
+    (check-equal "inlining: temporaries"
+                 23 (get (get (begin
+                               (or #f #t)
+                               (push-last x 1)
+                               object)
+                              "a")
+                         "b")))
