@@ -476,10 +476,7 @@
      (method (environment name #key (import `()) (export `()))
        (concatenate
         `(begin
-          (js:var *module*
-                  (js:if (js:defined (js:inline "GLOBAL"))
-                         (js:inline "GLOBAL")
-                         js:this)))
+          (js:var *module* js:this))
          (if (get environment "asynchronous?")
              (begin
               (push (get environment "post-processors")
@@ -487,10 +484,10 @@
                       (method (form)
                         `(begin
                           (js:comment ,(concatenate "@ sourceURL=" module-name))
-                          (define ,module-name
-                            ,(concatenate `(js:array)
-                                          (map symbol-name import))
-                            (js:function js:null (exports) ,form))))))
+                          ((js:inline "parent.define") ,module-name
+                           ,(concatenate `(js:array)
+                                         (map symbol-name import))
+                           (js:function js:null (exports) ,form))))))
               `())
              (bind ((property (generate-symbol))
                     (module (generate-symbol))

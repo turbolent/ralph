@@ -8,7 +8,7 @@
            <symbol> <hash-symbol> <keyword> <non-local-exit> <error>
            not true? signal
            *environment*
-           %define-class %make-generic %alias-type
+           %define-class %make-generic %alias-type %next-method
            %non-local-exit? %make-non-local-exit-function
            %get-property get %set
            %inherit make initialize type instance? superclass
