@@ -512,6 +512,7 @@
     (or (element satisfying-keys skip)
         failure)))
 
+;; <array> <object> or <string> <string>
 (define-function position ((array <array>) element)
   (js:var position ((js:get-property array "indexOf") element))
   (js:if (js:> position -1) position #f))
