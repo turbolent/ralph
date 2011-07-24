@@ -35,7 +35,6 @@ var require = (function () {
 
     function resolve (name) {
         var path = "file://" + root + '/' + name + '.js';
-        print(path);
         var uri = IO.newURI(path, null, null);
         var channel = IO.newChannelFromURI(uri);
         try {
@@ -50,7 +49,6 @@ var require = (function () {
     var system = {write: print};
 
     return function require (name) {
-        print("REQUIRE " + name)
         if (name == "system")
             return system;
 
@@ -66,7 +64,6 @@ var require = (function () {
                          sandbox, "1.5", name, 1);
         modules[name] = exports = sandbox.exports;
         var path = resolve(name);
-        print("== " + path);
         var code = read(path);
         if (path) {
             Cu.evalInSandbox(code, sandbox, "1.5", name, 1)
