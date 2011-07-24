@@ -55,9 +55,25 @@ function resolve (name) {
         return uri.spec;
 }
 
+
 var system = {args: [].slice.call(arguments),
-              stdout: {write: print},
-              stdin: {read: function () {
+              stdout: {write: (function () {
+                  var file = Cc["@mozilla.org/file/local;1"]
+                      .createInstance(Ci.nsILocalFile);
+                  file.initWithPath('/dev/stdout');
+                  var foStream = Cc["@mozilla.org/network/file-output-stream;1"]
+                      .createInstance(Ci.nsIFileOutputStream);
+                  foStream.init(file, -1, -1, 0);
+                  var coStream = Cc["@mozilla.org/intl/converter-output-stream;1"]
+                      .createInstance(Ci.nsIConverterOutputStream);
+                  var bufLen = 0x8000;
+                  coStream.init(foStream, "UTF-8", bufLen,
+                                Ci.nsIConverterOutputStream.DEFAULT_REPLACEMENT_CHARACTER);
+                  return function write (string) {
+                      coStream.writeString(string);
+                  }
+              })()},
+              stdin: {read: function read () {
                   return read('file:///dev/stdin');
               }}};
 
