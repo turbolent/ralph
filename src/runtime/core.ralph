@@ -96,17 +96,19 @@
 
 (define %define-class
   (js:function js:null (module exports name superclass slots)
-    (bind ((class (js:function js:null ())))
-      (%define module exports name class)
-      (set! (js:get-property class "%name")
-            name)
-      (set! (js:get-property class "%slots")
-            slots)
-      (js:if superclass
-             (begin
-              (%inherit class superclass)
-              (set! (js:get-property slots "__proto__")
-                    (js:get-property superclass "%slots")))))))
+    (begin
+     (js:var class (js:function js:null ()))
+     (%define module exports name class)
+     (set! (js:get-property class "%name")
+           name)
+     (set! (js:get-property class "%slots")
+           slots)
+     (js:if superclass
+            (begin
+             (%inherit class superclass)
+             (set! (js:get-property slots "__proto__")
+                   (js:get-property superclass "%slots"))))
+     (js:return class))))
 
 ;;;; getter
 
