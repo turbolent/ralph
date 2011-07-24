@@ -1,62 +1,76 @@
+var require = (function () {
+    var Cc = Components.classes;
+    var Ci = Components.interfaces;
+    var Cu = Components.utils;
+    var Cr = Components.results;
 
-// define('module-name', [dependeny, ...], function (exports) { ... })
-// require(['module-name', ...], function (exports) { ... })
+    var ENV = Cc["@mozilla.org/process/environment;1"]
+        .getService(Ci.nsIEnvironment);
+    var IO = Cc['@mozilla.org/network/io-service;1']
+        .getService(Ci.nsIIOService);
 
-var require, define;
+    var systemPrincipal = Cc["@mozilla.org/systemprincipal;1"]
+        .createInstance(Ci.nsIPrincipal);
+    var root = ENV.get("PWD");
 
-(function () {
     var modules = {};
-    var requests = 0;
-    var callbacks = {};
-	var head = document.getElementsByTagName('head')[0];
-	var href = document.location.href;
-	var root = href.substring(0, href.lastIndexOf('/') + 1);
+    var sandboxes = {};
 
-	function load (name, callback) {
-		if (!callbacks[name]) {
-			callbacks[name] = [callback];
+    function read (path) {
+        var channel = IO.newChannel(path, null, null);
+        var iStream = channel.open();
+        var ciStream = Cc["@mozilla.org/intl/converter-input-stream;1"].
+            createInstance(Ci.nsIConverterInputStream);
+        var bufLen = 0x8000;
+        ciStream.init(iStream, "UTF-8", bufLen,
+                      Ci.nsIConverterInputStream.DEFAULT_REPLACEMENT_CHARACTER);
+        var chunk = {};
+        var data = "";
+        while (ciStream.readString(bufLen, chunk) > 0)
+            data += chunk.value;
+        ciStream.close();
+        iStream.close();
+        return data;
+    }
 
-			console.log("load", name, +new Date());
-			var script = document.createElement('script');
-			script.setAttribute('src', root + name + '.js');
-			head.appendChild(script);
-		} else
-			callbacks[name].push(callback);
-	};
+    function resolve (name) {
+        var path = "file://" + root + '/' + name + '.js';
+        print(path);
+        var uri = IO.newURI(path, null, null);
+        var channel = IO.newChannelFromURI(uri);
+        try {
+            channel.open().close();
+        } catch (e) {
+            if (e.result == Cr.NS_ERROR_FILE_NOT_FOUND)
+                return null;
+        }
+        return uri.spec;
+    }
 
-	function ensureLoaded (dependencies, callback) {
-		var result = true;
-		for (var i = 0, n = dependencies.length; i < n; i++) {
-			var dependency = dependencies[i];
-			if (!modules.hasOwnProperty(dependency)) {
-				result = false;
-				load(dependency, callback);
-			}
-		};
-		return result;
-	}
+    var system = {write: print};
 
-	require = function (dependencies, body) {
-		(function check () {
-			if (ensureLoaded(dependencies, check)) {
-  				body.apply(null, dependencies.map(function (name) {
-					return modules[name];
-				}));
-			}
-		})();
-	};
+    return function require (name) {
+        print("REQUIRE " + name)
+        if (name == "system")
+            return system;
 
-	define = function (name, dependencies, factory) {
-		(function check () {
-			if (ensureLoaded(dependencies, check)) {
-				var module = {};
-				factory(module);
-				modules[name] = module;
-				callbacks[name].forEach(function (callback) {
-					callback();
-				});
-				callbacks[name] = [];
-			}
-		})();
-	};
+        var exports = modules[name];
+        if (exports)
+            return exports;
+
+        var sandbox = new Cu.Sandbox("http://localhost/");
+        sandboxes[name] = sandbox;
+        sandbox.require = require;
+        sandbox.print = print;
+        Cu.evalInSandbox("var exports = {};",
+                         sandbox, "1.5", name, 1);
+        modules[name] = exports = sandbox.exports;
+        var path = resolve(name);
+        print("== " + path);
+        var code = read(path);
+        if (path) {
+            Cu.evalInSandbox(code, sandbox, "1.5", name, 1)
+            return exports;
+        }
+    }
 })();
