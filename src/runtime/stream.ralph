@@ -1,6 +1,6 @@
 (define-module runtime/stream
   import: (runtime/core)
-  export: (<streamable>
+  export: (<stream>
            <string-stream>
            *standard-out*
            write
