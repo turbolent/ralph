@@ -638,12 +638,12 @@
        (select type ==
          (((S "<array>"))
           `((js:inline "Array.isArray") ,object))
-         (((S "<string>")
-           (S "<number>")
-           (S "<boolean>"))
-          `(js:=== (js:get-property ,object "constructor")
-                   (js:inline ,(get *type-name->constructor-name*
-                                    (symbol-name type)))))
+         ;; (((S "<string>")
+         ;;   (S "<number>")
+         ;;   (S "<boolean>"))
+         ;;  `(js:=== (js:get-property ,object "constructor")
+         ;;           (js:inline ,(get *type-name->constructor-name*
+         ;;                            (symbol-name type)))))
          (((S "<error>"))
           `(js:instanceof ,object (js:inline "Error")))
          (else:
