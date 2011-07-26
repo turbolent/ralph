@@ -399,7 +399,7 @@
 (define-function keys (object)
   ;; TODO: use of Object.keys generates errors ...
   (js:var keys [])
-  (if (instance? object (js:inline "Array"))
+  (if (instance? object <array>)
       (for ((i 0 (inc i)))
            ((>= i (size object)) keys)
         (push-last keys i))
