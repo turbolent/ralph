@@ -658,7 +658,11 @@
         ;; object
         ((js:get-property actual "prototype"
                           "isPrototypeOf")
-         object)))
+         object)
+        ;; mapped
+        (js:and (js:get-property type "%js-type")
+                (js:== (js:get-property object "constructor" "name")
+                       (js:get-property actual "name")))))
       (js:or (js:=== type <boolean>)
              (js:=== type (js:inline "Boolean")))))
 
