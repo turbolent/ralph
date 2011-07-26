@@ -77,6 +77,12 @@ var system = {args: [].slice.call(arguments),
                   return read('file:///dev/stdin');
               }}};
 
+// NB:
+// direct sharing of prefined constructors (Object, Array, ...)
+// between sandboxes is not possible: literals will always use
+// prefined object, ie. there's no global lookup. Also, redefinition
+// of built-ins is not defined in the specification.
+
 function createSandbox () {
     var sandbox = new Cu.Sandbox("http://localhost/");
     sandbox.require = require;
@@ -85,6 +91,11 @@ function createSandbox () {
                      sandbox, "1.5", "", 1);
     return sandbox;
 }
+
+var rootSandbox = createSandbox();
+
+var predefined = ["Object", "Array", "Boolean", "Date",
+                  "Function", "Number", "RegExp", "String"];
 
 function require (name) {
     if (name == "system")
@@ -101,6 +112,17 @@ function require (name) {
     if (path) {
         var code = read(path);
         Cu.evalInSandbox(code, sandbox, "1.5", name, 1);
+
+        for (var i = 0; i < predefined.length; i++) {
+            var name = predefined[i];
+            var rsp = rootSandbox[name].prototype
+            var sp = sandbox[name].prototype;
+            for (var property in sp) {
+                if (sp.hasOwnProperty(property))
+                    rsp[property] = sp[property];
+            }
+        }
+
         return exports;
     }
 }
@@ -109,8 +131,7 @@ if (arguments.length) {
     var path = arguments[0];
     var uri = IO.newURI(path, null, null);
     if (exists(uri)) {
-        var sandbox = createSandbox();
         var code = read(uri.spec);
-        Cu.evalInSandbox(code, sandbox, "1.5", path, 1);
+        Cu.evalInSandbox(code, rootSandbox, "1.5", path, 1);
     }
 }
