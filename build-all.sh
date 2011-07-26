@@ -1,6 +1,6 @@
 #!/bin/bash
 echo "==== STAGE 1 ====" && \
-time python build.py --bootstrap --dest stage1 && \
+time NODE_PATH=src python build.py --bootstrap --dest stage1 && \
 time NODE_PATH=stage1 node stage1/tests/runtime-tests.js && \
 echo "==== STAGE 2 ====" && \
 time NODE_PATH=stage1 python build.py --dest stage2 && \

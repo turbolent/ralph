@@ -14,7 +14,7 @@ var bootstrap = (args.indexOf('--bootstrap') >= 0);
 var async = (args.indexOf('--async') >= 0);
 
 if (bootstrap)
-	var bootstrapCompiler = require('./src/bootstrap/compiler');
+    var bootstrapCompiler = require('bootstrap/compiler');
 else {
 	var core = require("runtime/core"),
 	stream = require("runtime/stream"),

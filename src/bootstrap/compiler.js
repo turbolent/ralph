@@ -1,13 +1,13 @@
 
-var primitives = require('./primitives');
+var primitives = require('bootstrap/primitives');
 var Symbol = primitives.Symbol,
     Keyword = primitives.Keyword,
     S = primitives.S,
     K = primitives.K,
     HashSymbol = primitives.HashSymbol;
 
-var Reader = require('./reader').Reader;
-var Stream = require('./stream').Stream;
+var Reader = require('bootstrap/reader').Reader;
+var Stream = require('bootstrap/stream').Stream;
 
 //// utils
 

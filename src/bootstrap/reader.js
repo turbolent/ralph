@@ -1,5 +1,5 @@
 
-var primitives = require('./primitives');
+var primitives = require('bootstrap/primitives');
 var S = primitives.S,
     K = primitives.K,
     HashSymbol = primitives.HashSymbol;
