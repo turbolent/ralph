@@ -3,6 +3,7 @@ import os
 import shutil
 import subprocess
 import optparse
+import os
 
 parser = optparse.OptionParser()
 parser.add_option("-s", "--source", dest="src", default="src",
@@ -12,6 +13,9 @@ parser.add_option("-d", "--destination", dest="dest", default="build",
 parser.add_option("-b", "--bootstrap",
                   action="store_true", dest="bootstrap", default=False,
                   help="use bootstraping compiler")
+parser.add_option("-x", "--xpcshell",
+                  action="store_true", dest="xpcshell", default=False,
+                  help="use xpcshell runtime instead of node.js")
 parser.add_option("-a", "--async",
                   action="store_true", dest="async", default=False,
                   help="asynchronous module loading")
@@ -21,6 +25,12 @@ prefix = len(options.src)
 arguments = ['--async'] if options.async else []
 if options.bootstrap:
     arguments.append('--bootstrap')
+
+command = ['node', 'compile.js']
+if options.xpcshell:
+    command = ['xpcshell', 'require.js', 'file://' + os.getcwd() + '/compile.js']
+
+cmd = command + arguments
 
 for srcroot, dirnames, filenames in os.walk(options.src):
     destroot = options.dest + srcroot[prefix:]
@@ -34,8 +44,7 @@ for srcroot, dirnames, filenames in os.walk(options.src):
             destpath = os.path.join(destroot, destfilename)
             input = open(srcpath, 'r')
             output = open(destpath, 'w')
-            process = subprocess.Popen(['node', 'compile.js'] + arguments,
-                                       stdin=input, stdout=output)
+            process = subprocess.Popen(cmd, stdin=input, stdout=output)
             if process.wait() != 0:
                 exit(1)
         else:
