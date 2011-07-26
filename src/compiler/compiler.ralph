@@ -644,6 +644,8 @@
           `(js:=== (js:get-property ,object "constructor")
                    (js:inline ,(get *type-name->constructor-name*
                                     (symbol-name type)))))
+         (((S "<error>"))
+          `(js:instanceof ,object (js:inline "Error")))
          (else:
           `(js:call instance? ,object ,type))))
      "make-array"
