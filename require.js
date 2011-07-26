@@ -20,7 +20,7 @@ if (ENV.exists("MODULE_PATH")) {
 var modules = {};
 var sandboxes = {};
 
-function read (path) {
+function readPath (path) {
     var channel = IO.newChannel(path, null, null);
     var iStream = channel.open();
     var ciStream = Cc["@mozilla.org/intl/converter-input-stream;1"].
@@ -74,7 +74,7 @@ var system = {args: [].slice.call(arguments),
                   }
               })()},
               stdin: {read: function read () {
-                  return read('file:///dev/stdin');
+                  return readPath('file:///dev/stdin');
               }}};
 
 // NB:
@@ -110,7 +110,7 @@ function require (name) {
 
     var path = resolve(name);
     if (path) {
-        var code = read(path);
+        var code = readPath(path);
         Cu.evalInSandbox(code, sandbox, "1.5", name, 1);
 
         for (var i = 0; i < predefined.length; i++) {
@@ -131,7 +131,7 @@ if (arguments.length) {
     var path = arguments[0];
     var uri = IO.newURI(path, null, null);
     if (exists(uri)) {
-        var code = read(uri.spec);
+        var code = readPath(uri.spec);
         Cu.evalInSandbox(code, rootSandbox, "1.5", path, 1);
     }
 }
