@@ -19,7 +19,7 @@ Object.prototype.toArray = function () {
 
 function argumentNames (args) {
     return args.map(function (arg) {
-        return (arg instanceof Array ? arg[0] : arg);
+        return (Array.isArray(arg) ? arg[0] : arg);
     });
 }
 
@@ -39,7 +39,7 @@ function requiredArguments (args) {
 
 function addReturn (forms) {
     var last = forms.length - 1;
-    if (!(forms[last] instanceof Array
+    if (!(Array.isArray(forms[last])
           && forms[last][0] == S('js:return')))
     {
         forms[last] = [S('js:return'),
@@ -76,7 +76,7 @@ function functionDeclaration (name, args, body) {
             .forEach(function (key) {
                          var name = key;
                          var _default = false;
-                         if (key instanceof Array) {
+                         if (Array.isArray(key)) {
                              name = key[0];
                              _default = key[1];
                          }
@@ -131,7 +131,7 @@ var macros = {
     },
     '%backquote': function (form) {
         function transform (form) {
-            if (form instanceof Array) {
+            if (Array.isArray(form)) {
                 if (form.length > 0
                     && form[0] instanceof Symbol
                     && form[0].name == '%comma')
@@ -160,7 +160,7 @@ var macros = {
     'define-function': function (name, args) {
         var body = arguments.toArray().slice(2);
         var setter = false;
-        if (name instanceof Array && name.length == 2
+        if (Array.isArray(name) && name.length == 2
             && name[0] instanceof Symbol && name[0].name == 'setter')
         {
             setter = true;
@@ -171,7 +171,7 @@ var macros = {
                             + JSON.stringify(name));
         var type = 'null';
         if (args.length > 0) {
-            if (args[0] instanceof Array
+            if (Array.isArray(args[0])
                 && args[0].length > 1)
                 type = args[0][1].toString();
             else
@@ -295,7 +295,7 @@ var macros = {
         var slots = arguments.toArray().slice(2);
 		var slotsObject = [S('make-object')];
 		slots.forEach(function (slot) {
-                          if (slot instanceof Array) {
+                          if (Array.isArray(slot)) {
                               slotsObject.push(slot[0].name);
                               slotsObject.push([S('method'), [],
 												slot[1]]);
@@ -362,7 +362,7 @@ var macros = {
     },
     'set!': function (expression) {
         var valueRest = arguments.toArray().slice(1);
-        if (expression instanceof Array
+        if (Array.isArray(expression)
             && expression[0] != S('js:get-property'))
         {
             return ([S('%set')]
@@ -374,7 +374,7 @@ var macros = {
     'block': function (name) {
         var body = arguments.toArray().slice(1);
         var returnSymbol = name;
-        if (!(returnSymbol instanceof Array))
+        if (!Array.isArray(returnSymbol))
             throw new Error("block's exit-variable form should be a list");
         if (returnSymbol.length > 1)
             throw new Error("block's exit-variable form shouldn't include more than one name");
@@ -509,7 +509,7 @@ var macros = {
             var nested = [];
             var inner = [S('method'),
                          p.map(function (o) {
-                                   if (o instanceof Array) {
+                                   if (Array.isArray(o)) {
                                        var temp = Symbol.generate();
                                        nested.push([o, temp]);
                                        return temp;
@@ -590,13 +590,13 @@ var symbolMacros = {
 };
 
 function macroexpand (form) {
-    if (form instanceof Array) {
+    if (Array.isArray(form)) {
         // apply macros
-        while (form instanceof Array
+        while (Array.isArray(form)
                && form[0] instanceof Symbol
                && macros.hasOwnProperty(form[0].name))
             form = macros[form[0].name].apply(this, form.slice(1));
-        if (form instanceof Array) {
+        if (Array.isArray(form)) {
             // special?
             if (form[0] instanceof Symbol
                 && specialForms.hasOwnProperty(form[0].name))
@@ -672,7 +672,7 @@ var writers = {
         if (allowStatements) {
             var result = 'if (' + write(test) + ') {\n'
                 + writeStatements(then) + '\n}';
-            if (_else instanceof Array)
+            if (Array.isArray(_else))
                 result += (' else {\n' + writeStatements(_else) + '\n}');
             return result;
         } else {
@@ -780,7 +780,7 @@ var writers = {
     },
     'js:function': function (allowStatements, name, args, body) {
         return 'function ' + (name && name != S('js:null')
-                              ? (name instanceof Array ? write(name) : name) + ' '
+                              ? (Array.isArray(name) ? write(name) : name) + ' '
                               : '')
             + '(' + args.join(', ') + ') '
             + '{' + (body ? '\n' + writeStatements(body) + '\n' : "") + '}';
@@ -852,7 +852,7 @@ function writeExpressions (form) {
 }
 
 function write (form, allowStatements) {
-    if (form instanceof Array) {
+    if (Array.isArray(form)) {
         var head = form[0];
         var rest = form.slice(1);
         if (head instanceof Symbol
@@ -863,7 +863,7 @@ function write (form, allowStatements) {
                    && writers.hasOwnProperty(head.name))
         {
             return writers[head.name].apply(this, [allowStatements].concat(rest));
-        } else if (head instanceof Array
+        } else if (Array.isArray(head)
                    && head[0] instanceof Symbol
                    && head[0].name == 'js:function')
         {
@@ -886,5 +886,6 @@ exports.compile = function (code) {
     var stream = new Stream("(begin\n" + code + "\n)");
     var reader = new Reader(stream);
     var form = reader.read();
-    return write(macroexpand(form), true);
+    var expanded = macroexpand(form);
+    return write(expanded, true);
 };
