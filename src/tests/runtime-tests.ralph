@@ -218,6 +218,14 @@
             (instance? "test" <string>))
 (check-true "instance?: 1 is a <number>"
             (instance? 1 <number>))
+(check-true "instance?: [1, 2] is a <array>"
+            (instance? [1 2] <array>))
+(check-true "instance?: \"test\" is a <string>"
+            (apply instance? "test" [<string>]))
+(check-true "instance?: 1 is a <number>"
+            (apply instance? 1 [<number>]))
+(check-true "instance?: [1, 2] is a <array>"
+            (apply instance? [1 2] [<array>]))
 (check-true "instance?: a: is a <keyword>"
             (instance? a: <keyword>))
 (check-true "instance?: #t is a <boolean>"
@@ -394,21 +402,21 @@
             (if-bind (a #t)
               a
               (handler-case
-                  (begin
-                   a
-                   #f)
-                ((<error> condition: condition)
-                    #f))))
+               (begin
+                a
+                #f)
+               ((<error> condition: condition)
+                #f))))
 
 (check-true "if-bind: test is false, shouldn't be visible in then"
             (if-bind (a #f)
-                     a
-                     (handler-case
-                         (begin
-                          a
-                          #f)
-                       ((<error> condition: condition)
-                           #t))))
+              a
+              (handler-case
+               (begin
+                a
+                #f)
+               ((<error> condition: condition)
+                #t))))
 
 (define-generic test (object))
 
