@@ -3,7 +3,6 @@ import os
 import shutil
 import subprocess
 import optparse
-import os
 
 parser = optparse.OptionParser()
 parser.add_option("-s", "--source", dest="src", default="src",
@@ -13,12 +12,13 @@ parser.add_option("-d", "--destination", dest="dest", default="build",
 parser.add_option("-b", "--bootstrap",
                   action="store_true", dest="bootstrap", default=False,
                   help="use bootstraping compiler")
-parser.add_option("-x", "--xpcshell",
-                  action="store_true", dest="xpcshell", default=False,
-                  help="use xpcshell runtime instead of node.js")
+parser.add_option("-e", "--environment", dest="environment", default=False,
+                  help="runtime environment")
 parser.add_option("-a", "--async",
                   action="store_true", dest="async", default=False,
                   help="asynchronous module loading")
+parser.add_option("-p", "--path", dest="path", default="",
+                  help="modules path", metavar="PATH")
 
 (options, args) = parser.parse_args()
 prefix = len(options.src)
@@ -26,9 +26,16 @@ arguments = ['--async'] if options.async else []
 if options.bootstrap:
     arguments.append('--bootstrap')
 
-command = ['node', 'compile.js']
-if options.xpcshell:
+env = os.environ
+
+if options.environment == "node":
+    command = ['node', 'compile.js']
+    env['NODE_PATH'] = options.path
+elif options.environment == "xpcshell":
     command = ['xpcshell', 'require.js', 'file://' + os.getcwd() + '/compile.js']
+    env['MODULE_PATH'] = options.path
+elif options.environment == "ringojs":
+    command = ['ringo', '-l', '-m', options.path, 'compile.js']
 
 cmd = command + arguments
 
