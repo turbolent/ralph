@@ -18,8 +18,8 @@ function app (request) {
     var req = request.env.servletRequest;
     var inputStream = req.getInputStream();
     var code = "", chunk;
-    while (inputStream.available())
-        code += String.fromCharCode(inputStream.read());
+    while (chunk = inputStream.read(), chunk >= 0)
+        code += String.fromCharCode(chunk);
 	var query = req.getQueryString();
     var options = parseParameters(query);
 
