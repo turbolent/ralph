@@ -42,7 +42,7 @@ function handler (req, res) {
                                                                res.end(optimized);
                                                            });
                                                });
-                       req2.write("compilation_level=ADVANCED_OPTIMIZATIONS&js_code="
+                       req2.write("compilation_level=SIMPLE_OPTIMIZATIONS&js_code="
                                   + encodeURIComponent(compiled)
                                   + "&output_format=text&output_info=compiled_code");
                        req2.end();
