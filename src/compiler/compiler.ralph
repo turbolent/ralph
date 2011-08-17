@@ -511,7 +511,7 @@
                                (map (method (name)
                                       (if (instance? name <symbol>)
                                           (escape-symbol name)
-                                          (write name)))
+                                          (write-form name)))
                                     export))))))
      "block"
      (method (_ argument #rest body)
@@ -967,7 +967,7 @@
                    (S "js:function")))
           (concatenate "(" (write-expressions head) ")")
           (write-expressions head))
-      "(" (join (map write tail) ", ") ")"))
+      "(" (join (map write-form tail) ", ") ")"))
      "js:negative"
      (method (_ object)
        (concatenate
@@ -992,7 +992,7 @@
                 "\n"))
          ((> (size forms) 1)
           (concatenate
-           "(" (join (map write forms) ", ") ")"))
+           "(" (join (map write-form forms) ", ") ")"))
          (else:
           (write-expressions (first forms)))))
      "js:if"
@@ -1014,7 +1014,7 @@
      "js:array"
      (method (_ #rest elements)
        (concatenate
-        "[" (join (map write elements) ", ") "]"))
+        "[" (join (map write-form elements) ", ") "]"))
      "js:defined"
      (method (_ expression)
        (concatenate
@@ -1106,7 +1106,7 @@
      (method (_ name #rest arguments)
        (concatenate
         "new " (write-expressions name)
-        " (" (join (map write arguments) ", ") ")"))
+        " (" (join (map write-form arguments) ", ") ")"))
      "js:var"
      (method (_ name value)
        (concatenate
@@ -1135,7 +1135,7 @@
                 (escape-symbol name))
             (concatenate (escape-symbol (generate-symbol))
                          "__lambda"))
-        " (" (join (map write arguments) ", ") ") {"
+        " (" (join (map write-form arguments) ", ") ") {"
         (if body
             (concatenate "\n" (write-statements body) "\n")
             "")
@@ -1177,7 +1177,7 @@
       (for-each ((processor post-processors))
                 ()
         (set! expanded (processor expanded))))
-    (write expanded statements?)))
+    (write-form expanded statements?)))
 
 
 (define-function macroexpand (environment form)
@@ -1225,7 +1225,7 @@
        form))
     (else: form)))
 
-(define-function write (form statements?)
+(define-function write-form (form statements?)
   (select form instance?
     ;; array?
     ((<array>)
@@ -1243,7 +1243,7 @@
          ((and (instance? head <symbol>)
                (has? *infix* head-name))
           (bind ((infix (get *infix* head-name))
-                 (inside (join (map write tail)
+                 (inside (join (map write-form tail)
                                (concatenate " " infix " "))))
               (concatenate "(" inside ")")))
          ;; writer?
@@ -1273,7 +1273,7 @@
      (description form))))
 
 (define write-statements
-    (rcurry write #t))
+    (rcurry write-form #t))
 
 (define write-expressions
-    (rcurry write #f))
+    (rcurry write-form #f))
