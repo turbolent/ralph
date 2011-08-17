@@ -11,7 +11,9 @@
            contents
            remaining-contents))
 
-;; <streamable>
+;; <stream>
+
+(define-class <stream> ())
 
 (define-generic at-end? ((stream <stream>)))
 
@@ -25,7 +27,9 @@
 
 (define-generic contents ((stream <stream>)))
 
-(define-class <stream> ())
+(define-generic remaining-contents ((stream <stream>)))
+
+
 
 ;; <string-stream>
 
