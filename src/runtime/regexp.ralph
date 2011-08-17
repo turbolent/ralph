@@ -6,8 +6,8 @@
 
 (%alias-type <regexp> (js:inline "RegExp"))
 
-(define-function initialize ((regexp <regexp>)
-			     #key pattern global? ignore-case? multiline?)
+(define-method initialize ((regexp <regexp>)
+                           #key pattern global? ignore-case? multiline?)
   (when pattern
     ((js:get-property regexp "compile")
      pattern (concatenate

@@ -714,7 +714,7 @@
 
 (define-generic initialize (object #rest))
 
-(define-function initialize ((object <object>))
+(define-method initialize ((object <object>))
   (js:var slots (js:get-property (type object) "%slots"))
   (js:var arguments (as-object (rest (as-array js:arguments))))
   (js:var value)
@@ -750,18 +750,18 @@
 
 (define-generic description (object))
 
-(define-function description ((number <number>))
+(define-method description ((number <number>))
   (js:+ "" number))
 
-(define-function description ((string <string>))
+(define-method description ((string <string>))
   (js:var escaped ((js:get-property string "replace")
                    "\"" "\\\"" "g"))
   (js:+ "\"" escaped "\""))
 
-(define-function description ((array <array>))
+(define-method description ((array <array>))
   (js:+ "(" (join (map description array) " ") ")"))
 
-(define-function description ((value <boolean>))
+(define-method description ((value <boolean>))
   (if value "#t" "#f"))
 
 ;;
@@ -790,17 +790,17 @@
 (define-generic binary= (object1 object2))
 (define-generic binary< (object1 object2))
 
-(define-function binary= (object1 object2)
+(define-method binary= (object1 object2)
   (js:and (js:=== (type object1)
                   (type object2))
           (js:== object1 object2)))
 
-(define-function binary< (object1 object2)
+(define-method binary< (object1 object2)
   (js:and (js:=== (type object1)
                   (type object2))
           (js:< object1 object2)))
 
-(define-function binary= ((array1 <array>) (array2 <array>))
+(define-method binary= ((array1 <array>) (array2 <array>))
   (and (== (size array1)
            (size array2))
        (block (return)
@@ -871,13 +871,13 @@
               (make <symbol> name: name)))))
 (%define *module* exports "_s" symbol)
 
-(define-function description ((symbol <symbol>))
+(define-method description ((symbol <symbol>))
   (get symbol "name"))
 
-(define-function description ((keyword <keyword>))
+(define-method description ((keyword <keyword>))
   (js:+ (symbol-name keyword) ":"))
 
-(define-function description ((symbol <hash-symbol>))
+(define-method description ((symbol <hash-symbol>))
   (js:+ "#" (symbol-name symbol)))
 
 (define-function identity (value)

@@ -6,7 +6,7 @@
 
 (%alias-type <date> (js:inline "Date"))
 
-(define-function initialize ((date <date>) #rest rest)
+(define-method initialize ((date <date>) #rest rest)
   (bind ((arguments (as-object rest)))
     (for-each ((setter [["timestamp" "setTime"]
                         ["day" "setDate"]

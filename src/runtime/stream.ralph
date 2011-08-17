@@ -33,20 +33,20 @@
   (string "")
   (index 0))
 
-(define-function at-end? ((stream <string-stream>))
+(define-method at-end? ((stream <string-stream>))
   (js:>= (js:get-property stream "index")
          (js:- (size (js:get-property stream "string")) 1)))
 
-(define-function peek-char ((stream <string-stream>))
+(define-method peek-char ((stream <string-stream>))
   (js:get-property stream "string"
                    (js:get-property stream "index")))
 
-(define-function read-char ((stream <string-stream>))
+(define-method read-char ((stream <string-stream>))
   (js:var char (peek-char stream))
   (inc! (js:get-property stream "index"))
   char)
 
-(define-function write ((stream <string-stream>) object)
+(define-method write ((stream <string-stream>) object)
   (bind ((string (as-string object))
          (position (js:get-property stream "index"))
          (contents (js:get-property stream "string"))
@@ -57,13 +57,13 @@
                                end: (+ position length)))
     (advance stream count: length)))
 
-(define-function advance ((stream <string-stream>) #key (count 1))
+(define-method advance ((stream <string-stream>) #key (count 1))
   (inc! (js:get-property stream "index") count))
 
-(define-function contents ((stream <string-stream>))
+(define-method contents ((stream <string-stream>))
   (js:get-property stream "string"))
 
-(define-function remaining-contents ((stream <string-stream>))
+(define-method remaining-contents ((stream <string-stream>))
   ((js:get-property stream "string" "substring")
    (js:get-property stream "index")))
 
@@ -72,7 +72,7 @@
 (define-class <file-stream> (<stream>)
     file)
 
-(define-function write ((stream <file-stream>) object)
+(define-method write ((stream <file-stream>) object)
   ((js:get-property (js:get-property stream "file") "write")
    object))
 
@@ -80,7 +80,7 @@
 
 (define-class <document-stream> (<stream>))
 
-(define-function write ((stream <document-stream>) object)
+(define-method write ((stream <document-stream>) object)
   ((js:inline "document.write")
    object))
 

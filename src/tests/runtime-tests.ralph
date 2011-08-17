@@ -420,16 +420,16 @@
 
 (define-generic test (object))
 
-(define-function test ((string <string>))
+(define-method test ((string <string>))
   1)
 
-(define-function test ((number <number>))
+(define-method test ((number <number>))
   2)
 
-(define-function (setter test) ((object <object>) new-value)
+(define-method (setter test) ((object <object>) new-value)
   4)
 
-(define-function test ((object <object>))
+(define-method test ((object <object>))
   3)
 
 (check-equal "generic: specialized on <string>"
@@ -501,10 +501,10 @@
 
 (define-class <d> (<c>))
 
-(define-function foo ((object <a>))
+(define-method foo ((object <a>))
   1)
 
-(define-function foo ((object <b>))
+(define-method foo ((object <b>))
   2)
 
 (check-equal "classes: <b> inherits <a>: foo on <a>"
@@ -519,16 +519,16 @@
 ;; next-method
 (define-generic bar (object x))
 
-(define-function bar ((object <a>) a)
+(define-method bar ((object <a>) a)
   (set! (get object "next")
         next-method)
   (set! (get object "a") a))
 
-(define-function bar ((object <b>) b)
+(define-method bar ((object <b>) b)
   (next-method object "a")
   (set! (get object "b") b))
 
-(define-function bar ((object <d>) d)
+(define-method bar ((object <d>) d)
   (next-method object "b")
   (set! (get object "d") d))
 
@@ -542,10 +542,10 @@
                    (== (get d "a") "a"))))
 
 ;; next-method for setters
-(define-function (setter bar) ((a <a>) value)
+(define-method (setter bar) ((a <a>) value)
   (set! (get a "value") value))
 
-(define-function (setter bar) ((c <c>) value)
+(define-method (setter bar) ((c <c>) value)
   (next-method c 1))
 
 (bind ((d (make <d>)))
@@ -596,7 +596,7 @@
   z
   (c 3))
 
-(define-function initialize ((object <z>) #rest rest)
+(define-method initialize ((object <z>) #rest rest)
   (apply next-method object rest))
 
 (bind ((z (make <z> x: 1 z: 2))
@@ -618,7 +618,7 @@
   (baz 3)
   blub)
 
-(define-function initialize ((test <test>) #rest rest)
+(define-method initialize ((test <test>) #rest rest)
   (apply next-method test rest)
   (set! (get test "blub") 4))
 
