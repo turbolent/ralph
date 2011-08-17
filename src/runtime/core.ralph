@@ -1,6 +1,8 @@
 
 (define-module runtime/core
-  export: (%define %export %get-definition %define-getter %define-setter
+  export: (%define %export %get-definition
+           %define-function %define-setter-function
+           %define-method %define-setter-method
            (js:inline "_s") (js:inline "_k")
            (js:inline "_key") (js:inline "_rest")
            keyword keyword? symbol symbol-name
@@ -110,29 +112,95 @@
                    (js:get-property superclass "%slots"))))
      (js:return class))))
 
-;;;; getter
+;;;; functions
 
-(define %define-getter
-  (js:function js:null (module exports name function type display-name)
-    (bind ((getter (%get-definition module name))
-           (generic? (when getter
-                       (%get-property getter "%generic")))
-           ;; define new getter and return (possibly) existing setter
-           (setter (if generic?
-                       (bind ((type (%actual-type type))
-                              (prototype (js:get-property type "prototype"))
-                              (existing-getter (%get-property prototype name)))
-                         (set! (js:get-property prototype name) function)
-                         (set! (js:get-property function "%type") type)
-                         (%get-property existing-getter "%setter"))
-                       (begin
-                        (%define module exports name function)
-                        (%get-property getter "%setter")))))
+(define %define-function
+  (js:function js:null (module exports name function display-name)
+    (bind ((existing (%get-definition module name)))
+      (%define module exports name function)
+      ;; name
       (set! (js:get-property function "%name") name)
       (set! (js:get-property function "displayName") display-name)
       ;; re-define setter if it was existing
-      (when setter
+      (if-bind (setter (%get-property existing "%setter"))
         (set! (js:get-property function "%setter") setter)))))
+
+(define-function %define-setter-function
+    (module exports name function display-name)
+  (bind ((existing (%get-definition module name)))
+    (set! (js:get-property function "%name") name)
+    (set! (js:get-property function "displayName") display-name)
+    (set! (js:get-property function "%setter?") #t)
+    ;; temporary function (getter) required?
+    (unless (%get-definition module name)
+      (%define module exports name (%make-function)))
+    ;; definition
+    (set! (js:get-property (%get-definition module name) "%setter")
+          function)))
+
+;; methods
+
+(define-function %define-method (module exports name function
+                                 type display-name)
+  (bind ((existing (%get-definition module name))
+         (generic? (when existing
+                     (%get-property existing "%generic")))
+         (type (%actual-type type)))
+    ;; implicit definition of generic function
+    (unless generic?
+      (%define module exports name
+               (%make-generic name display-name)))
+    ;; definition
+    (set! (js:get-property function "%name") name)
+    (set! (js:get-property function "displayName") display-name)
+    (set! (js:get-property function "%type") type)
+    (bind ((prototype (js:get-property type "prototype"))
+           (existing-method (%get-property prototype name)))
+      (set! (js:get-property prototype name) function)
+      ;; re-define setter if it was existing
+      (if-bind (setter (%get-property existing-method "%setter"))
+               (set! (js:get-property function "%setter") setter)))))
+
+
+
+(define-function %define-setter-method (module exports name function
+                                        type display-name)
+  (bind ((existing (%get-definition module name))
+         (generic? (when existing
+                     (%get-property existing "%generic")))
+         (type (%actual-type type)))
+    ;; implicit definition of generic function
+    (unless generic?
+      (%define module exports name
+               (%make-generic function-name display-name)))
+    ;; definition
+    (set! (js:get-property function "%name") name)
+    (set! (js:get-property function "displayName") display-name)
+    (set! (js:get-property function "%setter?") #t)
+    (set! (js:get-property function "%type") type)
+    (bind ((prototype (js:get-property type "prototype"))
+           (getter (or (%get-property prototype name)
+                       ;; create temporary function (getter method)
+                       (bind ((temp (%make-function)))
+                         (set! (js:get-property prototype name)
+                               temp)
+                         temp))))
+      (set! (js:get-property getter "%setter") function))))
+
+
+(define-function %make-generic (function-name display-name)
+  (js:function dispatcher (object)
+    (begin
+     (js:var function (js:and (js:defined object)
+                              (js:get-property object function-name)))
+     (js:return (js:and function
+                        ((js:get-property function "apply") object js:arguments)))))
+  (set! (js:get-property dispatcher "%generic") #t)
+  (set! (js:get-property dispatcher "%name") function-name)
+  (set! (js:get-property dispatcher "displayName") display-name)
+  dispatcher)
+
+
 
 (define-function %search-setter (prototype name)
   (js:var setter)
@@ -151,31 +219,7 @@
          (js:return (js:get-property proto name)))
   (%search-setter proto name))
 
-(define %define-setter
-  (js:function js:null (module exports name function type display-name)
-    (bind ((getter (%get-definition module name))
-           (generic? (when getter
-                       (%get-property getter "%generic"))))
-      (set! (js:get-property function "%name") name)
-      (set! (js:get-property function "displayName") display-name)
-      (set! (js:get-property function "%setter?") #t)
-      (if generic?
-          (bind ((type (%actual-type type))
-                 (prototype (js:get-property type "prototype"))
-                 (getter (or (%get-property prototype name)
-                             ;; create temporary getter
-                             (bind ((temp (%make-function)))
-                               (set! (js:get-property prototype name)
-                                     temp)
-                               temp))))
-            (set! (js:get-property function "%type") type)
-            (set! (js:get-property getter "%setter") function))
-          (begin
-           (unless (%get-definition module name)
-             ;; creare temporary getter
-             (%define module exports name (%make-function)))
-           (set! (js:get-property (%get-definition module name) "%setter")
-                 function))))))
+
 
 (define-function %set (function #rest arguments)
   (js:var generic? (%get-property function "%generic"))
@@ -666,19 +710,7 @@
       (js:or (js:=== type <boolean>)
              (js:=== type (js:inline "Boolean")))))
 
-;; generic
 
-(define-function %make-generic (function-name display-name)
-  (js:function dispatcher (object)
-    (begin
-     (js:var function (js:and (js:defined object)
-                              (js:get-property object function-name)))
-     (js:return (js:and function
-                        ((js:get-property function "apply") object js:arguments)))))
-  (set! (js:get-property dispatcher "%generic") #t)
-  (set! (js:get-property dispatcher "%name") function-name)
-  (set! (js:get-property dispatcher "displayName") display-name)
-  dispatcher)
 
 (define-generic initialize (object #rest))
 

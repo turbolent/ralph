@@ -324,37 +324,6 @@
                                        ,temp
                                        ,(test (rest expressions)))))))
            (test expressions))))
-     "define-function"
-     (method (_ name arguments #rest body)
-       (destructuring-bind (setter? name)
-           (if (and (instance? name <array>)
-                    (== (size name) 2)
-                    (first name)
-                    (== (first name) (S "setter")))
-               [#t (second name)]
-               [#f name])
-         (when (not (or (instance? name <symbol>)
-                        setter?))
-           (signal (make <error> message:
-                         "define-function: name => symbol or (setter name)")))
-         (bind ((type (if (empty? arguments)
-                          "null"
-                          (bind ((head (first arguments)))
-                            (if (and (instance? head <array>)
-                                     (> (size head) 1))
-                                (escape-symbol (second head))
-                                "Object")))))
-           `(,(if setter?
-                  (S "%define-setter")
-                  (S "%define-getter"))
-             *module*
-             exports
-             (js:escape ,name)
-             ,(function-declaration
-               `(js:inline "__method__")
-               arguments body)
-             (js:inline ,type)
-             ,(display-name name arguments setter?: setter?)))))
      "inc"
      (method (_ object)
        `(js:+ ,object 1))
@@ -725,49 +694,92 @@
             `(js:call ==))
         arguments))))
 
-(do (method (comparison)
-      (set! (get *macros* comparison)
-            (method (_ #rest arguments)
-              (concatenate
-               (if (== (size arguments) 2)
-                   `(,(S (concatenate "binary" comparison)))
-                   `(js:call ,(S comparison)))
-               arguments))))
-    ["=" "<" ">" "<=" ">="])
+(define-function function-definer (macro-name setter-name function-name #key type?)
+  (method (_ name arguments #rest body)
+    (destructuring-bind (setter? name)
+        (if (and (instance? name <array>)
+                 (== (size name) 2)
+                 (first name)
+                 (== (first name) (S "setter")))
+            [#t (second name)]
+            [#f name])
+      (when (not (or (instance? name <symbol>)
+                     setter?))
+        (signal (make <error> message:
+                      (concatenate macro-name ": name => symbol or (setter name)"))))
+      `(,(if setter?
+             (S setter-name)
+             (S function-name))
+         *module*
+         exports
+         (js:escape ,name)
+         ,(function-declaration
+           `(js:inline "__method__")
+           arguments body)
+         (js:inline ,(if (or (not type)
+                             (empty? arguments))
+                         "null"
+                         (bind ((head (first arguments)))
+                               (if (and (instance? head <array>)
+                                        (> (size head) 1))
+                                   (escape-symbol (second head))
+                                   "Object"))))
+         ,(display-name name arguments setter?: setter?)))))
 
-(do (method (op)
-      (set! (get *macros* op)
-            (method (_ #rest arguments)
-              (concatenate
-               `(,(S (concatenate "js:" op)))
-               arguments))))
-    ["-" "+" "*" "/"])
+(for-each ((arguments [["define-function"
+                        "%define-setter-function" "%define-function"]
+                       ["define-method"
+                        "%define-setter-method" "%define-method"
+                        type: #t]]))
+          ()
+  (set! (get *macros* (first arguments))
+        (apply function-definer arguments)))
 
 
-(do (method (name/op)
-      (destructuring-bind (name op) name/op
-        (set! (get *macros* name)
-              (method (_ object value)
-                (if (or (not (instance? object <array>))
-                        (and (instance? object <array>)
-                             (or (== (first object)
-                                     (S "js:get-property"))
-                                 (and (== (first object)
-                                          (S "get"))
-                                      (== (size object) 3)))))
-                    `(,(S (concatenate "js:" op "="))
-                      ,(if (and (instance? object <array>)
-                                (== (first object)
-                                    (S "get")))
-                           (concatenate `(js:get-property)
-                                        (rest object))
-                           object)
-                      ,(or value 1))
-                    `(set! ,object
-                           (,(S (concatenate "js:" op))
-                            ,object ,(or value 1))))))))
-     [["inc!" "+"]
-      ["dec!" "-"]])
+(for-each ((comparison ["=" "<" ">" "<=" ">="]))
+          ()
+  (set! (get *macros* comparison)
+        (method (_ #rest arguments)
+          (concatenate
+           (if (== (size arguments) 2)
+               `(,(S (concatenate "binary" comparison)))
+               `(js:call ,(S comparison)))
+           arguments))))
+
+(for-each ((op ["-" "+" "*" "/"]))
+          ()
+  (set! (get *macros* op)
+        (method (_ #rest arguments)
+          (concatenate
+           `(,(S (concatenate "js:" op)))
+           arguments))))
+
+
+(for-each ((name/op  [["inc!" "+"]
+                      ["dec!" "-"]]))
+          ()
+  (destructuring-bind (name op) name/op
+    (set! (get *macros* name)
+          (method (_ object value)
+            (if (or (not (instance? object <array>))
+                    (and (instance? object <array>)
+                         (or (== (first object)
+                                 (S "js:get-property"))
+                             (and (== (first object)
+                                      (S "get"))
+                                  (== (size object) 3)))))
+                `(,(S (concatenate "js:" op "="))
+                   ,(if (and (instance? object <array>)
+                             (== (first object)
+                                 (S "get")))
+                        (concatenate `(js:get-property)
+                                     (rest object))
+                        object)
+                   ,(or value 1))
+                `(set! ,object
+                       (,(S (concatenate "js:" op))
+                         ,object ,(or value 1))))))))
+
 
 (define *symbol-macros*
   (make-object

@@ -169,6 +169,25 @@ var macros = {
         if (!(name instanceof Symbol || setter))
             throw new Error('function\'s name should be a symbol or (setter name): '
                             + JSON.stringify(name));
+        return [setter ? S('%define-setter-function') : S('%define-function'),
+                S('*module*'),
+                S('exports'),
+                [S('js:escape'), name],
+                functionDeclaration([S('js:inline'), '__method__'],
+                                    args, body)];
+    },
+    'define-method': function (name, args) {
+        var body = arguments.toArray().slice(2);
+        var setter = false;
+        if (Array.isArray(name) && name.length == 2
+            && name[0] instanceof Symbol && name[0].name == 'setter')
+        {
+            setter = true;
+            name = name[1];
+        }
+        if (!(name instanceof Symbol || setter))
+            throw new Error('function\'s name should be a symbol or (setter name): '
+                            + JSON.stringify(name));
         var type = 'null';
         if (args.length > 0) {
             if (Array.isArray(args[0])
@@ -177,7 +196,7 @@ var macros = {
             else
                 type = 'Object';
         }
-        return [setter ? S('%define-setter') : S('%define-getter'),
+        return [setter ? S('%define-setter-method') : S('%define-method'),
                 S('*module*'),
                 S('exports'),
                 [S('js:escape'), name],
