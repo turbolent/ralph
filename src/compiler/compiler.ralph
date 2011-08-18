@@ -197,9 +197,21 @@
                           clauses))))
      "define"
      (method (_ name value)
-       (concatenate `(%define *module* exports
-                              (js:escape ,name))
-                    (if value `(,value) `())))
+       (bind ((escaped (if (and (instance? name <array>)
+                                (== (first name)
+                                    (S "js:inline")))
+                           (second name)
+                           `(js:escape ,name))))
+         `(begin
+           ,(concatenate `(js:var ,name)
+                         (if value `(,value) `()))
+           (js:if (js:>= ((js:get-property
+                           *module* "%exports" "indexOf")
+                          ,escaped)
+                         0)
+                  (set! (js:get-property exports
+                                         ,escaped)
+                        ,name)))))
      "if"
      (method (_ test then else)
        `(js:if (true? ,test)
@@ -425,22 +437,22 @@
                        conditions))))))))
      "define-class"
      (method (_ class superclass #rest slots)
-       `(%define-class
-         *module* exports
-         (js:escape ,class)
-         ,(first superclass)
-         ,(bind ((object `(make-object)))
-            (for-each ((slot slots))
-                      ()
-              (if (instance? slot <array>)
-                  (begin
-                   (push-last object (symbol-name (first slot)))
-                   (push-last object `(method ()
-                                        ,(second slot))))
-                  (begin
-                   (push-last object (symbol-name slot))
-                   (push-last object #f))))
-            object)))
+       `(define ,class
+            (%make-class
+             (js:escape ,class)
+             ,(first superclass)
+             ,(bind ((object `(make-object)))
+                (for-each ((slot slots))
+                          ()
+                  (if (instance? slot <array>)
+                      (begin
+                       (push-last object (symbol-name (first slot)))
+                       (push-last object `(method ()
+                                                  ,(second slot))))
+                      (begin
+                       (push-last object (symbol-name slot))
+                       (push-last object #f))))
+                object))))
      "define-module"
      (method (environment name #key (import `()) (export `()))
        (concatenate
@@ -694,7 +706,7 @@
             `(js:call ==))
         arguments))))
 
-(define-function function-definer (macro-name setter-name function-name #key type?)
+(define-function function-definer (macro-name setter-name getter-name function-name #key type?)
   (method (_ name arguments #rest body)
     (destructuring-bind (setter? name)
         (if (and (instance? name <array>)
@@ -707,30 +719,32 @@
                      setter?))
         (signal (make <error> message:
                       (concatenate macro-name ": name => symbol or (setter name)"))))
-      `(,(if setter?
-             (S setter-name)
-             (S function-name))
-         *module*
-         exports
-         (js:escape ,name)
-         ,(function-declaration
-           `(js:inline "__method__")
-           arguments body)
-         (js:inline ,(if (or (not type)
-                             (empty? arguments))
-                         "null"
-                         (bind ((head (first arguments)))
-                               (if (and (instance? head <array>)
-                                        (> (size head) 1))
-                                   (escape-symbol (second head))
-                                   "Object"))))
-         ,(display-name name arguments setter?: setter?)))))
+      `(define ,name
+           ,(concatenate
+             `(,(if setter?
+                    (S setter-name)
+                    (S getter-name))
+                (js:escape ,name)
+                ,(function-declaration
+                  function-name
+                  arguments body))
+             (if type?
+                 `((js:inline ,(if (empty? arguments)
+                                   "null"
+                                   (bind ((head (first arguments)))
+                                         (if (and (instance? head <array>)
+                                                  (> (size head) 1))
+                                             (escape-symbol (second head))
+                                             "Object")))))
+                 `())
+             `((js:and (js:defined ,name) ,name)
+               ,(display-name name arguments setter?: setter?)))))))
 
 (for-each ((arguments [["define-function"
-                        "%define-setter-function" "%define-function"]
+                        "%make-setter-function" "%make-function" js:null]
                        ["define-method"
-                        "%define-setter-method" "%define-method"
-                        type: #t]]))
+                        "%make-setter-method" "%make-method" `(js:inline "__method__")
+                        type?: #t]]))
           ()
   (set! (get *macros* (first arguments))
         (apply function-definer arguments)))
