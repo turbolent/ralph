@@ -152,10 +152,19 @@ var macros = {
         return value;
     },
     'define': function (name, value) {
-        return [S('%define'),
-                S('*module*'), S('exports'),
-                [S('js:escape'), name]]
-            .concat(value ? [value] : []);
+        var realName = write(name);
+        return [S('begin'),
+                [S('js:var'), name].concat(value ? [value] : []),
+                [S('js:if'), 
+                 [S('js:>='), 
+                  [[S('js:get-property'), 
+                    S('*module*'), '%exports', 'indexOf'],
+                   [S('js:escape'), realName]],
+                  0],
+                 [S('set!'),
+                  [S('js:get-property'), S('exports'),
+                   [S('js:escape'), realName]],
+                  name]]];
     },
     'define-function': function (name, args) {
         var body = arguments.toArray().slice(2);
@@ -169,12 +178,13 @@ var macros = {
         if (!(name instanceof Symbol || setter))
             throw new Error('function\'s name should be a symbol or (setter name): '
                             + JSON.stringify(name));
-        return [setter ? S('%define-setter-function') : S('%define-function'),
-                S('*module*'),
-                S('exports'),
-                [S('js:escape'), name],
-                functionDeclaration([S('js:inline'), '__method__'],
-                                    args, body)];
+        return [S('define'), name,
+                [setter ? S('%make-setter-function') : S('%make-function'),
+                 [S('js:escape'), name],
+                 functionDeclaration([S('js:inline'), '__method__'],
+                                     args, body),
+                [S('js:and'),
+                 [S('js:defined'), name], name]]];
     },
     'define-method': function (name, args) {
         var body = arguments.toArray().slice(2);
@@ -196,13 +206,14 @@ var macros = {
             else
                 type = 'Object';
         }
-        return [setter ? S('%define-setter-method') : S('%define-method'),
-                S('*module*'),
-                S('exports'),
-                [S('js:escape'), name],
-                functionDeclaration([S('js:inline'), '__method__'],
-                                    args, body),
-                [S('js:inline'), type]];
+        return [S('define'), name,
+                [setter ? S('%make-setter-method') : S('%make-method'),
+                 [S('js:escape'), name],
+                 functionDeclaration([S('js:inline'), '__method__'],
+                                     args, body),
+                 [S('js:inline'), type],
+                 [S('js:and'),
+                  [S('js:defined'), name], name]]];
     },
     'method': function (args) {
         var body = arguments.toArray().slice(1);
@@ -258,9 +269,9 @@ var macros = {
         }
     },
     'select': function (value, test) {
-		var valueSymbol = Symbol.generate();
-		var isInfix = test instanceof Symbol && infix.hasOwnProperty(test.name);
-		var testSymbol = isInfix ? test : Symbol.generate();
+        var valueSymbol = Symbol.generate();
+        var isInfix = test instanceof Symbol && infix.hasOwnProperty(test.name);
+        var testSymbol = isInfix ? test : Symbol.generate();
         function testExpression (testValue) {
             return [testSymbol, valueSymbol, testValue];
         }
@@ -272,10 +283,10 @@ var macros = {
                         .concat(_case.slice(1)));
         });
         return [[S('js:function'), S('js:null'), [],
-				 [S('begin'),
-				  [S('js:var'), valueSymbol, value]]
-				 .concat(isInfix ? [] : [[S('js:var'), testSymbol, test]])
-				 .concat([[S('js:return'), [S('cond')].concat(cases)]])]];
+                 [S('begin'),
+                  [S('js:var'), valueSymbol, value]]
+                 .concat(isInfix ? [] : [[S('js:var'), testSymbol, test]])
+                 .concat([[S('js:return'), [S('cond')].concat(cases)]])]];
     },
     'bind-methods': function (bindings) {
         var body = arguments.toArray().slice(1);
@@ -312,29 +323,31 @@ var macros = {
     },
     'define-class': function (_class, superclass) {
         var slots = arguments.toArray().slice(2);
-		var slotsObject = [S('make-object')];
-		slots.forEach(function (slot) {
+        var slotsObject = [S('make-object')];
+        slots.forEach(function (slot) {
                           if (Array.isArray(slot)) {
                               slotsObject.push(slot[0].name);
                               slotsObject.push([S('method'), [],
-												slot[1]]);
+                                                slot[1]]);
                           } else {
                               slotsObject.push(slot.name);
-							  slotsObject.push(false);
+                              slotsObject.push(false);
                           }
-					  });
-        return [S('%define-class'), S('*module*'), S('exports'),
-                [S('js:escape'), _class], superclass[0] || false,
-				slotsObject];
+                      });
+        return [S('define'), _class,
+                [S('%make-class'),
+                 [S('js:escape'), _class], 
+                 superclass[0] || false,
+                 slotsObject]];
     },
     'define-generic': function (name, _arguments) {
         return [S('define'), name,
                 [S('%make-generic'), [S('js:escape'), name]]];
     },
-	'define-macro': function () {
-		// ignore - only available in full compiler
-		return null;
-	},
+    'define-macro': function () {
+        // ignore - only available in full compiler
+        return null;
+    },
     'define-module': function (name) {
         var keyArgs = arguments.toArray().slice(1);
         var imports = [];
@@ -372,10 +385,10 @@ var macros = {
                 [S('js:var'), S('*module*'),
                  [S('js:if'), [S('js:defined'), S('GLOBAL')], S('GLOBAL'), S('js:this')]]]
             .concat(imports)
-			.concat([[S('js:set'),
-					  [S('js:get-property'), S('*module*'), '%exports'],
-					  [S('js:array')].concat(exports)]]);
-	},
+            .concat([[S('js:set'),
+                      [S('js:get-property'), S('*module*'), '%exports'],
+                      [S('js:array')].concat(exports)]]);
+    },
     'if': function (test, then, _else) {
         return [S('js:if'), [S('true?'), test], then, _else];
     },
@@ -426,9 +439,9 @@ var macros = {
 
     },
     'until': function (test) {
-	var body = arguments.toArray().slice(1);
-	return [S('js:while'), [S('not'), test]]
-	    .concat(body);
+    var body = arguments.toArray().slice(1);
+    return [S('js:while'), [S('not'), test]]
+        .concat(body);
     },
     '%parallel-set': function () {
         var clauses = arguments.toArray();
@@ -468,15 +481,15 @@ var macros = {
         var body = arguments.toArray().slice(1);
         var variable = varCountResult[0];
         var count = varCountResult[1];
-		var countSymbol = Symbol.generate();
+        var countSymbol = Symbol.generate();
         var result = varCountResult[2];
         if (result === undefined)
             result = false;
         return [S('for'),
                 [[variable, 0, [S('js:+'), variable, 1]],
-				 [countSymbol, count, countSymbol]],
+                 [countSymbol, count, countSymbol]],
                 [[S('js:>='), variable, countSymbol], result]]
-			.concat(body);
+            .concat(body);
     },
     'and': function () {
         var expressions = arguments.toArray();
@@ -560,36 +573,36 @@ var macros = {
                 object];
     },
     'for-each': function (clauses, end) {
-		var body = arguments.toArray().slice(2);
-		var temporaries =
-			clauses.map(function (clause) {
-							return [Symbol.generate()].concat(clause);
-						});
-		var vars = clauses.map(function (clause) { return clause[0]; });
-		return [[S('js:function'), S('js:null'), [],
-				 [S('begin')]
-				 .concat(clauses.map(function (clause) {
-										 return [S('js:var'),
-												 clause[0]];
-									 }))
-				 .concat(temporaries.map(function (temp) {
-											 return [S('js:var'),
-													 temp[0], temp[2]];
-										 }))
-				 .concat([[S('js:while'), true,
-						   [S('js:if'), [S('any?'), S('empty?'),
-										 [S('js:array')]
-										 .concat(temporaries.map(function (temp) {
-																	 return temp[0];
-																 }))],
-							[S('js:return'), false]]]
-						  .concat(temporaries
-								  .map(function (temp) {
-										   return [S('set!'),
-												   temp[1], [S('first'), temp[0]]];
-									   }))
-						  .concat([[S('js:if'), end[0],
-									[S('js:return'),
+        var body = arguments.toArray().slice(2);
+        var temporaries =
+            clauses.map(function (clause) {
+                            return [Symbol.generate()].concat(clause);
+                        });
+        var vars = clauses.map(function (clause) { return clause[0]; });
+        return [[S('js:function'), S('js:null'), [],
+                 [S('begin')]
+                 .concat(clauses.map(function (clause) {
+                                         return [S('js:var'),
+                                                 clause[0]];
+                                     }))
+                 .concat(temporaries.map(function (temp) {
+                                             return [S('js:var'),
+                                                     temp[0], temp[2]];
+                                         }))
+                 .concat([[S('js:while'), true,
+                           [S('js:if'), [S('any?'), S('empty?'),
+                                         [S('js:array')]
+                                         .concat(temporaries.map(function (temp) {
+                                                                     return temp[0];
+                                                                 }))],
+                            [S('js:return'), false]]]
+                          .concat(temporaries
+                                  .map(function (temp) {
+                                           return [S('set!'),
+                                                   temp[1], [S('first'), temp[0]]];
+                                       }))
+                          .concat([[S('js:if'), end[0],
+                                    [S('js:return'),
 									 end.length === 1
 									 ? false
 									 : [S('begin')].concat(end.slice(1))],
@@ -786,7 +799,7 @@ var writers = {
             '(' + args.map(writeExpressions).join(', ') + ')';
     },
     'js:var': function (allowStatements, name, value) {
-        var result = "var " + name;
+        var result = "var " + write(name);
         if (value != undefined && value != S('js:undefined'))
             result += " = " + write(value);
         return result;
