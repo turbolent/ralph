@@ -184,7 +184,6 @@
                            (v 1 (* v i)))
                           ((<= i 0) v)))
 
-
 ;; element
 (check-equal "element: 1st element is 1"
              1 (element [1 2 3] 0))

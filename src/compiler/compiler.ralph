@@ -932,21 +932,23 @@
   ;;                  char))
   ;;              (as-array replaced))
   ;;         ""))
-  (bind ((upcase? #f)
-         (result ""))
-    (for-each ((char (as-array name)))
-              ()
-      (if (= char "-")
-          (set! upcase? #t)
-          (bind ((char (if upcase?
-                           (as-uppercase char)
-                           char)))
-            (inc! result
-                  (if-bind (replacement (get *symbol-escapes* char))
-                    replacement
-                    char))
-            (set! upcase? #f))))
-    result))
+  (if (= name "-")
+      (get *symbol-escapes* name)
+      (bind ((upcase? #f)
+             (result ""))
+        (for-each ((char (as-array name)))
+                  ()
+          (if (= char "-")
+              (set! upcase? #t)
+              (bind ((char (if upcase?
+                               (as-uppercase char)
+                               char)))
+                (inc! result
+                      (if-bind (replacement (get *symbol-escapes* char))
+                               replacement
+                               char))
+                (set! upcase? #f))))
+        result)))
 
 (define-function escape-symbol (symbol)
   (bind ((name (symbol-name symbol)))
