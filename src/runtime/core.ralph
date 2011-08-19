@@ -225,7 +225,9 @@
 
 (define %actual-type
   (js:function js:null (type)
-    (js:return (js:or (%get-property type "%js-type") type))))
+    (js:return
+      (js:or (%get-property type "%js-type")
+             type))))
 
 ;;;; keywords
 
@@ -353,8 +355,14 @@
 (define-class <boolean> ())
 (define-class <function> ())
 
+(define *type-mapping*
+    (make-object))
+
 (define-function %alias-type (ralph-type javascript-type)
   (set! (js:get-property ralph-type "%js-type") javascript-type)
+  (set! (js:get-property *type-mapping*
+                         (js:get-property javascript-type "name"))
+        ralph-type)
   (set! (js:get-property javascript-type "%ralph-type") ralph-type))
 
 (%alias-type <object> (js:inline "Object"))
@@ -656,7 +664,10 @@
       ;; ((js:inline "Object.getPrototypeOf") object))
       (begin
        (set! type (js:get-property object "constructor"))
-       (set! ralph-type (js:get-property type "%ralph-type"))
+       (set! ralph-type
+             (js:or (js:get-property type "%ralph-type")
+                    (%get-property *type-mapping*
+                                   (%get-property type "name"))))
        (js:or ralph-type type))))
 
 (define-function instance? (object type)
@@ -762,7 +773,8 @@
 (define-method binary= (object1 object2)
   (js:and (js:=== (type object1)
                   (type object2))
-          (js:== object1 object2)))
+          (js:=== ((js:get-property object1 "valueOf"))
+                  ((js:get-property object2 "valueOf")))))
 
 (define-method binary< (object1 object2)
   (js:and (js:=== (type object1)
