@@ -544,17 +544,20 @@
                                          `(set! ,(second temporary)
                                                 (first ,(first temporary))))
                                        temporaries)
-                                  `((js:if ,(first end)
-                                           (js:return
-                                            ,(if (empty? (rest end))
-                                                 #f
-                                                 (concatenate `(begin)
-                                                              (rest end))))
-                                           ,(bind ((vars (map first clauses)))
-                                              (concatenate `((js:function js:null ,vars
-                                                               ,(concatenate `(begin)
-                                                                             body)))
-                                                           vars))))
+                                  (bind ((vars (map first clauses))
+                                         (real-body (concatenate `((js:function js:null ,vars
+                                                                     ,(concatenate `(begin)
+                                                                                   body)))
+                                                                 vars)))
+                                    (if (empty? end)
+                                        `(,real-body)
+                                        `((js:if ,(first end)
+                                                 (js:return
+                                                   ,(if (empty? (rest end))
+                                                        #f
+                                                        (concatenate `(begin)
+                                                                     (rest end))))
+                                                 ,real-body))))
                                   (map (method (temporary)
                                          `(set! ,(first temporary)
                                                 (rest ,(first temporary))))

@@ -738,3 +738,12 @@
                                object)
                               "a")
                          "b")))
+(bind ((result []))
+  (for-each ((a [1 2 3])
+             (b [4 5 6]))
+            ()
+    (push-last result (+ a b)))
+  (check-equal "for-each: two sequences, no end test"
+               [5 7 9]
+               result))
+
