@@ -3,8 +3,7 @@
   export: (%define %export %get-definition
            %make-function %make-setter-function
            %make-method %make-setter-method
-           (js:inline "_s") (js:inline "_k")
-           (js:inline "_key") (js:inline "_rest")
+           "_s" "_k" "_key" "_rest"
            keyword keyword? symbol symbol-name
            <object> <string> <number> <boolean> <array> <function>
            <symbol> <hash-symbol> <keyword> <non-local-exit> <error>
@@ -237,22 +236,19 @@
 (define-function keyword? (keyword)
   (instance? keyword <keyword>))
 
-(define (js:inline "_k")
-  (js:function js:null (name)
-    (begin
-      (js:var keyword js:null)
-      (js:set name ((js:get-property name "toLowerCase")
-                    name))
-      (js:return
-       (if (has? %keywords name)
-           (js:get-property %keywords name)
-           (begin
-            (set! keyword (js:new <keyword>))
-            (set! (js:get-property keyword "name") name)
-            (set! (js:get-property %keywords name) keyword)
-            keyword))))))
+(define-function keyword (name)
+  (js:var keyword js:null)
+  (js:set name ((js:get-property name "toLowerCase")
+                name))
+  (if (has? %keywords name)
+      (js:get-property %keywords name)
+      (begin
+       (set! keyword (js:new <keyword>))
+       (set! (js:get-property keyword "name") name)
+       (set! (js:get-property %keywords name) keyword)
+       keyword)))
 
-(define keyword (js:inline "_k"))
+(define "_k" keyword)
 
 ;;;; non-local exit
 
@@ -825,10 +821,10 @@
 (define-class <hash-symbol> ()
     name)
 
-(define (js:inline "_key")
+(define "_key"
     (make <hash-symbol> name: "key"))
 
-(define (js:inline "_rest")
+(define "_rest"
     (make <hash-symbol> name: "rest"))
 
 
@@ -843,7 +839,7 @@
         (set! (get %symbols name)
               (make <symbol> name: name)))))
 
-(define (js:inline "_s") symbol)
+(define "_s" symbol)
 
 (define-method description ((symbol <symbol>))
   (get symbol "name"))

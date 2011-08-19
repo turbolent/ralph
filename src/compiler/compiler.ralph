@@ -196,22 +196,20 @@
              (concatenate `(js:set)
                           clauses))))
      "define"
-     (method (_ name value)
-       (bind ((escaped (if (and (instance? name <array>)
-                                (== (first name)
-                                    (S "js:inline")))
-                           (second name)
-                           `(js:escape ,name))))
-         `(begin
-           ,(concatenate `(js:var ,name)
-                         (if value `(,value) `()))
-           (js:if (js:>= ((js:get-property
-                           *module* "%exports" "indexOf")
-                          ,escaped)
-                         0)
-                  (set! (js:get-property exports
-                                         ,escaped)
-                        ,name)))))
+     (method (environment name value)
+       (bind ((escaped (if (instance? name <symbol>)
+                           (escape-symbol name)
+                           name))
+              (inlined (if (instance? name <string>)
+                        `(js:inline ,name)
+                        name)))
+         (concatenate `(begin
+                        ,(concatenate `(js:var ,inlined)
+                                      (if value `(,value) `())))
+                      (if (member? name (get environment "exports") test: =)
+                          `((set! (js:get-property exports ,escaped)
+                                  ,inlined))
+                          `()))))
      "if"
      (method (_ test then else)
        `(js:if (true? ,test)
@@ -454,7 +452,9 @@
                        (push-last object #f))))
                 object))))
      "define-module"
-     (method (environment name #key (import `()) (export `()))
+     (method (environment name #key (import []) (export []))
+       (set! (get environment "exports")
+             export)
        (concatenate
         `(begin
           (js:var *module* js:this))
@@ -486,14 +486,7 @@
                         (js:for-in (,property ,module)
                           (js:if ((js:get-property ,module "hasOwnProperty") ,property)
                                  (js:set (js:get-property *module* ,property)
-                                         (js:get-property ,module ,property))))))))))
-         `((set! (js:get-property *module* "%exports")
-                 ,(concatenate `(js:array)
-                               (map (method (name)
-                                      (if (instance? name <symbol>)
-                                          (escape-symbol name)
-                                          (write-form name)))
-                                    export))))))
+                                         (js:get-property ,module ,property))))))))))))
      "block"
      (method (_ argument #rest body)
         (destructuring-bind ((name)) argument

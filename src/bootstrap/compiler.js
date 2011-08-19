@@ -152,19 +152,22 @@ var macros = {
         return value;
     },
     'define': function (name, value) {
-        var realName = write(name);
+        var realName = name instanceof Symbol ?
+            name.toString() : name;
         return [S('begin'),
-                [S('js:var'), name].concat(value ? [value] : []),
+                [S('js:var'), typeof(name) == 'string' ? 
+				 [S('js:inline'), name] : name]
+				.concat(value ? [value] : []),
                 [S('js:if'), 
                  [S('js:>='), 
                   [[S('js:get-property'), 
                     S('*module*'), '%exports', 'indexOf'],
-                   [S('js:escape'), realName]],
+                   realName],
                   0],
                  [S('set!'),
                   [S('js:get-property'), S('exports'),
-                   [S('js:escape'), realName]],
-                  name]]];
+                   realName],
+                  [S('js:inline'), name]]]];
     },
     'define-function': function (name, args) {
         var body = arguments.toArray().slice(2);
@@ -376,7 +379,7 @@ var macros = {
                         if (name instanceof Symbol)
                             return name.toString();
                         else
-                            return write(name);
+                            return name;
                     });
                 }
             }
