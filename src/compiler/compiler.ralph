@@ -147,11 +147,11 @@
 (define *macros*
     (make-object
      "define-macro"
-     (method (_ name arguments #rest body)
+     (method (environment name arguments #rest body)
        (bind ((compiled (compile
                          (concatenate `(method ,arguments)
                                       body))))
-         (set! (get *macros* (symbol-name name))
+         (set! (get environment "macros" (symbol-name name))
                (eval (concatenate "(" compiled ")"))))
        #f)
      "%backquote"
@@ -1193,6 +1193,7 @@
   (bind ((post-processors [])
          (temporaries [])
          (environment (make-object
+                       "macros" (make-object)
                        "temporaries" temporaries
                        "post-processors" post-processors
                        "asynchronous?" asynchronous?))
@@ -1210,8 +1211,12 @@
      ;; apply macros
      (while (and (instance? form <array>)
                  (instance? (first form) <symbol>)
-                 (has? *macros* (symbol-name (first form))))
-       (bind ((macro (get *macros* (symbol-name (first form)))))
+                 (or (has? *macros* (symbol-name (first form)))
+                     (has? (get environment "macros")
+                           (symbol-name (first form)))))
+       (bind ((macro (or (get *macros* (symbol-name (first form)))
+                         (get environment "macros"
+                              (symbol-name (first form))))))
          (set! form (apply macro environment (rest form)))))
      ;; still array?
      (if (instance? form <array>)
