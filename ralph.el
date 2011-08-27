@@ -2,7 +2,8 @@
   `(,(regexp-opt
 	  '("#rest" "#key"
 		"method" "block"
-		"define-function" "define-class" "define-module"
+		"define-function" "define-method"
+        "define-class" "define-module"
 		"define-generic" "define-macro" "define"
 		"bind-properties" "bind-methods" "bind" "destructuring-bind"
 		"set!" "get" "inc!" "dec!"
@@ -13,7 +14,7 @@
 	("\\<<\\(\\sw\\|\\s_\\)+>\\>" . font-lock-type-face)
 	("\\<define\\>\\s-+\\(\\(\\sw\\|\\s_\\)+\\)"
 	 1 font-lock-variable-name-face)
-	("\\<define-\\(function\\|generic\\)\\>\\s-+\\(\\(\\sw\\|\\s_\\)+\\)"
+	("\\<define-\\(function\\|method\\|generic\\)\\>\\s-+\\(\\(\\sw\\|\\s_\\)+\\)"
 	 2 font-lock-function-name-face)
 	("\\<define-module\\>\\s-+\\(\\(\\sw\\|\\s_\\)+\\)"
 	 1 font-lock-function-name-face)
