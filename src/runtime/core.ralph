@@ -141,11 +141,18 @@
   (bind ((type (%actual-type type))
          (prototype (js:get-property type "prototype"))
          (getter (or (%get-property prototype name)
-                     ;; create temporary function (getter method)
-                     (bind ((temp (%make-empty-function)))
-                       (set! (js:get-property prototype name)
-                             temp)
-                       temp)))
+                     ;; pass to getter defined in super-class?
+                     (if-bind (getter (js:get-property prototype name))
+                       (bind ((temp (method (#rest rest)
+                                      (apply getter rest))))
+                         (set! (js:get-property prototype name)
+                               temp)
+                         temp)
+                       ;; create temporary function (getter method)
+                       (bind ((temp (%make-empty-function)))
+                         (set! (js:get-property prototype name)
+                               temp)
+                         temp))))
          (generic? (when existing
                      (%get-property existing "%generic?"))))
     ;; definition
