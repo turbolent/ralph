@@ -777,11 +777,29 @@
 (define-generic binary= (object1 object2))
 (define-generic binary< (object1 object2))
 
+
 (define-method binary= (object1 object2)
   (js:and (js:=== (type object1)
                   (type object2))
           (js:=== ((js:get-property object1 "valueOf"))
                   ((js:get-property object2 "valueOf")))))
+
+;; fix binary= for undefined and null
+;; (dispatcher won't find above method)
+
+(js:var binary=-dispatcher binary=)
+(define-function binary= (object1 object2)
+  (js:or (js:and (not object1)
+                 (not object2))
+         (binary=-dispatcher object1 object2)))
+
+(set! (js:get-property binary= "%generic?") #t)
+(set! (js:get-property binary= "%name")
+      (js:get-property binary=-dispatcher "%name"))
+(set! (js:get-property binary= "displayName")
+      (js:get-property binary=-dispatcher "displayName"))
+
+
 
 (define-method binary< (object1 object2)
   (js:and (js:=== (type object1)
