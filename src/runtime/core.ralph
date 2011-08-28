@@ -807,14 +807,12 @@
           (js:< object1 object2)))
 
 (define-method binary= ((array1 <array>) (array2 <array>))
-  (and (== (size array1)
-           (size array2))
-       (block (return)
-         (dotimes (i (size array1))
-           (unless (= (get array1 i)
-                      (get array2 i))
-             (return #f)))
-         #t)))
+  (js:and (js:=== (size array1)
+                  (size array2))
+          ;; NB: twisted logic
+          (js:not (for-each ((item1 array1)
+                             (item2 array2))
+                           ((js:not (binary= item1 item2)) #t)))))
 
 (define-function = (object1 object2 #rest more-objects)
   (compare binary= object1 object2 more-objects))
@@ -832,8 +830,8 @@
 (define-function binary> (object1 object2)
   (js:if (js:and (true? object1)
                  (true? object2))
-       (js:and (js:not (binary< object1 object2))
-               (js:not (binary= object1 object2)))))
+         (js:and (js:not (binary< object1 object2))
+                 (js:not (binary= object1 object2)))))
 
 (define-function > (object1 object2 #rest more-objects)
   (compare binary> object1 object2 more-objects))
