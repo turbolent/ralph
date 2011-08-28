@@ -203,13 +203,11 @@
               (inlined (if (instance? name <string>)
                         `(js:inline ,name)
                         name)))
-         (concatenate `(begin
-                        ,(concatenate `(js:var ,inlined)
-                                      (if value `(,value) `())))
-                      (if (member? name (get environment "exports") test: =)
-                          `((set! (js:get-property exports ,escaped)
-                                  ,inlined))
-                          `()))))
+           `(js:var ,inlined
+                    ,(if (member? name (get environment "exports") test: =)
+                         `(set! (js:get-property exports ,escaped)
+                                ,value)
+                         value))))
      "if"
      (method (_ test then else)
        `(js:if (true? ,test)
