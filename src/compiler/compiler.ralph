@@ -43,6 +43,12 @@
              (apply min length
                     (map position [#key #rest]))))))
 
+(define-function uses? (form symbol)
+  (if (instance? form <array>)
+      (any? (rcurry uses? symbol)
+            form)
+      (== form symbol)))
+
 (define-function function-declaration (name arguments body)
   (bind-methods ((position (symbol)
                   (find-key arguments (curry = symbol))))
@@ -235,10 +241,14 @@
                                                   `(js:set ,var ,value)))
                                               bindings)
                                          (prepend-return body))))
-            (map (method (binding)
-                   (destructuring-bind (var value) binding
-                     `(js:and (js:defined ,var) ,var)))
-                 bindings))))
+            (bind ((arguments (map (method (binding)
+                                     (destructuring-bind (var value) binding
+                                       (when (uses? value var)
+                                         `(js:and (js:defined ,var) ,var))))
+                                   bindings)))
+              (if (every? not arguments)
+                  []
+                  arguments)))))
      "if-bind"
      (method (_ binding then else)
        (destructuring-bind (var value) binding
