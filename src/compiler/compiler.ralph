@@ -543,10 +543,11 @@
                                                 (first ,(first temporary))))
                                        temporaries)
                                   (bind ((vars (map first clauses))
-                                         (real-body (concatenate `((js:function js:null ,vars
-                                                                     ,(concatenate `(begin)
-                                                                                   body)))
-                                                                 vars)))
+                                         (real-body (unless (empty? body)
+                                                      (concatenate `((js:function js:null ,vars
+                                                                       ,(concatenate `(begin)
+                                                                                     body)))
+                                                                   vars))))
                                     (if (empty? end)
                                         `(,real-body)
                                         `((js:if ,(first end)
