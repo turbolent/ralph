@@ -781,6 +781,7 @@
 (define-method binary= (object1 object2)
   (js:and (js:=== (type object1)
                   (type object2))
+          (js:defined object2)
           (js:=== ((js:get-property object1 "valueOf"))
                   ((js:get-property object2 "valueOf")))))
 

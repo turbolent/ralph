@@ -33,6 +33,14 @@
             (= [1 3 4 2] [1 3 4 2]))
 (check-false "equality: array with different contents"
              (= [1 3 4 2] [4 2 1 3]))
+(check-false "equality: undefined and #t"
+             (= js:undefined #t))
+(check-true "equality: undefined and #f"
+            (= js:undefined #f))
+(check-false "equality: object and undefined"
+             (= (make-object) js:undefined))
+(check-false "equality: 0 and undefined"
+             (= 0 js:undefined))
 
 ;; or
 (check-equal "or: \"\" is true"
