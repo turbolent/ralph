@@ -1137,7 +1137,8 @@
         (apply concatenate
                (map (method (element)
                       (if (and (instance? element <string>)
-                               (match *property-pattern* element))
+                               (match *property-pattern* element)
+                               (not (member? element *reserved*)))
                           (concatenate "." element)
                           (concatenate "[" (write-expressions element) "]")))
                     elements))))
