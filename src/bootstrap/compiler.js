@@ -112,9 +112,6 @@ var macros = {
         return [[S('js:get-property'), [S('js:array')],
                  "slice", "call"], _arguments, skip || 0];
     },
-    'size': function (object) {
-        return [S('js:get-property'), object, 'length'];
-    },
     'has?': function (object, property) {
         return [[S('js:get-property'), object,
                  "hasOwnProperty"],
@@ -155,12 +152,12 @@ var macros = {
         var realName = name instanceof Symbol ?
             name.toString() : name;
         return [S('begin'),
-                [S('js:var'), typeof(name) == 'string' ? 
+                [S('js:var'), typeof(name) == 'string' ?
 				 [S('js:inline'), name] : name]
 				.concat(value ? [value] : []),
-                [S('js:if'), 
-                 [S('js:>='), 
-                  [[S('js:get-property'), 
+                [S('js:if'),
+                 [S('js:>='),
+                  [[S('js:get-property'),
                     S('*module*'), '%exports', 'indexOf'],
                    realName],
                   0],
@@ -339,7 +336,7 @@ var macros = {
                       });
         return [S('define'), _class,
                 [S('%make-class'),
-                 [S('js:escape'), _class], 
+                 [S('js:escape'), _class],
                  superclass[0] || false,
                  slotsObject]];
     },

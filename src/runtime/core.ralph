@@ -381,8 +381,10 @@
 
 ;;;;
 
-(define-function size ((array <array>))
-  (js:get-property array "length"))
+(define-function size (object)
+  (if object
+      (js:or (js:get-property object "length") 0)
+      0))
 
 (define-function slice (array start end)
   ;; workaround for ringo: slice(undefined, undefined) -> undefined

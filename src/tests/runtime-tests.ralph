@@ -264,6 +264,13 @@
 (check-true "any? and rcurry: x > 2 on 1, 2, 3, 4"
             (any? (rcurry > 2) [1 2 3 4]))
 
+(check-equal "size: array [1 2 3]"
+             3 (size [1 2 3]))
+(check-equal "size: object"
+             0 (size (make-object)))
+(check-equal "size: #f"
+             0 (size #f))
+
 ;; scope
 (bind ((elements [0 1 2 3 4 5 6 7 8 9])
        (fns []))

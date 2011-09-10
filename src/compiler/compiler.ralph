@@ -651,8 +651,14 @@
        `((js:get-property [] "slice" "call")
          ,arguments ,(js:or skip 0)))
      "size"
-     (method (_ object)
-       `(js:get-property ,object "length"))
+     (method (environment object)
+       (destructuring-bind (temp)
+           (request-temporaries environment 1)
+         `(begin
+           (set! ,temp ,object)
+           (if ,temp
+               (js:or (js:get-property ,temp "length") 0)
+               0))))
      "has?"
      (method (_ object property)
        `((js:get-property ,object "hasOwnProperty")
