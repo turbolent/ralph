@@ -313,17 +313,19 @@
   result)
 
 (define-function (setter get) (object #rest properties/value)
-  (if (js:<= (size properties/value) 2)
-      (set! (js:get-property object (first properties/value))
-            (second properties/value))
-      (bind ((property (first properties/value))
-             (object2 (if (has? object property)
-                          (get object property)
-                          (bind ((new (make-object)))
-                            (set! (js:get-property object property) new)
-                            new))))
-        (apply %set get object2
-               (rest properties/value)))))
+  (js:var property)
+  (js:var object2)
+  (js:if (js:<= (size properties/value) 2)
+         (set! (js:get-property object (first properties/value))
+               (second properties/value))
+         (begin
+          (set! property (first properties/value))
+          (set! object2 (js:if (has? object property)
+                               (get object property)
+                               (set! (js:get-property object property)
+                                     (make-object))))
+          (apply %set get object2
+                 (rest properties/value)))))
 
 ;;;;
 
