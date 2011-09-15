@@ -209,7 +209,7 @@
               (inlined (if (instance? name <string>)
                         `(js:inline ,name)
                         name)))
-           `(js:var ,inlined
+           `(js:set ,inlined
                     ,(if (member? name (get environment "exports") test: =)
                          `(set! (js:get-property exports ,escaped)
                                 ,value)
