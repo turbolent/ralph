@@ -584,13 +584,22 @@
   (js:var item (js:get-property array 0))
   (js:if (true? item) item #f))
 
+(define-function (setter first) ((array <array>) value)
+  (set! (js:get-property array 0) value))
+
 (define-function second ((array <array>))
   (js:var item (js:get-property array 1))
   (js:if (true? item) item #f))
 
+(define-function (setter second) ((array <array>) value)
+  (set! (js:get-property array 1) value))
+
 (define-function third ((array <array>))
   (js:var item (js:get-property array 2))
   (js:if (true? item) item #f))
+
+(define-function (setter third) ((array <array>) value)
+  (set! (js:get-property array 2) value))
 
 (define-function last ((array <array>))
   (js:var item (js:get-property array (js:- (size array) 1)))
