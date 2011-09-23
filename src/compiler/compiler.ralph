@@ -683,20 +683,28 @@
                                `(js:* ,n -1)))))
      "push-last"
      (method (environment array value)
-       (destructuring-bind (temp)
-           (request-temporaries environment 1)
-         `(begin
-           (set! ,temp ,array)
-           ((js:get-property ,temp "push") ,value)
-           ,temp)))
+       (if (instance? array <symbol>)
+           `(begin
+             ((js:get-property ,array "push") ,value)
+             ,array)
+           (destructuring-bind (temp)
+               (request-temporaries environment 1)
+             `(begin
+               (set! ,temp ,array)
+               ((js:get-property ,temp "push") ,value)
+               ,temp))))
      "push"
      (method (environment array value)
-       (destructuring-bind (temp)
-           (request-temporaries environment 1)
-         `(begin
-           (set! ,temp ,array)
-           ((js:get-property ,temp "unshift") ,value)
-           ,temp)))
+       (if (instance? array <symbol>)
+           `(begin
+             ((js:get-property ,array "unshift") ,value)
+             ,array)
+           (destructuring-bind (temp)
+               (request-temporaries environment 1)
+             `(begin
+               (set! ,temp ,array)
+               ((js:get-property ,temp "unshift") ,value)
+               ,temp))))
      "pop"
      (method (_ array)
        `((js:get-property ,array "shift")))
