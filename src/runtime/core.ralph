@@ -35,7 +35,7 @@
            description
            identity
            min max abs round floor expt sqrt cos sin atan2 as-radiant
-           mod even? odd?
+           mod even? odd? *pi*
            extend! as-property-list as-object
            starts-with?))
 
@@ -938,8 +938,10 @@
 (define-function mod (number1 number2)
   (js:% number1 number2))
 
+(define *pi* (js:inline "Math.PI"))
+
 (define-function as-radiant (number)
-  (js:* number (js:/ (js:inline "Math.PI") 180)))
+  (js:* number (js:/ *pi* 180)))
 
 (define-function remove! ((array <array>) value)
   (js:var key (find-key array (curry = value)))
