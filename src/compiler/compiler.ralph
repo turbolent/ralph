@@ -656,9 +656,9 @@
            (request-temporaries environment 1)
          `(begin
            (set! ,temp ,object)
-           (if ,temp
-               (js:or (js:get-property ,temp "length") 0)
-               0))))
+           (js:or (js:and (true? ,temp)
+                          (js:get-property ,temp "length"))
+                  0))))
      "has?"
      (method (_ object property)
        `((js:get-property ,object "hasOwnProperty")
