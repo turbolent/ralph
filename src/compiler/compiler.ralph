@@ -1018,22 +1018,26 @@
      "begin"
      (method (statements? #rest forms)
        (cond
-         (statements?
-          (join (map (method (form)
-                       (concatenate
-                        (write-statements form)
-                        (if (and (instance? form <array>)
-                                 (== (first form)
-                                     (S "js:comment")))
-                            ""
-                            ";")))
-                     forms)
-                "\n"))
-         ((> (size forms) 1)
-          (concatenate
-           "(" (join (map write-form forms) ", ") ")"))
-         (else:
-          (write-expressions (first forms)))))
+        (statements?
+         (if (> (size forms) 1)
+             (join (concatenate
+                    (map (method (form)
+                           (concatenate
+                            (write-statements form)
+                            (if (and (instance? form <array>)
+                                     (== (first form)
+                                         (S "js:comment")))
+                                ""
+                                ";")))
+                         (but-last forms))
+                    (write-statements (last forms)))
+                   "\n")
+             (write-statements (first forms))))
+        ((> (size forms) 1)
+         (concatenate
+          "(" (join (map write-form forms) ", ") ")"))
+        (else:
+         (write-expressions (first forms)))))
      "js:if"
      (method (statements? test then else)
        (if statements?
