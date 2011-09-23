@@ -209,6 +209,9 @@
               (inlined (if (instance? name <string>)
                         `(js:inline ,name)
                         name)))
+           (bind-properties (definitions) environment
+             (unless (member? inlined definitions)
+               (push-last definitions inlined)))
            `(js:set ,inlined
                     ,(if (member? name (get environment "exports") test: =)
                          `(set! (js:get-property exports ,escaped)
@@ -638,6 +641,15 @@
      (method (_ #rest elements)
        (concatenate `(js:array)
                     elements))
+     "first"
+     (method (environment expression)
+       `(js:get-property ,expression 0))
+     "second"
+     (method (environment expression)
+       `(js:get-property ,expression 1))
+     "third"
+     (method (environment expression)
+       `(js:get-property ,expression 2))
      "slice"
      (method (_ array start end)
        (concatenate `((js:get-property ,array "slice"))
@@ -1213,6 +1225,7 @@
   (bind ((post-processors [])
          (temporaries [])
          (environment (make-object
+                       "definitions" []
                        "macros" (make-object)
                        "temporaries" temporaries
                        "post-processors" post-processors
@@ -1279,7 +1292,8 @@
     ;; array?
     ((<array>)
      (bind ((head (first form))
-            (head-name (symbol-name head))
+            (head-name (and head
+                            (symbol-name head)))
             (tail (rest form)))
        (cond
          ;; unary?
