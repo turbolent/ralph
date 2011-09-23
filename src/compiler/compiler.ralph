@@ -22,8 +22,9 @@
    (but-last forms)
    (make-array
     (bind ((tail (last forms)))
-      (if (== (first tail)
-              (S "js:return"))
+      (if (and tail
+               (== (first tail)
+                   (S "js:return")))
           (last forms)
           `(js:return ,tail))))))
 
