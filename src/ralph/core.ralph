@@ -1,7 +1,6 @@
 (define-module ralph/core
-  export: (%define %export %get-definition
-           %make-function %make-setter-function
-           %make-method %make-setter-method
+  export: (%define %export
+           %make-function %make-method
            "_s" "_k" "_key" "_rest"
            keyword keyword? symbol symbol-name
            <object> <string> <number> <boolean> <array> <function>

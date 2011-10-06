@@ -16,10 +16,10 @@ var async = (args.indexOf('--async') >= 0);
 if (bootstrap)
     var bootstrapCompiler = require('bootstrap/compiler');
 else {
-    var core = require("runtime/core"),
-        stream = require("runtime/stream"),
-        reader = require("compiler/reader"),
-        compiler = require("compiler/compiler");
+    var core = require("ralph/core"),
+        stream = require("ralph/stream"),
+        reader = require("ralph/reader"),
+        compiler = require("ralph/compiler");
 }
 
 var compiled;

@@ -135,6 +135,12 @@
              ""))
    ")"))
 
+(define-function setter-symbol (symbol)
+  (bind ((result (make <symbol> name:
+                       (concatenate "_SET_" (escape-symbol symbol)))))
+    (set! (get result "generated?") #t)
+    result))
+
 ;; NB: don't use for loops!
 (define-function request-temporaries (environment count)
   (bind-properties (temporaries post-processors) environment
@@ -274,8 +280,8 @@
                                     (rest expression))
                       ,(first value-rest)))
             (else:
-             (concatenate `(%set)
-                          expression
+             (concatenate `(,(setter-symbol (first expression)))
+                          (rest expression)
                           value-rest)))
            `(js:set ,expression ,(first value-rest))))
      "get"
@@ -735,27 +741,24 @@
             `(js:call ==))
         arguments))))
 
-(define-function function-definer (macro-name setter-name getter-name function-name #key type?)
-  (method (_ name arguments #rest body)
+(define-function function-definer (macro-name definer-name #key type?)
+  (method (_ function-name arguments #rest body)
     (destructuring-bind (setter? name)
-        (if (and (instance? name <array>)
-                 (== (size name) 2)
-                 (first name)
-                 (== (first name) (S "setter")))
-            [#t (second name)]
-            [#f name])
+        (if (and (instance? function-name <array>)
+                 (== (size function-name) 2)
+                 (== (first function-name) (S "setter")))
+            [#t (setter-symbol (second function-name))]
+            [#f function-name])
       (when (not (or (instance? name <symbol>)
                      setter?))
         (signal (make <error> message:
                       (concatenate macro-name ": name => symbol or (setter name)"))))
       `(define ,name
            ,(concatenate
-             `(,(if setter?
-                    (S setter-name)
-                    (S getter-name))
+             `(,(S definer-name)
                 (js:escape ,name)
                 ,(function-declaration
-                  function-name
+                  `(js:inline "__method__")
                   arguments body))
              (if type?
                  `((js:inline ,(if (empty? arguments)
@@ -767,13 +770,14 @@
                                              "Object")))))
                  `())
              `((js:and (js:defined ,name) ,name)
-               ,(display-name name arguments setter?: setter?)))))))
+               ,setter?
+               ,(display-name (if setter?
+                                  (second function-name)
+                                  function-name)
+                              arguments setter?: setter?)))))))
 
-(for-each ((arguments [["define-function"
-                        "%make-setter-function" "%make-function" js:null]
-                       ["define-method"
-                        "%make-setter-method" "%make-method" `(js:inline "__method__")
-                        type?: #t]]))
+(for-each ((arguments [["define-function" "%make-function"]
+                       ["define-method" "%make-method" type?: #t]]))
           ()
   (set! (get *macros* (first arguments))
         (apply function-definer arguments)))
@@ -826,8 +830,10 @@
 
 (define *symbol-macros*
   (make-object
-   "this-method" `(js:inline "__method__")
-   "next-method" `(%next-method this-method)))
+   "this-method" (method (environment)
+                   `(js:inline "__method__"))
+   "next-method" (method (_)
+                   `(%next-method this-method))))
 
 (define *special-forms*
     (make-object
@@ -942,7 +948,7 @@
   (bind ((symbol (make <symbol> name:
                        (concatenate "_" (as-string *symbol-count*)))))
     (inc! *symbol-count*)
-    (set! (get symbol "generated") #t)
+    (set! (get symbol "generated?") #t)
     symbol))
 
 (define *hyphen-pattern*
@@ -982,7 +988,7 @@
 (define-function escape-symbol (symbol)
   (bind ((name (symbol-name symbol)))
     (cond
-      ((has? symbol "generated")
+      ((get symbol "generated?")
        name)
       ((member? name *reserved*)
        (concatenate "_" name))
@@ -1289,7 +1295,8 @@
      ;; symbol-macro?
      (if-bind (symbol-macro (get *symbol-macros*
                                  (symbol-name form)))
-       (macroexpand environment symbol-macro)
+       (macroexpand environment
+                    (apply symbol-macro environment))
        form))
     (else: form)))
 
