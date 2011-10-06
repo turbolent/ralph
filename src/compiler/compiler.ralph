@@ -20,13 +20,12 @@
 (define-function prepend-return (forms)
   (concatenate
    (but-last forms)
-   (make-array
-    (bind ((tail (last forms)))
+   [(bind ((tail (last forms)))
       (if (and tail
                (== (first tail)
                    (S "js:return")))
           (last forms)
-          `(js:return ,tail))))))
+          `(js:return ,tail)))]))
 
 (define-function argument-names (arguments)
   (map (method (argument)
