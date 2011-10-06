@@ -1,9 +1,9 @@
 var http = require('http'),
   url = require('url'),
-  core = require("runtime/core"),
-  stream = require("runtime/stream"),
-  reader = require("compiler/reader"),
-  compiler = require("compiler/compiler");
+  core = require("ralph/core"),
+  stream = require("ralph/stream"),
+  reader = require("ralph/reader"),
+  compiler = require("ralph/compiler");
 
 
 function handler (req, res) {
