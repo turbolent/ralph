@@ -249,13 +249,13 @@
   (js:var keyword js:null)
   (js:set name ((js:get-property name "toLowerCase")
                 name))
-  (if (has? %keywords name)
-      (js:get-property %keywords name)
-      (begin
-       (set! keyword (js:new <keyword>))
-       (set! (js:get-property keyword "name") name)
-       (set! (js:get-property %keywords name) keyword)
-       keyword)))
+  (js:if (has? %keywords name)
+         (js:get-property %keywords name)
+         (begin
+          (set! keyword (js:new <keyword>))
+          (set! (js:get-property keyword "name") name)
+          (set! (js:get-property %keywords name) keyword)
+          keyword)))
 
 (define "_k" keyword)
 
