@@ -100,6 +100,10 @@ function functionDeclaration (name, args, body) {
 }
 
 
+function setterName (symbol) {
+    return "_SET_" + escape(symbol);
+}
+
 var macros = {
     'rest': function (array) {
         return [[S('js:get-property'), array, "slice"], 1];
@@ -178,13 +182,15 @@ var macros = {
         if (!(name instanceof Symbol || setter))
             throw new Error('function\'s name should be a symbol or (setter name): '
                             + JSON.stringify(name));
+        name = setter ? setterName(name) : name;
         return [S('define'), name,
-                [setter ? S('%make-setter-function') : S('%make-function'),
+                [S('%make-function'),
                  [S('js:escape'), name],
                  functionDeclaration([S('js:inline'), '__method__'],
                                      args, body),
-                [S('js:and'),
-                 [S('js:defined'), name], name]]];
+                 [S('js:and'),
+                  [S('js:defined'), name], name],
+                 setter]];
     },
     'define-method': function (name, args) {
         var body = arguments.toArray().slice(2);
@@ -206,14 +212,16 @@ var macros = {
             else
                 type = 'Object';
         }
+        name = setter ? setterName(name) : name;
         return [S('define'), name,
-                [setter ? S('%make-setter-method') : S('%make-method'),
+                [S('%make-method'),
                  [S('js:escape'), name],
                  functionDeclaration([S('js:inline'), '__method__'],
                                      args, body),
                  [S('js:inline'), type],
                  [S('js:and'),
-                  [S('js:defined'), name], name]]];
+                  [S('js:defined'), name], name],
+                 setter]];
     },
     'method': function (args) {
         var body = arguments.toArray().slice(1);
@@ -375,6 +383,9 @@ var macros = {
                     exports = value.map(function (name) {
                         if (name instanceof Symbol)
                             return name.toString();
+                        else if (name instanceof Array && name.length == 2
+                                 && name[0].name == "setter")
+                            return setterName(name[1]);
                         else
                             return name;
                     });
@@ -397,8 +408,8 @@ var macros = {
         if (Array.isArray(expression)
             && expression[0] != S('js:get-property'))
         {
-            return ([S('%set')]
-                    .concat(expression)
+            return ([[S('js:inline'), setterName(expression[0])]]
+                    .concat(expression.slice(1))
                     .concat(valueRest));
         } else
             return [S('js:set'), expression, valueRest[0]];

@@ -405,7 +405,7 @@
   (check-equal "bind-methods: 2"
                3 (test2 1)))
 
-;; get
+;; get setter/getter
 (bind ((x (make <object>)))
   (set! (get x "1" "2" "3") 4)
   (check-equal "get: '1' -> '2' -> '3' = 4"

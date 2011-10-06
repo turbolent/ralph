@@ -11,7 +11,7 @@
            %make-class %make-generic %next-method
            %alias-type %actual-type
            %non-local-exit? %make-non-local-exit-function
-           %get-property get %set
+           %get-property get (setter get) %set
            %inherit make initialize type instance? superclass
            as-string as-array as-number
            make-string make-number make-boolean
@@ -22,6 +22,7 @@
            as-lowercase as-uppercase
            make-array make-object
            element first second third last rest concatenate
+           (setter element) (setter first) (setter second) (setter third)
            size empty? but-last copy-sequence slice
            replace-subsequence replace-subsequence!
            reverse reverse! sort sort! remove remove!
@@ -91,31 +92,18 @@
 ;;;; functions
 
 (define %make-function
-    (js:function js:null (name function existing display-name)
-      (begin
-       ;; name
-       (set! (js:get-property function "%name") name)
-       (set! (js:get-property function "displayName") display-name)
-       ;; re-define setter if it was existing
-       (if-bind (setter (%get-property existing "%setter"))
-                (set! (js:get-property function "%setter") setter))
-       (js:return function))))
-
-(define-function %make-setter-function (name function existing display-name)
-  (set! (js:get-property function "%name") name)
-  (set! (js:get-property function "displayName") display-name)
-  (set! (js:get-property function "%setter?") #t)
-  ;; temporary function (getter) required?
-  (bind ((getter (or existing (%make-empty-function))))
-    ;; definition
-    (set! (js:get-property getter "%setter")
-          function)
-    getter))
+  (js:function js:null (name function existing setter? display-name)
+    (begin
+     ;; name
+     (set! (js:get-property function "%name") name)
+     (set! (js:get-property function "displayName") display-name)
+     (set! (js:get-property function "%setter?") setter?)
+     (js:return function))))
 
 ;; methods
 
 (define-function %make-method
-    (name function type existing display-name)
+    (name function type existing setter? display-name)
   (bind ((type (%actual-type type))
          (prototype (js:get-property type "prototype"))
          (existing-method (%get-property prototype name))
@@ -124,47 +112,13 @@
     ;; definition
     (set! (js:get-property function "%name") name)
     (set! (js:get-property function "displayName") display-name)
+    (set! (js:get-property function "%setter?") setter?)
     (set! (js:get-property function "%type") type)
     (set! (js:get-property prototype name) function)
-    ;; re-define setter if it was existing
-    (if-bind (setter (%get-property existing-method "%setter"))
-      (set! (js:get-property function "%setter") setter))
     ;; implicit definition of generic function?
     (if generic?
         existing
         (%make-generic name display-name))))
-
-
-(define-function %make-setter-method
-    (name function type existing display-name)
-  (bind ((type (%actual-type type))
-         (prototype (js:get-property type "prototype"))
-         (getter (or (%get-property prototype name)
-                     ;; pass to getter defined in super-class?
-                     (if-bind (getter (js:get-property prototype name))
-                       (bind ((temp (method (#rest rest)
-                                      (apply getter rest))))
-                         (set! (js:get-property prototype name)
-                               temp)
-                         temp)
-                       ;; create temporary function (getter method)
-                       (bind ((temp (%make-empty-function)))
-                         (set! (js:get-property prototype name)
-                               temp)
-                         temp))))
-         (generic? (when existing
-                     (%get-property existing "%generic?"))))
-    ;; definition
-    (set! (js:get-property function "%name") name)
-    (set! (js:get-property function "displayName") display-name)
-    (set! (js:get-property function "%setter?") #t)
-    (set! (js:get-property function "%type") type)
-    (set! (js:get-property getter "%setter") function)
-    ;; implicit definition of generic function?
-    (if generic?
-        existing
-        (%make-generic name display-name))))
-
 
 (define-function %make-generic (function-name display-name)
   (js:function dispatcher (object)
@@ -178,38 +132,12 @@
   (set! (js:get-property dispatcher "displayName") display-name)
   dispatcher)
 
-
-
-(define-function %search-setter (prototype name)
-  (js:var setter)
-  (js:while (and prototype (not setter))
-    ;; find next getter
-    (js:var getter (js:get-property prototype name))
-    (set! setter (%get-property getter "%setter"))
-    (set! prototype (js:get-property prototype "__proto__")))
-  setter)
-
 (define-function %next-method (function)
   (js:var name (js:get-property function "%name"))
   (js:var proto (js:get-property function "%type"
                                  "prototype" "__proto__"))
-  (js:if (not (js:get-property function "%setter?"))
-         (js:return (js:get-property proto name)))
-  (%search-setter proto name))
+  (js:return (js:get-property proto name)))
 
-
-
-(define-function %set (function #rest arguments)
-  (js:var generic? (%get-property function "%generic?"))
-  (js:var name (%get-property function "%name"))
-  (js:if (js:not generic?)
-         (js:return (apply (%get-property function "%setter")
-                           arguments)))
-  ;; generic
-  (js:var actual-type (%actual-type (type (first arguments))))
-  (js:var prototype (js:get-property actual-type "prototype"))
-  (js:var setter (%search-setter prototype name))
-  (apply setter arguments))
 
 ;;;; objects
 
@@ -323,7 +251,8 @@
                                (get object property)
                                (set! (js:get-property object property)
                                      (make-object))))
-          (apply %set get object2
+          (apply this-method
+                 object2
                  (rest properties/value)))))
 
 ;;;;
