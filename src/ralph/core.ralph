@@ -1,5 +1,4 @@
-
-(define-module runtime/core
+(define-module ralph/core
   export: (%define %export %get-definition
            %make-function %make-setter-function
            %make-method %make-setter-method

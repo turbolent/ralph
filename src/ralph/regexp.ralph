@@ -1,8 +1,8 @@
-(define-module runtime/regexp
-    import: (runtime/core)
-    export: (<regexp> match replace-all))
+(define-module ralph/regexp
+  import: (ralph/core)
+  export: (<regexp> match replace-all))
 
-(define-class <regexp> ())
+(define-class <regexp> (<object>))
 
 (%alias-type <regexp> (js:inline "RegExp"))
 

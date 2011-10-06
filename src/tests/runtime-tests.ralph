@@ -1,6 +1,6 @@
 (define-module runtime-tests
-  import: (runtime/core runtime/test runtime/format
-           runtime/stream runtime/watch))
+  import: (ralph/core ralph/test ralph/format
+           ralph/stream ralph/watch))
 
 ;; test expansion
 (define-function foo (if)

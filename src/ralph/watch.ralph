@@ -1,6 +1,6 @@
-(define-module runtime/watch
-    import: (runtime/core)
-    export: (watch unwatch))
+(define-module ralph/watch
+  import: (ralph/core)
+  export: (watch unwatch))
 
 ;; port of Eli Grey's watch and unwatch
 

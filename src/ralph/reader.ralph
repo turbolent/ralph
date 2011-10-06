@@ -1,18 +1,21 @@
-(define-module compiler/reader
-    import: (runtime/core runtime/stream runtime/format runtime/regexp)
+(define-module ralph/reader
+    import: (ralph/core ralph/stream ralph/format ralph/regexp)
     export: (read))
 
 (define *whitespace-pattern*
     (make <regexp> pattern: "[\t\n\r ]*"))
+
 (define *non-whitespace-pattern*
     (make <regexp> pattern: "[^\\[\\]()\n\r\t ]+"))
+
 (define *line-pattern*
     (make <regexp> pattern: "(.*)[\n\r]"))
+
 (define *number-patterns*
     (map (curry make <regexp> ignore-case?: #t pattern:)
          ["^[+-]?0x[0-9a-f]+"
-         "^[+-]?0[0-7]+"
-         "^[+-]?\\d+\\.?\\d*(?:e-?\\d*(?:\\d\\.?|\\.?\\d)\\d*)?"]))
+          "^[+-]?0[0-7]+"
+          "^[+-]?\\d+\\.?\\d*(?:e-?\\d*(?:\\d\\.?|\\.?\\d)\\d*)?"]))
 
 (define-function match-stream ((regexp <regexp>) (stream <stream>))
   (if-bind (result (match regexp (remaining-contents stream)))

@@ -1,5 +1,5 @@
-(define-module runtime/stream
-  import: (runtime/core)
+(define-module ralph/stream
+  import: (ralph/core)
   export: (<stream>
            <string-stream>
            *standard-out*
@@ -13,7 +13,7 @@
 
 ;; <stream>
 
-(define-class <stream> ())
+(define-class <stream> (<object>))
 
 (define-generic at-end? ((stream <stream>)))
 

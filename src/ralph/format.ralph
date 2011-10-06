@@ -1,8 +1,6 @@
-(define-module runtime/format
-  import: (runtime/core runtime/stream)
-  export: (format-out
-           format-to-string
-           format))
+(define-module ralph/format
+  import: (ralph/core ralph/stream)
+  export: (format-out format-to-string format))
 
 (define-function format-integer ((number <number>))
   ;; TODO:

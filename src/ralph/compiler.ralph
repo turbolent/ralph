@@ -1,10 +1,8 @@
-(define-module compiler/compiler
-    import: (runtime/core runtime/format runtime/regexp
-             compiler/reader)
-    export: (compile macroexpand transform-asynchronous))
+(define-module ralph/compiler
+  import: (ralph/core ralph/format ralph/regexp ralph/reader)
+  export: (compile macroexpand transform-asynchronous))
 
 (define S symbol)
-
 
 (define *type-name->constructor-name*
   (make-object

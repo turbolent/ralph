@@ -1,10 +1,11 @@
-(define-module runtime/date
-  import: (runtime/core)
+(define-module ralph/date
+  import: (ralph/core)
   export: (<date>))
 
-(define-class <date> ())
+(define-class <date> (<object>))
 
 (%alias-type <date> (js:inline "Date"))
+
 
 (define-method initialize ((date <date>) #rest rest)
   (bind ((arguments (as-object rest)))

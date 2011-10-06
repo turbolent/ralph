@@ -1,5 +1,5 @@
-(define-module runtime/test
-  import: (runtime/core runtime/format)
+(define-module ralph/test
+  import: (ralph/core ralph/format)
   export: (check-equal
            check-true
            check-false
