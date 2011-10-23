@@ -1105,12 +1105,11 @@
                (concatenate
                 "try {\n"
                 (write-statements body)
-                "\n}"
+                "\n} catch (" (write-expressions condition) ") {\n"
                 (if catch
-                    (concatenate
-                     " catch (" (write-expressions condition) ") {\n"
-                     (write-statements catch) "\n}")
+                    (write-statements catch)
                     "")
+                "\n}"
                 (if finally
                     (concatenate
                      " finally {\n"
