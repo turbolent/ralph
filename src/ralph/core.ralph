@@ -33,7 +33,8 @@
            inc dec
            description
            identity
-           min max abs round floor expt sqrt cos sin atan2 as-radiant
+           min max abs round floor ceil
+           expt sqrt cos sin atan2 as-radiant
            mod even? odd? *pi*
            extend! as-property-list
            as-association-list as-object
@@ -851,6 +852,9 @@
 
 (define-function floor (number)
   ((js:inline "Math.floor") number))
+
+(define-function ceil (number)
+  ((js:inline "Math.ceil") number))
 
 (define-function sin (number)
   ((js:inline "Math.sin") number))
