@@ -15,7 +15,7 @@
            as-string as-array as-number
            make-string make-number make-boolean
            apply reduce reduce1 map do repeatedly
-           any? every? member? choose-by find-key
+           any? every? member? choose choose-by find-key
            complement curry rcurry
            position last-position join trim replace
            as-lowercase as-uppercase
