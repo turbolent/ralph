@@ -10,6 +10,11 @@
    "<number>" "Number"
    "<boolean>" "Boolean"))
 
+(define-function setter-name? (name)
+  (and (instance? name <array>)
+       (== (size name) 2)
+       (== (first name) (S "setter"))))
+
 (define-function source (form)
   (bind-properties (source start-index end-index)
       form
@@ -217,7 +222,7 @@
              (unless (member? inlined definitions)
                (push-last definitions inlined)))
            `(js:set ,inlined
-                    ,(if (member? name (get environment "exports") test: =)
+                    ,(if (member? escaped (get environment "exports") test: =)
                          `(set! (js:get-property exports ,escaped)
                                 ,value)
                          value))))
@@ -469,7 +474,14 @@
      "define-module"
      (method (environment name #key (import []) (export []))
        (set! (get environment "exports")
-             export)
+             (map (method (name)
+                    (cond
+                     ((instance? name <symbol>)
+                      (escape-symbol name))
+                     ((setter-name? name)
+                      (escape-symbol (setter-symbol (second name))))
+                     (else: name)))
+                  export))
        (concatenate
         `(begin
           (js:var *module* js:this))
@@ -744,9 +756,7 @@
 (define-function function-definer (macro-name definer-name #key type?)
   (method (_ function-name arguments #rest body)
     (destructuring-bind (setter? name)
-        (if (and (instance? function-name <array>)
-                 (== (size function-name) 2)
-                 (== (first function-name) (S "setter")))
+        (if (setter-name? function-name)
             [#t (setter-symbol (second function-name))]
             [#f function-name])
       (when (not (or (instance? name <symbol>)
