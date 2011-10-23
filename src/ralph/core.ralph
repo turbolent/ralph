@@ -405,11 +405,15 @@
 (define-function reverse ((array <array>))
   (reverse! (slice array)))
 
-(define-function sort! ((array <array>) #key (test <))
-  ((js:get-property array "sort") test))
+(define-function sort! ((array <array>) #key (test <) (key identity))
+  ((js:get-property array "sort")
+   (method (a b)
+     (if (test (key a)
+               (key b))
+        -1 1))))
 
-(define-function sort ((array <array>) #key (test <))
-  (sort! (slice array) test: test))
+(define-function sort ((array <array>) #key (test <) (key identity))
+  (sort! (slice array) test: test key: key))
 
 (define-function element ((array <array>) key #key default)
   (or (js:get-property array key) default))
