@@ -660,10 +660,18 @@
   (check-equal "as-property-list: strings"
                (as-property-list object)
                ["a" 4 "b" 3 "c" 2 "d" 1])
-  (check-equal "as-property-list: strings"
+  (check-equal "as-property-list: keywords"
                (as-property-list object
                                  keywords?: #t)
                [a: 4 b: 3 c: 2 d: 1])
+  ;; as-association-list
+  (check-equal "as-association-list: strings"
+               (as-association-list object)
+               [["a" 4] ["b" 3] ["c" 2] ["d" 1]])
+  (check-equal "as-association-list: keywords"
+               (as-association-list object
+                                 keywords?: #t)
+               [[a: 4] [b: 3] [c: 2] [d: 1]])
   ;; extend!
   (check-equal "extend!: return extended object"
                object (extend! object

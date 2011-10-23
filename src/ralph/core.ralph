@@ -35,7 +35,8 @@
            identity
            min max abs round floor expt sqrt cos sin atan2 as-radiant
            mod even? odd? *pi*
-           extend! as-property-list as-object
+           extend! as-property-list
+           as-association-list as-object
            starts-with?))
 
 (define %get-property
@@ -895,6 +896,17 @@
                    (keyword (as-string key))
                    key))
     (push-last result (get object key)))
+  result)
+
+(define-function as-association-list (object #key keywords?)
+  (js:var result [])
+  (for-each ((key (keys object)))
+            ()
+    (push-last result
+               [(if keywords?
+                    (keyword (as-string key))
+                    key)
+                (get object key)]))
   result)
 
 (define-function starts-with? ((string <string>) (prefix <string>))
