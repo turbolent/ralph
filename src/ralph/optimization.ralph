@@ -1,0 +1,118 @@
+
+;; NB: only works when using ringo platform
+
+(define-module ralph/optimization
+  import: (ralph/core)
+  export: (optimize))
+
+;;;; libraries
+
+(add-to-classpath "../../lib/closure-compiler.jar")
+
+(define jscomp (js:inline "com.google.javascript.jscomp"))
+
+(do (method (name)
+      (import-class (js:get-property jscomp name)))
+    ["Compiler" "CompilerOptions" "CheckLevel" "JSSourceFile"
+     "VariableRenamingPolicy" "PropertyRenamingPolicy"])
+
+(define-function as-java-array (array type)
+  (bind ((result
+          ((js:inline "java.lang.reflect.Array.newInstance")
+           type (size array))))
+    (dotimes (i (size array))
+      (set! (js:get-property result i)
+            (get array i)))
+    result))
+
+(define *boolean-settings*
+  ;;;; safe optimizations
+  [
+   "closurePass"
+   "foldConstants"
+   "coalesceVariableNames"
+   "deadAssignmentElimination"
+  ;;  "extractPrototypeMemberDeclarations"
+   "collapseVariableDeclarations"
+  ;;  "convertToDottedProperties"
+   "rewriteFunctionExpressions"
+   "labelRenaming"
+   "removeDeadCode"
+   "optimizeArgumentsArray"
+   "collapseObjectLiterals"
+  ;;;; advance optimizations
+   "removeClosureAsserts"
+  ;;  "aliasKeywords"
+  ;;  "reserveRawExports"
+  ;;  "shadowVariables"
+  ;;  "removeUnusedPrototypeProperties"
+  ;;  "removeUnusedPrototypePropertiesInExterns"
+   "collapseAnonymousFunctions"
+  ;;  "collapseProperties"
+   "rewriteFunctionExpressions"
+  ;;  "smartNameRemoval"
+   "inlineConstantVars"
+   "inlineGetters"
+  ;;  "flowSensitiveInlineVariables"
+  ;;  "computeFunctionSideEffects"
+  ;;;; move code around based on the defined modules
+  ;;  "crossModuleCodeMotion"
+  ;;  "crossModuleMethodMotion"
+  ;;;; call optimizations
+  ;;  "devirtualizePrototypeMethods"
+   "optimizeParameters"
+   "optimizeReturns"
+   "optimizeCalls"
+   ])
+
+(define *value-settings*
+  (make-object
+   ;;   "checkGlobalThisLevel" (js:inline "CheckLevel.WARNING")
+   ))
+
+(define *function-settings*
+  (make-object
+   "setInlineFunctions" [(js:inline "CompilerOptions.Reach.ALL")]
+   "setInlineVariables" [(js:inline "CompilerOptions.Reach.ALL")]
+   "setRemoveUnusedVariable" [(js:inline "CompilerOptions.Reach.ALL")]
+   ))
+
+(define-function apply-settings (options)
+  (do (method (name)
+        (set! (js:get-property options name) #t))
+      *boolean-settings*)
+  (do (method (name)
+        (set! (js:get-property options name)
+              (get *value-settings* name)))
+      (keys *value-settings*))
+  (do (method (name)
+        ((js:get-property options name "apply")
+         options
+         (get *function-settings* name)))
+      (keys *function-settings*))
+  )
+
+(define-function as-source-file (source)
+  (bind ((code (js:new (js:inline "java.lang.String") source)))
+     ((js:get-property (js:inline "JSSourceFile") "fromInputStream")
+      "-" (js:new (js:inline "java.io.ByteArrayInputStream")
+                  ((js:get-property code "getBytes") "UTF-8")))))
+
+(define-function optimize (source #key pretty-print? (minimize? #t))
+  ((js:get-property (js:inline "Compiler") "setLoggingLevel")
+   (js:inline "java.util.logging.Level.WARNING"))
+  (bind ((options (js:new (js:inline "CompilerOptions")))
+         (compiler (js:new (js:inline "Compiler")))
+         (sources (as-java-array
+                   [(as-source-file source)]
+                   (js:inline "JSSourceFile"))))
+    (set! (get options "prettyPrint") pretty-print?)
+    (when minimize?
+      ((js:get-property options "setRenamingPolicy")
+       (js:inline "VariableRenamingPolicy.ALL")
+       (js:inline "PropertyRenamingPolicy.OFF")))
+    (apply-settings options)
+    (bind ((result ((js:get-property compiler "compile")
+                    [] sources options)))
+        (when (js:get-property result "success")
+          ((js:get-property compiler "toSource"))))))

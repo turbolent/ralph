@@ -1,6 +1,5 @@
 var Server = require('ringo/httpserver').Server;
-var core, stream, reader, compiler;
-
+var core, stream, reader, compiler, optimization;
 
 function parseParameters (input) {
     var params = {};
@@ -33,6 +32,10 @@ function app (request) {
                                         core._k('statements?'), ((options && options.hasOwnProperty('statements'))
                                                                  ? !!options.statements : true),
                                         core._k('asynchronous?'), options && !!options.asynchronous);
+        if (!!options.optimize)
+            compiled = optimization.optimize(compiled,
+                                             core._k('pretty-print?'), !!options.pretty,
+                                             core._k('minimize?'), !!options.minimize);
         return { status: 200,
                  headers: {'Content-Type': 'text/javascript'},
                  body: [compiled]
@@ -46,13 +49,12 @@ function app (request) {
 
 }
 
-
 var server = new Server({app: app, port: 5000});
-
 
 core = require("ralph/core"),
 stream = require("ralph/stream"),
 reader = require("ralph/reader"),
-compiler = require("ralph/compiler");
+compiler = require("ralph/compiler"),
+optimization = require("ralph/optimization");
 
 server.start();

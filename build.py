@@ -17,6 +17,9 @@ parser.add_option("-e", "--environment", dest="environment", default=False,
 parser.add_option("-a", "--async",
                   action="store_true", dest="async", default=False,
                   help="asynchronous module loading")
+parser.add_option("-o", "--optimize",
+                  action="store_true", dest="optimize", default=False,
+                  help="optimize code (ringojs environment only)")
 parser.add_option("-p", "--path", dest="path", default="",
                   help="modules path", metavar="PATH")
 
@@ -25,6 +28,8 @@ prefix = len(options.src)
 arguments = ['--async'] if options.async else []
 if options.bootstrap:
     arguments.append('--bootstrap')
+if options.optimize and options.environment == "ringojs":
+    arguments.append('--optimize')
 
 env = os.environ
 

@@ -12,6 +12,7 @@ try {
 
 var bootstrap = (args.indexOf('--bootstrap') >= 0);
 var async = (args.indexOf('--async') >= 0);
+var optimize = (args.indexOf('--optimize') >= 0);
 
 if (bootstrap)
     var bootstrapCompiler = require('bootstrap/compiler');
@@ -33,6 +34,12 @@ else {
     compiled = compiler.compile(form,
                                 core._k('statements?'), true,
                                 core._k('asynchronous?'), async);
+    if (optimize) {
+        var optimization = require("ralph/optimization");
+        compiled = optimization.optimize(compiled,
+                                         core._k('pretty-print?'), true,
+                                         core._k('minimize?'), false);
+    }
 }
 
 (typeof process === "undefined" ? system : process).stdout.write(compiled);

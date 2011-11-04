@@ -422,7 +422,7 @@
                ((<error> condition: condition)
                 #f))))
 
-(check-true "if-bind: test is false, shouldn't be visible in then"
+(check-true "if-bind: test is false, shouldn't be visible in then (ignore if optimized)"
             (if-bind (a #f)
               a
               (handler-case
