@@ -117,16 +117,22 @@ char *resolve (char *name) {
   return result;
 }
 
+const char* predefined[] =
+  { "Object", "Array", "Boolean", "Date",
+    "Function", "Number", "RegExp", "String",
+    NULL };
+
 JSValueRef require (JSContextRef context, JSObjectRef function,
                            JSObjectRef this, size_t argc,
                            const JSValueRef argv[], JSValueRef* exception)
 {
   JSValueRef undefined = JSValueMakeUndefined(context);
   if (argc > 0) {
+    JSObjectRef global = JSContextGetGlobalObject(context);
     char *name = JSValueToCString(context, argv[0], exception);
     char *contents;
     int freeContents = 0;
-    // TODO: don't recreate module every time
+    // TODO: cache modules
     if (strcmp(name, "system") == 0)
       contents = SYSTEM;
     else {
@@ -139,16 +145,48 @@ JSValueRef require (JSContextRef context, JSObjectRef function,
       return undefined;
     JSContextRef context2 =
       JSGlobalContextCreateInGroup(JSContextGetGroup(context), NULL);
+    JSObjectRef global2 = JSContextGetGlobalObject(context2);
     initialize(context2);
     evaluate(context2, contents, name);
     JSStringRef propertyName = JSStringCreateWithUTF8CString("exports");
     JSValueRef exports =
-      JSObjectGetProperty(context2, JSContextGetGlobalObject(context2),
-                          propertyName, exception);
+      JSObjectGetProperty(context2, global2, propertyName, exception);
     JSStringRelease(propertyName);
     free(name);
     if (freeContents)
       free(contents);
+
+    // copy properties of built-ins
+    int i = 0;
+    while (1) {
+      const char *preString = predefined[i++];
+      if (preString == NULL)
+        break;
+      JSStringRef preName = JSStringCreateWithUTF8CString(preString);
+      JSValueRef pre = JSObjectGetProperty(context, global, preName, NULL);
+      JSValueRef pre2 = JSObjectGetProperty(context2, global2, preName, NULL);
+      JSStringRelease(preName);
+
+      JSStringRef prototypeName = JSStringCreateWithUTF8CString("prototype");
+      JSObjectRef proto = JSObjectGetProperty(context, JSValueToObject(context, pre, NULL),
+                                              prototypeName, NULL);
+      JSObjectRef proto2 = JSObjectGetProperty(context2, JSValueToObject(context2, pre2, NULL),
+                                               prototypeName, NULL);
+      JSStringRelease(prototypeName);
+
+      JSPropertyNameArrayRef properties = JSObjectCopyPropertyNames(context2, proto2);
+      size_t n = JSPropertyNameArrayGetCount(properties);
+      size_t i = 0;
+      for (; i < n; i++) {
+        JSStringRef propertyName = JSPropertyNameArrayGetNameAtIndex(properties, i);
+        JSValueRef property = JSObjectGetProperty(context2, proto2, propertyName, NULL);
+
+        JSObjectSetProperty(context, proto, propertyName, property,
+                            kJSPropertyAttributeNone, NULL);
+      }
+      JSPropertyNameArrayRelease(properties);
+    }
+
     return exports;
   }
   return undefined;
@@ -169,9 +207,10 @@ const functionEntry globals[] = {
   {}
 };
 
-
 void initialize (JSContextRef context) {
   int i = 0;
+
+  JSObjectRef global = JSContextGetGlobalObject(context);
 
   while (1) {
     functionEntry entry = globals[i++];
@@ -180,17 +219,19 @@ void initialize (JSContextRef context) {
     JSStringRef name = JSStringCreateWithUTF8CString(entry.name);
     JSObjectRef function =
       JSObjectMakeFunctionWithCallback(context, name, entry.function);
-    JSObjectSetProperty(context, JSContextGetGlobalObject(context),
-                        name, function, kJSPropertyAttributeNone, NULL);
+    JSObjectSetProperty(context, global, name, function,
+                        kJSPropertyAttributeNone, NULL);
     JSStringRelease(name);
   }
 
   // exports
   JSStringRef propertyName = JSStringCreateWithUTF8CString("exports");
   JSObjectRef exports = JSObjectMake(context, NULL, NULL);
-  JSObjectSetProperty(context, JSContextGetGlobalObject(context),
-                      propertyName, exports, kJSPropertyAttributeNone, NULL);
+  JSObjectSetProperty(context, global, propertyName, exports,
+                      kJSPropertyAttributeNone, NULL);
   JSStringRelease(propertyName);
+
+
 }
 
 
@@ -209,6 +250,8 @@ void dump (JSContextRef context, JSValueRef value) {
   JSStringRelease(json);
 }
 
+
+
 int main (int argc, char *argv[]) {
   if (argc <= 1)
     return EXIT_FAILURE;
@@ -217,16 +260,17 @@ int main (int argc, char *argv[]) {
   if (path == NULL)
     path = getcwd(NULL, 0);
 
-  JSGlobalContextRef context =
-    JSGlobalContextCreate(NULL);
-  initialize(context);
-
   char *name = argv[1];
   char *contents = readFile(name);
-  if (contents != NULL)
-    evaluate(context, contents, name);
-  free(contents);
+  if (contents != NULL) {
+    JSGlobalContextRef context =
+      JSGlobalContextCreate(NULL);
+    initialize(context);
 
-  JSGlobalContextRelease(context);
+    evaluate(context, contents, name);
+
+    JSGlobalContextRelease(context);
+    free(contents);
+  }
   return EXIT_SUCCESS;
 }
