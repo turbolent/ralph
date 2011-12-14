@@ -8,7 +8,6 @@
            not true? signal
            *environment*
            %make-class %make-generic %next-method
-           %alias-type %actual-type
            %non-local-exit? %make-non-local-exit-function
            %get-property get (setter get) %set
            %inherit make initialize type instance? superclass
@@ -105,8 +104,7 @@
 
 (define-function %make-method
     (name function type existing setter? display-name)
-  (bind ((type (%actual-type type))
-         (prototype (js:get-property type "prototype"))
+  (bind ((prototype (js:get-property type "prototype"))
          (existing-method (%get-property prototype name))
          (generic? (when existing
                      (%get-property existing "%generic?"))))
@@ -143,7 +141,6 @@
 ;;;; objects
 
 (define-function make (type #rest arguments)
-  (js:var type (%actual-type type))
   (js:var object (js:new type))
   (apply initialize object arguments)
   object)
@@ -157,12 +154,6 @@
 
 (define-function superclass (class)
   (js:get-property class "prototype" "__super__"))
-
-(define %actual-type
-  (js:function js:null (type)
-    (js:return
-      (js:or (%get-property type "%js-type")
-             type))))
 
 ;;;; keywords
 
@@ -286,29 +277,12 @@
 
 ;;;;
 
-(define-class <object> ())
-(define-class <string> ())
-(define-class <number> ())
-(define-class <array> ())
-(define-class <boolean> ())
-(define-class <function> ())
-
-(define *type-mapping*
-    (make-object))
-
-(define-function %alias-type (ralph-type javascript-type)
-  (set! (js:get-property ralph-type "%js-type") javascript-type)
-  (set! (js:get-property *type-mapping*
-                         (js:get-property javascript-type "name"))
-        ralph-type)
-  (set! (js:get-property javascript-type "%ralph-type") ralph-type))
-
-(%alias-type <object> (js:inline "Object"))
-(%alias-type <string> (js:inline "String"))
-(%alias-type <number> (js:inline "Number"))
-(%alias-type <array> (js:inline "Array"))
-(%alias-type <boolean> (js:inline "Boolean"))
-(%alias-type <function> (js:inline "Function"))
+(define <object> (js:inline "Object"))
+(define <string> (js:inline "String"))
+(define <number> (js:inline "Number"))
+(define <array> (js:inline "Array"))
+(define <boolean> (js:inline "Boolean"))
+(define <function> (js:inline "Function"))
 
 ;;;;
 
@@ -611,33 +585,24 @@
       <boolean>
       ;; Object.getPrototypeOf on primitives only works in FireFox:
       ;; ((js:inline "Object.getPrototypeOf") object))
-      (begin
-       (set! type (js:get-property object "constructor"))
-       (set! ralph-type
-             (js:or (js:get-property type "%ralph-type")
-                    (%get-property *type-mapping*
-                                   (%get-property type "name"))))
-       (js:or ralph-type type))))
+      (js:get-property object "constructor")))
 
 (define-function instance? (object type)
-  (js:var actual)
+  (js:var ctor)
   (if object
       (begin
-       (set! actual (%actual-type type))
+       (set! ctor (js:get-property object "constructor"))
        (js:or
         ;; primitive
-        (js:=== (js:get-property object "constructor")
-                actual)
+        (js:=== ctor type)
         ;; object
-        ((js:get-property actual "prototype"
-                          "isPrototypeOf")
+        ((js:get-property type "prototype" "isPrototypeOf")
          object)
-        ;; mapped
-        (js:and (js:get-property type "%js-type")
-                (js:== (js:get-property object "constructor" "name")
-                       (js:get-property actual "name")))))
-      (js:or (js:=== type <boolean>)
-             (js:=== type (js:inline "Boolean")))))
+        ;; built-in
+        (js:and (js:not (has? type "%name"))
+                (js:== (js:get-property ctor "name")
+                       (js:get-property type "name")))))
+      (js:=== type <boolean>)))
 
 
 
@@ -664,7 +629,7 @@
 (define-class <error> ()
   message)
 
-(%alias-type <error> (js:inline "Error"))
+(define <error> (js:inline "Error"))
 
 ;;
 
