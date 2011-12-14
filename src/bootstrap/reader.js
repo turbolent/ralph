@@ -81,20 +81,20 @@ Reader.prototype.readList = function (end) {
 Reader.prototype.readSymbol = function () {
     var match = /[^()\[\]\n\r\t ]+/.exec(this.stream.rest());
     var name = match[0];
+    var rest = name.substring(1);
     this.stream.index += name.length;
     if (name == "#t") {
-	return true;
+	    return true;
     } else if (name == "#f") {
-	return false;
-    } else if (name[0] == '#'
-	     && (HashSymbol.names
-		 .indexOf(name.substring(1)) >= 0))
+	    return false;
+    } else if (name[0] == '#' &&
+               (HashSymbol.names.indexOf(rest) >= 0))
     {
-	return HashSymbol[name.substring(1)];
+	    return HashSymbol[rest];
     } else if (name[name.length - 1] == ":") {
-	return K(name.slice(0, -1).toLowerCase());
+	    return K(name.slice(0, -1).toLowerCase());
     } else
-	return S(name.toLowerCase());
+	    return S(name.toLowerCase());
 };
 
 Reader.prototype.readString = function () {

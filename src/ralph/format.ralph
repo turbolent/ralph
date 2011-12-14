@@ -7,7 +7,7 @@
   (js:+ "" number))
 
 (define-function format-out ((control-string <string>) #rest args)
-  "Formats arguments to *standard-output*."
+  "Formats arguments to *standard-out*."
   (apply format *standard-out* control-string args))
 
 (define-function format-to-string ((control-string <string>) #rest args)

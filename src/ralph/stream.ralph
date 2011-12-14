@@ -77,8 +77,7 @@
     file)
 
 (define-method write ((stream <file-stream>) object)
-  ((js:get-property (js:get-property stream "file") "write")
-   object))
+  ((js:get-property stream "file" "write") object))
 
 ;; <document-stream>
 
