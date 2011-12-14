@@ -8,6 +8,12 @@
 
 char *path;
 
+typedef struct {
+  char *name;
+  JSObjectCallAsFunctionCallback function;
+} functionEntry;
+
+
 static char *readFile (const char *name) {
   FILE *file;
   long size;
@@ -133,9 +139,15 @@ JSValueRef require (JSContextRef context, JSObjectRef function,
     char *contents;
     int freeContents = 0;
     // TODO: cache modules
-    if (strcmp(name, "system") == 0)
+    JSContextRef context2 =
+      JSGlobalContextCreateInGroup(JSContextGetGroup(context), NULL);
+    JSObjectRef global2 = JSContextGetGlobalObject(context2);
+    initialize(context2);
+    if (strcmp(name, "system") == 0) {
       contents = SYSTEM;
-    else {
+      functionEntry globals[] = {{ "write", writeFunc }, {}};
+      defineGlobals(context2, globals);
+    } else {
       char *filename = resolve(name);
       contents = readFile(filename);
       freeContents = 1;
@@ -143,10 +155,6 @@ JSValueRef require (JSContextRef context, JSObjectRef function,
     }
     if (contents == NULL)
       return undefined;
-    JSContextRef context2 =
-      JSGlobalContextCreateInGroup(JSContextGetGroup(context), NULL);
-    JSObjectRef global2 = JSContextGetGlobalObject(context2);
-    initialize(context2);
     evaluate(context2, contents, name);
     JSStringRef propertyName = JSStringCreateWithUTF8CString("exports");
     JSValueRef exports =
@@ -193,25 +201,9 @@ JSValueRef require (JSContextRef context, JSObjectRef function,
 }
 
 
-
-typedef struct {
-  char *name;
-  JSObjectCallAsFunctionCallback function;
-
-} functionEntry;
-
-const functionEntry globals[] = {
-  { "write", writeFunc },
-  { "require", require },
-  //
-  {}
-};
-
-void initialize (JSContextRef context) {
-  int i = 0;
-
+void defineGlobals (JSContextRef context, functionEntry globals[]) {
   JSObjectRef global = JSContextGetGlobalObject(context);
-
+  int i = 0;
   while (1) {
     functionEntry entry = globals[i++];
     if (entry.name == NULL)
@@ -223,6 +215,14 @@ void initialize (JSContextRef context) {
                         kJSPropertyAttributeNone, NULL);
     JSStringRelease(name);
   }
+}
+
+
+void initialize (JSContextRef context) {
+  JSObjectRef global = JSContextGetGlobalObject(context);
+
+  functionEntry globals[] = {{ "require", require }, {}};
+  defineGlobals(context, globals);
 
   // exports
   JSStringRef propertyName = JSStringCreateWithUTF8CString("exports");
@@ -230,10 +230,7 @@ void initialize (JSContextRef context) {
   JSObjectSetProperty(context, global, propertyName, exports,
                       kJSPropertyAttributeNone, NULL);
   JSStringRelease(propertyName);
-
-
 }
-
 
 
 void dump (JSContextRef context, JSValueRef value) {
