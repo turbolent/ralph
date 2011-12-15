@@ -1,0 +1,377 @@
+// gcc -DDEBUG -ljavascriptcoregtk-1.0 -L/usr/lib/webkitgtk-1.0-0/ -I/usr/include/webkit-1.0 engine.c -o engine
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <string.h>
+#include <JavaScriptCore/JavaScript.h>
+
+#ifdef DEBUG
+#define DLOG(fmt, args...) fprintf(stderr, "DEBUG: %s:%d: "fmt,__FILE__,__LINE__,args)
+#else
+#define DLOG(fmt, args...)
+#endif
+
+// TODO: handle errors
+
+
+char *path;
+
+
+typedef struct {
+  char *name;
+  JSObjectCallAsFunctionCallback function;
+} functionEntry;
+
+
+typedef struct {
+  char *name;
+  JSContextRef context;
+} contextEntry;
+
+contextEntry *contexts = NULL;
+int contextsCount = 0;
+int contextsSize = 0;
+
+
+int addContextEntry (contextEntry entry) {
+  // realloc needed?
+  if (contextsCount == contextsSize) {
+    if (contextsSize == 0)
+      contextsSize = 10;
+    else
+      contextsSize *= 2;
+
+    void *tmp = realloc(contexts, contextsSize * sizeof(contextEntry));
+    if (!tmp) {
+      fprintf(stderr, "ERROR: Couldn't reallocate memory!\n");
+      return;
+    }
+    contexts = (contextEntry*)tmp;
+  }
+  // add entry
+  contexts[contextsCount] = entry;
+  return ++contextsCount;
+}
+
+
+static char *readFile (const char *name) {
+  FILE *file;
+  long size;
+  char *buffer;
+  size_t result;
+
+  file = fopen(name, "r");
+  if (file == NULL)
+    return NULL;
+
+  fseek(file, 0, SEEK_END);
+  size = ftell(file);
+  rewind(file);
+
+  buffer = (char *)calloc(sizeof(char), size);
+  if (buffer == NULL)
+    return NULL;
+
+  result = fread(buffer, 1, size, file);
+  if (result != size)
+    return NULL;
+
+  fclose(file);
+  return buffer;
+}
+
+
+static char* JSStringToCString (JSStringRef string) {
+  size_t size = JSStringGetMaximumUTF8CStringSize(string);
+  char *buffer = (char *)calloc(sizeof(char), size);
+  JSStringGetUTF8CString(string, buffer, size);
+  return buffer;
+}
+
+
+static char* JSValueToCString (JSContextRef context, JSValueRef value,
+                               JSValueRef *exception)
+{
+  JSStringRef string = JSValueToStringCopy(context, value, exception);
+  char *result = JSStringToCString(string);
+  JSStringRelease(string);
+  return result;
+}
+
+
+static void dumpException (JSContextRef context, JSValueRef exception) {
+  // description
+  char *description = JSValueToCString(context, exception, NULL);
+  fprintf(stderr, "%s", description);
+  free(description);
+
+  // line
+  JSStringRef lineProperty = JSStringCreateWithUTF8CString("line");
+  JSValueRef lineValue =
+    JSObjectGetProperty(context, (JSObjectRef)exception, lineProperty, NULL);
+  int line = JSValueToNumber(context, lineValue, NULL);
+  fprintf(stderr, " on line %d", line);
+  JSStringRelease(lineProperty);
+
+  // source
+  JSStringRef sourceProperty = JSStringCreateWithUTF8CString("sourceURL");
+  if (JSObjectGetProperty(context, (JSObjectRef)exception, sourceProperty, NULL)) {
+    JSValueRef sourceValue =
+      JSObjectGetProperty(context, (JSObjectRef)exception, sourceProperty, NULL);
+    char *sourceString = JSValueToCString(context, sourceValue, NULL);
+    fprintf(stderr, " in %s", sourceString);
+    free(sourceString);
+  }
+  JSStringRelease(sourceProperty);
+
+  fprintf(stderr, "\n");
+
+}
+
+
+void defineGlobals (JSContextRef context, functionEntry globals[]) {
+  JSObjectRef global = JSContextGetGlobalObject(context);
+  int i = 0;
+  while (1) {
+    functionEntry entry = globals[i++];
+    if (entry.name == NULL)
+      break;
+    JSStringRef name = JSStringCreateWithUTF8CString(entry.name);
+    JSObjectRef function =
+      JSObjectMakeFunctionWithCallback(context, name, entry.function);
+    JSObjectSetProperty(context, global, name, function,
+                        kJSPropertyAttributeNone, NULL);
+    JSStringRelease(name);
+  }
+}
+
+
+static JSValueRef evaluate (JSContextRef context, char *source, char *name) {
+  JSStringRef sourceString = JSStringCreateWithUTF8CString(source);
+  JSStringRef nameString = JSStringCreateWithUTF8CString(name);
+  JSValueRef exception = NULL;
+  JSValueRef value =
+    JSEvaluateScript(context, sourceString, NULL,
+                     nameString, 0, &exception);
+  JSStringRelease(sourceString);
+  JSStringRelease(nameString);
+  if (exception) {
+    dumpException(context, exception);
+    JSValueMakeUndefined(context);
+  } else
+    return value;
+}
+
+
+static JSValueRef writeFunc (JSContextRef context, JSObjectRef function,
+                             JSObjectRef this, size_t argc,
+                             const JSValueRef argv[], JSValueRef* exception)
+{
+  int i = 0;
+  for (; i < argc; i++) {
+    char *string = JSValueToCString(context, argv[i], exception);
+    printf("%s", string);
+    free(string);
+  }
+  return JSValueMakeUndefined(context);
+}
+
+
+void initialize (JSContextRef context);
+
+
+char *resolve (char *name) {
+  int length =  strlen(path) + 1 + strlen(name) + 3;
+  char *result = (char *)calloc(sizeof(char), length);
+  sprintf(result, "%s/%s.js", path, name);
+  return result;
+}
+
+
+JSContextRef createModuleContext (JSContextRef context) {
+  JSContextRef moduleContext =
+    JSGlobalContextCreateInGroup(JSContextGetGroup(context), NULL);
+  initialize(moduleContext);
+  return moduleContext;
+}
+
+
+JSContextRef createSystemModule (JSContextRef context) {
+    JSContextRef moduleContext = createModuleContext(context);
+    functionEntry globals[] = {{ "write", writeFunc }, {}};
+    defineGlobals(moduleContext, globals);
+    evaluate(moduleContext, "exports.stdout = {write: write}", "system");
+    return moduleContext;
+}
+
+
+JSContextRef loadModule (JSContextRef context, char *name) {
+  DLOG("Loading module '%s'\n", name);
+  JSContextRef moduleContext = createModuleContext(context);
+  char *filename = resolve(name);
+  char *contents = readFile(filename);
+  free(filename);
+  if (contents == NULL)
+    return NULL;
+  evaluate(moduleContext, contents, name);
+  free(contents);
+  return moduleContext;
+}
+
+JSContextRef findModule (char *name) {
+  int i = 0;
+  for (; i < contextsCount; i++) {
+    contextEntry entry = contexts[i];
+    if (strcmp(entry.name, name) == 0)
+      return entry.context;
+  }
+  return NULL;
+}
+
+JSValueRef getExports (JSContextRef context) {
+  JSObjectRef global = JSContextGetGlobalObject(context);
+  JSStringRef propertyName = JSStringCreateWithUTF8CString("exports");
+  JSValueRef exports =
+    JSObjectGetProperty(context, global, propertyName, NULL);
+  JSStringRelease(propertyName);
+  return exports;
+}
+
+
+
+void copyTypeProperties (JSContextRef targetContext, JSContextRef sourceContext) {
+  static const char* predefined[] =
+    { "Object", "Array", "Boolean", "Date",
+      "Function", "Number", "RegExp", "String",
+      NULL };
+
+  // TODO: warn when redefining
+
+  JSObjectRef targetGlobal = JSContextGetGlobalObject(targetContext);
+  JSObjectRef sourceGlobal = JSContextGetGlobalObject(sourceContext);
+  // copy properties of built-ins
+  int i = 0;
+  while (1) {
+    const char *preString = predefined[i++];
+    if (preString == NULL)
+      break;
+    JSStringRef preName = JSStringCreateWithUTF8CString(preString);
+    JSValueRef targetPre =
+      JSObjectGetProperty(targetContext, targetGlobal, preName, NULL);
+    JSValueRef sourcePre =
+      JSObjectGetProperty(sourceContext, sourceGlobal, preName, NULL);
+    JSStringRelease(preName);
+
+    JSStringRef prototypeName = JSStringCreateWithUTF8CString("prototype");
+    JSObjectRef proto =
+      JSObjectGetProperty(targetContext,
+                          JSValueToObject(targetContext, targetPre, NULL),
+                          prototypeName, NULL);
+    JSObjectRef sourceProto =
+      JSObjectGetProperty(sourceContext,
+                          JSValueToObject(sourceContext, sourcePre, NULL),
+                          prototypeName, NULL);
+    JSStringRelease(prototypeName);
+
+    JSPropertyNameArrayRef properties =
+      JSObjectCopyPropertyNames(sourceContext, sourceProto);
+    size_t n = JSPropertyNameArrayGetCount(properties);
+    size_t i = 0;
+    for (; i < n; i++) {
+      JSStringRef propertyName = JSPropertyNameArrayGetNameAtIndex(properties, i);
+      JSValueRef property =
+        JSObjectGetProperty(sourceContext, sourceProto, propertyName, NULL);
+      JSObjectSetProperty(targetContext, proto, propertyName, property,
+                          kJSPropertyAttributeNone, NULL);
+    }
+    JSPropertyNameArrayRelease(properties);
+  }
+}
+
+
+JSValueRef require (JSContextRef context, JSObjectRef function,
+                    JSObjectRef this, size_t argc,
+                    const JSValueRef argv[], JSValueRef* exception)
+{
+  JSValueRef undefined = JSValueMakeUndefined(context);
+  if (argc > 0) {
+
+    char *name = JSValueToCString(context, argv[0], exception);
+
+    JSContextRef moduleContext = findModule(name);
+    if (moduleContext == NULL) {
+      if (strcmp(name, "system") == 0) {
+        moduleContext = createSystemModule(context);
+      } else {
+        moduleContext = loadModule(context, name);
+      }
+      contextEntry entry = {
+        .name = strdup(name),
+        .context = moduleContext
+      };
+      addContextEntry(entry);
+    }
+
+    copyTypeProperties(context, moduleContext);
+    JSValueRef exports = getExports(moduleContext);
+    free(name);
+    return exports;
+  }
+  return undefined;
+}
+
+
+void initialize (JSContextRef context) {
+  JSObjectRef global = JSContextGetGlobalObject(context);
+
+  functionEntry globals[] = {{ "require", require }, {}};
+  defineGlobals(context, globals);
+
+  // exports
+  JSStringRef propertyName = JSStringCreateWithUTF8CString("exports");
+  JSObjectRef exports = JSObjectMake(context, NULL, NULL);
+  JSObjectSetProperty(context, global, propertyName, exports,
+                      kJSPropertyAttributeNone, NULL);
+  JSStringRelease(propertyName);
+}
+
+
+void dump (JSContextRef context, JSValueRef value) {
+  JSValueRef exception = NULL;
+  JSStringRef json =
+    JSValueCreateJSONString(context, value, 2, &exception);
+  if (exception)
+    dump(context, exception);
+  else {
+    char *string = JSStringToCString(json);
+    fprintf(stderr, "%s\n", string);
+    free(string);
+  }
+  JSStringRelease(json);
+}
+
+
+
+int main (int argc, char *argv[]) {
+  if (argc <= 1)
+    return EXIT_FAILURE;
+
+  path = getenv("MODULE_PATH");
+  if (path == NULL)
+    path = getcwd(NULL, 0);
+
+  char *name = argv[1];
+  char *contents = readFile(name);
+  if (contents != NULL) {
+    JSGlobalContextRef context =
+      JSGlobalContextCreate(NULL);
+    initialize(context);
+
+    evaluate(context, contents, name);
+
+    JSGlobalContextRelease(context);
+    free(contents);
+  }
+  return EXIT_SUCCESS;
+}
