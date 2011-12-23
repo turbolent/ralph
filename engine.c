@@ -239,40 +239,47 @@ JSValueRef getExports (JSContextRef context) {
 }
 
 
+JSObjectRef getBuiltinPrototype (JSContextRef context, const char *builtin) {
+  JSStringRef builtinName = JSStringCreateWithUTF8CString(builtin);
+  JSStringRef prototypeName = JSStringCreateWithUTF8CString("prototype");
+  JSObjectRef global = JSContextGetGlobalObject(context);
+  JSValueRef builtinValue =
+    JSObjectGetProperty(context, global, builtinName, NULL);
+  JSObjectRef builtinObject =
+    JSValueToObject(context, builtinValue, NULL);
+  JSValueRef prototypeValue =
+    JSObjectGetProperty(context, builtinObject,
+                        prototypeName, NULL);
+  JSObjectRef prototypeObject =
+    JSValueToObject(context, prototypeValue, NULL);
 
-void copyTypeProperties (JSContextRef targetContext, JSContextRef sourceContext) {
-  static const char* predefined[] =
-    { "Object", "Array", "Boolean", "Date",
-      "Function", "Number", "RegExp", "String",
+  JSStringRelease(prototypeName);
+  JSStringRelease(builtinName);
+
+  return prototypeObject;
+}
+
+void copyBuiltinProperties (JSContextRef targetContext,
+                            JSContextRef sourceContext)
+{
+  static const char* builtins[] =
+    { "Object", "Function", "Array", "String", "Boolean", "Number",
+      "Date", "RegExp", "Error", "EvalError", "RangeError",
+      "ReferenceError", "SyntaxError", "TypeError", "URIError",
       NULL };
 
   // TODO: warn when redefining
 
-  JSObjectRef targetGlobal = JSContextGetGlobalObject(targetContext);
-  JSObjectRef sourceGlobal = JSContextGetGlobalObject(sourceContext);
+
   // copy properties of built-ins
   int i = 0;
   while (1) {
-    const char *preString = predefined[i++];
-    if (preString == NULL)
+    const char *builtin = builtins[i++];
+    if (builtin == NULL)
       break;
-    JSStringRef preName = JSStringCreateWithUTF8CString(preString);
-    JSValueRef targetPre =
-      JSObjectGetProperty(targetContext, targetGlobal, preName, NULL);
-    JSValueRef sourcePre =
-      JSObjectGetProperty(sourceContext, sourceGlobal, preName, NULL);
-    JSStringRelease(preName);
 
-    JSStringRef prototypeName = JSStringCreateWithUTF8CString("prototype");
-    JSObjectRef proto =
-      JSObjectGetProperty(targetContext,
-                          JSValueToObject(targetContext, targetPre, NULL),
-                          prototypeName, NULL);
-    JSObjectRef sourceProto =
-      JSObjectGetProperty(sourceContext,
-                          JSValueToObject(sourceContext, sourcePre, NULL),
-                          prototypeName, NULL);
-    JSStringRelease(prototypeName);
+    JSObjectRef targetProto = getBuiltinPrototype(targetContext, builtin);
+    JSObjectRef sourceProto = getBuiltinPrototype(sourceContext, builtin);
 
     JSPropertyNameArrayRef properties =
       JSObjectCopyPropertyNames(sourceContext, sourceProto);
@@ -282,7 +289,7 @@ void copyTypeProperties (JSContextRef targetContext, JSContextRef sourceContext)
       JSStringRef propertyName = JSPropertyNameArrayGetNameAtIndex(properties, i);
       JSValueRef property =
         JSObjectGetProperty(sourceContext, sourceProto, propertyName, NULL);
-      JSObjectSetProperty(targetContext, proto, propertyName, property,
+      JSObjectSetProperty(targetContext, targetProto, propertyName, property,
                           kJSPropertyAttributeNone, NULL);
     }
     JSPropertyNameArrayRelease(properties);
@@ -313,7 +320,7 @@ JSValueRef require (JSContextRef context, JSObjectRef function,
       addContextEntry(entry);
     }
 
-    copyTypeProperties(context, moduleContext);
+    copyBuiltinProperties(context, moduleContext);
     JSValueRef exports = getExports(moduleContext);
     free(name);
     return exports;
