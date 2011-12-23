@@ -217,10 +217,10 @@
 (check-equal "min:" (min 4 2 -1 6 3) -1)
 
 ;; instance?
-;;(check-true "instance?: mapped type: \"test\" is a String"
-;;            (instance? "test" (js:inline "String")))
-;;(check-true "instance?: mapped type: 1 is a Number"
-;;            (instance? 1 (js:inline "Number")))
+(check-true "instance?: \"test\" is a String"
+            (instance? "test" (js:inline "String")))
+(check-true "instance?: 1 is a Number"
+            (instance? 1 (js:inline "Number")))
 (check-true "instance?: \"test\" is a <string>"
             (instance? "test" <string>))
 (check-true "instance?: 1 is a <number>"
@@ -239,6 +239,21 @@
             (instance? #t <boolean>))
 (check-true "instance?: #f is a <boolean>"
             (instance? #f <boolean>))
+
+(define-class <a> (<object>))
+(define-class <b> (<a>))
+(define-class <c> (<b>))
+
+(check-true "instance?: <a> 1"
+            (instance? (make <a>) <a>))
+(check-true "instance?: <a> 2"
+            (instance? (make <b>) <a>))
+(check-true "instance?: <a> 3"
+            (instance? (make <c>) <a>))
+(check-false "instance?: subclass 1"
+             (instance? (make <a>) <b>))
+(check-false "instance?: subclass 2"
+             (instance? (make <a>) <c>))
 
 ;;
 (check-equal "type: js:null is <boolean>"
