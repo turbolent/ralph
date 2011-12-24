@@ -44,7 +44,7 @@ int addContextEntry (contextEntry entry) {
 
     void *tmp = realloc(contexts, contextsSize * sizeof(contextEntry));
     if (!tmp) {
-      fprintf(stderr, "ERROR: Couldn't reallocate memory!\n");
+      perror("Failed to reallocate memory");
       return;
     }
     contexts = (contextEntry*)tmp;
@@ -177,6 +177,42 @@ static JSValueRef writeFunc (JSContextRef context, JSObjectRef function,
   return JSValueMakeUndefined(context);
 }
 
+static JSValueRef readFunc (JSContextRef context, JSObjectRef function,
+                            JSObjectRef this, size_t argc,
+                            const JSValueRef argv[], JSValueRef* exception)
+{
+  const size_t size = 1024;
+  char buffer[size];
+  size_t length = 1;
+  char *content = malloc(sizeof(char) * size);
+  if (content == NULL) {
+    perror("Failed to allocate memory");
+    return JSValueMakeUndefined(context);
+  }
+
+  content[0] = '\0';
+  while (fgets(buffer, size, stdin)) {
+    char *old = content;
+    length += strlen(buffer);
+    content = realloc(content, length);
+    if (content == NULL) {
+      perror("Failed to reallocate memory");
+      free(old);
+      return JSValueMakeUndefined(context);
+    }
+    strcat(content, buffer);
+  }
+
+  if (ferror(stdin)) {
+    free(content);
+    perror("Failed to read from stdin");
+    return JSValueMakeUndefined(context);
+  }
+
+  JSStringRef string = JSStringCreateWithUTF8CString(content);
+  return JSValueMakeString(context, string);
+}
+
 
 void initialize (JSContextRef context);
 
@@ -199,9 +235,12 @@ JSContextRef createModuleContext (JSContextRef context) {
 
 JSContextRef createSystemModule (JSContextRef context) {
     JSContextRef moduleContext = createModuleContext(context);
-    functionEntry globals[] = {{ "write", writeFunc }, {}};
+    functionEntry globals[] = {{ "write", writeFunc },
+                               { "read", readFunc },
+                               {}};
     defineGlobals(moduleContext, globals);
     evaluate(moduleContext, "exports.stdout = {write: write}", "system");
+    evaluate(moduleContext, "exports.stdin = {read: read}", "system");
     return moduleContext;
 }
 
