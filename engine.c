@@ -16,12 +16,19 @@
 
 
 char *path;
+int ARGC;
+char **ARGV;
 
+enum type { FUNCTION, VALUE };
 
 typedef struct {
   char *name;
-  JSObjectCallAsFunctionCallback function;
-} functionEntry;
+  enum type type;
+  union {
+    JSValueRef value;
+    JSObjectCallAsFunctionCallback function;
+  } value;
+} entry;
 
 
 typedef struct {
@@ -100,6 +107,9 @@ static char* JSValueToCString (JSContextRef context, JSValueRef value,
 }
 
 
+
+
+
 static void dumpException (JSContextRef context, JSValueRef exception) {
   // description
   char *description = JSValueToCString(context, exception, NULL);
@@ -130,17 +140,22 @@ static void dumpException (JSContextRef context, JSValueRef exception) {
 }
 
 
-void defineGlobals (JSContextRef context, functionEntry globals[]) {
-  JSObjectRef global = JSContextGetGlobalObject(context);
+void defineGlobals (JSContextRef context, entry globals[]) {
+  JSObjectRef g = JSContextGetGlobalObject(context);
   int i = 0;
   while (1) {
-    functionEntry entry = globals[i++];
-    if (entry.name == NULL)
+    entry global = globals[i++];
+    if (global.name == NULL)
       break;
-    JSStringRef name = JSStringCreateWithUTF8CString(entry.name);
-    JSObjectRef function =
-      JSObjectMakeFunctionWithCallback(context, name, entry.function);
-    JSObjectSetProperty(context, global, name, function,
+    JSStringRef name = JSStringCreateWithUTF8CString(global.name);
+    JSValueRef value;
+    if (global.type == FUNCTION)
+      value = JSObjectMakeFunctionWithCallback(context, name,
+                                               global.value.function);
+    else
+      value = global.value.value;
+
+    JSObjectSetProperty(context, g, name, value,
                         kJSPropertyAttributeNone, NULL);
     JSStringRelease(name);
   }
@@ -158,7 +173,7 @@ static JSValueRef evaluate (JSContextRef context, char *source, char *name) {
   JSStringRelease(nameString);
   if (exception) {
     dumpException(context, exception);
-    JSValueMakeUndefined(context);
+    return JSValueMakeUndefined(context);
   } else
     return value;
 }
@@ -234,13 +249,25 @@ JSContextRef createModuleContext (JSContextRef context) {
 
 
 JSContextRef createSystemModule (JSContextRef context) {
+    JSValueRef arguments[ARGC];
+    int i = 0;
+    for (; i < ARGC; i++) {
+      JSStringRef argument =
+        JSStringCreateWithUTF8CString(ARGV[i]);
+      arguments[i] = JSValueMakeString(context, argument);
+    }
+    JSObjectRef args =
+      JSObjectMakeArray(context, ARGC, arguments, NULL);
+
     JSContextRef moduleContext = createModuleContext(context);
-    functionEntry globals[] = {{ "write", writeFunc },
-                               { "read", readFunc },
-                               {}};
+    entry globals[] = {{ "write", FUNCTION, .value.function = writeFunc },
+                       { "read", FUNCTION, .value.function = readFunc },
+                       { "args", VALUE, args },
+                       {}};
     defineGlobals(moduleContext, globals);
     evaluate(moduleContext, "exports.stdout = {write: write}", "system");
     evaluate(moduleContext, "exports.stdin = {read: read}", "system");
+    evaluate(moduleContext, "exports.args = args", "system");
     return moduleContext;
 }
 
@@ -371,7 +398,7 @@ JSValueRef require (JSContextRef context, JSObjectRef function,
 void initialize (JSContextRef context) {
   JSObjectRef global = JSContextGetGlobalObject(context);
 
-  functionEntry globals[] = {{ "require", require }, {}};
+  entry globals[] = {{ "require", FUNCTION, .value.function = require }, {}};
   defineGlobals(context, globals);
 
   // exports
@@ -397,11 +424,13 @@ void dump (JSContextRef context, JSValueRef value) {
   JSStringRelease(json);
 }
 
-
-
 int main (int argc, char *argv[]) {
   if (argc <= 1)
     return EXIT_FAILURE;
+
+  ARGC = argc;
+  ARGV = argv;
+
 
   path = getenv("MODULE_PATH");
   if (path == NULL)
