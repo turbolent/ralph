@@ -38,7 +38,8 @@
            mod even? odd? *pi*
            extend! as-property-list
            as-association-list as-object
-           starts-with?))
+           starts-with?
+           group-by))
 
 (define %get-property
   (js:function js:null (object name)
@@ -925,3 +926,13 @@
 
 (define-function odd? (number)
   (== (mod number 2) 1))
+
+(define-function group-by (predicate items)
+  (reduce (method (result item)
+            (bind ((key (predicate item)))
+              (if (has? result key)
+                  (push-last (get result key) item)
+                  (set! (get result key) [item])))
+            result)
+          (make-object)
+          items))

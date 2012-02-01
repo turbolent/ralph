@@ -779,3 +779,9 @@
   (check-equal "sort: key and test"
                [[c: 4] [a: 3] [d: 2] [b: 1]]
                (sort x test: > key: second)))
+
+;; group-by
+(check-equal "group-by"
+             ["1" ["a"] "2" ["as" "aa"] "3" ["asd"]]
+             (as-property-list
+              (group-by size ["a" "as" "asd" "aa"])))
