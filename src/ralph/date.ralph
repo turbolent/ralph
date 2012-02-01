@@ -2,10 +2,7 @@
   import: (ralph/core)
   export: (<date>))
 
-(define-class <date> (<object>))
-
-(%alias-type <date> (js:inline "Date"))
-
+(define <date> (js:inline "Date"))
 
 (define-method initialize ((date <date>) #rest rest)
   (bind ((arguments (as-object rest)))
@@ -25,4 +22,3 @@
 
 (define-function locale-time-string (date)
   ((js:get-property date "toLocaleTimeString")))
-

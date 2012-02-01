@@ -3,12 +3,11 @@
            %make-function %make-method
            "_s" "_k" "_key" "_rest"
            keyword keyword? symbol symbol-name
-           <object> <string> <number> <boolean> <array> <function>
-           <symbol> <hash-symbol> <keyword> <non-local-exit> <error>
+           <object> <string> <number> <boolean> <array> <function> <error>
+           <symbol> <hash-symbol> <keyword> <non-local-exit>
            not true? signal
            *environment*
            %make-class %make-generic %next-method
-           %alias-type %actual-type
            %non-local-exit? %make-non-local-exit-function
            %get-property get (setter get) %set
            %inherit make initialize type instance? superclass
@@ -46,10 +45,6 @@
     (js:return (js:and object
                        (has? object name)
                        (js:get-property object name)))))
-
-(define %make-empty-function
-  (js:function js:null (name function)
-    (js:return (js:new (js:inline "Function")))))
 
 ;;;; boolean primitives
 
@@ -106,11 +101,10 @@
 
 (define-function %make-method
     (name function type existing setter? display-name)
-  (bind ((type (%actual-type type))
-         (prototype (js:get-property type "prototype"))
+  (bind ((prototype (js:get-property type "prototype"))
          (existing-method (%get-property prototype name))
-         (generic? (when existing
-                     (%get-property existing "%generic?"))))
+         (generic? (js:and existing
+                           (%get-property existing "%generic?"))))
     ;; definition
     (set! (js:get-property function "%name") name)
     (set! (js:get-property function "displayName") display-name)
@@ -118,9 +112,9 @@
     (set! (js:get-property function "%type") type)
     (set! (js:get-property prototype name) function)
     ;; implicit definition of generic function?
-    (if generic?
-        existing
-        (%make-generic name display-name))))
+    (js:if generic?
+           existing
+           (%make-generic name display-name))))
 
 (define-function %make-generic (function-name display-name)
   (js:function dispatcher (object)
@@ -144,7 +138,6 @@
 ;;;; objects
 
 (define-function make (type #rest arguments)
-  (js:var type (%actual-type type))
   (js:var object (js:new type))
   (apply initialize object arguments)
   object)
@@ -159,17 +152,12 @@
 (define-function superclass (class)
   (js:get-property class "prototype" "__super__"))
 
-(define %actual-type
-  (js:function js:null (type)
-    (js:return
-      (js:or (%get-property type "%js-type")
-             type))))
-
 ;;;; keywords
 
 (define %keywords (make-object))
 
-(define <keyword> (%make-empty-function))
+(define-class <keyword> ()
+  name)
 
 (define-function keyword? (keyword)
   (instance? keyword <keyword>))
@@ -207,8 +195,7 @@
     (js:throw (js:new <non-local-exit>
                       name value))))
 
-(define-function as-string (object)
-  ((js:get-property object "toString")))
+(define as-string (js:inline "String"))
 
 (define as-number (js:inline "Number"))
 
@@ -232,12 +219,12 @@
   (js:var result)
   (js:while (js:not (empty? keys))
     (js:var key (first keys))
-    (if (has? object key)
-        (begin
-         (set! result (js:get-property object key))
-         (set! object result)
-         (set! keys (rest keys)))
-        (js:return #f)))
+    (js:if (has? object key)
+           (begin
+            (set! result (js:get-property object key))
+            (set! object result)
+            (set! keys (rest keys)))
+           (js:return #f)))
   result)
 
 (define-function (setter get) (object #rest properties/value)
@@ -278,37 +265,21 @@
     (set! key (pop list))
     (set! value (pop list))
     (set! (get result
-               (if (instance? key <keyword>)
-                   (symbol-name key)
-                   (as-string key)))
+               (js:if (instance? key <keyword>)
+                      (symbol-name key)
+                      (as-string key)))
           value))
   result)
 
 ;;;;
 
-(define-class <object> ())
-(define-class <string> ())
-(define-class <number> ())
-(define-class <array> ())
-(define-class <boolean> ())
-(define-class <function> ())
-
-(define *type-mapping*
-    (make-object))
-
-(define-function %alias-type (ralph-type javascript-type)
-  (set! (js:get-property ralph-type "%js-type") javascript-type)
-  (set! (js:get-property *type-mapping*
-                         (js:get-property javascript-type "name"))
-        ralph-type)
-  (set! (js:get-property javascript-type "%ralph-type") ralph-type))
-
-(%alias-type <object> (js:inline "Object"))
-(%alias-type <string> (js:inline "String"))
-(%alias-type <number> (js:inline "Number"))
-(%alias-type <array> (js:inline "Array"))
-(%alias-type <boolean> (js:inline "Boolean"))
-(%alias-type <function> (js:inline "Function"))
+(define <object> (js:inline "Object"))
+(define <string> (js:inline "String"))
+(define <number> (js:inline "Number"))
+(define <array> (js:inline "Array"))
+(define <boolean> (js:inline "Boolean"))
+(define <function> (js:inline "Function"))
+(define <error> (js:inline "Error"))
 
 ;;;;
 
@@ -339,11 +310,11 @@
           number more-numbers))
 
 (define-function - ((number <number>) #rest more-numbers)
-  (if (empty? more-numbers)
-      (js:negative number)
-      (reduce (method (number1 number2)
-                (js:- number1 number2))
-              number more-numbers)))
+  (js:if (empty? more-numbers)
+         (js:negative number)
+         (reduce (method (number1 number2)
+                   (js:- number1 number2))
+                 number more-numbers)))
 
 (define-function * ((number1 <number>) (number2 <number>)
                     #rest more-numbers)
@@ -360,15 +331,15 @@
 (define-function keys (object)
   ;; TODO: use of Object.keys generates errors ...
   (js:var keys [])
-  (if (instance? object <array>)
-      (for ((i 0 (inc i)))
-           ((>= i (size object)) keys)
-        (push-last keys i))
-      (begin
-       (js:for-in (key object)
-         (js:if (has? object key)
-           (push-last keys key)))
-       keys)))
+  (js:if (instance? object <array>)
+         (for ((i 0 (inc i)))
+              ((>= i (size object)) keys)
+           (push-last keys i))
+         (begin
+          (js:for-in (key object)
+            (js:if (has? object key)
+                   (push-last keys key)))
+          keys)))
 
 (define-function values (object)
   (js:var values [])
@@ -473,7 +444,7 @@
   (bind ((keys (keys array))
          (satisfying-keys
           (choose (method (index)
-                    (true? (predicate (element array index))))
+                    (predicate (element array index)))
                   (if from-end?
                       (reverse keys)
                       keys))))
@@ -594,7 +565,7 @@
     (apply function (%concat args curried-args))))
 
 (define-function always (value)
-  (method (#rest args)
+  (method ()
     value))
 
 (define-function complement ((function <function>))
@@ -609,37 +580,24 @@
   (js:if (js:or (js:=== object js:undefined)
                 (js:=== object js:null))
       <boolean>
-      ;; Object.getPrototypeOf on primitives only works in FireFox:
-      ;; ((js:inline "Object.getPrototypeOf") object))
-      (begin
-       (set! type (js:get-property object "constructor"))
-       (set! ralph-type
-             (js:or (js:get-property type "%ralph-type")
-                    (%get-property *type-mapping*
-                                   (%get-property type "name"))))
-       (js:or ralph-type type))))
+      (js:get-property object "constructor")))
 
 (define-function instance? (object type)
-  (js:var actual)
+  (js:var ctor)
   (if object
       (begin
-       (set! actual (%actual-type type))
+       (set! ctor (js:get-property object "constructor"))
        (js:or
         ;; primitive
-        (js:=== (js:get-property object "constructor")
-                actual)
+        (js:=== ctor type)
         ;; object
-        ((js:get-property actual "prototype"
-                          "isPrototypeOf")
-         object)
-        ;; mapped
-        (js:and (js:get-property type "%js-type")
-                (js:== (js:get-property object "constructor" "name")
-                       (js:get-property actual "name")))))
-      (js:or (js:=== type <boolean>)
-             (js:=== type (js:inline "Boolean")))))
-
-
+        (js:instanceof object type)
+        ;; built-in
+        (js:and (js:not (has? type "%name"))
+                (has? type "name")
+                (js:=== (js:get-property ctor "name")
+                        (js:get-property type "name")))))
+      (js:=== type <boolean>)))
 
 (define-generic initialize (object #rest))
 
@@ -658,13 +616,6 @@
                                 (js:if (js:=== value #f)
                                        value
                                        (value)))))))))
-
-;; error
-
-(define-class <error> ()
-  message)
-
-(%alias-type <error> (js:inline "Error"))
 
 ;;
 
@@ -905,10 +856,10 @@
   result)
 
 (define-function starts-with? ((string <string>) (prefix <string>))
-  (== ((js:get-property string "indexOf") prefix) 0))
+  (js:=== ((js:get-property string "indexOf") prefix) 0))
 
 (define-function even? (number)
-  (== (mod number 2) 0))
+  (js:=== (mod number 2) 0))
 
 (define-function odd? (number)
   (== (mod number 2) 1))

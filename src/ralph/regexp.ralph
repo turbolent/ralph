@@ -2,9 +2,7 @@
   import: (ralph/core)
   export: (<regexp> match replace-all))
 
-(define-class <regexp> (<object>))
-
-(%alias-type <regexp> (js:inline "RegExp"))
+(define <regexp> (js:inline "RegExp"))
 
 (define-method initialize ((regexp <regexp>)
                            #key pattern global? ignore-case? multiline?)

@@ -1356,6 +1356,8 @@
      (if form "true" "false"))
     ((<string>)
      (concatenate "\"" form "\""))
+    ((<number>)
+     (as-string form))
     (else:
      (description form))))
 
