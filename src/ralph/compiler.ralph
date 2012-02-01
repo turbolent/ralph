@@ -164,8 +164,10 @@
      "define-macro"
      (method (environment name arguments #rest body)
        (bind ((compiled (compile
-                         (concatenate `(method ,arguments)
-                                      body))))
+                         (concatenate
+                          `(method ,(concatenate [(S "*environment*")]
+                                                 arguments))
+                          body))))
          (set! (get environment "macros" (symbol-name name))
                (eval (concatenate "(" compiled ")"))))
        #f)
