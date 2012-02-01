@@ -880,14 +880,14 @@
 (define-function as-radiant (number)
   (js:* number (js:/ *pi* 180)))
 
-(define-function remove! ((array <array>) value)
-  (js:var key (find-key array (curry = value)))
+(define-function remove! ((array <array>) value #key (test ==))
+  (js:var key (find-key array (curry test value)))
   (when key
     ((js:get-property array "splice") key 1))
   array)
 
-(define-function remove ((array <array>) value)
-  (remove! (slice array) value))
+(define-function remove ((array <array>) value #key (test ==))
+  (remove! (slice array) value test: test))
 
 (define-function extend! ((object1 <object>) (object2 <object>))
   (for-each ((key (keys object2)))
