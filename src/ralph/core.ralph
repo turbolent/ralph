@@ -210,8 +210,7 @@
 (define-function as-string (object)
   ((js:get-property object "toString")))
 
-(define-function as-number (object)
-  ((js:inline "Number") object))
+(define as-number (js:inline "Number"))
 
 (define-function make-string (value)
   (js:new (js:inline "String") value))
@@ -837,40 +836,27 @@
     (dotimes (i count result)
       (push-last result (function)))))
 
-(define-function min (#rest numbers)
-  ((js:get-property (js:inline "Math.min") "apply")
-   js:null numbers))
+(define min (js:inline "Math.min"))
 
-(define-function max (#rest numbers)
-  ((js:get-property (js:inline "Math.max") "apply")
-  js:null numbers))
+(define max (js:inline "Math.max"))
 
-(define-function abs (number)
-  ((js:inline "Math.abs") number))
+(define abs (js:inline "Math.abs"))
 
-(define-function round (number)
-  ((js:inline "Math.round") number))
+(define round (js:inline "Math.round"))
 
-(define-function floor (number)
-  ((js:inline "Math.floor") number))
+(define floor (js:inline "Math.floor"))
 
-(define-function ceil (number)
-  ((js:inline "Math.ceil") number))
+(define ceil (js:inline "Math.ceil"))
 
-(define-function sin (number)
-  ((js:inline "Math.sin") number))
+(define sin (js:inline "Math.sin"))
 
-(define-function cos (number)
-  ((js:inline "Math.cos") number))
+(define cos (js:inline "Math.cos"))
 
-(define-function atan2 (x y)
-  ((js:inline "Math.atan2") x y))
+(define atan2 (js:inline "Math.atan2"))
 
-(define-function expt (base power)
-  ((js:inline "Math.pow") base power))
+(define expt (js:inline "Math.pow"))
 
-(define-function sqrt (number)
-  ((js:inline "Math.sqrt") number))
+(define sqrt (js:inline "Math.sqrt"))
 
 (define-function mod (number1 number2)
   (js:% number1 number2))
