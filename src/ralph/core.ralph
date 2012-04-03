@@ -40,6 +40,7 @@
            starts-with?
            group-by
            wrap-object unwrap-object
+           interpose))
 
 (define %get-property
   (js:function js:null (object name)
@@ -528,6 +529,11 @@
    target-array (%concat [start (js:- (or end start) start)]
                          insert-array))
   target-array)
+
+(define-function interpose (separator (array <array))
+  (reduce1 (method (a b)
+             (concatenate [a separator] b))
+           array))
 
 ;;;; string
 
