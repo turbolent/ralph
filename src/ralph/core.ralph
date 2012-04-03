@@ -629,7 +629,8 @@
   (js:var value)
   (js:if slots
          (js:for-in (key slots)
-           (js:if (not (has? (js:inline "Object.prototype") key))
+           (js:if (js:and (not (has? (js:inline "Object.prototype") key))
+                          (not (js:defined (js:get-property object key))))
                   (set! (js:get-property object key)
                         (js:if (has? arguments key)
                                (js:get-property arguments key)
