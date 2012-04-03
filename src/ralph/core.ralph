@@ -38,7 +38,8 @@
            extend! as-property-list
            as-association-list as-object
            starts-with?
-           group-by))
+           group-by
+           wrap-object unwrap-object
 
 (define %get-property
   (js:function js:null (object name)
@@ -888,3 +889,11 @@
             result)
           (make-object)
           items))
+
+(define-function wrap-object (object #rest rest)
+  (bind ((result ((js:inline "Object.create") object)))
+    (extend! result (as-object rest))
+    result))
+
+(define-function unwrap-object (object)
+  (js:get-property object "__proto__"))
