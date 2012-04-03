@@ -11,7 +11,7 @@
            %non-local-exit? %make-non-local-exit-function
            %get-property get (setter get) %set
            %inherit make initialize type instance? superclass
-           as-string as-array as-number
+           as-string as-array as-number parse-number
            make-string make-number make-boolean
            apply reduce reduce1 map do repeatedly
            any? every? member? choose choose-by find-key
@@ -198,6 +198,8 @@
 (define as-string (js:inline "String"))
 
 (define as-number (js:inline "Number"))
+
+(define parse-number (js:inline "parseFloat"))
 
 (define-function make-string (value)
   (js:new (js:inline "String") value))
