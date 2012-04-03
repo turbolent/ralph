@@ -15,7 +15,7 @@
            make-string make-number make-boolean
            apply reduce reduce1 map do repeatedly
            any? every? member? choose choose-by find-key
-           complement curry rcurry
+           complement curry rcurry compose
            position last-position join trim replace
            as-lowercase as-uppercase
            make-array make-object
@@ -573,6 +573,17 @@
 (define-function complement ((function <function>))
   (method (#rest arguments)
     (not (apply function arguments))))
+
+(define-function compose (#rest functions)
+  (if (empty? functions)
+      identity
+      (method (#rest arguments)
+        (reduce (method (value function)
+                  (function value))
+                (apply (last functions)
+                       arguments)
+                (but-last functions)
+                from-end?: #t))))
 
 ;;;; reflection primitives
 
