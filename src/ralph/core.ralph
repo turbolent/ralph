@@ -882,10 +882,10 @@
   (js:=== ((js:get-property string "indexOf") prefix) 0))
 
 (define-function even? (number)
-  (js:=== (mod number 2) 0))
+  (js:=== (js:% number 2) 0))
 
 (define-function odd? (number)
-  (== (mod number 2) 1))
+  (js:=== (js:% number 2) 1))
 
 (define-function group-by (predicate items)
   (reduce (method (result item)
