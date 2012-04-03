@@ -800,3 +800,7 @@
              ["1" ["a"] "2" ["as" "aa"] "3" ["asd"]]
              (as-property-list
               (group-by size ["a" "as" "asd" "aa"])))
+
+(check-equal "compose"
+             3
+             ((compose size rest) [1 2 3 4]))
