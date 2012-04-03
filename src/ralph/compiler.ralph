@@ -383,8 +383,12 @@
            (push-last next-clauses
                       (third clause)))
          `(bind ,init-clauses
-            ,(concatenate `(while (not ,(first end)))
-                          body
+            ,(concatenate `(js:while (not ,(first end)))
+                          (bind ((vars (map first clauses)))
+                              `(,(concatenate
+                                  `(,(concatenate `(method ,vars)
+                                                  body))
+                                   vars)))
                           `(,(concatenate `(%parallel-set)
                                           next-clauses)))
             ,(if (empty? (rest end))
