@@ -30,11 +30,16 @@
     table))
 
 (define-derived-mode
-  ralph-mode lisp-mode "Ralph"
+  ralph-mode nil "Ralph"
   "Major mode"
+  (make-local-variable 'font-lock-defaults)
   (setq font-lock-defaults '((ralph-mode-font-lock-keywords) nil nil))
-  (set (make-local-variable 'lisp-indent-function)
-	   'ralph-indent-function)
+  (make-local-variable 'indent-line-function)
+  (setq indent-line-function 'lisp-indent-line)
+  (make-local-variable 'indent-region-function)
+  (setq indent-region-function 'lisp-indent-region)
+  (make-local-variable 'lisp-indent-function)
+  (set lisp-indent-function 'ralph-indent-function)
   (set-syntax-table ralph-mode-syntax-table))
 
 ;; indentation offsets
@@ -52,7 +57,7 @@
 (put 'select 'ralph-indent-function 2)
 (put 'method 'ralph-indent-function 1)
 (put 'block 'ralph-indent-function 1)
-(put 'bind 'ralph-indent-function 2)
+(put 'bind 'ralph-indent-function 1)
 (put 'bind-properties 'ralph-indent-function 2)
 (put 'destructuring-bind 'ralph-indent-function 2)
 
