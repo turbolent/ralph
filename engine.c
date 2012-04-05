@@ -146,8 +146,22 @@ static void dumpException (JSContextRef context, JSValueRef exception) {
   }
   JSStringRelease(sourceProperty);
 
-  fprintf(stderr, "\n");
-
+  JSStringRef stackProperty = JSStringCreateWithUTF8CString("stack");
+  if (JSObjectGetProperty(context, (JSObjectRef)exception, stackProperty, NULL)) {
+    fprintf(stderr, ":\n");
+    JSValueRef stackValue =
+      JSObjectGetProperty(context, (JSObjectRef)exception, stackProperty, NULL);
+    char *stack = JSValueToCString(context, stackValue, NULL);
+    char *line = strtok(stack, "\n");
+    while (line != NULL) {
+      if (line[0] == '(')
+        fprintf(stderr, "%s\n", line);
+      line = strtok(NULL, "\n");
+    }
+  } else {
+    fprintf(stderr, "\n");
+  }
+  JSStringRelease(stackProperty);
 }
 
 
@@ -174,6 +188,8 @@ void defineGlobals (JSContextRef context, entry globals[]) {
 
 
 static JSValueRef evaluate (JSContextRef context, char *source, char *name) {
+  DLOG("Evaluating '%s'\n", name);
+
   JSStringRef sourceString = JSStringCreateWithUTF8CString(source);
   JSStringRef nameString = JSStringCreateWithUTF8CString(name);
   JSValueRef exception = NULL;
@@ -276,9 +292,11 @@ JSContextRef createSystemModule (JSContextRef context) {
                        { "args", VALUE, args },
                        {}};
     defineGlobals(moduleContext, globals);
-    evaluate(moduleContext, "exports.stdout = {write: write}", "system");
-    evaluate(moduleContext, "exports.stdin = {read: read}", "system");
-    evaluate(moduleContext, "exports.args = args", "system");
+    evaluate(moduleContext,
+             "exports.stdout = {write: write};" \
+             "exports.stdin = {read: read};" \
+             "exports.args = args",
+             "system");
     return moduleContext;
 }
 
@@ -288,6 +306,8 @@ JSContextRef loadModule (JSContextRef context, char *name) {
   JSContextRef moduleContext = createModuleContext(context);
   char *filename = resolve(name);
   char *contents = readFile(filename);
+
+  DLOG("Read '%s'\n", filename);
   free(filename);
   if (contents == NULL)
     return NULL;
@@ -441,7 +461,6 @@ int main (int argc, char *argv[]) {
 
   ARGC = argc;
   ARGV = argv;
-
 
   path = getenv("MODULE_PATH");
   if (path == NULL)
