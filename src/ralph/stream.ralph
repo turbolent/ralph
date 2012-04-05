@@ -2,6 +2,7 @@
   import: (ralph/core)
   export: (<stream>
            <string-stream>
+           <file-stream>
            *standard-out*
            stream-close
            stream-open?
@@ -64,14 +65,14 @@
 
 (define-method stream-write ((stream <string-stream>) (string <string>))
   (bind-properties (index) stream
-    (bind ((length (size string)))
+    (bind ((length (size string))
+           (end (+ index length)))
       (set! (get stream "string")
             (replace-subsequence (get stream "string") string
                                  start: index
-                                 end: (+ index length)))
+                                 end: end))
       (set! (get stream "length")
-            (max (+ index length)
-                 (get stream "length")))
+            (max end (get stream "length")))
       (inc! (get stream "index") length)))
   string)
 
