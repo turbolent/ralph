@@ -2,90 +2,90 @@
   import: (ralph/core)
   export: (<stream>
            <string-stream>
+           <file-stream>
            *standard-out*
-           write
-           read-char
-           peek-char
-           advance
-           at-end?
-           contents
-           remaining-contents))
+           stream-close
+           stream-open?
+           stream-at-end?
+           stream-peek
+           stream-read
+           stream-read-element
+           stream-read-to-end
+           stream-write
+           stream-contents))
 
-;; <stream>
+;;;; <stream>
 
 (define-class <stream> (<object>))
 
-(define-generic at-end? ((stream <stream>)))
+(define-generic stream-close ((stream <stream>)))
 
-(define-generic peek-char ((stream <stream>)))
+(define-generic stream-open? ((stream <stream>)))
 
-(define-generic read-char ((stream <stream>)))
+(define-generic stream-at-end? ((stream <stream>)))
 
-(define-generic write ((stream <stream>)))
+(define-generic stream-peek ((stream <stream>)))
 
-(define-generic advance ((stream <stream>)))
+(define-generic stream-read ((stream <stream>) (n <number>)))
 
-(define-generic contents ((stream <stream>)))
+(define-generic stream-read-element ((stream <stream>)))
 
-(define-generic remaining-contents ((stream <stream>)))
+(define-generic stream-read-to-end ((stream <stream>)))
+
+(define-generic stream-write ((stream <stream>) (string <string>)))
+
+(define-generic stream-contents ((stream <stream>)))
 
 
-
-;; <string-stream>
+;;;; <string-stream>
 
 (define-class <string-stream> (<stream>)
   (string "")
-  (index 0))
+  (index 0)
+  (length 0))
 
-(define-method at-end? ((stream <string-stream>))
-  (js:>= (js:get-property stream "index")
-         (js:- (size (js:get-property stream "string")) 1)))
+(define-method initialize ((stream <string-stream>) #rest rest)
+  (apply next-method stream rest)
+  (set! (get stream "length")
+        (size (get stream "string"))))
 
-(define-method peek-char ((stream <string-stream>))
-  (js:get-property stream "string"
-                   (js:get-property stream "index")))
+(define-method stream-at-end? ((stream <string-stream>))
+  (== (get stream "index")
+      (get stream "length")))
 
-(define-method read-char ((stream <string-stream>))
-  (js:var char (peek-char stream))
-  (inc! (js:get-property stream "index"))
-  char)
+(define-method stream-peek ((stream <string-stream>))
+  (element (get stream "string")
+           (get stream "index")))
 
-(define-method write ((stream <string-stream>) object)
-  (bind ((string (as-string object))
-         (position (js:get-property stream "index"))
-         (contents (js:get-property stream "string"))
-         (length (size string)))
-    (set! (js:get-property stream "string")
-          (replace-subsequence contents string
-                               start: position
-                               end: (+ position length)))
-    (advance stream count: length)))
+(define-method stream-read-element ((stream <string-stream>))
+  (unless (stream-at-end? stream)
+    (bind ((element (stream-peek stream)))
+      (inc! (get stream "index"))
+      element)))
 
-(define-method advance ((stream <string-stream>) #key (count 1))
-  (inc! (js:get-property stream "index") count))
+(define-method stream-write ((stream <string-stream>) (string <string>))
+  (bind-properties (index) stream
+    (bind ((length (size string))
+           (end (+ index length)))
+      (set! (get stream "string")
+            (replace-subsequence (get stream "string") string
+                                 start: index
+                                 end: end))
+      (set! (get stream "length")
+            (max end (get stream "length")))
+      (inc! (get stream "index") length)))
+  string)
 
-(define-method contents ((stream <string-stream>))
-  (js:get-property stream "string"))
+(define-method stream-contents ((stream <string-stream>))
+  (get stream "string"))
 
-(define-method remaining-contents ((stream <string-stream>))
-  ((js:get-property stream "string" "substring")
-   (js:get-property stream "index")))
-
-;; <file-stream>
+;;;; <file-stream>
 
 (define-class <file-stream> (<stream>)
-    file)
+  file)
 
-(define-method write ((stream <file-stream>) object)
-  ((js:get-property stream "file" "write") object))
-
-;; <document-stream>
-
-(define-class <document-stream> (<stream>))
-
-(define-method write ((stream <document-stream>) object)
-  ((js:inline "document.write")
-   object))
+(define-method stream-write ((stream <file-stream>) (string <string>))
+  ((js:get-property stream "file" "write") string))
 
 (define *standard-out*
   (if (== *environment* "browser")

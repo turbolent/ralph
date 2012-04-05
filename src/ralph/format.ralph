@@ -15,7 +15,7 @@
 This function effectively calls format and returns the result as a string."
   (bind ((stream (make <string-stream>)))
     (apply format stream control-string args)
-    (contents stream)))
+    (stream-contents stream)))
 
 (define-function format ((stream <stream>) (control-string <string>) #rest args)
   "Format a string and write it to a stream."
@@ -47,7 +47,7 @@ This function effectively calls format and returns the result as a string."
           (if (> next-dispatch 0)
               ;; write part upto next dispatch
               (begin
-               (write stream (slice control-string 0 next-dispatch))
+               (stream-write stream (slice control-string 0 next-dispatch))
                (set! control-string
                      (slice control-string next-dispatch)))
               (if next-dispatch
@@ -55,11 +55,11 @@ This function effectively calls format and returns the result as a string."
                   (bind ((arg (get args index))
                          (char (second control-string))
                          (percent (== char "%")))
-                    (write stream (if percent "%" (dispatch char arg)))
+                    (stream-write stream (if percent "%" (dispatch char arg)))
                     (set! control-string
                           (slice control-string 2))
                     (unless percent
                       (inc! index)))
                   (begin
-                   (write stream control-string)
+                   (stream-write stream control-string)
                    (set! control-string "")))))))))
