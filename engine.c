@@ -1,4 +1,15 @@
-// gcc -DDEBUG -ljavascriptcoregtk-1.0 -L/usr/lib/webkitgtk-1.0-0/ -I/usr/include/webkit-1.0 engine.c -o engine
+// $ gcc -DDEBUG  `pkg-config --cflags --libs javascriptcoregtk-3.0` engine.c -o engine
+
+// latest JavaScriptCore:
+// $ gcc -DDEBUG -I/usr/include/webkit-3.0 -c engine.c -o engine.o
+// $ gcc -lQtCore -L/usr/lib64 -L/usr/lib64/qt4 \
+//   -LWebKit/WebKitBuild/Release/Source/JavaScriptCore/release \
+//   -LWebKit/WebKitBuild/Release/Source/WTF/release \
+//   -Wl,-whole-archive -lJavaScriptCore \
+//   -Wl,-whole-archive -lWTF \
+//   -Wl,-no-whole-archive -pthread \
+//   engine.o -o engine
+
 
 #include <stdio.h>
 #include <stdlib.h>
