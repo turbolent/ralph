@@ -23,6 +23,11 @@
 	   'words)
 	 . font-lock-warning-face)))
 
+(defcustom ralph-mode-hook nil
+  "*List of functions to call on entry to ralph mode."
+  :group 'ralph
+  :type 'hook)
+
 (defvar ralph-mode-syntax-table
   (let ((table (copy-syntax-table lisp-mode-syntax-table)))
     (modify-syntax-entry ?\[ "(]" table)
@@ -40,7 +45,12 @@
   (setq indent-region-function 'lisp-indent-region)
   (make-local-variable 'lisp-indent-function)
   (set lisp-indent-function 'ralph-indent-function)
-  (set-syntax-table ralph-mode-syntax-table))
+  (set-syntax-table ralph-mode-syntax-table)
+  (make-local-variable 'comment-indent-function)
+  (setq comment-indent-function 'lisp-comment-indent)
+  (make-local-variable 'comment-start)
+  (setq comment-start ";")
+  (run-hooks 'ralph-mode-hook))
 
 ;; indentation offsets
 (put 'when 'ralph-indent-function 1)
@@ -108,10 +118,9 @@ This function also returns nil meaning don't specify the indentation."
             method)
         (setq method (or (get (intern-soft function) 'ralph-indent-function)
                          (get (intern-soft function) 'lisp-indent-hook)))
-        (cond ((or (eq method 'defun)
-                   (and (null method)
-                        (> (length function) 3)
-                        (string-match "\\`def" function)))
+        (cond ((and (null method)
+                    (> (length function) 3)
+                    (string-match "\\`def" function))
                (lisp-indent-defform state indent-point))
               ((integerp method)
                (lisp-indent-specform method state
