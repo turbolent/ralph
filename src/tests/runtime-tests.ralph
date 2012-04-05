@@ -485,28 +485,28 @@
 ;; <string-stream>
 (bind ((stream (make <string-stream> string: "test")))
   (check-false "<string-stream>: not at end when starting"
-               (at-end? stream))
+               (stream-at-end? stream))
   (check-true "<string-stream>: peeking doesn't advance the stream"
-              (and (== "t" (peek-char stream))
-                   (== "t" (peek-char stream))))
+              (and (== "t" (stream-peek stream))
+                   (== "t" (stream-peek stream))))
   (check-true "<string-stream>: reading advances the stream"
-              (and (== "t" (read-char stream))
-                   (== "e" (read-char stream))))
-  (read-char stream)
-  (read-char stream)
+              (and (== "t" (stream-read-element stream))
+                   (== "e" (stream-read-element stream))))
+  (stream-read-element stream)
+  (stream-read-element stream)
   (check-true "<string-stream>: at end when done"
-              (at-end? stream)))
+              (stream-at-end? stream)))
 (bind ((stream (make <string-stream>)))
   (check-equal "<string-stream>: empty contents when starting"
-               "" (contents stream))
-  (write stream "FOO")
+               "" (stream-contents stream))
+  (stream-write stream "FOO")
   (check-equal "<string-stream>: simple write"
-               "FOO" (contents stream))
+               "FOO" (stream-contents stream))
   (check-true "<string-stream>: writing advances, always at end"
-              (at-end? stream))
-  (write stream "BAR")
+              (stream-at-end? stream))
+  (stream-write stream "BAR")
   (check-equal "<string-stream>: another write, check contents"
-               "FOOBAR" (contents stream)))
+               "FOOBAR" (stream-contents stream)))
 
 ;; format
 (check-equal "format-to-string: numbers and escaping"
@@ -514,7 +514,7 @@
 (check-equal "format-to-string: method"
              "x%test%x" (format-to-string "x%mx"
                           (method (stream)
-                                  (write stream "%test%"))))
+                            (stream-write stream "%test%"))))
 (check-equal "format-to-string: description of <string>"
              "\"TEST\"" (format-to-string "%=" "TEST"))
 
