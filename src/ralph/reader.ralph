@@ -24,22 +24,24 @@
 
 (define *whitespace* ["\n" "\r" " " "\t"])
 (define *atom-end* (concatenate *whitespace*
-                                ["(" ")" "[" "]" "\"" "'" ";"]))
-
-;; TODO:
-;; "`" `(%backquote)
-;; "," `(%comma)
+                                ["(" ")" "[" "]" "\"" ";" "`" ","]))
+(define *wrapper-symbols* `(%backquote %comma))
 
 (define-function read ((stream <stream>))
   (bind ((stack [[]])
          (atom #f)
          (ends []))
-    (bind-methods ((add! ()
-                     (bind ((value (pop-last stack)))
-                       (push-last (last stack) value)))
-                   (add-atom! ()
+    (bind-methods ((add-to-stack! (value)
                      (push-last (last stack)
-                                (make-atom atom))))
+                                value)
+                     (when (member? (first (last stack stack))
+                                    *wrapper-symbols*)
+                       (add-last!)))
+                   (add-last! ()
+                     (bind ((value (pop-last stack)))
+                       (add-to-stack! value)))
+                   (add-atom! ()
+                     (add-to-stack! (make-atom atom))))
       (while (not (stream-at-end? stream))
         (bind ((char (stream-read-element stream)))
           (if atom
@@ -54,6 +56,10 @@
                  (select char ==
                    ((";")
                     (stream-read-through stream "\n"))
+                   (("`")
+                    (push-last stack [(symbol "%backquote")]))
+                   ((",")
+                    (push-last stack [(symbol "%comma")]))
                    (("(")
                     (push-last ends ")")
                     (push-last stack []))
@@ -62,7 +68,7 @@
                     (push-last stack `(js:array)))
                    (((last ends))
                     (pop-last ends)
-                    (add!))
+                    (add-last!))
                    ((")" "]") (signal (format-to-string "too many closings: %=" char)))
                    (("\"") (push-last stack ""))
                    (else:
@@ -70,7 +76,7 @@
                       (set! atom char)))))
                 ((<string>)
                  (if (== char "\"")
-                     (add!)
+                     (add-last!)
                      (begin
                       (when (== char "\\")
                         (stream-read-element stream))
