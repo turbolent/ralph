@@ -27,7 +27,7 @@
                                 ["(" ")" "[" "]" "\"" ";" "`" ","]))
 (define *wrapper-symbols* `(%backquote %comma))
 
-(define-function read ((stream <stream>))
+(define-function read ((stream <stream>) #key (eof-error? #t) eof-value)
   (bind ((stack [[]])
          (atom #f)
          (ends []))
@@ -87,5 +87,9 @@
           (begin
            (when atom
              (add-atom!))
-           (last stack))
+           (bind ((value (first (last stack))))
+             (or value
+                 (if eof-error?
+                     (signal "no object")
+                     eof-value))))
           (signal (format-to-string "missing closings: %=" ends))))))
