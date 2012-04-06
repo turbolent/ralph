@@ -409,6 +409,7 @@ _CL_a = _PE_makeClass("_CL_a", false, {});
 _CL_b = _PE_makeClass("_CL_b", _CL_a, {});
 _CL_c = _PE_makeClass("_CL_c", _CL_b, {});
 _CL_d = _PE_makeClass("_CL_d", _CL_c, {});
+_CL_e = _PE_makeClass("_CL_e", _CL_d, {});
 foo = _PE_makeMethod("foo", function __method__ (_object) {
 return 1
 }, _CL_a, ((typeof (foo) !== 'undefined') && foo), false, "(foo <a>)");
@@ -431,11 +432,14 @@ bar = _PE_makeMethod("bar", function __method__ (_object, d) {
 _PE_nextMethod(__method__)(_object, "b");
 return _object.d = d
 }, _CL_d, ((typeof (bar) !== 'undefined') && bar), false, "(bar <d> <object>)");
-(function _94__lambda (d) {
-d = make(_CL_d);
-bar(d, "d");
-checkFalse("next-method: last method shouldn't have a next", (_4 = d, _26 = "next", (_4 && _4.hasOwnProperty(_26) && _4[_26])));
-return checkTrue("next-method: all methods visited", ((true_W_(((_4 = d, _26 = "d", (_4 && _4.hasOwnProperty(_26) && _4[_26])) === "d")) && true_W_(((_4 = d, _26 = "b", (_4 && _4.hasOwnProperty(_26) && _4[_26])) === "b"))) ? ((_4 = d, _26 = "a", (_4 && _4.hasOwnProperty(_26) && _4[_26])) === "a") : false))
+bar = _PE_makeMethod("bar", function __method__ (_object) {
+return _PE_nextMethod(__method__).apply(null, arguments)()
+}, _CL_e, ((typeof (bar) !== 'undefined') && bar), false, "(bar <e>)");
+(function _94__lambda (e) {
+e = make(_CL_e);
+bar(e, "d");
+checkFalse("next-method: last method shouldn't have a next", (_4 = e, _26 = "next", (_4 && _4.hasOwnProperty(_26) && _4[_26])));
+return checkTrue("next-method: all methods visited", ((true_W_(((_4 = e, _26 = "d", (_4 && _4.hasOwnProperty(_26) && _4[_26])) === "d")) && true_W_(((_4 = e, _26 = "b", (_4 && _4.hasOwnProperty(_26) && _4[_26])) === "b"))) ? ((_4 = e, _26 = "a", (_4 && _4.hasOwnProperty(_26) && _4[_26])) === "a") : false))
 })();
 _SET_bar = _PE_makeMethod("_SET_bar", function __method__ (a, value) {
 return a.value = value

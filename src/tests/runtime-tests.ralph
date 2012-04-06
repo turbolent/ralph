@@ -542,6 +542,8 @@
 
 (define-class <d> (<c>))
 
+(define-class <e> (<d>))
+
 (define-method foo ((object <a>))
   1)
 
@@ -573,14 +575,17 @@
   (next-method object "b")
   (set! (get object "d") d))
 
-(bind ((d (make <d>)))
-  (bar d "d")
+(define-method bar ((object <e>))
+  (call-next-method))
+
+(bind ((e (make <e>)))
+  (bar e "d")
   (check-false "next-method: last method shouldn't have a next"
-               (get d "next"))
+               (get e "next"))
   (check-true "next-method: all methods visited"
-              (and (== (get d "d") "d")
-                   (== (get d "b") "b")
-                   (== (get d "a") "a"))))
+              (and (== (get e "d") "d")
+                   (== (get e "b") "b")
+                   (== (get e "a") "a"))))
 
 ;; next-method for setters
 (define-method (setter bar) ((a <a>) value)

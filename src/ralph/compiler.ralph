@@ -643,6 +643,9 @@
                                properties)
                           (prepend-return body)))
            ,object)))
+     "call-next-method"
+     (method (_)
+       `((js:get-property next-method "apply") js:null js:arguments))
      ;; optimizations / "inlining"
      "instance?"
      (method (_ object type)
@@ -846,7 +849,7 @@
 
 (define *symbol-macros*
   (make-object
-   "this-method" (method (environment)
+   "this-method" (method (_)
                    `(js:inline "__method__"))
    "next-method" (method (_)
                    `(%next-method this-method))))

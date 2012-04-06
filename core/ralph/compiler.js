@@ -552,82 +552,85 @@ return [symbol("js:var"), property, [symbol("js:get-property"), object_ST_, symb
 }, properties), prependReturn(body))], _object]
 })()
 },
-"instance?":function _211__lambda (__, _object, type) {
-return (function _212__lambda () {
+"call-next-method":function _211__lambda (__) {
+return [[symbol("js:get-property"), symbol("next-method"), "apply"], symbol("js:null"), symbol("js:arguments")]
+},
+"instance?":function _212__lambda (__, _object, type) {
+return (function _213__lambda () {
 var _41 = type;
 var _42 = _E__E_;
 return (true_W_((_4 = _42(_41, s("<array>")), (true_W_(_4) ? _4 : false))) ? [[symbol("js:inline"), "Array.isArray"], _object] : (true_W_((_4 = _42(_41, s("<error>")), (true_W_(_4) ? _4 : false))) ? [symbol("js:instanceof"), _object, [symbol("js:inline"), "Error"]] : [symbol("js:call"), symbol("instance?"), _object, type]))
 })()
 },
-"make-array":function _213__lambda (__) {
+"make-array":function _214__lambda (__) {
 var elements = [].slice.call(arguments, 1);
 return concatenate([symbol("js:array")], elements)
 },
-"first":function _214__lambda (environment, expression) {
+"first":function _215__lambda (environment, expression) {
 return [symbol("js:get-property"), expression, 0]
 },
-"second":function _215__lambda (environment, expression) {
+"second":function _216__lambda (environment, expression) {
 return [symbol("js:get-property"), expression, 1]
 },
-"third":function _216__lambda (environment, expression) {
+"third":function _217__lambda (environment, expression) {
 return [symbol("js:get-property"), expression, 2]
 },
-"slice":function _217__lambda (__, _array, start, end) {
+"slice":function _218__lambda (__, _array, start, end) {
 return concatenate([[symbol("js:get-property"), _array, "slice"]], (true_W_(start) ? [start] : []), (true_W_(end) ? [end] : []))
 },
-"rest":function _218__lambda (__, _array) {
+"rest":function _219__lambda (__, _array) {
 return [symbol("slice"), _array, 1]
 },
-"as-array":function _219__lambda (__, _arguments, skip) {
+"as-array":function _220__lambda (__, _arguments, skip) {
 return [[symbol("js:get-property"), [symbol("js:array")], "slice", "call"], _arguments, (skip || 0)]
 },
-"size":function _220__lambda (environment, _object) {
-return apply(function _221__lambda (temp) {
+"size":function _221__lambda (environment, _object) {
+return apply(function _222__lambda (temp) {
 return [symbol("begin"), [symbol("set!"), temp, _object], [symbol("js:or"), [symbol("js:and"), [symbol("true?"), temp], [symbol("js:get-property"), temp, "length"]], 0]]
 }, requestTemporaries(environment, 1))
 },
-"has?":function _222__lambda (__, _object, property) {
+"has?":function _223__lambda (__, _object, property) {
 return [[symbol("js:get-property"), _object, "hasOwnProperty"], property]
 },
-"but-last":function _223__lambda (__, _array, n) {
-return (function _224__lambda (n) {
+"but-last":function _224__lambda (__, _array, n) {
+return (function _225__lambda (n) {
 n = (_4 = n, (true_W_(_4) ? _4 : (_4 = 1, (true_W_(_4) ? _4 : false))));
 return [symbol("slice"), _array, 0, (true_W_(instance_W_(n, _CL_number)) ? (n * -1) : [symbol("js:*"), n, -1])]
 })(((typeof (n) !== 'undefined') && n))
 },
-"push-last":function _225__lambda (environment, _array, value) {
-return (true_W_(instance_W_(_array, _CL_symbol)) ? [symbol("begin"), [[symbol("js:get-property"), _array, "push"], value], _array] : apply(function _226__lambda (temp) {
+"push-last":function _226__lambda (environment, _array, value) {
+return (true_W_(instance_W_(_array, _CL_symbol)) ? [symbol("begin"), [[symbol("js:get-property"), _array, "push"], value], _array] : apply(function _227__lambda (temp) {
 return [symbol("begin"), [symbol("set!"), temp, _array], [[symbol("js:get-property"), temp, "push"], value], temp]
 }, requestTemporaries(environment, 1)))
 },
-"push":function _227__lambda (environment, _array, value) {
-return (true_W_(instance_W_(_array, _CL_symbol)) ? [symbol("begin"), [[symbol("js:get-property"), _array, "unshift"], value], _array] : apply(function _228__lambda (temp) {
+"push":function _228__lambda (environment, _array, value) {
+return (true_W_(instance_W_(_array, _CL_symbol)) ? [symbol("begin"), [[symbol("js:get-property"), _array, "unshift"], value], _array] : apply(function _229__lambda (temp) {
 return [symbol("begin"), [symbol("set!"), temp, _array], [[symbol("js:get-property"), temp, "unshift"], value], temp]
 }, requestTemporaries(environment, 1)))
 },
-"pop":function _229__lambda (__, _array) {
+"pop":function _230__lambda (__, _array) {
 return [[symbol("js:get-property"), _array, "shift"]]
 },
-"pop-last":function _230__lambda (__, _array) {
+"pop-last":function _231__lambda (__, _array) {
 return [[symbol("js:get-property"), _array, "pop"]]
 },
-"reverse!":function _231__lambda (__, _array) {
+"reverse!":function _232__lambda (__, _array) {
 return [[symbol("js:get-property"), _array, "reverse"]]
 },
-"as-string":function _232__lambda (__, _object) {
+"as-string":function _233__lambda (__, _object) {
 return [[symbol("js:get-property"), _object, "toString"]]
 },
-"as-number":function _233__lambda (__, _object) {
+"as-number":function _234__lambda (__, _object) {
 return [[symbol("js:inline"), "Number"], _object]
 },
-"%concat":function _234__lambda (__, array1, array2) {
+"%concat":function _235__lambda (__, array1, array2) {
 return [[symbol("js:get-property"), array1, "concat"], array2]
 },
-"concatenate":function _235__lambda (__, _object) {
+"concatenate":function _236__lambda (__, _object) {
 var rest = [].slice.call(arguments, 2);
 return concatenate((true_W_(instance_W_(_object, _CL_string)) ? [symbol("js:+"), _object] : [symbol("js:call"), symbol("concatenate"), _object]), rest)
 },
-"==":function _236__lambda (__) {
+"==":function _237__lambda (__) {
 var _arguments = [].slice.call(arguments, 1);
 return concatenate((true_W_(((_4 = _arguments, ((true_W_(_4) && _4.length) || 0)) === 2)) ? [symbol("js:===")] : [symbol("js:call"), symbol("==")]), _arguments)
 }};
@@ -638,45 +641,45 @@ for (var _46 = 0; (_46 < _43.length); _46 = (_46 + 2)) {
 var _44 = _43[_46];
 var _45 = _43[(_46 + 1)];
 if (true_W_(keyword_W_(_44))) {
-(function _237__lambda () {
+(function _238__lambda () {
 var _47 = _44;
 return (true_W_((_4 = (_47 == _k('type?')), (true_W_(_4) ? _4 : false))) ? type_W_ = _45 : false)
 })()
 }
 };
-return function _238__lambda (__, functionName, _arguments) {
+return function _239__lambda (__, functionName, _arguments) {
 var body = [].slice.call(arguments, 3);
-return apply(function _239__lambda (setter_W_, name) {
+return apply(function _240__lambda (setter_W_, name) {
 if (!true_W_((_4 = instance_W_(name, _CL_symbol), (true_W_(_4) ? _4 : (_4 = setter_W_, (true_W_(_4) ? _4 : false)))))) {
 signal(make(_CL_error, _k('message'), concatenate(macroName, ": name => symbol or (setter name)")))
 };
-return [symbol("define"), name, concatenate([s(definerName), [symbol("js:escape"), name], functionDeclaration([symbol("js:inline"), "__method__"], _arguments, body)], (true_W_(type_W_) ? [[symbol("js:inline"), (true_W_(empty_W_(_arguments)) ? "null" : (function _240__lambda (head) {
+return [symbol("define"), name, concatenate([s(definerName), [symbol("js:escape"), name], functionDeclaration([symbol("js:inline"), "__method__"], _arguments, body)], (true_W_(type_W_) ? [[symbol("js:inline"), (true_W_(empty_W_(_arguments)) ? "null" : (function _241__lambda (head) {
 head = _arguments[0];
 return (true_W_(((true_W_(Array.isArray(head))) ? binary_GT_((_4 = head, ((true_W_(_4) && _4.length) || 0)), 1) : false)) ? escapeSymbol(head[1]) : "Object")
 })())]] : []), [[symbol("js:and"), [symbol("js:defined"), name], name], setter_W_, displayName((true_W_(setter_W_) ? functionName[1] : functionName), _arguments, _k('setter?'), setter_W_)])]
 }, (true_W_(setterName_W_(functionName)) ? [true, setterSymbol(functionName[1])] : [false, functionName]))
 }
 }, ((typeof (functionDefiner) !== 'undefined') && functionDefiner), false, "(function-definer <object> <object> #key type?)");
-(function _241__lambda (_49, _50) {
+(function _242__lambda (_49, _50) {
 _49 = [["define-function", "%make-function"], ["define-method", "%make-method", _k('type?'), true]];
 _50 = (_4 = _49, ((true_W_(_4) && _4.length) || 0));
 return (function(){
 for (var _48 = 0; (_48 < _50); _48 = (_48 + 1)) {
 var _arguments = _49[_48];
-(function _242__lambda (_arguments) {
+(function _243__lambda (_arguments) {
 MACROS[_arguments[0]] = apply(functionDefiner, _arguments)
 })(_arguments)
 }
 })()
 })();
-(function _243__lambda (_52, _53) {
+(function _244__lambda (_52, _53) {
 _52 = ["=", "<", ">", "<=", ">="];
 _53 = (_4 = _52, ((true_W_(_4) && _4.length) || 0));
 return (function(){
 for (var _51 = 0; (_51 < _53); _51 = (_51 + 1)) {
 var comparison = _52[_51];
-(function _244__lambda (comparison) {
-MACROS[comparison] = function _245__lambda (__) {
+(function _245__lambda (comparison) {
+MACROS[comparison] = function _246__lambda (__) {
 var _arguments = [].slice.call(arguments, 1);
 return concatenate((true_W_(((_4 = _arguments, ((true_W_(_4) && _4.length) || 0)) === 2)) ? [s(("binary" + comparison))] : [symbol("js:call"), s(comparison)]), _arguments)
 }
@@ -684,14 +687,14 @@ return concatenate((true_W_(((_4 = _arguments, ((true_W_(_4) && _4.length) || 0)
 }
 })()
 })();
-(function _246__lambda (_55, _56) {
+(function _247__lambda (_55, _56) {
 _55 = ["-", "+", "*", "/"];
 _56 = (_4 = _55, ((true_W_(_4) && _4.length) || 0));
 return (function(){
 for (var _54 = 0; (_54 < _56); _54 = (_54 + 1)) {
 var op = _55[_54];
-(function _247__lambda (op) {
-MACROS[op] = function _248__lambda (__) {
+(function _248__lambda (op) {
+MACROS[op] = function _249__lambda (__) {
 var _arguments = [].slice.call(arguments, 1);
 return concatenate([s(("js:" + op))], _arguments)
 }
@@ -699,15 +702,15 @@ return concatenate([s(("js:" + op))], _arguments)
 }
 })()
 })();
-(function _249__lambda (_58, _59) {
+(function _250__lambda (_58, _59) {
 _58 = [["inc!", "+"], ["dec!", "-"]];
 _59 = (_4 = _58, ((true_W_(_4) && _4.length) || 0));
 return (function(){
 for (var _57 = 0; (_57 < _59); _57 = (_57 + 1)) {
 var name_SL_op = _58[_57];
-(function _250__lambda (name_SL_op) {
-apply(function _251__lambda (name, op) {
-return MACROS[name] = function _252__lambda (__, _object, value) {
+(function _251__lambda (name_SL_op) {
+apply(function _252__lambda (name, op) {
+return MACROS[name] = function _253__lambda (__, _object, value) {
 return (true_W_((_4 = !true_W_(Array.isArray(_object)), (true_W_(_4) ? _4 : (_4 = ((true_W_(Array.isArray(_object))) ? (_4 = (_object[0] === s("js:get-property")), (true_W_(_4) ? _4 : (_4 = ((true_W_((_object[0] === s("get")))) ? ((_4 = _object, ((true_W_(_4) && _4.length) || 0)) === 3) : false), (true_W_(_4) ? _4 : false)))) : false), (true_W_(_4) ? _4 : false))))) ? [s(("js:" + op + "=")), (true_W_(((true_W_(Array.isArray(_object))) ? (_object[0] === s("get")) : false)) ? concatenate([symbol("js:get-property")], _object.slice(1)) : _object), (_4 = value, (true_W_(_4) ? _4 : (_4 = 1, (true_W_(_4) ? _4 : false))))] : [symbol("set!"), _object, [s(("js:" + op)), _object, (_4 = value, (true_W_(_4) ? _4 : (_4 = 1, (true_W_(_4) ? _4 : false))))]])
 }
 }, name_SL_op)
@@ -715,10 +718,10 @@ return (true_W_((_4 = !true_W_(Array.isArray(_object)), (true_W_(_4) ? _4 : (_4 
 }
 })()
 })();
-SYMBOLMACROS = {"this-method":function _253__lambda (environment) {
+SYMBOLMACROS = {"this-method":function _254__lambda (__) {
 return [symbol("js:inline"), "__method__"]
 },
-"next-method":function _254__lambda (__) {
+"next-method":function _255__lambda (__) {
 return [symbol("%next-method"), symbol("this-method")]
 }};
 SPECIALFORMS = {"make-object":0,
@@ -740,18 +743,18 @@ SPECIALFORMS = {"make-object":0,
 "js:escape":false,
 "js:inline":false,
 "js:get-property":0,
-"js:for":function _255__lambda (environment, clauses) {
+"js:for":function _256__lambda (environment, clauses) {
 var body = [].slice.call(arguments, 2);
-return concatenate([symbol("js:for"), map(function _256__lambda (clause) {
-return apply(function _257__lambda (_60) {
+return concatenate([symbol("js:for"), map(function _257__lambda (clause) {
+return apply(function _258__lambda (_60) {
 var rest = [].slice.call(arguments, 1);
-return apply(function _258__lambda (_var, value) {
+return apply(function _259__lambda (_var, value) {
 return concatenate([[_var, macroexpand(environment, value)]], map(curry(macroexpand, environment), rest))
 }, _60)
 }, clause)
 }, clauses)], macroexpand(environment, body))
 },
-"js:try":function _259__lambda (environment, body, _var, _catch, _finally) {
+"js:try":function _260__lambda (environment, body, _var, _catch, _finally) {
 return [symbol("js:try"), macroexpand(environment, body), _var, macroexpand(environment, _catch), macroexpand(environment, _finally)]
 }};
 UNARY = {"js:-":"-"};
@@ -799,7 +802,7 @@ SYMBOLESCAPES = {"-":"_M_",
 RESERVED = ["break", "case", "catch", "continue", "default", "delete", "do", "else", "finally", "for", "function", "if", "in", "instanceof", "new", "return", "switch", "this", "throw", "try", "typeof", "var", "void", "while", "with", "abstract", "boolean", "byte", "char", "class", "const", "debugger", "double", "enum", "export", "extends", "final", "float", "goto", "implements", "import", "int", "interface", "long", "native", "package", "private", "protected", "public", "short", "static", "super", "synchronized", "throws", "transient", "volatile", "null", "true", "false", "arguments", "object", "number", "string", "array"];
 SYMBOLCOUNT = 0;
 generateSymbol = _PE_makeFunction("generateSymbol", function __method__ () {
-return (function _260__lambda (symbol) {
+return (function _261__lambda (symbol) {
 symbol = make(_CL_symbol, _k('name'), ("_" + SYMBOLCOUNT.toString()));
 (SYMBOLCOUNT += 1);
 symbol["generated?"] = true;
@@ -808,24 +811,24 @@ return symbol
 }, ((typeof (generateSymbol) !== 'undefined') && generateSymbol), false, "(generate-symbol)");
 HYPHENPATTERN = make(_CL_regexp, _k('pattern'), "-(.)", _k('global?'), true);
 escape = _PE_makeFunction("escape", function __method__ (name) {
-return (true_W_(binary_E_(name, "-")) ? (_4 = SYMBOLESCAPES, _18 = name, (_4 && _4.hasOwnProperty(_18) && _4[_18])) : (function _261__lambda (upcase_W_, result) {
+return (true_W_(binary_E_(name, "-")) ? (_4 = SYMBOLESCAPES, _18 = name, (_4 && _4.hasOwnProperty(_18) && _4[_18])) : (function _262__lambda (upcase_W_, result) {
 upcase_W_ = false;
 result = "";
-(function _262__lambda (_62, _63) {
+(function _263__lambda (_62, _63) {
 _62 = [].slice.call(name, 0);
 _63 = (_4 = _62, ((true_W_(_4) && _4.length) || 0));
 return (function(){
 for (var _61 = 0; (_61 < _63); _61 = (_61 + 1)) {
 var _char = _62[_61];
-(function _263__lambda (_char) {
+(function _264__lambda (_char) {
 if (true_W_(binary_E_(_char, "-"))) {
 upcase_W_ = true
 } else {
-(function _264__lambda (_char) {
+(function _265__lambda (_char) {
 _char = (true_W_(upcase_W_) ? asUppercase(_char) : _char);
-(result += (function _265__lambda (_64) {
+(result += (function _266__lambda (_64) {
 _64 = (_4 = SYMBOLESCAPES, _18 = _char, (_4 && _4.hasOwnProperty(_18) && _4[_18]));
-return (true_W_(_64) ? (function _266__lambda (replacement) {
+return (true_W_(_64) ? (function _267__lambda (replacement) {
 replacement = _64;
 return replacement
 })() : _char)
@@ -841,7 +844,7 @@ return result
 })())
 }, ((typeof (escape) !== 'undefined') && escape), false, "(escape <object>)");
 escapeSymbol = _PE_makeFunction("escapeSymbol", function __method__ (symbol) {
-return (function _267__lambda (name) {
+return (function _268__lambda (name) {
 name = symbolName(symbol);
 return (true_W_((_4 = symbol, _18 = "generated?", (_4 && _4.hasOwnProperty(_18) && _4[_18]))) ? name : (true_W_(member_W_(name, RESERVED)) ? ("_" + name) : (true_W_(((true_W_(binary_E_(name[0], "<")) && true_W_(binary_E_(last(name), ">"))) ? binary_GT_((_4 = name, ((true_W_(_4) && _4.length) || 0)), 2) : false)) ? ("_CL_" + escape(name.slice(1).slice(0, -1))) : (true_W_(((true_W_(binary_E_(name[0], "*")) && true_W_(binary_E_(last(name), "*"))) ? binary_GT_((_4 = name, ((true_W_(_4) && _4.length) || 0)), 2) : false)) ? asUppercase(escape(name.slice(1).slice(0, -1))) : escape(name)))))
 })()
@@ -853,60 +856,60 @@ writeBody = _PE_makeFunction("writeBody", function __method__ (body) {
 return writeStatements(concatenate([symbol("begin")], body))
 }, ((typeof (writeBody) !== 'undefined') && writeBody), false, "(write-body <object>)");
 PROPERTYPATTERN = make(_CL_regexp, _k('pattern'), "^[a-z_]+[a-z0-9]*$", _k('ignore-case?'), true);
-WRITERS = {"js:call":function _268__lambda (__, head) {
+WRITERS = {"js:call":function _269__lambda (__, head) {
 var tail = [].slice.call(arguments, 2);
 return concatenate((true_W_(((true_W_(Array.isArray(head)) && true_W_(instance_W_(head[0], _CL_symbol))) ? (head[0] === s("js:function")) : false)) ? ("(" + writeExpressions(head) + ")") : writeExpressions(head)), "(", join(map(writeForm, tail), ", "), ")")
 },
-"js:negative":function _269__lambda (__, _object) {
+"js:negative":function _270__lambda (__, _object) {
 return ("(- " + writeExpressions(_object) + ")")
 },
-"js:not":function _270__lambda (__, expression) {
+"js:not":function _271__lambda (__, expression) {
 return ("!" + writeExpressions(expression))
 },
-"begin":function _271__lambda (statements_W_) {
+"begin":function _272__lambda (statements_W_) {
 var forms = [].slice.call(arguments, 1);
-return (true_W_(statements_W_) ? (true_W_(binary_GT_((_4 = forms, ((true_W_(_4) && _4.length) || 0)), 1)) ? join(concatenate(map(function _272__lambda (form) {
+return (true_W_(statements_W_) ? (true_W_(binary_GT_((_4 = forms, ((true_W_(_4) && _4.length) || 0)), 1)) ? join(concatenate(map(function _273__lambda (form) {
 return concatenate(writeStatements(form), (true_W_(((true_W_(Array.isArray(form))) ? (form[0] === s("js:comment")) : false)) ? "" : ";"))
 }, forms.slice(0, -1)), writeStatements(last(forms))), "\n") : writeStatements(forms[0])) : (true_W_(binary_GT_((_4 = forms, ((true_W_(_4) && _4.length) || 0)), 1)) ? ("(" + join(map(writeForm, forms), ", ") + ")") : writeExpressions(forms[0])))
 },
-"js:if":function _273__lambda (statements_W_, test, then, _else) {
+"js:if":function _274__lambda (statements_W_, test, then, _else) {
 return (true_W_(statements_W_) ? ("if (" + writeExpressions(test) + ") {\n" + writeStatements(then) + "\n}" + (true_W_(_else) ? (" else {\n" + writeStatements(_else) + "\n}") : "")) : ("(" + writeExpressions(test) + " ? " + writeExpressions(then) + " : " + writeExpressions(_else) + ")"))
 },
-"js:array":function _274__lambda (__) {
+"js:array":function _275__lambda (__) {
 var elements = [].slice.call(arguments, 1);
 return ("[" + join(map(writeForm, elements), ", ") + "]")
 },
-"js:defined":function _275__lambda (__, expression) {
+"js:defined":function _276__lambda (__, expression) {
 return ("(typeof (" + writeExpressions(expression) + ") !== 'undefined')")
 },
-"js:delete":function _276__lambda (__, expression) {
+"js:delete":function _277__lambda (__, expression) {
 return ("(delete (" + writeExpressions(expression) + "))")
 },
-"js:try":function _277__lambda (statements_W_, body, condition, _catch, _finally) {
-return (function _278__lambda (result) {
+"js:try":function _278__lambda (statements_W_, body, condition, _catch, _finally) {
+return (function _279__lambda (result) {
 result = ("try {\n" + writeStatements(body) + "\n} catch (" + writeExpressions(condition) + ") {\n" + (true_W_(_catch) ? writeStatements(_catch) : "") + "\n}" + (true_W_(_finally) ? (" finally {\n" + writeStatements(_finally) + "\n}") : ""));
 return (true_W_(statements_W_) ? result : wrapBlock(result))
 })()
 },
-"js:for-in":function _279__lambda (statements_W_, variable_SL_expression) {
+"js:for-in":function _280__lambda (statements_W_, variable_SL_expression) {
 var body = [].slice.call(arguments, 2);
-return apply(function _280__lambda (variable, expression) {
-return (function _281__lambda (result) {
+return apply(function _281__lambda (variable, expression) {
+return (function _282__lambda (result) {
 result = ("for (var " + writeExpressions(variable) + " in " + writeExpressions(expression) + ") {\n" + writeBody(body) + "\n}");
 return (true_W_(statements_W_) ? result : wrapBlock(result))
 })()
 }, variable_SL_expression)
 },
-"js:for":function _282__lambda (statements_W_, clauses) {
+"js:for":function _283__lambda (statements_W_, clauses) {
 var body = [].slice.call(arguments, 2);
-return (function _283__lambda (inits, tests, nexts) {
+return (function _284__lambda (inits, tests, nexts) {
 inits = [];
 tests = [];
 nexts = [];
-_do(function _284__lambda (clause) {
-return apply(function _285__lambda (_65, test, next) {
-return apply(function _286__lambda (_var, value) {
-return (function _287__lambda (set) {
+_do(function _285__lambda (clause) {
+return apply(function _286__lambda (_65, test, next) {
+return apply(function _287__lambda (_var, value) {
+return (function _288__lambda (set) {
 set = s("js:set");
 inits.push(writeExpressions([set, _var, value]));
 inits;
@@ -917,66 +920,66 @@ return (nexts.push(writeExpressions([set, _var, next])), nexts)
 }, _65)
 }, clause)
 }, clauses);
-return (function _288__lambda (result) {
-result = ("for (var " + join(map(function _289__lambda (parts) {
+return (function _289__lambda (result) {
+result = ("for (var " + join(map(function _290__lambda (parts) {
 return join(parts, ", ")
 }, [inits, tests, nexts]), "; ") + ") {\n" + writeBody(body) + "\n}");
 return (true_W_(statements_W_) ? result : wrapBlock(result))
 })()
 })()
 },
-"js:while":function _290__lambda (statements_W_, test) {
+"js:while":function _291__lambda (statements_W_, test) {
 var body = [].slice.call(arguments, 2);
-return (function _291__lambda (result) {
+return (function _292__lambda (result) {
 result = ("while (" + writeExpressions(test) + ") {\n" + writeBody(body) + "\n}");
 return (true_W_(statements_W_) ? result : wrapBlock(result))
 })()
 },
-"js:inline":function _292__lambda (__, identifier) {
+"js:inline":function _293__lambda (__, identifier) {
 return identifier.toString()
 },
-"js:get-property":function _293__lambda (__, _object) {
+"js:get-property":function _294__lambda (__, _object) {
 var elements = [].slice.call(arguments, 2);
-return concatenate((true_W_(instance_W_(_object, _CL_number)) ? ("(" + writeExpressions(_object) + ")") : writeExpressions(_object)), apply(concatenate, map(function _294__lambda (element) {
+return concatenate((true_W_(instance_W_(_object, _CL_number)) ? ("(" + writeExpressions(_object) + ")") : writeExpressions(_object)), apply(concatenate, map(function _295__lambda (element) {
 return (true_W_(((true_W_(instance_W_(element, _CL_string)) && true_W_(match(PROPERTYPATTERN, element))) ? !true_W_(member_W_(element, RESERVED)) : false)) ? ("." + element) : ("[" + writeExpressions(element) + "]"))
 }, elements)))
 },
-"js:new":function _295__lambda (__, name) {
+"js:new":function _296__lambda (__, name) {
 var _arguments = [].slice.call(arguments, 2);
 return ("new " + writeExpressions(name) + " (" + join(map(writeForm, _arguments), ", ") + ")")
 },
-"js:var":function _296__lambda (__, name, value) {
+"js:var":function _297__lambda (__, name, value) {
 return ("var " + writeExpressions(name) + (true_W_(((true_W_(value)) ? !true_W_((value === s("js:undefined"))) : false)) ? (" = " + writeExpressions(value)) : ""))
 },
-"js:set":function _297__lambda (__, name, value) {
+"js:set":function _298__lambda (__, name, value) {
 return concatenate(writeExpressions(name), " = ", writeExpressions(value))
 },
-"js:return":function _298__lambda (__, body) {
+"js:return":function _299__lambda (__, body) {
 return ("return " + writeExpressions(body))
 },
-"js:function":function _299__lambda (__, name, _arguments, body) {
+"js:function":function _300__lambda (__, name, _arguments, body) {
 return ("function " + (true_W_(((true_W_(name)) ? !true_W_((name === s("js:null"))) : false)) ? (true_W_(Array.isArray(name)) ? writeExpressions(name) : escapeSymbol(name)) : concatenate(escapeSymbol(generateSymbol()), "__lambda")) + " (" + join(map(writeForm, _arguments), ", ") + ") {" + (true_W_(body) ? ("\n" + writeStatements(body) + "\n") : "") + "}")
 },
-"js:escape":function _300__lambda (__, symbol) {
+"js:escape":function _301__lambda (__, symbol) {
 return writeExpressions(escapeSymbol(symbol))
 },
-"js:throw":function _301__lambda (statements_W_, error) {
-return (function _302__lambda (result) {
+"js:throw":function _302__lambda (statements_W_, error) {
+return (function _303__lambda (result) {
 result = ("throw " + writeExpressions(error));
 return (true_W_(statements_W_) ? result : wrapBlock(result))
 })()
 },
-"js:comment":function _303__lambda (__, comment) {
+"js:comment":function _304__lambda (__, comment) {
 return (true_W_(position(comment, "\n")) ? ("/*" + comment + "*/") : ("//" + comment))
 },
-"make-object":function _304__lambda (__) {
+"make-object":function _305__lambda (__) {
 var keyValues = [].slice.call(arguments, 1);
-return (function _305__lambda (entries) {
+return (function _306__lambda (entries) {
 entries = [];
-(function _306__lambda (i) {
+(function _307__lambda (i) {
 i = 0;
 while (!true_W_(binary_GT__E_(i, (_4 = keyValues, ((true_W_(_4) && _4.length) || 0))))) {
-(function _307__lambda (i) {
+(function _308__lambda (i) {
 return (entries.push(concatenate(writeExpressions(element(keyValues, i)), ":", writeExpressions(element(keyValues, (i + 1))))), entries)
 })(i);
 i = (i + 2)
@@ -994,13 +997,13 @@ for (var _69 = 0; (_69 < _66.length); _69 = (_69 + 2)) {
 var _67 = _66[_69];
 var _68 = _66[(_69 + 1)];
 if (true_W_(keyword_W_(_67))) {
-(function _308__lambda () {
+(function _309__lambda () {
 var _70 = _67;
 return (true_W_((_4 = (_70 == _k('statements?')), (true_W_(_4) ? _4 : false))) ? statements_W_ = _68 : (true_W_((_4 = (_70 == _k('asynchronous?')), (true_W_(_4) ? _4 : false))) ? asynchronous_W_ = _68 : false))
 })()
 }
 };
-return (function _309__lambda (postProcessors, temporaries, environment, expanded) {
+return (function _310__lambda (postProcessors, temporaries, environment, expanded) {
 postProcessors = [];
 temporaries = [];
 environment = {"definitions":[],
@@ -1010,13 +1013,13 @@ environment = {"definitions":[],
 "asynchronous?":asynchronous_W_};
 expanded = macroexpand(environment, form);
 if (!true_W_(empty_W_(postProcessors))) {
-(function _310__lambda (_72, _73) {
+(function _311__lambda (_72, _73) {
 _72 = postProcessors;
 _73 = (_4 = _72, ((true_W_(_4) && _4.length) || 0));
 return (function(){
 for (var _71 = 0; (_71 < _73); _71 = (_71 + 1)) {
 var processor = _72[_71];
-(function _311__lambda (processor) {
+(function _312__lambda (processor) {
 expanded = processor(expanded)
 })(processor)
 }
@@ -1041,13 +1044,13 @@ hex = _PE_makeFunction("hex", function __method__ (code) {
 return fillZeros(code.toString(16))
 }, ((typeof (hex) !== 'undefined') && hex), false, "(hex <object>)");
 escapeString = _PE_makeFunction("escapeString", function __method__ (_string) {
-return join(map(function _312__lambda (_char) {
-return (function _313__lambda (_74) {
+return join(map(function _313__lambda (_char) {
+return (function _314__lambda (_74) {
 _74 = (_4 = ESCAPED, _18 = _char, (_4 && _4.hasOwnProperty(_18) && _4[_18]));
-return (true_W_(_74) ? (function _314__lambda (escaped) {
+return (true_W_(_74) ? (function _315__lambda (escaped) {
 escaped = _74;
 return ("\\" + escaped)
-})() : (function _315__lambda (code) {
+})() : (function _316__lambda (code) {
 code = charCode(_char);
 return (true_W_(_LT_(31, code, 127)) ? _char : ("\\u" + hex(code)))
 })())
@@ -1055,30 +1058,30 @@ return (true_W_(_LT_(31, code, 127)) ? _char : ("\\u" + hex(code)))
 }, [].slice.call(_string, 0)), "")
 }, ((typeof (escapeString) !== 'undefined') && escapeString), false, "(escape-string <object>)");
 macroexpand = exports.macroexpand = _PE_makeFunction("macroexpand", function __method__ (environment, form) {
-return (function _316__lambda () {
+return (function _317__lambda () {
 var _75 = form;
 var _76 = instance_W_;
-return (true_W_((_4 = _76(_75, _CL_array), (true_W_(_4) ? _4 : false))) ? ((function _317__lambda () {
+return (true_W_((_4 = _76(_75, _CL_array), (true_W_(_4) ? _4 : false))) ? ((function _318__lambda () {
 while (true_W_(((true_W_(Array.isArray(form)) && true_W_(instance_W_(form[0], _CL_symbol))) ? (_4 = MACROS.hasOwnProperty(symbolName(form[0])), (true_W_(_4) ? _4 : (_4 = (_4 = environment, _18 = "macros", (_4 && _4.hasOwnProperty(_18) && _4[_18])).hasOwnProperty(symbolName(form[0])), (true_W_(_4) ? _4 : false)))) : false))) {
-(function _318__lambda (macro) {
+(function _319__lambda (macro) {
 macro = (_4 = (_4 = MACROS, _18 = symbolName(form[0]), (_4 && _4.hasOwnProperty(_18) && _4[_18])), (true_W_(_4) ? _4 : (_4 = get(environment, "macros", symbolName(form[0])), (true_W_(_4) ? _4 : false))));
 return form = apply(macro, environment, form.slice(1))
 })()
 };
 return false
-})(), (true_W_(Array.isArray(form)) ? (function _319__lambda (head) {
+})(), (true_W_(Array.isArray(form)) ? (function _320__lambda (head) {
 head = form[0];
-return (true_W_(((true_W_(instance_W_(head, _CL_symbol))) ? SPECIALFORMS.hasOwnProperty(symbolName(head)) : false)) ? (function _320__lambda (expander) {
+return (true_W_(((true_W_(instance_W_(head, _CL_symbol))) ? SPECIALFORMS.hasOwnProperty(symbolName(head)) : false)) ? (function _321__lambda (expander) {
 expander = (_4 = SPECIALFORMS, _18 = symbolName(head), (_4 && _4.hasOwnProperty(_18) && _4[_18]));
-return (function _321__lambda () {
+return (function _322__lambda () {
 var _77 = expander;
 var _78 = instance_W_;
 return (true_W_((_4 = _78(_77, _CL_number), (true_W_(_4) ? _4 : false))) ? concatenate(form.slice(0, (expander + 1)), map(curry(macroexpand, environment), form.slice((expander + 1)))) : (true_W_((_4 = _78(_77, _CL_function), (true_W_(_4) ? _4 : false))) ? apply(expander, environment, form.slice(1)) : form))
 })()
 })() : map(curry(macroexpand, environment), form))
-})() : macroexpand(environment, form))) : (true_W_((_4 = _76(_75, _CL_symbol), (true_W_(_4) ? _4 : false))) ? (function _322__lambda (_79) {
+})() : macroexpand(environment, form))) : (true_W_((_4 = _76(_75, _CL_symbol), (true_W_(_4) ? _4 : false))) ? (function _323__lambda (_79) {
 _79 = (_4 = SYMBOLMACROS, _18 = symbolName(form), (_4 && _4.hasOwnProperty(_18) && _4[_18]));
-return (true_W_(_79) ? (function _323__lambda (symbolMacro) {
+return (true_W_(_79) ? (function _324__lambda (symbolMacro) {
 symbolMacro = _79;
 return macroexpand(environment, apply(symbolMacro, environment))
 })() : form)
@@ -1086,21 +1089,21 @@ return macroexpand(environment, apply(symbolMacro, environment))
 })()
 }, ((typeof (macroexpand) !== 'undefined') && macroexpand), false, "(macroexpand <object> <object>)");
 writeForm = _PE_makeFunction("writeForm", function __method__ (form, statements_W_) {
-return (function _324__lambda () {
+return (function _325__lambda () {
 var _80 = form;
 var _81 = instance_W_;
-return (true_W_((_4 = _81(_80, _CL_array), (true_W_(_4) ? _4 : false))) ? (function _325__lambda (head, headName, tail) {
+return (true_W_((_4 = _81(_80, _CL_array), (true_W_(_4) ? _4 : false))) ? (function _326__lambda (head, headName, tail) {
 head = form[0];
 headName = ((true_W_(head)) ? symbolName(head) : false);
 tail = form.slice(1);
-return (true_W_(((true_W_(instance_W_(head, _CL_symbol)) && true_W_(UNARY.hasOwnProperty(headName))) ? ((_4 = form, ((true_W_(_4) && _4.length) || 0)) === 2) : false)) ? ("(" + (_4 = UNARY, _18 = headName, (_4 && _4.hasOwnProperty(_18) && _4[_18])) + " " + writeExpressions(form[1]) + ")") : (true_W_(((true_W_(instance_W_(head, _CL_symbol))) ? INFIX.hasOwnProperty(headName) : false)) ? (function _326__lambda (infix, inside) {
+return (true_W_(((true_W_(instance_W_(head, _CL_symbol)) && true_W_(UNARY.hasOwnProperty(headName))) ? ((_4 = form, ((true_W_(_4) && _4.length) || 0)) === 2) : false)) ? ("(" + (_4 = UNARY, _18 = headName, (_4 && _4.hasOwnProperty(_18) && _4[_18])) + " " + writeExpressions(form[1]) + ")") : (true_W_(((true_W_(instance_W_(head, _CL_symbol))) ? INFIX.hasOwnProperty(headName) : false)) ? (function _327__lambda (infix, inside) {
 infix = (_4 = INFIX, _18 = headName, (_4 && _4.hasOwnProperty(_18) && _4[_18]));
 inside = join(map(writeForm, tail), (" " + infix + " "));
 return ("(" + inside + ")")
 })() : (true_W_(((true_W_(instance_W_(head, _CL_symbol))) ? WRITERS.hasOwnProperty(headName) : false)) ? apply((_4 = WRITERS, _18 = headName, (_4 && _4.hasOwnProperty(_18) && _4[_18])), statements_W_, tail) : (true_W_(head) ? apply((_4 = WRITERS, _18 = "js:call", (_4 && _4.hasOwnProperty(_18) && _4[_18])), statements_W_, head, tail) : "[]"))))
-})() : (true_W_((_4 = _81(_80, _CL_symbol), (true_W_(_4) ? _4 : false))) ? (function _327__lambda (_82) {
+})() : (true_W_((_4 = _81(_80, _CL_symbol), (true_W_(_4) ? _4 : false))) ? (function _328__lambda (_82) {
 _82 = (_4 = SYMBOLS, _18 = symbolName(form), (_4 && _4.hasOwnProperty(_18) && _4[_18]));
-return (true_W_(_82) ? (function _328__lambda (symbol) {
+return (true_W_(_82) ? (function _329__lambda (symbol) {
 symbol = _82;
 return symbol
 })() : escapeSymbol(form))
