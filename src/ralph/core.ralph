@@ -19,8 +19,10 @@
            position last-position join trim replace
            as-lowercase as-uppercase
            make-array make-object
-           element first second third last rest concatenate
-           (setter element) (setter first) (setter second) (setter third)
+           element last rest concatenate
+           first second third
+           (setter element) (setter last)
+           (setter first) (setter second) (setter third)
            size empty? but-last copy-sequence slice
            replace-subsequence replace-subsequence!
            reverse reverse! sort sort! remove remove!
@@ -510,6 +512,11 @@
 
 (define-function last ((array <array>))
   (js:get-property array (js:- (size array) 1)))
+
+(define-function (setter last) ((array <array>) value)
+  (set! (js:get-property array (js:- (size array) 1))
+        value))
+
 
 (define-function rest ((array <array>))
   (slice array 1))
