@@ -1,0 +1,33 @@
+(define-module tests/reader-tests
+  import: (ralph/core ralph/test
+           ralph/stream ralph/reader))
+
+(bind ((stream (make <string-stream> string: "(a (key: (b #t [1 2] \"c\" #f d #key) 2)) () #rest")))
+  (check-equal "expressions"
+               [[(symbol "a") [key: [(symbol "b") #t [(symbol "js:array") 1 2] "c" #f (symbol "d") #key] 2]] [] #rest]
+               (read stream)))
+
+
+(bind ((stream (make <string-stream> string: "this; asdasd\n isnt ; asdasd \n; asdasd\n a comment")))
+  (check-equal "comments"
+               [(symbol "this") (symbol "isnt") (symbol "a") (symbol "comment")]
+               (read stream)))
+
+(bind ((stream (make <string-stream> string: "a `(x ,(y z)) `(,b)")))
+  (check-equal "backquote and comma"
+               [(symbol "a")
+                [(symbol "%backquote")
+                 [(symbol "x")
+                  [(symbol "%comma")
+                   [(symbol "y") (symbol "z")]]]]
+                [(symbol "%backquote")
+                 [[(symbol "%comma") (symbol "b")]]]]
+               (read stream)))
+
+
+(bind ((stream (make <string-stream> string: "(a (1)))")))
+  (check-condition "too many closing" <string> (method () (read stream))))
+
+(bind ((stream (make <string-stream> string: "(a (1")))
+  (check-condition "missing closing" <string> (method () (read stream))))
+

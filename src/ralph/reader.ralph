@@ -1,15 +1,6 @@
 (define-module ralph/reader
-    import: (ralph/core ralph/stream ralph/format ralph/regexp)
+    import: (ralph/core ralph/stream ralph/regexp)
     export: (read))
-
-(define *whitespace-pattern*
-    (make <regexp> pattern: "[\t\n\r ]*"))
-
-(define *non-whitespace-pattern*
-    (make <regexp> pattern: "[^\\[\\]()\n\r\t ]+"))
-
-(define *line-pattern*
-    (make <regexp> pattern: "(.*)[\n\r]"))
 
 (define *number-patterns*
     (map (curry make <regexp> ignore-case?: #t pattern:)
@@ -17,134 +8,84 @@
           "^[+-]?0[0-7]+"
           "^[+-]?\\d+\\.?\\d*(?:e-?\\d*(?:\\d\\.?|\\.?\\d)\\d*)?"]))
 
-(define-function match-stream ((regexp <regexp>) (stream <stream>))
-  (if-bind (result (match regexp (remaining-contents stream)))
-    (begin
-     (advance stream count: (size (first result)))
-     result)))
-
-(define-function read-string ((stream <stream>))
-  (read-char stream)
-  (bind ((result (make <string-stream>))
-         (char (read-char stream)))
-    (while (not (== char "\""))
-      (write result
-             (select char =
-               (("\\")
-                (write result "\\")
-                (read-char stream))
-               (("\n")
-                "\\n\\\n")
-               (else:
-                char)))
-      (set! char (read-char stream)))
-    (make-string (contents result))))
-
-(define-function read-symbol ((stream <stream>))
-  (bind ((value (first (match-stream *non-whitespace-pattern* stream))))
-    (select value =
-      (("#t") (make-boolean #t))
-      (("#f") (make-boolean #f))
-      (("#key") #key)
-      (("#rest") #rest)
-      (else:
+(define-function make-atom (value)
+  (select value ==
+    (("#t") (make-boolean #t))
+    (("#f") (make-boolean #f))
+    (("#key") #key)
+    (("#rest") #rest)
+    (else:
+     (if-bind (number (any? (rcurry match value)
+                            *number-patterns*))
+       (make-number (first number))
        (if (== (last value) ":")
            (keyword (but-last value))
            (symbol value))))))
 
-(define-function read-line-aux (stream pattern)
-  (if-bind (result (match-stream pattern stream))
-    (bind ((string (first result)))
-     (for-each ((char string))
-               ()
-       (when (== char "\n")
-         (inc! (get stream "line"))))
-     (if-bind (line-offset (last-position string "\n"))
-       (set! (get stream "line-index")
-             (- (get stream "index")
-                (- (size string) line-offset 1))))
-     result)))
-
-(define-function read-line ((stream <stream>))
-  (read-line-aux stream *line-pattern*))
-
-(define-function read-whitespace ((stream <stream>))
-  (read-line-aux stream *whitespace-pattern*))
-
-(define-function read-list ((stream <stream>) end)
-  (bind ((result []))
-    ;; read opening paren
-    (read-char stream)
-    (bind ((parens (set! (get stream "parens")
-                         (or (get stream "parens") []))))
-      ;; save position in stream's parens stack
-      (destructuring-bind (_ line column)
-          (index/line/column stream)
-        (push-last parens [line column]))
-      (read-whitespace stream)
-      (until (or (== (peek-char stream) end)
-                 (at-end? stream))
-        (if (== (peek-char stream) ";")
-            (read-line stream)
-            (push-last result (read stream)))
-        (read-whitespace stream))
-      ;; read closing paren
-      (read-char stream)
-      (bind ((position (pop-last parens)))
-        ;; check if parens match
-        (when (and (empty? (get stream "parens"))
-                   (not (at-end? stream)))
-          (destructuring-bind (_ line column)
-              (index/line/column stream)
-            (signal (make <error> message:
-                          (format-to-string "Too many closing parens at %d:%d"
-                                            line column)))))
-        (when (and (at-end? stream)
-                   (not (empty? (get stream "parens"))))
-          (destructuring-bind (line column) position
-            (signal (make <error> message:
-                          (format-to-string "Missing closing paren for %d:%d"
-                                            line column))))))
-      result)))
-
-(define-function index/line/column ((stream <stream>))
-  (bind-properties (index line line-index) stream
-    [index line (if line-index
-                    (- index line-index)
-                    index)]))
+(define *whitespace* ["\n" "\r" " " "\t"])
+(define *atom-end* (concatenate *whitespace*
+                                ["(" ")" "[" "]" "\"" ";" "`" ","]))
+(define *wrapper-symbols* `(%backquote %comma))
 
 (define-function read ((stream <stream>))
-  (read-whitespace stream)
-  (unless (at-end? stream)
-    (bind ((start (index/line/column stream))
-           (result (select (peek-char stream) ==
-                     ((";")
-                      (read-line stream)
-                      (set! start (index/line/column stream))
-                      (read stream))
-                     (("\"")
-                      (read-string stream))
-                     (("(")
-                      (read-list stream ")"))
-                     (("[")
-                      (concatenate `(js:array)
-                                   (read-list stream "]")))
-                     (("`")
-                      (read-char stream)
-                      `(%backquote ,(read stream)))
-                     ((",")
-                      (read-char stream)
-                      [(symbol "%comma")
-                       (read stream)])
-                     (else:
-                      (if-bind (number (any? (rcurry match-stream stream)
-                                             *number-patterns*))
-                        (make-number (first number))
-                        (read-symbol stream)))))
-           (end (index/line/column stream)))
-      (for-each ((property ["start-index" "start-line" "start-column"
-                            "end-index" "end-line" "end-column" "source"])
-                 (value (concatenate start end [(get stream "string")])))
-                ()
-        (set! (get result property) value))
-      result)))
+  (bind ((stack [[]])
+         (atom #f)
+         (ends []))
+    (bind-methods ((add-to-stack! (value)
+                     (push-last (last stack)
+                                value)
+                     (when (member? (first (last stack stack))
+                                    *wrapper-symbols*)
+                       (add-last!)))
+                   (add-last! ()
+                     (bind ((value (pop-last stack)))
+                       (add-to-stack! value)))
+                   (add-atom! ()
+                     (add-to-stack! (make-atom atom))))
+      (while (not (stream-at-end? stream))
+        (bind ((char (stream-read-element stream)))
+          (if atom
+              (if (member? char *atom-end*)
+                  (begin
+                   (add-atom!)
+                   (stream-unread-element stream)
+                   (set! atom #f))
+                  (set! atom (concatenate atom char)))
+              (select (last stack) instance?
+                ((<array>)
+                 (select char ==
+                   ((";")
+                    (stream-read-through stream "\n"))
+                   (("`")
+                    (push-last stack [(symbol "%backquote")]))
+                   ((",")
+                    (push-last stack [(symbol "%comma")]))
+                   (("(")
+                    (push-last ends ")")
+                    (push-last stack []))
+                   (("[")
+                    (push-last ends "]")
+                    (push-last stack `(js:array)))
+                   (((last ends))
+                    (pop-last ends)
+                    (add-last!))
+                   ((")" "]") (signal (format-to-string "too many closings: %=" char)))
+                   (("\"") (push-last stack ""))
+                   (else:
+                    (unless (member? char *whitespace*)
+                      (set! atom char)))))
+                ((<string>)
+                 (if (== char "\"")
+                     (add-last!)
+                     (begin
+                      (when (== char "\\")
+                        (stream-read-element stream))
+                      (set! (last stack)
+                            (concatenate (last stack)
+                                         char)))))))))
+      (if (empty? ends)
+          (begin
+           (when atom
+             (add-atom!))
+           (last stack))
+          (signal (format-to-string "missing closings: %=" ends))))))

@@ -11,8 +11,11 @@
            stream-read
            stream-read-element
            stream-read-to-end
+           stream-read-through
+           stream-unread-element
            stream-write
-           stream-contents))
+           stream-contents
+           stream-remaining-contents))
 
 ;;;; <stream>
 
@@ -32,9 +35,15 @@
 
 (define-generic stream-read-to-end ((stream <stream>)))
 
+(define-generic stream-read-through ((stream <stream>) (element <string>)))
+
+(define-generic stream-unread-element ((stream <stream>)))
+
 (define-generic stream-write ((stream <stream>) (string <string>)))
 
 (define-generic stream-contents ((stream <stream>)))
+
+(define-generic stream-remaining-contents ((stream <stream>)))
 
 
 ;;;; <string-stream>
@@ -63,6 +72,19 @@
       (inc! (get stream "index"))
       element)))
 
+(define-method stream-read-through ((stream <string-stream>) (element <string>))
+  (bind ((found? #f))
+    (while (not (or (stream-at-end? stream)
+                    found?))
+      (set! found?
+            (== (stream-read-element stream)
+                element)))))
+
+(define-method stream-unread-element ((stream <string-stream>))
+  (set! (get stream "index")
+        (max 0 (dec (get stream "index")))))
+
+
 (define-method stream-write ((stream <string-stream>) (string <string>))
   (bind-properties (index) stream
     (bind ((length (size string))
@@ -78,6 +100,11 @@
 
 (define-method stream-contents ((stream <string-stream>))
   (get stream "string"))
+
+(define-method stream-remaining-contents ((stream <string-stream>))
+  (slice (get stream "string")
+         (get stream "index")))
+
 
 ;;;; <file-stream>
 

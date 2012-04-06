@@ -1,4 +1,4 @@
-(define-module runtime-tests
+(define-module tests/runtime-tests
   import: (ralph/core ralph/test ralph/format
            ralph/stream ralph/watch))
 
@@ -506,7 +506,19 @@
               (stream-at-end? stream))
   (stream-write stream "BAR")
   (check-equal "<string-stream>: another write, check contents"
-               "FOOBAR" (stream-contents stream)))
+               "FOOBAR" (stream-contents stream))
+  (stream-unread-element stream)
+  (check-equal "<string-stream>: stream-unread-element"
+               "R" (stream-read-element stream))
+  (stream-unread-element stream)
+  (stream-unread-element stream)
+  (check-equal "<string-stream>: stream-remaining-contents"
+               "AR" (stream-remaining-contents stream))
+  (stream-unread-element stream)
+  (stream-read-through stream "A")
+  (check-equal "<string-stream>: stream-read-through"
+               "R" (stream-read-element stream)))
+
 
 ;; format
 (check-equal "format-to-string: numbers and escaping"
