@@ -72,6 +72,18 @@
       (inc! (get stream "index"))
       element)))
 
+(define-method stream-read ((stream <string-stream>) (n <number>))
+  (bind ((result ""))
+    (for ((i 0 (inc i)))
+         ((or (stream-at-end? stream)
+              (>= i n))
+          result)
+      (set! result
+            (concatenate result
+                         (stream-read-element stream))))))
+
+
+
 (define-method stream-read-through ((stream <string-stream>) (element <string>))
   (bind ((found? #f))
     (while (not (or (stream-at-end? stream)
