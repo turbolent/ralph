@@ -82,8 +82,6 @@
             (concatenate result
                          (stream-read-element stream))))))
 
-
-
 (define-method stream-read-through ((stream <string-stream>) (element <string>))
   (bind ((found? #f))
     (while (not (or (stream-at-end? stream)
@@ -95,7 +93,6 @@
 (define-method stream-unread-element ((stream <string-stream>))
   (set! (get stream "index")
         (max 0 (dec (get stream "index")))))
-
 
 (define-method stream-write ((stream <string-stream>) (string <string>))
   (bind-properties (index) stream
@@ -125,6 +122,9 @@
 
 (define-method stream-write ((stream <file-stream>) (string <string>))
   ((js:get-property stream "file" "write") string))
+
+
+;;;;
 
 (define *standard-out*
   (if (== *environment* "browser")
