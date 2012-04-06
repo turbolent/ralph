@@ -1265,6 +1265,37 @@
     (write-form expanded statements?)))
 
 
+
+(define *escaped*
+  (make-object
+   "\"" "\""
+   "\\" "\\"
+   "\b" "b"
+   "\f" "f"
+   "\n" "n"
+   "\r" "r"
+   "\v" "v"
+   "\t" "t"))
+
+(define-function fill-zeros (string)
+  (concatenate
+   (slice "0000" 0 (- 4 (size string)))
+   string))
+
+(define-function hex (code)
+  (fill-zeros ((js:get-property code "toString") 16)))
+
+(define-function escape-string (string)
+  (join (map (method (char)
+               (if-bind (escaped (get *escaped* char))
+                 (concatenate "\\" escaped)
+                 (bind ((code (char-code char)))
+                   (if (< 0x1f code  0x7f)
+                       char
+                       (concatenate "\\u" (hex code))))))
+             (as-array string))
+        ""))
+
 (define-function macroexpand (environment form)
   (select form instance?
     ((<array>)
@@ -1359,7 +1390,7 @@
     ((<boolean>)
      (if form "true" "false"))
     ((<string>)
-     (concatenate "\"" form "\""))
+     (concatenate "\"" (escape-string form) "\""))
     ((<number>)
      (as-string form))
     (else:
