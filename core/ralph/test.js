@@ -9,10 +9,10 @@ MODULE[_0] = _1[_0]
 }
 };
 reportSuccess = _PE_makeFunction("reportSuccess", function __method__ (description, explanation) {
-return formatOut((true_W_((ENVIRONMENT === "browser")) ? " <span style=\"color:green\">✓</span> %s: %s<br/>" : " \033[32m✓\033[0m %s: %s\n"), description, explanation)
+return formatOut((true_W_((ENVIRONMENT === "browser")) ? " <span style=\"color:green\">\u2713</span> %s: %s<br/>" : " \u001b[32m\u2713\u001b[0m %s: %s\n"), description, explanation)
 }, ((typeof (reportSuccess) !== 'undefined') && reportSuccess), false, "(report-success <string> <string>)");
 reportFailure = _PE_makeFunction("reportFailure", function __method__ (description, explanation) {
-return formatOut((true_W_((ENVIRONMENT === "browser")) ? " <span style=\"color:red\">✘</span> %s: %s<br/>" : " \033[31m✘\033[0m %s: %s\n"), description, explanation)
+return formatOut((true_W_((ENVIRONMENT === "browser")) ? " <span style=\"color:red\">\u2718</span> %s: %s<br/>" : " \u001b[31m\u2718\u001b[0m %s: %s\n"), description, explanation)
 }, ((typeof (reportFailure) !== 'undefined') && reportFailure), false, "(report-failure <string> <string>)");
 checkEqual = exports.checkEqual = _PE_makeFunction("checkEqual", function __method__ (description, expectedValue, testValue) {
 return (true_W_(binary_E_(expectedValue, testValue)) ? reportSuccess(description, formatToString("Values are equal: %=, %=", expectedValue, testValue)) : reportFailure(description, formatToString("Values should be equal: %=, %=", expectedValue, testValue)))

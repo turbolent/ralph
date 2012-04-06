@@ -21,7 +21,7 @@ var args = [].slice.call(arguments, 1);
 return (function _8__lambda (stream) {
 stream = make(_CL_stringStream);
 apply(format, stream, controlString, args);
-return contents(stream)
+return streamContents(stream)
 })()
 }, ((typeof (formatToString) !== 'undefined') && formatToString), false, "(format-to-string <string> #rest args)");
 format = exports.format = _PE_makeFunction("format", function __method__ (stream, controlString) {
@@ -39,14 +39,14 @@ return (function _12__lambda () {
 while (!true_W_(empty_W_(controlString))) {
 (function _13__lambda (nextDispatch) {
 nextDispatch = position(controlString, "%");
-return (true_W_(binary_GT_(nextDispatch, 0)) ? (write(stream, controlString.slice(0, nextDispatch)), controlString = controlString.slice(nextDispatch)) : (true_W_(nextDispatch) ? (function _14__lambda (arg, _char, percent) {
+return (true_W_(binary_GT_(nextDispatch, 0)) ? (streamWrite(stream, controlString.slice(0, nextDispatch)), controlString = controlString.slice(nextDispatch)) : (true_W_(nextDispatch) ? (function _14__lambda (arg, _char, percent) {
 arg = (_5 = args, _6 = index, (_5 && _5.hasOwnProperty(_6) && _5[_6]));
 _char = controlString[1];
 percent = (_char === "%");
-write(stream, (true_W_(percent) ? "%" : dispatch(_char, arg)));
+streamWrite(stream, (true_W_(percent) ? "%" : dispatch(_char, arg)));
 controlString = controlString.slice(2);
 return (!true_W_(percent) ? (index += 1) : false)
-})() : (write(stream, controlString), controlString = "")))
+})() : (streamWrite(stream, controlString), controlString = "")))
 })()
 };
 return false

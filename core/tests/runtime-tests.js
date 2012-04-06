@@ -141,26 +141,26 @@ return ((true_W_(a)) ? b : false)
 })(true, true));
 checkEqual("for: increment until i = 0 > 10", 11, (function _55__lambda (i) {
 i = 0;
-(function _56__lambda () {
 while (!true_W_(binary_GT_(i, 10))) {
+(function _56__lambda (i) {
+return false
+})(i);
 i = (i + 1)
 };
-return false
-})();
 return i
 })());
 checkEqual("for: 10!", 3628800, (function _57__lambda (i, v) {
 i = 10;
 v = 1;
-(function _58__lambda () {
 while (!true_W_(binary_LT__E_(i, 0))) {
+(function _58__lambda (i, v) {
+return false
+})(i, v);
 var _14 = (i - 1);
 var _15 = (v * i);
 i = _14;
 v = _15
 };
-return false
-})();
 return v
 })());
 checkEqual("element: 1st element is 1", 1, element([1, 2, 3], 0));
@@ -217,18 +217,17 @@ elements = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
 fns = [];
 (function _63__lambda (i) {
 i = 0;
-(function _64__lambda () {
 while (!true_W_(binary_GT__E_(i, (_4 = elements, ((true_W_(_4) && _4.length) || 0))))) {
-(function _65__lambda (el) {
+(function _64__lambda (i) {
+return (function _65__lambda (el) {
 el = element(elements, i);
 return (fns.push(function _66__lambda () {
 return el
 }), fns)
-})();
+})()
+})(i);
 i = (i + 1)
 };
-return false
-})();
 return false
 })();
 return checkEqual("scope: bind in for loop builds closures", 2, element(fns, 2)())
@@ -238,17 +237,15 @@ numbers = make(_CL_array);
 return (function _68__lambda (i, _16) {
 i = 0;
 _16 = (10 - (_4 = numbers, ((true_W_(_4) && _4.length) || 0)));
-(function _69__lambda () {
 while (!true_W_((i >= _16))) {
-numbers.push(i);
-numbers;
+(function _69__lambda (i, _16) {
+return (numbers.push(i), numbers)
+})(i, _16);
 var _17 = (i + 1);
 var _18 = _16;
 i = _17;
 _16 = _18
 };
-return false
-})();
 return numbers
 })()
 })()));
@@ -378,25 +375,33 @@ return checkEqual("inc!: 0 -> 1", 1, (_4 = x, _26 = "y", (_4 && _4.hasOwnPropert
 checkEqual("position: find 2 in (1 2 3)", 1, position([1, 2, 3], 2));
 (function _91__lambda (stream) {
 stream = make(_CL_stringStream, _k('string'), "test");
-checkFalse("<string-stream>: not at end when starting", atEnd_W_(stream));
-checkTrue("<string-stream>: peeking doesn't advance the stream", ((true_W_(("t" === peekChar(stream)))) ? ("t" === peekChar(stream)) : false));
-checkTrue("<string-stream>: reading advances the stream", ((true_W_(("t" === readChar(stream)))) ? ("e" === readChar(stream)) : false));
-readChar(stream);
-readChar(stream);
-return checkTrue("<string-stream>: at end when done", atEnd_W_(stream))
+checkFalse("<string-stream>: not at end when starting", streamAtEnd_W_(stream));
+checkTrue("<string-stream>: peeking doesn't advance the stream", ((true_W_(("t" === streamPeek(stream)))) ? ("t" === streamPeek(stream)) : false));
+checkTrue("<string-stream>: reading advances the stream", ((true_W_(("t" === streamReadElement(stream)))) ? ("e" === streamReadElement(stream)) : false));
+streamReadElement(stream);
+streamReadElement(stream);
+return checkTrue("<string-stream>: at end when done", streamAtEnd_W_(stream))
 })();
 (function _92__lambda (stream) {
 stream = make(_CL_stringStream);
-checkEqual("<string-stream>: empty contents when starting", "", contents(stream));
-write(stream, "FOO");
-checkEqual("<string-stream>: simple write", "FOO", contents(stream));
-checkTrue("<string-stream>: writing advances, always at end", atEnd_W_(stream));
-write(stream, "BAR");
-return checkEqual("<string-stream>: another write, check contents", "FOOBAR", contents(stream))
+checkEqual("<string-stream>: empty contents when starting", "", streamContents(stream));
+streamWrite(stream, "FOO");
+checkEqual("<string-stream>: simple write", "FOO", streamContents(stream));
+checkTrue("<string-stream>: writing advances, always at end", streamAtEnd_W_(stream));
+streamWrite(stream, "BAR");
+checkEqual("<string-stream>: another write, check contents", "FOOBAR", streamContents(stream));
+streamUnreadElement(stream);
+checkEqual("<string-stream>: stream-unread-element", "R", streamReadElement(stream));
+streamUnreadElement(stream);
+streamUnreadElement(stream);
+checkEqual("<string-stream>: stream-remaining-contents", "AR", streamRemainingContents(stream));
+streamUnreadElement(stream);
+streamReadThrough(stream, "A");
+return checkEqual("<string-stream>: stream-read-through", "R", streamReadElement(stream))
 })();
 checkEqual("format-to-string: numbers and escaping", "1%2", formatToString("%d%%%d", 1, 2));
 checkEqual("format-to-string: method", "x%test%x", formatToString("x%mx", function _93__lambda (stream) {
-return write(stream, "%test%")
+return streamWrite(stream, "%test%")
 }));
 checkEqual("format-to-string: description of <string>", "\"TEST\"", formatToString("%=", "TEST"));
 foo = _PE_makeGeneric("foo", "(foo <object>)");
@@ -687,5 +692,6 @@ x = [[_k('a'), 3], [_k('b'), 1], [_k('c'), 4], [_k('d'), 2]];
 checkEqual("sort: key", [[_k('b'), 1], [_k('d'), 2], [_k('a'), 3], [_k('c'), 4]], sort(x, _k('key'), second));
 return checkEqual("sort: key and test", [[_k('c'), 4], [_k('a'), 3], [_k('d'), 2], [_k('b'), 1]], sort(x, _k('test'), _GT_, _k('key'), second))
 })();
-checkEqual("group-by", ["1", ["a"], "2", ["as", "aa"], "3", ["asd"]], asPropertyList(groupBy(size, ["a", "as", "asd", "aa"])))
+checkEqual("group-by", ["1", ["a"], "2", ["as", "aa"], "3", ["asd"]], asPropertyList(groupBy(size, ["a", "as", "asd", "aa"])));
+checkEqual("compose", 3, compose(size, rest)([1, 2, 3, 4]))
 })()

@@ -865,7 +865,7 @@ var specialForms = {
     'js:function': 2,
     'js:escape': false,
     'js:inline': false,
-    'js:get-property': false,
+    'js:get-property': 0,
     'js:for': function (clauses) {
         var body = arguments.toArray().slice(1);
         return [S('js:for'),

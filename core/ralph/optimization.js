@@ -20,16 +20,15 @@ result = java.lang.reflect.Array.newInstance(type, (_4 = _array, ((true_W_(_4) &
 (function _17__lambda (i, _5) {
 i = 0;
 _5 = (_4 = _array, ((true_W_(_4) && _4.length) || 0));
-(function _18__lambda () {
 while (!true_W_((i >= _5))) {
-result[i] = (_4 = _array, _6 = i, (_4 && _4.hasOwnProperty(_6) && _4[_6]));
+(function _18__lambda (i, _5) {
+return result[i] = (_4 = _array, _6 = i, (_4 && _4.hasOwnProperty(_6) && _4[_6]))
+})(i, _5);
 var _7 = (i + 1);
 var _8 = _5;
 i = _7;
 _5 = _8
 };
-return false
-})();
 return false
 })();
 return result
