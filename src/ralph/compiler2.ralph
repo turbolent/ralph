@@ -1,0 +1,106 @@
+(define-module ralph/compiler2
+  import: (ralph/core ralph/format ralph/regexp ralph/reader)
+  export: (<environment> macroexpand-1
+                         macroexpand
+                         macroexpand-all))
+
+;;;; utilities
+
+(define-function expression? (form)
+  (and (instance? form <array>)
+       (not (empty? form))
+       (instance? (first form) <symbol>)))
+
+;;;; special forms
+
+(define *special-forms*
+  (make-object))
+
+(define-function special-form-definition (form env)
+  (get *special-forms* (symbol-name (first form))))
+
+(define-macro define-special-form (name #rest definition)
+  `(set! (get *special-forms* ,(symbol-name name))
+         ,(concatenate `(method)
+                       definition)))
+
+(define-special-form
+  %method (env name arguments #rest body)
+  (concatenate `(%method ,name ,arguments)
+               (map (rcurry macroexpand-all env) body)))
+
+(define-special-form
+  %set (env name value)
+  `(%set ,name ,(macroexpand-all value env)))
+
+
+;;;; macros
+
+(define *default-macros*
+  (make-object))
+
+(define-macro define-default-macro (name #rest definition)
+  `(set! (get *default-macros* ,(symbol-name name))
+         ,(concatenate `(method)
+                       definition)))
+
+(define-default-macro
+  begin (_ #rest expressions)
+  (if (> (size expressions) 1)
+      (concatenate `(%begin)
+                   expressions)
+      (first expressions)))
+
+(define-default-macro
+  bind (_ bindings #rest body)
+  (if (empty? bindings)
+      (concatenate `(begin) body)
+      (bind ((binding (first bindings)))
+        (destructuring-bind (var value) binding
+          `((%method #f (,var)
+              ,(concatenate `(bind ,(rest bindings))
+                            body))
+            ,value)))))
+
+(define-default-macro cond (_ #rest cases)
+  (unless (empty? cases)
+    (destructuring-bind (test #rest then) (first cases)
+      (bind ((then (concatenate `(begin) then)))
+        (if (== test else:)
+            then
+            `(if ,test
+                 ,then
+                 ,(concatenate `(cond)
+                               (rest cases))))))))
+
+;;;; macro expansion
+
+(define-class <environment> (<object>)
+  (macros *default-macros*))
+
+(define-function macro-definition (form env)
+  (get env "macros" (symbol-name (first form))))
+
+(define-function macroexpand-1 (form env)
+  (if-bind (macro (and (expression? form)
+                       (macro-definition form env)))
+    (apply macro env (rest form))
+    form))
+
+(define-function macroexpand (form env)
+  (bind ((expanded (macroexpand-1 form env)))
+    (if (== expanded form)
+        form
+        (macroexpand expanded env))))
+
+(define-function macroexpand-all (form env)
+  (select form instance?
+    ((<array>)
+     (if (macro-definition form env)
+         (macroexpand-all (macroexpand form env) env)
+         (if-bind (expander (special-form-definition form env))
+           (apply expander env (rest form))
+           (map (rcurry macroexpand-all env)
+                form))))
+    ;; TODO: symbol macro ((<symbol>) )
+    (else: form)))
