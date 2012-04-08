@@ -260,7 +260,8 @@
                                          (prepend-return body))))
             (bind ((arguments (map (method (binding)
                                      (destructuring-bind (var value) binding
-                                       (when (uses? value var)
+                                       (when (any? (rcurry uses? var)
+                                                   (map second bindings))
                                          `(js:and (js:defined ,var) ,var))))
                                    bindings)))
               (if (every? not arguments)
