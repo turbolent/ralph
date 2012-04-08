@@ -9,7 +9,7 @@
           "^[+-]?\\d+\\.?\\d*(?:e-?\\d*(?:\\d\\.?|\\.?\\d)\\d*)?"]))
 
 (define *line-pattern*
-    (make <regexp> pattern: "(.*)[\n\r]"))
+    (make <regexp> pattern: "(.*)[\n\r]?"))
 
 (define *whitespace-subpattern*
   ;; Vertical Tab, Form Feed, No-break space, Byte Order Mark
