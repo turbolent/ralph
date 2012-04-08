@@ -856,25 +856,12 @@
 
 (define *special-forms*
     (make-object
-     "make-object" 0
-     "js:array" 0
-     "js:defined" 0
-     "js:delete" 0
-     "js:negative" 0
-     "js:not" 0
-     "begin" 0
-     "js:if" 0
-     "js:throw" 0
-     "js:return" 0
-     "js:while" 0
      "js:new" 1
      "js:var" 1
-     "js:set" 0
      "js:for-in" 1
      "js:function" 2
      "js:escape" #f
      "js:inline" #f
-     "js:get-property" 0
      "js:for"
      (method (environment clauses #rest body)
        (concatenate
@@ -985,7 +972,7 @@
   ;;                  replacement
   ;;                  char))
   ;;              (as-array replaced))
-  ;;         ""))
+  ;;         "")
   (if (= name "-")
       (get *symbol-escapes* name)
       (bind ((upcase? #f)
