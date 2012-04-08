@@ -194,6 +194,9 @@
                      (format-to-string "comma not inside backquote: %d:%d"
                                        (get value "start-line")
                                        (get value "start-column")))))
+     "%array"
+     (method (_ #rest values)
+       (concatenate `(js:array) values))
      "%parallel-set"
      (method (_ #rest clauses)
        (bind ((temp-clauses [])

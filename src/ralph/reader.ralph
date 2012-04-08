@@ -106,7 +106,7 @@
              (push-last stack []))
             (("[")
              (push-last ends "]")
-             (push-last stack `(js:array)))
+             (push-last stack `(%array)))
             (((last ends))
              (pop-last ends)
              (add-last!))
