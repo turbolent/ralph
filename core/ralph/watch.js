@@ -29,7 +29,7 @@ return currentValue
 return (true_W_((delete (_object[property]))) ? (true_W_(Object.defineProperty) ? Object.defineProperty(_object, property, {"get":getter,
 "set":setter}) : (true_W_(((true_W_(Object.prototype.__defineGetter__)) ? js_C_idenfifier("Object.prototype.__defineSetter__") : false)) ? (_object.__defineGetter__(property, getter), _object.__defineSetter__(property, setter)) : false)) : false)
 })(((typeof (getter) !== 'undefined') && getter), ((typeof (setter) !== 'undefined') && setter))
-})()
+})(((typeof (oldValue) !== 'undefined') && oldValue), false)
 };
 return _object
 }, ((typeof (watch) !== 'undefined') && watch), false, "(watch <object> <object> <object>)");

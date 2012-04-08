@@ -87,7 +87,7 @@ end = (index + length);
 stream.string = replaceSubsequence((_4 = stream, _5 = "string", (_4 && _4.hasOwnProperty(_5) && _4[_5])), _string, _k('start'), index, _k('end'), end);
 stream.length = max(end, (_4 = stream, _5 = "length", (_4 && _4.hasOwnProperty(_5) && _4[_5])));
 return (stream.index += length)
-})()
+})(((typeof (length) !== 'undefined') && length), false)
 })(stream);
 return _string
 }, _CL_stringStream, ((typeof (streamWrite) !== 'undefined') && streamWrite), false, "(stream-write <string-stream> <string>)");

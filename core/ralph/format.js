@@ -46,7 +46,7 @@ percent = (_char === "%");
 streamWrite(stream, (true_W_(percent) ? "%" : dispatch(_char, arg)));
 controlString = controlString.slice(2);
 return (!true_W_(percent) ? (index += 1) : false)
-})() : (streamWrite(stream, controlString), controlString = "")))
+})(false, ((typeof (_char) !== 'undefined') && _char), false) : (streamWrite(stream, controlString), controlString = "")))
 })()
 };
 return false

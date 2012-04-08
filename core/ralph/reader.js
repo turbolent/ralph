@@ -10,7 +10,7 @@ MODULE[_0] = _1[_0]
 }
 };
 NUMBERPATTERNS = map(curry(make, _CL_regexp, _k('ignore-case?'), true, _k('pattern')), ["^[+-]?0x[0-9a-f]+", "^[+-]?0[0-7]+", "^[+-]?\\d+\\.?\\d*(?:e-?\\d*(?:\\d\\.?|\\.?\\d)\\d*)?"]);
-LINEPATTERN = make(_CL_regexp, _k('pattern'), "(.*)[\n\r]");
+LINEPATTERN = make(_CL_regexp, _k('pattern'), "(.*)[\n\r]?");
 WHITESPACESUBPATTERN = "\t\n\r\v\f\u00a0\ufeff ";
 WHITESPACEPATTERN = make(_CL_regexp, _k('pattern'), ("[" + WHITESPACESUBPATTERN + "]*"));
 ATOMPATTERN = make(_CL_regexp, _k('pattern'), ("[^\\[\\]();`," + WHITESPACESUBPATTERN + "]+"));
@@ -102,7 +102,7 @@ _char = streamReadElement(stream);
 return (function _33__lambda () {
 var _16 = _char;
 var _17 = _E__E_;
-return (true_W_((_5 = _17(_16, ";"), (true_W_(_5) ? _5 : false))) ? readLine(stream) : (true_W_((_5 = _17(_16, "`"), (true_W_(_5) ? _5 : false))) ? (stack.push([symbol("%backquote")]), stack) : (true_W_((_5 = _17(_16, ","), (true_W_(_5) ? _5 : false))) ? (stack.push([symbol("%comma")]), stack) : (true_W_((_5 = _17(_16, "("), (true_W_(_5) ? _5 : false))) ? ((ends.push(")"), ends), (stack.push([]), stack)) : (true_W_((_5 = _17(_16, "["), (true_W_(_5) ? _5 : false))) ? ((ends.push("]"), ends), (stack.push([symbol("js:array")]), stack)) : (true_W_((_5 = _17(_16, last(ends)), (true_W_(_5) ? _5 : false))) ? (ends.pop(), addLast_B_()) : (true_W_((_5 = _17(_16, ")"), (true_W_(_5) ? _5 : (_5 = _17(_16, "]"), (true_W_(_5) ? _5 : false))))) ? signal(formatToString("too many closings: %=", _char)) : (true_W_((_5 = _17(_16, "\""), (true_W_(_5) ? _5 : false))) ? addToStack_B_(readString(stream)) : (streamUnreadElement(stream), addToStack_B_(makeAtom(matchStream(ATOMPATTERN, stream)[0])))))))))))
+return (true_W_((_5 = _17(_16, ";"), (true_W_(_5) ? _5 : false))) ? readLine(stream) : (true_W_((_5 = _17(_16, "`"), (true_W_(_5) ? _5 : false))) ? (stack.push([symbol("%backquote")]), stack) : (true_W_((_5 = _17(_16, ","), (true_W_(_5) ? _5 : false))) ? (stack.push([symbol("%comma")]), stack) : (true_W_((_5 = _17(_16, "("), (true_W_(_5) ? _5 : false))) ? ((ends.push(")"), ends), (stack.push([]), stack)) : (true_W_((_5 = _17(_16, "["), (true_W_(_5) ? _5 : false))) ? ((ends.push("]"), ends), (stack.push([symbol("%array")]), stack)) : (true_W_((_5 = _17(_16, last(ends)), (true_W_(_5) ? _5 : false))) ? (ends.pop(), addLast_B_()) : (true_W_((_5 = _17(_16, ")"), (true_W_(_5) ? _5 : (_5 = _17(_16, "]"), (true_W_(_5) ? _5 : false))))) ? signal(formatToString("too many closings: %=", _char)) : (true_W_((_5 = _17(_16, "\""), (true_W_(_5) ? _5 : false))) ? addToStack_B_(readString(stream)) : (streamUnreadElement(stream), addToStack_B_(makeAtom(matchStream(ATOMPATTERN, stream)[0])))))))))))
 })()
 })();
 readWhitespace(stream)

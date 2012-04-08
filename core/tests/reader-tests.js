@@ -10,7 +10,7 @@ MODULE[_0] = _1[_0]
 };
 (function _4__lambda (stream) {
 stream = make(_CL_stringStream, _k('string'), "((a (key: (b #t [1 2] \"c\" #f d #key) 2)) () #rest)");
-return checkEqual("expressions", [[symbol("a"), [_k('key'), [symbol("b"), true, [symbol("js:array"), 1, 2], "c", false, symbol("d"), _key], 2]], [], _rest], read(stream))
+return checkEqual("expressions", [[symbol("a"), [_k('key'), [symbol("b"), true, [symbol("%array"), 1, 2], "c", false, symbol("d"), _key], 2]], [], _rest], read(stream))
 })();
 (function _5__lambda (stream) {
 stream = make(_CL_stringStream, _k('string'), "(((a 1)))");

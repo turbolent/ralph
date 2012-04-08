@@ -33,7 +33,7 @@ return date[_function](value)
 })(setter)
 }
 })()
-})()
+})(((typeof (_5) !== 'undefined') && _5), false)
 })()
 }, _CL_date, ((typeof (initialize) !== 'undefined') && initialize), false, "(initialize <date> #rest rest)");
 localeTimeString = _PE_makeFunction("localeTimeString", function __method__ (date) {

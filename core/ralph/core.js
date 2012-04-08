@@ -38,7 +38,7 @@ _function["%setter?"] = setter_W_;
 _function["%type"] = type;
 prototype[name] = _function;
 return (generic_W_ ? existing : _PE_makeGeneric(name, displayName))
-})()
+})(((typeof (prototype) !== 'undefined') && prototype), false, false)
 }, ((typeof (_PE_makeMethod) !== 'undefined') && _PE_makeMethod), false, "(%make-method <object> <object> <object> <object> <object> <object>)");
 _PE_makeGeneric = exports._PE_makeGeneric = _PE_makeFunction("_PE_makeGeneric", function __method__ (functionName, displayName) {
 function dispatcher (_object) {
@@ -844,7 +844,7 @@ object1[key] = (_4 = object2, _5 = key, (_4 && _4.hasOwnProperty(_5) && _4[_5]))
 })(key)
 }
 })()
-})();
+})(((typeof (_77) !== 'undefined') && _77), false);
 return object1
 }, ((typeof (extend_B_) !== 'undefined') && extend_B_), false, "(extend! <object> <object>)");
 asPropertyList = exports.asPropertyList = _PE_makeFunction("asPropertyList", function __method__ (_object) {
@@ -875,7 +875,7 @@ result
 })(key)
 }
 })()
-})();
+})(((typeof (_85) !== 'undefined') && _85), false);
 return result
 }, ((typeof (asPropertyList) !== 'undefined') && asPropertyList), false, "(as-property-list <object> #key keywords?)");
 asAssociationList = exports.asAssociationList = _PE_makeFunction("asAssociationList", function __method__ (_object) {
@@ -904,7 +904,7 @@ result
 })(key)
 }
 })()
-})();
+})(((typeof (_93) !== 'undefined') && _93), false);
 return result
 }, ((typeof (asAssociationList) !== 'undefined') && asAssociationList), false, "(as-association-list <object> #key keywords?)");
 startsWith_W_ = exports.startsWith_W_ = _PE_makeFunction("startsWith_W_", function __method__ (_string, prefix) {

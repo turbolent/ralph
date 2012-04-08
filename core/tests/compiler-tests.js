@@ -15,7 +15,7 @@ file = fs.open(path, {"read":true});
 result = file.read();
 file.close();
 return result
-})()
+})(((typeof (file) !== 'undefined') && file), false)
 }, ((typeof (readFile) !== 'undefined') && readFile), false, "(read-file <object>)");
 (function _5__lambda (source, stream, startTime, form, readTime, compiled, compileTime) {
 source = readFile("./tests/runtime-tests.ralph");
@@ -28,4 +28,4 @@ compileTime = new Date ();
 print(compiled);
 print("READ TIME:", (readTime - startTime));
 return print("COMPILE TIME:", (compileTime - readTime))
-})()
+})(((typeof (source) !== 'undefined') && source), ((typeof (stream) !== 'undefined') && stream), false, ((typeof (form) !== 'undefined') && form), false, false, false)
