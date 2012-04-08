@@ -101,6 +101,18 @@
                  (bind ((y (+ y 1)))
                    y)))
 
+(bind ((a 1)
+       (b 2)
+       (c 3))
+  (bind ((a a)
+         (b c)
+         (c a))
+    (check-equal "bind: a" a 1)
+    (check-equal "bind: b" b 3)
+    (check-equal "bind: c" c 1)))
+
+
+
 ;; %parallel-set
 (bind ((i 0)
        (v 0))
