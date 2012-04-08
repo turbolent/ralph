@@ -1,0 +1,94 @@
+(define-module tests/compiler2-tests
+  import: (ralph/core ralph/test
+           ralph/stream ralph/reader ralph/compiler2))
+
+(define *environment*
+  (make <environment>))
+
+(set! (get *environment* "macros" "alpha")
+      (method (_ x y)
+        `(beta ,x ,y)))
+
+(set! (get *environment* "macros" "beta")
+      (method (_ x y)
+        `(gamma ,x ,y)))
+
+
+(check-equal "macroexpand-1: alpha"
+             `(beta 1 2)
+             (macroexpand-1 `(alpha 1 2) *environment*))
+
+(check-equal "macroexpand: alpha"
+             `(gamma 1 2)
+             (macroexpand `(alpha 1 2) *environment*))
+
+
+(check-equal "macroexpand: bind"
+             `((%method #f (a)
+                 (bind ((b (+ a 1)))
+                   b))
+               1)
+              (macroexpand `(bind ((a 1)
+                                   (b (+ a 1)))
+                              b)
+                           *environment*))
+
+(check-equal "macroexpand: cond"
+             `(if (a)
+                  (begin 1 2)
+                  (cond
+                   (b 3)
+                   (else: 4 5)))
+              (macroexpand `(cond
+                             ((a) 1 2)
+                             (b 3)
+                             (else: 4 5))
+                           *environment*))
+
+(check-equal "macroexpand: prevent expansion of sepcial forms"
+             `((%method #f (cond)
+                 (bind () d))
+               ((a) b))
+             (macroexpand `(bind ((cond
+                                   ((a) b)
+                                   (else: c)))
+                             d)
+                          *environment*))
+
+(check-equal "macroexpand-all: bind b"
+             (symbol "b")
+             (macroexpand-all `(bind ()
+                                 b)
+                              *environment*))
+
+
+(check-equal "macroexpand-all: bind b"
+             `((%method #f (b)
+                b)
+               (+ a 1))
+              (macroexpand-all `(bind ((b (+ a 1)))
+                                  b)
+                               *environment*))
+
+(check-equal "macroexpand-all: bind a, b"
+             `((%method #f (a)
+                 ((%method #f (b)
+                   b)
+                  (+ a 1)))
+               1)
+              (macroexpand-all `(bind ((a 1)
+                                       (b (+ a 1)))
+                                  b)
+                               *environment*))
+
+(check-equal "macroexpand-all: cond"
+             `(if (a)
+                  (%begin 1 2)
+                  (if b
+                      3
+                      (%begin 4 5)))
+              (macroexpand-all `(cond
+                                 ((a) 1 2)
+                                 (b 3)
+                                 (else: 4 5))
+                               *environment*))
