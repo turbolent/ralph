@@ -24,7 +24,7 @@
 
 
 (check-equal "macroexpand: bind"
-             `((%method #f (a)
+             `((%method (a)
                  (bind ((b (+ a 1)))
                    b))
                1)
@@ -46,7 +46,7 @@
                            *environment*))
 
 (check-equal "macroexpand: prevent expansion of sepcial forms"
-             `((%method #f (cond)
+             `((%method (cond)
                  (bind () d))
                ((a) b))
              (macroexpand `(bind ((cond
@@ -63,23 +63,23 @@
 
 
 (check-equal "macroexpand-all: bind b"
-             `((%method #f (b)
-                b)
+             `((%method (b)
+                 b)
                (+ a 1))
-              (macroexpand-all `(bind ((b (+ a 1)))
-                                  b)
-                               *environment*))
+             (macroexpand-all `(bind ((b (+ a 1)))
+                                 b)
+                              *environment*))
 
 (check-equal "macroexpand-all: bind a, b"
-             `((%method #f (a)
-                 ((%method #f (b)
-                   b)
+             `((%method (a)
+                 ((%method (b)
+                    b)
                   (+ a 1)))
                1)
-              (macroexpand-all `(bind ((a 1)
-                                       (b (+ a 1)))
-                                  b)
-                               *environment*))
+             (macroexpand-all `(bind ((a 1)
+                                      (b (+ a 1)))
+                                 b)
+                              *environment*))
 
 (check-equal "macroexpand-all: cond"
              `(if (a)
@@ -87,8 +87,90 @@
                   (if b
                       3
                       (%begin 4 5)))
-              (macroexpand-all `(cond
-                                 ((a) 1 2)
-                                 (b 3)
-                                 (else: 4 5))
-                               *environment*))
+             (macroexpand-all `(cond
+                                ((a) 1 2)
+                                (b 3)
+                                (else: 4 5))
+                              *environment*))
+
+(check-equal "macroexpand-all: set!"
+             `(%set x 1)
+             (macroexpand-all `(set! x 1)
+                              *environment*))
+
+(check-equal "macroexpand-all: set!"
+             `(%%set-cond x 1)
+             (macroexpand-all `(set! (cond x) 1)
+                              *environment*))
+
+
+(check-equal "alpha-convert: single method"
+             `(%method (%_1) 1)
+             (alpha-convert `(%method (a) 1)
+                            (make-object)))
+
+(check-equal "alpha-convert: nested methods"
+             `((%method (%_2)
+                 ((%method (%_3)
+                    %_3)
+                  %_2))
+               1)
+             (alpha-convert `((%method (a)
+                                ((%method (a)
+                                   a)
+                                 a))
+                              1)
+                            (make-object)))
+
+(check-equal "beta-reduce: single argument: variable"
+             `(begin (+ y y))
+             (beta-reduce `((%method (x)
+                              (+ x y))
+                            y)
+                          (make-object)))
+
+(check-equal "beta-reduce: single argument: value"
+             `((%method (x)
+                 (+ x y))
+               1)
+             (beta-reduce `((%method (x)
+                              (+ x y))
+                            1)
+                          (make-object)))
+
+(check-equal "beta-reduce: single argument: expression"
+             `((%method (x)
+                 (+ x y))
+               (+ x 1))
+             (beta-reduce `((%method (x)
+                              (+ x y))
+                            (+ x 1))
+                          (make-object)))
+
+(bind ((a (make-object "a" 1))
+       (b (wrap-object a "b" 2))
+       (c (wrap-object b "c" 3)))
+  ((js:inline "console.error")
+   (js:get-property b "a")))
+
+(bind ((expanded
+        (macroexpand-all `(bind ((a 1)
+                                 (b 2))
+                            (+ a b))
+                         *environment*)))
+  ((js:inline "console.error") (description expanded))
+  ((js:inline "console.error")
+   (description (alpha-convert expanded (make-object))))
+  ((js:inline "console.error")
+   (description (beta-reduce (alpha-convert
+                              expanded
+                              (make-object))
+                             (make-object))))
+
+  )
+
+
+
+
+
+

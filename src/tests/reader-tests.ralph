@@ -4,7 +4,11 @@
 
 (bind ((stream (make <string-stream> string: "((a (key: (b #t [1 2] \"c\" #f d #key) 2)) () #rest)")))
   (check-equal "expressions"
-               [[(symbol "a") [key: [(symbol "b") #t [(symbol "js:array") 1 2] "c" #f (symbol "d") #key] 2]] [] #rest]
+               [[(symbol "a")
+                 [key: [(symbol "b") #t [(symbol "%array") 1 2]
+                        "c" #f (symbol "d") #key]
+                       2]]
+                [] #rest]
                (read stream)))
 
 (bind ((stream (make <string-stream> string: "(((a 1)))")))

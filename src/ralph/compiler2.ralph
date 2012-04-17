@@ -2,7 +2,10 @@
   import: (ralph/core ralph/format ralph/regexp ralph/reader)
   export: (<environment> macroexpand-1
                          macroexpand
-                         macroexpand-all))
+                         macroexpand-all
+                         alpha-convert
+                         beta-reduce
+                         reset-symbol-counter!))
 
 ;;;; utilities
 
@@ -10,6 +13,17 @@
   (and (instance? form <array>)
        (not (empty? form))
        (instance? (first form) <symbol>)))
+
+(define-function setter-symbol (function-symbol)
+  (symbol (concatenate "%%set-" (symbol-name function-symbol))))
+
+(define *symbol-count* 0)
+
+(define-function reset-symbol-counter! ()
+  (set! *symbol-count* 0))
+
+(define-function generate-symbol ()
+  (symbol (concatenate "%_" (as-string (inc! *symbol-count*)))))
 
 ;;;; special forms
 
@@ -24,9 +38,10 @@
          ,(concatenate `(method)
                        definition)))
 
+;; function with fixed argument list
 (define-special-form
-  %method (env name arguments #rest body)
-  (concatenate `(%method ,name ,arguments)
+  %method (env arguments #rest body)
+  (concatenate `(%method ,arguments)
                (map (rcurry macroexpand-all env) body)))
 
 (define-special-form
@@ -44,20 +59,18 @@
          ,(concatenate `(method)
                        definition)))
 
-(define-default-macro
-  begin (_ #rest expressions)
+(define-default-macro begin (_ #rest expressions)
   (if (> (size expressions) 1)
       (concatenate `(%begin)
                    expressions)
       (first expressions)))
 
-(define-default-macro
-  bind (_ bindings #rest body)
+(define-default-macro bind (_ bindings #rest body)
   (if (empty? bindings)
       (concatenate `(begin) body)
       (bind ((binding (first bindings)))
         (destructuring-bind (var value) binding
-          `((%method #f (,var)
+          `((%method (,var)
               ,(concatenate `(bind ,(rest bindings))
                             body))
             ,value)))))
@@ -72,6 +85,13 @@
                  ,then
                  ,(concatenate `(cond)
                                (rest cases))))))))
+
+(define-default-macro set! (_ place #rest rest)
+  (if (instance? place <array>)
+      (concatenate `(,(setter-symbol (first place)))
+                   (rest place)
+                   rest)
+      `(%set ,place ,(first rest))))
 
 ;;;; macro expansion
 
@@ -104,3 +124,87 @@
                 form))))
     ;; TODO: symbol macro ((<symbol>) )
     (else: form)))
+
+;;;; alpha conversion
+
+(define-function rename-variables (variables env)
+  (bind ((env (wrap-object env)))
+    [(map (method (variable)
+            (set! (get env (symbol-name variable))
+                  (generate-symbol)))
+          variables)
+     env]))
+
+(define-function find-variable (variable env)
+  ;; TODO: use find-property, signal error if not found
+  (js:get-property env (symbol-name variable)))
+
+(define-function alpha-convert (form env)
+  (select form instance?
+    ((<array>)
+     (if (== (symbol-name (first form)) "%method")
+         (destructuring-bind (_ arguments #rest body) form
+           (destructuring-bind (new-arguments env)
+               (rename-variables arguments env)
+             (concatenate `(%method ,new-arguments)
+                          (map (rcurry alpha-convert env)
+                               body))))
+         (map (rcurry alpha-convert env)
+              form env)))
+    ((<symbol>)
+     (or (find-variable form env)
+         form))
+    (else: form)))
+
+;;;; beta reduction
+
+; ((L (x y) (+ x y)) a (+ a 1))
+; ((L (y) (+ a y)) (+ a 1))
+
+(define-function substitute-variables (variables new-variables env)
+  (bind ((env (wrap-object env)))
+    (for-each ((variable variables)
+               (new-variable new-variables))
+              ()
+      (set! (get env (symbol-name variable))
+            new-variable))
+    env))
+
+(define-function beta-reduce (form env)
+  (select form instance?
+    ((<array>)
+     (if (and (instance? (first form) <array>)
+              (== (symbol-name (first (first form))) "%method"))
+         (destructuring-bind ((_ arguments #rest body) #rest values)
+             form
+           (if (every? (rcurry instance? <symbol>) values)
+               (bind ((env (substitute-variables arguments values env)))
+                 (concatenate `(begin)
+                              (map (rcurry beta-reduce env)
+                                   body)))
+               (bind ((variables [])
+                      (new-variables [])
+                      (new-arguments [])
+                      (new-values []))
+                 (for-each ((argument arguments)
+                            (value values))
+                           ()
+                   (if (instance? value <symbol>)
+                       (begin
+                        (push-last variables argument)
+                        (push-last new-variables value))
+                       (begin
+                        (push-last new-arguments argument)
+                        (push-last new-values value))))
+                 (concatenate `(,(concatenate `(%method ,new-arguments)
+                                              (map (rcurry beta-reduce env)
+                                                   body)))
+                              new-values))))
+         (map (rcurry beta-reduce env)
+              form env)))
+    ((<symbol>)
+     (or (find-variable form env)
+         form))
+    (else: form)))
+
+;; TODO: http://matt.might.net/articles/a-normalization/
