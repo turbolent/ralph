@@ -4,7 +4,7 @@
                          macroexpand
                          macroexpand-all
                          alpha-convert
-                         beta-reduce
+;;                         beta-reduce
                          reset-symbol-counter!
                          atomic?
                          normalize-term))
@@ -16,11 +16,15 @@
 ;;         => "var t1; if (x) { x = 3; t1 = 1 } else { t1 = 2 }; return t1")
 ;; - closures are expensive, try to only generate them when necessary
 
-;; - TODO: bind and alpha-conversion allows block scope -> don't transform bind to lambda
+;; - TODO: method: support for keyword arguments and rest
 ;; - TODO: transform bind to js:var in last pass, flatten variable to nearest lambda
 ;; - TODO: bind had return, as it is an expression; only leave for last when flattening
 ;; - TODO: lift symbols (keywords), use same binding
 ;; - TODO: remove top-level expressions without side-effects (constants)
+
+;; Questions:
+;; - beta reduction?! what about explicit closures, e.g. loops
+;; - keyword arguments and rest?
 
 ;; Languages
 ;;
@@ -28,7 +32,7 @@
 ;;   "We assume the front-end uniquely renames all variables [...]"
 ;; => alpha-conversion before ANF
 ;;
-;; L1:
+;; L1: source
 ;; <prog> ::= <dec> ...
 ;; <dec> ::= (define <var> <exp>)
 ;;        |  (define-function <var> (<name> ...) <exp> ...)
@@ -60,6 +64,20 @@
 ;;        |  <L1.exp>
 ;;
 ;; L3: macroexpanded
+;; <prog> ::= <dec> ...
+;; <dec> ::= (%define <var> <exp>)
+;;        |  <exp>
+;;
+;; <exp> ::= (%bind (<var> <exp>) <exp>)
+;;        |  (%begin <exp> ...)
+;;        |  (%if <exp> <exp> <exp>)
+;;        |  (%set <var> <exp>)
+;;        |  (%method (<name> ...) <exp>)
+;;        |  <number>
+;;        |  <boolean>
+;;        |  <string>
+;;        |  <var>
+
 ;; L4: alpha-converted
 ;; L5: in ANF
 ;; L6: beta-reduced
@@ -67,6 +85,7 @@
 ;; JS back-end transformations:
 ;;   %make-function <ralph-name-string> => %make-function <js-name-string>
 ;;   ...
+
 
 ;;;; utilities
 
@@ -94,6 +113,8 @@
 
 ;;;; special forms
 
+;; utilities
+
 (define *special-forms*
   (make-object))
 
@@ -105,18 +126,27 @@
          ,(concatenate `(method)
                        definition)))
 
-;; function with fixed argument list
+;; definitions
+
 (define-special-form
-  %method (env arguments #rest body)
-  (concatenate `(%method ,arguments)
-               (map (rcurry macroexpand-all env) body)))
+  %method (env arguments body)
+  `(%method ,arguments
+     ,(macroexpand-all body env)))
 
 (define-special-form
   %set (env name value)
   `(%set ,name ,(macroexpand-all value env)))
 
+(define-special-form
+  %bind (env binding body)
+  (destructuring-bind (var value) binding
+    `(%bind (,var ,(macroexpand-all value env))
+       ,(macroexpand-all body env))))
+
 
 ;;;; macros
+
+;; utilities
 
 (define *default-macros*
   (make-object))
@@ -126,22 +156,32 @@
          ,(concatenate `(method)
                        definition)))
 
-(define-default-macro begin (_ #rest expressions)
+;; definitions
+
+(define-function maybe-begin (expressions)
   (if (> (size expressions) 1)
       (concatenate `(%begin)
                    expressions)
       (first expressions)))
 
-;; TODO: only transform to single bind, not lambda!
+(define-default-macro begin (_ #rest expressions)
+  (maybe-begin expressions))
+
+(define-default-macro method (_ arguments #rest body)
+  `(%method ,arguments
+     ,(maybe-begin body)))
+
 (define-default-macro bind (_ bindings #rest body)
   (if (empty? bindings)
       (concatenate `(begin) body)
-      (bind ((binding (first bindings)))
-        (destructuring-bind (var value) binding
-          `((%method (,var)
-              ,(concatenate `(bind ,(rest bindings))
-                            body))
-            ,value)))))
+      (destructuring-bind (var value) (first bindings)
+        `(%bind (,var ,value)
+           ,(concatenate `(bind ,(rest bindings))
+                         body)))))
+
+(define-default-macro if (_ #rest expressions)
+  ;; simply rename to keep consistency in next language
+  (concatenate `(%if) expressions))
 
 (define-default-macro cond (_ #rest cases)
   (unless (empty? cases)
@@ -216,15 +256,22 @@
 (define-function alpha-convert (form env)
   (select form instance?
     ((<array>)
-     (if (== (symbol-name (first form)) "%method")
-         (destructuring-bind (_ arguments #rest body) form
-           (destructuring-bind (new-arguments env)
-               (rename-variables arguments env)
-             (concatenate `(%method ,new-arguments)
-                          (map (rcurry alpha-convert env)
-                               body))))
-         (map (rcurry alpha-convert env)
-              form env)))
+     (select (symbol-name (first form)) ==
+       (("%method")
+        (destructuring-bind (_ arguments body) form
+          (destructuring-bind (new-arguments env)
+              (rename-variables arguments env)
+            `(%method ,new-arguments
+               ,(alpha-convert body env)))))
+       (("%bind")
+        (destructuring-bind (_ (var value) body) form
+          (destructuring-bind ((new-var) env)
+              (rename-variables [var] env)
+            `(%bind (,new-var ,value)
+               ,(alpha-convert body env)))))
+       (else:
+        (map (rcurry alpha-convert env)
+             form env))))
     ((<symbol>)
      (or (find-variable form env)
          form))
@@ -245,45 +292,43 @@
     env))
 
 
-;; TODO: eliminate
-;; ((L () X)) => X
-;; (begin 1) => 1
+;;;; TODO: eliminate
+;;;; ((L () X)) => X
+;;;; (begin 1) => 1
 
-(define-function beta-reduce (form env)
-  (select form instance?
-    ((<array>)
-     ;; TODO: bind
-     (if (and (instance? (first form) <array>)
-              (== (symbol-name (first (first form))) "%method"))
-         (destructuring-bind ((_ arguments #rest body) #rest values)
-             form
-           ;; TODO: maybe also support constant values (numbers, etc.)
-           (bind ((variables [])
-                  (new-variables [])
-                  (new-arguments [])
-                  (new-values []))
-             (for-each ((argument arguments)
-                        (value values))
-                 ()
-               (if (atomic? value)
-                   (begin
-                    (push-last variables argument)
-                    (push-last new-variables value))
-                   (begin
-                    (push-last new-arguments argument)
-                    (push-last new-values value))))
-             (bind ((env (substitute-variables variables new-variables env))
-                    (body (map (rcurry beta-reduce env)
-                               body)))
-               (concatenate `(,(concatenate `(%method ,new-arguments)
-                                            body))
-                            new-values))))
-         (map (rcurry beta-reduce env)
-              form env)))
-    ((<symbol>)
-     (or (find-variable form env)
-         form))
-    (else: form)))
+;;(define-function beta-reduce (form env)
+;;  (select form instance?
+;;    ((<array>)
+;;     ;; TODO: bind
+;;     (if (and (instance? (first form) <array>)
+;;              (== (symbol-name (first (first form))) "%method"))
+;;         (destructuring-bind ((_ arguments #rest body) #rest values)
+;;             form
+;;           ;; TODO: maybe also support constant values (numbers, etc.)
+;;           (bind ((variables [])
+;;                  (new-variables [])
+;;                  (new-arguments [])
+;;                  (new-values []))
+;;             (for-each ((argument arguments)
+;;                        (value values))
+;;                 ()
+;;               (if (atomic? value)
+;;                   (begin
+;;                    (push-last variables argument)
+;;                    (push-last new-variables value))
+;;                   (begin
+;;                    (push-last new-arguments argument)
+;;                    (push-last new-values value))))
+;;             (bind ((env (substitute-variables variables new-variables env)))
+;;               (concatenate `(,(concatenate `(%method ,new-arguments)
+;;                                            (beta-reduce body env)))
+;;                            new-values))))
+;;         (map (rcurry beta-reduce env)
+;;              form env)))
+;;    ((<symbol>)
+;;     (or (find-variable form env)
+;;         form))
+;;    (else: form)))
 
 
 ;; ANF
@@ -292,34 +337,7 @@
 ;;     Flanagan, Sabry, Duba, Felleisen
 ;;   - "A-Normalization: Why and How"
 ;;     Matt Might (http://matt.might.net/articles/a-normalization/)
-;; * modified to support:
-;;   - sequence of expressions in method, bind and begin
-;;   - expression names and additional arguments for set!
-;;
-;;   [`(λ ,params . ,body)
-;;     (k `(λ ,params ,(normalize-term `(begin . ,body))))]
-;;
-;;   [`(let () . ,e*)
-;;     (normalize `(begin . ,e*) k)]
-;;
-;;   [`(let ([,x ,exp1] . ,clause) . ,e*)
-;;     (normalize exp1 (λ (aexp1)
-;;      `(let ([,x ,aexp1])
-;;        ,(normalize `(let (,@clause) . ,e*) k))))]
-;;
-;;   [`(begin ,exp)
-;;    (normalize exp k)]
-;;
-;;   [`(begin ,exp . ,e*)
-;;     (normalize exp (λ (aexp)
-;;      `(begin ,aexp
-;;         ,(normalize `(begin ,@e*) k))))]
-;;
-;;   [`(set! ,v ,exp . ,e*)
-;;    (normalize-name exp (λ (t)
-;;      (normalize-name* e* (λ (t*)
-;;          (k `(set! ,v ,t . ,t*))))))]
-
+;; * modified to support expression names and additional arguments for set!
 
 (define-function atomic? (expression)
   (any? (curry instance? expression)
@@ -333,51 +351,39 @@
 (define-function normalize (exp k)
   (if (instance? exp <array>)
       (select (symbol-name (first exp)) ==
-        (("method")
-         (destructuring-bind (_ (#rest arguments) #rest body) exp
-           (k `(method ,arguments
-                 ,(normalize-term
-                   (concatenate `(begin) body))))))
-        (("begin")
+        (("%method")
+         (destructuring-bind (_ (#rest arguments) body) exp
+           (k `(%method ,arguments
+                 ,(normalize-term body)))))
+        (("%begin")
          (destructuring-bind (_ exp1 #rest e*) exp
            (if (empty? e*)
                (normalize exp1 k)
                (normalize
                 exp1 (method (aexp1)
-                       `(begin
+                       `(%begin
                          ,aexp1
                          ,(normalize (concatenate
-                                      `(begin)
-                                      e*)
+                                      `(%begin) e*)
                                      k)))))))
-        (("bind")
-         (destructuring-bind (_ (#rest clauses) #rest body) exp
-           (if (empty? clauses)
-               (normalize (concatenate `(begin) body) k)
-               (destructuring-bind (var exp1)
-                   (first clauses)
-                 (normalize
-                  exp1 (method (aexp1)
-                         `(bind ((,var ,aexp1))
-                            ,(normalize (concatenate
-                                         `(bind ,(rest clauses))
-                                         body)
-                                        k))))))))
-        (("if")
+        (("%bind")
+         (destructuring-bind (_ (var exp1) body) exp
+           (normalize
+            exp1 (method (aexp1)
+                   `(%bind (,var ,aexp1)
+                      ,(normalize body k))))))
+        (("%if")
          (destructuring-bind (_ exp1 exp2 exp3) exp
            (normalize-name
             exp1 (method (aexp1)
-                   (k `(if ,aexp1
+                   (k `(%if ,aexp1
                            ,(normalize-term exp2)
                            ,(normalize-term exp3)))))))
-        (("set!")
-         (destructuring-bind (_ var exp1 #rest e*) exp
+        (("%set")
+         (destructuring-bind (_ var exp) exp
            (normalize-name
-            exp1 (method (aexp1)
-                   (normalize-name*
-                    e* (method (t*)
-                         (k (concatenate `(set! ,var ,aexp1)
-                                         t*))))))))
+            exp (method (aexp)
+                  (k `(%set ,var ,aexp))))))
         (else:
          (destructuring-bind (f #rest e*) exp
            (normalize-name
@@ -393,7 +399,7 @@
                (if (atomic? aexp)
                    (k aexp)
                    (bind ((t (generate-symbol)))
-                     `(bind ((,t ,aexp))
+                     `(%bind (,t ,aexp)
                         ,(k t)))))))
 
 (define-function normalize-name* (exp* k)
@@ -438,16 +444,13 @@
    "define-generic"
    (method (_ name arguments)
      `(define ,name
-        (%make-generic ,(symbol-name ,name))))))
+        (%make-generic ,(symbol-name name))))))
 
 (for-each ((arguments [["define-function" "%make-function" #f]
                        ["define-method" "%make-method" #t]]))
           ()
   (set! (get *top-level-macros* (first arguments))
         (apply function-definer arguments)))
-
-(set! (get *top-level-macros* )
-      (apply function-definer arguments)))
 
 (define-function macroexpand-program (declarations)
   (map (rcurry macroexpand-1 *top-level-macros*)

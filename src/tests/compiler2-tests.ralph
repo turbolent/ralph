@@ -24,34 +24,34 @@
 
 
 (check-equal "macroexpand: bind"
-             `((%method (a)
-                 (bind ((b (+ a 1)))
-                   b))
-               1)
+             `(%bind (a 1)
+                (bind ((b (+ a 1)))
+                  b))
               (macroexpand `(bind ((a 1)
                                    (b (+ a 1)))
                               b)
                            *environment*))
 
-(check-equal "macroexpand: cond"
+(check-equal "macroexpand-1: cond"
              `(if (a)
                   (begin 1 2)
                   (cond
                    (b 3)
                    (else: 4 5)))
-              (macroexpand `(cond
-                             ((a) 1 2)
-                             (b 3)
-                             (else: 4 5))
-                           *environment*))
+              (macroexpand-1 `(cond
+                               ((a) 1 2)
+                               (b 3)
+                               (else: 4 5))
+                             *environment*))
 
-(check-equal "macroexpand: prevent expansion of sepcial forms"
-             `((%method (cond)
-                 (bind () d))
-               ((a) b))
-             (macroexpand `(bind ((cond
+(check-equal "macroexpand: prevent expansion of sepcial forms 2"
+             `(%bind (cond
+                      ((a) b)
+                      (else: c))
+                     d)
+             (macroexpand `(%bind (cond
                                    ((a) b)
-                                   (else: c)))
+                                   (else: c))
                              d)
                           *environment*))
 
@@ -63,30 +63,27 @@
 
 
 (check-equal "macroexpand-all: bind b"
-             `((%method (b)
-                 b)
-               (+ a 1))
+             `(%bind (b (+ a 1))
+                b)
              (macroexpand-all `(bind ((b (+ a 1)))
                                  b)
                               *environment*))
 
 (check-equal "macroexpand-all: bind a, b"
-             `((%method (a)
-                 ((%method (b)
-                    b)
-                  (+ a 1)))
-               1)
+             `(%bind (a 1)
+                (%bind (b (+ a 1))
+                    b))
              (macroexpand-all `(bind ((a 1)
                                       (b (+ a 1)))
                                  b)
                               *environment*))
 
 (check-equal "macroexpand-all: cond"
-             `(if (a)
-                  (%begin 1 2)
-                  (if b
-                      3
-                      (%begin 4 5)))
+             `(%if (a)
+                   (%begin 1 2)
+                   (%if b
+                        3
+                        (%begin 4 5)))
              (macroexpand-all `(cond
                                 ((a) 1 2)
                                 (b 3)
@@ -101,6 +98,15 @@
 (check-equal "macroexpand-all: set!"
              `(%%set-cond x 1)
              (macroexpand-all `(set! (cond x) 1)
+                              *environment*))
+
+(check-equal "macroexpand-all: prevent expansion of sepcial forms"
+             `(%bind (cond ((a) b))
+                d)
+             (macroexpand-all `(bind ((cond
+                                       ((a) b)
+                                       (else: c)))
+                                 d)
                               *environment*))
 
 
@@ -124,44 +130,82 @@
                               1)
                             (make-object)))
 
-(check-equal "beta-reduce: single argument: variable"
-             `((%method () (+ y y)))
-             (beta-reduce `((%method (x)
-                              (+ x y))
-                            y)
-                          (make-object)))
+;; TODO: test alpha-convert for bind
 
-(check-equal "beta-reduce: single argument: value"
-             `((%method () (+ 1 y)))
-             (beta-reduce `((%method (x)
-                              (+ x y))
-                            1)
-                          (make-object)))
 
-(check-equal "beta-reduce: single argument: expression"
-             `((%method (x)
-                 (+ x y))
-               (+ x 1))
-             (beta-reduce `((%method (x)
-                              (+ x y))
-                            (+ x 1))
-                          (make-object)))
+;;(check-equal "beta-reduce: single argument: variable"
+;;             `((%method () (+ y y)))
+;;             (beta-reduce `((%method (x)
+;;                              (+ x y))
+;;                            y)
+;;                          (make-object)))
 
-(bind ((a (make-object "a" 1))
-       (b (wrap-object a "b" 2))
-       (c (wrap-object b "c" 3)))
-  ((js:inline "console.error")
-   (js:get-property b "a")))
+;;(check-equal "beta-reduce: single argument: value"
+;;             `((%method () (+ 1 y)))
+;;             (beta-reduce `((%method (x)
+;;                              (+ x y))
+;;                            1)
+;;                          (make-object)))
 
+;;(check-equal "beta-reduce: single argument: expression"
+;;             `((%method (x)
+;;                 (+ x y))
+;;               (+ x 1))
+;;             (beta-reduce `((%method (x)
+;;                              (+ x y))
+;;                            (+ x 1))
+;;                          (make-object)))
+
+;; TODO: test beta-reduce for bind
+
+
+(reset-symbol-counter!)
 (bind ((expanded
         (macroexpand-all `(bind ((a 1)
                                  (b 2))
+                            (- 1 c)
                             (+ a b))
-                         *environment*))
-       (alpha (alpha-convert expanded (make-object))))
+                         *environment*)))
+
   (check-equal ""
-               `((%method () ((%method () (+ 1 2)))))
-               (beta-reduce alpha (make-object))))
+               `(%bind (a 1)
+                  (%bind (b 2)
+                    (%begin
+                     (- 1 c)
+                     (+ a b))))
+               expanded)
+  (check-equal ""
+               `(%bind (%_1 1)
+                  (%bind (%_2 2)
+                    (%begin
+                     (- 1 c)
+                     (+ %_1 %_2))))
+               (alpha-convert expanded (make-object))))
+
+
+
+(reset-symbol-counter!)
+(bind ((expanded
+        (macroexpand-all `((method (a b)
+                             (- 1 c)
+                             (+ a b))
+                           1 2)
+                         *environment*)))
+
+  (check-equal ""
+               `((%method (a b)
+                   (%begin
+                    (- 1 c)
+                    (+ a b)))
+                 1 2)
+               expanded)
+  (check-equal ""
+               `((%method (%_1 %_2)
+                   (%begin
+                    (- 1 c)
+                    (+ %_1 %_2)))
+                 1 2)
+               (alpha-convert expanded (make-object))))
 
 (check-true "atomic? on number" (atomic? 1))
 
@@ -174,108 +218,124 @@
 
 (reset-symbol-counter!)
 (check-equal "ANF: nested expression"
-             `(bind ((%_1 (- 2 1)))
+             `(%bind (%_1 (- 2 1))
                 (+ %_1 2))
              (normalize-term `(+ (- 2 1) 2)))
 
 (reset-symbol-counter!)
 (check-equal "ANF: bind"
-             `(bind ((%_1 (+ 2 2)))
-                (bind ((x 1))
-                  (bind ((%_2 (f x)))
+             `(%bind (%_1 (+ 2 2))
+                (%bind (x 1)
+                  (%bind (%_2 (f x))
                     (+ %_1 %_2))))
-             (normalize-term `(+ (+ 2 2)
-                                 (bind ((x 1))
-                                   (f x)))))
+             (normalize-term
+              (macroexpand-all
+               `(+ (+ 2 2)
+                   (bind ((x 1))
+                     (f x)))
+               *environment*)))
 
 
 (reset-symbol-counter!)
 (check-equal "ANF: begin"
-             `(begin
+             `(%begin
                1
-               (begin
+               (%begin
                 (+ 2 2)
-                (bind ((%_1 (- 3 3)))
-                  (bind ((x 1))
-                    (bind ((%_2 (f x)))
+                (%bind (%_1 (- 3 3))
+                  (%bind (x 1)
+                    (%bind (%_2 (f x))
                       (+ %_1 %_2))))))
              (normalize-term
-              `(begin
-                1
-                (+ (begin (+ 2 2) (- 3 3))
-                   (bind ((x 1))
-                     (f x))))))
+              (macroexpand-all
+               `(begin
+                 1
+                 (+ (begin (+ 2 2) (- 3 3))
+                    (bind ((x 1))
+                      (f x))))
+               *environment*)))
 
 (reset-symbol-counter!)
 (check-equal "ANF: if"
-             `(bind ((%_1 (= n 0)))
-                (if %_1
-                    1
-                    (bind ((%_2 (- n 1)))
-                      (bind ((%_3 (f %_2)))
-                        (* n %_3)))))
+             `(%bind (%_1 (= n 0))
+                (%if %_1
+                     1
+                     (%bind (%_2 (- n 1))
+                       (%bind (%_3 (f %_2))
+                         (* n %_3)))))
              (normalize-term
-              `(if (= n 0)
-                   1
-                   (* n (f (- n 1))))))
+              (macroexpand-all
+               `(if (= n 0)
+                    1
+                    (* n (f (- n 1))))
+               *environment*)))
 
 (reset-symbol-counter!)
 (check-equal "ANF: application"
-             `(bind ((id (method (x) x)))
-                (bind ((apply (method (f x) (f x))))
-                  (bind ((%_1 (id apply)))
-                    (bind ((%_2 (id 3)))
+             `(%bind (id (%method (x) x))
+                (%bind (apply (%method (f x) (f x)))
+                  (%bind (%_1 (id apply))
+                    (%bind (%_2 (id 3))
                       (%_1 %_2)))))
              (normalize-term
-              `(bind ((id (method (x) x))
-                      (apply (method (f x) (f x))))
-                 ((id apply) (id 3)))))
+              (macroexpand-all
+               `(bind ((id (method (x) x))
+                       (apply (method (f x) (f x))))
+                  ((id apply) (id 3)))
+               *environment*)))
 
 (reset-symbol-counter!)
 (check-equal "ANF: method"
-             `(method (a)
-                (method (b)
-                  (begin
+             `(%method (a)
+                (%method (b)
+                  (%begin
                    (- a b)
-                   (bind ((%_1 (- a b)))
+                   (%bind (%_1 (- a b))
                      (+ %_1 b)))))
              (normalize-term
-              `(method (a)
-                 (method (b)
-                   (- a b)
-                   (+ (- a b) b)))))
-
+              (macroexpand-all
+               `(method (a)
+                  (method (b)
+                    (- a b)
+                    (+ (- a b) b)))
+               *environment*)))
 
 (reset-symbol-counter!)
 (check-equal "ANF: set!"
-             `(bind ((%_1 (- b 3)))
-                (bind ((%_2 (+ %_1 c)))
-                  (begin
-                   (set! a %_2)
-                   (bind ((%_3 (set! z a)))
-                     (bind ((%_4 (* %_3 5)))
-                       (set! x %_4))))))
+             `(%bind (%_1 (- b 3))
+                (%bind (%_2 (+ %_1 c))
+                  (%begin
+                   (%set a %_2)
+                   (%bind (%_3 (%set z a))
+                     (%bind (%_4 (* %_3 5))
+                       (%set x %_4))))))
              (normalize-term
-              `(begin
-                (set! a (+ (- b 3) c))
-                (set! x (* (set! z a) 5)))))
+              (macroexpand-all
+               `(begin
+                 (set! a (+ (- b 3) c))
+                 (set! x (* (set! z a) 5)))
+               *environment*)))
 
 (reset-symbol-counter!)
 (check-equal "ANF: set! with expression"
-             `(bind ((%_1 (+ 2 3)))
-                (set! (foo x) %_1))
+             `(%bind (%_1 (+ 2 3))
+                (%%set-foo x %_1))
              (normalize-term
-              `(set! (foo x) (+ 2 3))))
+              (macroexpand-all
+               `(set! (foo x) (+ 2 3))
+               *environment*)))
 
 (reset-symbol-counter!)
 (check-equal "ANF: set! with expression and keywords"
-             `(bind ((%_1 (+ 2 3)))
-                (bind ((%_2 (bar x)))
-                  (bind ((%_3 (> %_2 1)))
-                    (set! (foo x) %_1 animated?: %_3))))
+             `(%bind (%_1 (+ 2 3))
+                (%bind (%_2 (bar x))
+                  (%bind (%_3 (> %_2 1))
+                    (%%set-foo x %_1 animated?: %_3))))
              (normalize-term
-              `(set! (foo x) (+ 2 3)
-                     animated?: (> (bar x) 1))))
+              (macroexpand-all
+               `(set! (foo x) (+ 2 3)
+                      animated?: (> (bar x) 1))
+               *environment*)))
 
 (bind ((program
         `((define-method handle-transition-end ((view <scroll-indicator>) event)
