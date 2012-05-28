@@ -526,19 +526,24 @@
         (signal (make <error> message:
                       (concatenate macro-name ": "
                                    "name not <var> or (setter <var>)"))))
-      `(define ,name
-         (,(symbol definer-name)
-          ,(symbol-name name)
-          ,(concatenate `(method ,arguments)
-                        body)
-          ,setter?
-          ,(when (and type?
-                      (not (empty? arguments)))
-             (bind ((head (first arguments)))
-               (if (and (instance? head <array>)
-                        (> (size head) 1))
-                   (second head)
-                   (symbol "<object>")))))))))
+      (bind ((arguments (map (method (argument)
+                               (if (instance? argument <array>)
+                                   (first argument)
+                                   argument))
+                             arguments)))
+        `(define ,name
+           (,(symbol definer-name)
+            ,(symbol-name name)
+            ,(concatenate `(method ,arguments)
+                          body)
+            ,setter?
+            ,(when (and type?
+                        (not (empty? arguments)))
+               (bind ((head (first arguments)))
+                 (if (and (instance? head <array>)
+                          (> (size head) 1))
+                     (second head)
+                     (symbol "<object>"))))))))))
 
 (define *top-level-macros*
   (make-object
