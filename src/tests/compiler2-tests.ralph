@@ -78,6 +78,24 @@
                                  b)
                               *environment*))
 
+(check-equal "macroexpand-all: and"
+             `(%if 1 (%if 2 #f #f) #f)
+             (macroexpand-all `(and 1 #t 2 #f 3)
+                              *environment*))
+
+
+(reset-symbol-counter!)
+(check-equal "macroexpand-all: or"
+             `(%bind (%_1 #f)
+                (%if %_1
+                     %_1
+                     (%bind (%_2 2)
+                       (%if %_2
+                            %_2
+                            3))))
+             (macroexpand-all `(or #f 2 3)
+                              *environment*))
+
 (check-equal "macroexpand-all: cond"
              `(%if (a)
                    (%begin 1 2)
@@ -100,6 +118,26 @@
              (macroexpand-all `(set! (cond x) 1)
                               *environment*))
 
+
+(check-equal "macroexpand-all: parallel-set! 1"
+             `(%set x 1)
+             (macroexpand-all `(parallel-set! x 1)
+                              *environment*))
+
+(reset-symbol-counter!)
+(check-equal "macroexpand-all: parallel-set! 2"
+             `(%bind (%_1 1)
+                (%begin
+                 (%bind (%_2 (+ x 1))
+                   (%begin
+                    (%set z (- x y))
+                    (%set y %_2)))
+                 (%set x %_1)))
+             (macroexpand-all `(parallel-set! x 1
+                                              y (+ x 1)
+                                              z (- x y))
+                              *environment*))
+
 (check-equal "macroexpand-all: prevent expansion of sepcial forms"
              `(%bind (cond ((a) b))
                 d)
@@ -109,14 +147,27 @@
                                  d)
                               *environment*))
 
+(reset-symbol-counter!)
+(check-equal "macroexpand-all: bind-properties"
+             `(%bind (%_1 obj)
+                (%bind (a (%get-property %_1 "a"))
+                  (%bind (b (%get-property %_1 "b"))
+                    (%begin
+                     (first a)
+                     (second b)))))
+             (macroexpand-all `(bind-properties (a b) obj
+                                 (first a)
+                                 (second b))
+                              *environment*))
 
+
+(reset-symbol-counter!)
 (check-equal "alpha-convert: single method"
              `(%method (%_1) 1)
              (alpha-convert `(%method (a) 1)
                             (make-object)))
 
 (reset-symbol-counter!)
-
 (check-equal "alpha-convert: nested methods"
              `((%method (%_1)
                  ((%method (%_2)
@@ -301,6 +352,31 @@
                *environment*)))
 
 (reset-symbol-counter!)
+(check-equal "ANF: begin"
+             `(%begin
+               1
+               (%begin
+                (c)
+                (%bind (%_1 (a))
+                  (%bind (%_2 (+ 1 %_1))
+                    (%begin
+                     (b %_2)
+                     (%begin
+                      5
+                      (%bind (%_3 (d))
+                        (- %_3 23))))))))
+             (normalize-term
+              (macroexpand-all
+               `(begin
+                 1
+                 (begin
+                  (c)
+                  (b (+ 1 (a))))
+                 5
+                 (- (d) 23))
+               *environment*)))
+
+(reset-symbol-counter!)
 (check-equal "ANF: set!"
              `(%bind (%_1 (- b 3))
                 (%bind (%_2 (+ %_1 c))
@@ -337,7 +413,76 @@
                       animated?: (> (bar x) 1))
                *environment*)))
 
-(bind ((program
+(reset-symbol-counter!)
+(check-equal "ANF: or"
+             ;; not in statement form yet
+             `(%bind (%_1 #f)
+                (%bind (%_3 (%if %_1
+                                 %_1
+                                 (%bind (%_2 2)
+                                   (%if %_2 %_2 3))))
+                  (foo %_3 bar)))
+             (normalize-term
+              (macroexpand-all
+               `(foo (or #f 2 3) bar)
+               *environment*)))
+
+(reset-symbol-counter!)
+(check-equal "ANF: while"
+             `(%bind (counter 5)
+                (%bind (result 1)
+                  (%begin
+                   (%while (> counter 0)
+                     (%bind (%_1 (* factorial counter))
+                       (%begin
+                         (%set factorial %_1)
+                         (%bind (%_2 (- counter 1))
+                           (%set counter %_2)))))
+                   counter)))
+             (normalize-term
+              (macroexpand-all
+               `(bind ((counter 5)
+                       (result 1))
+                  (while (> counter 0)
+                    (set! factorial (* factorial counter))
+                    (set! counter (- counter 1)))
+                  counter)
+               *environment*)))
+
+(reset-symbol-counter!)
+(check-equal "ANF: while as expression"
+             ;; TODO: why isn't the %begin flattened?
+             `(%bind (run? #t)
+                (%bind (value (%while run?
+                                (%begin
+                                 (foo)
+                                 (%begin
+                                  (%set run? #f)
+                                  23))))
+                  (== value #f)))
+             (normalize-term
+              (macroexpand-all
+               `(bind ((run? #t)
+                       (value
+                        (while run?
+                          (foo)
+                          (set! run? #f)
+                          23)))
+                  (== value #f))
+               *environment*)))
+
+(reset-symbol-counter!)
+(check-equal "ANF: begin as expression"
+             `(%bind (%_1 (curry + 1))
+                (%begin 1
+                  (%bind (%_2 (+ 2 3))
+                    (%_1 %_2 4))))
+             (normalize-term
+              (macroexpand-all
+               `((curry + 1) (begin 1 (+ 2 3)) 4)
+               *environment*)))
+
+(bind ((code
         `((define-method handle-transition-end ((view <scroll-indicator>) event)
             (when (get view "flashing?")
               (set! (get view "flashing-timeout")
@@ -345,9 +490,12 @@
                                    (when (get view "flashing?")
                                      (set! (get view "flashing?") #f)
                                      (set! (view-visible? view) #f)))
-                                 750))))
-          (define-function x (a)
-            (handle-transition-end *view* (make-event "foo")))
-          (define-function y (handle-transition-end)
-            (handle-transition-end *view* (make-event "bar"))))))
-)
+                                 750))))))
+       (top-expanded (first (macroexpand-program code)))
+       (_ (format-out "1: %=\n\n" top-expanded))
+       (expanded (macroexpand-all top-expanded *environment*))
+       (_ (format-out "2: %=\n\n" expanded))
+       (alpha-converted (alpha-convert expanded (make-object)))
+       (_ (format-out "3: %=\n\n" alpha-converted))
+       (normalized (normalize-term alpha-converted))
+       (_ (format-out "4: %=\n\n" normalized))))
