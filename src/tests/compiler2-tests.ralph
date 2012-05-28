@@ -138,6 +138,34 @@
                                               z (- x y))
                               *environment*))
 
+(reset-symbol-counter!)
+(check-equal "macroexpand-all: select"
+             `(%bind (%_1 x)
+                (%bind (%_2 instance?)
+                  (%if (%bind (%_3 (%_2 %_1 <array>))
+                         (%if %_3
+                              %_3
+                              (%_2 %_1
+                                   <string>)))
+                       (%begin
+                        (print x)
+                        (slice x 2))
+                       (%if (%_2 %_1 <number>)
+                            (* x 23)
+                            (%begin
+                             (do-sth)
+                             else)))))
+             (macroexpand-all `(select x instance?
+                                 ((<array> <string>)
+                                  (print x)
+                                  (slice x 2))
+                                 ((<number>)
+                                  (* x 23))
+                                 (else:
+                                  (do-sth)
+                                  else))
+                              *environment*))
+
 (check-equal "macroexpand-all: prevent expansion of sepcial forms"
              `(%bind (cond ((a) b))
                 d)
@@ -482,6 +510,35 @@
                `((curry + 1) (begin 1 (+ 2 3)) 4)
                *environment*)))
 
+
+
+(reset-symbol-counter!)
+(check-equal "ANF: select"
+             `(%bind (%_1 x)
+                (%bind (%_2 instance?)
+                  (%bind (%_3 (%_2 %_1 <array>))
+                    (%bind (%_4 (%if %_3 %_3 (%_2 %_1 <string>)))
+                      (%if %_4
+                           (%begin
+                            (print x)
+                            (slice x 2))
+                           (%bind (%_5 (%_2 %_1 <number>))
+                             (%if %_5
+                                  (* x 23)
+                                  (%begin
+                                   (do-sth)
+                                   else))))))))
+             (normalize-term
+              (macroexpand-all `(select x instance?
+                                  ((<array> <string>)
+                                   (print x)
+                                   (slice x 2))
+                                  ((<number>)
+                                  (* x 23))
+                                  (else:
+                                   (do-sth)
+                                   else))
+                               *environment*)))
 (bind ((code
         `((define-method handle-transition-end ((view <scroll-indicator>) event)
             (when (get view "flashing?")

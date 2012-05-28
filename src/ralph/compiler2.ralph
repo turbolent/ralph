@@ -297,8 +297,30 @@
                    properties)))
      body)))
 
+(define-default-macro select (_ value test #rest cases)
+  (bind ((value* (generate-symbol))
+         (test* (generate-symbol)))
+    (bind-methods ((test-expression (test-value)
+                     `(,test* ,value* ,test-value)))
+      `(bind ((,value* ,value)
+              (,test* ,test))
+         ,(concatenate
+           `(cond)
+           (map (method (case)
+                  (destructuring-bind (tests #rest then) case
+                    (if (== tests else:)
+                        case
+                        (concatenate
+                         `(,(concatenate
+                             `(or)
+                             (map test-expression tests)))
+                         then))))
+                cases))))))
+
+
+
 ;; TODO:
-;; - select, bind-methods, destructuring-bind
+;; - bind-methods, destructuring-bind
 ;; - for, do, for-each, dotimes
 ;; - %return, %try, %throw, block, handler-case
 ;; - %backquote, %comma
