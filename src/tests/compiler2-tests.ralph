@@ -408,11 +408,13 @@
 (check-equal "ANF: set!"
              `(%bind (%_1 (- b 3))
                 (%bind (%_2 (+ %_1 c))
-                  (%begin
-                   (%set a %_2)
-                   (%bind (%_3 (%set z a))
-                     (%bind (%_4 (* %_3 5))
-                       (%set x %_4))))))
+                  (%bind (%_3 (%set a %_2))
+                    (%begin
+                     %_3
+                     (%bind (%_4 (%set z a))
+                       (%bind (%_5 (* %_4 5))
+                         (%bind (%_6 (%set x %_5))
+                           %_6)))))))
              (normalize-term
               (macroexpand-all
                `(begin
@@ -443,6 +445,7 @@
 
 (reset-symbol-counter!)
 (check-equal "ANF: or"
+             ;; usage of %if as expression OK,
              ;; not in statement form yet
              `(%bind (%_1 #f)
                 (%bind (%_3 (%if %_1
@@ -462,10 +465,12 @@
                   (%begin
                    (%while (> counter 0)
                      (%bind (%_1 (* factorial counter))
-                       (%begin
-                         (%set factorial %_1)
-                         (%bind (%_2 (- counter 1))
-                           (%set counter %_2)))))
+                       (%bind (%_2 (%set factorial %_1))
+                         (%begin
+                          %_2
+                          (%bind (%_3 (- counter 1))
+                            (%bind (%_4 (%set counter %_3))
+                              %_4))))))
                    counter)))
              (normalize-term
               (macroexpand-all
@@ -479,14 +484,14 @@
 
 (reset-symbol-counter!)
 (check-equal "ANF: while as expression"
-             ;; TODO: why isn't the %begin flattened?
              `(%bind (run? #t)
                 (%bind (value (%while run?
                                 (%begin
                                  (foo)
-                                 (%begin
-                                  (%set run? #f)
-                                  23))))
+                                 (%bind (%_1 (%set run? #f))
+                                   (%begin
+                                    %_1
+                                    23)))))
                   (== value #f)))
              (normalize-term
               (macroexpand-all
