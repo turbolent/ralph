@@ -20,19 +20,9 @@
 ;; - TODO: transform bind to js:var in last pass, flatten variable to nearest lambda
 ;; - TODO: bind had return, as it is an expression; only leave for last when flattening
 ;; - TODO: lift symbols (keywords), use same binding
-;; - TODO: remove top-level expressions without side-effects (constants)
-;; - TODO: generic 'sink' method to add set! or explicit return to return value
-
-;; - TODO: in JS backend, after ANF: if value of binding is %if, %while, etc.:
-;;         turn into assignment form, "sink" assignment:
-;;         (%bind (%_1 (%if ... (%bind (%_2 ...) (foo %_2) ...)) (bar %_1 baz))
-;;         => (%bind (%_1 #f)
-;;              (%if ...
-;;                   (%bind (%_2 ...)
-;;                     (set! %_1 (foo %_2)))
-;;                   ...)
-;;              (bar %_1 baz))
-
+;; - TODO: dead-code elimination (after ANF):
+;;         check all but last expressions in body:
+;;         side-effect free? no function call, constant or symbol
 
 ;; Questions:
 ;; - beta reduction?! what about explicit closures, e.g. loops
@@ -471,7 +461,7 @@
   (if (instance? exp <array>)
       (select (symbol-name (first exp)) ==
         (("%method")
-         (destructuring-bind (_ (#rest arguments) body) exp
+         (destructuring-bind (_ arguments body) exp
            (k `(%method ,arguments
                  ,(normalize-term body)))))
         (("%begin")
@@ -486,27 +476,34 @@
                                       `(%begin) e*)
                                      k)))))))
         (("%bind")
-         (destructuring-bind (_ (var exp1) body) exp
+         (destructuring-bind (_ (var value) body) exp
            (normalize
-            exp1 (method (aexp1)
-                   `(%bind (,var ,aexp1)
+            value (method (avalue)
+                   `(%bind (,var ,avalue)
                       ,(normalize body k))))))
         (("%if")
-         (destructuring-bind (_ exp1 exp2 exp3) exp
+         (destructuring-bind (_ test then else) exp
            (normalize-name
-            exp1 (method (aexp1)
-                   (k `(%if ,aexp1
-                           ,(normalize-term exp2)
-                           ,(normalize-term exp3)))))))
+            test (method (atest)
+                   (k `(%if ,atest
+                            ,(normalize-term then)
+                            ,(normalize-term else)))))))
         (("%while")
-         (destructuring-bind (_ exp1 exp2) exp
-           (k `(%while ,(normalize-term exp1)
-                       ,(normalize-term exp2)))))
+         (destructuring-bind (_ test body) exp
+           (k `(%while ,(normalize-term test)
+                       ,(normalize-term body)))))
         (("%set")
-         (destructuring-bind (_ var exp1) exp
+         (destructuring-bind (_ var value) exp
            (normalize-name
-            exp1 (method (aexp1)
-                  (k `(%set ,var ,aexp1))))))
+            value (method (avalue)
+                    ;; binding helps in later passes
+                    ;; (sinking, dead code elimination):
+                    ;; values are always symbols,
+                    ;; no check for assignment
+                    (bind ((result (generate-symbol)))
+                      `(%bind (,result (%set ,var ,avalue))
+                         ,(k result)))))))
+
         (else:
          (destructuring-bind (f #rest e*) exp
            (normalize-name
