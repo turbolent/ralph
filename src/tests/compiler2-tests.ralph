@@ -544,6 +544,26 @@
                                    (do-sth)
                                    else))
                                *environment*)))
+
+(reset-symbol-counter!)
+(check-equal "statements: or"
+             `(%bind (%_1 #f)
+                (%bind (%_3 #f)
+                  (%begin
+                   (%if %_1
+                        (%set %_3 %_1)
+                        (%bind (%_2 2)
+                          (%if %_2
+                               (%set %_3 %_2)
+                               (%set %_3 3))))
+                   (foo %_3 bar))))
+             (transform-statements
+              (normalize-term
+               (macroexpand-all
+                `(foo (or #f 2 3) bar)
+                *environment*))))
+
+
 (bind ((code
         `((define-method handle-transition-end ((view <scroll-indicator>) event)
             (when (get view "flashing?")
@@ -561,3 +581,5 @@
        (_ (format-out "3: %=\n\n" alpha-converted))
        (normalized (normalize-term alpha-converted))
        (_ (format-out "4: %=\n\n" normalized))))
+
+
