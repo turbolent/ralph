@@ -307,10 +307,28 @@
                          then))))
                 cases))))))
 
+(define-function destructure (bindings values body)
+  (if (instance? values <symbol>)
+      (bind ((i (size bindings)))
+        (reduce (method (body binding)
+                  (dec! i)
+                  (if (instance? binding <symbol>)
+                      `(bind ((,binding (nth ,values ,i)))
+                         ,body)
+                      (destructure binding `(nth ,values ,i) body)))
+                body (reverse bindings)))
+      ;; ensures values is only evaluated once
+      (bind ((var (generate-symbol)))
+        `(bind ((,var ,values))
+           ,(destructure bindings var body)))))
+
+(define-default-macro destructuring-bind (_ bindings values #rest body)
+  (destructure bindings values
+               (concatenate `(begin) body)))
 
 
 ;; TODO:
-;; - bind-methods, destructuring-bind
+;; - bind-methods
 ;; - for, do, for-each, dotimes
 ;; - %return, %try, %throw, block, handler-case
 ;; - %backquote, %comma

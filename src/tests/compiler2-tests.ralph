@@ -188,6 +188,23 @@
                                  (second b))
                               *environment*))
 
+(reset-symbol-counter!)
+(check-equal "macroexpand-all: destructuring-bind"
+             `(%bind (a (nth values 0))
+                (%bind (%_1 (nth values 1))
+                  (%bind (b (nth %_1 0))
+                    (%bind (c (nth %_1 1))
+                      (%bind (%_2 (nth %_1 2))
+                        (%bind (d (nth %_2 0))
+                          (%bind (e (nth %_2 1))
+                            (%bind (f (nth values 2))
+                              (foo e)))))))))
+             (macroexpand-all `(destructuring-bind (a (b c (d e)) f) values
+                                 (foo e))
+                              *environment*))
+
+
+
 
 (reset-symbol-counter!)
 (check-equal "alpha-convert: single method"
