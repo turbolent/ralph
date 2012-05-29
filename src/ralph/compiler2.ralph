@@ -608,6 +608,8 @@
 
 ;;;; statements
 
+;; TODO: handle %while, return value is always #f
+
 ;; "sink"/wrap return value with expression
 ;; e.g. to assign or explicitly return
 
@@ -625,12 +627,15 @@
            `(%bind ,binding ,(wrap-value body wrapper))))
         (("%if")
          (destructuring-bind (_ test then else) exp
+           ;; TODO: don't sink if both else and then
+           ;;       are atomic? or function calls
+           ;;       i.e., no %begin, %bind, etc.
            `(%if ,test
                  ,(wrap-value then wrapper)
                  ,(wrap-value else wrapper))))
         (else:
-         (concatenate wrapper exp)))
-      (concatenate wrapper exp)))
+         (concatenate wrapper [exp])))
+      (concatenate wrapper [exp])))
 
 ;; in JS backend, after ANF: if value of binding is control-flow (%if, %while, etc.):
 ;; turn into statement form, then "sink" assignment:
@@ -662,9 +667,15 @@
                `(%bind (,var #f)
                   (%begin
                    ,(wrap-value value `(%set ,var))
-                   ,body))
+                   ,(transform-statements body)))
                `(%bind (,var ,value)
                        ,(transform-statements body)))))
+        (("%if")
+         (destructuring-bind (_ test then else) exp
+           `(%if ,test
+                 ,(transform-statements then)
+                 ,(transform-statements else))))
         (else:
          exp))
       exp))
+
