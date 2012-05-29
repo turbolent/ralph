@@ -310,7 +310,8 @@
 (reset-symbol-counter!)
 (check-equal "ANF: simple expression"
              `(+ 1 2)
-             (normalize-term `(+ 1 2)))
+             (normalize-term
+              `(+ 1 2)))
 
 (reset-symbol-counter!)
 (check-equal "ANF: nested expression"
@@ -573,30 +574,80 @@
                           (%if %_2
                                (%set %_3 %_2)
                                (%set %_3 3))))
-                   (foo %_3 bar))))
-             (transform-statements
-              (normalize-term
-               (macroexpand-all
-                `(foo (or #f 2 3) bar)
-                *environment*))))
+                   (%return (foo %_3 bar)))))
+             (add-explicit-return
+              (transform-statements
+               (normalize-term
+                (macroexpand-all
+                 `(foo (or #f 2 3) bar)
+                 *environment*)))))
 
 
-(bind ((code
-        `((define-method handle-transition-end ((view <scroll-indicator>) event)
-            (when (get view "flashing?")
-              (set! (get view "flashing-timeout")
-                    (set-timeout (method ()
-                                   (when (get view "flashing?")
-                                     (set! (get view "flashing?") #f)
-                                     (set! (view-visible? view) #f)))
-                                 750))))))
-       (top-expanded (first (macroexpand-program code)))
-       (_ (format-out "1: %=\n\n" top-expanded))
-       (expanded (macroexpand-all top-expanded *environment*))
-       (_ (format-out "2: %=\n\n" expanded))
-       (alpha-converted (alpha-convert expanded (make-object)))
-       (_ (format-out "3: %=\n\n" alpha-converted))
-       (normalized (normalize-term alpha-converted))
-       (_ (format-out "4: %=\n\n" normalized))))
+
+(define-function all-passes (code)
+  (bind ((top-expanded (macroexpand-program code))
+         (_ (format-out "1: %=\n\n" top-expanded))
+         (expanded (macroexpand-all top-expanded *environment*))
+         (_ (format-out "2: %=\n\n" expanded))
+         (alpha-converted (alpha-convert expanded (make-object)))
+         (_ (format-out "3: %=\n\n" alpha-converted))
+         (normalized (normalize-term alpha-converted))
+         (_ (format-out "4: %=\n\n" normalized))
+         (statements (transform-statements normalized))
+         (_ (format-out "5: %=\n\n" statements)))))
 
 
+(all-passes
+ `(bind ((gcd (method (a b)
+                (cond
+                 ((> a b)
+                  (gcd (- a b) b))
+                 ((< a b)
+                  (gcd (- b a) a))
+                 (else: a)))))
+    (gcd 28974330 310200)))
+
+
+(all-passes
+ `(method (view animated?)
+    (when (get view "bounces?")
+      (destructuring-bind (x y) (get view "offset")
+        (bind ((max-point (get view "max-point"))
+               (offset (limit [x y] [0 0] max-point)))
+          (when (or (not (== (first offset) x))
+                    (not (== (second offset) y)))
+            (set! (content-offset view)
+                  offset
+                  animated?: animated?)
+            (when animated?
+              (begin-snap-animation view))))))))
+
+;;
+`(%method (%_13 %_14)
+   (%bind (%_21 (get %_13 "bounces?"))
+     (%if %_21
+          (%bind (%_15 (get %_13 "offset"))
+            (%bind (%_16 (nth %_15 0))
+              (%bind (%_17 (nth %_15 1))
+                (%bind (%_18 (get %_13 "max-point"))
+                  (%bind (%_22 (%array %_16 %_17))
+                    (%bind (%_23 (%array 0 0))
+                      (%bind (%_19 (limit %_22 %_23 %_18))
+                        (%bind (%_24 (first %_19))
+                          (%bind (%_25 (== %_24 %_16))
+                            (%bind (%_20 (not %_25))
+                              (%bind (%_28 #f)
+                                (%begin
+                                 (%if %_20
+                                      (%set %_28 %_20)
+                                      (%bind (%_26 (second %_19))
+                                        (%bind (%_27 (== %_26 %_17))
+                                          (%set %_28 (not %_27)))))
+                                 (%if %_28
+                                      (%begin
+                                       (%%set-content-offset %_13 %_19 animated?: %_14)
+                                       (%if %_14
+                                            (%return (begin-snap-animation %_13))
+                                            (%return #f)))
+                                      (%return #f))))))))))))))
+          (%return #f))))
