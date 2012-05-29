@@ -637,6 +637,9 @@
          (concatenate wrapper [exp])))
       (concatenate wrapper [exp])))
 
+(define-function add-explicit-return (exp)
+  (wrap-value exp `(%return)))
+
 ;; in JS backend, after ANF: if value of binding is control-flow (%if, %while, etc.):
 ;; turn into statement form, then "sink" assignment:
 ;; (%bind (%_1 (%if ... (%bind (%_2 ...) (foo %_2) ...)) (bar %_1 baz))
@@ -654,7 +657,7 @@
         (("%method")
          (destructuring-bind (_ arguments body) exp
            `(%method ,arguments
-              ,(transform-statements body))))
+              ,(add-explicit-return (transform-statements body)))))
         (("%begin")
          (destructuring-bind (_ #rest exps) exp
            (concatenate `(%begin)
