@@ -386,19 +386,20 @@
      (select (symbol-name (first form)) ==
        (("%method")
         (destructuring-bind (_ arguments body) form
-          (destructuring-bind (new-arguments env)
+          (destructuring-bind (new-arguments env*)
               (rename-variables arguments env)
             `(%method ,new-arguments
-               ,(alpha-convert body env)))))
+               ,(alpha-convert body env*)))))
        (("%bind")
         (destructuring-bind (_ (var value) body) form
-          (destructuring-bind ((new-var) env)
+          (destructuring-bind ((new-var) env*)
               (rename-variables [var] env)
-            `(%bind (,new-var ,value)
-               ,(alpha-convert body env)))))
+            ;; NOTE: binding is available inside value!
+            `(%bind (,new-var ,(alpha-convert value env*))
+               ,(alpha-convert body env*)))))
        (else:
         (map (rcurry alpha-convert env)
-             form env))))
+             form))))
     ((<symbol>)
      (or (find-variable form env)
          form))
