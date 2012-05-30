@@ -16,80 +16,92 @@
 ;;         => "var t1; if (x) { x = 3; t1 = 1 } else { t1 = 2 }; return t1")
 ;; - closures are expensive, try to only generate them when necessary
 
-;; - TODO: method: support for keyword arguments and rest
-;; - TODO: transform bind to js:var in last pass, flatten variable to nearest lambda
-;; - TODO: bind had return, as it is an expression; only leave for last when flattening
-;; - TODO: lift symbols (keywords), use same binding
-;; - TODO: dead-code elimination (after ANF):
-;;         check all but last expressions in body:
-;;         side-effect free? no function call, constant or symbol
-
 ;; Questions:
 ;; - beta reduction?! what about explicit closures, e.g. loops
-;; - keyword arguments and rest?
 ;; - top-level defines: alpha-convert? normalize to bind?
+;; - explicit imports? would solve global scope problem
 
 ;; Languages
 ;;
-;; - ANF algorithm assumes unique naming of variables:
-;;   "We assume the front-end uniquely renames all variables [...]"
-;; => alpha-conversion before ANF
-;;
+
 ;; L1: source
-;; <prog> ::= <dec> ...
+;; <prog> ::= <dec>*
 ;; <dec> ::= (define <var> <exp>)
-;;        |  (define-function <var> (<var> ...) <exp> ...)
-;;        |  (define-function (setter <var>) (<var> ...) <exp> ...)
-;;        |  (define-generic <var> (<var> ...))
-;;        |  (define-method <var> (<var> ...) <exp> ...)
-;;        |  (define-method (setter <var>) (<var> ...) <exp> ...)
+;;        |  (define-function <var> <lambda-list> <exp>*)
+;;        |  (define-function (setter <var>) <lambda-list> <exp>*)
+;;        |  (define-generic <var> <lambda-list>)
+;;        |  (define-method <var> <typed-lambda-list> <exp>*)
+;;        |  (define-method (setter <var>) <typed-lambda-list> <exp>*)
 ;;        |  <exp>
 ;;
-;; <exp> ::= (bind ((<var> <exp>) ...) <exp> ...)
-;;        |  (begin <exp> ...)
+;; <lambda-list> ::= (<var>* <rest-key>)
+;;
+;; <typed-lambda-list> ::= ([(<var> <exp>)] <var>* <rest-key>)
+;;                      |  <lambda-list>
+;;
+;; <nested-lambda-list> ::= ({<nested-lambda-list> | <var>}* <rest-key>)
+;;
+;; <rest-key> ::= [#rest <var>] [#key <var> | (<var> <exp>)]
+;;
+;; <exp> ::= (bind ((<var> <exp>)*) <exp>*)
+;;        |  (begin <exp>*)
 ;;        |  (if <exp> <exp> <exp>)
 ;;        |  (if-bind (<var> <exp>) <exp> <exp>)
-;;        |  (when <exp> <exp> ...)
-;;        |  (unless <exp> <exp> ...)
+;;        |  (when <exp> <exp>*)
+;;        |  (unless <exp> <exp>*)
 ;;        |  (set! <var> <exp>)
-;;        |  (set! <exp> <exp> ...)
-;;        |  (parallel-set! [<var> <exp>] ...)
-;;        |  (method (<var> ...) <exp> ...)
-;;        |  (and <exp> ...)
-;;        |  (or <exp> ...)
-;;        |  (while <exp> <exp> ...)
-;;        |  (until <exp> <exp> ...)
-;;        |  (bind-properties (<var> ...) <exp> <exp> ...)
+;;        |  (set! <exp> <exp>*)
+;;        |  (parallel-set! {<var> <exp>}*)
+;;        |  (method <lambda-list> <exp>*)
+;;        |  (and <exp>*)
+;;        |  (or <exp>*)
+;;        |  (while <exp> <exp>*)
+;;        |  (dotimes (<var> <exp> <exp>) <exp>*)
+;;        |  (until <exp> <exp>*)
+;;        |  (bind-properties (<var>*) <exp> <exp>*)
+;;        |  (destructuring-bind <nested-lambda-list> <exp> <exp>*)
 ;;        |  <number>
 ;;        |  <boolean>
 ;;        |  <string>
 ;;        |  <var>
 ;;
 ;; L2: expanded top-level defines
-;; <prog> ::= <dec> ...
+;; <prog> ::= <dec>*
 ;; <dec> ::= (define <var> <L1.exp>)
 ;;        |  <L1.exp>
 ;;
 ;; L3: macroexpanded
-;; <prog> ::= <dec> ...
+;; <prog> ::= <dec>*
 ;; <dec> ::= (%define <var> <exp>)
 ;;        |  <exp>
 ;;
 ;; <exp> ::= (%bind (<var> <exp>) <exp>)
-;;        |  (%begin <exp> ...)
+;;        |  (%begin <exp>+)
 ;;        |  (%if <exp> <exp> <exp>)
 ;;        |  (%set <var> <exp>)
-;;        |  (%method (<var> ...) <exp>)
+;;        |  (%method (<var>*) <exp>)
 ;;        |  (%while <exp> <exp>)
+;;        |  (%array <exp>*)
+;;        |  (%object {<string> <exp>}*)
 ;;        |  <number>
 ;;        |  <boolean>
 ;;        |  <string>
 ;;        |  <var>
 
-;; L4: alpha-converted
-;; L5: in ANF
-;; L6: beta-reduced
-;;
+;; - alpha-converted
+;;   (ANF algorithm assumes unique naming of variables:
+;;    "We assume the front-end uniquely renames all variables [...]")
+;; - in ANF
+;; - beta-reduced
+;; - TODO: constant folding
+;; - TODO: unreachable code elimination
+;; - TODO: dead-code elimination
+;;         check all but last expressions in body:
+;;         side-effect free? no function call, constant or symbol
+;; - in statement form
+;; - TODO: lift and reuse symbols and keywords
+;; - TODO: transform bind to single js:var, flatten variable to nearest lambda
+
 ;; JS back-end transformations:
 ;;   %make-function <ralph-name-string> => %make-function <js-name-string>
 ;;   ...
