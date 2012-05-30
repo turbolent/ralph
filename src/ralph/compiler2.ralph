@@ -253,13 +253,9 @@
                          body)))))
 
 (define-default-macro if (_ test then else)
-  ;; TODO: rather optimize in separate pass?
-  ;;       direct reduces allocation
-  ;; TODO: "evaluate", check if then == else
-  (select test ==
-    ((#t) then)
-    ((#f) else)
-    (else: `(%if ,test ,then ,else))))
+  `(%if ,test ,then ,else))
+
+
 
 (define-default-macro define (_ name value)
   `(%define ,name ,value))
@@ -336,6 +332,41 @@
   (concatenate `(while (not ,test))
                body))
 
+(define-default-macro dotimes (_ binding #rest body)
+  (bind ((temp (generate-symbol)))
+    (destructuring-bind (var count result) binding
+      `(bind ((,temp ,count))
+         ,(concatenate
+           `(for ((,var 0 (+ ,var 1)))
+                 ((>= ,var ,temp) ,(or result #f)))
+           body)))))
+
+(define-default-macro for (_ clauses end #rest body)
+  (bind ((init-clauses [])
+         (next-clauses [])
+         (vars (map first clauses)))
+    (for-each ((clause clauses))
+              ()
+      ;; init
+      (push-last init-clauses
+                 (slice clause 0 2))
+      ;; next
+      (push-last next-clauses
+                 (first clause))
+      (push-last next-clauses
+                 (third clause)))
+    `(bind ,init-clauses
+       ,(concatenate `(while (not ,(first end))
+                        ,(concatenate
+                          `(,(concatenate `(method ,vars)
+                                          body))
+                          vars)
+                        ,(concatenate `(parallel-set!)
+                                      next-clauses)))
+       ,(unless (empty? (rest end))
+          (concatenate `(begin)
+                       (rest end))))))
+
 (define-default-macro bind-properties (_ properties object #rest body)
   (bind ((object* (generate-symbol)))
     (concatenate
@@ -368,6 +399,7 @@
                          then))))
                 cases))))))
 
+;; TODO: support #rest and #key
 (define-function destructure (bindings values body)
   (if (instance? values <symbol>)
       (bind ((i (size bindings)))
@@ -387,10 +419,24 @@
   (destructure bindings values
                (concatenate `(begin) body)))
 
+(define-default-macro bind-methods (_ bindings #rest body)
+  (concatenate
+   `(bind ,(map (method (binding)
+                  (destructuring-bind (name arguments #rest body)
+                      binding
+                    `(,name (concatenate `(method arguments)
+                                         body))))
+                bindings))
+   body))
+
+(define-default-macro inc! (_ object value)
+  `(set! ,object (+ ,object ,(or value 1))))
+
+(define-default-macro dec! (_ object value)
+  `(set! ,object (- ,object ,(or value 1))))
 
 ;; TODO:
-;; - bind-methods
-;; - for, do, for-each, dotimes
+;; - for-each
 ;; - %return, %try, %throw, block, handler-case
 ;; - %backquote, %comma
 
