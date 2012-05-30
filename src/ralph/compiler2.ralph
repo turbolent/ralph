@@ -572,7 +572,12 @@
 ;;     Flanagan, Sabry, Duba, Felleisen
 ;;   - "A-Normalization: Why and How"
 ;;     Matt Might (http://matt.might.net/articles/a-normalization/)
-;; * modified to support %while
+;; * modified:
+;,   - support for %while
+;;   - create less bindings for expressions involving
+;;     no control-flow (see pure-expression?)
+;;     => reduces JS variable bindings (5-20% performance hit)
+
 
 (define-function atomic? (expression)
   (any? (curry instance? expression)
@@ -631,22 +636,32 @@
                          ,(k result)))))))
 
         (else:
-         (destructuring-bind (f #rest e*) exp
-           (normalize-name
-            f (method (t)
-                (normalize-name*
-                 e* (method (t*)
-                      (k (concatenate [t] t*)))))))))
+         (if (pure-expression? exp)
+             (k exp)
+             (destructuring-bind (f #rest e*) exp
+               (normalize-name
+                f (method (t)
+                    (normalize-name*
+                     e* (method (t*)
+                          (k (concatenate [t] t*))))))))))
       (k exp)))
 
+(define-function pure-expression? (exp)
+  (if (instance? exp <array>)
+      (not (or (member? (first exp)
+                        `(%method %set %begin %if %while %bind))
+               (not (every? pure-expression?
+                            (rest exp)))))
+      #t))
+
 (define-function normalize-name (exp k)
-  (normalize exp
-             (method (aexp)
-               (if (atomic? aexp)
-                   (k aexp)
-                   (bind ((t (generate-symbol)))
-                     `(%bind (,t ,aexp)
-                        ,(k t)))))))
+  (normalize
+   exp (method (aexp)
+         (if (atomic? aexp)
+             (k aexp)
+             (bind ((t (generate-symbol)))
+               `(%bind (,t ,aexp)
+                 ,(k t)))))))
 
 (define-function normalize-name* (exp* k)
   (if (empty? exp*)
@@ -749,7 +764,7 @@
 
 ;; in JS backend, after ANF: if value of binding is control-flow (%if, %while, etc.):
 ;; turn into statement form, then "sink" assignment:
-;; (%bind (%_1 (%if ... (%bind (%_2 ...) (foo %_2) ...)) (bar %_1 baz))
+;; (%bind (%_1 (%if ... (%bind (%_2 ...) (foo %_2) ...))) (bar %_1 baz))
 ;; => (%bind (%_1 #f)
 ;;      (%begin
 ;;       (%if ...
@@ -788,4 +803,3 @@
         (else:
          exp))
       exp))
-
