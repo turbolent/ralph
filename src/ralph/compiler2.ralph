@@ -180,20 +180,69 @@
          ,(concatenate `(method)
                        definition)))
 
-;; definitions
-
 (define-function maybe-begin (expressions)
-  (if (> (size expressions) 1)
-      (concatenate `(%begin)
-                   expressions)
-      (first expressions)))
+  (select (size expressions) ==
+    ((0) #f)
+    ((1) (first expressions))
+    (else:
+     (concatenate `(%begin)
+                  expressions))))
+
+;; => [required rest keys]
+(define-function analyze-arguments (arguments)
+  (bind-methods ((position (symbol)
+                   (find-key arguments (curry = symbol))))
+    (bind ((rest (position #rest))
+           (key (position #key)))
+      [(copy-sequence arguments
+                      end: (or rest key
+                               (size arguments)))
+       (when rest
+         (element arguments (inc rest)))
+       (when key
+         (copy-sequence arguments
+                        start: (inc key)))])))
+
+(define-function wrap (exp #rest wrappers)
+  (reduce (method (result wrapper)
+            (wrapper result))
+          exp
+          wrappers))
+
+;; definitions
 
 (define-default-macro begin (_ #rest expressions)
   (maybe-begin expressions))
 
 (define-default-macro method (_ arguments #rest body)
-  `(%method ,arguments
-     ,(maybe-begin body)))
+  (destructuring-bind (required rest key)
+      (analyze-arguments arguments)
+    (bind ((rest? rest)
+           (rest (or rest (generate-symbol))))
+      (wrap (maybe-begin body)
+            (method (body)
+              (if (empty? key)
+                  body
+                  (bind ((key-values
+                          (reduce1 concatenate
+                                   (map (method (binding)
+                                          (destructuring-bind (var value)
+                                              binding
+                                            [(symbol-name var) value]))
+                                        key))))
+                    `(bind-properties ,(map first key)
+                         (%keys ,rest ,(concatenate `(%object)
+                                                    key-values))
+                       ,body))))
+            (method (body)
+              (if (or rest? (not (empty? key)))
+                  `(bind ((,rest (%rest ,(size required))))
+                     ,body)
+                  body))
+            (method (body)
+              `(%method ,required
+                 ,body))))))
+
 
 (define-default-macro bind (_ bindings #rest body)
   (if (empty? bindings)
