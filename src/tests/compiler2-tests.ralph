@@ -79,7 +79,7 @@
                               *environment*))
 
 (check-equal "macroexpand-all: and"
-             `(%if 1 (%if 2 #f #f) #f)
+             `(%if 1 (%if #t (%if 2 (%if #f 3 #f) #f) #f) #f)
              (macroexpand-all `(and 1 #t 2 #f 3)
                               *environment*))
 
@@ -204,6 +204,66 @@
                               *environment*))
 
 
+(check-equal "required arguments: rest and key"
+             [`(a b) (symbol "r") `((c 1) (d 2))]
+             (analyze-arguments
+              `(a b #rest r #key (c 1) (d 2))))
+
+(check-equal "required arguments: rest only"
+             [`(a b) (symbol "r") []]
+             (analyze-arguments
+              `(a b #rest r)))
+
+(check-equal "required arguments: key only"
+             [`(a b) #f `((c 1))]
+             (analyze-arguments
+              `(a b #key (c 1))))
+
+(check-equal "required arguments: none, but key"
+             [[] #f `((c 1))]
+             (analyze-arguments
+              `(#key (c 1))))
+
+(check-equal "required arguments: none"
+             [[] #f []]
+             (analyze-arguments[]))
+
+
+(check-equal "macroexpand-all: normal method"
+             `(%method (a)
+                a)
+             (macroexpand-all `(method (a)
+                                 a)
+                              *environment*))
+
+(reset-symbol-counter!)
+(check-equal "macroexpand-all: method with rest and keyword arguments"
+             `(%method (a b)
+                (%bind (r (%rest 2))
+                  (%bind (%_1 (%keys r (%object "c" 1 "d" 2)))
+                    (%bind (c (%get-property %_1 "c"))
+                      (%bind (d (%get-property %_1 "d"))
+                        (foo c))))))
+             (macroexpand-all `(method (a b #rest r #key (c 1) (d 2))
+                                 (foo c))
+                              *environment*))
+
+(reset-symbol-counter!)
+(check-equal "macroexpand-all: dotimes (for, while)"
+             `(%bind (%_1 (+ (- 3 2)))
+                (%bind (i 0)
+                  (%begin
+                   (%while (not (>= i %_1))
+                     (%begin
+                      ((%method (i)
+                         (foo i))
+                       i)
+                      (%set i (+ i 1))))
+                   (- i 2))))
+             (macroexpand-all `(dotimes (i (+ (- 3 2)) (- i 2))
+                                 (foo i))
+                              *environment*))
+
 
 
 (reset-symbol-counter!)
@@ -295,6 +355,7 @@
                     (+ a b)))
                  1 2)
                expanded)
+  (reset-symbol-counter!)
   (check-equal ""
                `((%method (%_1 %_2)
                    (%begin
@@ -315,8 +376,7 @@
 
 (reset-symbol-counter!)
 (check-equal "ANF: nested expression"
-             `(%bind (%_1 (- 2 1))
-                (+ %_1 2))
+             `(+ (- 2 1) 2)
              (normalize-term `(+ (- 2 1) 2)))
 
 (reset-symbol-counter!)
@@ -357,9 +417,7 @@
              `(%bind (%_1 (= n 0))
                 (%if %_1
                      1
-                     (%bind (%_2 (- n 1))
-                       (%bind (%_3 (f %_2))
-                         (* n %_3)))))
+                     (* n (f (- n 1)))))
              (normalize-term
               (macroexpand-all
                `(if (= n 0)
@@ -371,9 +429,7 @@
 (check-equal "ANF: application"
              `(%bind (id (%method (x) x))
                 (%bind (apply (%method (f x) (f x)))
-                  (%bind (%_1 (id apply))
-                    (%bind (%_2 (id 3))
-                      (%_1 %_2)))))
+                  ((id apply) (id 3))))
              (normalize-term
               (macroexpand-all
                `(bind ((id (method (x) x))
@@ -387,8 +443,7 @@
                 (%method (b)
                   (%begin
                    (- a b)
-                   (%bind (%_1 (- a b))
-                     (+ %_1 b)))))
+                   (+ (- a b) b))))
              (normalize-term
               (macroexpand-all
                `(method (a)
@@ -403,14 +458,11 @@
                1
                (%begin
                 (c)
-                (%bind (%_1 (a))
-                  (%bind (%_2 (+ 1 %_1))
-                    (%begin
-                     (b %_2)
-                     (%begin
-                      5
-                      (%bind (%_3 (d))
-                        (- %_3 23))))))))
+                (%begin
+                 (b (+ 1 (a)))
+                 (%begin
+                  5
+                  (- (d) 23)))))
              (normalize-term
               (macroexpand-all
                `(begin
@@ -424,15 +476,14 @@
 
 (reset-symbol-counter!)
 (check-equal "ANF: set!"
-             `(%bind (%_1 (- b 3))
-                (%bind (%_2 (+ %_1 c))
-                  (%bind (%_3 (%set a %_2))
-                    (%begin
-                     %_3
-                     (%bind (%_4 (%set z a))
-                       (%bind (%_5 (* %_4 5))
-                         (%bind (%_6 (%set x %_5))
-                           %_6)))))))
+             `(%bind (%_1 (+ (- b 3) c))
+                (%bind (%_2 (%set a %_1))
+                  (%begin
+                   %_2
+                   (%bind (%_3 (%set z a))
+                     (%bind (%_4 (* %_3 5))
+                       (%bind (%_5 (%set x %_4))
+                         %_5))))))
              (normalize-term
               (macroexpand-all
                `(begin
@@ -442,8 +493,7 @@
 
 (reset-symbol-counter!)
 (check-equal "ANF: set! with expression"
-             `(%bind (%_1 (+ 2 3))
-                (%%set-foo x %_1))
+             `(%%set-foo x (+ 2 3))
              (normalize-term
               (macroexpand-all
                `(set! (foo x) (+ 2 3))
@@ -451,10 +501,8 @@
 
 (reset-symbol-counter!)
 (check-equal "ANF: set! with expression and keywords"
-             `(%bind (%_1 (+ 2 3))
-                (%bind (%_2 (bar x))
-                  (%bind (%_3 (> %_2 1))
-                    (%%set-foo x %_1 animated?: %_3))))
+             `(%%set-foo x (+ 2 3)
+                         animated?: (> (bar x) 1))
              (normalize-term
               (macroexpand-all
                `(set! (foo x) (+ 2 3)
@@ -525,14 +573,14 @@
 (reset-symbol-counter!)
 (check-equal "ANF: begin as expression"
              `(%bind (%_1 (curry + 1))
-                (%begin 1
-                  (%bind (%_2 (+ 2 3))
-                    (%_1 %_2 4))))
+                (%begin
+                 1
+                 (%bind (%_2 (+ 2 3))
+                   (%_1 %_2 4))))
              (normalize-term
               (macroexpand-all
                `((curry + 1) (begin 1 (+ 2 3)) 4)
                *environment*)))
-
 
 
 (reset-symbol-counter!)
@@ -585,6 +633,7 @@
 
 
 (define-function all-passes (code)
+  (reset-symbol-counter!)
   (bind ((top-expanded (macroexpand-program code))
          (_ (format-out "1: %=\n\n" top-expanded))
          (expanded (macroexpand-all top-expanded *environment*))
@@ -623,31 +672,25 @@
               (begin-snap-animation view))))))))
 
 ;;
-`(%method (%_13 %_14)
-   (%bind (%_21 (get %_13 "bounces?"))
-     (%if %_21
-          (%bind (%_15 (get %_13 "offset"))
-            (%bind (%_16 (nth %_15 0))
-              (%bind (%_17 (nth %_15 1))
-                (%bind (%_18 (get %_13 "max-point"))
-                  (%bind (%_22 (%array %_16 %_17))
-                    (%bind (%_23 (%array 0 0))
-                      (%bind (%_19 (limit %_22 %_23 %_18))
-                        (%bind (%_24 (first %_19))
-                          (%bind (%_25 (== %_24 %_16))
-                            (%bind (%_20 (not %_25))
-                              (%bind (%_28 #f)
-                                (%begin
-                                 (%if %_20
-                                      (%set %_28 %_20)
-                                      (%bind (%_26 (second %_19))
-                                        (%bind (%_27 (== %_26 %_17))
-                                          (%set %_28 (not %_27)))))
-                                 (%if %_28
-                                      (%begin
-                                       (%%set-content-offset %_13 %_19 animated?: %_14)
-                                       (%if %_14
-                                            (%return (begin-snap-animation %_13))
-                                            (%return #f)))
-                                      (%return #f))))))))))))))
-          (%return #f))))
+`(%method (%_3 %_4)
+   (%if (get %_3 "bounces?")
+        (%bind (%_5 (get %_3 "offset"))
+          (%bind (%_6 (nth %_5 0))
+            (%bind (%_7 (nth %_5 1))
+              (%bind (%_8 (get %_3 "max-point"))
+                (%bind (%_9 (limit (%array %_6 %_7) (%array 0 0) %_8))
+                  (%bind (%_10 (not (== (first %_9) %_6)))
+                    (%bind (%_11 #f)
+                      (%begin
+                       (%if %_10
+                            (%set %_11 %_10)
+                            (%set %_11 (not (== (second %_9) %_7))))
+                       (%if %_11
+                            (%begin
+                             (%%set-content-offset %_3 %_9 animated?: %_4)
+                             (%if %_4
+                                  (%return (begin-snap-animation %_3))
+                                  (%return #f)))
+                            (%return #f))))))))))
+        (%return #f)))
+
