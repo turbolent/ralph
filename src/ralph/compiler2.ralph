@@ -23,7 +23,6 @@
 
 ;; Languages
 ;;
-
 ;; L1: source
 ;; <prog> ::= <dec>*
 ;; <dec> ::= (define <var> <exp>)
@@ -101,6 +100,11 @@
 ;; - lift and reuse symbols and keywords
 ;; - in statement form (with explicit returns)
 ;; - TODO: transform bind to single js:var, flatten variable to nearest lambda
+;; - TODO: optimize else when if uses explicit returns (always ok?):
+;;         (%if ... (return .1.) (return .2.))
+;;         => (%begin (%if ... (return .1.) #f) (return .2.))
+;; - TODO: JS' return has false value as default:
+;;         (%return #f) => (js:return)
 
 ;; JS back-end transformations:
 ;;   %make-function <ralph-name-string> => %make-function <js-name-string>
@@ -481,8 +485,8 @@
   (cond
    ((and (instance? exp <array>)
          (not (empty? exp)))
-    (if (== (first exp)
-            (symbol "%comma"))
+    (if (member? (first exp)
+                 [(symbol "%comma") (symbol "%backqoute")])
         (second exp)
         (concatenate `(%array)
                      (map transform-quoted
@@ -874,26 +878,53 @@
 
 (define-function lift-all (exp mapping k)
   (lift-symbol
-     (first exp) mapping
-     (method (t mapping)
-       (lift-symbol*
-        (rest exp) mapping
-        (method (t* mapping)
-          (k (concatenate [t] t*)
-             mapping))))))
+   (first exp) mapping
+   (method (t mapping)
+     (lift-symbol*
+      (rest exp) mapping
+      (method (t* mapping)
+        (k (concatenate [t] t*)
+           mapping))))))
 
 (define-function lift-symbol (exp mapping k)
   (if (and (instance? exp <array>)
            (not (empty? exp)))
-      (if (== (first exp) (symbol "symbol"))
+      (select (symbol-name (first exp)) ==
+        (("%bind")
+         (destructuring-bind (_ (var value) body) exp
+           (lift-symbol
+            value mapping
+            (method (lvalue mapping)
+              (lift-symbol
+               body mapping
+               (method (lbody mapping)
+                 (k `(%bind (,var ,lvalue)
+                       ,lbody)
+                    mapping)))))))
+        (("%method" "%set")
+         (destructuring-bind (m e1 e2) exp
+           (lift-symbol
+            e2 mapping
+            (method (le2 mapping)
+              (k `(,m ,e1 ,le2)
+                 mapping)))))
+        (("%begin" "%if" "%while")
+         (destructuring-bind (m #rest e*) exp
+           (lift-symbol*
+            e* mapping
+            (method (le* mapping)
+              (k (concatenate `(,m) le*)
+                 mapping)))))
+        (("symbol")
           (destructuring-bind (_ name) exp
             (if-bind (t (get mapping name))
               (k t mapping)
               (bind ((t (set! (get mapping name)
                               (generate-symbol))))
                 `(%bind (,t ,exp)
-                        ,(k t mapping)))))
-          (lift-all exp mapping k))
+                        ,(k t mapping))))))
+        (else:
+         (lift-all exp mapping k)))
       (k exp mapping)))
 
 (define-function lift-symbol* (exp* mapping k)

@@ -2,6 +2,7 @@
   import: (ralph/core ralph/test
            ralph/stream ralph/reader ralph/compiler2))
 
+
 (define *environment*
   (make <environment>))
 
@@ -746,3 +747,107 @@
                             (%return #f))))))))))
         (%return #f)))
 
+
+
+(reset-symbol-counter!)
+(check-equal "lift-symbols: simple"
+            `(%bind (%_1 (symbol "a"))
+               %_1)
+             (lift-symbols
+              (macroexpand-all
+               `(begin (symbol "a"))
+               *environment*)))
+
+
+(reset-symbol-counter!)
+(check-equal "lift-symbols: multiple uses"
+            `(%bind (%_1 (symbol "a"))
+               (%bind (%_2 (symbol "b"))
+                 (%bind (%_3 (symbol "c"))
+                   (%bind (a %_1)
+                     (%bind (b %_2)
+                       (foo a %_1 b %_2 %_3))))))
+             (lift-symbols
+              (macroexpand-all
+               `(bind ((a (symbol "a"))
+                       (b (symbol "b")))
+                  (foo
+                   a (symbol "a")
+                   b (symbol "b")
+                   (symbol "c")))
+               *environment*)))
+
+(reset-symbol-counter!)
+(check-equal "lift-symbols: bind"
+             `(%bind (%_1 (symbol "a"))
+                (%begin
+                 %_1
+                 (%bind (symbol "a")
+                   (%bind (a %_1)
+                     (foo a %_1)))))
+             (lift-symbols
+              (macroexpand-all
+               `(begin
+                 (symbol "a")
+                 (bind ((symbol "a"))
+                   (bind ((a (symbol "a")))
+                     (foo a (symbol "a")))))
+               *environment*)))
+
+(reset-symbol-counter!)
+(check-equal "lift-symbols: method"
+             `(%bind (%_2 (symbol "a"))
+                (%begin
+                 23
+                 (%method (x)
+                   %_2)))
+             (lift-symbols
+              (macroexpand-all
+               `(begin
+                 23
+                 (method (x)
+                   (symbol "a")))
+               *environment*)))
+
+(reset-symbol-counter!)
+(check-equal "lift-symbols: method"
+             `(%method (symbol)
+                symbol)
+             (lift-symbols
+              (macroexpand-all
+               `(method (symbol)
+                  symbol)
+               *environment*)))
+
+(reset-symbol-counter!)
+(check-equal "lift-symbols: set!"
+             `(%bind (%_1 (symbol "b"))
+                (%%set-symbol "a" %_1))
+             (lift-symbols
+              (macroexpand-all
+               `(set! (symbol "a")
+                      (symbol "b"))
+               *environment*)))
+
+(reset-symbol-counter!)
+(check-equal "lift-symbols: begin, if, while"
+             `(%bind (%_1 (symbol "a"))
+                (%bind (%_2 (symbol "b"))
+                  (%bind (%_3 (symbol "c"))
+                    (%begin
+                     (%if %_1
+                          (%while (bar %_2)
+                            (%begin %_1 23 %_3))
+                          %_3)
+                     %_2))))
+             (lift-symbols
+              (macroexpand-all
+               `(begin
+                 (if (symbol "a")
+                     (while (bar (symbol "b"))
+                       (symbol "a")
+                       23
+                       (symbol "c"))
+                     (symbol "c"))
+                 (symbol "b"))
+               *environment*)))
