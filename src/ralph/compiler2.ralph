@@ -651,7 +651,8 @@
   (normalize expression identity))
 
 (define-function normalize (exp k)
-  (if (instance? exp <array>)
+  (if (and (instance? exp <array>)
+           (not (empty? exp)))
       (select (symbol-name (first exp)) ==
         (("%method")
          (destructuring-bind (_ arguments body) exp
@@ -700,12 +701,7 @@
         (else:
          (if (pure-expression? exp)
              (k exp)
-             (destructuring-bind (f #rest e*) exp
-               (normalize-name
-                f (method (t)
-                    (normalize-name*
-                     e* (method (t*)
-                          (k (concatenate [t] t*))))))))))
+             (normalize-all exp k))))
       (k exp)))
 
 (define-function pure-expression? (exp)
@@ -728,11 +724,14 @@
 (define-function normalize-name* (exp* k)
   (if (empty? exp*)
       (k [])
-      (normalize-name
-       (first exp*) (method (t)
-                      (normalize-name*
-                       (rest exp*) (method (t*)
-                                     (k (concatenate [t] t*))))))))
+      (normalize-all exp* k)))
+
+(define-function normalize-all (exp k)
+  (normalize-name
+   (first exp) (method (t)
+                 (normalize-name*
+                  (rest exp) (method (t*)
+                               (k (concatenate [t] t*)))))))
 
 
 ;;;; top-level expansion
