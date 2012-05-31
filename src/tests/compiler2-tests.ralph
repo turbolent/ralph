@@ -299,6 +299,26 @@
 
 
 (reset-symbol-counter!)
+(check-equal "macroexpand-all: backqoute"
+             `(%array
+               (%array (symbol "foo")
+                       (symbol "bar")
+                       3)
+               (concatenate
+                (%array (symbol "%array") 1 2)
+                (%array 3 4))
+               (+ 5 6))
+             (bind ((stream (make <string-stream> string:
+                                  (concatenate
+                                   "`((foo bar 3) "
+                                   ",(concatenate `(%array 1 2) [3 4]) "
+                                   ",(+ 5 6))")))
+                    (exp (read stream)))
+               (macroexpand-all exp
+                                *environment*)))
+
+
+(reset-symbol-counter!)
 (check-equal "alpha-convert: single method"
              `(%method (%_1) 1)
              (alpha-convert `(%method (a) 1)

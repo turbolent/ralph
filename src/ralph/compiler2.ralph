@@ -477,9 +477,31 @@
 (define-default-macro dec! (_ object value)
   `(set! ,object (- ,object ,(or value 1))))
 
-;; TODO:
-;; - %try, %throw, block, handler-case
-;; - %backquote, %comma
+(define-function transform-quoted (exp)
+  (cond
+   ((and (instance? exp <array>)
+         (not (empty? exp)))
+    (if (== (first exp)
+            (symbol "%comma"))
+        (second exp)
+        (concatenate `(%array)
+                     (map transform-quoted
+                          exp))))
+   ((instance? exp <symbol>)
+    `(symbol ,(symbol-name exp)))
+   (else:
+    exp)))
+
+(define-default-macro %backquote (_ exp)
+  (transform-quoted exp))
+
+;; comma is only used as a marker and
+;; actually handled in backquote
+(define-default-macro %comma (_ value)
+  (signal (make <error> message: "comma not inside backquote")))
+
+
+;; TODO: %try, %throw, block, handler-case
 
 ;;;; macro expansion
 
