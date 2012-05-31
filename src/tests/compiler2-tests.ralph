@@ -264,6 +264,38 @@
                                  (foo i))
                               *environment*))
 
+(reset-symbol-counter!)
+(check-equal "macroexpand-all: for-each"
+             `(%bind (%_1 (%array 1 2 3 4))
+                (%bind (%_2 (%array 5 6 7))
+                  (%bind (%_3 #f)
+                    (%bind (%_4 (%array %_1 %_2))
+                      (%begin
+                       (%while (not (%bind (%_5 %_3)
+                                      (%if %_5
+                                           %_5
+                                           (any? empty? %_4))))
+                         (%bind (a (first %_1))
+                           (%bind (b (first %_2))
+                             (%if (%bind (%_6 (> a 2))
+                                    (%if %_6
+                                         %_6
+                                         (> b 5)))
+                                  (%set %_3 #t)
+                                  (%begin
+                                   (baz a b)
+                                   (%set %_1 (rest %_1))
+                                   (%set %_2 (rest %_2)))))))
+                       (foo a)
+                       (bar b))))))
+             (macroexpand-all `(for-each ((a [1 2 3 4])
+                                          (b [5 6 7]))
+                                         ((or (> a 2)
+                                              (> b 5))
+                                          (foo a)
+                                          (bar b))
+                                 (baz a b))
+                              *environment*))
 
 
 (reset-symbol-counter!)

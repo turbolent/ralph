@@ -367,6 +367,48 @@
           (concatenate `(begin)
                        (rest end))))))
 
+(define-default-macro for-each (_ clauses end #rest body)
+  (destructuring-bind (end-test #rest results) end
+    (bind ((clauses (map (method (clause)
+                           (concatenate [(generate-symbol)]
+                                        clause))
+                         clauses))
+           (end? (generate-symbol))
+           (values (generate-symbol)))
+      (concatenate
+       ;; evaluate each collection once
+       `(bind ,(concatenate
+                (map (method (clause)
+                       (destructuring-bind (temp var values) clause
+                         [temp values]))
+                     clauses)
+                `((,end? #f)
+                  (,values ,(concatenate `(%array)
+                                         (map first clauses)))))
+          ;; check exhaustion
+          (until (or ,end?
+                     (any? empty? ,values))
+            ;; bind each var to next element
+            (bind ,(map (method (clause)
+                          (destructuring-bind (temp var values) clause
+                            [var `(first ,temp)]))
+                        clauses)
+              (if ,end-test
+                  (set! ,end? #t)
+                  ,(concatenate
+                    `(begin)
+                    ;; TODO: rebind variables to create closure
+                    body
+                    ;; update temporary collection bindings
+                    (map (method (clause)
+                           `(set! ,(first clause)
+                                  (rest ,(first clause))))
+                         clauses))))))
+       ;; execute all result expressions, returning last; false if none
+       (if (empty? results)
+           [#f]
+           results)))))
+
 (define-default-macro bind-properties (_ properties object #rest body)
   (bind ((object* (generate-symbol)))
     (concatenate
@@ -436,10 +478,8 @@
   `(set! ,object (- ,object ,(or value 1))))
 
 ;; TODO:
-;; - for-each
-;; - %return, %try, %throw, block, handler-case
+;; - %try, %throw, block, handler-case
 ;; - %backquote, %comma
-
 
 ;;;; macro expansion
 
