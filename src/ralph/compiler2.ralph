@@ -98,8 +98,8 @@
 ;; - TODO: dead-code elimination
 ;;         check all but last expressions in body:
 ;;         side-effect free? no function call, constant or symbol
-;; - in statement form
-;; - TODO: lift and reuse symbols and keywords
+;; - lift and reuse symbols and keywords
+;; - in statement form (with explicit returns)
 ;; - TODO: transform bind to single js:var, flatten variable to nearest lambda
 
 ;; JS back-end transformations:
@@ -864,3 +864,39 @@
         (else:
          exp))
       exp))
+
+;;;; symbol lifting
+
+;; TODO: keywords, hash-symbols
+
+(define-function lift-symbols (exp)
+  (lift-symbol exp (make-object) identity))
+
+(define-function lift-all (exp mapping k)
+  (lift-symbol
+     (first exp) mapping
+     (method (t mapping)
+       (lift-symbol*
+        (rest exp) mapping
+        (method (t* mapping)
+          (k (concatenate [t] t*)
+             mapping))))))
+
+(define-function lift-symbol (exp mapping k)
+  (if (and (instance? exp <array>)
+           (not (empty? exp)))
+      (if (== (first exp) (symbol "symbol"))
+          (destructuring-bind (_ name) exp
+            (if-bind (t (get mapping name))
+              (k t mapping)
+              (bind ((t (set! (get mapping name)
+                              (generate-symbol))))
+                `(%bind (,t ,exp)
+                        ,(k t mapping)))))
+          (lift-all exp mapping k))
+      (k exp mapping)))
+
+(define-function lift-symbol* (exp* mapping k)
+  (if (empty? exp*)
+      (k [] mapping)
+      (lift-all exp* mapping k)))
