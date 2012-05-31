@@ -99,7 +99,7 @@
 ;;         side-effect free? no function call, constant or symbol
 ;; - lift and reuse symbols and keywords
 ;; - in statement form (with explicit returns)
-;; - TODO: transform bind to single js:var, flatten variable to nearest lambda
+;; - TODO: transform bind to single js:var, flatten variable to nearest special form
 ;; - TODO: optimize else when if uses explicit returns (always ok?):
 ;;         (%if ... (return .1.) (return .2.))
 ;;         => (%begin (%if ... (return .1.) #f) (return .2.))
@@ -820,6 +820,10 @@
            `(%if ,test
                  ,(wrap-value then wrapper)
                  ,(wrap-value else wrapper))))
+        (("%while")
+         `(%begin
+           ,exp
+           ,(wrap-value #f wrapper)))
         (else:
          (concatenate wrapper [exp])))
       (concatenate wrapper [exp])))
@@ -838,6 +842,12 @@
 ;;            ...)
 ;;       (bar %_1 baz)))
 
+(define-function statement? (exp)
+  (and (instance? exp <array>)
+       (not (empty? exp))
+       (member? (first exp)
+                `(%if %while %begin %bind))))
+
 (define-function transform-statements (exp)
   (if (instance? exp <array>)
       (select (symbol-name (first exp)) ==
@@ -852,19 +862,29 @@
                              exps))))
         (("%bind")
          (destructuring-bind (_ (var value) body) exp
-           (if (and (instance? value <array>)
-                    (member? (first value) `(%if %while)))
+           (if (statement? value)
                `(%bind (,var #f)
                   (%begin
-                   ,(wrap-value value `(%set ,var))
+                   ,(wrap-value (transform-statements value)
+                                `(%set ,var))
                    ,(transform-statements body)))
                `(%bind (,var ,value)
-                       ,(transform-statements body)))))
+                  ,(transform-statements body)))))
         (("%if")
          (destructuring-bind (_ test then else) exp
            `(%if ,test
                  ,(transform-statements then)
                  ,(transform-statements else))))
+        (("%while")
+         (destructuring-bind (_ test body) exp
+           `(%while ,test
+                    ,(transform-statements body))))
+        (("%set")
+         (destructuring-bind (_ var value) exp
+           (if (statement? value)
+               (wrap-value (transform-statements value)
+                           `(%set ,var))
+               `(%set (,var ,value)))))
         (else:
          exp))
       exp))

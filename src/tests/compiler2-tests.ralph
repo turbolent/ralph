@@ -683,6 +683,74 @@
                  `(foo (or #f 2 3) bar)
                  *environment*)))))
 
+(reset-symbol-counter!)
+(check-equal "statements: if exp. in if stmt."
+             `(%bind (%_1 #f)
+                (%begin
+                 (%if a
+                      (%set %_1 1)
+                      (%set %_1 2))
+                 (%if %_1
+                      3
+                      4)))
+             (transform-statements
+               (normalize-term
+                (macroexpand-all
+                 `(if (if a 1 2) 3 4)
+                 *environment*))))
+
+(reset-symbol-counter!)
+(check-equal "statements: while exp. in while stmt."
+             `(%while (> a 2)
+                (%bind (a #f)
+                  (%begin
+                   (%begin
+                    (%while (< b 3)
+                      (%if a
+                           (%bind (c #f)
+                             (%begin
+                              (%if c
+                                   (%set c 5)
+                                   (%set c 6))
+                              c))
+                           #f))
+                    (%set a #f))
+                   4)))
+             (transform-statements
+               (normalize-term
+                (macroexpand-all
+                 `(while (> a 2)
+                    (bind ((a (while (< b 3)
+                                (if a
+                                    (bind ((c (if c 5 6)))
+                                      c)
+                                    #f))))
+                      4))
+                 *environment*))))
+
+
+(reset-symbol-counter!)
+(check-equal "statements: value of while applied to method"
+             `(%bind (y 5)
+                (%bind (%_2 (%method (x)
+                              (%if x 1 2)))
+                  (%bind (%_5 #f)
+                    (%begin
+                     (%begin
+                      (%while (> y 2)
+                        (%bind (%_3 (- y 1))
+                          (%bind (%_4 (%set y %_3))
+                            %_4)))
+                      (%set %_5 #f))
+                     (%_2 %_5)))))
+             (transform-statements
+               (normalize-term
+                (macroexpand-all
+                 `(bind ((y 5))
+                    ((method (x) (if x 1 2))
+                     (while (> y 2)
+                       (dec! y))))
+                 *environment*))))
 
 
 (define-function all-passes (code)
