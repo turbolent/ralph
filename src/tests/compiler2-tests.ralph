@@ -329,6 +329,12 @@
                                 *environment*)))
 
 
+(check-equal "macroexpand-all: symbol macros"
+             `(%begin 1 (%next-method this-method) 2)
+             (macroexpand-all `(begin 1 next-method 2)
+                              *environment*))
+
+
 (reset-symbol-counter!)
 (check-equal "alpha-convert: single method"
              `(%method (%_1) 1)

@@ -17,7 +17,9 @@
 ;; - closures are expensive, try to only generate them when necessary
 
 ;; Questions:
-;; - beta reduction?! what about explicit closures, e.g. loops
+;; - beta reduction?!
+;;   what about explicit closures, e.g. loops?
+;;   what about assignment of vairables, e.g. ((n 3) (i n)) .... i
 ;; - top-level defines: alpha-convert? normalize to bind?
 ;; - explicit imports? would solve global scope problem
 
@@ -521,18 +523,41 @@
 
 ;; TODO: %try, %throw, block, handler-case
 
+;;;; symbol macros
+
+;; utilities
+
+(define *default-symbol-macros*
+  (make-object))
+
+(define-macro define-default-symbol-macro (name #rest definition)
+  `(set! (get *default-symbol-macros* ,(symbol-name name))
+         ,(concatenate `(method)
+                       definition)))
+
+;; definitions
+
+(define-default-symbol-macro next-method (_)
+  `(%next-method this-method))
+
 ;;;; macro expansion
 
 (define-class <environment> (<object>)
-  (macros *default-macros*))
+  (macros *default-macros*)
+  (symbol-macros *default-symbol-macros*))
 
 (define-function macro-definition (form env)
-  (get env "macros" (symbol-name (first form))))
+  (select form instance?
+    ((<array>)
+     (get env "macros" (symbol-name (first form))))
+    ((<symbol>)
+     (get env "symbol-macros" (symbol-name form)))))
 
 (define-function macroexpand-1 (form env)
-  (if-bind (macro (and (expression? form)
-                       (macro-definition form env)))
-    (apply macro env (rest form))
+  (if-bind (macro (macro-definition form env))
+    (apply macro env (if (instance? form <array>)
+                         (rest form)
+                         form))
     form))
 
 (define-function macroexpand (form env)
@@ -550,7 +575,10 @@
            (apply expander env (rest form))
            (map (rcurry macroexpand-all env)
                 form))))
-    ;; TODO: symbol macro ((<symbol>) )
+    ((<symbol>)
+     (if (macro-definition form env)
+         (macroexpand-all (macroexpand form env) env)
+         form))
     (else: form)))
 
 ;;;; alpha conversion
