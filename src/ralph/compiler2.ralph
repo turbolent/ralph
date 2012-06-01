@@ -406,9 +406,13 @@
               (if ,end-test
                   (set! ,end? #t)
                   ,(concatenate
-                    `(begin)
-                    ;; TODO: rebind variables to create closure
-                    body
+                    `(begin
+                      ;; rebind variables to create closure
+                      ,(bind ((vars (map second clauses)))
+                         (concatenate
+                          `(,(concatenate `(method ,vars)
+                                          body))
+                          vars)))
                     ;; update temporary collection bindings
                     (map (method (clause)
                            `(set! ,(first clause)
@@ -804,8 +808,6 @@
 
 
 ;;;; statements
-
-;; TODO: handle %while, return value is always #f
 
 ;; "sink"/wrap return value with expression
 ;; e.g. to assign or explicitly return

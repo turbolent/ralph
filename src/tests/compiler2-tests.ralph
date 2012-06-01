@@ -292,7 +292,9 @@
                                          (> b 5)))
                                   (%set %_3 #t)
                                   (%begin
-                                   (baz a b)
+                                   ((%method (a b)
+                                      (baz a b))
+                                    a b)
                                    (%set %_1 (rest %_1))
                                    (%set %_2 (rest %_2)))))))
                        (foo a)
