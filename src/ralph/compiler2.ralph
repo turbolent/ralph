@@ -193,18 +193,18 @@
                   expressions))))
 
 ;; => [required rest keys]
-(define-function analyze-arguments (arguments)
+(define-function analyze-lambda-list (list)
   (bind-methods ((position (symbol)
-                   (find-key arguments (curry = symbol))))
+                   (find-key list (curry = symbol))))
     (bind ((rest (position #rest))
            (key (position #key)))
-      [(copy-sequence arguments
+      [(copy-sequence list
                       end: (or rest key
-                               (size arguments)))
+                               (size list)))
        (when rest
-         (element arguments (inc rest)))
+         (element list (inc rest)))
        (when key
-         (copy-sequence arguments
+         (copy-sequence list
                         start: (inc key)))])))
 
 (define-function wrap (exp #rest wrappers)
@@ -213,6 +213,32 @@
           exp
           wrappers))
 
+(define-function wrap-rest/keys (body all required rest key)
+  (bind ((rest? rest)
+         (rest (or rest
+                   (unless (empty? key)
+                     (generate-symbol)))))
+    (wrap body
+          (method (body)
+            (if (empty? key)
+                body
+                (bind ((key-values
+                        (reduce1 concatenate
+                                 (map (method (binding)
+                                        (destructuring-bind (var value)
+                                            binding
+                                          [(symbol-name var) value]))
+                                      key))))
+                  `(bind-properties ,(map first key)
+                       (%keys ,rest ,(concatenate `(%object)
+                                                  key-values))
+                     ,body))))
+          (method (body)
+            (if (or rest? (not (empty? key)))
+                `(bind ((,rest (slice ,all ,(size required))))
+                   ,body)
+                body)))))
+
 ;; definitions
 
 (define-default-macro begin (_ #rest expressions)
@@ -220,32 +246,12 @@
 
 (define-default-macro method (_ arguments #rest body)
   (destructuring-bind (required rest key)
-      (analyze-arguments arguments)
-    (bind ((rest? rest)
-           (rest (or rest (generate-symbol))))
-      (wrap (maybe-begin body)
-            (method (body)
-              (if (empty? key)
-                  body
-                  (bind ((key-values
-                          (reduce1 concatenate
-                                   (map (method (binding)
-                                          (destructuring-bind (var value)
-                                              binding
-                                            [(symbol-name var) value]))
-                                        key))))
-                    `(bind-properties ,(map first key)
-                         (%keys ,rest ,(concatenate `(%object)
-                                                    key-values))
-                       ,body))))
-            (method (body)
-              (if (or rest? (not (empty? key)))
-                  `(bind ((,rest (%rest ,(size required))))
-                     ,body)
-                  body))
-            (method (body)
-              `(%method ,required
-                 ,body))))))
+      (analyze-lambda-list arguments)
+    `(%method ,required
+       ,(wrap-rest/keys
+         (maybe-begin body)
+         (symbol "%all-arguments")
+         required rest key))))
 
 
 (define-default-macro bind (_ bindings #rest body)
@@ -445,17 +451,21 @@
                          then))))
                 cases))))))
 
-;; TODO: support #rest and #key
 (define-function destructure (bindings values body)
   (if (instance? values <symbol>)
-      (bind ((i (size bindings)))
-        (reduce (method (body binding)
-                  (dec! i)
-                  (if (instance? binding <symbol>)
-                      `(bind ((,binding (nth ,values ,i)))
-                         ,body)
-                      (destructure binding `(nth ,values ,i) body)))
-                body (reverse bindings)))
+      (destructuring-bind (required rest key)
+          (analyze-lambda-list bindings)
+        (bind ((i (size required)))
+          (reduce (method (body binding)
+                    (dec! i)
+                    (if (instance? binding <symbol>)
+                        `(bind ((,binding (nth ,values ,i)))
+                           ,body)
+                        (destructure binding `(nth ,values ,i) body)))
+                  (wrap-rest/keys body
+                                  values
+                                  required rest key)
+                  (reverse required))))
       ;; ensures values is only evaluated once
       (bind ((var (generate-symbol)))
         `(bind ((,var ,values))

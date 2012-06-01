@@ -195,39 +195,47 @@
                 (%bind (%_1 (nth values 1))
                   (%bind (b (nth %_1 0))
                     (%bind (c (nth %_1 1))
-                      (%bind (%_2 (nth %_1 2))
-                        (%bind (d (nth %_2 0))
-                          (%bind (e (nth %_2 1))
-                            (%bind (f (nth values 2))
-                              (foo e)))))))))
-             (macroexpand-all `(destructuring-bind (a (b c (d e)) f) values
+                      (%bind (%_3 (nth %_1 2))
+                        (%bind (d (nth %_3 0))
+                          (%bind (e (nth %_3 1))
+                            (%bind (f (slice %_3 2))
+                              (%bind (%_4 (%keys f (%object "g" 1)))
+                                (%bind (g (%get-property %_4 "g"))
+                                  (%bind (%_2 (slice %_1 3))
+                                    (%bind (%_5 (%keys %_2 (%object "h" 2)))
+                                      (%bind (h (%get-property %_5 "h"))
+                                        (%bind (i (nth values 2))
+                                          (foo e)))))))))))))))
+             (macroexpand-all `(destructuring-bind
+                                   (a (b c (d e #rest f #key (g 1)) #key (h 2)) i)
+                                   values
                                  (foo e))
                               *environment*))
 
 
 (check-equal "required arguments: rest and key"
              [`(a b) (symbol "r") `((c 1) (d 2))]
-             (analyze-arguments
+             (analyze-lambda-list
               `(a b #rest r #key (c 1) (d 2))))
 
 (check-equal "required arguments: rest only"
              [`(a b) (symbol "r") []]
-             (analyze-arguments
+             (analyze-lambda-list
               `(a b #rest r)))
 
 (check-equal "required arguments: key only"
              [`(a b) #f `((c 1))]
-             (analyze-arguments
+             (analyze-lambda-list
               `(a b #key (c 1))))
 
 (check-equal "required arguments: none, but key"
              [[] #f `((c 1))]
-             (analyze-arguments
+             (analyze-lambda-list
               `(#key (c 1))))
 
 (check-equal "required arguments: none"
              [[] #f []]
-             (analyze-arguments[]))
+             (analyze-lambda-list []))
 
 
 (check-equal "macroexpand-all: normal method"
@@ -240,7 +248,7 @@
 (reset-symbol-counter!)
 (check-equal "macroexpand-all: method with rest and keyword arguments"
              `(%method (a b)
-                (%bind (r (%rest 2))
+                (%bind (r (slice %all-arguments 2))
                   (%bind (%_1 (%keys r (%object "c" 1 "d" 2)))
                     (%bind (c (%get-property %_1 "c"))
                       (%bind (d (%get-property %_1 "d"))
@@ -732,17 +740,16 @@
 (reset-symbol-counter!)
 (check-equal "statements: value of while applied to method"
              `(%bind (y 5)
-                (%bind (%_2 (%method (x)
-                              (%if x 1 2)))
-                  (%bind (%_5 #f)
+                (%bind (%_1 (%method (x) (%if x 1 2)))
+                  (%bind (%_4 #f)
                     (%begin
                      (%begin
                       (%while (> y 2)
-                        (%bind (%_3 (- y 1))
-                          (%bind (%_4 (%set y %_3))
-                            %_4)))
-                      (%set %_5 #f))
-                     (%_2 %_5)))))
+                        (%bind (%_2 (- y 1))
+                          (%bind (%_3 (%set y %_2))
+                            %_3)))
+                      (%set %_4 #f))
+                     (%_1 %_4)))))
              (transform-statements
                (normalize-term
                 (macroexpand-all
@@ -864,11 +871,11 @@
 
 (reset-symbol-counter!)
 (check-equal "lift-symbols: method"
-             `(%bind (%_2 (symbol "a"))
+             `(%bind (%_1 (symbol "a"))
                 (%begin
                  23
                  (%method (x)
-                   %_2)))
+                   %_1)))
              (lift-symbols
               (macroexpand-all
                `(begin
