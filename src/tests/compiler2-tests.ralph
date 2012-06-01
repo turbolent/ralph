@@ -934,3 +934,28 @@
                      (symbol "c"))
                  (symbol "b"))
                *environment*)))
+
+(reset-symbol-counter!)
+(check-equal "fold-bindings"
+             `(%begin
+               (js:var (%_1 (symbol "a"))
+                       (%_2 (symbol "b"))
+                       (%_3 (symbol "c")))
+               (%begin
+                (%if %_1
+                     (%while (bar %_2)
+                       (%begin %_1 23 %_3))
+                     %_3)
+                %_2))
+             (fold-bindings
+              (lift-symbols
+               (macroexpand-all
+                `(begin
+                  (if (symbol "a")
+                      (while (bar (symbol "b"))
+                        (symbol "a")
+                        23
+                        (symbol "c"))
+                      (symbol "c"))
+                  (symbol "b"))
+                *environment*))))

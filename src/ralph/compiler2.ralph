@@ -918,7 +918,7 @@
         (("%while")
          (destructuring-bind (_ test body) exp
            `(%while ,test
-                    ,(transform-statements body))))
+              ,(transform-statements body))))
         (("%set")
          (destructuring-bind (_ var value) exp
            (if (statement? value)
@@ -991,3 +991,46 @@
   (if (empty? exp*)
       (k [] mapping)
       (lift-all exp* mapping k)))
+
+
+
+;;;; fold bindings
+
+(define-function fold-bindings (exp)
+  (if (instance? exp <array>)
+      (select (symbol-name (first exp)) ==
+        (("%method")
+         (destructuring-bind (_ arguments body) exp
+           `(%method ,arguments
+              ,(fold-bindings body))))
+        (("%begin")
+         (destructuring-bind (_ #rest exps) exp
+           (concatenate `(%begin)
+                        (map fold-bindings
+                             exps))))
+        (("%bind")
+         (destructuring-bind (_ (var value) body) exp
+           (bind ((bindings [[var value]]))
+             (while (and (instance? body <array>)
+                         (not (empty? body))
+                         (== (first body) (symbol "%bind")))
+               (push-last bindings
+                          (second body))
+               (set! body (third body)))
+             `(%begin
+               ,(concatenate `(js:var)
+                             bindings)
+               ,body))))
+        (("%if")
+         (destructuring-bind (_ test then else) exp
+           `(%if ,test
+                 ,(fold-bindings then)
+                 ,(fold-bindings else))))
+        (("%while")
+         (destructuring-bind (_ test body) exp
+           `(%while ,test
+              ,(fold-bindings body))))
+        ;; %set: leave as is
+        (else:
+         exp))
+      exp))
