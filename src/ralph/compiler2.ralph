@@ -1044,3 +1044,119 @@
         (else:
          exp))
       exp))
+
+;;;; compilation to JS
+
+;; TODO: inline, unary
+
+(define *escaped*
+  (make-object
+   "\"" "\""
+   "\\" "\\"
+   "\b" "b"
+   "\f" "f"
+   "\n" "n"
+   "\r" "r"
+   "\v" "v"
+   "\t" "t"))
+
+(define-function fill-zeros (string)
+  (concatenate
+   (slice "0000" 0 (- 4 (size string)))
+   string))
+
+(define-function hex (code)
+  (fill-zeros ((js:get-property code "toString") 16)))
+
+(define-function escape-string (string)
+  (join (map (method (char)
+               (if-bind (escaped (get *escaped* char))
+                 (concatenate "\\" escaped)
+                 (bind ((code (char-code char)))
+                   (if (< 0x1f code  0x7f)
+                       char
+                       (concatenate "\\u" (hex code))))))
+             (as-array string))
+        ""))
+
+(define-function compile-js (exp)
+  (select exp instance?
+    ((<array>)
+     (if (empty? exp)
+         (signal (make <error> message: "empty expression"))
+         (compile-js-exp exp)))
+    ((<number>)
+     (as-string exp))
+    ((<boolean>)
+     (if exp "true" "false"))
+    ((<string>)
+     (concatenate "\"" (escape-string exp) "\""))
+    (else:
+     (description exp))))
+
+(define-function compile-js-exp (exp)
+  (bind ((name (symbol-name (first exp))))
+    (select name ==
+      (("%array")
+       (destructuring-bind (_ #rest elements) exp
+         (concatenate
+          "[" (join (map compile-js elements) ", ") "]")))
+      (("%if")
+       (destructuring-bind (_ test then else) exp
+         (concatenate
+          "if (" (compile-js test) ")\n"
+          (compile-js then)
+          (if else
+              (concatenate
+               "\nelse " (compile-js else))
+              ""))))
+      (("%while")
+       (destructuring-bind (_ test body) exp
+         "while (" (compile-js test) ")\n"
+         (compile-js body)))
+      (("%return")
+       (concatenate
+        "return " (compile-js (second exp))))
+      (("%begin")
+       (concatenate
+        "{" (join (map compile-js (rest exp)) ";\n") "}"))
+      (("%set")
+       (destructuring-bind (_ var value) exp
+         (concatenate
+          (compile-js var) " = "
+          (compile-js value))))
+      (("%method")
+       ;; TODO: add to environment
+       (bind ((name (generate-symbol)))
+         (destructuring-bind (_ arguments body) exp
+           (concatenate
+            "function " (compile-js name)
+            " (" (join (map compile-js arguments) ", ") ") {\n"
+            ;; optimization: default is false
+            (if body
+                ;; TOOD: check if %begin and directly embed
+                (compile-js body)
+                "")
+            "}"
+            ))))
+       (("js:var")
+        (destructuring-bind (_ #rest bindings) exp
+          (concatenate
+           "var "
+           (join (map (method (binding)
+                        (destructuring-bind (var value)
+                            binding
+                          (concatenate
+                           (compile-js var)
+                           (if value
+                               (concatenate
+                                " = " (compile-js value))
+                               ""))))
+                      bindings)
+                 ",\n"))))
+      (else:
+       (destructuring-bind (head #rest tail) exp
+         (concatenate
+          (compile-js head)
+          "(" (join (map compile-js tail) ", ") ")"))))))
+

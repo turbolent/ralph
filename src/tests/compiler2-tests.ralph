@@ -958,3 +958,20 @@
                       (symbol "c"))
                   (symbol "b"))
                 *environment*))))
+
+(reset-symbol-counter!)
+(check-equal "compile"
+             ""
+             (compile-js
+              (fold-statements
+               (lift-symbols
+                (macroexpand-all
+                 `(bind ((x (method (y) (+ 1 y))))
+                   (if (symbol "a")
+                       (while (bar (symbol "b"))
+                         (symbol "a")
+                         (x 2)
+                         (symbol "c"))
+                       (symbol "c"))
+                   (symbol "b"))
+                 *environment*)))))
