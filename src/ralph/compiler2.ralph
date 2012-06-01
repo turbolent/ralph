@@ -9,6 +9,8 @@
                          atomic?
                          normalize-term))
 
+;; TODO: symbol => %symbol
+
 ;; - everything is an expression, transform to statements after ANF easy
 ;; - instead of trying to use JS statements (while, try, etc.) as expressions,
 ;;   by wrapping them in lambdas, allways generate statements (while, but also if, etc.)
@@ -994,20 +996,27 @@
 
 
 
-;;;; fold bindings
+;;;; fold-statements
 
-(define-function fold-bindings (exp)
+(define-function fold-statements (exp)
   (if (instance? exp <array>)
       (select (symbol-name (first exp)) ==
         (("%method")
          (destructuring-bind (_ arguments body) exp
            `(%method ,arguments
-              ,(fold-bindings body))))
+              ,(fold-statements body))))
         (("%begin")
          (destructuring-bind (_ #rest exps) exp
-           (concatenate `(%begin)
-                        (map fold-bindings
-                             exps))))
+           (reduce concatenate
+                   `(%begin)
+                   (map (method (exp)
+                          (bind ((folded (fold-statements exp)))
+                            (if (and (instance? folded <array>)
+                                     (not (empty? folded))
+                                     (== (first folded) (symbol "%begin")))
+                                (rest folded)
+                                [folded])))
+                        exps))))
         (("%bind")
          (destructuring-bind (_ (var value) body) exp
            (bind ((bindings [[var value]]))
@@ -1017,19 +1026,20 @@
                (push-last bindings
                           (second body))
                (set! body (third body)))
-             `(%begin
-               ,(concatenate `(js:var)
-                             bindings)
-               ,body))))
+             (fold-statements
+              `(%begin
+                ,(concatenate `(js:var)
+                              bindings)
+                ,body)))))
         (("%if")
          (destructuring-bind (_ test then else) exp
            `(%if ,test
-                 ,(fold-bindings then)
-                 ,(fold-bindings else))))
+                 ,(fold-statements then)
+                 ,(fold-statements else))))
         (("%while")
          (destructuring-bind (_ test body) exp
            `(%while ,test
-              ,(fold-bindings body))))
+              ,(fold-statements body))))
         ;; %set: leave as is
         (else:
          exp))
