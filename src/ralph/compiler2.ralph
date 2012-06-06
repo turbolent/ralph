@@ -692,7 +692,7 @@
      env]))
 
 (define-function find-variable (variable env)
-  ;; TODO: use find-property, signal error if not found
+  ;; TODO: use deep-get, signal error if not found
   (js:get-property env (symbol-name variable)))
 
 (define-function alpha-convert (form env)
@@ -709,8 +709,8 @@
         (destructuring-bind (_ (var value) body) form
           (destructuring-bind ((new-var) env*)
               (rename-variables [var] env)
-            ;; NOTE: binding is available inside value!
-            `(%bind (,new-var ,(alpha-convert value env*))
+            ;; TODO: make binding available inside value?
+            `(%bind (,new-var ,(alpha-convert value env))
                ,(alpha-convert body env*)))))
        (else:
         (map (rcurry alpha-convert env)
