@@ -950,7 +950,7 @@
                    ,(wrap-value (transform-statements value)
                                 `(%set ,var))
                    ,(transform-statements body)))
-               `(%bind (,var ,value)
+               `(%bind (,var ,(transform-statements value))
                   ,(transform-statements body)))))
         (("%if")
          (set! (third exp)
