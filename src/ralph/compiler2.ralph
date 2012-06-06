@@ -4,115 +4,18 @@
                          macroexpand
                          macroexpand-all
                          alpha-convert
-;;                         beta-reduce
                          reset-symbol-counter!
                          atomic?
                          normalize-term))
 
+;; TODO: refactor lift-defines and lift-symbols: define-lift-pass
+
 ;; TODO: symbol => %symbol
+;; TODO: %primitive-...
 
-;; - everything is an expression, transform to statements after ANF easy
-;; - instead of trying to use JS statements (while, try, etc.) as expressions,
-;;   by wrapping them in lambdas, allways generate statements (while, but also if, etc.)
-;;   (e.g. instead of "return x ? (x = 3, 1) : 2"
-;;         => "var t1; if (x) { x = 3; t1 = 1 } else { t1 = 2 }; return t1")
-;; - closures are expensive, try to only generate them when necessary
 
-;; Questions:
-;; - beta reduction?!
-;;   what about explicit closures, e.g. loops?
-;;   what about assignment of vairables, e.g. ((n 3) (i n)) .... i
-;; - top-level defines: alpha-convert? normalize to bind?
-;; - explicit imports? would solve global scope problem
-
-;; Languages
-;;
-;; L1: source
-;; <prog> ::= <dec>*
-;; <dec> ::= (define <var> <exp>)
-;;        |  (define-function <var> <lambda-list> <exp>*)
-;;        |  (define-function (setter <var>) <lambda-list> <exp>*)
-;;        |  (define-generic <var> <lambda-list>)
-;;        |  (define-method <var> <typed-lambda-list> <exp>*)
-;;        |  (define-method (setter <var>) <typed-lambda-list> <exp>*)
-;;        |  <exp>
-;;
-;; <lambda-list> ::= (<var>* <rest-key>)
-;;
-;; <typed-lambda-list> ::= ([(<var> <exp>)] <var>* <rest-key>)
-;;                      |  <lambda-list>
-;;
-;; <nested-lambda-list> ::= ({<nested-lambda-list> | <var>}* <rest-key>)
-;;
-;; <rest-key> ::= [#rest <var>] [#key <var> | (<var> <exp>)]
-;;
-;; <exp> ::= (bind ((<var> <exp>)*) <exp>*)
-;;        |  (begin <exp>*)
-;;        |  (if <exp> <exp> <exp>)
-;;        |  (if-bind (<var> <exp>) <exp> <exp>)
-;;        |  (when <exp> <exp>*)
-;;        |  (unless <exp> <exp>*)
-;;        |  (set! <var> <exp>)
-;;        |  (set! <exp> <exp>*)
-;;        |  (parallel-set! {<var> <exp>}*)
-;;        |  (method <lambda-list> <exp>*)
-;;        |  (and <exp>*)
-;;        |  (or <exp>*)
-;;        |  (while <exp> <exp>*)
-;;        |  (dotimes (<var> <exp> <exp>) <exp>*)
-;;        |  (until <exp> <exp>*)
-;;        |  (bind-properties (<var>*) <exp> <exp>*)
-;;        |  (destructuring-bind <nested-lambda-list> <exp> <exp>*)
-;;        |  <number>
-;;        |  <boolean>
-;;        |  <string>
-;;        |  <var>
-;;
-;; L2: expanded top-level defines
-;; <prog> ::= <dec>*
-;; <dec> ::= (define <var> <L1.exp>)
-;;        |  <L1.exp>
-;;
-;; L3: macroexpanded
-;; <prog> ::= <dec>*
-;; <dec> ::= (%define <var> <exp>)
-;;        |  <exp>
-;;
-;; <exp> ::= (%bind (<var> <exp>) <exp>)
-;;        |  (%begin <exp>+)
-;;        |  (%if <exp> <exp> <exp>)
-;;        |  (%set <var> <exp>)
-;;        |  (%method (<var>*) <exp>)
-;;        |  (%while <exp> <exp>)
-;;        |  (%array <exp>*)
-;;        |  (%object {<string> <exp>}*)
-;;        |  <number>
-;;        |  <boolean>
-;;        |  <string>
-;;        |  <var>
-
-;; - alpha-converted
-;;   (ANF algorithm assumes unique naming of variables:
-;;    "We assume the front-end uniquely renames all variables [...]")
-;; - in ANF
-;; - beta-reduced
-;; - TODO: constant folding
-;; - TODO: unreachable code elimination
-;; - TODO: dead-code elimination
-;;         check all but last expressions in body:
-;;         side-effect free? no function call, constant or symbol
-;; - lift and reuse symbols and keywords
-;; - in statement form (with explicit returns)
-;; - TODO: transform bind to single js:var, flatten variable to nearest special form
-;; - TODO: optimize else when if uses explicit returns (always ok?):
-;;         (%if ... (return .1.) (return .2.))
-;;         => (%begin (%if ... (return .1.) #f) (return .2.))
-;; - TODO: JS' return has false value as default:
-;;         (%return #f) => (js:return)
-
-;; JS back-end transformations:
-;;   %make-function <ralph-name-string> => %make-function <js-name-string>
-;;   ...
+;; TODO: generate-symbol => pass env
+;; TODO: use one environment for all passes (?!)
 
 
 ;;;; utilities
