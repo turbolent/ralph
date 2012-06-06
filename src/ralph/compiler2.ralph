@@ -881,26 +881,25 @@
 ;; "sink"/wrap return value with expression
 ;; e.g. to assign or explicitly return
 
+;; NOTE: wrap-value, transform-statements and
+;; flatten-statements are destructive!
+;; => mutation of expressions reduces consing
+
 (define-function wrap-value (exp wrapper)
   (if (instance? exp <array>)
       (select (symbol-name (first exp)) ==
-        (("%begin")
-         (destructuring-bind (_ #rest e*) exp
-           (concatenate `(%begin)
-                        (but-last e*)
-                        `(,(wrap-value
-                            (last e*) wrapper)))))
-        (("%bind")
-         (destructuring-bind (_ binding body) exp
-           `(%bind ,binding ,(wrap-value body wrapper))))
+        (("%begin" "%bind")
+         ;; wrap body
+         (set! (last exp)
+               (wrap-value (last exp) wrapper))
+         exp)
         (("%if")
-         (destructuring-bind (_ test then else) exp
-           ;; TODO: don't sink if both else and then
-           ;;       are atomic? or function calls
-           ;;       i.e., no %begin, %bind, etc.
-           `(%if ,test
-                 ,(wrap-value then wrapper)
-                 ,(wrap-value else wrapper))))
+         ;; wrap then and else
+         (set! (third exp)
+               (wrap-value (third exp) wrapper))
+         (set! (last exp)
+               (wrap-value (last exp) wrapper))
+         exp)
         (("%while")
          `(%begin
            ,exp
@@ -909,19 +908,20 @@
          (concatenate wrapper [exp])))
       (concatenate wrapper [exp])))
 
+
 (define-function add-explicit-return (exp)
   (wrap-value exp `(%return)))
 
-;; in JS backend, after ANF: if value of binding is control-flow (%if, %while, etc.):
+;; after ANF: if value of binding is control-flow (%if, %while, etc.):
 ;; turn into statement form, then "sink" assignment:
-;; (%bind (%_1 (%if ... (%bind (%_2 ...) (foo %_2) ...))) (bar %_1 baz))
-;; => (%bind (%_1 #f)
+;; (%bind ($1 (%if ... (%bind ($2 ...) (foo $2) ...))) (bar $1 baz))
+;; => (%bind ($1 #f)
 ;;      (%begin
 ;;       (%if ...
-;;            (%bind (%_2 ...)
-;;              (set! %_1 (foo %_2)))
+;;            (%bind ($2 ...)
+;;              (set! $1 (foo $2)))
 ;;            ...)
-;;       (bar %_1 baz)))
+;;       (bar $1 baz)))
 
 (define-function statement? (exp)
   (and (instance? exp <array>)
@@ -933,9 +933,10 @@
   (if (instance? exp <array>)
       (select (symbol-name (first exp)) ==
         (("%method")
-         (destructuring-bind (_ arguments body) exp
-           `(%method ,arguments
-              ,(add-explicit-return (transform-statements body)))))
+         (set! (last exp)
+               (add-explicit-return
+                (transform-statements (last exp))))
+         exp)
         (("%begin")
          (destructuring-bind (_ #rest exps) exp
            (concatenate `(%begin)
@@ -952,23 +953,20 @@
                `(%bind (,var ,value)
                   ,(transform-statements body)))))
         (("%if")
-         (destructuring-bind (_ test then else) exp
-           `(%if ,test
-                 ,(transform-statements then)
-                 ,(transform-statements else))))
-        (("%while")
-         (destructuring-bind (_ test body) exp
-           `(%while ,test
-              ,(transform-statements body))))
-        (("%set")
-         (destructuring-bind (_ var value) exp
-           (if (statement? value)
-               (wrap-value (transform-statements value)
-                           `(%set ,var))
-               `(%set (,var ,value)))))
+         (set! (third exp)
+               (transform-statements (third exp)))
+         (set! (last exp)
+               (transform-statements (last exp)))
+         exp)
+        (("%while" "%set")
+         (set! (last exp)
+               (transform-statements (last exp)))
+         exp)
         (else:
-         exp))
+         (map transform-statements exp)))
       exp))
+
+
 
 ;;;; symbol lifting
 
