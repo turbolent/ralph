@@ -774,18 +774,9 @@
 ;;    (else: form)))
 
 
-;; ANF
-;; * see:
-;;   - "The Essence of Compiling with Continuations"
-;;     Flanagan, Sabry, Duba, Felleisen
-;;   - "A-Normalization: Why and How"
-;;     Matt Might (http://matt.might.net/articles/a-normalization/)
-;; * modified:
-;,   - support for %while
-;;   - create less bindings for expressions involving
-;;     no control-flow (see pure-expression?)
-;;     => reduces JS variable bindings (5-20% performance hit)
+;;;; ANF
 
+;; TODO: also normalize when function can be inlined?
 
 (define-function atomic? (expression)
   (any? (curry instance? expression)
@@ -823,7 +814,7 @@
                       ,(normalize body k))))))
         (("%if")
          (destructuring-bind (_ test then else) exp
-           (normalize-name
+           (normalize-value
             test (method (atest)
                    (k `(%if ,atest
                             ,(normalize-term then)
@@ -834,29 +825,34 @@
                        ,(normalize-term body)))))
         (("%set")
          (destructuring-bind (_ var value) exp
-           (normalize-name
+           (normalize-value
             value (method (avalue)
-                    ;; binding helps in later passes
-                    ;; (sinking, dead code elimination):
-                    ;; values are always symbols,
-                    ;; no check for assignment
-                    (bind ((result (generate-symbol)))
-                      `(%bind (,result (%set ,var ,avalue))
-                         ,(k result)))))))
+                   (k `(%set ,var ,avalue))))))
 
         (else:
-         (if (pure-expression? exp)
-             (k exp)
-             (normalize-all exp k))))
+         (if (contains-statements? exp)
+             (normalize-all exp k)
+             (k exp))))
       (k exp)))
 
-(define-function pure-expression? (exp)
-  (if (instance? exp <array>)
-      (not (or (member? (first exp)
-                        `(%method %set %begin %if %while %bind))
-               (not (every? pure-expression?
-                            (rest exp)))))
-      #t))
+(define-function normalize-value (exp k)
+  (if (contains-statements? exp)
+      (normalize-name exp k)
+      (k (if (instance? exp <array>)
+             (map normalize-term exp)
+             exp))))
+
+(define-function contains-statements? (exp)
+  (if (and (instance? exp <array>)
+           (not (empty? exp)))
+      (select (symbol-name (first exp)) ==
+        (("%begin" "%if" "%while" "%bind") #t)
+        (("%set")
+         (contains-statements? (last exp)))
+        (("%method") #f)
+        (else:
+         (any? contains-statements? exp)))
+      #f))
 
 (define-function normalize-name (exp k)
   (normalize

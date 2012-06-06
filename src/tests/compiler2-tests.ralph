@@ -501,11 +501,10 @@
                *environment*)))
 
 (reset-symbol-counter!)
-(check-equal "ANF: if"
-             `(%bind (%_1 (= n 0))
-                (%if %_1
-                     1
-                     (* n (f (- n 1)))))
+(check-equal "ANF: if: trivial expressions"
+             `(%if (= n 0)
+                   1
+                   (* n (f (- n 1))))
              (normalize-term
               (macroexpand-all
                `(if (= n 0)
@@ -563,15 +562,10 @@
                *environment*)))
 
 (reset-symbol-counter!)
-(check-equal "ANF: set!"
-             `(%bind (%_1 (+ (- b 3) c))
-                (%bind (%_2 (%set a %_1))
-                  (%begin
-                   %_2
-                   (%bind (%_3 (%set z a))
-                     (%bind (%_4 (* %_3 5))
-                       (%bind (%_5 (%set x %_4))
-                         %_5))))))
+(check-equal "ANF: nested set!"
+             `(%begin
+               (%set a (+ (- b 3) c))
+               (%set x (* (%set z a) 5)))
              (normalize-term
               (macroexpand-all
                `(begin
@@ -581,7 +575,7 @@
 
 (reset-symbol-counter!)
 (check-equal "ANF: set! with expression"
-             `(%%set-foo x (+ 2 3))
+             `(foo-setter x (+ 2 3))
              (normalize-term
               (macroexpand-all
                `(set! (foo x) (+ 2 3))
@@ -589,7 +583,7 @@
 
 (reset-symbol-counter!)
 (check-equal "ANF: set! with expression and keywords"
-             `(%%set-foo x (+ 2 3)
+             `(foo-setter x (+ 2 3)
                          animated?: (> (bar x) 1))
              (normalize-term
               (macroexpand-all
@@ -601,12 +595,12 @@
 (check-equal "ANF: or"
              ;; usage of %if as expression OK,
              ;; not in statement form yet
-             `(%bind (%_1 #f)
-                (%bind (%_3 (%if %_1
-                                 %_1
-                                 (%bind (%_2 2)
-                                   (%if %_2 %_2 3))))
-                  (foo %_3 bar)))
+             `(%bind ($1 #f)
+                (%bind ($3 (%if $1
+                                 $1
+                                 (%bind ($2 2)
+                                   (%if $2 $2 3))))
+                  (foo $3 bar)))
              (normalize-term
               (macroexpand-all
                `(foo (or #f 2 3) bar)
@@ -618,13 +612,9 @@
                 (%bind (result 1)
                   (%begin
                    (%while (> counter 0)
-                     (%bind (%_1 (* factorial counter))
-                       (%bind (%_2 (%set factorial %_1))
-                         (%begin
-                          %_2
-                          (%bind (%_3 (- counter 1))
-                            (%bind (%_4 (%set counter %_3))
-                              %_4))))))
+                     (%begin
+                      (%set factorial (* factorial counter))
+                      (%set counter (- counter 1))))
                    counter)))
              (normalize-term
               (macroexpand-all
@@ -640,12 +630,10 @@
 (check-equal "ANF: while as expression"
              `(%bind (run? #t)
                 (%bind (value (%while run?
-                                (%begin
-                                 (foo)
-                                 (%bind (%_1 (%set run? #f))
-                                   (%begin
-                                    %_1
-                                    23)))))
+                                (%begin (foo)
+                                  (%begin
+                                   (%set run? #f)
+                                   23))))
                   (== value #f)))
              (normalize-term
               (macroexpand-all
@@ -659,12 +647,26 @@
                *environment*)))
 
 (reset-symbol-counter!)
+(check-equal "ANF: while in if"
+             `(%bind ($1 (%while run? (foo)))
+                (%bind (x (%if $1 42 23))
+                  (bar x)))
+             (normalize-term
+              (macroexpand-all
+               `(bind ((x (if (while run?
+                                (foo))
+                              42
+                              23)))
+                  (bar x))
+               *environment*)))
+
+(reset-symbol-counter!)
 (check-equal "ANF: begin as expression"
-             `(%bind (%_1 (curry + 1))
+             `(%bind ($1 (curry + 1))
                 (%begin
                  1
-                 (%bind (%_2 (+ 2 3))
-                   (%_1 %_2 4))))
+                 (%bind ($2 (+ 2 3))
+                   ($1 $2 4))))
              (normalize-term
               (macroexpand-all
                `((curry + 1) (begin 1 (+ 2 3)) 4)
@@ -673,20 +675,19 @@
 
 (reset-symbol-counter!)
 (check-equal "ANF: select"
-             `(%bind (%_1 x)
-                (%bind (%_2 instance?)
-                  (%bind (%_3 (%_2 %_1 <array>))
-                    (%bind (%_4 (%if %_3 %_3 (%_2 %_1 <string>)))
-                      (%if %_4
+             `(%bind ($1 x)
+                (%bind ($2 instance?)
+                  (%bind ($3 ($2 $1 <array>))
+                    (%bind ($4 (%if $3 $3 ($2 $1 <string>)))
+                      (%if $4
                            (%begin
                             (print x)
                             (slice x 2))
-                           (%bind (%_5 (%_2 %_1 <number>))
-                             (%if %_5
-                                  (* x 23)
-                                  (%begin
-                                   (do-sth)
-                                   else))))))))
+                           (%if ($2 $1 <number>)
+                                (* x 23)
+                                (%begin
+                                 (do-sth)
+                                 else)))))))
              (normalize-term
               (macroexpand-all `(select x instance?
                                   ((<array> <string>)
