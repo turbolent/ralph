@@ -81,7 +81,6 @@
     `(%bind (,var ,(macroexpand-all value env))
        ,(macroexpand-all body env))))
 
-
 ;;;; macros
 
 ;; utilities
@@ -183,11 +182,6 @@
 
 (define-default-macro if (_ test then else)
   `(%if ,test ,then ,else))
-
-
-
-(define-default-macro define (_ name value)
-  `(%define ,name ,value))
 
 (define-default-macro set! (_ place #rest rest)
   (if (instance? place <array>)
@@ -436,6 +430,170 @@
 ;; actually handled in backquote
 (define-default-macro %comma (_ value)
   (signal (make <error> message: "comma not inside backquote")))
+
+(define-function function-definer (macro-name definer-name type?)
+  (method (_ function-name arguments #rest body)
+    (destructuring-bind (setter? name)
+        (if (setter-name? function-name)
+            [#t (setter-symbol (second function-name))]
+            [#f function-name])
+      (when (not (or (instance? name <symbol>)
+                     setter?))
+        (signal (make <error> message:
+                      (concatenate macro-name ": "
+                                   "name not <var> or (setter <var>)"))))
+      (bind ((arguments (map (method (argument)
+                               (if (instance? argument <array>)
+                                   (first argument)
+                                   argument))
+                             arguments)))
+        `(define ,name
+           (,(symbol definer-name)
+            (%native-name ,(symbol-name name))
+            ,(concatenate `(method ,arguments)
+                          body)
+            ,setter?
+            ,(when (and type?
+                        (not (empty? arguments)))
+               (bind ((head (first arguments)))
+                 (if (and (instance? head <array>)
+                          (> (size head) 1))
+                     (second head)
+                     (symbol "<object>"))))))))))
+
+(for-each ((arguments [["define-function" "%make-function" #f]
+                       ["define-method" "%make-method" #t]]))
+          ()
+  (set! (get *default-macros* (first arguments))
+        (apply function-definer arguments)))
+
+
+(define-default-macro define-generic (_ name arguments)
+  `(define ,name
+     (%make-generic
+      (%native-name ,(symbol-name name)))))
+
+(define-default-macro define-class (_ name superclass #rest slots)
+  (bind ((object `(make-object)))
+    (for-each ((slot slots))
+              ()
+      (if (instance? slot <array>)
+          (begin
+           (push-last object (symbol-name (first slot)))
+           (push-last object `(method ()
+                                ,(second slot))))
+          (begin
+           (push-last object (symbol-name slot))
+           (push-last object #f))))
+    `(define ,name
+       (%make-class
+        (%native-name ,(symbol-name name))
+        ,(first superclass)
+        ,object))))
+
+(define-default-macro define-module (_ name #key (import []) (export []))
+  ;; TODO: add exports to env
+  (concatenate `(begin)
+               (map (method (module)
+                      ;; TODO: support for symbol (import all)
+                      (destructuring-bind (name #rest names) module
+                        (bind ((temp (generate-symbol)))
+                           `(%bind (,temp (require ,(symbol-name name)))
+                              ,(concatenate
+                                `(begin)
+                                (map (method (name)
+                                       `(%define ,name
+                                                 (%get-property
+                                                  ,temp ,(symbol-name name))
+                                                 #f))
+                                     names))))))
+                    import)))
+
+;; see lift-defines
+(define-default-macro define (_ name value)
+  ;; TODO: check env if exported
+  `(%define ,name ,value #f))
+
+
+
+;;;; lift defines
+
+;; search for all %define and create top-level bindings,
+;; replace with assignment to new top-level-binding
+
+(define-function lift-defines (exp)
+  (lift-define exp (make-object) identity))
+
+(define-function definition-replacement (name value export?)
+  (bind ((assignment `(%set ,name ,value)))
+    (if export?
+        `(%begin
+          ,assignment
+          (%export (%native-name ,(symbol-name name))
+                   ,name))
+        assignment)))
+
+(define-function lift-define (exp defined k)
+  (if (and (instance? exp <array>)
+           (not (empty? exp)))
+      (select (symbol-name (first exp)) ==
+        (("%bind")
+         (destructuring-bind (_ (var value) body) exp
+           (lift-define
+            value defined
+            (method (lvalue defined)
+              (lift-define
+               body defined
+               (method (lbody defined)
+                 (k `(%bind (,var ,lvalue)
+                       ,lbody)
+                    defined)))))))
+        (("%method" "%set")
+         (destructuring-bind (m e1 e2) exp
+           (lift-define
+            e2 defined
+            (method (le2 defined)
+              (k `(,m ,e1 ,le2)
+                 defined)))))
+        (("%begin" "%if" "%while")
+         (destructuring-bind (m #rest e*) exp
+           (lift-define*
+            e* defined
+            (method (le* defined)
+              (k (concatenate [m] le*)
+                 defined)))))
+        (("%define")
+         (destructuring-bind (_ var value export?) exp
+           (bind ((name (symbol-name var)))
+             (if (get defined name)
+                 (k (definition-replacement
+                      var value export?)
+                    defined)
+                 (begin
+                  (set! (get defined name) #t)
+                  `(%bind (,var #f)
+                     ,(k (definition-replacement
+                           var value export?)
+                         defined)))))))
+        (else:
+         (lift-define** exp defined k)))
+      (k exp defined)))
+
+(define-function lift-define* (exp* defined k)
+  (if (empty? exp*)
+      (k [] defined)
+      (lift-define** exp* defined k)))
+
+(define-function lift-define** (exp defined k)
+  (lift-define
+   (first exp) defined
+   (method (t defined)
+     (lift-define*
+      (rest exp) defined
+      (method (t* defined)
+        (k (concatenate [t] t*)
+           defined))))))
+
 
 
 ;; TODO: %try, %throw, block, handler-case
@@ -695,61 +853,6 @@
                  (normalize-name*
                   (rest exp) (method (t*)
                                (k (concatenate [t] t*)))))))
-
-
-;;;; top-level expansion
-
-(define-function function-definer (macro-name definer-name type?)
-  (method (_ function-name arguments #rest body)
-    (destructuring-bind (setter? name)
-        (if (setter-name? function-name)
-            [#t (setter-symbol (second function-name))]
-            [#f function-name])
-      (when (not (or (instance? name <symbol>)
-                     setter?))
-        (signal (make <error> message:
-                      (concatenate macro-name ": "
-                                   "name not <var> or (setter <var>)"))))
-      (bind ((arguments (map (method (argument)
-                               (if (instance? argument <array>)
-                                   (first argument)
-                                   argument))
-                             arguments)))
-        `(define ,name
-           (,(symbol definer-name)
-            ,(symbol-name name)
-            ,(concatenate `(method ,arguments)
-                          body)
-            ,setter?
-            ,(when (and type?
-                        (not (empty? arguments)))
-               (bind ((head (first arguments)))
-                 (if (and (instance? head <array>)
-                          (> (size head) 1))
-                     (second head)
-                     (symbol "<object>"))))))))))
-
-(define *top-level-macros*
-  (make-object
-   "define-generic"
-   (method (_ name arguments)
-     `(define ,name
-        (%make-generic ,(symbol-name name))))))
-
-(define *top-level-environment*
-  (make <environment> macros: *top-level-macros*))
-
-;; TODO: define-module, define-class
-
-(for-each ((arguments [["define-function" "%make-function" #f]
-                       ["define-method" "%make-method" #t]]))
-          ()
-  (set! (get *top-level-macros* (first arguments))
-        (apply function-definer arguments)))
-
-(define-function macroexpand-program (declarations)
-  (map (rcurry macroexpand *top-level-environment*)
-       declarations))
 
 
 ;;;; statements
