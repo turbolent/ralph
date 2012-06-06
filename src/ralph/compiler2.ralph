@@ -26,7 +26,7 @@
        (instance? (first form) <symbol>)))
 
 (define-function setter-symbol (function-symbol)
-  (symbol (concatenate "%%set-" (symbol-name function-symbol))))
+  (symbol (concatenate (symbol-name function-symbol) "-setter")))
 
 (define-function setter-name? (name)
   (and (instance? name <array>)
@@ -40,7 +40,10 @@
   (set! *symbol-count* 0))
 
 (define-function generate-symbol ()
-  (symbol (concatenate "%_" (as-string (inc! *symbol-count*)))))
+  (bind ((name (concatenate "$" (as-string (inc! *symbol-count*))))
+         (result (symbol name)))
+    (set! (get result "generated?") #t)
+    result))
 
 ;;;; special forms
 
@@ -130,19 +133,24 @@
             (if (empty? key)
                 body
                 (bind ((key-values
-                        (reduce1 concatenate
-                                 (map (method (binding)
-                                        (destructuring-bind (var value)
-                                            binding
-                                          [(symbol-name var) value]))
-                                      key))))
-                  `(bind-properties ,(map first key)
-                       (%keys ,rest ,(concatenate `(%object)
-                                                  key-values))
+                        (map (method (binding)
+                               (if (instance? binding <array>)
+                                   binding
+                                   [binding #f]))
+                             key)))
+                  `(bind-properties ,(map first key-values)
+                       (%keys ,rest
+                              ,(concatenate `(%object)
+                                            (reduce1 concatenate
+                                                     (map (method (key-value)
+                                                            (destructuring-bind (key value)
+                                                                key-value
+                                                              [(symbol-name key) value]))
+                                                          key-values))))
                      ,body))))
           (method (body)
             (if (or rest? (not (empty? key)))
-                `(bind ((,rest (slice ,all ,(size required))))
+                `(bind ((,rest (%slice ,all ,(size required))))
                    ,body)
                 body)))))
 
@@ -163,11 +171,15 @@
 
 (define-default-macro bind (_ bindings #rest body)
   (if (empty? bindings)
-      (concatenate `(begin) body)
-      (destructuring-bind (var value) (first bindings)
-        `(%bind (,var ,value)
-           ,(concatenate `(bind ,(rest bindings))
-                         body)))))
+      (maybe-begin body)
+      (reduce (method (body binding)
+                `(%bind
+                  ,(if (instance? binding <symbol>)
+                       `(,binding #f)
+                       binding)
+                  ,body))
+              (maybe-begin body)
+              (reverse bindings))))
 
 (define-default-macro if (_ test then else)
   `(%if ,test ,then ,else))
@@ -246,7 +258,7 @@
      ,(maybe-begin body)))
 
 (define-default-macro until (_ test #rest body)
-  (concatenate `(while (not ,test))
+  (concatenate `(while (%not ,test))
                body))
 
 (define-default-macro dotimes (_ binding #rest body)
@@ -273,7 +285,7 @@
       (push-last next-clauses
                  (third clause)))
     `(bind ,init-clauses
-       ,(concatenate `(while (not ,(first end))
+       ,(concatenate `(while (%not ,(first end))
                         ,(concatenate
                           `(,(concatenate `(method ,vars)
                                           body))
@@ -304,11 +316,11 @@
                                          (map first clauses)))))
           ;; check exhaustion
           (until (or ,end?
-                     (any? empty? ,values))
+                     (%any? %empty? ,values))
             ;; bind each var to next element
             (bind ,(map (method (clause)
                           (destructuring-bind (temp var values) clause
-                            [var `(first ,temp)]))
+                            [var `(%first ,temp)]))
                         clauses)
               (if ,end-test
                   (set! ,end? #t)
@@ -323,7 +335,7 @@
                     ;; update temporary collection bindings
                     (map (method (clause)
                            `(set! ,(first clause)
-                                  (rest ,(first clause))))
+                                  (%rest ,(first clause))))
                          clauses))))))
        ;; execute all result expressions, returning last; false if none
        (if (empty? results)
@@ -370,9 +382,9 @@
           (reduce (method (body binding)
                     (dec! i)
                     (if (instance? binding <symbol>)
-                        `(bind ((,binding (nth ,values ,i)))
+                        `(bind ((,binding (%element ,values ,i)))
                            ,body)
-                        (destructure binding `(nth ,values ,i) body)))
+                        (destructure binding `(%element ,values ,i) body)))
                   (wrap-rest/keys body
                                   values
                                   required rest key)
@@ -397,10 +409,10 @@
    body))
 
 (define-default-macro inc! (_ object value)
-  `(set! ,object (+ ,object ,(or value 1))))
+  `(set! ,object (%+ ,object ,(or value 1))))
 
 (define-default-macro dec! (_ object value)
-  `(set! ,object (- ,object ,(or value 1))))
+  `(set! ,object (%- ,object ,(or value 1))))
 
 (define-function transform-quoted (exp)
   (cond
@@ -443,7 +455,7 @@
 ;; definitions
 
 (define-default-symbol-macro next-method (_)
-  `(%next-method this-method))
+  `(%next-method %this-method))
 
 ;;;; macro expansion
 
@@ -670,7 +682,7 @@
              (k aexp)
              (bind ((t (generate-symbol)))
                `(%bind (,t ,aexp)
-                 ,(k t)))))))
+                  ,(k t)))))))
 
 (define-function normalize-name* (exp* k)
   (if (empty? exp*)
