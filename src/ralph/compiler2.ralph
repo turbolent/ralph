@@ -975,16 +975,6 @@
 (define-function lift-symbols (exp)
   (lift-symbol exp (make-object) identity))
 
-(define-function lift-all (exp mapping k)
-  (lift-symbol
-   (first exp) mapping
-   (method (t mapping)
-     (lift-symbol*
-      (rest exp) mapping
-      (method (t* mapping)
-        (k (concatenate [t] t*)
-           mapping))))))
-
 (define-function lift-symbol (exp mapping k)
   (if (and (instance? exp <array>)
            (not (empty? exp)))
@@ -1012,74 +1002,82 @@
            (lift-symbol*
             e* mapping
             (method (le* mapping)
-              (k (concatenate `(,m) le*)
+              (k (concatenate [m] le*)
                  mapping)))))
         (("symbol")
-          (destructuring-bind (_ name) exp
-            (if-bind (t (get mapping name))
-              (k t mapping)
-              (bind ((t (set! (get mapping name)
-                              (generate-symbol))))
-                `(%bind (,t ,exp)
-                        ,(k t mapping))))))
+         (destructuring-bind (_ name) exp
+           (if-bind (t (get mapping "symbol" name))
+             (k t mapping)
+             (bind ((t (set! (get mapping "symbol" name)
+                             (generate-symbol))))
+               `(%bind (,t ,exp)
+                  ,(k t mapping))))))
         (else:
-         (lift-all exp mapping k)))
+         (lift-symbol** exp mapping k)))
       (k exp mapping)))
 
 (define-function lift-symbol* (exp* mapping k)
   (if (empty? exp*)
       (k [] mapping)
-      (lift-all exp* mapping k)))
+      (lift-symbol** exp* mapping k)))
+
+(define-function lift-symbol** (exp mapping k)
+  (lift-symbol
+   (first exp) mapping
+   (method (t mapping)
+     (lift-symbol*
+      (rest exp) mapping
+      (method (t* mapping)
+        (k (concatenate [t] t*)
+           mapping))))))
 
 
 
-;;;; fold-statements
+;;;; flatten-statements
 
-(define-function fold-statements (exp)
+(define-function flatten-statements (exp)
   (if (instance? exp <array>)
       (select (symbol-name (first exp)) ==
-        (("%method")
-         (destructuring-bind (_ arguments body) exp
-           `(%method ,arguments
-              ,(fold-statements body))))
+        (("%method" "%while" "%set")
+         (set! (last exp)
+               (flatten-statements (last exp)))
+         exp)
         (("%begin")
          (destructuring-bind (_ #rest exps) exp
            (reduce concatenate
                    `(%begin)
                    (map (method (exp)
-                          (bind ((folded (fold-statements exp)))
-                            (if (and (instance? folded <array>)
-                                     (not (empty? folded))
-                                     (== (first folded) (symbol "%begin")))
-                                (rest folded)
-                                [folded])))
+                          (bind ((flattened (flatten-statements exp)))
+                            (if (and (instance? flattened <array>)
+                                     (not (empty? flattened))
+                                     (== (first flattened)
+                                         (symbol "%begin")))
+                                (rest flattened)
+                                [flattened])))
                         exps))))
         (("%bind")
          (destructuring-bind (_ (var value) body) exp
-           (bind ((bindings [[var value]]))
+           (bind ((bindings [[var (flatten-statements value)]]))
              (while (and (instance? body <array>)
                          (not (empty? body))
                          (== (first body) (symbol "%bind")))
-               (push-last bindings
-                          (second body))
+               (destructuring-bind (var value) (second body)
+                 (push-last bindings
+                            [var (flatten-statements value)]))
                (set! body (third body)))
-             (fold-statements
+             (flatten-statements
               `(%begin
-                ,(concatenate `(js:var)
+                ,(concatenate `(%var)
                               bindings)
                 ,body)))))
         (("%if")
-         (destructuring-bind (_ test then else) exp
-           `(%if ,test
-                 ,(fold-statements then)
-                 ,(fold-statements else))))
-        (("%while")
-         (destructuring-bind (_ test body) exp
-           `(%while ,test
-              ,(fold-statements body))))
-        ;; %set: leave as is
+         (set! (third exp)
+               (flatten-statements (third exp)))
+         (set! (last exp)
+               (flatten-statements (last exp)))
+         exp)
         (else:
-         exp))
+         (map flatten-statements exp)))
       exp))
 
 ;;;; compilation to JS
