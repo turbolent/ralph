@@ -702,31 +702,30 @@
 
 (reset-symbol-counter!)
 (check-equal "statements: or"
-             `(%bind (%_1 #f)
-                (%bind (%_3 #f)
+             `(%bind ($1 #f)
+                (%bind ($3 #f)
                   (%begin
-                   (%if %_1
-                        (%set %_3 %_1)
-                        (%bind (%_2 2)
-                          (%if %_2
-                               (%set %_3 %_2)
-                               (%set %_3 3))))
-                   (%return (foo %_3 bar)))))
-             (add-explicit-return
+                   (%if $1
+                        (%set $3 $1)
+                        (%bind ($2 2)
+                          (%if $2
+                               (%set $3 $2)
+                               (%set $3 3))))
+                   (foo $3 bar))))
               (transform-statements
                (normalize-term
                 (macroexpand-all
                  `(foo (or #f 2 3) bar)
-                 *environment*)))))
+                 *environment*))))
 
 (reset-symbol-counter!)
 (check-equal "statements: if exp. in if stmt."
-             `(%bind (%_1 #f)
+             `(%bind ($1 #f)
                 (%begin
                  (%if a
-                      (%set %_1 1)
-                      (%set %_1 2))
-                 (%if %_1
+                      (%set $1 1)
+                      (%set $1 2))
+                 (%if $1
                       3
                       4)))
              (transform-statements
@@ -768,16 +767,17 @@
 (reset-symbol-counter!)
 (check-equal "statements: value of while applied to method"
              `(%bind (y 5)
-                (%bind (%_1 (%method (x) (%if x 1 2)))
-                  (%bind (%_4 #f)
+                (%bind ($1 (%method (x)
+                             (%if x
+                                  (%return 1)
+                                  (%return 2))))
+                  (%bind ($2 #f)
                     (%begin
                      (%begin
                       (%while (> y 2)
-                        (%bind (%_2 (- y 1))
-                          (%bind (%_3 (%set y %_2))
-                            %_3)))
-                      (%set %_4 #f))
-                     (%_1 %_4)))))
+                        (%set y (%- y 1)))
+                      (%set $2 #f))
+                     ($1 $2)))))
              (transform-statements
                (normalize-term
                 (macroexpand-all
@@ -788,74 +788,10 @@
                  *environment*))))
 
 
-(define-function all-passes (code)
-  (reset-symbol-counter!)
-  (bind ((top-expanded (macroexpand-program code))
-         (_ (format-out "1: %=\n\n" top-expanded))
-         (expanded (macroexpand-all top-expanded *environment*))
-         (_ (format-out "2: %=\n\n" expanded))
-         (alpha-converted (alpha-convert expanded (make-object)))
-         (_ (format-out "3: %=\n\n" alpha-converted))
-         (normalized (normalize-term alpha-converted))
-         (_ (format-out "4: %=\n\n" normalized))
-         (statements (transform-statements normalized))
-         (_ (format-out "5: %=\n\n" statements)))))
-
-
-(all-passes
- `(bind ((gcd (method (a b)
-                (cond
-                 ((> a b)
-                  (gcd (- a b) b))
-                 ((< a b)
-                  (gcd (- b a) a))
-                 (else: a)))))
-    (gcd 28974330 310200)))
-
-
-(all-passes
- `(method (view animated?)
-    (when (get view "bounces?")
-      (destructuring-bind (x y) (get view "offset")
-        (bind ((max-point (get view "max-point"))
-               (offset (limit [x y] [0 0] max-point)))
-          (when (or (not (== (first offset) x))
-                    (not (== (second offset) y)))
-            (set! (content-offset view)
-                  offset
-                  animated?: animated?)
-            (when animated?
-              (begin-snap-animation view))))))))
-
-;;
-`(%method (%_3 %_4)
-   (%if (get %_3 "bounces?")
-        (%bind (%_5 (get %_3 "offset"))
-          (%bind (%_6 (nth %_5 0))
-            (%bind (%_7 (nth %_5 1))
-              (%bind (%_8 (get %_3 "max-point"))
-                (%bind (%_9 (limit (%array %_6 %_7) (%array 0 0) %_8))
-                  (%bind (%_10 (not (== (first %_9) %_6)))
-                    (%bind (%_11 #f)
-                      (%begin
-                       (%if %_10
-                            (%set %_11 %_10)
-                            (%set %_11 (not (== (second %_9) %_7))))
-                       (%if %_11
-                            (%begin
-                             (%%set-content-offset %_3 %_9 animated?: %_4)
-                             (%if %_4
-                                  (%return (begin-snap-animation %_3))
-                                  (%return #f)))
-                            (%return #f))))))))))
-        (%return #f)))
-
-
-
 (reset-symbol-counter!)
 (check-equal "lift-symbols: simple"
-            `(%bind (%_1 (symbol "a"))
-               %_1)
+            `(%bind ($1 (symbol "a"))
+               $1)
              (lift-symbols
               (macroexpand-all
                `(begin (symbol "a"))
@@ -864,12 +800,12 @@
 
 (reset-symbol-counter!)
 (check-equal "lift-symbols: multiple uses"
-            `(%bind (%_1 (symbol "a"))
-               (%bind (%_2 (symbol "b"))
-                 (%bind (%_3 (symbol "c"))
-                   (%bind (a %_1)
-                     (%bind (b %_2)
-                       (foo a %_1 b %_2 %_3))))))
+            `(%bind ($1 (symbol "a"))
+               (%bind ($2 (symbol "b"))
+                 (%bind ($3 (symbol "c"))
+                   (%bind (a $1)
+                     (%bind (b $2)
+                       (foo a $1 b $2 $3))))))
              (lift-symbols
               (macroexpand-all
                `(bind ((a (symbol "a"))
@@ -882,12 +818,12 @@
 
 (reset-symbol-counter!)
 (check-equal "lift-symbols: bind"
-             `(%bind (%_1 (symbol "a"))
+             `(%bind ($1 (symbol "a"))
                 (%begin
-                 %_1
+                 $1
                  (%bind (symbol "a")
-                   (%bind (a %_1)
-                     (foo a %_1)))))
+                   (%bind (a $1)
+                     (foo a $1)))))
              (lift-symbols
               (macroexpand-all
                `(begin
@@ -899,11 +835,11 @@
 
 (reset-symbol-counter!)
 (check-equal "lift-symbols: method"
-             `(%bind (%_1 (symbol "a"))
+             `(%bind ($1 (symbol "a"))
                 (%begin
                  23
                  (%method (x)
-                   %_1)))
+                   $1)))
              (lift-symbols
               (macroexpand-all
                `(begin
@@ -924,8 +860,8 @@
 
 (reset-symbol-counter!)
 (check-equal "lift-symbols: set!"
-             `(%bind (%_1 (symbol "b"))
-                (%%set-symbol "a" %_1))
+             `(%bind ($1 (symbol "b"))
+                (symbol-setter "a" $1))
              (lift-symbols
               (macroexpand-all
                `(set! (symbol "a")
@@ -934,15 +870,15 @@
 
 (reset-symbol-counter!)
 (check-equal "lift-symbols: begin, if, while"
-             `(%bind (%_1 (symbol "a"))
-                (%bind (%_2 (symbol "b"))
-                  (%bind (%_3 (symbol "c"))
+             `(%bind ($1 (symbol "a"))
+                (%bind ($2 (symbol "b"))
+                  (%bind ($3 (symbol "c"))
                     (%begin
-                     (%if %_1
-                          (%while (bar %_2)
-                            (%begin %_1 23 %_3))
-                          %_3)
-                     %_2))))
+                     (%if $1
+                          (%while (bar $2)
+                            (%begin $1 23 $3))
+                          $3)
+                     $2))))
              (lift-symbols
               (macroexpand-all
                `(begin
@@ -956,17 +892,17 @@
                *environment*)))
 
 (reset-symbol-counter!)
-(check-equal "fold-statements"
+(check-equal "flatten-statements"
              `(%begin
-               (js:var (%_1 (symbol "a"))
-                       (%_2 (symbol "b"))
-                       (%_3 (symbol "c")))
-               (%if %_1
-                    (%while (bar %_2)
-                      (%begin %_1 23 %_3))
-                    %_3)
-               %_2)
-             (fold-statements
+               (%var ($1 (symbol "a"))
+                     ($2 (symbol "b"))
+                     ($3 (symbol "c")))
+               (%if $1
+                    (%while (bar $2)
+                      (%begin $1 23 $3))
+                    $3)
+               $2)
+             (flatten-statements
               (lift-symbols
                (macroexpand-all
                 `(begin
@@ -979,19 +915,59 @@
                   (symbol "b"))
                 *environment*))))
 
-(reset-symbol-counter!)
-(check-equal "compile"
-             ""
-             (compile-js
-              (fold-statements
-               (lift-symbols
-                (macroexpand-all
-                 `(bind ((x (method (y) (+ 1 y))))
-                   (if (symbol "a")
-                       (while (bar (symbol "b"))
-                         (symbol "a")
-                         (x 2)
-                         (symbol "c"))
-                       (symbol "c"))
-                   (symbol "b"))
-                 *environment*)))))
+
+(define-function all-stages (program)
+  (reduce (method (result name/fn)
+            (destructuring-bind (name fn) name/fn
+              (bind ((result (fn result)))
+                (format-out ">>> %s:\n%=\n" name result)
+                result)))
+          program
+          [["source" identity]
+           ["with begin" (rcurry push (symbol "begin"))]
+           ["macroexpanded" (rcurry macroexpand-all *environment*)]
+           ["lifted defines" lift-defines]
+           ["alpha-converted" (rcurry alpha-convert (make-object))]
+           ["ANF" normalize-term]
+           ["lifted symbols" lift-symbols]
+           ["statements" transform-statements]
+           ["flattened" flatten-statements]
+           ["compiled" (rcurry compile-js (make-object))]
+           ]))
+
+
+(all-stages
+ `((bind ((x (method (y)
+               (next-method 3)
+               (+ 1 y))))
+     (if (symbol "a")
+         (while (bar (symbol "b"))
+           (symbol "a")
+           (x 2)
+           (make-object "a" 1 "null" 2)
+           (symbol "c"))
+           (symbol "c"))
+     (symbol "b"))))
+
+(all-stages
+ `((define-module test
+     import: ((ralph/core get first second)))
+   (define foo 1)
+   (+ foo 1)
+   (define-function snap-offset-to-bounds ((view <scroll-view>) #key animated?)
+     (when (get view "bounces?")
+       (destructuring-bind (x y) (get view "offset")
+         (bind ((max-point (get view "max-point"))
+                (offset (limit [x y] [0 0] max-point)))
+           (when (or (not (== (first offset) x))
+                     (not (== (second offset) y)))
+             (set! (content-offset view)
+                   offset
+                   animated?: animated?)
+             (when animated?
+               (begin-snap-animation view)))))))
+   (define-function this-bar ()
+     foo)))
+
+
+;; TODO: test dot compilation result (nested function calls)

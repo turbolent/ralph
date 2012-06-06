@@ -1082,7 +1082,13 @@
 
 ;;;; compilation to JS
 
-;; TODO: inline, unary
+;; TODO:
+;; - keywords, hash symbols, get, not
+;; - %make-function <ralph-name-string>
+;;   => %make-function <js-name-string>
+
+
+;; utilities
 
 (define *escaped*
   (make-object
@@ -1100,98 +1106,211 @@
    (slice "0000" 0 (- 4 (size string)))
    string))
 
-(define-function hex (code)
-  (fill-zeros ((js:get-property code "toString") 16)))
-
 (define-function escape-string (string)
   (join (map (method (char)
                (if-bind (escaped (get *escaped* char))
                  (concatenate "\\" escaped)
                  (bind ((code (char-code char)))
-                   (if (< 0x1f code  0x7f)
+                   (if (< 0x1f code 0x7f)
                        char
-                       (concatenate "\\u" (hex code))))))
+                       (concatenate
+                        "\\u" (fill-zeros (as-hex code)))))))
              (as-array string))
         ""))
 
-(define-function compile-js (exp)
+(define *reserved*
+  ["break" "case" "catch" "continue" "default" "delete" "do" "else"
+   "finally" "for" "function" "if" "in" "instanceof" "new" "return"
+   "switch" "this" "throw" "try" "typeof" "var" "void" "while"
+   "with" "abstract" "boolean" "byte" "char" "class" "const"
+   "debugger" "double" "enum" "export" "extends" "final" "float"
+   "goto" "implements" "import" "int" "interface" "long" "native"
+   "package" "private" "protected" "public" "short" "static" "super"
+   "synchronized" "throws" "transient" "volatile" "null" "true" "false"
+   "arguments" "object" "number" "string" "array" "let" "yield"])
+
+(define *symbol-escapes*
+  (make-object
+   "-" "_"
+   "_" "__"
+   "&" "A"
+   "$" "B"
+   ":" "C"
+   "." "D"
+   "=" "E"
+   ;; F
+   ">" "G"
+   "#" "H"
+   "@" "I"
+   ;; J, K
+   "<" "L"
+   "%" "M"
+   "!" "N"
+   ;; O
+   "+" "P"
+   "?" "Q"
+   ;; R: reserved
+   "/" "S"
+   "*" "T"
+   ;; U, V, W, X, Y
+   ;; Z: any other
+   ))
+
+(define-function escape-symbol-name (name)
+  (cond
+   ((member? name *reserved*)
+    (concatenate "R" name))
+   (else:
+    (bind ((chars
+            (map (method (char)
+                   (cond
+                    ((has? *symbol-escapes* char)
+                     (get *symbol-escapes* char))
+                    ((match "\\w" char)
+                     char)
+                    (else:
+                     (concatenate
+                      "Z" (as-string (char-code char))))))
+                 (as-array name))))
+      (join chars "")))))
+
+(define-function valid-identifier? (identifier)
+  (and (not (member? identifier *reserved*))
+       (match "^\\w+$" identifier)))
+
+;;
+
+
+(define-function compile-js (exp env)
   (select exp instance?
     ((<array>)
      (if (empty? exp)
          (signal (make <error> message: "empty expression"))
-         (compile-js-exp exp)))
+         (compile-js-exp exp env)))
     ((<number>)
      (as-string exp))
     ((<boolean>)
      (if exp "true" "false"))
     ((<string>)
      (concatenate "\"" (escape-string exp) "\""))
+    ((<symbol>)
+     (if (== exp (symbol "%this-method"))
+         (compile-js (get env "current-method")
+                     env)
+         (if (get exp "generated?")
+             (symbol-name exp)
+             (escape-symbol-name
+              (symbol-name exp)))))
     (else:
      (description exp))))
 
-(define-function compile-js-exp (exp)
+(define-function compile-js-exp (exp env)
   (bind ((name (symbol-name (first exp))))
     (select name ==
+      (("%unary")
+       (destructuring-bind (_ operator value) exp
+         (concatenate
+          "(" (compile-js operator env)
+          " " (compile-js value env) ")")))
+      (("%infix")
+       (destructuring-bind (_ operator #rest values) exp
+         (concatenate
+          "(" (join (map (rcurry compile-js env)
+                         values)
+                    (concatenate
+                     " " (compile-js operator env) " "))
+          ")")))
       (("%array")
        (destructuring-bind (_ #rest elements) exp
          (concatenate
-          "[" (join (map compile-js elements) ", ") "]")))
+          "[" (join (map (rcurry compile-js env)
+                         elements)
+                    ", ")
+          "]")))
+      (("%object")
+       (bind ((key-values (rest exp))
+              (entries []))
+         (dotimes (i (/ (size key-values) 2))
+           (push-last entries
+                      (concatenate
+                       (bind ((name (element key-values (* i 2))))
+                         (if (valid-identifier? name)
+                             name
+                             (compile-js name env)))
+                       ":" (compile-js
+                            (element key-values (+ (* i 2) 1))
+                            env))))
+         (concatenate
+          "{" (join entries ",\n") "}")))
       (("%if")
        (destructuring-bind (_ test then else) exp
          (concatenate
-          "if (" (compile-js test) ")\n"
-          (compile-js then)
+          "if (" (compile-js test env) ")\n"
+          (compile-js then env)
           (if else
               (concatenate
-               "\nelse " (compile-js else))
+               "\nelse " (compile-js else env))
               ""))))
       (("%while")
        (destructuring-bind (_ test body) exp
-         "while (" (compile-js test) ")\n"
-         (compile-js body)))
+         "while (" (compile-js test env) ")\n"
+         (compile-js body env)))
       (("%return")
        (concatenate
-        "return " (compile-js (second exp))))
+        "return " (compile-js (second exp) env)))
       (("%begin")
        (concatenate
-        "{" (join (map compile-js (rest exp)) ";\n") "}"))
+        "{" (join (map (rcurry compile-js env)
+                       (rest exp))
+                  ";\n")
+        "}"))
       (("%set")
        (destructuring-bind (_ var value) exp
          (concatenate
-          (compile-js var) " = "
-          (compile-js value))))
+          (compile-js var env) " = "
+          (compile-js value env))))
       (("%method")
-       ;; TODO: add to environment
-       (bind ((name (generate-symbol)))
+       (bind ((name (generate-symbol))
+              (env* (wrap-object env current-method: name)))
          (destructuring-bind (_ arguments body) exp
            (concatenate
-            "function " (compile-js name)
-            " (" (join (map compile-js arguments) ", ") ") {\n"
+            "function " (compile-js name env)
+            " (" (join (map (rcurry compile-js env)
+                            arguments)
+                       ", ")
+            ") {\n"
             ;; optimization: default is false
             (if body
                 ;; TOOD: check if %begin and directly embed
-                (compile-js body)
+                (compile-js body env*)
                 "")
             "}"
             ))))
-       (("js:var")
-        (destructuring-bind (_ #rest bindings) exp
-          (concatenate
-           "var "
-           (join (map (method (binding)
-                        (destructuring-bind (var value)
-                            binding
-                          (concatenate
-                           (compile-js var)
-                           (if value
-                               (concatenate
-                                " = " (compile-js value))
-                               ""))))
-                      bindings)
-                 ",\n"))))
+      (("%var")
+       (destructuring-bind (_ #rest bindings) exp
+         (concatenate
+          "var "
+          (join (map (method (binding)
+                       (destructuring-bind (var value)
+                           binding
+                         (concatenate
+                          (compile-js var env)
+                          (if value
+                              (concatenate
+                                " = " (compile-js value env))
+                              ""))))
+                     bindings)
+                ",\n"))))
+      (("%native")
+       (as-string (second exp)))
+      (("%native-name")
+       (concatenate
+        "\"" (escape-symbol-name (second exp)) "\""))
       (else:
        (destructuring-bind (head #rest tail) exp
          (concatenate
-          (compile-js head)
-          "(" (join (map compile-js tail) ", ") ")"))))))
-
+          (compile-js head env)
+          "(" (join (map (rcurry compile-js env)
+                         tail)
+                    ", ")
+          ")"))))))
