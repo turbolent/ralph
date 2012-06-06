@@ -204,7 +204,7 @@
 (define-default-macro cond (_ #rest cases)
   (unless (empty? cases)
     (destructuring-bind (test #rest then) (first cases)
-      (bind ((then (concatenate `(begin) then)))
+      (bind ((then (maybe-begin then)))
         (if (== test else:)
             then
             `(if ,test
@@ -212,10 +212,14 @@
                  ,(concatenate `(cond)
                                (rest cases))))))))
 
-(define-default-macro when (_ condition #rest body)
-  `(if ,condition
-       ,(concatenate `(begin)
-                     body)
+(define-default-macro when (_ test #rest body)
+  `(if ,test
+       ,(maybe-begin body)
+       #f))
+
+(define-default-macro unless (_ test #rest body)
+  `(if (%not ,test)
+       ,(maybe-begin body)
        #f))
 
 (define-default-macro and (_ #rest values)
@@ -394,12 +398,13 @@
 
 (define-default-macro bind-methods (_ bindings #rest body)
   (concatenate
-   `(bind ,(map (method (binding)
-                  (destructuring-bind (name arguments #rest body)
-                      binding
-                    `(,name (concatenate `(method arguments)
-                                         body))))
-                bindings))
+   `(bind ,(map first bindings))
+   (map (method (binding)
+          (destructuring-bind (name arguments #rest body)
+              binding
+            `(set! ,name ,(concatenate `(method ,arguments)
+                                       body))))
+        bindings)
    body))
 
 (define-default-macro inc! (_ object value)
@@ -430,6 +435,26 @@
 ;; actually handled in backquote
 (define-default-macro %comma (_ value)
   (signal (make <error> message: "comma not inside backquote")))
+
+(define *dot-name-error*
+  (make <error>
+        message: "unsupported name for call in dot"))
+
+(define-default-macro . (_ value #rest calls)
+  (reduce (method (value call)
+            (destructuring-bind (name #rest arguments) call
+              (concatenate
+               `((%get-property ,value
+                                ,(select name instance?
+                                   ((<string>)
+                                    name)
+                                   ((<symbol>)
+                                    (symbol-name name))
+                                   (else:
+                                    (signal *dot-name-error*)))))
+               arguments)))
+          value
+          calls))
 
 (define-function function-definer (macro-name definer-name type?)
   (method (_ function-name arguments #rest body)
