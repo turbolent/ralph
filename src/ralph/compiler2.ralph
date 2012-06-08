@@ -925,6 +925,12 @@
        (member? (first exp)
                 `(%if %while %begin %bind))))
 
+(define-function add-explicit-true (exp)
+  (if (and (expression? exp)
+           (== (first exp) (symbol "%not")))
+      exp
+      `(%true? ,exp)))
+
 (define-function transform-statements (exp)
   (if (instance? exp <array>)
       (select (symbol-name (first exp)) ==
@@ -949,12 +955,19 @@
                `(%bind (,var ,(transform-statements value))
                   ,(transform-statements body)))))
         (("%if")
-         (set! (third exp)
-               (transform-statements (third exp)))
-         (set! (last exp)
-               (transform-statements (last exp)))
-         exp)
-        (("%while" "%set")
+         (destructuring-bind (_ test then else) exp
+           `(%if
+             ;; TODO: only if not boolean
+             ,(add-explicit-true test)
+             ,(transform-statements then)
+             ,(transform-statements else))))
+        (("%while")
+         (destructuring-bind (_ test body) exp
+           `(%while
+             ;; TODO: only if not boolean
+             ,(add-explicit-true test)
+             ,(transform-statements body))))
+        (("%set")
          (set! (last exp)
                (transform-statements (last exp)))
          exp)
