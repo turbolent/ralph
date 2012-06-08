@@ -2,9 +2,9 @@
   import: (ralph/core ralph/test
            ralph/stream ralph/reader ralph/compiler2))
 
-
 (define *environment*
   (make <environment>))
+
 
 (set! (get *environment* "macros" "alpha")
       (method (_ x y)
@@ -705,10 +705,10 @@
              `(%bind ($1 #f)
                 (%bind ($3 #f)
                   (%begin
-                   (%if $1
+                   (%if (%true? $1)
                         (%set $3 $1)
                         (%bind ($2 2)
-                          (%if $2
+                          (%if (%true? $2)
                                (%set $3 $2)
                                (%set $3 3))))
                    (foo $3 bar))))
@@ -722,10 +722,10 @@
 (check-equal "statements: if exp. in if stmt."
              `(%bind ($1 #f)
                 (%begin
-                 (%if a
+                 (%if (%true? a)
                       (%set $1 1)
                       (%set $1 2))
-                 (%if $1
+                 (%if (%true? $1)
                       3
                       4)))
              (transform-statements
@@ -736,15 +736,15 @@
 
 (reset-symbol-counter!)
 (check-equal "statements: while exp. in while stmt."
-             `(%while (> a 2)
+             `(%while (%true? (> a 2))
                 (%bind (a #f)
                   (%begin
                    (%begin
-                    (%while (< b 3)
-                      (%if a
+                    (%while (%true? (< b 3))
+                      (%if (%true?  a)
                            (%bind (c #f)
                              (%begin
-                              (%if c
+                              (%if (%true? c)
                                    (%set c 5)
                                    (%set c 6))
                               c))
@@ -768,13 +768,13 @@
 (check-equal "statements: value of while applied to method"
              `(%bind (y 5)
                 (%bind ($1 (%method (x)
-                             (%if x
+                             (%if (%true? x)
                                   (%return 1)
                                   (%return 2))))
                   (%bind ($2 #f)
                     (%begin
                      (%begin
-                      (%while (> y 2)
+                      (%while (%true? (> y 2))
                         (%set y (%- y 1)))
                       (%set $2 #f))
                      ($1 $2)))))
@@ -917,23 +917,24 @@
 
 
 (define-function all-stages (program)
-  (reduce (method (result name/fn)
-            (destructuring-bind (name fn) name/fn
-              (bind ((result (fn result)))
-                (format-out ">>> %s:\n%=\n" name result)
-                result)))
-          program
-          [["source" identity]
-           ["with begin" (rcurry push (symbol "begin"))]
-           ["macroexpanded" (rcurry macroexpand-all *environment*)]
-           ["lifted defines" lift-defines]
-           ["alpha-converted" (rcurry alpha-convert (make-object))]
-           ["ANF" normalize-term]
-           ["lifted symbols" lift-symbols]
-           ["statements" transform-statements]
-           ["flattened" flatten-statements]
-           ["compiled" (rcurry compile-js (make-object))]
-           ]))
+  (bind ((env (make-object)))
+    (reduce (method (result name/fn)
+              (destructuring-bind (name fn) name/fn
+                (bind ((result (fn result)))
+                  (format-out ">>> %s:\n%=\n" name result)
+                  result)))
+            program
+            [["source" identity]
+             ["with begin" (rcurry push (symbol "begin"))]
+             ["macroexpanded" (rcurry macroexpand-all *environment*)]
+             ["lifted defines" lift-defines]
+             ["alpha-converted" (rcurry alpha-convert env)]
+             ["ANF" normalize-term]
+             ["lifted symbols" lift-symbols]
+             ["statements" transform-statements]
+             ["flattened" flatten-statements]
+             ["compiled" (rcurry compile-js (make-object))]
+             ])))
 
 
 (all-stages
@@ -951,10 +952,10 @@
 
 (all-stages
  `((define-module test
-     import: ((ralph/core get first second)))
+     import: ((ralph/common map)))
    (define foo 1)
    (+ foo 1)
-   (define-function snap-offset-to-bounds ((view <scroll-view>) #key animated?)
+   (define-method snap-offset-to-bounds ((view <scroll-view>) #key animated?)
      (when (get view "bounces?")
        (destructuring-bind (x y) (get view "offset")
          (bind ((max-point (get view "max-point"))
@@ -969,5 +970,21 @@
    (define-function this-bar ()
      foo)))
 
+(all-stages
+ `((. node
+      ("removeClass" "off")
+      ("addClass" "on")
+      (end))))
 
-;; TODO: test dot compilation result (nested function calls)
+(all-stages
+ `((. 23 ("valueOf"))))
+
+
+(all-stages `((what foo: 42 about: #rest foo: 2)))
+
+(all-stages `((define foo #f)
+              (when (not foo)
+                (unless foo
+                  (bind ((not (method (x) x)))
+                    (unless foo
+                      #t))))))

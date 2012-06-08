@@ -1097,15 +1097,9 @@
          (map flatten-statements exp)))
       exp))
 
+
+
 ;;;; compilation to JS
-
-;; TODO:
-;; - keywords, hash symbols, get, not
-;; - %make-function <ralph-name-string>
-;;   => %make-function <js-name-string>
-
-
-;; utilities
 
 (define *escaped*
   (make-object
@@ -1195,8 +1189,6 @@
   (and (not (member? identifier *reserved*))
        (match "^\\w+$" identifier)))
 
-;;
-
 
 (define-function compile-js (exp env)
   (select exp instance?
@@ -1210,14 +1202,22 @@
      (if exp "true" "false"))
     ((<string>)
      (concatenate "\"" (escape-string exp) "\""))
+    ((<hash-symbol>)
+     (concatenate
+      "$" (as-uppercase (symbol-name exp))))
+    ((<keyword>)
+     (concatenate
+      "$K(\"" (symbol-name exp)  "\")"))
     ((<symbol>)
-     (if (== exp (symbol "%this-method"))
-         (compile-js (get env "current-method")
-                     env)
-         (if (get exp "generated?")
-             (symbol-name exp)
-             (escape-symbol-name
-              (symbol-name exp)))))
+     (select exp ==
+       (((symbol "%this-method"))
+        (compile-js (get env "current-method")
+                    env))
+       (else:
+        (if (get exp "generated?")
+            (symbol-name exp)
+            (escape-symbol-name
+             (symbol-name exp))))))
     (else:
      (description exp))))
 
@@ -1264,7 +1264,9 @@
          (concatenate
           "if (" (compile-js test env) ")\n"
           (compile-js then env)
-          (if else
+          ;; optimization: default is false
+          (if (and else
+                   (not (= else `(%return #f))))
               (concatenate
                "\nelse " (compile-js else env))
               ""))))
@@ -1295,14 +1297,12 @@
             " (" (join (map (rcurry compile-js env)
                             arguments)
                        ", ")
-            ") {\n"
-            ;; optimization: default is false
-            (if body
-                ;; TOOD: check if %begin and directly embed
-                (compile-js body env*)
-                "")
-            "}"
-            ))))
+            ")\n"
+            (bind ((body* (compile-js body env*)))
+              (if (and (expression? body)
+                       (== (first body) (symbol "%begin")))
+                  body*
+                  (concatenate "{" body* "}")))))))
       (("%var")
        (destructuring-bind (_ #rest bindings) exp
          (concatenate
@@ -1317,12 +1317,21 @@
                                 " = " (compile-js value env))
                               ""))))
                      bindings)
-                ",\n"))))
+                ", "))))
       (("%native")
        (as-string (second exp)))
       (("%native-name")
        (concatenate
         "\"" (escape-symbol-name (second exp)) "\""))
+      (("%get-property")
+       (destructuring-bind (_ object property) exp
+         (concatenate
+          (if (instance? object <number>)
+              (concatenate "(" (compile-js object env) ")")
+              (compile-js object env))
+          (if (valid-identifier? property)
+              (concatenate "." property)
+              (concatenate "[" (compile-js property env) "]")))))
       (else:
        (destructuring-bind (head #rest tail) exp
          (concatenate
