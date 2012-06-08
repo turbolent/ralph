@@ -979,14 +979,11 @@
 
 ;;;; symbol lifting
 
-;; TODO: keywords, hash-symbols
-
 (define-function lift-symbols (exp)
   (lift-symbol exp (make-object) identity))
 
 (define-function lift-symbol (exp mapping k)
-  (if (and (instance? exp <array>)
-           (not (empty? exp)))
+  (if (expression? exp)
       (select (symbol-name (first exp)) ==
         (("%bind")
          (destructuring-bind (_ (var value) body) exp
@@ -1015,15 +1012,27 @@
                  mapping)))))
         (("symbol")
          (destructuring-bind (_ name) exp
-           (if-bind (t (get mapping "symbol" name))
-             (k t mapping)
-             (bind ((t (set! (get mapping "symbol" name)
-                             (generate-symbol))))
-               `(%bind (,t ,exp)
-                  ,(k t mapping))))))
+           (lift-value
+            name exp "symbol" mapping k)))
         (else:
          (lift-symbol** exp mapping k)))
-      (k exp mapping)))
+      (select exp instance?
+        ((<keyword>)
+         (lift-value
+          (symbol-name exp) exp "keyword" mapping k))
+        ((<hash-symbol>)
+         (lift-value
+          (symbol-name exp) exp "hash" mapping k))
+        (else:
+         (k exp mapping)))))
+
+(define-function lift-value (name value type mapping k)
+  (if-bind (t (get mapping type name))
+    (k t mapping)
+    (bind ((t (set! (get mapping type name)
+                    (generate-symbol))))
+      `(%bind (,t ,value)
+         ,(k t mapping)))))
 
 (define-function lift-symbol* (exp* mapping k)
   (if (empty? exp*)
@@ -1039,7 +1048,6 @@
       (method (t* mapping)
         (k (concatenate [t] t*)
            mapping))))))
-
 
 
 ;;;; flatten-statements
