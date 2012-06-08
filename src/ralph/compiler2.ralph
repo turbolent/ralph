@@ -208,7 +208,7 @@
        #f))
 
 (define-default-macro unless (_ test #rest body)
-  `(if (%not ,test)
+  `(if (not ,test)
        ,(maybe-begin body)
        #f))
 
@@ -446,7 +446,7 @@
           value
           calls))
 
-(define-function function-definer (macro-name definer-name type?)
+(define-function function-definer (macro-name definer-name type/existing?)
   (method (_ function-name arguments #rest body)
     (destructuring-bind (setter? name)
         (if (setter-name? function-name)
@@ -457,24 +457,31 @@
         (signal (make <error> message:
                       (concatenate macro-name ": "
                                    "name not <var> or (setter <var>)"))))
+      (when (and type/existing?
+                 (empty? arguments))
+        (signal (make <error> message:
+                      (concatenate macro-name ": "
+                                   "method has no arguments"))))
       (bind ((arguments (map (method (argument)
                                (if (instance? argument <array>)
                                    (first argument)
                                    argument))
                              arguments)))
         `(define ,name
-           (,(symbol definer-name)
-            (%native-name ,(symbol-name name))
-            ,(concatenate `(method ,arguments)
-                          body)
-            ,setter?
-            ,(when (and type?
-                        (not (empty? arguments)))
-               (bind ((head (first arguments)))
-                 (if (and (instance? head <array>)
-                          (> (size head) 1))
-                     (second head)
-                     (symbol "<object>"))))))))))
+           ,(concatenate
+             `(,(symbol definer-name)
+               (%native-name ,(symbol-name name))
+               ,(concatenate `(method ,arguments)
+                             body)
+               ,setter?)
+             (if type/existing?
+                 `(,(bind ((head (first arguments)))
+                      (if (and (instance? head <array>)
+                               (> (size head) 1))
+                          (second head)
+                          (symbol "<object>")))
+                   (%definition ,(symbol-name name)))
+                 [])))))))
 
 (for-each ((arguments [["define-function" "%make-function" #f]
                        ["define-method" "%make-method" #t]]))
@@ -488,21 +495,20 @@
      (%make-generic
       (%native-name ,(symbol-name name)))))
 
-(define-default-macro define-class (_ name superclass #rest slots)
+(define-default-macro define-class (_ name superclass #rest properties)
   (bind ((object `(make-object)))
-    (for-each ((slot slots))
+    (for-each ((property properties))
               ()
-      (if (instance? slot <array>)
+      (if (instance? property <array>)
           (begin
-           (push-last object (symbol-name (first slot)))
+           (push-last object (symbol-name (first property)))
            (push-last object `(method ()
-                                ,(second slot))))
+                                ,(second property))))
           (begin
-           (push-last object (symbol-name slot))
+           (push-last object (symbol-name property))
            (push-last object #f))))
     `(define ,name
        (%make-class
-        (%native-name ,(symbol-name name))
         ,(first superclass)
         ,object))))
 
@@ -651,10 +657,12 @@
     form))
 
 (define-function macroexpand (form env)
-  (bind ((expanded (macroexpand-1 form env)))
-    (if (== expanded form)
-        form
-        (macroexpand expanded env))))
+  (bind ((done? #f))
+    (until done?
+      (bind ((expanded (macroexpand-1 form env)))
+        (set! done? (== expanded form))
+        (set! form expanded)))
+    form))
 
 (define-function macroexpand-all (form env)
   (select form instance?
@@ -770,9 +778,7 @@
 
 (define-function atomic? (expression)
   (any? (curry instance? expression)
-        [<number> <boolean> <string> <symbol>
-                  ;; TODO: aren't keywords symbols?
-                  <keyword>]))
+        [<number> <boolean> <string> <symbol> <keyword>]))
 
 (define-function normalize-term (expression)
   (normalize expression identity))
