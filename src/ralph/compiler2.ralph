@@ -8,16 +8,6 @@
                          atomic?
                          normalize-term))
 
-;; TODO: refactor lift-defines and lift-symbols: define-lift-pass
-
-;; TODO: symbol => %symbol
-;; TODO: %primitive-...
-
-
-;; TODO: generate-symbol => pass env
-;; TODO: use one environment for all passes (?!)
-
-
 ;;;; utilities
 
 (define-function expression? (form)

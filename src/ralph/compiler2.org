@@ -23,7 +23,11 @@ by wrapping them in lambdas, allways generate statements (while, but also if, et
 (bind ((not (method (x) x)))
   (not 1))
 *** import definitons from ralph/core by default? treat special?
-
+** ANF
+*** only normalizes expressions containing statements
+*** reduces amount of bindings directly, instead of normalization,
+then reverse and reduce back
+*** "direct" approach/non-normalization maybe wrong when inlining?!
 * ANF
 ** "The Essence of Compiling with Continuations"
 Flanagan, Sabry, Duba, Felleisen
@@ -32,9 +36,8 @@ Matt Might (http://matt.might.net/articles/a-normalization/)
 ** modified:
 *** support for %while
 *** create less bindings for expressions involving
-**** no control-flow (see pure-expression?)
+**** no control-flow statements (see contains-statements?)
 **** reduces JS variable bindings (5-20% performance hit)
-
 * Languages/Passes
 ** L1: Source
 #+BEGIN_SRC
