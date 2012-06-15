@@ -328,6 +328,22 @@
        `(define ,name
           (%make-generic (js:escape ,name)
                          ,(display-name name arguments))))
+     "."
+     (method  (_ value #rest calls)
+       (reduce (method (value call)
+                 (destructuring-bind (name #rest arguments) call
+                   (concatenate
+                    `((js:get-property ,value
+                                       ,(select name instance?
+                                          ((<string>)
+                                           name)
+                                          ((<symbol>)
+                                           (symbol-name name))
+                                          (else:
+                                           (signal "DOT")))))
+                    arguments)))
+               value
+               calls))
      "not"
      (method (_ value)
        `(js:not (true? ,value)))
@@ -476,7 +492,7 @@
                       (begin
                        (push-last object (symbol-name (first slot)))
                        (push-last object `(method ()
-                                                  ,(second slot))))
+                                            ,(second slot))))
                       (begin
                        (push-last object (symbol-name slot))
                        (push-last object #f))))
