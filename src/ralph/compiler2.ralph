@@ -476,8 +476,8 @@
         (if (setter-name? function-name)
             [#t (setter-symbol (second function-name))]
             [#f function-name])
-      (when (not (or (instance? name <symbol>)
-                     setter?))
+      (unless (or (instance? name <symbol>)
+                  setter?)
         (signal (make <error> message:
                       (concatenate macro-name ": "
                                    "name not <var> or (setter <var>)"))))
@@ -486,16 +486,27 @@
         (signal (make <error> message:
                       (concatenate macro-name ": "
                                    "method has no arguments"))))
-      (bind ((arguments (map (method (argument)
-                               (if (instance? argument <array>)
-                                   (first argument)
-                                   argument))
-                             arguments)))
+      (destructuring-bind (required rest key)
+          (analyze-lambda-list arguments)
+        (bind ((required
+                (map (method (argument)
+                       (if (instance? argument <array>)
+                           (first argument)
+                           argument))
+                     required)))
         `(define ,name
            ,(concatenate
              `(,(symbol definer-name)
                (%native-name ,(symbol-name name))
-               ,(concatenate `(method ,arguments)
+               ,(concatenate `(method
+                                  ,(concatenate
+                                    required
+                                    (if rest
+                                        (concatenate `(#rest) rest)
+                                        [])
+                                    (if key
+                                        (concatenate `(#key) key)
+                                        [])))
                              body)
                ,setter?)
              (if type/existing?
@@ -504,8 +515,8 @@
                                (> (size head) 1))
                           (second head)
                           (symbol "<object>")))
-                   (%definition ,(symbol-name name)))
-                 [])))))))
+                   ,name)
+                 []))))))))
 
 (for-each ((arguments [["define-function" "%make-function" #f]
                        ["define-method" "%make-method" #t]]))
