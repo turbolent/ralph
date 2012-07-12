@@ -1,0 +1,130 @@
+(define-module ralph2/stream
+  export: (<stream>
+           <string-stream>
+           <file-stream>
+           *standard-out*
+           stream-close
+           stream-open?
+           stream-at-end?
+           stream-peek
+           stream-read
+           stream-read-element
+           stream-read-to-end
+           stream-read-through
+           stream-unread-element
+           stream-write
+           stream-contents
+           stream-remaining-contents))
+
+;;;; <stream>
+
+(define-class <stream> (<object>))
+
+(define-generic stream-close ((stream <stream>)))
+
+(define-generic stream-open? ((stream <stream>)))
+
+(define-generic stream-at-end? ((stream <stream>)))
+
+(define-generic stream-peek ((stream <stream>)))
+
+(define-generic stream-read ((stream <stream>) (n <number>)))
+
+(define-generic stream-read-element ((stream <stream>)))
+
+(define-generic stream-read-to-end ((stream <stream>)))
+
+(define-generic stream-read-through ((stream <stream>) (element <string>)))
+
+(define-generic stream-unread-element ((stream <stream>)))
+
+(define-generic stream-write ((stream <stream>) (string <string>)))
+
+(define-generic stream-contents ((stream <stream>)))
+
+(define-generic stream-remaining-contents ((stream <stream>)))
+
+
+;;;; <string-stream>
+
+(define-class <string-stream> (<stream>)
+  (string "")
+  (index 0)
+  (length 0))
+
+(define-method initializeX ((stream <string-stream>) #rest rest)
+  (apply next-method stream rest)
+  (set! (get stream "length")
+        (size (get stream "string"))))
+
+(define-method stream-at-end? ((stream <string-stream>))
+  (== (get stream "index")
+      (get stream "length")))
+
+(define-method stream-peek ((stream <string-stream>))
+  (element (get stream "string")
+           (get stream "index")))
+
+(define-method stream-read-element ((stream <string-stream>))
+  (unless (stream-at-end? stream)
+    (bind ((element (stream-peek stream)))
+      (inc! (get stream "index"))
+      element)))
+
+(define-method stream-read ((stream <string-stream>) (n <number>))
+  (bind ((result ""))
+    (for ((i 0 (inc i)))
+         ((or (stream-at-end? stream)
+              (>= i n))
+          result)
+      (set! result
+            (concatenate result
+                         (stream-read-element stream))))))
+
+(define-method stream-read-through ((stream <string-stream>) (element <string>))
+  (bind ((found? #f))
+    (while (not (or (stream-at-end? stream)
+                    found?))
+      (set! found?
+            (== (stream-read-element stream)
+                element)))))
+
+(define-method stream-unread-element ((stream <string-stream>))
+  (set! (get stream "index")
+        (max 0 (dec (get stream "index")))))
+
+(define-method stream-write ((stream <string-stream>) (string <string>))
+  (bind-properties (index) stream
+    (bind ((length (size string))
+           (end (+ index length)))
+      (set! (get stream "string")
+            (replace-subsequence (get stream "string") string
+                                 start: index
+                                 end: end))
+      (set! (get stream "index") end)
+      (set! (get stream "length")
+            (max end (get stream "length")))))
+  string)
+
+(define-method stream-contents ((stream <string-stream>))
+  (get stream "string"))
+
+(define-method stream-remaining-contents ((stream <string-stream>))
+  (slice (get stream "string")
+         (get stream "index")))
+
+
+;;;; <file-stream>
+
+(define-class <file-stream> (<stream>)
+  file)
+
+(define-method stream-write ((stream <file-stream>) (string <string>))
+  ((%get-property stream "file" "write") string))
+
+
+;;;;
+
+(define *standard-out*
+  (makeX <file-stream>
+         file: (%get-property (%native "process") "stdout")))
