@@ -8,6 +8,14 @@
                          atomic?
                          normalize-term))
 
+
+;;;; modules
+
+;; holds informations about all modules:
+;; name => <environment>
+
+(define *modules* (make-object))
+
 ;;;; utilities
 
 (define-function expression? (form)
@@ -548,27 +556,48 @@
         ,object))))
 
 (define-core-macro define-module (env name #key (import []) (export []))
-  ;; TODO: add exports to env
-  (concatenate `(begin)
-               (map (method (module)
-                      ;; TODO: support for symbol (import all)
-                      (destructuring-bind (name #rest names) module
-                        (bind ((temp (generate-symbol)))
-                           `(%bind (,temp (require ,(symbol-name name)))
-                              ,(concatenate
-                                `(begin)
-                                (map (method (name)
-                                       `(%define ,name
-                                                 (%get-property
-                                                  ,temp ,(symbol-name name))
-                                                 #f))
-                                     names))))))
-                    import)))
+  (set! (get env "exports")
+        (map (method (name)
+               (if (setter-name? name)
+                   (setter-symbol (second name))
+                   name))
+             export))
+  (maybe-begin
+   (map (method (import)
+          (bind ((module-name (symbol-name
+                               (if (instance? import <array>)
+                                   (first import)
+                                   import))))
+            (import-module
+             env module-name
+             names: (when (instance? import <array>)
+                      (rest import)))
+            (import-definition module-name env)))
+        import)))
 
-;; see lift-defines
-(define-default-macro define (_ name value)
-  ;; TODO: check env if exported
-  `(%define ,name ,value #f))
+;; NOTE: requires module has been imported
+(define-function import-definition (module-name module)
+  (bind ((import-name (get module "import-names" module-name)))
+    ;; $X is require
+    `(define ,import-name
+       ((%native "$X") ,module-name))))
+
+(define-function import-module (module module-name #key names)
+  ;; make sure module is loaded
+  (load-module module-name)
+  (bind ((other-module (get *modules* module-name))
+         (names (or names (get other-module "exports")))
+         (import-name (generate-symbol)))
+    (set! (get module "import-names" module-name)
+          import-name)
+    (push (get module "imports")
+          [other-module names])
+    ;; TODO: import all macros or only exported ones?
+    (chain-object (get module "macros")
+                  (get other-module "macros"))
+    (chain-object (get module "symbol-macros")
+                  (get other-module "symbol-macros"))
+    other-module))
 
 
 
