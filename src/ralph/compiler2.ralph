@@ -71,15 +71,15 @@
     `(%bind (,var ,(macroexpand-all value env))
        ,(macroexpand-all body env))))
 
-;;;; macros
+;;;; core macros
 
 ;; utilities
 
-(define *default-macros*
+(define *core-macros*
   (make-object))
 
-(define-macro define-default-macro (name #rest definition)
-  `(set! (get *default-macros* ,(symbol-name name))
+(define-macro define-core-macro (name #rest definition)
+  `(set! (get *core-macros* ,(symbol-name name))
          ,(concatenate `(method)
                        definition)))
 
@@ -145,10 +145,10 @@
 
 ;; definitions
 
-(define-default-macro begin (_ #rest expressions)
+(define-core-macro begin (_ #rest expressions)
   (maybe-begin expressions))
 
-(define-default-macro method (_ arguments #rest body)
+(define-core-macro method (_ arguments #rest body)
   (destructuring-bind (required rest key)
       (analyze-lambda-list arguments)
     `(%method ,required
@@ -158,7 +158,7 @@
          required rest key))))
 
 
-(define-default-macro bind (_ bindings #rest body)
+(define-core-macro bind (_ bindings #rest body)
   (if (empty? bindings)
       (maybe-begin body)
       (reduce (method (body binding)
@@ -170,10 +170,10 @@
               (maybe-begin body)
               (reverse bindings))))
 
-(define-default-macro if (_ test then else)
+(define-core-macro if (_ test then else)
   `(%if ,test ,then ,else))
 
-(define-default-macro set! (_ place #rest rest)
+(define-core-macro set! (_ place #rest rest)
   (if (instance? place <array>)
       (concatenate `(,(setter-symbol (first place)))
                    (rest place)
@@ -181,7 +181,7 @@
       `(%set ,place ,(first rest))))
 
 
-(define-default-macro parallel-set! (_ var value #rest clauses)
+(define-core-macro parallel-set! (_ var value #rest clauses)
   (if (empty? clauses)
       `(set! ,var ,value)
       (bind ((temp (generate-symbol)))
@@ -191,7 +191,7 @@
            (set! ,var ,temp)))))
 
 
-(define-default-macro cond (_ #rest cases)
+(define-core-macro cond (_ #rest cases)
   (unless (empty? cases)
     (destructuring-bind (test #rest then) (first cases)
       (bind ((then (maybe-begin then)))
@@ -202,17 +202,17 @@
                  ,(concatenate `(cond)
                                (rest cases))))))))
 
-(define-default-macro when (_ test #rest body)
+(define-core-macro when (_ test #rest body)
   `(if ,test
        ,(maybe-begin body)
        #f))
 
-(define-default-macro unless (_ test #rest body)
+(define-core-macro unless (_ test #rest body)
   `(if (not ,test)
        ,(maybe-begin body)
        #f))
 
-(define-default-macro and (_ #rest values)
+(define-core-macro and (_ #rest values)
   (select (size values) ==
     ((0) #t)
     ((1) (first values))
@@ -220,7 +220,7 @@
               ,(concatenate `(and)
                             (rest values))))))
 
-(define-default-macro or (_ #rest values)
+(define-core-macro or (_ #rest values)
   (select (size values) ==
     ((0) #f)
     ((1) (first values))
@@ -232,7 +232,7 @@
               ,(concatenate `(or)
                             (rest values))))))))
 
-(define-default-macro if-bind (_ binding then else)
+(define-core-macro if-bind (_ binding then else)
   (destructuring-bind (var value) binding
     (bind ((temp (generate-symbol)))
       `(bind ((,temp ,value))
@@ -241,15 +241,15 @@
                ,then)
              ,else)))))
 
-(define-default-macro while (_ test #rest body)
+(define-core-macro while (_ test #rest body)
   `(%while ,test
      ,(maybe-begin body)))
 
-(define-default-macro until (_ test #rest body)
+(define-core-macro until (_ test #rest body)
   (concatenate `(while (%not ,test))
                body))
 
-(define-default-macro dotimes (_ binding #rest body)
+(define-core-macro dotimes (_ binding #rest body)
   (bind ((temp (generate-symbol)))
     (destructuring-bind (var count result) binding
       `(bind ((,temp ,count))
@@ -258,7 +258,7 @@
                  ((>= ,var ,temp) ,(or result #f)))
            body)))))
 
-(define-default-macro for (_ clauses end #rest body)
+(define-core-macro for (_ clauses end #rest body)
   (bind ((init-clauses [])
          (next-clauses [])
          (vars (map first clauses)))
@@ -284,7 +284,7 @@
           (concatenate `(begin)
                        (rest end))))))
 
-(define-default-macro for-each (_ clauses end #rest body)
+(define-core-macro for-each (_ clauses end #rest body)
   (destructuring-bind (end-test #rest results) end
     (bind ((clauses (map (method (clause)
                            (concatenate [(generate-symbol)]
@@ -330,7 +330,7 @@
            [#f]
            results)))))
 
-(define-default-macro bind-properties (_ properties object #rest body)
+(define-core-macro bind-properties (_ properties object #rest body)
   (bind ((object* (generate-symbol)))
     (concatenate
      `(bind ,(concatenate
@@ -342,7 +342,7 @@
                    properties)))
      body)))
 
-(define-default-macro select (_ value test #rest cases)
+(define-core-macro select (_ value test #rest cases)
   (bind ((value* (generate-symbol))
          (test* (generate-symbol)))
     (bind-methods ((test-expression (test-value)
@@ -382,11 +382,11 @@
         `(bind ((,var ,values))
            ,(destructure bindings var body)))))
 
-(define-default-macro destructuring-bind (_ bindings values #rest body)
+(define-core-macro destructuring-bind (_ bindings values #rest body)
   (destructure bindings values
                (concatenate `(begin) body)))
 
-(define-default-macro bind-methods (_ bindings #rest body)
+(define-core-macro bind-methods (_ bindings #rest body)
   (concatenate
    `(bind ,(map first bindings))
    (map (method (binding)
@@ -397,11 +397,11 @@
         bindings)
    body))
 
-(define-default-macro inc! (_ object value)
+(define-core-macro inc! (_ object value)
   `(set! ,object (%+ ,object ,(or value 1))))
+(define-core-macro dec! (_ object value)
+  `(set! ,object (- ,object ,(or value 1))))
 
-(define-default-macro dec! (_ object value)
-  `(set! ,object (%- ,object ,(or value 1))))
 
 (define-function transform-quoted (exp)
   (cond
@@ -418,19 +418,19 @@
    (else:
     exp)))
 
-(define-default-macro %backquote (_ exp)
+(define-core-macro %backquote (_ exp)
   (transform-quoted exp))
 
 ;; comma is only used as a marker and
 ;; actually handled in backquote
-(define-default-macro %comma (_ value)
+(define-core-macro %comma (_ value)
   (signal (make <error> message: "comma not inside backquote")))
 
 (define *dot-name-error*
   (make <error>
         message: "unsupported name for call in dot"))
 
-(define-default-macro . (_ value #rest calls)
+(define-core-macro . (_ value #rest calls)
   (reduce (method (value call)
             (destructuring-bind (name #rest arguments) call
               (concatenate
@@ -486,16 +486,16 @@
 (for-each ((arguments [["define-function" "%make-function" #f]
                        ["define-method" "%make-method" #t]]))
           ()
-  (set! (get *default-macros* (first arguments))
+  (set! (get *core-macros* (first arguments))
         (apply function-definer arguments)))
 
 
-(define-default-macro define-generic (_ name arguments)
+(define-core-macro define-generic (_ name arguments)
   `(define ,name
      (%make-generic
       (%native-name ,(symbol-name name)))))
 
-(define-default-macro define-class (_ name superclass #rest properties)
+(define-core-macro define-class (_ name superclass #rest properties)
   (bind ((object `(make-object)))
     (for-each ((property properties))
               ()
@@ -512,7 +512,7 @@
         ,(first superclass)
         ,object))))
 
-(define-default-macro define-module (_ name #key (import []) (export []))
+(define-core-macro define-module (env name #key (import []) (export []))
   ;; TODO: add exports to env
   (concatenate `(begin)
                (map (method (module)
