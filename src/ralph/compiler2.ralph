@@ -746,42 +746,109 @@
          form))
     (else: form)))
 
+
+
+
 ;;;; alpha conversion
 
-(define-function rename-variables (variables env)
-  (bind ((env (wrap-object env)))
-    [(map (method (variable)
-            (set! (get env (symbol-name variable))
-                  (generate-symbol)))
-          variables)
-     env]))
+;; "names" => module name => symbol name => renaming+
 
-(define-function find-variable (variable env)
-  ;; TODO: use deep-get, signal error if not found
-  (js:get-property env (symbol-name variable)))
+(define-function ensure-naming-structure (module variable-module variable-name)
+  ;; ensure renmaing object for module
+  (unless (get module "names" variable-module)
+    (set! (get module "names" variable-module)
+          (make-object)))
+  ;; ensure renaming list for variable
+  (unless (get module "names"
+               variable-module variable-name)
+    (set! (get module "names"
+               variable-module variable-name)
+          []))
+  module)
 
-(define-function alpha-convert (form env)
+(define-function rename-variables (variables module)
+  (map (method (variable)
+         (bind ((variable-module (or (get variable "module")
+                                     ""))
+                (variable-name (symbol-name variable))
+                (new-variable (generate-symbol)))
+           (ensure-naming-structure
+            module variable-module variable-name)
+           (push (get module "names"
+                      variable-module variable-name)
+                 new-variable)
+           new-variable))
+       variables))
+
+(define-function restore-variables (variables module)
+  (for-each ((variable variables))
+            ()
+    (bind ((variable-module (or (get variable "module")
+                                ""))
+           (variable-name (symbol-name variable)))
+      (pop (get module "names"
+                variable-module variable-name)))))
+
+(define-function find-variable (variable module)
+  (bind ((variable-module (or (get variable "module")
+                              ""))
+         (variable-name (symbol-name variable)))
+    (if-bind (renamings (get module "names"
+                             variable-module variable-name))
+      (first renamings))))
+
+(define-function alpha-convert (form module)
   (select form instance?
     ((<array>)
      (select (symbol-name (first form)) ==
        (("%method")
         (destructuring-bind (_ arguments body) form
-          (destructuring-bind (new-arguments env*)
-              (rename-variables arguments env)
-            `(%method ,new-arguments
-               ,(alpha-convert body env*)))))
+          (bind ((new-arguments
+                  (rename-variables arguments module)))
+            (set! (second form)
+                  new-arguments)
+            (set! (last form)
+                  (alpha-convert body module))
+            (restore-variables arguments module)
+            form)))
        (("%bind")
         (destructuring-bind (_ (var value) body) form
-          (destructuring-bind ((new-var) env*)
-              (rename-variables [var] env)
-            ;; TODO: make binding available inside value?
-            `(%bind (,new-var ,(alpha-convert value env))
-               ,(alpha-convert body env*)))))
+          ;; TODO: make binding available inside value?
+          ;; (if so, also change define-free-variables)
+          (bind ((new-value (alpha-convert value module)))
+            (destructuring-bind (new-var)
+                (rename-variables [var] module)
+              (bind ((result
+                      `(%bind (,new-var ,new-value)
+                         ,(alpha-convert body module))))
+                (restore-variables [var] module)
+                result)))))
+       (("%define")
+        ;; rename in future expression
+        ;; NOTE: modifies module!
+        (destructuring-bind (_ variable) form
+          (bind ((variable-module (or (get variable "module")
+                                      ""))
+                 (variable-name (symbol-name variable))
+                 (new-variable (generate-symbol)))
+            (ensure-naming-structure
+             module variable-module variable-name)
+            (push-last (get module "names"
+                            variable-module variable-name)
+                       new-variable)
+            ;; register renaming of definition
+            (set! (get module "renaming->definition-name"
+                       (symbol-name new-variable))
+                  variable-name)
+            ;; update form
+            (set! (second form)
+                  new-variable)
+            form)))
        (else:
-        (map (rcurry alpha-convert env)
+        (map (rcurry alpha-convert module)
              form))))
     ((<symbol>)
-     (or (find-variable form env)
+     (or (find-variable form module)
          form))
     (else: form)))
 
