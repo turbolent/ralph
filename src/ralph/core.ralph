@@ -796,21 +796,28 @@
     (make <hash-symbol> name: "rest"))
 
 
-(define-class <symbol> ()
-    name)
+(define-class <symbol> (<object>)
+    name
+    module)
 
 (define %symbols (make-object))
 
-(define-function symbol (name)
-  (bind ((name (as-lowercase name)))
-    (or (get %symbols name)
-        (set! (get %symbols name)
-              (make <symbol> name: name)))))
+(define-function symbol (name module)
+  (bind ((name (as-lowercase name))
+         (module* (as-lowercase (or module ""))))
+    (or (get %symbols module* name)
+        (set! (get %symbols module* name)
+              (make <symbol>
+                    name: name
+                    module: module)))))
 
 (define "_s" symbol)
 
 (define-method description ((symbol <symbol>))
-  (get symbol "name"))
+  (js:+ (if-bind (module (get symbol "module"))
+          (concatenate module "::")
+          "")
+        (get symbol "name")))
 
 (define-method description ((keyword <keyword>))
   (js:+ (symbol-name keyword) ":"))
