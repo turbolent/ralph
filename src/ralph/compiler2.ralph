@@ -1690,3 +1690,153 @@
                     ", ")
           ")"))))))
 
+
+;;;;
+
+(define path (require "path"))
+(define fs (require "fs"))
+(define vm (require "vm"))
+
+
+(define-function ensure-directory (directory)
+  (bind ((parent (. path ("dirname" directory))))
+    (unless (. path ("existsSync" parent))
+      (ensure-directory parent))
+    (unless (. path ("existsSync" directory))
+      (. fs ("mkdirSync" directory)))))
+
+(define-function executable-path (module-name)
+  (. path ("resolve" "output"
+           (concatenate module-name ".js"))))
+
+(define-function source-path (module-name)
+  (. path ("resolve" "src"
+           (concatenate module-name ".ralph"))))
+
+(define-function open-executable (module-name)
+  (bind ((p (executable-path module-name)))
+    (ensure-directory (. path ("dirname" p)))
+    (. fs ("openSync" p "w"))))
+
+(define-function load-source (module-name)
+  (bind ((p (source-path module-name))
+         (source (. fs ("readFileSync" p) ("toString")))
+         (stream (make <string-stream>
+                       string: (concatenate "(" source "\n)"))))
+    (read stream)))
+
+
+(define-function all-stages (exp module)
+  (reduce (method (result name/fn)
+            (destructuring-bind (name fn) name/fn
+              (bind ((result (fn result)))
+                (format-out "### %s:\n%=\n" name result)
+                result)))
+          exp
+          [["source" identity]
+           ["macroexpanded" (rcurry macroexpand-all module)]
+           ["lifted defines" (rcurry lift-defines module)]
+           ["defined free variables"
+            (rcurry define-free-variables module)]
+           ["alpha-converted" (rcurry alpha-convert module)]
+           ["ANF" normalize-term]
+           ["lifted symbols" (rcurry lift-symbols module)]
+           ["statements" (rcurry transform-statements module)]
+           ["flattened" flatten-statements]
+           ["compiled" (rcurry compile-js module)]
+           ]))
+
+
+(define-function recompile? (module-name)
+  (bind ((p (executable-path module-name)))
+    (or (not (. path ("existsSync" p)))
+        (bind ((p2 (source-path module-name)))
+          (< (get (. fs ("statSync" p)) "mtime")
+             (get (. fs ("statSync" p2)) "mtime"))))))
+
+(define-function load-module (module-name)
+  ;; make sure module is compiled
+  (bind ((module (compile-module module-name)))
+    (unless (get module "loaded?")
+      (bind ((p (executable-path module-name)))
+        ;; TODO: get from DB
+        (bind ((exported (require p)))
+          (set! (get module "exports")
+                (map symbol (keys exported))))))))
+
+(define-function compile-program (module)
+  ;; prepare
+  (. vm ("runInThisContext" "var exports = {}"))
+  (eval "$X = require")
+  (for-each ((exp (get module "program")))
+            ()
+    ;; compile
+    (bind ((result (all-stages exp module)))
+      ;; evalute
+      (. vm ("runInThisContext" result))
+      ;; write
+      (. fs ("writeSync" (get module "executable")
+             (concatenate "\n" result)))))
+  (bind-properties (export exports) module
+    (for-each ((definition (get module "exports")))
+              ()
+      (bind ((name (symbol-name definition))
+             (renamed (symbol-name (first (get module "names" "" name))))
+             (value (eval renamed)))
+        (export name value))))
+  (set! (get module "loaded?") #t))
+
+
+(define-function boot-core-definitions (module)
+  (extend! (get module "macros")
+           *core-macros*)
+  (extend! (get module "symbol-macros")
+           *core-symbol-macros*)
+  (for-each ((macro (keys *core-macros*)))
+            ()
+    (. module ("export" macro
+               (get *core-macros* macro))))
+  (for-each ((macro (keys *core-symbol-macros*)))
+            ()
+    (. module ("export" macro
+               (get *core-symbol-macros* macro)))))
+
+
+(define-function compile-module (module-name)
+  ; TODO: if recompile?
+  (unless (get *modules* module-name)
+    ;; create module
+    ;; read source program
+    (bind ((module (make <environment> name: module-name))
+           (program (load-source module-name)))
+      (set! (get *modules* module-name)
+            module)
+      (set! (get module "program")
+            program)
+      ;; initialize executable
+      (bind ((executable (open-executable module-name)))
+        (set! (get module "executable")
+              executable)
+        ;; inject export function
+        (. fs ("writeSync" executable
+               (concatenate "exports.$U = function ($V, $W) { exports[$V] = $W };\n"
+                            "$X = require;")))
+        (bind ((exports (require (executable-path module-name))))
+          (set! (get module "export")
+                (get exports "$U")))
+        ;; core?
+        (if (= module-name "ralph2/core")
+            (boot-core-definitions module)
+            ;; implicit import of core
+            (begin
+             (import-module module "ralph2/core")
+             (push program (import-definition "ralph2/core" module))))
+        (compile-program module)
+        ;; close
+        (. fs ("closeSync" executable)))
+      module)))
+
+;;
+(bind ((start (make <date>)))
+  (compile-module "ralph2/runtime.test")
+  (format-out "%d\n" (- (make <date>) start)))
