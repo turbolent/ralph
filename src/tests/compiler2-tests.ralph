@@ -1,10 +1,16 @@
-(define-module tests/compiler2-tests
-  import: (ralph/core ralph/test
-           ralph/stream ralph/reader ralph/compiler2))
+
+;; TODO: change to 2
+(define-module ralph2/compiler.test
+  import: (ralph/test ralph/stream
+           ralph/reader ralph2/compiler))
+
+(define-function make-core-environment ()
+  (make <environment>
+        macros: *core-macros*
+        symbol-macros: *core-symbol-macros*))
 
 (define *environment*
-  (make <environment>))
-
+  (make-core-environment))
 
 (set! (get *environment* "macros" "alpha")
       (method (_ x y)
@@ -191,20 +197,20 @@
 
 (reset-symbol-counter!)
 (check-equal "macroexpand-all: destructuring-bind"
-             `(%bind (a (%element values 0))
-                (%bind ($1 (%element values 1))
-                  (%bind (b (%element $1 0))
-                    (%bind (c (%element $1 1))
-                      (%bind ($3 (%element $1 2))
-                        (%bind (d (%element $3 0))
-                          (%bind (e (%element $3 1))
+             `(%bind (a (element values 0))
+                (%bind ($1 (element values 1))
+                  (%bind (b (element $1 0))
+                    (%bind (c (element $1 1))
+                      (%bind ($3 (element $1 2))
+                        (%bind (d (element $3 0))
+                          (%bind (e (element $3 1))
                             (%bind (f (%slice $3 2))
                               (%bind ($4 (%keys f (%object "g" 1)))
                                 (%bind (g (%get-property $4 "g"))
                                   (%bind ($2 (%slice $1 3))
                                     (%bind ($5 (%keys $2 (%object "h" 2)))
                                       (%bind (h (%get-property $5 "h"))
-                                        (%bind (i (%element values 2))
+                                        (%bind (i (element values 2))
                                           (foo e)))))))))))))))
              (macroexpand-all `(destructuring-bind
                                    (a (b c (d e #rest f #key (g 1)) #key (h 2)) i)
@@ -262,7 +268,7 @@
              `(%bind ($1 (+ (- 3 2)))
                 (%bind (i 0)
                   (%begin
-                   (%while (%not (>= i $1))
+                   (%while (not (>= i $1))
                      (%begin
                       ((%method (i)
                          (foo i))
@@ -274,39 +280,70 @@
                               *environment*))
 
 (reset-symbol-counter!)
-(check-equal "macroexpand-all: for-each"
+(check-equal "macroexpand-all: for-each with body"
              `(%bind ($1 (%array 1 2 3 4))
                 (%bind ($2 (%array 5 6 7))
                   (%bind ($3 #f)
-                    (%bind ($4 (%array $1 $2))
-                      (%begin
-                       (%while (%not (%bind ($5 $3)
-                                       (%if $5
-                                            $5
-                                            (%any? %empty? $4))))
-                         (%bind (a (%first $1))
-                           (%bind (b (%first $2))
-                             (%if (%bind ($6 (> a 2))
-                                    (%if $6
-                                         $6
-                                         (> b 5)))
-                                  (%set $3 #t)
-                                  (%begin
-                                   ((%method (a b)
-                                      (baz a b))
-                                    a b)
-                                   (%set $1 (%rest $1))
-                                   (%set $2 (%rest $2)))))))
-                       (foo a)
-                       (bar b))))))
-             (macroexpand-all `(for-each ((a [1 2 3 4])
-                                          (b [5 6 7]))
-                                         ((or (> a 2)
-                                              (> b 5))
-                                          (foo a)
-                                          (bar b))
-                                 (baz a b))
-                              *environment*))
+                    (%bind ($5 #f)
+                      (%bind ($4 (%array $1 $2))
+                        (%begin
+                         (%while (not (%bind ($6 $3)
+                                        (%if $6 $6 (any? empty? $4))))
+                           (%bind (a (first $1))
+                             (%bind (b (first $2))
+                               (%if (%bind ($7 (> a 2))
+                                      (%if $7 $7 (> b 5)))
+                                    (%begin
+                                     (%set $5 (%begin
+                                               (foo a)
+                                               (bar b)))
+                                     (%set $3 #t))
+                                    (%begin
+                                     ((%method (a b)
+                                        (baz a b))
+                                      a b)
+                                     (%set $1 (rest $1))
+                                     (%set $2 (rest $2))
+                                     (%set $4 (%array $1 $2)))))))
+                         $5))))))
+             (macroexpand-all
+              `(for-each ((a [1 2 3 4])
+                          (b [5 6 7]))
+                         ((or (> a 2)
+                              (> b 5))
+                          (foo a)
+                          (bar b))
+                 (baz a b))
+              *environment*))
+
+
+(reset-symbol-counter!)
+(check-equal "macroexpand-all: for-each without body"
+             `(%bind ($1 (%array 1 2 3))
+                (%bind ($2 (%array 1 2 3))
+                  (%bind ($3 #f)
+                    (%bind ($5 #f)
+                      (%bind ($4 (%array $1 $2))
+                        (%begin
+                         (%while (not (%bind ($6 $3)
+                                        (%if $6 $6 (any? empty? $4))))
+                           (%bind (a (first $1))
+                             (%bind (b (first $2))
+                               (%if (not (binary= a b))
+                                 (%begin
+                                  (%set $5 #t)
+                                  (%set $3 #t))
+                                 (%begin
+                                  ((%method (a b) #f) a b)
+                                  (%set $1 (rest $1))
+                                  (%set $2 (rest $2))
+                                  (%set $4 (%array $1 $2)))))))
+                         $5))))))
+             (macroexpand-all
+              `(for-each ((a [1 2 3])
+                          (b [1 2 3]))
+                         ((not (binary= a b)) #t))
+              *environment*))
 
 
 (reset-symbol-counter!)
@@ -358,7 +395,7 @@
 (check-equal "alpha-convert: single method"
              `(%method ($1) 1)
              (alpha-convert `(%method (a) 1)
-                            (make-object)))
+                            *environment*))
 
 (reset-symbol-counter!)
 (check-equal "alpha-convert: nested methods"
@@ -372,7 +409,23 @@
                                    a)
                                  a))
                               1)
-                            (make-object)))
+                            *environment*))
+
+(reset-symbol-counter!)
+(check-equal "alpha-convert: define"
+             `(%begin
+               (foo a)
+               (%define $1)
+               (bar $1)
+               (%method ($2)
+                 $2))
+             (alpha-convert `(%begin
+                              (foo a)
+                              (%define a)
+                              (bar a)
+                              (%method (a)
+                               a))
+                            *environment*))
 
 ;; TODO: test alpha-convert for bind
 
@@ -581,6 +634,22 @@
                `(set! (foo x) (+ 2 3))
                *environment*)))
 
+
+(reset-symbol-counter!)
+(check-equal "ANF: nested set! with if"
+             `(%begin
+               (%set a (+ (- b 3) c))
+               (%bind ($1 (%if a b c))
+                 (%bind ($2 (%set z $1))
+                   (%bind ($3 (* $2 5))
+                     (%set x $3)))))
+             (normalize-term
+              (macroexpand-all
+               `(begin
+                 (set! a (+ (- b 3) c))
+                 (set! x (* (set! z (if a b c)) 5)))
+               *environment*)))
+
 (reset-symbol-counter!)
 (check-equal "ANF: set! with expression and keywords"
              `(foo-setter x (+ 2 3)
@@ -661,6 +730,21 @@
                *environment*)))
 
 (reset-symbol-counter!)
+(check-equal "ANF: if in while"
+             `(%while #t
+                (%begin
+                 (%bind ($1 (foo))
+                   (%bind ($2 (%if $1 $1 (bar)))
+                     (%if $2
+                          (baz)
+                          (%native "break"))))))
+             (normalize-term
+              (macroexpand-all
+               `(while (or (foo) (bar))
+                  (baz))
+               *environment*)))
+
+(reset-symbol-counter!)
 (check-equal "ANF: begin as expression"
              `(%bind ($1 (curry + 1))
                 (%begin
@@ -700,15 +784,60 @@
                                    else))
                                *environment*)))
 
+
+(reset-symbol-counter!)
+(check-equal "ANF: if in expression"
+             `(%method ()
+                (bar (%method (item)
+                       (%bind ($1 (%if a b c))
+                         (baz $1 item)))))
+             (normalize-term
+              (macroexpand-all
+               `(method ()
+                  (bar (method (item)
+                         (baz (if a b c)
+                              item))))
+               *environment*)))
+
+(reset-symbol-counter!)
+(check-equal "ANF: if in expression 2"
+             `(%method ()
+                (bar (%method (item)
+                       (%bind ($1 (%if c b a))
+                         (%bind ($2 (%if a b c))
+                           ($1 $2 item))))))
+             (normalize-term
+              (macroexpand-all
+               `(method ()
+                  (bar (method (item)
+                         ((if c b a)
+                          (if a b c)
+                          item))))
+               *environment*)))
+
+
+(reset-symbol-counter!)
+(check-equal "ANF: while in if in exp"
+             `(%bind ($1 (%while run? (foo)))
+                (%bind ($2 (%if $1 42 23))
+                  (foo $2)))
+             (normalize-term
+              (macroexpand-all
+               `(foo (if (while run?
+                           (foo))
+                         42
+                         23))
+               *environment*)))
+
 (reset-symbol-counter!)
 (check-equal "statements: or"
              `(%bind ($1 #f)
                 (%bind ($3 #f)
                   (%begin
-                   (%if (%true? $1)
+                   (%if ((%native "$T") $1)
                         (%set $3 $1)
                         (%bind ($2 2)
-                          (%if (%true? $2)
+                          (%if ((%native "$T") $2)
                                (%set $3 $2)
                                (%set $3 3))))
                    (foo $3 bar))))
@@ -716,35 +845,37 @@
                (normalize-term
                 (macroexpand-all
                  `(foo (or #f 2 3) bar)
-                 *environment*))))
+                 *environment*))
+               *environment*))
 
 (reset-symbol-counter!)
 (check-equal "statements: if exp. in if stmt."
              `(%bind ($1 #f)
                 (%begin
-                 (%if (%true? a)
+                 (%if ((%native "$T") a)
                       (%set $1 1)
                       (%set $1 2))
-                 (%if (%true? $1)
+                 (%if ((%native "$T") $1)
                       3
                       4)))
              (transform-statements
                (normalize-term
                 (macroexpand-all
                  `(if (if a 1 2) 3 4)
-                 *environment*))))
+                 *environment*))
+               *environment*))
 
 (reset-symbol-counter!)
 (check-equal "statements: while exp. in while stmt."
-             `(%while (%true? (> a 2))
+             `(%while ((%native "$T") (> a 2))
                 (%bind (a #f)
                   (%begin
                    (%begin
-                    (%while (%true? (< b 3))
-                      (%if (%true?  a)
+                    (%while ((%native "$T") (< b 3))
+                      (%if ((%native "$T")  a)
                            (%bind (c #f)
                              (%begin
-                              (%if (%true? c)
+                              (%if ((%native "$T") c)
                                    (%set c 5)
                                    (%set c 6))
                               c))
@@ -761,21 +892,22 @@
                                       c)
                                     #f))))
                       4))
-                 *environment*))))
+                 *environment*))
+               *environment*))
 
 
 (reset-symbol-counter!)
 (check-equal "statements: value of while applied to method"
              `(%bind (y 5)
                 (%bind ($1 (%method (x)
-                             (%if (%true? x)
+                             (%if ((%native "$T") x)
                                   (%return 1)
                                   (%return 2))))
                   (%bind ($2 #f)
                     (%begin
                      (%begin
-                      (%while (%true? (> y 2))
-                        (%set y (%- y 1)))
+                      (%while ((%native "$T") (> y 2))
+                        (%set y (- y 1)))
                       (%set $2 #f))
                      ($1 $2)))))
              (transform-statements
@@ -785,139 +917,271 @@
                     ((method (x) (if x 1 2))
                      (while (> y 2)
                        (dec! y))))
-                 *environment*))))
+                 *environment*))
+               *environment*))
 
 
 (reset-symbol-counter!)
-(check-equal "lift-symbols: simple"
-            `(%bind ($1 (symbol "a"))
-               $1)
-             (lift-symbols
-              (macroexpand-all
-               `(begin (symbol "a"))
-               *environment*)))
+(bind ((module (make-core-environment)))
+  (check-equal "lift-symbols: simple"
+               `(%bind ($1 (symbol "a"))
+                  $1)
+               (lift-symbols
+                (macroexpand-all
+                 `(begin (symbol "a"))
+                 module)
+                module)))
 
 
 (reset-symbol-counter!)
-(check-equal "lift-symbols: multiple uses"
-            `(%bind ($1 (symbol "a"))
-               (%bind ($2 (symbol "b"))
-                 (%bind ($3 (symbol "c"))
-                   (%bind (a $1)
-                     (%bind (b $2)
-                       (foo a $1 b $2 $3))))))
-             (lift-symbols
-              (macroexpand-all
-               `(bind ((a (symbol "a"))
-                       (b (symbol "b")))
-                  (foo
-                   a (symbol "a")
-                   b (symbol "b")
-                   (symbol "c")))
-               *environment*)))
+(bind ((module (make-core-environment)))
+  (check-equal "lift-symbols: multiple uses"
+               `(%bind ($1 (symbol "a"))
+                  (%bind ($2 (symbol "b"))
+                    (%bind ($3 (symbol "c"))
+                      (%bind (a $1)
+                        (%bind (b $2)
+                          (foo a $1 b $2 $3))))))
+               (lift-symbols
+                (macroexpand-all
+                 `(bind ((a (symbol "a"))
+                         (b (symbol "b")))
+                    (foo
+                     a (symbol "a")
+                     b (symbol "b")
+                     (symbol "c")))
+                 module)
+                module)))
 
 (reset-symbol-counter!)
-(check-equal "lift-symbols: bind"
-             `(%bind ($1 (symbol "a"))
-                (%begin
-                 $1
-                 (%bind (symbol "a")
-                   (%bind (a $1)
-                     (foo a $1)))))
-             (lift-symbols
-              (macroexpand-all
-               `(begin
-                 (symbol "a")
-                 (bind ((symbol "a"))
-                   (bind ((a (symbol "a")))
-                     (foo a (symbol "a")))))
-               *environment*)))
+(bind ((module (make-core-environment)))
+  (check-equal "lift-symbols: bind"
+               `(%bind ($1 (symbol "a"))
+                  (%begin
+                   $1
+                   (%bind (symbol "a")
+                     (%bind (a $1)
+                       (foo a $1)))))
+               (lift-symbols
+                (macroexpand-all
+                 `(begin
+                   (symbol "a")
+                   (bind ((symbol "a"))
+                     (bind ((a (symbol "a")))
+                       (foo a (symbol "a")))))
+                 module)
+                module)))
 
 (reset-symbol-counter!)
-(check-equal "lift-symbols: method"
-             `(%bind ($1 (symbol "a"))
-                (%begin
-                 23
-                 (%method (x)
-                   $1)))
-             (lift-symbols
-              (macroexpand-all
-               `(begin
-                 23
-                 (method (x)
-                   (symbol "a")))
-               *environment*)))
+(bind ((module (make-core-environment)))
+  (check-equal "lift-symbols: method"
+               `(%bind ($1 (symbol "a"))
+                  (%begin
+                   23
+                   (%method (x)
+                     $1)))
+               (lift-symbols
+                (macroexpand-all
+                 `(begin
+                   23
+                   (method (x)
+                     (symbol "a")))
+                 module)
+                module)))
 
 (reset-symbol-counter!)
-(check-equal "lift-symbols: method"
-             `(%method (symbol)
-                symbol)
-             (lift-symbols
-              (macroexpand-all
-               `(method (symbol)
+(bind ((module (make-core-environment)))
+  (check-equal "lift-symbols: method"
+               `(%method (symbol)
                   symbol)
-               *environment*)))
+               (lift-symbols
+                (macroexpand-all
+                 `(method (symbol)
+                    symbol)
+                 module)
+                module)))
 
 (reset-symbol-counter!)
-(check-equal "lift-symbols: set!"
-             `(%bind ($1 (symbol "b"))
-                (symbol-setter "a" $1))
-             (lift-symbols
-              (macroexpand-all
-               `(set! (symbol "a")
-                      (symbol "b"))
-               *environment*)))
+(bind ((module (make-core-environment)))
+  (check-equal "lift-symbols: set!"
+               `(%bind ($1 (symbol "b"))
+                  (symbol-setter "a" $1))
+               (lift-symbols
+                (macroexpand-all
+                 `(set! (symbol "a")
+                        (symbol "b"))
+                 module)
+                module)))
 
 (reset-symbol-counter!)
-(check-equal "lift-symbols: begin, if, while"
-             `(%bind ($1 (symbol "a"))
-                (%bind ($2 (symbol "b"))
-                  (%bind ($3 (symbol "c"))
-                    (%begin
-                     (%if $1
-                          (%while (bar $2)
-                            (%begin $1 23 $3))
-                          $3)
-                     $2))))
-             (lift-symbols
-              (macroexpand-all
-               `(begin
-                 (if (symbol "a")
-                     (while (bar (symbol "b"))
-                       (symbol "a")
-                       23
+(bind ((module (make-core-environment)))
+  (check-equal "lift-symbols: begin, if, while"
+               `(%bind ($1 (symbol "a"))
+                  (%bind ($2 (symbol "b"))
+                    (%bind ($3 (symbol "c"))
+                      (%begin
+                        (%if $1
+                             (%while (bar $2)
+                               (%begin $1 23 $3))
+                             $3)
+                        $2))))
+               (lift-symbols
+                (macroexpand-all
+                 `(begin
+                   (if (symbol "a")
+                       (while (bar (symbol "b"))
+                         (symbol "a")
+                         23
+                         (symbol "c"))
                        (symbol "c"))
-                     (symbol "c"))
-                 (symbol "b"))
-               *environment*)))
+                   (symbol "b"))
+                 module)
+                module)))
 
 (reset-symbol-counter!)
-(check-equal "flatten-statements"
-             `(%begin
-               (%var ($1 (symbol "a"))
-                     ($2 (symbol "b"))
-                     ($3 (symbol "c")))
-               (%if $1
-                    (%while (bar $2)
-                      (%begin $1 23 $3))
-                    $3)
-               $2)
-             (flatten-statements
-              (lift-symbols
-               (macroexpand-all
-                `(begin
-                  (if (symbol "a")
-                      (while (bar (symbol "b"))
-                        (symbol "a")
-                        23
+(bind ((module (make-core-environment)))
+  (check-equal "flatten-statements"
+               `(%begin
+                 (%var ($1 (symbol "a"))
+                       ($2 (symbol "b"))
+                       ($3 (symbol "c")))
+                 (%if $1
+                      (%while (bar $2)
+                        (%begin $1 23 $3))
+                      $3)
+                 $2)
+               (flatten-statements
+                (lift-symbols
+                 (macroexpand-all
+                  `(begin
+                    (if (symbol "a")
+                        (while (bar (symbol "b"))
+                          (symbol "a")
+                          23
+                          (symbol "c"))
                         (symbol "c"))
-                      (symbol "c"))
-                  (symbol "b"))
-                *environment*))))
+                    (symbol "b"))
+                  module)
+                 module))))
 
+
+(reset-symbol-counter!)
+(bind ((module (make-core-environment)))
+  (check-equal "lift-defines: simple"
+               `(%begin
+                 (%define x)
+                 (%set x 1))
+               (lift-defines
+                (macroexpand-all
+                 `(define x 1)
+                 module)
+                module)))
+
+(bind ((module (make-core-environment)))
+  (check-equal "lift-defines: nested"
+               `(%begin
+                 (%define x)
+                 (%if (foo 1)
+                      (%set x 1)
+                      #f))
+               (lift-defines
+                (macroexpand-all
+                 `(when (foo 1)
+                    (define x 1))
+                 module)
+                module)))
+
+(reset-symbol-counter!)
+(bind ((module (make-core-environment)))
+  (check-equal "lift-defines: multiple"
+               `(%begin
+                 (%define x)
+                 (%if (foo 1)
+                      (%set x 1)
+                      (%set x 2)))
+               (lift-defines
+                (macroexpand-all
+                 `(if (foo 1)
+                      (define x 1)
+                      (define x 2))
+                 module)
+                module)))
+
+(reset-symbol-counter!)
+(bind ((module (make-core-environment)))
+  (check-equal "define free variables: use of prior definition"
+               `(%begin
+                 (%define foo)
+                 (%begin
+                  (%define bar)
+                  (%begin
+                   (%bind (bar 42)
+                     (%set foo (%infix "+" 23 bar)))
+                   (%set bar foo)
+                   bar
+                   foo)))
+               (define-free-variables
+                 (lift-defines
+                  (macroexpand-all
+                   `(begin
+                     (bind ((bar 42))
+                       (define foo (%infix "+" 23 bar)))
+                     (define bar foo)
+                     bar
+                     foo)
+                   module)
+                  module)
+                 module)))
+
+(reset-symbol-counter!)
+(bind ((module (make-core-environment)))
+  (check-equal "define free variables: use of future definition"
+               `(%begin
+                 (%define foo)
+                 (%begin
+                  (%define bar)
+                  (%begin
+                   (%set foo (%method () (bar)))
+                   (%set bar (%method () 1))
+                   (foo))))
+               (define-free-variables
+                 (lift-defines
+                  (macroexpand-all
+                   `(begin
+                     (define foo
+                       (method ()
+                         (bar)))
+                     (define bar
+                       (method ()
+                         1))
+                     (foo))
+                   module)
+                  module)
+                 module)))
+
+;;
+
+(reset-symbol-counter!)
+(bind ((module (make-core-environment)))
+  (check-equal "define free variables: use of undefined identifier"
+               `(%begin
+                 (%define bar2)
+                 (%begin
+                  (%define foo2)
+                  (%set foo2 (%method ()
+                               (bar2)))))
+               (define-free-variables
+                 (lift-defines
+                  (macroexpand-all
+                   `(define foo2
+                      (method ()
+                        (bar2)))
+                   module)
+                  module)
+                 module)))
 
 (define-function all-stages (program)
-  (bind ((env (make-object)))
+  (bind ((module (make-core-environment)))
     (reduce (method (result name/fn)
               (destructuring-bind (name fn) name/fn
                 (bind ((result (fn result)))
@@ -926,12 +1190,14 @@
             program
             [["source" identity]
              ["with begin" (rcurry push (symbol "begin"))]
-             ["macroexpanded" (rcurry macroexpand-all *environment*)]
-             ["lifted defines" lift-defines]
-             ["alpha-converted" (rcurry alpha-convert env)]
+             ["macroexpanded" (rcurry macroexpand-all module)]
+             ["lifted defines" (rcurry lift-defines module)]
+             ["defined free variables"
+              (rcurry define-free-variables module)]
+             ["alpha-converted" (rcurry alpha-convert module)]
              ["ANF" normalize-term]
-             ["lifted symbols" lift-symbols]
-             ["statements" transform-statements]
+             ["lifted symbols" (rcurry lift-symbols module)]
+             ["statements" (rcurry transform-statements module)]
              ["flattened" flatten-statements]
              ["compiled" (rcurry compile-js (make-object))]
              ])))
@@ -950,25 +1216,6 @@
            (symbol "c"))
      (symbol "b"))))
 
-(all-stages
- `((define-module test
-     import: ((ralph/common map)))
-   (define foo 1)
-   (+ foo 1)
-   (define-method snap-offset-to-bounds ((view <scroll-view>) #key animated?)
-     (when (get view "bounces?")
-       (destructuring-bind (x y) (get view "offset")
-         (bind ((max-point (get view "max-point"))
-                (offset (limit [x y] [0 0] max-point)))
-           (when (or (not (== (first offset) x))
-                     (not (== (second offset) y)))
-             (set! (content-offset view)
-                   offset
-                   animated?: animated?)
-             (when animated?
-               (begin-snap-animation view)))))))
-   (define-function this-bar ()
-     foo)))
 
 (all-stages
  `((. node
@@ -988,3 +1235,5 @@
                   (bind ((not (method (x) x)))
                     (unless foo
                       #t))))))
+
+
