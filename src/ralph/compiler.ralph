@@ -177,8 +177,10 @@
                         (cond
                           ((and (instance? form <array>)
                                 (not (empty? form)))
-                           (if (== (first form)
-                                   (S "%comma"))
+                           (if (== (symbol-name (first form))
+                                   ;; TODO: (S "%comma" "ralph/core")
+                                   "%comma"
+                                   )
                                (second form)
                                (concatenate `(make-array)
                                             (map transform
