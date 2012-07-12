@@ -1333,6 +1333,60 @@
 
 ;;;; flatten-statements
 
+(define-function flatten-begins (exps)
+  (reduce1 concatenate
+           (map (method (exp)
+                  (bind ((flattened (flatten-statements exp)))
+                    (if (and (instance? flattened <array>)
+                             (not (empty? flattened))
+                             (== (first flattened)
+                                 (symbol "%begin")))
+                        (rest flattened)
+                        [flattened])))
+                exps)))
+
+(define-function var? (exp)
+  (and (expression? exp)
+       (== (first exp)
+           (symbol "%var"))))
+
+(define-function set? (exp)
+  (and (expression? exp)
+       (== (first exp)
+           (symbol "%set"))))
+
+(define-function method? (exp)
+  (and (expression? exp)
+       (== (first exp)
+           (symbol "%method"))))
+
+(define-function flatten-vars (exps)
+  (reduce (method (result exp)
+            (bind ((previous (and (not (empty? result))
+                                  (last result)))
+                   (previous-var? (and previous
+                                       (var? previous))))
+              (if (and previous-var? (var? exp))
+                  ;; add current bindings to previous
+                  (begin
+                   (do (method (binding)
+                         (push-last (last result)
+                                    binding))
+                       (rest exp))
+                   result)
+                  ;; add assignment to previous binding?
+                  (bind ((merge? (and previous-var? (set? exp)))
+                         (binding (and merge? (last (last result))))
+                         (name (and merge? (second exp))))
+                    (if (== (first binding)
+                            name)
+                        (begin
+                         (set! (second binding)
+                               (third exp))
+                         result)
+                        (concatenate result [exp]))))))
+          [] exps))
+
 (define-function flatten-statements (exp)
   (if (instance? exp <array>)
       (select (symbol-name (first exp)) ==
@@ -1342,32 +1396,15 @@
          exp)
         (("%begin")
          (destructuring-bind (_ #rest exps) exp
-           (reduce concatenate
-                   `(%begin)
-                   (map (method (exp)
-                          (bind ((flattened (flatten-statements exp)))
-                            (if (and (instance? flattened <array>)
-                                     (not (empty? flattened))
-                                     (== (first flattened)
-                                         (symbol "%begin")))
-                                (rest flattened)
-                                [flattened])))
-                        exps))))
+           (maybe-begin
+            (flatten-vars
+             (flatten-begins exps)))))
         (("%bind")
-         (destructuring-bind (_ (var value) body) exp
-           (bind ((bindings [[var (flatten-statements value)]]))
-             (while (and (instance? body <array>)
-                         (not (empty? body))
-                         (== (first body) (symbol "%bind")))
-               (destructuring-bind (var value) (second body)
-                 (push-last bindings
-                            [var (flatten-statements value)]))
-               (set! body (third body)))
-             (flatten-statements
-              `(%begin
-                ,(concatenate `(%var)
-                              bindings)
-                ,body)))))
+         (destructuring-bind (_ binding body) exp
+           (flatten-statements
+            `(%begin
+              (%var ,binding)
+              ,body))))
         (("%if")
          (set! (third exp)
                (flatten-statements (third exp)))
