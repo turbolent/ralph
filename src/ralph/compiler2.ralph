@@ -607,78 +607,67 @@
 ;; search for all %define and create top-level bindings,
 ;; replace with assignment to new top-level-binding
 
-(define-function lift-defines (exp)
-  (lift-define exp (make-object) identity))
+(define-function lift-defines (exp module)
+  (lift-define exp module identity))
 
-(define-function definition-replacement (name value export?)
-  (bind ((assignment `(%set ,name ,value)))
-    (if export?
-        `(%begin
-          ,assignment
-          (%export (%native-name ,(symbol-name name))
-                   ,name))
-        assignment)))
-
-(define-function lift-define (exp defined k)
-  (if (and (instance? exp <array>)
-           (not (empty? exp)))
+(define-function lift-define (exp module k)
+  (if (expression? exp)
       (select (symbol-name (first exp)) ==
         (("%bind")
          (destructuring-bind (_ (var value) body) exp
            (lift-define
-            value defined
-            (method (lvalue defined)
+            value module
+            (method (lvalue module)
               (lift-define
-               body defined
-               (method (lbody defined)
+               body module
+               (method (lbody module)
                  (k `(%bind (,var ,lvalue)
                        ,lbody)
-                    defined)))))))
+                    module)))))))
         (("%method" "%set")
          (destructuring-bind (m e1 e2) exp
            (lift-define
-            e2 defined
-            (method (le2 defined)
+            e2 module
+            (method (le2 module)
               (k `(,m ,e1 ,le2)
-                 defined)))))
+                 module)))))
         (("%begin" "%if" "%while")
          (destructuring-bind (m #rest e*) exp
            (lift-define*
-            e* defined
-            (method (le* defined)
+            e* module
+            (method (le* module)
               (k (concatenate [m] le*)
-                 defined)))))
-        (("%define")
+                 module)))))
+        (("define")
          (destructuring-bind (_ var value export?) exp
            (bind ((name (symbol-name var)))
-             (if (get defined name)
-                 (k (definition-replacement
-                      var value export?)
-                    defined)
+             (if (get module "defined?" name)
+                 (k `(%set ,var ,value)
+                    module)
                  (begin
-                  (set! (get defined name) #t)
-                  `(%bind (,var #f)
-                     ,(k (definition-replacement
-                           var value export?)
-                         defined)))))))
+                  (set! (get module "defined?" name) #t)
+                  `(%begin
+                    (%define ,var)
+                    ,(k `(%set ,var ,value)
+                        module)))))))
         (else:
-         (lift-define** exp defined k)))
-      (k exp defined)))
+         (lift-define** exp module k)))
+      (k exp module)))
 
-(define-function lift-define* (exp* defined k)
+(define-function lift-define* (exp* module k)
   (if (empty? exp*)
-      (k [] defined)
-      (lift-define** exp* defined k)))
+      (k [] module)
+      (lift-define** exp* module k)))
 
-(define-function lift-define** (exp defined k)
+(define-function lift-define** (exp module k)
   (lift-define
-   (first exp) defined
-   (method (t defined)
+   (first exp) module
+   (method (t module)
      (lift-define*
-      (rest exp) defined
-      (method (t* defined)
+      (rest exp) module
+      (method (t* module)
         (k (concatenate [t] t*)
-           defined))))))
+           module))))))
 
 
 
