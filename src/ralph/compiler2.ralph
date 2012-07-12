@@ -419,6 +419,14 @@
   `(set! ,object (- ,object ,(or value 1))))
 
 
+;; TODO: backend-specific
+(define-core-macro call-next-method (_)
+  `((%get-property next-method "apply")
+    (%native "null")
+    (%native "arguments")))
+
+
+
 (define-function transform-quoted (exp)
   (cond
    ((and (instance? exp <array>)
