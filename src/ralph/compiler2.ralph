@@ -174,7 +174,9 @@
   `(%if ,test ,then ,else))
 
 (define-core-macro set! (_ place #rest rest)
-  (if (instance? place <array>)
+  (if (and (instance? place <array>)
+           (not (== (first place)
+                    (symbol "%get-property"))))
       (concatenate `(,(setter-symbol (first place)))
                    (rest place)
                    rest)
@@ -246,7 +248,7 @@
      ,(maybe-begin body)))
 
 (define-core-macro until (_ test #rest body)
-  (concatenate `(while (%not ,test))
+  (concatenate `(while (not ,test))
                body))
 
 (define-core-macro dotimes (_ binding #rest body)
@@ -273,7 +275,8 @@
       (push-last next-clauses
                  (third clause)))
     `(bind ,init-clauses
-       ,(concatenate `(while (%not ,(first end))
+       ,(concatenate `(while ,(or (empty? end)
+                                  `(not ,(first end)))
                         ,(concatenate
                           `(,(concatenate `(method ,vars)
                                           body))
@@ -285,50 +288,62 @@
                        (rest end))))))
 
 (define-core-macro for-each (_ clauses end #rest body)
-  (destructuring-bind (end-test #rest results) end
-    (bind ((clauses (map (method (clause)
-                           (concatenate [(generate-symbol)]
-                                        clause))
-                         clauses))
-           (end? (generate-symbol))
-           (values (generate-symbol)))
-      (concatenate
-       ;; evaluate each collection once
-       `(bind ,(concatenate
+  (bind ((clauses
+          (map (method (clause)
+                 (concatenate [(generate-symbol)]
+                              clause))
+               clauses))
+         (end? (generate-symbol))
+         (values (generate-symbol))
+         (result (generate-symbol))
+         (body (concatenate
+                `(begin
+                  ;; rebind variables to create closure
+                  ,(bind ((vars (map second clauses)))
+                     (concatenate
+                      `(,(concatenate `(method ,vars)
+                                      ;; actual body
+                                      body))
+                      vars)))
+                ;; update temporary collection bindings
                 (map (method (clause)
-                       (destructuring-bind (temp var values) clause
-                         [temp values]))
+                       `(set! ,(first clause)
+                              (rest ,(first clause))))
                      clauses)
-                `((,end? #f)
-                  (,values ,(concatenate `(%array)
-                                         (map first clauses)))))
-          ;; check exhaustion
-          (until (or ,end?
-                     (%any? %empty? ,values))
-            ;; bind each var to next element
-            (bind ,(map (method (clause)
-                          (destructuring-bind (temp var values) clause
-                            [var `(%first ,temp)]))
-                        clauses)
-              (if ,end-test
-                  (set! ,end? #t)
-                  ,(concatenate
-                    `(begin
-                      ;; rebind variables to create closure
-                      ,(bind ((vars (map second clauses)))
-                         (concatenate
-                          `(,(concatenate `(method ,vars)
-                                          body))
-                          vars)))
-                    ;; update temporary collection bindings
-                    (map (method (clause)
-                           `(set! ,(first clause)
-                                  (%rest ,(first clause))))
-                         clauses))))))
-       ;; execute all result expressions, returning last; false if none
-       (if (empty? results)
-           [#f]
-           results)))))
+                `((set! ,values
+                        ,(concatenate `(%array)
+                                      (map first clauses)))))))
+    ;; evaluate each collection once
+    `(bind ,(concatenate
+             (map (method (clause)
+                    (destructuring-bind (temp var values) clause
+                      [temp values]))
+                  clauses)
+             `((,end? #f)
+               (,result #f)
+               (,values ,(concatenate `(%array)
+                                      (map first clauses)))))
+       ;; check exhaustion
+       (until (or ,end? (any? empty? ,values))
+         ;; bind each var to next element
+         (bind ,(map (method (clause)
+                       (destructuring-bind (temp var values) clause
+                         [var `(first ,temp)]))
+                     clauses)
+           ,(if-bind (end-test (first end))
+              `(if ,end-test
+                   (begin
+                    (set! ,result
+                          ,(maybe-begin
+                            ;; execute all result expressions, returning last; false if none
+                            (bind ((results (rest end)))
+                              (if (empty? results)
+                                  [#f]
+                                  results))))
+                    (set! ,end? #t))
+                   ,body)
+              body)))
+       ,result)))
 
 (define-core-macro bind-properties (_ properties object #rest body)
   (bind ((object* (generate-symbol)))
@@ -370,9 +385,9 @@
           (reduce (method (body binding)
                     (dec! i)
                     (if (instance? binding <symbol>)
-                        `(bind ((,binding (%element ,values ,i)))
+                        `(bind ((,binding (element ,values ,i)))
                            ,body)
-                        (destructure binding `(%element ,values ,i) body)))
+                        (destructure binding `(element ,values ,i) body)))
                   (wrap-rest/keys body
                                   values
                                   required rest key)
@@ -398,7 +413,8 @@
    body))
 
 (define-core-macro inc! (_ object value)
-  `(set! ,object (%+ ,object ,(or value 1))))
+  `(set! ,object (+ ,object ,(or value 1))))
+
 (define-core-macro dec! (_ object value)
   `(set! ,object (- ,object ,(or value 1))))
 
