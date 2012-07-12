@@ -658,17 +658,17 @@
 
 ;; utilities
 
-(define *default-symbol-macros*
+(define *core-symbol-macros*
   (make-object))
 
-(define-macro define-default-symbol-macro (name #rest definition)
-  `(set! (get *default-symbol-macros* ,(symbol-name name))
+(define-macro define-core-symbol-macro (name #rest definition)
+  `(set! (get *core-symbol-macros* ,(symbol-name name))
          ,(concatenate `(method)
                        definition)))
 
 ;; definitions
 
-(define-default-symbol-macro next-method (_)
+(define-core-symbol-macro next-method (_)
   `(%next-method %this-method))
 
 ;;;; macro expansion
