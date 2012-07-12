@@ -1184,54 +1184,74 @@
        (member? (first exp)
                 `(%if %while %begin %bind))))
 
-(define-function add-explicit-true (exp)
-  (if (and (expression? exp)
-           (== (first exp) (symbol "%not")))
-      exp
-      `(%true? ,exp)))
 
-(define-function transform-statements (exp)
+(define-function add-explicit-true (exp)
+  `((%native "$T") ,exp))
+
+(define-function transform-statements (exp module)
   (if (instance? exp <array>)
       (select (symbol-name (first exp)) ==
         (("%method")
          (set! (last exp)
                (add-explicit-return
-                (transform-statements (last exp))))
+                (transform-statements (last exp)
+                                      module)))
          exp)
         (("%begin")
          (destructuring-bind (_ #rest exps) exp
-           (concatenate `(%begin)
-                        (map transform-statements
-                             exps))))
+           (maybe-begin
+            (map (rcurry transform-statements module)
+                 exps))))
         (("%bind")
          (destructuring-bind (_ (var value) body) exp
            (if (statement? value)
                `(%bind (,var #f)
                   (%begin
-                   ,(wrap-value (transform-statements value)
-                                `(%set ,var))
-                   ,(transform-statements body)))
-               `(%bind (,var ,(transform-statements value))
-                  ,(transform-statements body)))))
+                   ,(wrap-value
+                     (transform-statements value module)
+                     `(%set ,var))
+                   ,(transform-statements body module)))
+               `(%bind (,var
+                        ,(transform-statements value module))
+                  ,(transform-statements body module)))))
         (("%if")
          (destructuring-bind (_ test then else) exp
            `(%if
              ;; TODO: only if not boolean
              ,(add-explicit-true test)
-             ,(transform-statements then)
-             ,(transform-statements else))))
+             ,(transform-statements then module)
+             ,(transform-statements else module))))
         (("%while")
-         (destructuring-bind (_ test body) exp
-           `(%while
-             ;; TODO: only if not boolean
-             ,(add-explicit-true test)
-             ,(transform-statements body))))
-        (("%set")
-         (set! (last exp)
-               (transform-statements (last exp)))
+         (set! (second exp)
+               (add-explicit-true (second exp)))
+         (set! (third exp)
+               (transform-statements (third exp) module))
          exp)
+        (("%set")
+         (destructuring-bind (_ name value) exp
+           (bind ((value* (transform-statements value module))
+                  (definition-name
+                    (get module "renaming->definition-name"
+                         (symbol-name name))))
+             ;; check if exported definition
+             (if (and definition-name
+                      (member? (symbol definition-name)
+                               (get module "exports")))
+               (begin
+                (set! (first exp) (symbol "%begin"))
+                (set! (second exp)
+                      `(%set ,name ,value*))
+                (set! (third exp)
+                      `(%set (%get-property (%native "exports")
+                                            ,definition-name)
+                             ,name)))
+               ;; no re-export, leave as is
+               (set! (third exp) value*))))
+         exp)
+        (("%define")
+         `(%var (,(last exp) #f)))
         (else:
-         (map transform-statements exp)))
+         (map (rcurry transform-statements module) exp)))
       exp))
 
 
