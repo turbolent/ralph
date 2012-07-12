@@ -228,7 +228,7 @@
    arguments (js:or skip 0)))
 
 (define-function has? (object property)
-  ((js:get-property object "hasOwnProperty") property))
+  ((js:inline "Object.hasOwnProperty.call") object  property))
 
 (define-function get (object #rest keys)
   (js:var result)
@@ -484,7 +484,7 @@
            (method (element)
              (js:var result (function element))
              (set! match result)
-             result)))
+             (true? result))))
   (js:if found? match #f))
 
 (define-function member? (value (array <array>) #key (test ==))

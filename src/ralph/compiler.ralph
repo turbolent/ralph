@@ -718,7 +718,8 @@
                   0))))
      "has?"
      (method (_ object property)
-       `((js:get-property ,object "hasOwnProperty")
+       `((js:inline "Object.hasOwnProperty.call")
+         ,object
          ,property))
      "but-last"
      (method (_ array n)
