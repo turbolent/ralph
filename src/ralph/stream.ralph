@@ -127,10 +127,5 @@
 ;;;;
 
 (define *standard-out*
-  (if (== *environment* "browser")
-      (make <document-stream>)
-      (bind ((object (if (== *environment* "commonjs")
-                         (require "system")
-                         process)))
-        (make <file-stream>
-              file: (js:get-property object "stdout")))))
+  (make <file-stream>
+        file: (js:inline "process.stdout")))
