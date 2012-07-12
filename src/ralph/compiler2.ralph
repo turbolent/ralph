@@ -97,8 +97,8 @@
   `(%set ,name ,(macroexpand-all value env)))
 
 (define-special-form
-  %define (env name value)
-  `(%define ,name ,(macroexpand-all value env)))
+  define (env name value)
+  `(define ,name ,(macroexpand-all value env)))
 
 (define-special-form
   %bind (env binding body)
