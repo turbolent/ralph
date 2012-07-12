@@ -15,13 +15,13 @@
        (not (empty? form))
        (instance? (first form) <symbol>)))
 
-(define-function setter-symbol (function-symbol)
-  (symbol (concatenate (symbol-name function-symbol) "-setter")))
+(define-function setter-symbol (name)
+  (symbol (concatenate (symbol-name name) "-setter")))
 
 (define-function setter-name? (name)
   (and (instance? name <array>)
        (== (size name) 2)
-       (every? (rcurry instance? <symbol>))
+       (every? (rcurry instance? <symbol>) name)
        (== (symbol-name (first name)) "setter")))
 
 (define *symbol-count* 0)
