@@ -1,5 +1,8 @@
-(define-module ralph/compiler2
-  import: (ralph/core ralph/format ralph/regexp ralph/reader)
+
+;; TODO: change imports to ralph2 when self-hosting
+
+(define-module ralph2/compiler
+  import: (ralph/core ralph/format ralph/regexp ralph/reader ralph/date)
   export: (<environment> macroexpand-1
                          macroexpand
                          macroexpand-all
@@ -7,6 +10,30 @@
                          reset-symbol-counter!
                          atomic?
                          normalize-term))
+
+;; TODO: cleanup
+
+;; TODO: define-macro, %macro!
+;; TODO: hygienic expansion:
+;;       - rename symbols before passing to expander
+;;       - rename after expansion
+;;       - lift external references
+;; TODO: inlining, %inline!
+;; TODO: constant propagation, constant folding
+;; TODO: dead code elimination
+;; TODO: fix form/env naming convention
+
+;; TODO: signal warning in define-free-variables
+
+;; TODO: fix calling behaviour: var x = y.foo; x() VS y.foo()
+;;       problematic when normalization binds %get-property
+;;       => .bind?
+
+;; NOTE: no symbol expansion after macroexpand-all,
+;;       as ANF uses atomic? to decide if expression
+;;       has side-effects and needs to be normalized
+;;       (influences evaluation order)
+
 
 
 ;;;; modules
@@ -602,6 +629,10 @@
 
 
 
+;; TODO: %try, %throw, block, handler-case
+;; TODO: inline make-object
+;;       (initialize with string keys, evaluate and set rest)
+
 ;;;; lift defines
 
 ;; search for all %define and create top-level bindings,
@@ -670,8 +701,6 @@
            module))))))
 
 
-
-;; TODO: %try, %throw, block, handler-case
 
 ;;;; symbol macros
 
@@ -944,14 +973,14 @@
 ;; ((L (x y) (+ x y)) a (+ a 1))
 ;; => ((L (y) (+ a y)) (+ a 1))
 
-(define-function substitute-variables (variables new-variables env)
-  (bind ((env (wrap-object env)))
-    (for-each ((variable variables)
-               (new-variable new-variables))
-              ()
-      (set! (get env (symbol-name variable))
-            new-variable))
-    env))
+;; (define-function substitute-variables (variables new-variables env)
+;;   (bind ((env (wrap-object env)))
+;;     (for-each ((variable variables)
+;;                (new-variable new-variables))
+;;               ()
+;;       (set! (get env (symbol-name variable))
+;;             new-variable))
+;;     env))
 
 
 ;;;; TODO: eliminate
