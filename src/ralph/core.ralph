@@ -43,7 +43,8 @@
            starts-with?
            group-by
            wrap-object unwrap-object
-           interpose))
+           interpose
+           make-plain-object))
 
 (define %get-property
   (js:function js:null (object name)
@@ -487,6 +488,16 @@
              (true? result))))
   (js:if found? match #f))
 
+;; TODO: use keys?!
+; ; (define-function any? ((function <function>) (values <array>))
+; ;   (bind ((value #f)
+; ;          (n (size values)))
+; ;     (for ((i 0 (+ i 1)))
+; ;          ((or value (>= i n)) value)
+; ;       (set! value
+; ;             (function (element values i))))))
+
+
 (define-function member? (value (array <array>) #key (test ==))
   (any? (method (other-value)
           (test value other-value))
@@ -927,3 +938,55 @@
 
 (define-function unwrap-object (object)
   (js:get-property object "__proto__"))
+
+
+(define-function update-with (fn obj #rest objs)
+  (do (method (obj2)
+        (do (method (property)
+              (bind ((value (get obj2 property)))
+                (set! (get obj property)
+                      (if (has? obj property)
+                          (fn (get obj property)
+                              value)
+                          value))))
+            (keys obj2)))
+      objs))
+
+(define-function chain-object (object1 object2)
+  (set! (js:get-property object2 "__proto__")
+        (js:get-property object1 "__proto__"))
+  (set! (js:get-property object1 "__proto__")
+        object2)
+  object1)
+
+(define-function unchain-object (object)
+  (set! (js:get-property object "__proto__")
+        (when (js:get-property object "__proto__")
+          (js:get-property object "__proto__" "__proto__")))
+  object)
+
+(define-function as-set (values)
+  (bind ((set []))
+    (set-union! set values)))
+
+(define-function set-add! (set object)
+  (unless (member? object set)
+    (push-last set object)))
+
+(define set-remove! remove!)
+
+(define-function set-union! (set1 set2)
+  (do (curry set-add! set1) set2)
+  set1)
+
+(define-function set-subtract! (set1 set2)
+  (do (curry set-remove! set1) set2)
+  set1)
+
+
+(define-function as-hex-string ((number <number>))
+  (. number ("toString" 16)))
+
+(define-function make-plain-object ()
+  (js:inline "Object.create(null)"))
+
