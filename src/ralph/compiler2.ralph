@@ -1038,8 +1038,17 @@
                             ,(normalize-term else)))))))
         (("%while")
          (destructuring-bind (_ test body) exp
-           (k `(%while ,(normalize-term test)
-                       ,(normalize-term body)))))
+           (k (if (contains-statements? test)
+                  `(%while #t
+                     (%begin
+                      ,(normalize-term
+                        `(%if ,test
+                              ,(normalize-term body)
+                              (%native "break")
+                              #f))))
+                  `(%while
+                    ,(normalize-term test)
+                    ,(normalize-term body))))))
         (("%set")
          (destructuring-bind (_ var value) exp
            (normalize-value
@@ -1049,7 +1058,7 @@
         (else:
          (if (contains-statements? exp)
              (normalize-all exp k)
-             (k exp))))
+             (k (map normalize-term exp)))))
       (k exp)))
 
 (define-function normalize-value (exp k)
