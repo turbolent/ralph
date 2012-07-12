@@ -539,7 +539,7 @@
       (%native-name ,(symbol-name name)))))
 
 (define-core-macro define-class (_ name superclass #rest properties)
-  (bind ((object `(make-object)))
+  (bind ((object `(%object)))
     (for-each ((property properties))
               ()
       (if (instance? property <array>)
@@ -552,7 +552,8 @@
            (push-last object #f))))
     `(define ,name
        (%make-class
-        ,(first superclass)
+        ,(unless (empty? superclass)
+           (first superclass))
         ,object))))
 
 (define-core-macro define-module (env name #key (import []) (export []))
