@@ -693,8 +693,18 @@
 ;;;; macro expansion
 
 (define-class <environment> (<object>)
-  (macros *default-macros*)
-  (symbol-macros *default-symbol-macros*))
+  name
+  loaded?
+  (macros (make-plain-object))
+  (symbol-macros (make-plain-object))
+  (names (make-object))
+  (defined? (make-object
+             "%all-arguments" #t
+             "%this-method" #t))
+  (lifted (make-object))
+  (exports [])
+  (imports [])
+  (import-names (make-plain-object)))
 
 (define-function macro-definition (form env)
   (select form instance?
