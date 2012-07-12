@@ -1258,75 +1258,77 @@
 
 ;;;; symbol lifting
 
-(define-function lift-symbols (exp)
-  (lift-symbol exp (make-object) identity))
+(define-function lift-symbols (exp module)
+  (lift-symbol exp module identity))
 
-(define-function lift-symbol (exp mapping k)
-  (if (expression? exp)
+(define-function lift-symbol (exp module k)
+  (if (and (instance? exp <array>)
+           (not (empty? exp)))
       (select (symbol-name (first exp)) ==
         (("%bind")
          (destructuring-bind (_ (var value) body) exp
            (lift-symbol
-            value mapping
-            (method (lvalue mapping)
+            value module
+            (method (lvalue module)
               (lift-symbol
-               body mapping
-               (method (lbody mapping)
+               body module
+               (method (lbody module)
                  (k `(%bind (,var ,lvalue)
                        ,lbody)
-                    mapping)))))))
+                    module)))))))
         (("%method" "%set")
          (destructuring-bind (m e1 e2) exp
            (lift-symbol
-            e2 mapping
-            (method (le2 mapping)
+            e2 module
+            (method (le2 module)
               (k `(,m ,e1 ,le2)
-                 mapping)))))
+                 module)))))
         (("%begin" "%if" "%while")
          (destructuring-bind (m #rest e*) exp
            (lift-symbol*
-            e* mapping
-            (method (le* mapping)
+            e* module
+            (method (le* module)
               (k (concatenate [m] le*)
-                 mapping)))))
+                 module)))))
+        ;; TODO: fix, already renamed
         (("symbol")
          (destructuring-bind (_ name) exp
            (lift-value
-            name exp "symbol" mapping k)))
+            name exp "symbol" module k)))
         (else:
-         (lift-symbol** exp mapping k)))
+         (lift-symbol** exp module k)))
       (select exp instance?
         ((<keyword>)
          (lift-value
-          (symbol-name exp) exp "keyword" mapping k))
+          (symbol-name exp) exp "keyword" module k))
         ((<hash-symbol>)
          (lift-value
-          (symbol-name exp) exp "hash" mapping k))
+          (symbol-name exp) exp "hash" module k))
         (else:
-         (k exp mapping)))))
+         (k exp module)))))
 
-(define-function lift-value (name value type mapping k)
-  (if-bind (t (get mapping type name))
-    (k t mapping)
-    (bind ((t (set! (get mapping type name)
+(define-function lift-value (name value type module k)
+  (if-bind (t (get module "lifted" type name))
+    (k t module)
+    (bind ((t (set! (get module "lifted" type name)
                     (generate-symbol))))
       `(%bind (,t ,value)
-         ,(k t mapping)))))
+         ,(k t module)))))
 
-(define-function lift-symbol* (exp* mapping k)
+(define-function lift-symbol* (exp* module k)
   (if (empty? exp*)
-      (k [] mapping)
-      (lift-symbol** exp* mapping k)))
+      (k [] module)
+      (lift-symbol** exp* module k)))
 
-(define-function lift-symbol** (exp mapping k)
+(define-function lift-symbol** (exp module k)
   (lift-symbol
-   (first exp) mapping
-   (method (t mapping)
+   (first exp) module
+   (method (t module)
      (lift-symbol*
-      (rest exp) mapping
-      (method (t* mapping)
+      (rest exp) module
+      (method (t* module)
         (k (concatenate [t] t*)
-           mapping))))))
+           module))))))
 
 
 ;;;; flatten-statements
