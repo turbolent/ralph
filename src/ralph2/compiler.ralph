@@ -14,7 +14,7 @@
                          atomic?
                          normalize-term))
 
-;; TODO: check if compilation is necessary
+;; TODO: use verbs in function names
 
 ;; TODO: naming convention: identifier = symbol, name = string
 
@@ -1757,17 +1757,21 @@
   (. path ("resolve" "output"
            (concatenate module-name ".js"))))
 
+(define-function module-path (module-name)
+  (. path ("resolve" "output"
+           (concatenate module-name ".rm"))))
+
 (define-function source-path (module-name)
   (. path ("resolve" "src"
            (concatenate module-name ".ralph"))))
 
 
-; (define-function recompile? (module-name)
-;   (bind ((p (executable-path module-name)))
-;     (or (not (. path ("existsSync" p)))
-;         (bind ((p2 (source-path module-name)))
-;           (< (get (. fs ("statSync" p)) "mtime")
-;              (get (. fs ("statSync" p2)) "mtime"))))))
+(define-function recompile? (module-name)
+  (bind ((p (executable-path module-name)))
+    (or (not (. path ("existsSync" p)))
+        (bind ((p2 (source-path module-name)))
+          (< (get (. fs ("statSync" p)) "mtime")
+             (get (. fs ("statSync" p2)) "mtime"))))))
 
 
 (define-function compile-time-import-module (env module-name #key names)
@@ -1809,7 +1813,15 @@
 
 (define-function find-module (module-name)
   (or (compile-module module-name)
-      (get *modules* module-name)))
+      (get *modules* module-name)
+      (read-module module-name)))
+
+(define-function read-module (module-name)
+  (bind ((p (module-path module-name)))
+    (when (. path ("existsSync" p))
+      (apply (curry make <module> name:)
+             (read (make <string-stream>
+                         string: (read-file p)))))))
 
 (define-function read-file (path)
   (. fs ("readFileSync" path)
@@ -1821,8 +1833,8 @@
     (. fs ("openSync" p "w"))))
 
 (define-function compile-module (module-name)
-  ; TODO: if recompile?
-  (unless (has? *modules* module-name)
+  (when (and (not (has? *modules* module-name))
+             (recompile? module-name))
     (bind ((module (make <module> name: module-name))
            (env (make <environment> module: module))
            (source (read-file (source-path module-name)))
@@ -1845,10 +1857,15 @@
                     "\n"))))
           program)
       (. fs ("closeSync" executable))
+      ;; write module
+      (. fs ("writeFileSync" (module-path module-name)
+             ;; ignore imports for now
+             (description [module-name
+                           exports: (get module "exports")])))
       module)))
 
 ;;;;
 
 (bind ((start (make <date>)))
-  (compile-module "ralph2/macro-test.a")
+  (compile-module "ralph2/runtime.test")
   (format-out "%d\n" (- (make <date>) start)))
