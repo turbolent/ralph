@@ -1,5 +1,8 @@
 
 ;; TODO: change imports to ralph2 when self-hosting
+;; TODO: adjust to core API changes:
+;;  - keys => object-properties
+;; TODO: move helper macros into own module
 
 (define-module ralph2/compiler
   import: (ralph/core ralph/format ralph/regexp ralph/reader ralph/date)
@@ -11,6 +14,7 @@
                          atomic?
                          normalize-term))
 
+;; TODO: check if compilation is necessary
 
 ;; TODO: naming convention: identifier = symbol, name = string
 
@@ -615,7 +619,10 @@
                              (if (instance? import <array>)
                                  (first import)
                                  import))))
-          (compile-time-import-module env module-name)))
+          (compile-time-import-module
+           env module-name
+           names: (when (instance? import <array>)
+                    (rest import)))))
       compile-time-import)
   ;; imports
   (maybe-begin
@@ -639,16 +646,19 @@
     `(define ,import-name
        ((%native "require") ,module-name))))
 
-(define-core-macro define-macro (env name #rest rest)
-  (. console (error "DEFINING MACRO" name))
+(define-core-macro define-macro (env name arguments #rest body)
   `(begin
-    ,(concatenate `(define-function ,name) rest)
+    ,(concatenate `(define-function ,name
+                     ,(concatenate `(,(generate-symbol))
+                                   arguments))
+                  body)
     (set! (%get-property ,name "%macro?") #t)))
 
-(define-core-macro define-symbol-macro (env name #rest rest)
+(define-core-macro define-symbol-macro (env name arguments #rest body)
   `(begin
-    ,(concatenate `(define-function ,name ,(generate-symbol))
-                  rest)
+    ;; ignore arguments
+    ,(concatenate `(define-function ,name ())
+                  body)
     (set! (%get-property ,name "%symbol-macro?") #t)))
 
 
@@ -756,7 +766,6 @@
      (js:get-property env "symbol-macros" (symbol-name form)))))
 
 (define-function macroexpand-1 (form env)
-  (. console ("error" "MACROEXPAND-1\n" form))
   (if-bind (macro (macro-definition form env))
     (apply macro env (if (instance? form <array>)
                          (rest form)
@@ -1761,7 +1770,7 @@
 ;              (get (. fs ("statSync" p2)) "mtime"))))))
 
 
-(define-function compile-time-import-module (env module-name)
+(define-function compile-time-import-module (env module-name #key names)
   (destructuring-bind (macros symbol-macros)
       (if (== module-name "ralph2/core")
           [*core-macros* *core-symbol-macros*]
@@ -1780,7 +1789,9 @@
                       ((get definition "%symbol-macro?")
                        (set! (get symbol-macros name)
                              definition)))))
-                 (keys definitions))
+                 (if names
+                     (map symbol-name names)
+                     (keys definitions)))
              [macros symbol-macros])))
     (chain-object (get env "macros")
                   macros)
