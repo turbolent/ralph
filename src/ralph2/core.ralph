@@ -127,18 +127,18 @@
   (%native-call "$SL.call" arguments (%infix "||" skip 0)))
 
 (define-function make-string (value)
-  ((%native "new String")) value)
+  (%native-call "new String") value)
 
 (define-function make-number (value)
-  ((%native "new Number") value))
+  (%native-call "new Number" value))
 
 (define-function make-boolean (value)
-  ((%native "new Boolean") value))
+  (%native-call "new Boolean" value))
 
 (define parse-number (%native "parseFloat"))
 
 (define-function parse-integer (value #key (radix 10))
-  ((%native "parseInt") value radix))
+  (%native-call "parseInt" value radix))
 
 (define-function char-code (char)
   (. char ("charCodeAt" 0)))
@@ -776,8 +776,8 @@
   (%infix "*" number (%infix "/" *pi* 180)))
 
 (define-function signal ((error <error>))
-  (%native "throw " error)
-  error)
+  (%native-call "throw" error)
+  #f)
 
 (define-function extend! ((object1 <object>) (object2 <object>))
   (for-each ((key (object-properties object2)))
