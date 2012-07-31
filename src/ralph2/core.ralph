@@ -33,7 +33,17 @@
            signal starts-with?
            as-property-list
            as-association-list
-           extend! update-with group-by))
+           extend! update-with group-by)
+  inline: (not
+           size as-string as-number as-array
+           make-string make-number make-boolean
+           parse-number char-code empty?
+           rest last but-last slice %concat reverse!
+           first second third pop pop-last replace
+           as-hex-string starts-with?
+           as-uppercase as-lowercase trim
+           inc dec mod as-radiant even? odd?
+           has? signal))
 
 ;; TODO: fix key/property naming convention
 ;; TODO: export
@@ -61,12 +71,9 @@
 
 (%native "$T = " true?)
 
-;; TODO: inline
 (define-function not (value)
-  ((%native "!")
-   (true? value)))
+  (%native-call "!" (true? value)))
 
-;; TODO: inline
 (define-function size (object)
   (%infix "||"
           (%get-property (%infix "||" object #f)
@@ -101,63 +108,55 @@
 (define-function keyword (name)
   (bind ((name* (. name ("toLowerCase"))))
     (or (%get-property %keywords name*)
-        (bind ((keyword (%unary "new" <keyword>)))
+        (bind ((keyword (%native-call "new" <keyword>)))
           (set! (%get-property keyword "name") name)
           (set! (%get-property %keywords name) keyword)
           keyword))))
 
 (%native "$K = " keyword)
 
-;; TODO: inline
+
 (define-function %concat ((array1 <array>) (array2 <array>))
   (. array1 ("concat" array2)))
 
-;; TODO: inline
 (define as-string (%native "String"))
 
-;; TODO: inline
 (define as-number (%native "Number"))
 
 (define-function as-array (arguments skip)
-  ((%native "$SL.call") arguments (%infix "||" skip 0)))
+  (%native-call "$SL.call" arguments (%infix "||" skip 0)))
 
-;; TODO: inline
 (define-function make-string (value)
   ((%native "new String")) value)
 
-;; TODO: inline
 (define-function make-number (value)
   ((%native "new Number") value))
 
-;; TODO: inline
 (define-function make-boolean (value)
   ((%native "new Boolean") value))
 
-;; TODO: inline
 (define parse-number (%native "parseFloat"))
 
 (define-function parse-integer (value #key (radix 10))
   ((%native "parseInt") value radix))
 
-;; TODO: inline
 (define-function char-code (char)
   (. char ("charCodeAt" 0)))
 
-;; TODO: inline
 (define code-char (%native "String.fromCharCode"))
 
-;; TODO: inline
 (define-function empty? (sequence)
   (%infix "===" (size sequence) 0))
 
-;; TODO: inline
 (define-function rest (sequence)
   (. sequence ("slice" 1)))
 
 (define-function last ((array <array>))
-  (element array (dec (size array) 1)))
+  ;; rebind, so inling doesn't result
+  ;; in re-evaluation of array
+  (bind ((array array))
+    (%get-property array (dec (size array) 1))))
 
-;; TODO: inline
 (define-function first (sequence)
   (%get-property sequence 0))
 
@@ -165,7 +164,6 @@
 (define-function (setter first) ((array <array>) value)
   (set! (%get-property array 0) value))
 
-;; TODO: inline
 (define-function second (sequence)
   (%get-property sequence 1))
 
@@ -173,7 +171,6 @@
 (define-function (setter second) ((array <array>) value)
   (set! (%get-property array 1) value))
 
-;; TODO: inline
 (define-function third (sequence)
   (%get-property sequence 2))
 
@@ -193,15 +190,12 @@
   (. array ("push" value))
   array)
 
-;; TODO: inline
 (define-function pop ((array <array>))
   (. array ("shift")))
 
-;; TODO: inline
 (define-function pop-last ((array <array>))
   (. array ("pop")))
 
-;; TODO: inline
 (define-function but-last ((array <array>) n)
   (. array ("slice" 0 (%infix "*" (%infix "||" n 1) -1))))
 
@@ -225,7 +219,7 @@
   (. array ("reverse")))
 
 (define-function reverse ((array <array>))
-  (reverse! (copy-sequence array)))
+  (reverse! (slice array)))
 
 (define-function choose ((function <function>) (array <array>))
   (. array ("filter" (method (element)
@@ -267,13 +261,13 @@
                          -1 1)))))
 
 (define-function sort ((array <array>) #key (test <) (key identity))
-  (sort! (copy-sequence array)
+  (sort! (slice array)
          test: test key: key))
 
 ;; TODO: choose-by
 
 (define-function apply ((function <function>))
-  (bind ((actual (%slice %all-arguments 1 -1))
+  (bind ((actual (%native-call "$SL.call" %all-arguments 1 -1))
          (last (%get-property %all-arguments
                               (%infix "-" (size %all-arguments) 1)))
          (arguments (if (%infix "===" last function)
@@ -324,7 +318,7 @@
 
 (define-function - ((number <number>) #rest numbers)
   (if (empty? numbers)
-      (%unary "-" number)
+      (%native-call "-" number)
       (reduce (method (number1 number2)
                 (%infix "-" number1 number2))
               number numbers)))
@@ -357,7 +351,6 @@
          (%infix "instanceof" object type)))
       (%infix "===" type <boolean>)))
 
-;; TODO: inline
 (define-function has? (object property)
   ((%native "$HP.call") object property))
 
@@ -490,7 +483,7 @@
   (compare binary>= object objects))
 
 (define-function as-object (property-list)
-  (bind ((list (copy-sequence property-list))
+  (bind ((list (slice property-list))
          (result (%object)))
     (while (> (size list) 0)
       (bind ((key (pop list))
@@ -503,11 +496,9 @@
     result))
 
 
-;; TODO: inline
 (define-function as-uppercase ((string <string>))
   (. string ("toUpperCase")))
 
-;; TODO: inline
 (define-function as-lowercase ((string <string>))
   (. string ("toLowerCase")))
 
@@ -515,11 +506,9 @@
 (define-function join ((array <array>) (string <string>))
   (. array ("join" string)))
 
-;; TODO: inline
 (define-function trim ((string <string>))
   (. string ("trim")))
 
-;; TODO: inline
 (define-function replace ((string <string>) pattern replacement)
   (. string ("replace" pattern replacement)))
 
@@ -566,7 +555,6 @@
 (define-function (setter element) ((array <array>) key value)
   (set! (%get-property array key) value))
 
-;; TODO: inline
 (define-function slice ((array <array>) start end)
   (. array ("slice" start end)))
 
@@ -631,14 +619,14 @@
 
 (define-function copy-sequence ((array <array>) #key (start 0) end)
   (bind ((end (or end (%native "undefined"))))
-    (. array ("slice" start end))))
+    (slice array start end)))
 
 
 ;; TODO: remove X from make and initialize
 ;; (temporary to avoid clash with old runtime)
 
 (define-function makeX (type #rest arguments)
-  (bind ((object (%unary "new " type)))
+  (bind ((object (%native-call "new" type)))
     (apply initializeX object arguments)
     object))
 
@@ -709,11 +697,9 @@
                object2
                (rest properties/value)))))
 
-;; TODO: inline
 (define-function inc ((number <number>))
   (%infix "+" number 1))
 
-;; TODO: inline
 (define-function dec ((number <number>))
   (%infix "-" number 1))
 
@@ -728,7 +714,6 @@
     [a b]))
 
 
-;; TODO: inline
 (define-function as-hex-string ((number <number>))
   (. number ("toString" 16)))
 
@@ -782,21 +767,17 @@
 
 (define sqrt (%native "Math.sqrt"))
 
-;; TODO: inline
 (define-function mod (number1 number2)
   (%infix "%" number1 number2))
 
 (define *pi* (%native "Math.PI"))
 
-;; TODO: inline
 (define-function as-radiant (number)
   (%infix "*" number (%infix "/" *pi* 180)))
 
-;; TODO: inline
 (define-function signal ((error <error>))
   (%native "throw " error)
   error)
-
 
 (define-function extend! ((object1 <object>) (object2 <object>))
   (for-each ((key (object-properties object2)))
@@ -827,15 +808,12 @@
                   (get object key)]))
     result))
 
-;; TODO: inline
 (define-function starts-with? ((string <string>) (prefix <string>))
   (%infix "===" (. string ("indexOf" prefix)) 0))
 
-;; TODO: inline
 (define-function even? (number)
   (%infix "===" (%infix "%" number 2) 0))
 
-;; TODO: inline
 (define-function odd? (number)
   (%infix "===" (%infix "%" number 2) 1))
 
