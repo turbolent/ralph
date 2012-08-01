@@ -899,12 +899,12 @@
                      [] (rest exp)))
             (as-set definitions))))
         (("%set" "%if" "%while"
-          "%array" "%object" "%define"
+          "%array" "%object" "%infix"
           "%get-property" "%native-call")
          (as-set (reduce concatenate []
                          (map free-variables
                               (rest exp)))))
-        (("%native" "%native-name" "%infix" )
+        (("%native" "%native-name" "%define")
          (as-set []))
         (else:
          (reduce1 set-union!
@@ -1086,7 +1086,7 @@
       (if (instance? (first form) <symbol>)
           (select (symbol-name (first form)) ==
             ;; inline only last
-            (("%method" "%set" "%define")
+            (("%method" "%set")
              (set! (last form)
                    (inline (last form) env))
              form)
@@ -1099,12 +1099,12 @@
                form))
             ;; inline all arguments
             (("%begin" "%if" "%while" "%array" "%object"
-              "%get-property" "%native-call")
+              "%get-property" "%native-call" "%infix")
              (concatenate [(first form)]
                           (map (rcurry inline env)
                                (rest form))))
             ;; no inlining
-            (("%native" "%native-name" "%infix")
+            (("%native" "%native-name" "%define")
              form)
             ;; application of function with name
             (else:
