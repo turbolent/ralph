@@ -61,14 +61,15 @@
   ;; NOTE: resolved: [module-name names*]*
   (imports []))
 
+(define *defined?*
+  `(%all-arguments %this-method))
+
 (define-class <environment> (<object>)
   module
   (macros (make-plain-object))
   (symbol-macros (make-plain-object))
   (names (make-object))
-  (defined? (make-object
-             "%all-arguments" #t
-             "%this-method" #t))
+  (defined? (make-object))
   (lifted (make-object))
   (import-names (make-plain-object)))
 
@@ -691,8 +692,8 @@
 
 ;;;; lift defines
 
-;; search for all %define and create top-level bindings,
-;; replace with assignment to new top-level-binding
+;; replace defines with top-level %defines
+;; and local assignments
 
 (define-function lift-defines (exp env)
   (lift-define exp env identity))
@@ -728,7 +729,7 @@
         (("define")
          (destructuring-bind (_ var value export?) exp
            (bind ((name (symbol-name var)))
-             (if (get env "defined?" name)
+             (if (has? (get env "defined?") name)
                  (k `(%set ,var ,value)
                     env)
                  (begin
@@ -839,8 +840,11 @@
 (define-function define-free-variables (exp env)
   (bind ((variables
           (set-subtract!
-           (free-variables exp)
-           (as-set (map symbol (keys (get env "defined?")))))))
+           (set-subtract!
+            (free-variables exp)
+            (as-set (map symbol
+                         (keys (get env "defined?")))))
+           *defined?*)))
     (if (empty? variables)
         exp
         (concatenate
@@ -854,6 +858,33 @@
                     ;; imported?
                     (if-bind (import-name (find-import-name variable env))
                       `((%set ,variable (%get-property ,import-name ,name)))
+                      [])))))
+              variables)
+         [exp]))))
+
+
+(define-function define-free-variables2 (exp env)
+  (bind ((variables (choose
+                     (method (variable)
+                       (not (has? (get env "definition-names")
+                                  (symbol-name variable))))
+                     (set-subtract! (free-variables exp)
+                                    *defined?*))))
+    (if (empty? variables)
+        exp
+        (concatenate
+         `(%begin)
+         (map (method (variable)
+                (bind ((name (symbol-name variable)))
+                  (set! (get env "defined?" name) #t)
+                  (maybe-begin
+                   (concatenate
+                    `((%define ,variable))
+                    ;; imported?
+                    (if-bind (old-import-name (find-import-name variable env))
+                      (bind ((import-name (symbol (get env "new-definition-names"
+                                                       (symbol-name old-import-name)))))
+                        `((%set ,variable (%get-property ,import-name ,name))))
                       [])))))
               variables)
          [exp]))))
@@ -1008,6 +1039,9 @@
             (set! (get env "definition-names"
                        (symbol-name new-variable))
                   variable-name)
+            (set! (get env "new-definition-names"
+                       variable-name)
+                  (symbol-name new-variable))
             ;; <<<
             ;; update form
             (set! (second form)
@@ -1109,29 +1143,23 @@
             ;; application of function with name
             (else:
              (bind ((name (symbol-name (first form)))
-                    (definition-name (get env "definition-names" name))
+                    (definition-name (or (get env "definition-names" name)
+                                         name))
                     (definition
-                      (when definition-name
-                        ;; local definition?
-                        (or (when (inline? (get env "module")
-                                           definition-name)
-                              (get env "module" "functions"
-                                   definition-name))
-                            ; ;; imported definition?
-                            ; (if-bind (module (find-module-for-definition
-                            ;                   (symbol definition-name)
-                            ;                   env))
-                            ;   (when (inline? module definition-name)
-                            ;     (get module "functions"
-                            ;          definition-name)))
-                            ))))
+                      ;; local definition?
+                      (or (when (inline? (get env "module")
+                                         definition-name)
+                            (get env "module" "functions"
+                                 definition-name))
+                          ;; imported definition?
+                          (if-bind (module (find-module-for-definition
+                                            (symbol definition-name)
+                                            env))
+                            (when (inline? module definition-name)
+                              (get module "functions"
+                                   definition-name))))))
                (if definition
-                   (begin
-                    (. console (error "INLINING" definition-name "\n"
-                                      (description definition)))
-                    (bind ((result (inline-definition definition (rest form) env)))
-                      (. console (error "RESULT" (description result)))
-                      result))
+                   (inline-definition definition (rest form) env)
                    ;; normal call
                    (map (rcurry inline env)
                         form)))))
@@ -1149,26 +1177,30 @@
 
 (define-function inline-definition (definition values env)
   ;; TODO: rest and keyword parameters?
-  (destructuring-bind (_ arguments #rest body) definition
-    (bind ((actual-arguments (map (method (argument)
-                                  (if (instance? argument <array>)
-                                      (first argument)
-                                      argument))
-                                arguments)))
-      ;; create initial bindings
-      (dotimes (i (size actual-arguments))
-        (bind ((argument (element actual-arguments i))
-               (value (element values i))
-               (argument-module (or (get argument "module") ""))
-               (argument-name (symbol-name argument)))
-          (ensure-naming-structure
-           env argument-module argument-name)
-          (push (get env "names" argument-module argument-name)
-                (or value `(%native "undefined")))))
-      ;; rename
-      (bind ((result (alpha-convert (maybe-begin body) env)))
-        (restore-variables actual-arguments env)
-        result))))
+  ;; inlines definition itself and inlines values before., e.g. (not (not ...))
+  (bind ((inlined-definition (inline definition env)))
+    (destructuring-bind (_ arguments #rest body) inlined-definition
+        (bind ((actual-arguments (map (method (argument)
+                                        (if (instance? argument <array>)
+                                            (first argument)
+                                            argument))
+                                      arguments)))
+          ;; create initial bindings
+          (dotimes (i (size actual-arguments))
+            (bind ((argument (element actual-arguments i))
+                   (value (element values i))
+                   (argument-module (or (get argument "module") ""))
+                   (argument-name (symbol-name argument)))
+              (ensure-naming-structure
+               env argument-module argument-name)
+              (push (get env "names" argument-module argument-name)
+                    (if value
+                        (inline value env)
+                        `(%native "undefined")))))
+          ;; rename
+          (bind ((result (alpha-convert (maybe-begin body) env)))
+            (restore-variables actual-arguments env)
+            result)))))
 
 
 ;;;; ANF
@@ -1855,6 +1887,8 @@
             (rcurry alpha-convert env)]
            ["inline"
             (rcurry inline env)]
+           ["defined free variables after inline"
+            (rcurry define-free-variables2 env)]
            ["ANF"
             normalize-term]
            ["lifted symbols"
