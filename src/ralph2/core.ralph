@@ -147,9 +147,7 @@
   (. sequence ("slice" 1)))
 
 (define-function last ((array <array>))
-  ;; rebind for inling
-  (bind ((array array))
-    (%get-property array (dec (size array) 1))))
+  (%get-property array (dec (size array) 1)))
 
 (define-function first (sequence)
   (%get-property sequence 0))
@@ -177,18 +175,12 @@
   elements)
 
 (define-function push ((array <array>) value)
-  ;; rebind for inling
-  (bind ((array array)
-         (value value))
-    (%native array ".unshift(" value ")")
-    array))
+  (%native array ".unshift(" value ")")
+  array)
 
 (define-function push-last ((array <array>) value)
-  ;; rebind for inling
-  (bind ((array array)
-         (value value))
-    (%native array ".push(" value ")")
-    array))
+  (%native array ".push(" value ")")
+  array)
 
 (define-function pop ((array <array>))
   (. array ("shift")))

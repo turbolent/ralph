@@ -546,6 +546,24 @@
           value
           calls))
 
+(define-function simplify-arguments (arguments)
+  (destructuring-bind (required rest key)
+      (analyze-lambda-list arguments)
+    (bind ((required
+            (map (method (argument)
+                   (if (instance? argument <array>)
+                       (first argument)
+                       argument))
+                 required)))
+      (concatenate
+       required
+       (if rest
+           (concatenate `(#rest) rest)
+           [])
+       (if key
+           (concatenate `(#key) key)
+           [])))))
+
 (define-function function-definer (macro-name definer-name
                                    #key type/existing? record?)
   (method (env function-name arguments #rest body)
@@ -563,46 +581,31 @@
         (signal (make <error> message:
                       (concatenate macro-name ": "
                                    "method has no arguments"))))
-      (destructuring-bind (required rest key)
-          (analyze-lambda-list arguments)
-        (bind ((required
-                (map (method (argument)
-                       (if (instance? argument <array>)
-                           (first argument)
-                           argument))
-                     required))
-               (method-definition
-                (macroexpand-all
-                 (concatenate `(method
-                                   ,(concatenate
-                                     required
-                                     (if rest
-                                         (concatenate `(#rest) rest)
-                                         [])
-                                     (if key
-                                         (concatenate `(#key) key)
-                                         [])))
-                              body)
-                 env)))
-          (when record?
-            (set! (get env "module" "functions"
-                       (symbol-name name))
-                  method-definition))
-          ;; result
-          `(define ,name
-             ,(concatenate
-               `(,(symbol definer-name)
-                 (%native-name ,(symbol-name name))
-                 ,method-definition
-                 ,setter?)
-               (if type/existing?
-                   `(,(bind ((head (first arguments)))
-                        (if (and (instance? head <array>)
-                                 (> (size head) 1))
-                            (second head)
-                            (symbol "<object>")))
-                     ,name)
-                   []))))))))
+      (bind ((simplified-arguments (simplify-arguments arguments))
+             (method-definition
+              (macroexpand-all
+               (concatenate `(method ,simplified-arguments)
+                            body)
+               env)))
+        (when record?
+          (set! (get env "module" "functions"
+                     (symbol-name name))
+                method-definition))
+        ;; result
+        `(define ,name
+           ,(concatenate
+             `(,(symbol definer-name)
+               (%native-name ,(symbol-name name))
+               ,method-definition
+               ,setter?)
+             (if type/existing?
+                 `(,(bind ((head (first arguments)))
+                      (if (and (instance? head <array>)
+                               (> (size head) 1))
+                          (second head)
+                          (symbol "<object>")))
+                   ,name)
+                 [])))))))
 
 (for-each ((arguments [["define-function" "%make-function"
                         type/existing?: #f
@@ -1189,32 +1192,34 @@
         (get module "inline")))
 
 (define-function inline-definition (definition values env)
-  ;; TODO: rest and keyword parameters?
+  ;; TODO: move preparation to method definition?
   ;; inlines definition itself and inlines values before., e.g. (not (not ...))
-  (bind ((inlined-definition (inline definition env))
-         (prepared-definition (alpha-convert inlined-definition env)))
-    (destructuring-bind (_ arguments #rest body) prepared-definition
-        (bind ((actual-arguments (map (method (argument)
-                                        (if (instance? argument <array>)
-                                            (first argument)
-                                            argument))
-                                      arguments)))
-          ;; create initial bindings
-          (dotimes (i (size actual-arguments))
-            (bind ((argument (element actual-arguments i))
-                   (value (element values i))
-                   (argument-module (or (get argument "module") ""))
-                   (argument-name (symbol-name argument)))
-              (ensure-naming-structure
-               env argument-module argument-name)
-              (push (get env "names" argument-module argument-name)
-                    (if value
-                        (inline value env)
-                        `(%native "undefined")))))
-          ;; rename
-          (bind ((result (alpha-convert (maybe-begin body) env)))
-            (restore-variables actual-arguments env)
-            result)))))
+  (destructuring-bind (_ arguments body) definition
+    ;; TODO: rest and keyword parameters
+    ;; rebind arguments, so values are only evaluated once
+    (bind ((body (reduce (method (body argument)
+                           `(%bind (,argument ,argument)
+                                   ,body))
+                         body
+                         (reverse arguments)))
+           (inlined (inline body env))
+           (prepared (alpha-convert inlined env)))
+      ;; create initial bindings
+      (dotimes (i (size arguments))
+        (bind ((argument (element arguments i))
+               (value (element values i))
+               (argument-module (or (get argument "module") ""))
+               (argument-name (symbol-name argument)))
+          (ensure-naming-structure
+           env argument-module argument-name)
+          (push (get env "names" argument-module argument-name)
+                (if value
+                    (inline value env)
+                    `(%native "undefined")))))
+      ;; rename
+      (bind ((result (alpha-convert body env)))
+        (restore-variables arguments env)
+        result))))
 
 
 ;;;; ANF
