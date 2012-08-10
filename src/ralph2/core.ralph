@@ -67,9 +67,8 @@
 
 (define-function true? (value)
   (%infix "&&"
-          (%infix "!==" value (%native "null"))
-          (%infix "!==" value (%native "undefined"))
-          (%infix "!==" (. value ("valueOf")) #f)))
+          (%infix "!=" value (%native "null"))
+          (%infix "!==" value #f)))
 
 (%native "$T = " true?)
 
@@ -434,10 +433,9 @@
   (and (%infix "==="
                (type object1)
                (type object2))
-       ;; TODO: (js:defined object2)
        (%infix "==="
-               (. object1 ("valueOf"))
-               (. object2 ("valueOf")))))
+               object1
+               object2)))
 
 (define-method binary= ((array1 <array>) (array2 <array>))
   (and (%infix "=="
