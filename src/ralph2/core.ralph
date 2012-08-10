@@ -38,8 +38,8 @@
            parse-number char-code empty?
            rest last but-last slice %concat reverse!
            first second third replace
-           push push-last
-           pop pop-last
+           push push-last pop pop-last
+           reduce1 reduce
            as-hex-string starts-with?
            as-uppercase as-lowercase trim
            inc dec mod as-radiant even? odd?
@@ -199,21 +199,26 @@
 (define-function but-last ((array <array>) n)
   (. array ("slice" 0 (%infix "*" (%infix "||" n 1) -1))))
 
-;; TODO: rewrite
 (define-function every? ((function <function>) (array <array>))
-  (. array ("every" (method (element)
-                      (true? (function element))))))
+  (not (any? (method (value)
+               (not (function value)))
+             array)))
 
 ;; TODO: rewrite
 (define-function reduce1 ((function <function>) (array <array>))
-  (. array ("reduce" (method (previous current)
-                       (function previous current)))))
+  (bind ((function function)
+         (array array))
+    (. array ("reduce" (method (previous current)
+                         (function previous current))))))
 
 ;; TODO: rewrite
 (define-function reduce ((function <function>) initial-value (array <array>))
-  (. array ("reduce" (method (previous current)
-                       (function previous current))
-            initial-value)))
+  (bind ((function function)
+         (initial-value initial-value)
+         (array array))
+    (. array ("reduce" (method (previous current)
+                         (function previous current))
+              initial-value))))
 
 (define-function reverse! ((array <array>))
   (. array ("reverse")))
@@ -222,8 +227,12 @@
   (reverse! (slice array)))
 
 (define-function choose ((function <function>) (array <array>))
-  (. array ("filter" (method (element)
-                       (true? (function element))))))
+  (bind ((result []))
+    (for-each ((element array))
+              ()
+      (when (function element)
+        (push-last result element)))
+    result))
 
 ;; TODO: improve
 (define-function find-key ((array <array>) (predicate <function>)
@@ -591,10 +600,10 @@
 (define-function any? ((function <function>) (values <array>))
   (bind ((value #f)
          (n (size values)))
-    (for ((i 0 (+ i 1)))
+    (for ((i 0 (inc i)))
          ((or value (>= i n)) value)
       (set! value
-            (function (element values i))))))
+            (function (%get-property values i))))))
 
 (define-function map ((function <function>) #rest arrays)
   (bind ((result []))
