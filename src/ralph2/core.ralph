@@ -3,8 +3,7 @@
            <boolean> <function> <error>
            %make-function true? not size %inherit
            %make-class %keywords <keyword> keyword %keys
-           %concat as-string as-number
-           as-array make-string make-number make-boolean
+           %concat as-string as-number as-array
            parse-number parse-integer char-code code-char
            empty? rest last first (setter first)
            second (setter second) third (setter third)
@@ -36,7 +35,6 @@
            extend! update-with group-by)
   inline: (not
            size as-string as-number as-array
-           make-string make-number make-boolean
            parse-number char-code empty?
            rest last but-last slice %concat reverse!
            first second third replace
@@ -132,15 +130,6 @@
 (define-function as-array (arguments skip)
   (%native-call "$SL.call" arguments (%infix "||" skip 0)))
 
-(define-function make-string (value)
-  (%native-call "new String") value)
-
-(define-function make-number (value)
-  (%native-call "new Number" value))
-
-(define-function make-boolean (value)
-  (%native-call "new Boolean" value))
-
 (define parse-number (%native "parseFloat"))
 
 (define-function parse-integer (value #key (radix 10))
@@ -183,6 +172,7 @@
 (define-function (setter third) ((array <array>) value)
   (set! (%get-property array 2) value))
 
+;; TODO: inline
 (define-function make-array (#rest elements)
   elements)
 
