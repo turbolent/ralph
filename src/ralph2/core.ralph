@@ -39,7 +39,9 @@
            make-string make-number make-boolean
            parse-number char-code empty?
            rest last but-last slice %concat reverse!
-           first second third pop pop-last replace
+           first second third replace
+           push push-last
+           pop pop-last
            as-hex-string starts-with?
            as-uppercase as-lowercase trim
            inc dec mod as-radiant even? odd?
@@ -81,7 +83,12 @@
           0))
 
 (%native "$SL = [].slice")
-(%native "$HP = Object.hasOwnProperty")
+
+(define-function inc ((number <number>))
+  (%infix "+" number 1))
+
+(define-function dec ((number <number>))
+  (%infix "-" number 1))
 
 (define-function %inherit (class superclass)
   (set! (%get-property class "prototype" "__proto__")
@@ -152,8 +159,7 @@
   (. sequence ("slice" 1)))
 
 (define-function last ((array <array>))
-  ;; rebind, so inling doesn't result
-  ;; in re-evaluation of array
+  ;; rebind for inling
   (bind ((array array))
     (%get-property array (dec (size array) 1))))
 
@@ -178,17 +184,22 @@
 (define-function (setter third) ((array <array>) value)
   (set! (%get-property array 2) value))
 
-
 (define-function make-array (#rest elements)
   elements)
 
 (define-function push ((array <array>) value)
-  (. array ("unshift" value))
-  array)
+  ;; rebind for inling
+  (bind ((array array)
+         (value value))
+    (%native array ".unshift(" value ")")
+    array))
 
 (define-function push-last ((array <array>) value)
-  (. array ("push" value))
-  array)
+  ;; rebind for inling
+  (bind ((array array)
+         (value value))
+    (%native array ".push(" value ")")
+    array))
 
 (define-function pop ((array <array>))
   (. array ("shift")))
@@ -352,7 +363,9 @@
       (%infix "===" type <boolean>)))
 
 (define-function has? (object property)
-  ((%native "$HP.call") object property))
+  (bind ((object object)
+         (property property))
+    (%native object ".hasOwnProperty(" property ")")))
 
 (define-function %make-method (name function setter? type existing)
   (bind ((prototype (%get-property type "prototype"))
@@ -427,8 +440,9 @@
                (. object2 ("valueOf")))))
 
 (define-method binary= ((array1 <array>) (array2 <array>))
-  (and (== (size array1)
-           (size array2))
+  (and (%infix "=="
+               (size array1)
+               (size array2))
        ;; NB: twisted logic
        (not (for-each ((item1 array1)
                        (item2 array2))
@@ -539,10 +553,10 @@
 
 ;; handles keyword arguments
 (define-function %keys (key-values defaults)
-  (for ((i 0 (+ i 2)))
-       ((>= i (size key-values)))
+  (for ((i 0 (inc i 2)))
+       ((%infix ">=" i (size key-values)))
     (bind ((key (%get-property key-values i))
-           (value (%get-property key-values (+ i 1))))
+           (value (%get-property key-values (inc i 1))))
       (when (instance? key <keyword>)
         (set! (%get-property defaults (%get-property key "name"))
               value))))
@@ -658,7 +672,7 @@
                          (has? object key))
                (bind ((value (or (%get-property arguments key)
                                  (bind ((value (%get-property properties key)))
-                                   (if (== value #f)
+                                   (if (%infix "===" value #f)
                                        value
                                        (value))))))
                  (set! (%get-property object key)
@@ -696,12 +710,6 @@
         (apply %this-method
                object2
                (rest properties/value)))))
-
-(define-function inc ((number <number>))
-  (%infix "+" number 1))
-
-(define-function dec ((number <number>))
-  (%infix "-" number 1))
 
 
 (define-function split-with (function array)
@@ -828,7 +836,7 @@
           items))
 
 (define-function wrap-object (object #rest rest)
-  (bind ((result ((%native "Object.create") object)))
+  (bind ((result (%native-call "Object.create" object)))
     (extend! result (as-object rest))
     result))
 
