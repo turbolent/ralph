@@ -15,8 +15,9 @@
                          normalize-term))
 
 ;; NOTE: naming convention:
-;;  - identifier = symbol, name = string
-;;  - form = any source object, expression = (<symbol> ...)
+;; - identifier = symbol, name = string
+;; TODO: - form = any source object, expression = (<symbol> ...)
+;; - verbed functions or predicates
 
 ;; NOTE: no symbol expansion after macroexpand-all,
 ;;       as ANF uses atomic? to decide if expression
@@ -710,9 +711,24 @@
     (set! (%get-property ,identifier "%symbol-macro?") #t)))
 
 
-;; TODO: %try, %throw, block, handler-case
 ;; TODO: inline make-object
 ;;       (initialize with string keys, evaluate and set rest)
+
+
+(define-core-macro handler-case (_ body #rest cases)
+  (bind ((condition-var (generate-symbol)))
+    `(%try body ,condition-var
+           ,(concatenate
+             `(cond)
+             (map (method (case)
+                    (destructuring-bind ((type #key condition) #rest body) case
+                      (concatenate `((instance? ,condition-var ,type))
+                                   (if condition
+                                       `(,(concatenate
+                                           `(bind ((,condition ,condition-var)))
+                                           body))
+                                       body))))
+                  cases)))))
 
 ;;;; lift defines
 
@@ -736,6 +752,14 @@
                  (k `(%bind (,var ,lvalue)
                        ,lbody)
                     env)))))))
+        (("%try")
+         (destructuring-bind (m e1 v e2) exp
+           (lift-define*
+            [e1 e2] env
+            (method (le* env)
+              (destructuring-bind (le1 le2) le*
+                (k `(,m ,le1 ,v ,le2)
+                   env))))))
         (("%method" "%set")
          (destructuring-bind (m e1 e2) exp
            (lift-define
@@ -957,6 +981,11 @@
                             (find-free-variables e))))
                      [] (rest exp)))
             (as-set definitions))))
+        (("%try")
+         (destructuring-bind (_ e1 v e2) exp
+           (set-union!
+            (as-set (find-free-variables e1))
+            (as-set (find-free-variables e2)))))
         (("%set" "%if" "%while"
           "%array" "%object" "%infix"
           "%get-property" "%native-call")
@@ -999,7 +1028,8 @@
   (map (method (identifier)
          (destructuring-bind (module-name name)
              (get-module-name/name identifier)
-           (bind ((new-identifier (generate-symbol name)))
+           (bind ((new-identifier (generate-symbol (unless (get identifier "generated?")
+                                                     name))))
              (ensure-naming-structure env module-name name)
              (push (get env "identifiers" module-name name)
                    new-identifier)
@@ -1044,6 +1074,16 @@
               (bind ((result
                       `(%bind (,new-var ,new-value)
                          ,(alpha-convert body env))))
+                (restore-identifiers [var] env)
+                result)))))
+       (("%try")
+        (destructuring-bind (_ body var catch) form
+          (bind ((new-body (alpha-convert body env)))
+            (destructuring-bind (new-var)
+                (rename-identifiers [var] env)
+              (bind ((result
+                      `(%try ,new-body ,new-var
+                             ,(alpha-convert catch env))))
                 (restore-identifiers [var] env)
                 result)))))
        (("%define")
@@ -1153,6 +1193,13 @@
                      (inline (second binding) env))
                (set! (last form)
                      (inline body env))
+               form))
+            (("%try")
+             (destructuring-bind (_ body var catch) form
+               (set! (second form)
+                     (inline body env))
+               (set! (last form)
+                     (inline catch env))
                form))
             ;; inline all arguments
             (("%begin" "%if" "%while" "%array" "%object"
@@ -1282,6 +1329,12 @@
                   `(%while
                     ,(normalize-term test)
                     ,(normalize-term body))))))
+        (("%try")
+         (destructuring-bind (_ body var catch) exp
+           (k `(%try
+                ,(normalize-term body)
+                ,var
+                ,(normalize-term catch)))))
         (("%set")
          ;; TODO: always normalize value?
          (destructuring-bind (_ var value) exp
@@ -1305,7 +1358,7 @@
   (if (and (instance? exp <array>)
            (not (empty? exp)))
       (select (symbol-name (first exp)) ==
-        (("%begin" "%if" "%while" "%bind") #t)
+        (("%begin" "%if" "%while" "%bind" "%try") #t)
         (("%set")
          (contains-statements? (last exp)))
         (("%method") #f)
@@ -1363,6 +1416,12 @@
          `(%begin
            ,exp
            ,(wrap-value #f wrapper)))
+        (("%try")
+         (set! (second exp)
+               (wrap-value (second exp) wrapper))
+         (set! (last exp)
+               (wrap-value (last exp) wrapper))
+         exp)
         (else:
          (concatenate wrapper [exp])))
       (concatenate wrapper [exp])))
@@ -1375,12 +1434,12 @@
 ;; turn into statement form, then "sink" assignment
 ;; TODO: example from paper
 
+;; TODO: reuse/merge contains-statements?
 (define-function statement? (exp)
   (and (instance? exp <array>)
        (not (empty? exp))
        (member? (first exp)
-                `(%if %while %begin %bind))))
-
+                `(%if %while %begin %bind %try))))
 
 (define-function add-explicit-true (exp)
   `((%native "$T") ,exp))
@@ -1423,6 +1482,12 @@
                (add-explicit-true (second exp)))
          (set! (third exp)
                (transform-statements (third exp) env))
+         exp)
+        (("%try")
+         (set! (second exp)
+               (transform-statements (second exp) exp))
+         (set! (last exp)
+               (transform-statements (last exp) env))
          exp)
         (("%set")
          (destructuring-bind (_ identifier value) exp
@@ -1487,6 +1552,14 @@
             (method (le* env)
               (k (concatenate [m] le*)
                  env)))))
+        (("%try")
+         (destructuring-bind (_ e1 v e2) exp
+           (lift-symbol*
+            [e1 e2] env
+            (method (le* env)
+              (destructuring-bind (le1 le2) le*
+                (k `(%try ,le1 ,v ,le2)
+                   env))))))
         ;; TODO: fix, already renamed
         (("symbol")
          (destructuring-bind (_ name) exp
@@ -1605,6 +1678,12 @@
         (("%if")
          (set! (third exp)
                (flatten-statements (third exp)))
+         (set! (last exp)
+               (flatten-statements (last exp)))
+         exp)
+        (("%try")
+         (set! (second exp)
+               (flatten-statements (second exp)))
          (set! (last exp)
                (flatten-statements (last exp)))
          exp)
@@ -1789,6 +1868,11 @@
        (destructuring-bind (_ test body) exp
          (concatenate "while (" (compile-js test env) ")\n"
                       (compile-js body env))))
+      (("%try")
+       (destructuring-bind (_ body var catch) exp
+         (concatenate "try {" (compile-js body env) "}\n"
+                      "catch (" (compile-js var env) ")\n"
+                      "{" (compile-js catch env) "}")))
       (("%return")
        (concatenate
         "return " (compile-js (second exp) env)))

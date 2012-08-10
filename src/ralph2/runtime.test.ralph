@@ -139,12 +139,11 @@
 ;                  (foo 2)
 ;                  3))
 
-;; TODO
-; ;; signal
-; (check-condition "signal <error>" <error>
-;                  (method ()
-;                    (signal (makeX <error> message: "!"))
-;                    #f))
+;; signal
+(check-condition "signal <error>" <error>
+                 (method ()
+                   (signal (makeX <error> message: "!"))
+                   #f))
 
 
 (check-true "binary<: 0 < 1"
@@ -424,27 +423,16 @@
   (check-equal "get: '1' -> '2' -> '3' = 4"
                4 (get x "1" "2" "3")))
 
-;; TODO
-; ;; if-bind
-; (check-true "if-bind: test is true, shouldn't be visible in then"
-;             (if-bind (a #t)
-;               a
-;               (handler-case
-;                (begin
-;                 a
-;                 #f)
-;                ((<error> condition: condition)
-;                 #f))))
-
-; (check-true "if-bind: test is false, shouldn't be visible in then (ignore if optimized)"
-;             (if-bind (a #f)
-;               a
-;               (handler-case
-;                (begin
-;                 a
-;                 #f)
-;                ((<error> condition: condition)
-;                 #t))))
+;; if-bind
+(check-true "if-bind: test is true, shouldn't be visible in then"
+            (if-bind (a #t)
+              a
+              (handler-case
+               (begin
+                a
+                #f)
+               ((<error> condition: condition)
+                #f))))
 
 (define-generic test (object))
 
