@@ -14,11 +14,18 @@
                          atomic?
                          normalize-term))
 
-;; TODO: cross-module inlining
-
+;; TODO: clean up
 ;; TODO: use verbs in function names
 
 ;; TODO: naming convention: identifier = symbol, name = string
+
+;; TODO: faster choose, ever?, reduce(1)
+
+;; TODO: setter inlining
+
+;; TODO: how to optimize binary operators, concatenate,
+;;       instance?, binary get, get-setter, etc. ?
+;;       -> generic pass: if (call of definitionX in moduleY) then ...?
 
 ;; TODO: refactor nodejs specific code into file stream
 
@@ -48,6 +55,9 @@
 
 ;; TODO: update language definitions,
 ;;       ensure each pass respects all cases correctly
+
+;; TODO: add dynamic binding?
+;;       (set temp, try, finally reset)
 
 
 ;;;; modules
@@ -94,8 +104,11 @@
 (define-function reset-symbol-counter! ()
   (set! *symbol-count* 0))
 
-(define-function generate-symbol ()
-  (bind ((name (concatenate "$" (as-string (inc! *symbol-count*))))
+(define-function generate-symbol (prefix)
+  (bind ((name (concatenate "$" (if prefix
+                                    (escape-symbol-name prefix)
+                                    "")
+                            (as-string (inc! *symbol-count*))))
          (result (symbol name)))
     (set! (get result "generated?") #t)
     result))
@@ -864,18 +877,21 @@
 
 
 (define-function define-free-variables2 (exp env)
-  (bind ((variables (choose
+  (bind ((free (set-subtract! (free-variables exp)
+                                    *defined?*))
+         (variables (choose
                      (method (variable)
                        (not (has? (get env "definition-names")
                                   (symbol-name variable))))
-                     (set-subtract! (free-variables exp)
-                                    *defined?*))))
+                     free)))
     (if (empty? variables)
         exp
         (concatenate
          `(%begin)
          (map (method (variable)
-                (bind ((name (symbol-name variable)))
+                (bind (;; TODO: old name?
+                       (name (symbol-name variable)))
+                  ;; TODO: defined-after-inline? and subtract above?!
                   (set! (get env "defined?" name) #t)
                   (maybe-begin
                    (concatenate
@@ -967,7 +983,7 @@
   (map (method (variable)
          (bind ((variable-module (or (get variable "module") ""))
                 (variable-name (symbol-name variable))
-                (new-variable (generate-symbol)))
+                (new-variable (generate-symbol variable-name)))
            (ensure-naming-structure
             env variable-module variable-name)
            (push (get env "names"
@@ -1002,14 +1018,11 @@
      (select (symbol-name (first form)) ==
        (("%method")
         (destructuring-bind (_ arguments body) form
-          (bind ((new-arguments
-                  (rename-variables arguments env)))
-            (set! (second form)
-                  new-arguments)
-            (set! (last form)
-                  (alpha-convert body env))
+          (bind ((new-arguments (rename-variables arguments env))
+                 (new-body (alpha-convert body env))
+                 (result [_ new-arguments new-body]))
             (restore-variables arguments env)
-            form)))
+            result)))
        (("%bind")
         (destructuring-bind (_ (var value) body) form
           ;; TODO: make binding available inside value?
@@ -1107,7 +1120,7 @@
 ;;              form env)))
 ;;    ((<symbol>)
 ;;     ... (find-variable form env)
-;;        ... form
+;;        ... form)
 ;;    (else: form)))
 
 
@@ -1178,8 +1191,9 @@
 (define-function inline-definition (definition values env)
   ;; TODO: rest and keyword parameters?
   ;; inlines definition itself and inlines values before., e.g. (not (not ...))
-  (bind ((inlined-definition (inline definition env)))
-    (destructuring-bind (_ arguments #rest body) inlined-definition
+  (bind ((inlined-definition (inline definition env))
+         (prepared-definition (alpha-convert inlined-definition env)))
+    (destructuring-bind (_ arguments #rest body) prepared-definition
         (bind ((actual-arguments (map (method (argument)
                                         (if (instance? argument <array>)
                                             (first argument)
@@ -1258,11 +1272,11 @@
                     ,(normalize-term test)
                     ,(normalize-term body))))))
         (("%set")
+         ;; TODO: always normalize value?
          (destructuring-bind (_ var value) exp
            (normalize-value
             value (method (avalue)
                    (k `(%set ,var ,avalue))))))
-
         (else:
          (if (contains-statements? exp)
              (normalize-all exp k)
@@ -1347,15 +1361,8 @@
   (wrap-value exp `(%return)))
 
 ;; after ANF: if value of binding is control-flow (%if, %while, etc.):
-;; turn into statement form, then "sink" assignment:
-;; (%bind ($1 (%if ... (%bind ($2 ...) (foo $2) ...))) (bar $1 baz))
-;; => (%bind ($1 #f)
-;;      (%begin
-;;       (%if ...
-;;            (%bind ($2 ...)
-;;              (set! $1 (foo $2)))
-;;            ...)
-;;       (bar $1 baz)))
+;; turn into statement form, then "sink" assignment
+;; TODO: example from paper
 
 (define-function statement? (exp)
   (and (instance? exp <array>)
