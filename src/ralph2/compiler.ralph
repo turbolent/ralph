@@ -14,12 +14,14 @@
                          atomic?
                          normalize-term))
 
-;; TODO: clean up
-;; TODO: use verbs in function names
+;; NOTE: naming convention:
+;;  - identifier = symbol, name = string
+;;  - form = any source object, expression = (<symbol> ...)
 
-;; TODO: naming convention: identifier = symbol, name = string
-
-;; TODO: faster choose, ever?, reduce(1)
+;; NOTE: no symbol expansion after macroexpand-all,
+;;       as ANF uses atomic? to decide if expression
+;;       has side-effects and needs to be normalized
+;;       (influences evaluation order)
 
 ;; TODO: setter inlining
 
@@ -44,11 +46,6 @@
 ;;       problematic when normalization binds %get-property
 ;;       => .bind?
 
-;; NOTE: no symbol expansion after macroexpand-all,
-;;       as ANF uses atomic? to decide if expression
-;;       has side-effects and needs to be normalized
-;;       (influences evaluation order)
-
 ;; TODO: Clojure(Script) loop/recur
 
 ;; TODO: ensure symbol-macro expanded before whole form
@@ -68,7 +65,7 @@
 (define-class <module> (<object>)
   name
   (exports [])
-  ;; NOTE: resolved: [module-name names*]*
+  ;; NOTE: resolved: [module identifier*]*
   (imports []))
 
 (define *defined?*
@@ -78,10 +75,11 @@
   module
   (macros (make-plain-object))
   (symbol-macros (make-plain-object))
-  (names (make-object))
+  ;; see alpha conversion
+  (identifiers (make-object))
   (defined? (make-object))
   (lifted (make-object))
-  (import-names (make-plain-object)))
+  (import-identifiers (make-plain-object)))
 
 ;;;; utilities
 
@@ -90,14 +88,17 @@
        (not (empty? form))
        (instance? (first form) <symbol>)))
 
-(define-function setter-symbol (name)
-  (symbol (concatenate (symbol-name name) "-setter")))
+(define-function transform-setter-identifier (identifier)
+  (symbol (concatenate (symbol-name identifier)
+                       "-setter")))
 
-(define-function setter-name? (name)
-  (and (instance? name <array>)
-       (== (size name) 2)
-       (every? (rcurry instance? <symbol>) name)
-       (== (symbol-name (first name)) "setter")))
+(define-function setter-identifier? (form)
+  (and (instance? form <array>)
+       (== (size form) 2)
+       (every? (rcurry instance? <symbol>)
+               form)
+       (== (symbol-name (first form))
+           "setter")))
 
 (define *symbol-count* 0)
 
@@ -105,10 +106,11 @@
   (set! *symbol-count* 0))
 
 (define-function generate-symbol (prefix)
-  (bind ((name (concatenate "$" (if prefix
-                                    (escape-symbol-name prefix)
-                                    "")
-                            (as-string (inc! *symbol-count*))))
+  (bind ((name (concatenate
+                (if prefix
+                    (escape-name prefix)
+                    "")
+                (as-string (inc! *symbol-count*))))
          (result (symbol name)))
     (set! (get result "generated?") #t)
     result))
@@ -120,11 +122,13 @@
 (define *special-forms*
   (make-object))
 
-(define-function special-form-definition (form env)
-  (get *special-forms* (symbol-name (first form))))
+(define-function find-special-form (form env)
+  (when (expression? form)
+    (get *special-forms*
+         (symbol-name (first form)))))
 
-(define-macro define-special-form (name #rest definition)
-  `(set! (get *special-forms* ,(symbol-name name))
+(define-macro define-special-form (identifier #rest definition)
+  `(set! (get *special-forms* ,(symbol-name identifier))
          ,(concatenate `(method)
                        definition)))
 
@@ -136,12 +140,12 @@
      ,(macroexpand-all body env)))
 
 (define-special-form
-  %set (env name value)
-  `(%set ,name ,(macroexpand-all value env)))
+  %set (env identifier value)
+  `(%set ,identifier ,(macroexpand-all value env)))
 
 (define-special-form
-  define (env name value)
-  `(define ,name ,(macroexpand-all value env)))
+  define (env identifier value)
+  `(define ,identifier ,(macroexpand-all value env)))
 
 (define-special-form
   %bind (env binding body)
@@ -156,8 +160,8 @@
 (define *core-macros*
   (make-object))
 
-(define-macro define-core-macro (name #rest definition)
-  `(set! (get *core-macros* ,(symbol-name name))
+(define-macro define-core-macro (identifier #rest definition)
+  `(set! (get *core-macros* ,(symbol-name identifier))
          ,(concatenate `(method)
                        definition)))
 
@@ -255,7 +259,7 @@
   (if (and (instance? place <array>)
            (not (== (first place)
                     (symbol "%get-property"))))
-      (concatenate `(,(setter-symbol (first place)))
+      (concatenate `(,(transform-setter-identifier (first place)))
                    (rest place)
                    rest)
       `(%set ,place ,(first rest))))
@@ -483,10 +487,11 @@
   (concatenate
    `(bind ,(map first bindings))
    (map (method (binding)
-          (destructuring-bind (name arguments #rest body)
+          (destructuring-bind (identifier arguments #rest body)
               binding
-            `(set! ,name ,(concatenate `(method ,arguments)
-                                       body))))
+            `(set! ,identifier
+                   ,(concatenate `(method ,arguments)
+                                 body))))
         bindings)
    body))
 
@@ -503,20 +508,20 @@
     (%native "null")
     (%native "arguments")))
 
-(define-function transform-quoted (exp)
+(define-function transform-quoted (form)
   (cond
-   ((and (instance? exp <array>)
-         (not (empty? exp)))
-    (if (member? (first exp)
+   ((and (instance? form <array>)
+         (not (empty? form)))
+    (if (member? (first form)
                  [(symbol "%comma") (symbol "%backqoute")])
-        (second exp)
+        (second form)
         (concatenate `(%array)
                      (map transform-quoted
-                          exp))))
-   ((instance? exp <symbol>)
-    `(symbol ,(symbol-name exp)))
+                          form))))
+   ((instance? form <symbol>)
+    `(symbol ,(symbol-name form)))
    (else:
-    exp)))
+    form)))
 
 (define-core-macro %backquote (_ exp)
   (transform-quoted exp))
@@ -532,14 +537,14 @@
 
 (define-core-macro . (_ value #rest calls)
   (reduce (method (value call)
-            (destructuring-bind (name #rest arguments) call
+            (destructuring-bind (property #rest arguments) call
               (concatenate
                `((%get-property ,value
-                                ,(select name instance?
+                                ,(select property instance?
                                    ((<string>)
-                                    name)
+                                    property)
                                    ((<symbol>)
-                                    (symbol-name name))
+                                    (symbol-name property))
                                    (else:
                                     (signal *dot-name-error*)))))
                arguments)))
@@ -564,14 +569,14 @@
            (concatenate `(#key) key)
            [])))))
 
-(define-function function-definer (macro-name definer-name
-                                   #key type/existing? record?)
-  (method (env function-name arguments #rest body)
-    (destructuring-bind (setter? name)
-        (if (setter-name? function-name)
-            [#t (setter-symbol (second function-name))]
-            [#f function-name])
-      (unless (or (instance? name <symbol>)
+(define-function make-function-definer
+    (macro-name definer-name #key type/existing? record?)
+  (method (env identifier arguments #rest body)
+    (destructuring-bind (setter? identifier)
+        (if (setter-identifier? identifier)
+            [#t (transform-setter-identifier (second identifier))]
+            [#f identifier])
+      (unless (or (instance? identifier <symbol>)
                   setter?)
         (signal (make <error> message:
                       (concatenate macro-name ": "
@@ -589,13 +594,13 @@
                env)))
         (when record?
           (set! (get env "module" "functions"
-                     (symbol-name name))
+                     (symbol-name identifier))
                 method-definition))
         ;; result
-        `(define ,name
+        `(define ,identifier
            ,(concatenate
              `(,(symbol definer-name)
-               (%native-name ,(symbol-name name))
+               (%native-name ,(symbol-name identifier))
                ,method-definition
                ,setter?)
              (if type/existing?
@@ -604,7 +609,7 @@
                                (> (size head) 1))
                           (second head)
                           (symbol "<object>")))
-                   ,name)
+                   ,identifier)
                  [])))))))
 
 (for-each ((arguments [["define-function" "%make-function"
@@ -614,15 +619,15 @@
                         type/existing?: #t]]))
           ()
   (set! (get *core-macros* (first arguments))
-        (apply function-definer arguments)))
+        (apply make-function-definer arguments)))
 
 
-(define-core-macro define-generic (_ name arguments)
-  `(define ,name
+(define-core-macro define-generic (_ identifier arguments)
+  `(define ,identifier
      (%make-generic
-      (%native-name ,(symbol-name name)))))
+      (%native-name ,(symbol-name identifier)))))
 
-(define-core-macro define-class (_ name superclass #rest properties)
+(define-core-macro define-class (_ identifier superclass #rest properties)
   (bind ((object `(%object)))
     (for-each ((property properties))
               ()
@@ -634,21 +639,22 @@
           (begin
            (push-last object (symbol-name property))
            (push-last object #f))))
-    `(define ,name
+    `(define ,identifier
        (%make-class
         ,(unless (empty? superclass)
            (first superclass))
         ,object))))
 
-(define-core-macro define-module (env name #key (import []) (export [])
-                                                (compile-time-import [])
-                                                (inline []))
+;; TODO: identifiers: support setter identifiers
+(define-core-macro define-module (env _ #key (import []) (export [])
+                                             (compile-time-import [])
+                                             (inline []))
   ;; exports
   (set! (get env "module" "exports")
-        (map (method (name)
-               (if (setter-name? name)
-                   (setter-symbol (second name))
-                   name))
+        (map (method (identifier)
+               (if (setter-identifier? identifier)
+                   (transform-setter-identifier (second identifier))
+                   identifier))
              export))
   ;; compile-time imports
   (do (method (import)
@@ -658,8 +664,8 @@
                                  import))))
           (compile-time-import-module
            env module-name
-           names: (when (instance? import <array>)
-                    (rest import)))))
+           identifiers: (when (instance? import <array>)
+                          (rest import)))))
       compile-time-import)
   ;; inline
   (set! (get env "module" "inline")
@@ -673,33 +679,35 @@
                                    import))))
             ;; TODO: support only:, except:, rename:, prefix:
             (import-module (get env "module") module-name
-                           names: (when (instance? import <array>)
-                                    (rest import)))
-            (definition-for-import module-name env)))
+                           identifiers: (when (instance? import <array>)
+                                          (rest import)))
+            (make-import-definition module-name env)))
         import)))
 
 ;; NOTE: requires module has been imported
-(define-function definition-for-import (module-name env)
-  (bind ((import-name (generate-symbol)))
-    (set! (get env "import-names" module-name)
-          import-name)
-    `(define ,import-name
+(define-function make-import-definition (module-name env)
+  (bind ((import-identifier (generate-symbol)))
+    (set! (get env "import-identifiers" module-name)
+          import-identifier)
+    `(define ,import-identifier
        ((%native "require") ,module-name))))
 
-(define-core-macro define-macro (env name arguments #rest body)
+(define-core-macro define-macro (env identifier arguments #rest body)
   `(begin
-    ,(concatenate `(define-function ,name
-                     ,(concatenate `(,(generate-symbol))
-                                   arguments))
-                  body)
-    (set! (%get-property ,name "%macro?") #t)))
+    ,(concatenate
+      `(define-function ,identifier
+         ;; TODO: properly inject environment
+         ,(concatenate `(,(generate-symbol))
+                       arguments))
+      body)
+    (set! (%get-property ,identifier "%macro?") #t)))
 
-(define-core-macro define-symbol-macro (env name arguments #rest body)
+(define-core-macro define-symbol-macro (env identifier arguments #rest body)
   `(begin
     ;; ignore arguments
-    ,(concatenate `(define-function ,name ())
+    ,(concatenate `(define-function ,identifier ())
                   body)
-    (set! (%get-property ,name "%symbol-macro?") #t)))
+    (set! (%get-property ,identifier "%symbol-macro?") #t)))
 
 
 ;; TODO: %try, %throw, block, handler-case
@@ -782,8 +790,8 @@
 (define *core-symbol-macros*
   (make-object))
 
-(define-macro define-core-symbol-macro (name #rest definition)
-  `(set! (get *core-symbol-macros* ,(symbol-name name))
+(define-macro define-core-symbol-macro (identifier #rest definition)
+  `(set! (get *core-symbol-macros* ,(symbol-name identifier))
          ,(concatenate `(method)
                        definition)))
 
@@ -795,7 +803,7 @@
 ;;;; macro expansion
 
 
-(define-function macro-definition (form env)
+(define-function find-macro-definition (form env)
   ;; TODO: deep-get
   (select form instance?
     ((<array>)
@@ -806,7 +814,7 @@
      (js:get-property env "symbol-macros" (symbol-name form)))))
 
 (define-function macroexpand-1 (form env)
-  (if-bind (macro (macro-definition form env))
+  (if-bind (macro (find-macro-definition form env))
     (apply macro env (if (instance? form <array>)
                          (rest form)
                          form))
@@ -823,14 +831,14 @@
 (define-function macroexpand-all (form env)
   (select form instance?
     ((<array>)
-     (if (macro-definition form env)
+     (if (find-macro-definition form env)
          (macroexpand-all (macroexpand form env) env)
-         (if-bind (expander (special-form-definition form env))
+         (if-bind (expander (find-special-form form env))
            (apply expander env (rest form))
            (map (rcurry macroexpand-all env)
                 form))))
     ((<symbol>)
-     (if (macro-definition form env)
+     (if (find-macro-definition form env)
          (macroexpand-all (macroexpand form env) env)
          form))
     (else: form)))
@@ -839,25 +847,24 @@
 
 ;;;; define free variables
 
-;; TODO: clean up, imported name is symbol
-(define-function find-module-for-definition (definition-name env)
+(define-function find-module-for-definition-identifier (definition-identifier env)
   (any? (method (import)
-          (destructuring-bind (module-name names) import
-            ;; TODO: names symbols?
-            (when (member? definition-name names)
-              (get *modules* module-name))))
+          (destructuring-bind (module identifiers) import
+            (when (member? definition-identifier identifiers)
+              module)))
         (get env "module" "imports")))
 
-(define-function find-import-name (definition-name env)
-  (if-bind (module (find-module-for-definition
-                    definition-name env))
-    (get env "import-names" (get module "name"))))
+(define-function find-import-identifier (definition-identifier env)
+  (if-bind (module (find-module-for-definition-identifier
+                    definition-identifier env))
+    (get env "import-identifiers"
+         (get module "name"))))
 
 (define-function define-free-variables (exp env)
   (bind ((variables
           (set-subtract!
            (set-subtract!
-            (free-variables exp)
+            (find-free-variables exp)
             (as-set (map symbol
                          (keys (get env "defined?")))))
            *defined?*)))
@@ -872,16 +879,16 @@
                    (concatenate
                     `((%define ,variable))
                     ;; imported?
-                    (if-bind (import-name (find-import-name variable env))
-                      `((%set ,variable (%get-property ,import-name ,name)))
+                    (if-bind (import-identifier (find-import-identifier variable env))
+                      `((%set ,variable (%get-property ,import-identifier ,name)))
                       [])))))
               variables)
          [exp]))))
 
 
 (define-function define-free-variables2 (exp env)
-  (bind ((free (set-subtract! (free-variables exp)
-                                    *defined?*))
+  (bind ((free (set-subtract! (find-free-variables exp)
+                              *defined?*))
          (variables (choose
                      (method (variable)
                        (not (has? (get env "definition-names")
@@ -894,21 +901,23 @@
          (map (method (variable)
                 (bind (;; TODO: old name?
                        (name (symbol-name variable)))
-                  ;; TODO: defined-after-inline? and subtract above?!
+                  ;; TODO: use "defined-after-inline" instead and subtract above?
                   (set! (get env "defined?" name) #t)
                   (maybe-begin
                    (concatenate
                     `((%define ,variable))
                     ;; imported?
-                    (if-bind (old-import-name (find-import-name variable env))
-                      (bind ((import-name (symbol (get env "new-definition-names"
-                                                       (symbol-name old-import-name)))))
-                        `((%set ,variable (%get-property ,import-name ,name))))
+                    (if-bind (old-import-identifier
+                              (find-import-identifier variable env))
+                      (bind ((import-identifier
+                              (symbol (get env "new-definition-names"
+                                           (symbol-name old-import-identifier)))))
+                        `((%set ,variable (%get-property ,import-identifier ,name))))
                       [])))))
               variables)
          [exp]))))
 
-(define-function free-variables (exp)
+(define-function find-free-variables (exp)
   (cond
    ((and (instance? exp <array>)
          (not (empty? exp)))
@@ -919,7 +928,7 @@
         (("%method")
          (destructuring-bind (_ arguments body) exp
            (set-subtract!
-            (free-variables body)
+            (find-free-variables body)
             (as-set arguments))))
         (("%bind")
          (destructuring-bind (_ (var value) body) exp
@@ -927,9 +936,9 @@
            ;; (if so, also change alpha-convert)
            (set-union!
             (set-subtract!
-             (free-variables body)
+             (find-free-variables body)
              (as-set [var]))
-            (free-variables value))))
+            (find-free-variables value))))
         (("%begin")
          ;; %define will only appear in %begin,
          ;; see previous pass lift-defines
@@ -945,20 +954,20 @@
                             (begin
                              (push-last definitions (second e))
                              [])
-                            (free-variables e))))
+                            (find-free-variables e))))
                      [] (rest exp)))
             (as-set definitions))))
         (("%set" "%if" "%while"
           "%array" "%object" "%infix"
           "%get-property" "%native-call")
          (as-set (reduce concatenate []
-                         (map free-variables
+                         (map find-free-variables
                               (rest exp)))))
         (("%native" "%native-name" "%define")
          (as-set []))
         (else:
          (reduce1 set-union!
-                  (map free-variables
+                  (map find-free-variables
                        exp))))))
    ((instance? exp <symbol>)
     (as-set [exp]))
@@ -968,50 +977,49 @@
 
 ;;;; alpha conversion
 
-;; "names" => module name => symbol name => renaming+
+;; "identifiers" => module name => symbol name => renaming+
 
-(define-function ensure-naming-structure (env variable-module variable-name)
+(define-function ensure-naming-structure (env module-name name)
   ;; ensure renaming object for env
-  (unless (get env "names" variable-module)
-    (set! (get env "names" variable-module)
+  (unless (get env "identifiers" module-name)
+    (set! (get env "identifiers" module-name)
           (make-object)))
   ;; ensure renaming list for variable
-  (bind ((module-renamings (get env "names" variable-module)))
-    (unless (get module-renamings variable-name)
-      (set! (get module-renamings variable-name)
+  (bind ((module-renamings (get env "identifiers" module-name)))
+    (unless (get module-renamings name)
+      (set! (get module-renamings name)
             [])))
   env)
 
-(define-function rename-variables (variables env)
-  (map (method (variable)
-         (bind ((variable-module (or (get variable "module") ""))
-                (variable-name (symbol-name variable))
-                (new-variable (generate-symbol variable-name)))
-           (ensure-naming-structure
-            env variable-module variable-name)
-           (push (get env "names"
-                      variable-module variable-name)
-                 new-variable)
-           new-variable))
-       variables))
+(define-function get-module-name/name (identifier)
+  [(or (get identifier "module") "")
+   (symbol-name identifier)])
 
-(define-function restore-variables (variables env)
-  (for-each ((variable variables))
+(define-function rename-identifiers (identifiers env)
+  (map (method (identifier)
+         (destructuring-bind (module-name name)
+             (get-module-name/name identifier)
+           (bind ((new-identifier (generate-symbol name)))
+             (ensure-naming-structure env module-name name)
+             (push (get env "identifiers" module-name name)
+                   new-identifier)
+             new-identifier)))
+       identifiers))
+
+(define-function restore-identifiers (identifiers env)
+  (for-each ((identifier identifiers))
             ()
-    (bind ((variable-module (or (get variable "env")
-                                ""))
-           (variable-name (symbol-name variable)))
-      (pop (get env "names"
-                variable-module variable-name)))))
+    (destructuring-bind (module-name name)
+        (get-module-name/name identifier)
+      (pop (get env "identifiers" module-name name)))))
 
 (define *not-found* (make-object))
 
-(define-function find-variable (variable env)
-  (bind ((variable-module (or (get variable "module")
-                              ""))
-         (variable-name (symbol-name variable)))
-    (if-bind (renamings (get env "names"
-                             variable-module variable-name))
+(define-function find-identifier (identifier env)
+  (destructuring-bind (module-name name)
+      (get-module-name/name identifier)
+    (if-bind (renamings (get env "identifiers"
+                             module-name name))
       (first renamings)
       *not-found*)))
 
@@ -1021,10 +1029,10 @@
      (select (symbol-name (first form)) ==
        (("%method")
         (destructuring-bind (_ arguments body) form
-          (bind ((new-arguments (rename-variables arguments env))
+          (bind ((new-arguments (rename-identifiers arguments env))
                  (new-body (alpha-convert body env))
                  (result [_ new-arguments new-body]))
-            (restore-variables arguments env)
+            (restore-identifiers arguments env)
             result)))
        (("%bind")
         (destructuring-bind (_ (var value) body) form
@@ -1032,42 +1040,41 @@
           ;; (if so, also change define-free-variables)
           (bind ((new-value (alpha-convert value env)))
             (destructuring-bind (new-var)
-                (rename-variables [var] env)
+                (rename-identifiers [var] env)
               (bind ((result
                       `(%bind (,new-var ,new-value)
                          ,(alpha-convert body env))))
-                (restore-variables [var] env)
+                (restore-identifiers [var] env)
                 result)))))
        (("%define")
         ;; rename in future expression
         ;; NOTE: modifies env!
-        (destructuring-bind (_ variable) form
-          (bind ((variable-module (or (get variable "module")
-                                      ""))
-                 (variable-name (symbol-name variable))
-                 (new-variable (generate-symbol)))
-            ;; TODO: refactor
-            ;; >>>
-            (ensure-naming-structure env variable-module variable-name)
-            (push-last (get env "names" variable-module variable-name)
-                       new-variable)
-            ;; register renaming of definition
-            (set! (get env "definition-names"
-                       (symbol-name new-variable))
-                  variable-name)
-            (set! (get env "new-definition-names"
-                       variable-name)
-                  (symbol-name new-variable))
-            ;; <<<
-            ;; update form
-            (set! (second form)
-                  new-variable)
-            form)))
+        (destructuring-bind (_ identifier) form
+          (destructuring-bind (module-name name)
+              (get-module-name/name identifier)
+            (bind ((new-identifier (generate-symbol)))
+              ;; TODO: refactor
+              ;; >>>
+              (ensure-naming-structure env module-name name)
+              (push-last (get env "identifiers" module-name name)
+                         new-identifier)
+              ;; register renaming of definition
+              (set! (get env "definition-names"
+                         (symbol-name new-identifier))
+                    name)
+              (set! (get env "new-definition-names"
+                         name)
+                    (symbol-name new-identifier))
+              ;; <<<
+              ;; update form
+              (set! (second form)
+                    new-identifier)
+              form))))
        (else:
         (map (rcurry alpha-convert env)
              form))))
     ((<symbol>)
-     (bind ((value (find-variable form env)))
+     (bind ((value (find-identifier form env)))
        (if (== value *not-found*)
            form
            value)))
@@ -1168,7 +1175,7 @@
                             (get env "module" "functions"
                                  definition-name))
                           ;; imported definition?
-                          (if-bind (module (find-module-for-definition
+                          (if-bind (module (find-module-for-definition-identifier
                                             (symbol definition-name)
                                             env))
                             (when (inline? module definition-name)
@@ -1207,18 +1214,17 @@
       ;; create initial bindings
       (dotimes (i (size arguments))
         (bind ((argument (element arguments i))
-               (value (element values i))
-               (argument-module (or (get argument "module") ""))
-               (argument-name (symbol-name argument)))
-          (ensure-naming-structure
-           env argument-module argument-name)
-          (push (get env "names" argument-module argument-name)
-                (if value
-                    (inline value env)
-                    `(%native "undefined")))))
+               (value (element values i)))
+          (destructuring-bind (module-name name)
+              (get-module-name/name argument)
+            (ensure-naming-structure env module-name name)
+            (push (get env "identifiers" module-name name)
+                  (if value
+                      (inline value env)
+                      `(%native "undefined"))))))
       ;; rename
       (bind ((result (alpha-convert body env)))
-        (restore-variables arguments env)
+        (restore-identifiers arguments env)
         result))))
 
 
@@ -1290,7 +1296,7 @@
 
 (define-function normalize-value (exp k)
   (if (contains-statements? exp)
-      (normalize-name exp k)
+      (normalize* exp k)
       (k (if (instance? exp <array>)
              (map normalize-term exp)
              exp))))
@@ -1307,7 +1313,7 @@
          (any? contains-statements? exp)))
       #f))
 
-(define-function normalize-name (exp k)
+(define-function normalize* (exp k)
   (normalize
    exp (method (aexp)
          (if (atomic? aexp)
@@ -1316,15 +1322,15 @@
                `(%bind (,t ,aexp)
                   ,(k t)))))))
 
-(define-function normalize-name* (exp* k)
+(define-function normalize** (exp* k)
   (if (empty? exp*)
       (k [])
       (normalize-all exp* k)))
 
 (define-function normalize-all (exp k)
-  (normalize-name
+  (normalize*
    (first exp) (method (t)
-                 (normalize-name*
+                 (normalize**
                   (rest exp) (method (t*)
                                (k (concatenate [t] t*)))))))
 
@@ -1419,25 +1425,25 @@
                (transform-statements (third exp) env))
          exp)
         (("%set")
-         (destructuring-bind (_ name value) exp
+         (destructuring-bind (_ identifier value) exp
            (bind ((value* (transform-statements value env))
                   (definition-name
                     (get env "definition-names"
-                         (symbol-name name))))
+                         (symbol-name identifier))))
              ;; check if exported definition
              (if (and definition-name
                       (member? (symbol definition-name)
                                (get env "module" "exports")))
-               (begin
-                (set! (first exp) (symbol "%begin"))
-                (set! (second exp)
-                      `(%set ,name ,value*))
-                (set! (third exp)
-                      `(%set (%get-property (%native "exports")
-                                            ,definition-name)
-                             ,name)))
-               ;; no re-export, leave as is
-               (set! (third exp) value*))))
+                 (begin
+                  (set! (first exp) (symbol "%begin"))
+                  (set! (second exp)
+                        `(%set ,identifier ,value*))
+                  (set! (third exp)
+                        `(%set (%get-property (%native "exports")
+                                              ,definition-name)
+                               ,identifier)))
+                 ;; no re-export, leave as is
+                 (set! (third exp) value*))))
          exp)
         (("%define")
          `(%var (,(last exp) #f)))
@@ -1568,9 +1574,9 @@
                   ;; add assignment to previous binding?
                   (bind ((merge? (and previous-var? (set? exp)))
                          (binding (and merge? (last (last result))))
-                         (name (and merge? (second exp))))
+                         (identifier (and merge? (second exp))))
                     (if (== (first binding)
-                            name)
+                            identifier)
                         (begin
                          (set! (second binding)
                                (third exp))
@@ -1677,7 +1683,7 @@
    ;; Z: any other
    ))
 
-(define-function escape-symbol-name (name)
+(define-function escape-name (name)
   (if (member? name *reserved*)
       (concatenate "R" name)
       (bind ((chars
@@ -1693,7 +1699,7 @@
                    (as-array name))))
         (join chars ""))))
 
-(define-function valid-identifier? (identifier)
+(define-function valid-js-name? (identifier)
   (and (not (member? identifier *reserved*))
        (match "^\\w+$" identifier)))
 
@@ -1714,7 +1720,7 @@
       "$" (as-uppercase (symbol-name exp))))
     ((<keyword>)
      (concatenate
-      "$K(\"" (symbol-name exp)  "\")"))
+      "$K(\"" (symbol-name exp) "\")"))
     ((<symbol>)
      (select exp ==
        (((symbol "%this-method"))
@@ -1724,9 +1730,8 @@
         "arguments")
        (else:
         (if (get exp "generated?")
-            (symbol-name exp)
-            (escape-symbol-name
-             (symbol-name exp))))))
+            (concatenate "$" (symbol-name exp))
+            (escape-name (symbol-name exp))))))
     (else:
      (description exp))))
 
@@ -1761,7 +1766,7 @@
            (push-last entries
                       (concatenate
                        (bind ((name (element key-values (* i 2))))
-                         (if (valid-identifier? name)
+                         (if (valid-js-name? name)
                              name
                              (compile-js name env)))
                        ":" (compile-js
@@ -1837,12 +1842,12 @@
        (reduce1 concatenate
                 (map (method (e)
                        (if (instance? e <symbol>)
-                           (symbol-name e)
+                           (compile-js e)
                            (as-string e)))
                      (rest exp))))
       (("%native-name")
        (concatenate
-        "\"" (escape-symbol-name (second exp)) "\""))
+        "\"" (escape-name (second exp)) "\""))
       (("%get-property")
        (destructuring-bind (_ object #rest properties) exp
          (concatenate
@@ -1853,7 +1858,7 @@
                     (concatenate
                      result
                      (if (and (instance? property <string>)
-                              (valid-identifier? property))
+                              (valid-js-name? property))
                          (concatenate "." property)
                          (concatenate "[" (compile-js property env) "]"))))
                   "" properties))))
@@ -1946,7 +1951,7 @@
              (get (. fs ("statSync" p2)) "mtime"))))))
 
 
-(define-function compile-time-import-module (env module-name #key names)
+(define-function compile-time-import-module (env module-name #key identifiers)
   (destructuring-bind (macros symbol-macros)
       (if (== module-name "ralph2/core")
           [*core-macros* *core-symbol-macros*]
@@ -1965,8 +1970,8 @@
                       ((get definition "%symbol-macro?")
                        (set! (get symbol-macros name)
                              definition)))))
-                 (if names
-                     (map symbol-name names)
+                 (if identifiers
+                     (map symbol-name identifiers)
                      (keys definitions)))
              [macros symbol-macros])))
     (chain-object (get env "macros")
@@ -1974,13 +1979,13 @@
     (chain-object (get env "symbol-macros")
                   symbol-macros)))
 
-(define-function import-module (module module-name #key names)
+(define-function import-module (module module-name #key identifiers)
   ;; TODO: open database first
-  (bind ((other-module (find-module module-name))
-         (names (or names
-                    (get other-module "exports"))))
+  (bind ((other-module (find-module module-name)))
     (push (get module "imports")
-          [module-name names])
+          [other-module
+           (or identifiers
+               (get other-module "exports"))])
     other-module))
 
 (define-function find-module (module-name)
@@ -2021,7 +2026,7 @@
         ;; implicitly import and load core
         (import-module module "ralph2/core")
         (push program
-              (definition-for-import "ralph2/core" env)))
+              (make-import-definition "ralph2/core" env)))
       ;; compile
       (do (method (expression)
             (. fs ("writeSync" executable
