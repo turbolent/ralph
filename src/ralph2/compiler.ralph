@@ -152,10 +152,15 @@
                        definition)))
 
 ;; definitions
-(define-special-form
-  %method (env arguments body)
-  `(%method ,arguments
-     ,(macroexpand-all body env)))
+(define-special-form %method (env arguments body)
+  (do (curry bind! env)
+      arguments)
+  (bind ((expanded-body
+          (macroexpand-all body env)))
+    (do (curry unbind! env)
+        arguments)
+    `(%method ,arguments
+       ,expanded-body)))
 
 (define-special-form
   %set (env identifier value)
