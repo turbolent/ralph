@@ -747,7 +747,7 @@
 
 (define-core-macro handler-case (_ body #rest cases)
   (bind ((condition-var (generate-symbol)))
-    `(%try body ,condition-var
+    `(%try ,body ,condition-var
            ,(concatenate
              `(cond)
              (map (method (case)
@@ -1015,9 +1015,11 @@
             (as-set definitions))))
         (("%try")
          (destructuring-bind (_ e1 v e2) exp
-           (set-union!
-            (as-set (find-free-variables e1))
-            (as-set (find-free-variables e2)))))
+           (set-subtract!
+            (set-union!
+             (as-set (find-free-variables e1))
+             (as-set (find-free-variables e2)))
+            (as-set [v]))))
         (("%set" "%if" "%while"
           "%array" "%object" "%infix"
           "%get-property" "%native-call")
