@@ -37,8 +37,9 @@
            size as-string as-number as-array
            parse-number char-code empty?
            rest last but-last slice %concat reverse!
-           first second third replace
-           push push-last pop pop-last
+           first second third
+           (setter first) (setter second) (setter third)
+           replace push push-last pop pop-last
            reduce1 reduce
            as-hex-string starts-with?
            as-uppercase as-lowercase trim
@@ -152,21 +153,18 @@
 (define-function first (sequence)
   (%get-property sequence 0))
 
-;; TODO: inline
 (define-function (setter first) ((array <array>) value)
   (set! (%get-property array 0) value))
 
 (define-function second (sequence)
   (%get-property sequence 1))
 
-;; TODO: inline
 (define-function (setter second) ((array <array>) value)
   (set! (%get-property array 1) value))
 
 (define-function third (sequence)
   (%get-property sequence 2))
 
-;; TODO: inline
 (define-function (setter third) ((array <array>) value)
   (set! (%get-property array 2) value))
 
