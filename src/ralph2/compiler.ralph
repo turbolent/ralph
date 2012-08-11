@@ -125,6 +125,15 @@
     (set! (get result "generated?") #t)
     result))
 
+(define-function bind! (env identifier)
+  (set! (get env "bound?" (symbol-name identifier))
+        #t))
+
+(define-function unbind! (env identifier)
+  (set! (get env "bound?" (symbol-name identifier))
+        #f))
+
+
 ;;;; special forms
 
 ;; utilities
@@ -143,7 +152,6 @@
                        definition)))
 
 ;; definitions
-
 (define-special-form
   %method (env arguments body)
   `(%method ,arguments
@@ -153,15 +161,24 @@
   %set (env identifier value)
   `(%set ,identifier ,(macroexpand-all value env)))
 
-(define-special-form
-  define (env identifier value)
-  `(define ,identifier ,(macroexpand-all value env)))
+(define-special-form define (env identifier value)
+  (bind! env identifier)
+  `(define ,identifier
+     ,(macroexpand-all value env)))
 
-(define-special-form
-  %bind (env binding body)
+;; TODO: make binding available inside value?
+;; (if so, also change alpha-convert,
+;;  find-free-variables)
+(define-special-form %bind (env binding body)
   (destructuring-bind (var value) binding
-    `(%bind (,var ,(macroexpand-all value env))
-       ,(macroexpand-all body env))))
+    (bind ((expanded-value
+            (macroexpand-all value env)))
+      (bind! env var)
+      (bind ((result
+              `(%bind (,var ,expanded-value)
+                      ,(macroexpand-all body env))))
+        (unbind! env var)
+        result))))
 
 ;;;; core macros
 
@@ -840,9 +857,13 @@
     ((<array>)
      (when (empty? form)
        (signal "Empty form"))
-     (js:get-property env "macros" (symbol-name (first form))))
+     (bind ((name (symbol-name (first form))))
+       (unless (get env "bound?" name)
+         (js:get-property env "macros" name))))
     ((<symbol>)
-     (js:get-property env "symbol-macros" (symbol-name form)))))
+     (bind ((name (symbol-name form)))
+       (unless (get env "bound?" name)
+         (js:get-property env "symbol-macros" name))))))
 
 (define-function macroexpand-1 (form env)
   (if-bind (macro (find-macro-definition form env))
@@ -962,7 +983,8 @@
         (("%bind")
          (destructuring-bind (_ (var value) body) exp
            ;; TODO: make binding available inside value?
-           ;; (if so, also change alpha-convert)
+           ;; (if so, also change alpha-convert,
+           ;;  %bind special form)
            (set-union!
             (set-subtract!
              (find-free-variables body)
@@ -1072,7 +1094,8 @@
        (("%bind")
         (destructuring-bind (_ (var value) body) form
           ;; TODO: make binding available inside value?
-          ;; (if so, also change define-free-variables)
+          ;; (if so, also change find-free-variables,
+          ;;  %bind special form)
           (bind ((new-value (alpha-convert value env)))
             (destructuring-bind (new-var)
                 (rename-identifiers [var] env)
