@@ -427,7 +427,7 @@
                object2)))
 
 (define-method binary= ((array1 <array>) (array2 <array>))
-  (and (%infix "=="
+  (and (%infix "==="
                (size array1)
                (size array2))
        ;; NB: twisted logic

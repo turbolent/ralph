@@ -24,20 +24,21 @@
 ;;       has side-effects and needs to be normalized
 ;;       (influences evaluation order)
 
-;; TODO: setter inlining
 
 ;; TODO: how to optimize binary operators, concatenate,
 ;;       instance?, binary get, get-setter, etc. ?
-;;       -> generic pass: if (call of definitionX in moduleY) then ...?
 
 ;; TODO: refactor nodejs specific code into file stream
+
+;; TODO: constant propagation?, constant folding
+
+;; TODO: beta reduction of %method and %bind (check assignment)
 
 ;; TODO: hygienic expansion:
 ;;       - rename symbols before passing to expander
 ;;       - rename after expansion
 ;;       - lift external references
 
-;; TODO: constant propagation, constant folding
 ;; TODO: dead code elimination
 ;; TODO: fix form/env naming convention
 
@@ -119,7 +120,7 @@
   (bind ((name (concatenate
                 (if prefix
                     (escape-name prefix)
-                    "")
+                    "g")
                 (as-string (inc! *symbol-count*))))
          (result (symbol name)))
     (set! (get result "generated?") #t)
@@ -854,7 +855,6 @@
   `(%next-method %this-method))
 
 ;;;; macro expansion
-
 
 (define-function find-macro-definition (form env)
   ;; TODO: deep-get
