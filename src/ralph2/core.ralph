@@ -40,8 +40,7 @@
            first second third
            (setter first) (setter second) (setter third)
            replace push push-last pop pop-last
-           reduce1 reduce
-           as-hex-string starts-with?
+           reduce1 as-hex-string starts-with?
            as-uppercase as-lowercase trim
            inc dec mod as-radiant even? odd?
            has? signal binary==))
@@ -136,9 +135,6 @@
 
 (define parse-number (%native "parseFloat"))
 
-(define-function parse-integer (value #key (radix 10))
-  (%native-call "parseInt" value radix))
-
 (define-function char-code (char)
   (. char ("charCodeAt" 0)))
 
@@ -192,69 +188,24 @@
 (define-function but-last ((array <array>) n)
   (. array ("slice" 0 (%infix "*" (%infix "||" n 1) -1))))
 
-(define-function every? ((function <function>) (array <array>))
-  (not (any? (method (value)
-               (not (function value)))
-             array)))
+(define-function slice ((array <array>) start end)
+  (. array ("slice" start end)))
 
-;; TODO: rewrite
-(define-function reduce1 ((function <function>) (array <array>))
-  (bind ((function function)
-         (array array))
-    (. array ("reduce" (method (previous current)
-                         (function previous current))))))
+(define-function reduce1 ((function <function>) (values <array>))
+  (reduce function (first values) (rest values)))
 
-;; TODO: rewrite
-(define-function reduce ((function <function>) initial-value (array <array>))
-  (bind ((function function)
-         (initial-value initial-value)
-         (array array))
-    (. array ("reduce" (method (previous current)
-                         (function previous current))
-              initial-value))))
+(define-function reduce ((function <function>) initial-value (values <array>))
+  (bind ((value initial-value))
+    (dotimes (i (size values))
+      (set! value (function value
+                            (%get-property values i))))
+    value))
 
 (define-function reverse! ((array <array>))
   (. array ("reverse")))
 
 (define-function reverse ((array <array>))
   (reverse! (slice array)))
-
-(define-function choose ((function <function>) (array <array>))
-  (bind ((result []))
-    (for-each ((element array))
-              ()
-      (when (function element)
-        (push-last result element)))
-    result))
-
-;; TODO: improve
-(define-function find-key ((array <array>) (predicate <function>)
-                           #key (skip 0) failure from-end?)
-  (bind ((keys (object-properties array))
-         (satisfying-keys
-          (choose (method (index)
-                    (predicate (element array index)))
-                  (if from-end?
-                      (reverse keys)
-                      keys))))
-    (or (element satisfying-keys skip)
-        failure)))
-
-;; <array> <object> or <string> <string>
-(define-function position ((array <array>) element)
-  (bind ((position (. array ("indexOf" element))))
-    (when (> position -1)
-      position)))
-
-(define-function last-position ((array <array>) element)
-  (bind ((position (. array ("lastIndexOf" element))))
-    (when (> position -1)
-      position)))
-
-(define-function member? (value (array <array>) #key (test ==))
-  (any? (method (other-value)
-          (test value other-value))
-        array))
 
 (define-function sort! ((array <array>) #key (test <) (key identity))
   (. array ("sort" (method (a b)
@@ -351,10 +302,9 @@
               numerator denominators)))
 
 (define-function type (object)
-  (if (or (%infix "===" object (%native "undefined"))
-          (%infix "===" object (%native "null")))
-      <boolean>
-      (%get-property object "constructor")))
+  (if object
+      (%get-property object "constructor")
+      <boolean>))
 
 (define-function instance? (object type)
   (if object
@@ -367,9 +317,7 @@
       (binary== type <boolean>)))
 
 (define-function has? (object property)
-  (bind ((object object)
-         (property property))
-    (%native object ".hasOwnProperty(" property ")")))
+  (%native object ".hasOwnProperty(" property ")"))
 
 (define-function %make-method (name function setter? type existing)
   (bind ((prototype (%get-property type "prototype"))
@@ -412,8 +360,7 @@
 (define-function concatenate (object #rest rest)
   (reduce (if (instance? object <array>)
               %concat
-              (method (current next)
-                (%infix "+" current next)))
+              binary+)
           object rest))
 
 (define-function compare ((function <function>) object objects)
@@ -469,8 +416,8 @@
   (compare binary< object objects))
 
 (define-function binary<= (object1 object2)
-  (and (true? object1)
-       (true? object2)
+  (and object1
+       object2
        (or (binary< object1 object2)
            (binary= object1 object2))))
 
@@ -478,8 +425,8 @@
   (compare binary<= object objects))
 
 (define-function binary> (object1 object2)
-  (and (true? object1)
-       (true? object2)
+  (and object1
+       object2
        (not (binary< object1 object2))
        (not (binary= object1 object2))))
 
@@ -506,6 +453,16 @@
               value)))
     result))
 
+;; <array> <object> or <string> <string>
+(define-function position ((array <array>) element)
+  (bind ((position (. array ("indexOf" element))))
+    (when (> position -1)
+      position)))
+
+(define-function last-position ((array <array>) element)
+  (bind ((position (. array ("lastIndexOf" element))))
+    (when (> position -1)
+      position)))
 
 (define-function as-uppercase ((string <string>))
   (. string ("toUpperCase")))
@@ -559,15 +516,28 @@
               value))))
   defaults)
 
+;; TODO: improve
+(define-function find-key ((array <array>) (predicate <function>)
+                           #key (skip 0) failure from-end?)
+  (bind ((keys (object-properties array))
+         (satisfying-keys
+          (choose (method (index)
+                    (predicate (element array index)))
+                  (if from-end?
+                      (reverse keys)
+                      keys))))
+    (or (element satisfying-keys skip)
+        failure)))
+
+(define-function parse-integer (value #key (radix 10))
+  (%native-call "parseInt" value radix))
+
 (define-function element ((array <array>) index #key default)
   (or (%get-property array index)
       default))
 
 (define-function (setter element) ((array <array>) key value)
   (set! (%get-property array key) value))
-
-(define-function slice ((array <array>) start end)
-  (. array ("slice" start end)))
 
 (define-function replace-subsequence ((target-array <array>) (insert-array <array>)
                                       #key (start 0) (end (size target-array)))
@@ -605,6 +575,16 @@
       (set! value
             (function (%get-property values i))))))
 
+(define-function member? (value (array <array>) #key (test ==))
+  (any? (method (other-value)
+          (test value other-value))
+        array))
+
+(define-function every? ((function <function>) (array <array>))
+  (not (any? (method (value)
+               (not (function value)))
+             array)))
+
 (define-function map ((function <function>) #rest arrays)
   (bind ((result []))
     (if (empty? (rest arrays))
@@ -627,6 +607,13 @@
         (set! arrays (map rest arrays))))
   #f)
 
+(define-function choose ((function <function>) (array <array>))
+  (bind ((result []))
+    (for-each ((element array))
+              ()
+      (when (function element)
+        (push-last result element)))
+    result))
 
 (define-function copy-sequence ((array <array>) #key (start 0) end)
   (bind ((end (or end (%native "undefined"))))
@@ -669,9 +656,8 @@
                          (has? object key))
                (bind ((value (or (%get-property arguments key)
                                  (bind ((value (%get-property properties key)))
-                                   (if (%infix "===" value #f)
-                                       value
-                                       (value))))))
+                                   (when value
+                                     (value))))))
                  (set! (%get-property object key)
                        value))))
            (object-properties properties
