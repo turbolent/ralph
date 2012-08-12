@@ -83,10 +83,10 @@
 (%native "$SL = [].slice")
 
 (define-function inc ((number <number>))
-  (%infix "+" number 1))
+  (%plus number 1))
 
 (define-function dec ((number <number>))
-  (%infix "-" number 1))
+  (%minus number 1))
 
 (define-function binary== (object1 object2)
   (%infix "===" object1 object2))
@@ -271,7 +271,7 @@
 (define-function apply ((function <function>))
   (bind ((actual (%native-call "$SL.call" %all-arguments 1 -1))
          (last (%get-property %all-arguments
-                              (%infix "-" (size %all-arguments) 1)))
+                              (%minus (size %all-arguments) 1)))
          (arguments (if (binary== last function)
                         actual
                         (%concat actual last))))
@@ -313,29 +313,42 @@
                 (but-last functions)
                 from-end?: #t))))
 
-(define-function + ((number <number>) #rest numbers)
-  (reduce (method (number1 number2)
-            (%infix "+" number1 number2))
-          number numbers))
+(define-function binary+ (number1 number2)
+  (%plus number1 number2))
 
-(define-function - ((number <number>) #rest numbers)
+(define-function + (#rest numbers)
   (if (empty? numbers)
-      (%native-call "-" number)
-      (reduce (method (number1 number2)
-                (%infix "-" number1 number2))
-              number numbers)))
+      0
+      (reduce1 binary+
+               numbers)))
 
-(define-function * ((number1 <number>) (number2 <number>)
-                    #rest numbers)
-  (reduce1 (method (number1 number2)
-             (%infix "*" number1 number2))
-           (%concat [number1 number2] numbers)))
 
-(define-function / ((number1 <number>) (number2 <number>)
-                    #rest numbers)
-  (reduce1 (method (number1 number2)
-             (%infix "/" number1 number2))
-           (%concat [number1 number2] numbers)))
+(define-function binary- (number1 number2)
+  (%minus number1 number2))
+
+(define-function - ((minuend <number>) #rest subtrahends)
+  (if (empty? subtrahends)
+      (%native-call "-" minuend)
+      (reduce binary-
+              minuend subtrahends)))
+
+(define-function binary* (number1 number2)
+  (%times number1 number2))
+
+(define-function * (#rest numbers)
+  (if (empty? numbers)
+      1
+      (reduce1 binary*
+               numbers)))
+
+(define-function binary/ (number1 number2)
+  (%divide number1 number2))
+
+(define-function / ((numerator <number>) #rest denominators)
+  (if (empty? denominators)
+      (%divide 1 numerator)
+      (reduce binary/
+              numerator denominators)))
 
 (define-function type (object)
   (if (or (%infix "===" object (%native "undefined"))
@@ -764,8 +777,10 @@
 
 (define *pi* (%native "Math.PI"))
 
+(define *radiant* (%divide *pi* 180))
+
 (define-function as-radiant (number)
-  (%infix "*" number (%infix "/" *pi* 180)))
+  (%times number *radiant*))
 
 (define-function signal ((error <error>))
   (%native-call "throw" error)

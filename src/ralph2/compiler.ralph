@@ -534,6 +534,28 @@
 (define-core-macro dec! (_ object value)
   `(set! ,object (- ,object ,(or value 1))))
 
+(define-core-macro + (_ #rest values)
+  (if (empty? values)
+      0
+      (concatenate `(%plus) values)))
+
+(define-core-macro - (_ minuend #rest subtrahends)
+  (if (empty? subtrahends)
+      `(%native-call "-" ,minuend)
+      (concatenate `(%minus ,minuend)
+                   subtrahends)))
+
+(define-core-macro * (_ #rest values)
+  (if (empty? values)
+      1
+      (concatenate `(%times) values)))
+
+(define-core-macro / (_ numerator #rest denominators)
+  (if (empty? denominators)
+      `(%divide 1 ,numerator)
+      (concatenate `(%divide ,numerator)
+                   denominators)))
+
 
 ;; TODO: backend-specific
 (define-core-macro call-next-method (_)
@@ -1022,7 +1044,8 @@
             (as-set [v]))))
         (("%set" "%if" "%while"
           "%array" "%object" "%infix"
-          "%get-property" "%native-call")
+          "%get-property" "%native-call"
+          "%plus" "%minus" "%times" "%divide")
          (as-set (reduce concatenate []
                          (map find-free-variables
                               (rest exp)))))
@@ -1237,7 +1260,8 @@
                form))
             ;; inline all arguments
             (("%begin" "%if" "%while" "%array" "%object"
-              "%get-property" "%native-call" "%infix")
+              "%get-property" "%native-call" "%infix"
+              "%plus" "%minus" "%times" "%divide")
              (concatenate [(first form)]
                           (map (rcurry inline env)
                                (rest form))))
@@ -1864,6 +1888,15 @@
                     (concatenate
                      " " operator " "))
           ")")))
+      (("%plus" "%minus" "%times" "%divide")
+       (compile-js-exp
+        (concatenate `(%infix ,(select name ==
+                                 (("%plus") "+")
+                                 (("%minus") "-")
+                                 (("%times") "*")
+                                 (("%divide") "/")))
+                     (rest exp))
+        env))
       (("%array")
        (destructuring-bind (_ #rest elements) exp
          (concatenate
