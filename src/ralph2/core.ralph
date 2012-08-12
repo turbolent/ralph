@@ -44,7 +44,7 @@
            as-hex-string starts-with?
            as-uppercase as-lowercase trim
            inc dec mod as-radiant even? odd?
-           has? signal))
+           has? signal binary==))
 
 ;; TODO: fix key/property naming convention
 ;; TODO: export
@@ -87,6 +87,9 @@
 
 (define-function dec ((number <number>))
   (%infix "-" number 1))
+
+(define-function binary== (object1 object2)
+  (%infix "===" object1 object2))
 
 (define-function %inherit (class superclass)
   (set! (%get-property class "prototype" "__proto__")
@@ -142,7 +145,7 @@
 (define code-char (%native "String.fromCharCode"))
 
 (define-function empty? (sequence)
-  (%infix "===" (size sequence) 0))
+  (binary== (size sequence) 0))
 
 (define-function rest (sequence)
   (. sequence ("slice" 1)))
@@ -269,7 +272,7 @@
   (bind ((actual (%native-call "$SL.call" %all-arguments 1 -1))
          (last (%get-property %all-arguments
                               (%infix "-" (size %all-arguments) 1)))
-         (arguments (if (%infix "===" last function)
+         (arguments (if (binary== last function)
                         actual
                         (%concat actual last))))
     ((%get-property function "apply")
@@ -345,10 +348,10 @@
       (bind ((ctor (%get-property object "constructor")))
         (or
          ;; primitive
-         (%infix "===" ctor type)
+         (binary== ctor type)
          ;; object
          (%infix "instanceof" object type)))
-      (%infix "===" type <boolean>)))
+      (binary== type <boolean>)))
 
 (define-function has? (object property)
   (bind ((object object)
@@ -409,8 +412,6 @@
         (set! object other)))
     (not failed?)))
 
-(define-function binary== (object1 object2)
-  (%infix "===" object1 object2))
 
 (define-function == (object #rest objects)
   (compare binary== object objects))
@@ -419,17 +420,14 @@
 (define-generic binary< (object1 object2))
 
 (define-method binary= (object1 object2)
-  (and (%infix "==="
-               (type object1)
-               (type object2))
-       (%infix "==="
-               object1
-               object2)))
+  (and (binary== (type object1)
+                 (type object2))
+       (binary== object1
+                 object2)))
 
 (define-method binary= ((array1 <array>) (array2 <array>))
-  (and (%infix "==="
-               (size array1)
-               (size array2))
+  (and (binary== (size array1)
+                 (size array2))
        ;; NB: twisted logic
        (not (for-each ((item1 array1)
                        (item2 array2))
@@ -450,9 +448,8 @@
 ;; TODO: (define-method binary= ((array1 <array>) (array2 <array>)))
 
 (define-method binary< (object1 object2)
-  (and (%infix "==="
-               (type object1)
-               (type object2))
+  (and (binary== (type object1)
+                 (type object2))
        (%infix "<" object1 object2)))
 
 (define-function < (object #rest objects)
@@ -804,13 +801,13 @@
     result))
 
 (define-function starts-with? ((string <string>) (prefix <string>))
-  (%infix "===" (. string ("indexOf" prefix)) 0))
+  (binary== (. string ("indexOf" prefix)) 0))
 
 (define-function even? (number)
-  (%infix "===" (%infix "%" number 2) 0))
+  (binary== (%infix "%" number 2) 0))
 
 (define-function odd? (number)
-  (%infix "===" (%infix "%" number 2) 1))
+  (binary== (%infix "%" number 2) 1))
 
 (define-function group-by (predicate items)
   (reduce (method (result item)
