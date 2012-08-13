@@ -8,6 +8,11 @@
 ;; - identifier = symbol, name = string
 ;; - verbed functions or predicates
 
+;; NOTE: no symbol expansion after macroexpand-all,
+;;       as ANF uses atomic? to decide if expression
+;;       has side-effects and needs to be normalized
+;;       (influences evaluation order)
+
 ;;;; modules
 
 ;; module-name => <module>
@@ -413,11 +418,16 @@
 
 (define-core-macro select (_ value test #rest cases)
   (bind ((value* (generate-symbol))
-         (test* (generate-symbol)))
+         (test* (if (instance? test <symbol>)
+                    test
+                    (generate-symbol))))
     (bind-methods ((test-expression (test-value)
-                     `(,test* ,value* ,test-value)))
-      `(bind ((,value* ,value)
-              (,test* ,test))
+                     [test* value* test-value]))
+      `(bind ,(concatenate
+               [[value* value]]
+               (if (instance? test <symbol>)
+                   []
+                   [[test* test]]))
          ,(concatenate
            `(cond)
            (map (method (case)
@@ -439,7 +449,7 @@
           (reduce (method (body binding)
                     (dec! i)
                     (if (instance? binding <symbol>)
-                        `(bind ((,binding (element ,values ,i)))
+                        `(bind ((,binding (%get-property ,values ,i)))
                            ,body)
                         (destructure binding
                                      `(%get-property ,values ,i)
