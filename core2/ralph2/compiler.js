@@ -1,10 +1,10 @@
-var $g1464 = require("ralph2/core")
+var $g1464 = require("ralph/core")
 {var $g2061, $g2062, $g2063, $g2064, $g2065;
-$g2061 = require("ralph2/stream");
-$g2062 = require("ralph2/format");
-$g2063 = require("ralph2/regexp");
-$g2064 = require("ralph2/reader");
-$g2065 = require("ralph2/date")}
+$g2061 = require("ralph/stream");
+$g2062 = require("ralph/format");
+$g2063 = require("ralph/regexp");
+$g2064 = require("ralph/reader");
+$g2065 = require("ralph/date")}
 var $g2066 = $g1464["make-object"], $g2067 = $g2066()
 var $g2068 = $g1464["%make-class"], $g2069 = $g1464["<object>"], $g2070 = $g2068($g2069, {name:false,
 exports:function $g2071 ()
@@ -1608,7 +1608,7 @@ return $g4701($g2164($g4978.statSync($p5002), "mtime"), $g2164($g4978.statSync($
 {var $g5012 = $g1464["chain-object"], $g5013;
 $g3145 = $g2084("compile_time_import_module", function $g5030 ($env5014, $module_name5015)
 {var $g5016 = $SL.call(arguments, 2), $g5017 = $g2977($g5016, {names:false}), $names5018 = $g5017.names, $g5025;
-if ($T($g2119($module_name5015, "ralph2/core")))
+if ($T($g2119($module_name5015, "ralph/core")))
 $g5025 = [$g2198, $g3318]
 else {$g5013($module_name5015);
 var $definitions5019 = require($module_name5015), $macros5020 = $g2076(), $symbol_macros5021 = $g2076(), $g5028 = function $g5031 ($name5022)
@@ -1664,11 +1664,11 @@ else $g5087 = false;
 if ($T($g5087))
 {var $module5068 = $g2928($g2070, $g5059, $module_name5067), $env5069 = $g2928($g2077, $g5089, $module5068), $source5070 = $g5056($g4996($module_name5067)), $program5071 = $g4957($source5070), $executable5072 = $g5063($module_name5067);
 $g2145($g2067, $module_name5067, $module5068);
-$g3145($env5069, "ralph2/core");
-var $value5081 = $g2119($module_name5067, "ralph2/core"), $g5088 = !(trueQ($value5081));
+$g3145($env5069, "ralph/core");
+var $value5081 = $g2119($module_name5067, "ralph/core"), $g5088 = !(trueQ($value5081));
 if ($T($g5088))
-{$g3146($module5068, "ralph2/core");
-var $rarray5084 = $program5071, $value5085 = $g3147("ralph2/core", $env5069);
+{$g3146($module5068, "ralph/core");
+var $rarray5084 = $program5071, $value5085 = $g3147("ralph/core", $env5069);
 $rarray5084.unshift($value5085);
 $rarray5084};
 $g2173(function $g5092 ($expression5073)
@@ -1677,6 +1677,6 @@ $g4978.closeSync($executable5072);
 $g4978.writeFileSync($g4993($module_name5067), $g4770([$module_name5067, $g5090, $g2164($module5068, "exports")]));
 return $module5068}}, false)}
 {var $g5093 = $g2062["format-out"], $g5094 = $g2065["<date>"], $start5095 = $g2928($g5094);
-$g5013("ralph2/compiler");
-$g5013("ralph2/runtime.test");
+$g5013("ralph/compiler");
+$g5013("ralph/runtime.test");
 $g5093("%d\n", ($g2928($g5094) - $start5095))}

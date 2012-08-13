@@ -1,5 +1,5 @@
-var $g5099 = require("ralph2/core")
-var $g5101 = require("ralph2/format")
+var $g5099 = require("ralph/core")
+var $g5101 = require("ralph/format")
 var $g5102 = true
 var $g5103 = $g5099["%make-function"], $g5104 = $g5101["format-out"], $g5105 = $g5103("report_success", function $g5109 ($description5106, $explanation5107)
 {var $g5108;

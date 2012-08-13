@@ -1,4 +1,4 @@
-var $g1466 = require("ralph2/core")
+var $g1466 = require("ralph/core")
 false
 {var $g1468 = $g1466["%make-function"], $g1469 = $g1466.symbol, $g1470 = $g1466["symbol-name"], $g1471 = $g1466.concatenate, $g1472 = $g1468("define_special_form", function $g1476 ($g1473, $identifier1474)
 {var $definition1475 = $SL.call(arguments, 2);

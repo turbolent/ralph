@@ -1,4 +1,4 @@
-var $g2013 = require("ralph2/core")
+var $g2013 = require("ralph/core")
 false
 {var $g2014 = Date;
 exports["<date>"] = $g2014}

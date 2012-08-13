@@ -1,8 +1,8 @@
-var $g5097 = require("ralph2/core")
+var $g5097 = require("ralph/core")
 {var $g5166, $g5167, $g5168;
-$g5166 = require("ralph2/test");
-$g5167 = require("ralph2/format");
-$g5168 = require("ralph2/stream")}
+$g5166 = require("ralph/test");
+$g5167 = require("ralph/format");
+$g5168 = require("ralph/stream")}
 var $g5169 = $g5097["%make-function"], $g5170 = $g5169("foo", function $g5172 ($rif5171)
 {return 23}, false)
 {var $g5173 = $g5166["check-equal"];
