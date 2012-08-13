@@ -1,18 +1,8 @@
 
-;; TODO: change imports to ralph2 when self-hosting
-;; TODO: adjust to core API changes:
-;;  - keys => object-properties
-;; TODO: move helper macros into own module
-
 (define-module ralph2/compiler
-  import: (ralph/core ralph/format ralph/regexp ralph/reader ralph/date)
-  export: (<environment> macroexpand-1
-                         macroexpand
-                         macroexpand-all
-                         alpha-convert
-                         reset-symbol-counter!
-                         atomic?
-                         normalize-term))
+  import: (ralph2/stream ralph2/format ralph2/regexp
+           ralph2/reader ralph2/date)
+  compile-time-import: (ralph2/compiler-macros))
 
 ;; NOTE: naming convention:
 ;; - identifier = symbol, name = string
@@ -24,23 +14,30 @@
 ;;       has side-effects and needs to be normalized
 ;;       (influences evaluation order)
 
+;; TODO: check destructuring-bind is optimized
 
-;; TODO: how to optimize binary operators, concatenate,
+;; TODO: optimize == -> binary==
+
+;; TODO: optimize select: directly use function is variable
+;;       (eg. == => (== x "foo") => (binary==
+
+;; TODO: require.js: wrap in define
+
+;; TODO: how to optimize binary comparisons, concatenate,
 ;;       instance?, binary get, get-setter, etc. ?
 
 ;; TODO: refactor nodejs specific code into file stream
 
-;; TODO: constant propagation?, constant folding
+;; TODO: constant propagation?/folding/elimination (ANF version of SCCP?)
 
 ;; TODO: beta reduction of %method and %bind (check assignment)
+
+;; TODO: lambda lifting (only small gain)
 
 ;; TODO: hygienic expansion:
 ;;       - rename symbols before passing to expander
 ;;       - rename after expansion
 ;;       - lift external references
-
-;; TODO: dead code elimination
-;; TODO: fix form/env naming convention
 
 ;; TODO: signal warning in define-free-variables
 
@@ -147,11 +144,6 @@
     (get *special-forms*
          (symbol-name (first form)))))
 
-(define-macro define-special-form (identifier #rest definition)
-  `(set! (get *special-forms* ,(symbol-name identifier))
-         ,(concatenate `(method)
-                       definition)))
-
 ;; definitions
 (define-special-form %method (env arguments body)
   (do (curry bind! env)
@@ -192,11 +184,6 @@
 
 (define *core-macros*
   (make-object))
-
-(define-macro define-core-macro (identifier #rest definition)
-  `(set! (get *core-macros* ,(symbol-name identifier))
-         ,(concatenate `(method)
-                       definition)))
 
 (define-function maybe-begin (expressions)
   (select (size expressions) ==
@@ -865,11 +852,6 @@
 
 (define *core-symbol-macros*
   (make-object))
-
-(define-macro define-core-symbol-macro (identifier #rest definition)
-  `(set! (get *core-symbol-macros* ,(symbol-name identifier))
-         ,(concatenate `(method)
-                       definition)))
 
 ;; definitions
 
