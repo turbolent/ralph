@@ -7,5 +7,5 @@ Ralph is a Lisp-1 dialect that compiles to JavaScript. It is inspired by
 
 Install node, then:
 
-  `$ ./scripts/build.sh`
-  `$ ./scripts/test-build.sh`
+* `$ ./scripts/build.sh`
+* `$ ./scripts/test-build.sh`
