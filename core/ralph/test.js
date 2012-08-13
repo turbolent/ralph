@@ -1,54 +1,56 @@
-var MODULE = this;
-var _3 = ["ralph/core", "ralph/format"];
-for (var _2 = 0; (_2 < 2); _2 = (_2 + 1)) {
-var _1 = require(_3[_2]);
-for (var _0 in _1) {
-if (_1.hasOwnProperty(_0)) {
-MODULE[_0] = _1[_0]
-}
-}
-};
-reportSuccess = _PE_makeFunction("reportSuccess", function __method__ (description, explanation) {
-return formatOut((true_W_((ENVIRONMENT === "browser")) ? " <span style=\"color:green\">\u2713</span> %s: %s<br/>" : " \u001b[32m\u2713\u001b[0m %s: %s\n"), description, explanation)
-}, ((typeof (reportSuccess) !== 'undefined') && reportSuccess), false, "(report-success <string> <string>)");
-reportFailure = _PE_makeFunction("reportFailure", function __method__ (description, explanation) {
-return formatOut((true_W_((ENVIRONMENT === "browser")) ? " <span style=\"color:red\">\u2718</span> %s: %s<br/>" : " \u001b[31m\u2718\u001b[0m %s: %s\n"), description, explanation)
-}, ((typeof (reportFailure) !== 'undefined') && reportFailure), false, "(report-failure <string> <string>)");
-checkEqual = exports.checkEqual = _PE_makeFunction("checkEqual", function __method__ (description, expectedValue, testValue) {
-return (true_W_(binary_E_(expectedValue, testValue)) ? reportSuccess(description, formatToString("Values are equal: %=, %=", expectedValue, testValue)) : reportFailure(description, formatToString("Values should be equal: %=, %=", expectedValue, testValue)))
-}, ((typeof (checkEqual) !== 'undefined') && checkEqual), false, "(check-equal <string> <object> <object>)");
-checkUnequal = _PE_makeFunction("checkUnequal", function __method__ (description, expectedValue, testValue) {
-return (!true_W_(binary_E_(expectedValue, testValue)) ? reportSuccess(description, formatToString("Values aren't equal: %=, %=", expectedValue, testValue)) : reportFailure(description, formatToString("Values shouldn't be equal: %=, %=", expectedValue, testValue)))
-}, ((typeof (checkUnequal) !== 'undefined') && checkUnequal), false, "(check-unequal <string> <object> <object>)");
-checkTrue = exports.checkTrue = _PE_makeFunction("checkTrue", function __method__ (description, expression) {
-return (true_W_(expression) ? reportSuccess(description, formatToString("Expression is true: %=", expression)) : reportFailure(description, formatToString("Expression should be true: %=", expression)))
-}, ((typeof (checkTrue) !== 'undefined') && checkTrue), false, "(check-true <string> <object>)");
-checkFalse = exports.checkFalse = _PE_makeFunction("checkFalse", function __method__ (description, expression) {
-return (!true_W_(expression) ? reportSuccess(description, formatToString("Expression is false: %=", expression)) : reportFailure(description, formatToString("Expression should be false: %=", expression)))
-}, ((typeof (checkFalse) !== 'undefined') && checkFalse), false, "(check-false <string> <object>)");
-checkCondition = exports.checkCondition = _PE_makeFunction("checkCondition", function __method__ (description, conditionClass, _function) {
-return (function _6__lambda () {
-try {
-return (_function(), reportFailure(description, formatToString("Condition %= should have been signaled.", conditionClass)))
-} catch (_4) {
-if (true_W_(instance_W_(_4, conditionClass))) {
-return reportSuccess(description, formatToString("Condition %= was signaled.", conditionClass))
-}
-}
-})()
-}, ((typeof (checkCondition) !== 'undefined') && checkCondition), false, "(check-condition <string> <class> <function>)");
-checkNoError = exports.checkNoError = _PE_makeFunction("checkNoError", function __method__ (description, _function) {
-return (function _7__lambda () {
-try {
-return (_function(), reportSuccess(description, "No error was signaled."))
-} catch (_5) {
-if (true_W_((_5 instanceof Error))) {
-var condition = _5;
-return reportFailure(description, formatToString("Condition %= shouldn't have been signaled.", condition))
-}
-}
-})()
-}, ((typeof (checkNoError) !== 'undefined') && checkNoError), false, "(check-no-error <string> <function>)");
-checkInstance_W_ = exports.checkInstance_W_ = _PE_makeFunction("checkInstance_W_", function __method__ (description, valueType, value) {
-return (true_W_(instance_W_(value, valueType)) ? reportSuccess(description, formatToString("Value is of instance %=: %=", valueType, value)) : reportFailure(description, formatToString("Value should be of instance %=: %=", valueType, value)))
-}, ((typeof (checkInstance_W_) !== 'undefined') && checkInstance_W_), false, "(check-instance? <string> <class> <object>)")
+var $g5099 = require("ralph/core")
+var $g5101 = require("ralph/format")
+var $g5102 = true
+var $g5103 = $g5099["%make-function"], $g5104 = $g5101["format-out"], $g5105 = $g5103("report_success", function $g5109 ($description5106, $explanation5107)
+{var $g5108;
+if ($T($g5102))
+$g5108 = "."
+else $g5108 = " \u001b[32m\u2713\u001b[0m %s: %s\n";
+return $g5104($g5108, $description5106, $explanation5107)}, false)
+var $g5110 = $g5103("report_failure", function $g5114 ($description5111, $explanation5112)
+{var $g5113;
+if ($T($g5102))
+$g5113 = "\n"
+else $g5113 = "";
+return $g5104("%s \u001b[31m\u2718\u001b[0m %s: %s\n", $g5113, $description5111, $explanation5112)}, false)
+{var $g5115 = $g5099["="], $g5116 = $g5101["format-to-string"], $g5117 = $g5103("check_equal", function $g5121 ($description5118, $expected_value5119, $test_value5120)
+{if ($T($g5115($expected_value5119, $test_value5120)))
+return $g5105($description5118, $g5116("Values are equal: %=, %=", $expected_value5119, $test_value5120))
+else return $g5110($description5118, $g5116("Values should be equal: %=, %=", $expected_value5119, $test_value5120))}, false);
+exports["check-equal"] = $g5117}
+var trueQ = $g5099["true?"], $g5122 = $g5099.not, $g5123 = $g5103("check_unequal", function $g5130 ($description5124, $expected_value5125, $test_value5126)
+{var $value5128 = $g5115($expected_value5125, $test_value5126), $g5129 = !(trueQ($value5128));
+if ($T($g5129))
+return $g5105($description5124, $g5116("Values aren't equal: %=, %=", $expected_value5125, $test_value5126))
+else return $g5110($description5124, $g5116("Values shouldn't be equal: %=, %=", $expected_value5125, $test_value5126))}, false)
+{var $g5131 = $g5103("check_true", function $g5134 ($description5132, $expression5133)
+{if ($T($expression5133))
+return $g5105($description5132, $g5116("Expression is true: %=", $expression5133))
+else return $g5110($description5132, $g5116("Expression should be true: %=", $expression5133))}, false);
+exports["check-true"] = $g5131}
+{var trueQ = $g5099["true?"], $g5135 = $g5103("check_false", function $g5141 ($description5136, $expression5137)
+{var $value5139 = $expression5137, $g5140 = !(trueQ($value5139));
+if ($T($g5140))
+return $g5105($description5136, $g5116("Expression is false: %=", $expression5137))
+else return $g5110($description5136, $g5116("Expression should be false: %=", $expression5137))}, false);
+exports["check-false"] = $g5135}
+{var $g5143 = $g5099["instance?"], $g5144 = $g5103("check_condition", function $g5149 ($description5145, $condition_class5146, $rfunction5147)
+{try {{$rfunction5147();
+return $g5110($description5145, $g5116("Condition %= should have been signaled.", $condition_class5146))}}
+catch ($g5148)
+{if ($T($g5143($g5148, $condition_class5146)))
+return $g5105($description5145, $g5116("Condition %= was signaled.", $condition_class5146))}}, false);
+exports["check-condition"] = $g5144}
+{var $g5151 = $g5099["<error>"], $g5152 = $g5103("check_no_error", function $g5157 ($description5153, $rfunction5154)
+{try {{$rfunction5154();
+return $g5105($description5153, "No error was signaled.")}}
+catch ($g5155)
+{if ($T($g5143($g5155, $g5151)))
+{var $condition5156 = $g5155;
+return $g5110($description5153, $g5116("Condition %= shouldn't have been signaled.", $condition5156))}}}, false);
+exports["check-no-error"] = $g5152}
+{var $g5158 = $g5103("check_instanceQ", function $g5162 ($description5159, $value_type5160, $value5161)
+{if ($T($g5143($value5161, $value_type5160)))
+return $g5105($description5159, $g5116("Value is of instance %=: %=", $value_type5160, $value5161))
+else return $g5110($description5159, $g5116("Value should be of instance %=: %=", $value_type5160, $value5161))}, false);
+exports["check-instance?"] = $g5158}

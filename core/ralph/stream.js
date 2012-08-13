@@ -1,108 +1,115 @@
-(function _7__lambda (_4, _5) {
-var MODULE = this;
-var _3 = ["ralph/core"];
-for (var _2 = 0; (_2 < 1); _2 = (_2 + 1)) {
-var _1 = require(_3[_2]);
-for (var _0 in _1) {
-if (_1.hasOwnProperty(_0)) {
-MODULE[_0] = _1[_0]
-}
-}
-};
-_CL_stream = exports._CL_stream = _PE_makeClass("_CL_stream", _CL_object, {});
-streamClose = exports.streamClose = _PE_makeGeneric("streamClose", "(stream-close <stream>)");
-streamOpen_W_ = exports.streamOpen_W_ = _PE_makeGeneric("streamOpen_W_", "(stream-open? <stream>)");
-streamAtEnd_W_ = exports.streamAtEnd_W_ = _PE_makeGeneric("streamAtEnd_W_", "(stream-at-end? <stream>)");
-streamPeek = exports.streamPeek = _PE_makeGeneric("streamPeek", "(stream-peek <stream>)");
-streamRead = exports.streamRead = _PE_makeGeneric("streamRead", "(stream-read <stream> <number>)");
-streamReadElement = exports.streamReadElement = _PE_makeGeneric("streamReadElement", "(stream-read-element <stream>)");
-streamReadToEnd = exports.streamReadToEnd = _PE_makeGeneric("streamReadToEnd", "(stream-read-to-end <stream>)");
-streamReadThrough = exports.streamReadThrough = _PE_makeGeneric("streamReadThrough", "(stream-read-through <stream> <string>)");
-streamUnreadElement = exports.streamUnreadElement = _PE_makeGeneric("streamUnreadElement", "(stream-unread-element <stream>)");
-streamWrite = exports.streamWrite = _PE_makeGeneric("streamWrite", "(stream-write <stream> <string>)");
-streamContents = exports.streamContents = _PE_makeGeneric("streamContents", "(stream-contents <stream>)");
-streamRemainingContents = exports.streamRemainingContents = _PE_makeGeneric("streamRemainingContents", "(stream-remaining-contents <stream>)");
-_CL_stringStream = exports._CL_stringStream = _PE_makeClass("_CL_stringStream", _CL_stream, {"string":function _8__lambda () {
-return ""
-},
-"index":function _9__lambda () {
-return 0
-},
-"length":function _10__lambda () {
-return 0
-}});
-initialize = _PE_makeMethod("initialize", function __method__ (stream) {
-var rest = [].slice.call(arguments, 1);
-apply(_PE_nextMethod(__method__), stream, rest);
-return stream.length = (_4 = (_4 = stream, _5 = "string", (_4 && _4.hasOwnProperty(_5) && _4[_5])), ((true_W_(_4) && _4.length) || 0))
-}, _CL_stringStream, ((typeof (initialize) !== 'undefined') && initialize), false, "(initialize <string-stream> #rest rest)");
-streamAtEnd_W_ = exports.streamAtEnd_W_ = _PE_makeMethod("streamAtEnd_W_", function __method__ (stream) {
-return ((_4 = stream, _5 = "index", (_4 && _4.hasOwnProperty(_5) && _4[_5])) === (_4 = stream, _5 = "length", (_4 && _4.hasOwnProperty(_5) && _4[_5])))
-}, _CL_stringStream, ((typeof (streamAtEnd_W_) !== 'undefined') && streamAtEnd_W_), false, "(stream-at-end? <string-stream>)");
-streamPeek = exports.streamPeek = _PE_makeMethod("streamPeek", function __method__ (stream) {
-return element((_4 = stream, _5 = "string", (_4 && _4.hasOwnProperty(_5) && _4[_5])), (_4 = stream, _5 = "index", (_4 && _4.hasOwnProperty(_5) && _4[_5])))
-}, _CL_stringStream, ((typeof (streamPeek) !== 'undefined') && streamPeek), false, "(stream-peek <string-stream>)");
-streamReadElement = exports.streamReadElement = _PE_makeMethod("streamReadElement", function __method__ (stream) {
-return (!true_W_(streamAtEnd_W_(stream)) ? (function _11__lambda (element) {
-element = streamPeek(stream);
-(stream.index += 1);
-return element
-})() : false)
-}, _CL_stringStream, ((typeof (streamReadElement) !== 'undefined') && streamReadElement), false, "(stream-read-element <string-stream>)");
-streamRead = exports.streamRead = _PE_makeMethod("streamRead", function __method__ (stream, n) {
-return (function _12__lambda (result) {
-result = "";
-return (function _13__lambda (i) {
-i = 0;
-while (!true_W_((_4 = streamAtEnd_W_(stream), (true_W_(_4) ? _4 : (_4 = binary_GT__E_(i, n), (true_W_(_4) ? _4 : false)))))) {
-(function _14__lambda (i) {
-return result = concatenate(result, streamReadElement(stream))
-})(i);
-i = (i + 1)
-};
-return result
-})()
-})()
-}, _CL_stringStream, ((typeof (streamRead) !== 'undefined') && streamRead), false, "(stream-read <string-stream> <number>)");
-streamReadThrough = exports.streamReadThrough = _PE_makeMethod("streamReadThrough", function __method__ (stream, element) {
-return (function _15__lambda (found_W_) {
-found_W_ = false;
-return (function _16__lambda () {
-while (!true_W_((_4 = streamAtEnd_W_(stream), (true_W_(_4) ? _4 : (_4 = found_W_, (true_W_(_4) ? _4 : false)))))) {
-found_W_ = (streamReadElement(stream) === element)
-};
-return false
-})()
-})()
-}, _CL_stringStream, ((typeof (streamReadThrough) !== 'undefined') && streamReadThrough), false, "(stream-read-through <string-stream> <string>)");
-streamUnreadElement = exports.streamUnreadElement = _PE_makeMethod("streamUnreadElement", function __method__ (stream) {
-return stream.index = max(0, ((_4 = stream, _5 = "index", (_4 && _4.hasOwnProperty(_5) && _4[_5])) - 1))
-}, _CL_stringStream, ((typeof (streamUnreadElement) !== 'undefined') && streamUnreadElement), false, "(stream-unread-element <string-stream>)");
-streamWrite = exports.streamWrite = _PE_makeMethod("streamWrite", function __method__ (stream, _string) {
-(function _17__lambda (_6) {
-var index = _6.index;
-return (function _18__lambda (length, end) {
-length = (_4 = _string, ((true_W_(_4) && _4.length) || 0));
-end = (index + length);
-stream.string = replaceSubsequence((_4 = stream, _5 = "string", (_4 && _4.hasOwnProperty(_5) && _4[_5])), _string, _k('start'), index, _k('end'), end);
-stream.length = max(end, (_4 = stream, _5 = "length", (_4 && _4.hasOwnProperty(_5) && _4[_5])));
-return (stream.index += length)
-})(((typeof (length) !== 'undefined') && length), false)
-})(stream);
-return _string
-}, _CL_stringStream, ((typeof (streamWrite) !== 'undefined') && streamWrite), false, "(stream-write <string-stream> <string>)");
-streamContents = exports.streamContents = _PE_makeMethod("streamContents", function __method__ (stream) {
-return (_4 = stream, _5 = "string", (_4 && _4.hasOwnProperty(_5) && _4[_5]))
-}, _CL_stringStream, ((typeof (streamContents) !== 'undefined') && streamContents), false, "(stream-contents <string-stream>)");
-streamRemainingContents = exports.streamRemainingContents = _PE_makeMethod("streamRemainingContents", function __method__ (stream) {
-return (_4 = stream, _5 = "string", (_4 && _4.hasOwnProperty(_5) && _4[_5])).slice((_4 = stream, _5 = "index", (_4 && _4.hasOwnProperty(_5) && _4[_5])))
-}, _CL_stringStream, ((typeof (streamRemainingContents) !== 'undefined') && streamRemainingContents), false, "(stream-remaining-contents <string-stream>)");
-_CL_fileStream = exports._CL_fileStream = _PE_makeClass("_CL_fileStream", _CL_stream, {"file":false});
-streamWrite = exports.streamWrite = _PE_makeMethod("streamWrite", function __method__ (stream, _string) {
-return stream.file.write(_string)
-}, _CL_fileStream, ((typeof (streamWrite) !== 'undefined') && streamWrite), false, "(stream-write <file-stream> <string>)");
-STANDARDOUT = exports.STANDARDOUT = (true_W_((ENVIRONMENT === "browser")) ? make(_CL_documentStream) : (function _19__lambda (_object) {
-_object = (true_W_((ENVIRONMENT === "commonjs")) ? require("system") : process);
-return make(_CL_fileStream, _k('file'), _object.stdout)
-})())
-})()
+var $g1490 = require("ralph/core")
+false
+{var $g1491 = $g1490["%make-class"], $g1492 = $g1490["<object>"], $g1493 = $g1491($g1492, {});
+exports["<stream>"] = $g1493}
+{var $g1494 = $g1490["%make-generic"], $g1495 = $g1494("stream_close");
+exports["stream-close"] = $g1495}
+{var $g1496 = $g1494("stream_openQ");
+exports["stream-open?"] = $g1496}
+{var $g1497 = $g1494("stream_at_endQ");
+exports["stream-at-end?"] = $g1497}
+{var $g1498 = $g1494("stream_peek");
+exports["stream-peek"] = $g1498}
+{var $g1499 = $g1494("stream_read");
+exports["stream-read"] = $g1499}
+{var $g1500 = $g1494("stream_read_element");
+exports["stream-read-element"] = $g1500}
+{var $g1501 = $g1494("stream_read_to_end");
+exports["stream-read-to-end"] = $g1501}
+{var $g1502 = $g1494("stream_read_through");
+exports["stream-read-through"] = $g1502}
+{var $g1503 = $g1494("stream_unread_element");
+exports["stream-unread-element"] = $g1503}
+{var $g1504 = $g1494("stream_write");
+exports["stream-write"] = $g1504}
+{var $g1505 = $g1494("stream_contents");
+exports["stream-contents"] = $g1505}
+{var $g1506 = $g1494("stream_remaining_contents");
+exports["stream-remaining-contents"] = $g1506}
+{var $g1507 = $g1491($g1493, {"string":function $g1508 ()
+{return ""},
+index:function $g1509 ()
+{return 0},
+length:function $g1510 ()
+{return 0}});
+exports["<string-stream>"] = $g1507}
+var $g1511 = $g1490["%make-method"], $g1512 = $g1490.apply, $g1513 = $g1490["%next-method"], $g1514 = $g1490["get-setter"], $g1515 = $g1490.size, $g1516 = $g1490.get, $g1517 = $g1511("initialize", function $g1523 ($stream1518)
+{var $rest1519 = $SL.call(arguments, 1);
+$g1512($g1513($g1523), $stream1518, $rest1519);
+var $robject1521 = $g1516($stream1518, "string"), $g1522 = (($robject1521 || false).length || 0);
+return $g1514($stream1518, "length", $g1522)}, false, $g1507, $g1517)
+{var $g1524 = $g1490["=="];
+$g1497 = $g1511("stream_at_endQ", function $g1526 ($stream1525)
+{return $g1524($g1516($stream1525, "index"), $g1516($stream1525, "length"))}, false, $g1507, $g1497);
+exports["stream-at-end?"] = $g1497}
+{var $g1527 = $g1490.element;
+$g1498 = $g1511("stream_peek", function $g1529 ($stream1528)
+{return $g1527($g1516($stream1528, "string"), $g1516($stream1528, "index"))}, false, $g1507, $g1498);
+exports["stream-peek"] = $g1498}
+{var trueQ = $g1490["true?"], $g1530 = $g1490.not;
+$g1500 = $g1511("stream_read_element", function $g1536 ($stream1531)
+{var $value1534 = $g1497($stream1531), $g1535 = !(trueQ($value1534));
+if ($T($g1535))
+{var $element1532 = $g1498($stream1531);
+$g1514($stream1531, "index", ($g1516($stream1531, "index") + 1));
+return $element1532}}, false, $g1507, $g1500);
+exports["stream-read-element"] = $g1500}
+{var trueQ = $g1490["true?"], $g1538 = $g1490[">="], $g1539 = $g1490.concatenate, $g1540 = $g1490.inc;
+$g1499 = $g1511("stream_read", function $g1553 ($stream1541, $n1542)
+{var $result1543 = "", $i1544 = 0;
+while ($T(true))
+{var $g1545 = $g1497($stream1541), $value1548;
+if ($T($g1545))
+$value1548 = $g1545
+else $value1548 = $g1538($i1544, $n1542);
+var $g1552 = !(trueQ($value1548));
+if ($T($g1552))
+{(function $g1554 ($i1546)
+{return $result1543 = $g1539($result1543, $g1500($stream1541))})($i1544);
+var $rnumber1550 = $i1544, $g1551 = ($rnumber1550 + 1);
+$i1544 = $g1551}
+else break};
+return $result1543}, false, $g1507, $g1499);
+exports["stream-read"] = $g1499}
+{var trueQ = $g1490["true?"];
+$g1502 = $g1511("stream_read_through", function $g1563 ($stream1556, $element1557)
+{var $foundq1558;
+while ($T(true))
+{var $g1559 = $g1497($stream1556), $value1561;
+if ($T($g1559))
+$value1561 = $g1559
+else $value1561 = $foundq1558;
+var $g1562 = !(trueQ($value1561));
+if ($T($g1562))
+$foundq1558 = $g1524($g1500($stream1556), $element1557)
+else break};
+return false}, false, $g1507, $g1502);
+exports["stream-read-through"] = $g1502}
+{var $g1564 = $g1490.max, $g1565 = $g1490.dec;
+$g1503 = $g1511("stream_unread_element", function $g1571 ($stream1566)
+{var $rnumber1568 = $g1516($stream1566, "index"), $g1569 = ($rnumber1568 - 1), $g1570 = $g1564(0, $g1569);
+return $g1514($stream1566, "index", $g1570)}, false, $g1507, $g1503);
+exports["stream-unread-element"] = $g1503}
+{var $g1582 = $K("start"), $g1583 = $K("end"), $g1573 = $g1490["replace-subsequence"];
+$g1504 = $g1511("stream_write", function $g1584 ($stream1574, $rstring1575)
+{var $g1576 = $stream1574, $index1577 = $g1576.index, $robject1581 = $rstring1575, $length1578 = (($robject1581 || false).length || 0), $end1579 = ($index1577 + $length1578);
+$g1514($stream1574, "string", $g1573($g1516($stream1574, "string"), $rstring1575, $g1582, $index1577, $g1583, $end1579));
+$g1514($stream1574, "index", $end1579);
+$g1514($stream1574, "length", $g1564($end1579, $g1516($stream1574, "length")));
+return $rstring1575}, false, $g1507, $g1504);
+exports["stream-write"] = $g1504}
+{$g1505 = $g1511("stream_contents", function $g1586 ($stream1585)
+{return $g1516($stream1585, "string")}, false, $g1507, $g1505);
+exports["stream-contents"] = $g1505}
+{var $g1587 = $g1490.slice;
+$g1506 = $g1511("stream_remaining_contents", function $g1595 ($stream1588)
+{var $rarray1592 = $g1516($stream1588, "string"), $start1593 = $g1516($stream1588, "index"), $end1594 = undefined;
+return $rarray1592.slice($start1593, $end1594)}, false, $g1507, $g1506);
+exports["stream-remaining-contents"] = $g1506}
+{var $g1596 = $g1491($g1493, {file:false});
+exports["<file-stream>"] = $g1596}
+{$g1504 = $g1511("stream_write", function $g1599 ($stream1597, $rstring1598)
+{return $stream1597.file.write($rstring1598)}, false, $g1596, $g1504);
+exports["stream-write"] = $g1504}
+{var $g1602 = $K("file"), $g1600 = $g1490.make, $g1601 = $g1600($g1596, $g1602, process.stdout);
+exports["*standard-out*"] = $g1601}
