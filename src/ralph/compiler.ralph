@@ -2016,11 +2016,11 @@
       (. fs ("mkdirSync" directory)))))
 
 (define-function executable-path (module-name)
-  (. path ("resolve" "output2"
+  (. path ("resolve" "build"
            (concatenate module-name ".js"))))
 
 (define-function module-path (module-name)
-  (. path ("resolve" "output2"
+  (. path ("resolve" "build"
            (concatenate module-name ".rm"))))
 
 (define-function source-path (module-name)
