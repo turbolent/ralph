@@ -1,0 +1,5 @@
+(define-module ralph2/macro-test.b
+  export: (foo))
+
+(define-macro foo ()
+  2)
