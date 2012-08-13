@@ -6,17 +6,6 @@
 (define-function format-integer ((number <number>))
   (as-string number))
 
-(define-function format-out ((control-string <string>) #rest args)
-  "Formats arguments to *standard-out*."
-  (apply format *standard-out* control-string args))
-
-(define-function format-to-string ((control-string <string>) #rest args)
-  "Process a format string and return the result as another string.
-This function effectively calls format and returns the result as a string."
-  (bind ((stream (makeX <string-stream>)))
-    (apply format stream control-string args)
-    (stream-contents stream)))
-
 (define-function format ((stream <stream>) (control-string <string>) #rest args)
   "Format a string and write it to a stream."
   (bind-methods ((dispatch (char arg)
@@ -63,3 +52,14 @@ This function effectively calls format and returns the result as a string."
                   (begin
                    (stream-write stream control-string)
                    (set! control-string "")))))))))
+
+(define-function format-out ((control-string <string>) #rest args)
+  "Formats arguments to *standard-out*."
+  (apply format *standard-out* control-string args))
+
+(define-function format-to-string ((control-string <string>) #rest args)
+  "Process a format string and return the result as another string.
+This function effectively calls format and returns the result as a string."
+  (bind ((stream (makeX <string-stream>)))
+    (apply format stream control-string args)
+    (stream-contents stream)))
