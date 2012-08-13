@@ -1,0 +1,21 @@
+(define-module ralph2/regexp
+  export: (<regexp> match replace-all))
+
+(define <regexp> (%native "RegExp"))
+
+(define-method initializeX ((regexp <regexp>)
+                            #key pattern global? ignore-case? multiline?)
+  (when pattern
+    (bind ((flags (concatenate
+                   (if global? "g" "")
+                   (if ignore-case? "i" "")
+                   (if multiline? "m" ""))))
+      (. regexp ("compile" pattern)))))
+
+(define-function find ((regexp <regexp>) (string <string>))
+  (bind ((position (. string ("search" regexp))))
+    (when (> position -1)
+      position)))
+
+(define-function match ((regexp <regexp>) (string <string>))
+  (. string ("match" regexp)))
