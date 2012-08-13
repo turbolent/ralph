@@ -4,16 +4,19 @@
 
 (define <date> (%native "Date"))
 
-(define-method initialize ((date <date>) #rest rest)
-  (bind ((arguments (as-object rest)))
-    (for-each ((setter [["timestamp" "setTime"]
-                        ["day" "setDate"]
-                        ["month" "setMonth"]
-                        ["year" "setYear"]
-                        ["minutes" "setMinutes"]
-                        ["seconds" "setSeconds"]
-                        ["hours" "setHours"]
-                        ["milliseconds" "setMilliseconds"]]))
+(define *setters*
+  [["timestamp" "setTime"]
+   ["day" "setDate"]
+   ["month" "setMonth"]
+   ["year" "setYear"]
+   ["minutes" "setMinutes"]
+   ["seconds" "setSeconds"]
+   ["hours" "setHours"]
+   ["milliseconds" "setMilliseconds"]])
+
+(define-method initialize ((date <date>) #rest options)
+  (bind ((arguments (as-object options)))
+    (for-each ((setter *setters*))
               ()
       (destructuring-bind (keyword function) setter
         (if-bind (value (get arguments keyword))

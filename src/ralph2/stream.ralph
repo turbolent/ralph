@@ -52,7 +52,7 @@
   (index 0)
   (length 0))
 
-(define-method initializeX ((stream <string-stream>) #rest rest)
+(define-method initialize ((stream <string-stream>) #rest rest)
   (apply next-method stream rest)
   (set! (get stream "length")
         (size (get stream "string"))))
@@ -126,5 +126,5 @@
 ;;;;
 
 (define *standard-out*
-  (makeX <file-stream>
-         file: (%get-property (%native "process") "stdout")))
+  (make <file-stream>
+        file: (%get-property (%native "process") "stdout")))

@@ -1,10 +1,12 @@
 (define-module ralph2/regexp
-  export: (<regexp> match replace-all))
+  export: (<regexp> match replace-all)
+  inline: (match))
 
 (define <regexp> (%native "RegExp"))
 
-(define-method initializeX ((regexp <regexp>)
-                            #key pattern global? ignore-case? multiline?)
+(define-method initialize ((regexp <regexp>)
+                           #key pattern global?
+                                ignore-case? multiline?)
   (when pattern
     (bind ((flags (concatenate
                    (if global? "g" "")

@@ -3,25 +3,25 @@
     export: (read))
 
 (define *number-patterns*
-  (map (curry makeX <regexp> ignore-case?: #t pattern:)
+  (map (curry make <regexp> ignore-case?: #t pattern:)
        ["^[+-]?0x[0-9a-f]+"
         "^[+-]?0[0-7]+"
         "^[+-]?\\d+\\.?\\d*(?:e-?\\d*(?:\\d\\.?|\\.?\\d)\\d*)?"]))
 
 (define *line-pattern*
-  (makeX <regexp> pattern: "(.*)[\n\r]?"))
+  (make <regexp> pattern: "(.*)[\n\r]?"))
 
 (define *whitespace-subpattern*
   ;; Vertical Tab, Form Feed, No-break space, Byte Order Mark
   "\t\n\r\u000B\u000C\u00A0\uFEFF ")
 
 (define *whitespace-pattern*
-  (makeX <regexp> pattern:
-         (concatenate "[" *whitespace-subpattern* "]*")))
+  (make <regexp> pattern:
+        (concatenate "[" *whitespace-subpattern* "]*")))
 
 (define *atom-pattern*
-  (makeX <regexp> pattern:
-         (concatenate "[^\\[\\]();`," *whitespace-subpattern* "]+")))
+  (make <regexp> pattern:
+        (concatenate "[^\\[\\]();`," *whitespace-subpattern* "]+")))
 
 (define-function match-stream ((regexp <regexp>) (stream <stream>))
   (if-bind (result (match regexp (stream-remaining-contents stream)))
@@ -51,7 +51,7 @@
            (symbol value))))))
 
 (define-function read-string ((stream <stream>))
-  (bind ((result (makeX <string-stream>))
+  (bind ((result (make <string-stream>))
          (char (stream-read-element stream)))
     (while (not (== char "\""))
       (when (stream-at-end? stream)

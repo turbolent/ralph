@@ -573,11 +573,11 @@
 ;; comma is only used as a marker and
 ;; actually handled in backquote
 (define-core-macro %comma (_ value)
-  (signal (makeX <error> message: "comma not inside backquote")))
+  (signal (make <error> message: "comma not inside backquote")))
 
 (define *dot-name-error*
-  (makeX <error>
-         message: "unsupported name for call in dot"))
+  (make <error>
+        message: "unsupported name for call in dot"))
 
 (define-core-macro . (_ value #rest calls)
   (reduce (method (value call)
@@ -622,12 +622,12 @@
             [#f identifier])
       (unless (or (instance? identifier <symbol>)
                   setter?)
-        (signal (makeX <error> message:
+        (signal (make <error> message:
                       (concatenate macro-name ": "
                                    "name not <var> or (setter <var>)"))))
       (when (and type/existing?
                  (empty? arguments))
-        (signal (makeX <error> message:
+        (signal (make <error> message:
                       (concatenate macro-name ": "
                                    "method has no arguments"))))
       (bind ((simplified-arguments (simplify-arguments arguments))
@@ -1826,7 +1826,7 @@
   (select exp instance?
     ((<array>)
      (if (empty? exp)
-         (signal (makeX <error> message: "empty expression"))
+         (signal (make <error> message: "empty expression"))
          (compile-js-exp exp env)))
     ((<number>)
      (as-string exp))
@@ -2015,8 +2015,8 @@
 ;;;;
 
 (define-function read-program (source)
-  (read (makeX <string-stream>
-               string: (concatenate "(" source "\n)"))))
+  (read (make <string-stream>
+              string: (concatenate "(" source "\n)"))))
 
 (define-function compile-expression (exp env)
   (reduce (method (result name/fn)
@@ -2129,8 +2129,8 @@
 (define-function read-module (module-name)
   (bind ((p (module-path module-name)))
     (when (. path ("existsSync" p))
-      (apply (curry makeX <module> name:)
-             (read (makeX <string-stream>
+      (apply (curry make <module> name:)
+             (read (make <string-stream>
                          string: (read-file p)))))))
 
 (define-function read-file (path)
@@ -2146,8 +2146,8 @@
   (when (and (not (has? *modules* module-name))
              ;; TODO: (recompile? module-name)
              #t)
-    (bind ((module (makeX <module> name: module-name))
-           (env (makeX <environment> module: module))
+    (bind ((module (make <module> name: module-name))
+           (env (make <environment> module: module))
            (source (read-file (source-path module-name)))
            (program (read-program source))
            (executable (open-executable module-name)))
@@ -2177,7 +2177,7 @@
 
 ;;;;
 
-(bind ((start (makeX <date>)))
+(bind ((start (make <date>)))
   (compile-module "ralph2/compiler")
   (compile-module "ralph2/runtime.test")
-  (format-out "%d\n" (- (makeX <date>) start)))
+  (format-out "%d\n" (- (make <date>) start)))

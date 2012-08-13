@@ -24,7 +24,7 @@
            replace-subsequence replace-subsequence!
            remove remove!
            interpose any? map do copy-sequence slice
-           makeX object-properties object-values initializeX
+           make object-properties object-values initialize
            <hash-symbol> get (setter get) inc dec split-with
            as-hex-string description min max abs
            round floor ceil sin cos atan2 expt sqrt
@@ -506,9 +506,9 @@
          (module* (as-lowercase (or module ""))))
     (or (get %symbols module* name)
         (set! (get %symbols module* name)
-              (makeX <symbol>
-                     name: name
-                     module: module)))))
+              (make <symbol>
+                    name: name
+                    module: module)))))
 
 (%native "$S = " symbol)
 
@@ -633,9 +633,9 @@
 ;; TODO: remove X from make and initialize
 ;; (temporary to avoid clash with old runtime)
 
-(define-function makeX (type #rest arguments)
+(define-function make (type #rest arguments)
   (bind ((object (%native-call "new" type)))
-    (apply initializeX object arguments)
+    (apply initialize object arguments)
     object))
 
 (define-function object-properties (object #key inherited?)
@@ -655,9 +655,9 @@
   (map (curry get object)
        (object-properties object)))
 
-(define-generic initializeX (object #rest))
+(define-generic initialize (object #rest))
 
-(define-method initializeX ((object <object>) #rest rest)
+(define-method initialize ((object <object>) #rest rest)
   (bind ((arguments (as-object rest)))
     (if-bind (properties (%get-property (type object)
                                         "%properties"))
@@ -677,10 +677,10 @@
 (define-class <hash-symbol> (<object>)
     name)
 
-(bind ((key (makeX <hash-symbol> name: "key")))
+(bind ((key (make <hash-symbol> name: "key")))
   (%native "$KEY = " key))
 
-(bind ((rest (makeX <hash-symbol> name: "rest")))
+(bind ((rest (make <hash-symbol> name: "rest")))
   (%native "$REST = " rest))
 
 (define-function get (object #rest properties)

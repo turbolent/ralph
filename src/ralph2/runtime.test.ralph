@@ -142,7 +142,7 @@
 ;; signal
 (check-condition "signal <error>" <error>
                  (method ()
-                   (signal (makeX <error> message: "!"))
+                   (signal (make <error> message: "!"))
                    #f))
 
 
@@ -259,15 +259,15 @@
 (define-class <c> (<b>))
 
 (check-true "instance?: <a> 1"
-            (instance? (makeX <a>) <a>))
+            (instance? (make <a>) <a>))
 (check-true "instance?: <a> 2"
-            (instance? (makeX <b>) <a>))
+            (instance? (make <b>) <a>))
 (check-true "instance?: <a> 3"
-            (instance? (makeX <c>) <a>))
+            (instance? (make <c>) <a>))
 (check-false "instance?: subclass 1"
-             (instance? (makeX <a>) <b>))
+             (instance? (make <a>) <b>))
 (check-false "instance?: subclass 2"
-             (instance? (makeX <a>) <c>))
+             (instance? (make <a>) <c>))
 
 ;;
 (check-equal "type: null is <boolean>"
@@ -282,7 +282,7 @@
 (define-function foo (object)
   (%get-property object "foo"))
 
-(bind ((bar (makeX <object>)))
+(bind ((bar (make <object>)))
   (set! (foo bar) 1)
   (check-equal "function: setter before getter"
                1 (foo bar)))
@@ -315,7 +315,7 @@
                2 ((element fns 2))))
 
 (check-equal "dotimes: count form only evaluated at beginning"
-             9 (last (bind ((numbers (makeX <array>)))
+             9 (last (bind ((numbers (make <array>)))
                        (dotimes (i (- 10 (size numbers)) numbers)
                          (push-last numbers i)))))
 
@@ -418,7 +418,7 @@
                3 (test2 1)))
 
 ;; get setter/getter
-(bind ((x (makeX <object>)))
+(bind ((x (make <object>)))
   (set! (get x "1" "2" "3") 4)
   (check-equal "get: '1' -> '2' -> '3' = 4"
                4 (get x "1" "2" "3")))
@@ -452,14 +452,14 @@
              1 (test "test"))
 (check-equal "generic: specialized on <number>"
              2 (test 1))
-(bind ((x (makeX <object>)))
+(bind ((x (make <object>)))
   (check-equal "generic: setter before getter, get"
                3 (test x))
   (check-equal "generic: setter before getter, set"
                4 (set! (test x) 0)))
 
 ;; inc!
-(bind ((x (makeX <object>)))
+(bind ((x (make <object>)))
   (set! (get x "y") 0)
   (inc! (get x "y"))
   (check-equal "inc!: 0 -> 1"
@@ -470,7 +470,7 @@
              1 (position [1 2 3] 2))
 
 ;; <string-stream>
-(bind ((stream (makeX <string-stream> string: "test")))
+(bind ((stream (make <string-stream> string: "test")))
   (check-false "<string-stream>: not at end when starting"
                (stream-at-end? stream))
   (check-true "<string-stream>: peeking doesn't advance the stream"
@@ -483,7 +483,7 @@
   (stream-read-element stream)
   (check-true "<string-stream>: at end when done"
               (stream-at-end? stream)))
-(bind ((stream (makeX <string-stream>)))
+(bind ((stream (make <string-stream>)))
   (check-equal "<string-stream>: empty contents when starting"
                "" (stream-contents stream))
   (stream-write stream "FOO")
@@ -538,13 +538,13 @@
   2)
 
 (check-equal "classes: <b> inherits <a>: foo on <a>"
-             1 (foo (makeX <a>)))
+             1 (foo (make <a>)))
 
 (check-equal "classes: <b> inherits <a>: foo on <b>"
-             2 (foo (makeX <b>)))
+             2 (foo (make <b>)))
 
 (check-equal "classes: <c> inherits <b>: foo on <c>"
-             2 (foo (makeX <c>)))
+             2 (foo (make <c>)))
 
 ;; next-method
 (define-generic bar (object x))
@@ -565,7 +565,7 @@
 (define-method bar ((object <e>))
   (call-next-method))
 
-(bind ((e (makeX <e>)))
+(bind ((e (make <e>)))
   (bar e "d")
   (check-false "next-method: last method shouldn't have a next"
                (get e "next"))
@@ -581,7 +581,7 @@
 (define-method (setter bar) ((c <c>) value)
   (next-method c 1))
 
-(bind ((d (makeX <d>)))
+(bind ((d (make <d>)))
   (set! (bar d) 2)
   (check-equal "next-method: setter" 1 (get d "value")))
 
@@ -615,11 +615,11 @@
   z
   (c 3))
 
-(define-method initializeX ((object <z>) #rest rest)
+(define-method initialize ((object <z>) #rest rest)
   (apply next-method object rest))
 
-(bind ((z (makeX <z> x: 1 z: 2))
-       (x (makeX <x>)))
+(bind ((z (make <z> x: 1 z: 2))
+       (x (make <x>)))
   (check-equal "slots: keyword initializer (1)"
                1 (get z "x"))
   (check-equal "slots: keyword initializer (2)"
@@ -637,11 +637,11 @@
   (baz 3)
   blub)
 
-(define-method initializeX ((test <test>) #rest rest)
+(define-method initialize ((test <test>) #rest rest)
   (apply next-method test rest)
   (set! (get test "blub") 4))
 
-(bind ((test (makeX <test> foo: 1 bar: 2)))
+(bind ((test (make <test> foo: 1 bar: 2)))
   (check-equal "type: default initializer for slot 1"
                1 (get test "foo"))
   (check-equal "type: default initializer for slot 2"
