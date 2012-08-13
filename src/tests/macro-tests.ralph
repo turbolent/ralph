@@ -1,7 +1,0 @@
-;; macros
-(define-macro with (function #rest body)
-  `(,function ,(concatenate `(method ())
-                            body)))
-
-(with test
-  (+ 1 2))

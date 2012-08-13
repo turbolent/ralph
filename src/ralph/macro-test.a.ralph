@@ -1,0 +1,9 @@
+(define-module ralph/macro-test.a
+  import: (ralph/test)
+  compile-time-import: (ralph/macro-test.b
+                        ralph/macro-test.c))
+
+(define-function foo ()
+  1)
+
+(check-equal "X" (foo) 3)

@@ -1,26 +1,15 @@
 (define-module ralph/format
-  import: (ralph/core ralph/stream)
+  import: (ralph/stream)
   export: (format-out format-to-string format))
 
+;; TODO:
 (define-function format-integer ((number <number>))
-  ;; TODO:
-  (js:+ "" number))
-
-(define-function format-out ((control-string <string>) #rest args)
-  "Formats arguments to *standard-out*."
-  (apply format *standard-out* control-string args))
-
-(define-function format-to-string ((control-string <string>) #rest args)
-  "Process a format string and return the result as another string.
-This function effectively calls format and returns the result as a string."
-  (bind ((stream (make <string-stream>)))
-    (apply format stream control-string args)
-    (stream-contents stream)))
+  (as-string number))
 
 (define-function format ((stream <stream>) (control-string <string>) #rest args)
   "Format a string and write it to a stream."
   (bind-methods ((dispatch (char arg)
-                   (select (as-lowercase char) js:===
+                   (select (as-lowercase char) ==
                      (("s" "c")
                       arg)
                      (("=")
@@ -52,7 +41,7 @@ This function effectively calls format and returns the result as a string."
                      (slice control-string next-dispatch)))
               (if next-dispatch
                   ;; dispatch
-                  (bind ((arg (get args index))
+                  (bind ((arg (element args index))
                          (char (second control-string))
                          (percent (== char "%")))
                     (stream-write stream (if percent "%" (dispatch char arg)))
@@ -63,3 +52,14 @@ This function effectively calls format and returns the result as a string."
                   (begin
                    (stream-write stream control-string)
                    (set! control-string "")))))))))
+
+(define-function format-out ((control-string <string>) #rest args)
+  "Formats arguments to *standard-out*."
+  (apply format *standard-out* control-string args))
+
+(define-function format-to-string ((control-string <string>) #rest args)
+  "Process a format string and return the result as another string.
+This function effectively calls format and returns the result as a string."
+  (bind ((stream (make <string-stream>)))
+    (apply format stream control-string args)
+    (stream-contents stream)))

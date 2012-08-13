@@ -1,1264 +1,1691 @@
+
 (define-module ralph/compiler
-  import: (ralph/core ralph/format ralph/regexp ralph/reader)
-  export: (compile macroexpand transform-asynchronous))
+  import: (ralph/stream ralph/format ralph/regexp
+           ralph/reader ralph/date)
+  compile-time-import: (ralph/compiler-macros))
 
-(define S symbol)
+;; NOTE: naming convention:
+;; - identifier = symbol, name = string
+;; - verbed functions or predicates
 
-(define *type-name->constructor-name*
-  (make-object
-   "<string>" "String"
-   "<number>" "Number"
-   "<boolean>" "Boolean"))
+;;;; modules
 
-(define-function setter-name? (name)
-  (and (instance? name <array>)
-       (== (size name) 2)
-       (== (first name) (S "setter"))))
+;; module-name => <module>
+(define *modules* (make-object))
 
-(define-function source (form)
-  (bind-properties (source start-index end-index)
-      form
-    (slice source start-index end-index)))
+(define-class <module> (<object>)
+  name
+  ;; name*
+  (exports [])
+  ;; [module name*]*
+  (imports [])
+  ;; name*
+  (inline []))
 
-(define-function prepend-return (forms)
-  (concatenate
-   (but-last forms)
-   [(bind ((tail (last forms)))
-      (if (and tail
-               (== (first tail)
-                   (S "js:return")))
-          (last forms)
-          `(js:return ,tail)))]))
+(define *defined?*
+  `(%all-arguments %this-method))
 
-(define-function argument-names (arguments)
-  (map (method (argument)
-         (if (instance? argument <array>)
-             (first argument)
-             argument))
-       arguments))
+(define-class <environment> (<object>)
+  module
+  (macros (make-plain-object))
+  (symbol-macros (make-plain-object))
+  ;; see alpha conversion
+  (identifiers (make-object))
+  (defined? (make-object))
+  (lifted (make-object))
+  (import-identifiers (make-plain-object)))
 
-(define-function required-arguments (arguments)
-  (bind ((length (size arguments)))
-    (bind-methods ((position (hash-symbol)
-                     (find-key arguments (curry = hash-symbol)
-                               failure: length)))
-      (slice arguments 0
-             (apply min length
-                    (map position [#key #rest]))))))
+;;;; utilities
 
-(define-function uses? (form symbol)
-  (if (instance? form <array>)
-      (any? (rcurry uses? symbol)
-            form)
-      (== form symbol)))
+(define-function expression? (form)
+  (and (instance? form <array>)
+       (not (empty? form))
+       (instance? (first form) <symbol>)))
 
-(define-function function-declaration (name arguments body)
-  (bind-methods ((position (symbol)
-                  (find-key arguments (curry = symbol))))
-    (bind ((required (required-arguments arguments))
-           (body (if (and (> (size body) 1)
-                          (instance? (first body) <string>))
-                     ;; strip documentation
-                     (slice body 1)
-                     body))
-           (rest-position (position #rest))
-           (key-position (position #key))
-           (rest/key-code []))
-      ;; key
-      (when (or rest-position
-                key-position)
-        (bind ((rest-var (if rest-position
-                             (element arguments
-                                      (inc rest-position))
-                             (generate-symbol))))
-          (push-last rest/key-code
-                     `(js:var ,rest-var
-                              (as-array js:arguments
-                                        ,(size required))))
-          (when key-position
-            ;; check #rest and #key are in order
-            (when (and rest-position
-                       (< key-position rest-position))
-              (signal (make <error>
-                            message: "#key should appear after #rest")))
-            (destructuring-bind (key-var value-var index-var)
-                (repeatedly generate-symbol 3)
-              (bind ((setter-code `(select ,key-var js:==)))
-                (for-each ((key (slice arguments (inc key-position))))
-                          ()
-                  (destructuring-bind (name default)
-                      (if (instance? key <array>)
-                          key
-                          [key #f])
-                    (push-last rest/key-code
-                               `(js:var ,name ,default))
-                    (push-last setter-code
-                               `((,(keyword (symbol-name name)))
-                                 (js:set ,name ,value-var)))))
-                (push-last rest/key-code
-                           `(js:for (((,index-var 0)
-                                      (js:< ,index-var
-                                            (js:get-property ,rest-var "length"))
-                                      (js:+ ,index-var 2)))
-                                    (js:var ,key-var
-                                            (js:get-property ,rest-var ,index-var))
-                                    (js:var ,value-var
-                                            (js:get-property ,rest-var
-                                                             (js:+ ,index-var 1)))
-                                    (when (keyword? ,key-var)
-                                      ,setter-code))))))))
-      ;; function
-      `(js:function ,(or name (S "js:null"))
-                    ,(argument-names required)
-                    ,(concatenate `(begin)
-                                  rest/key-code
-                                  ;; body
-                                  (prepend-return body))))))
+(define-function transform-setter-identifier (identifier)
+  (symbol (concatenate (symbol-name identifier)
+                       "-setter")))
 
-(define-function display-name (name arguments #key setter?)
-  (concatenate
-   "(" (if setter?
-           (concatenate "(setter " (symbol-name name) ")")
-           (symbol-name name))
-   (bind ((specializers? #t))
-       (join (map (method (argument)
-                    (concatenate
-                     " " (if specializers?
-                             (if (or (== argument #key)
-                                     (== argument #rest))
-                                 (begin
-                                  (set! specializers? #f)
-                                  (concatenate "#" (symbol-name argument)))
-                                 (if (instance? argument <array>)
-                                     (symbol-name (second argument))
-                                     "<object>"))
-                             (symbol-name
-                              (if (instance? argument <array>)
-                                  (first argument)
-                                  argument)))))
-                  arguments)
-             ""))
-   ")"))
+(define-function setter-identifier? (form)
+  (and (instance? form <array>)
+       (== (size form) 2)
+       (every? (rcurry instance? <symbol>)
+               form)
+       (== (symbol-name (first form))
+           "setter")))
 
-(define-function setter-symbol (symbol)
-  (bind ((result (make <symbol> name:
-                       (concatenate "_SET_" (escape-symbol symbol)))))
-    (set! (get result "generated?") #t)
-    result))
-
-;; NB: don't use for loops!
-(define-function request-temporaries (environment count)
-  (bind-properties (temporaries post-processors) environment
-    (when (empty? temporaries)
-      (push post-processors
-            (method (form)
-              `((js:function js:null ,temporaries ,form)))))
-    (when (< (size temporaries) count)
-      (dotimes (_ (- count (size temporaries)))
-        (push-last temporaries
-                   (generate-symbol))))
-    temporaries))
-
-(define *macros*
-    (make-object
-     "define-macro"
-     (method (environment name arguments #rest body)
-       (bind ((compiled (compile
-                         (concatenate
-                          `(method ,(concatenate [(S "*environment*")]
-                                                 arguments))
-                          body))))
-         (set! (get environment "macros" (symbol-name name))
-               (eval (concatenate "(" compiled ")"))))
-       #f)
-     "%backquote"
-     (method (_ form)
-       (bind-methods ((transform (form)
-                        (cond
-                          ((and (instance? form <array>)
-                                (not (empty? form)))
-                           (if (== (first form)
-                                   (S "%comma"))
-                               (second form)
-                               (concatenate `(make-array)
-                                            (map transform
-                                                 form))))
-                          ((instance? form <symbol>)
-                           `(symbol ,(symbol-name form)))
-                          (else:
-                           form))))
-         (transform form)))
-     "%comma"
-     (method (_ value)
-       (signal (make <error> message:
-                     (format-to-string "comma not inside backquote: %d:%d"
-                                       (get value "start-line")
-                                       (get value "start-column")))))
-     "%array"
-     (method (_ #rest values)
-       (concatenate `(js:array) values))
-     "%parallel-set"
-     (method (_ #rest clauses)
-       (bind ((temp-clauses [])
-              (set-clauses []))
-         (if (> (size clauses) 2)
-             (begin
-              (for ((i 0 (+ i 2)))
-                   ((>= i (size clauses)))
-               (bind ((temp (generate-symbol)))
-                  (push-last temp-clauses
-                             `(js:var ,temp ,(element clauses (inc i))))
-                  (push-last set-clauses
-                             `(js:set ,(element clauses i) ,temp))))
-              (concatenate `(begin)
-                           temp-clauses
-                           set-clauses))
-             (concatenate `(js:set)
-                          clauses))))
-     "define"
-     (method (environment name value)
-       (bind ((escaped (if (instance? name <symbol>)
-                           (escape-symbol name)
-                           name))
-              (inlined (if (instance? name <string>)
-                        `(js:inline ,name)
-                        name)))
-           (bind-properties (definitions) environment
-             (unless (member? inlined definitions)
-               (push-last definitions inlined)))
-           `(js:set ,inlined
-                    ,(if (member? escaped (get environment "exports") test: =)
-                         `(set! (js:get-property exports ,escaped)
-                                ,value)
-                         value))))
-     "if"
-     (method (_ test then else)
-       `(js:if (true? ,test)
-               ,then
-               ,else))
-     "when"
-     (method (_ test #rest body)
-       `(if ,test
-            ,(concatenate `(begin) body)
-            #f))
-     "unless"
-     (method (_ test #rest body)
-       `(js:if (js:not (true? ,test))
-               ,(concatenate `(begin) body)
-               #f))
-     "bind"
-     (method (_ bindings #rest body)
-       (bind ((vars (map first bindings)))
-           (concatenate
-            `((js:function js:null ,vars
-                           ,(concatenate `(begin)
-                                         (map (method (binding)
-                                                (destructuring-bind (var value)
-                                                    binding
-                                                  `(js:set ,var ,value)))
-                                              bindings)
-                                         (prepend-return body))))
-            (bind ((arguments (map (method (binding)
-                                     (destructuring-bind (var value) binding
-                                       (when (any? (rcurry uses? var)
-                                                   (map second bindings))
-                                         `(js:and (js:defined ,var) ,var))))
-                                   bindings)))
-              (if (every? not arguments)
-                  []
-                  arguments)))))
-     "if-bind"
-     (method (_ binding then else)
-       (destructuring-bind (var value) binding
-         (bind ((temp (generate-symbol)))
-           `(bind ((,temp ,value))
-              (if ,temp
-                  (bind ((,var ,temp))
-                    ,then)
-                  ,else)))))
-     "set!"
-     (method (_ expression #rest value-rest)
-       (if (instance? expression <array>)
-           (cond
-            ((== (first expression)
-                 (S "js:get-property"))
-             `(js:set ,expression
-                      ,(first value-rest)))
-            ((and (== (first expression)
-                      (S "get"))
-                  (== (size expression) 3))
-             `(js:set ,(concatenate `(js:get-property)
-                                    (rest expression))
-                      ,(first value-rest)))
-            (else:
-             (concatenate `(,(setter-symbol (first expression)))
-                          (rest expression)
-                          value-rest)))
-           `(js:set ,expression ,(first value-rest))))
-     "get"
-     (method (_ object #rest keys)
-       (if (== (size keys) 1)
-           `(%get-property ,object ,(first keys))
-           (concatenate `(js:call get ,object)
-                        keys)))
-     "%get-property"
-     (method (environment object name)
-       (destructuring-bind (temp1 temp2)
-           (request-temporaries environment 2)
-         `(begin
-           (set! ,temp1 ,object)
-           (set! ,temp2 ,name)
-           (js:and ,temp1
-                   (has? ,temp1 ,temp2)
-                   (js:get-property ,temp1 ,temp2)))))
-     "while"
-     (method (_ test #rest body)
-       `((js:function js:null ()
-           ,(concatenate
-             `(begin)
-             `(,(concatenate `(js:while (true? ,test))
-                             body)
-                (js:return #f))))))
-     "until"
-     (method (_ test #rest body)
-       (concatenate `(while (not ,test))
-                    body))
-     "define-generic"
-     (method (_ name arguments)
-       `(define ,name
-          (%make-generic (js:escape ,name)
-                         ,(display-name name arguments))))
-     "not"
-     (method (_ value)
-       `(js:not (true? ,value)))
-     "true?"
-     (method (_ value)
-       (if (and (instance? value <array>)
-                (any? (curry == (first value))
-                      [(S "not") (S "js:not")]))
-           value
-           `(js:call true? ,value)))
-     "and"
-     (method (_ #rest expressions)
-       (or (empty? expressions)
-           `(js:if ,(concatenate `(js:and)
-                                 (map (method (expression)
-                                        `(true? ,expression))
-                                      (but-last expressions)))
-                   ,(last expressions)
-                   #f)))
-     "or"
-     (method (environment #rest expressions)
-       (destructuring-bind (temp)
-           (request-temporaries environment 1)
-         (bind-methods ((test (expressions)
-                          (if (empty? expressions)
-                              #f
-                              `(begin
-                                (set! ,temp ,(first expressions))
-                                (js:if (true? ,temp)
-                                       ,temp
-                                       ,(test (rest expressions)))))))
-           (test expressions))))
-     "inc"
-     (method (_ object)
-       `(js:+ ,object 1))
-     "dec"
-     (method (_ object)
-       `(js:- ,object 1))
-     "dotimes"
-     (method (environment binding #rest body)
-       (bind ((temp (generate-symbol)))
-         (destructuring-bind (var count result) binding
-           (concatenate `(for ((,var 0 (js:+ ,var 1))
-                               (,temp ,count ,temp))
-                              ((js:>= ,var ,temp) ,(or result #f)))
-                        body))))
-     "for"
-     (method (_ clauses end #rest body)
-       (bind ((init-clauses [])
-              (next-clauses []))
-         (for-each ((clause clauses))
-                   ()
-           (push-last init-clauses
-                      (slice clause 0 2))
-           (push-last next-clauses
-                      (first clause))
-           (push-last next-clauses
-                      (third clause)))
-         `(bind ,init-clauses
-            ,(concatenate `(js:while (not ,(first end)))
-                          (bind ((vars (map first clauses)))
-                              `(,(concatenate
-                                  `(,(concatenate `(method ,vars)
-                                                  body))
-                                   vars)))
-                          `(,(concatenate `(%parallel-set)
-                                          next-clauses)))
-            ,(if (empty? (rest end))
-                 #f
-                 (concatenate `(begin)
-                              (rest end))))))
-     "method"
-     (method (_ arguments #rest body)
-       (function-declaration (S "js:null")
-                             arguments body))
-     "cond"
-     (method (_ #rest cases)
-       (if (empty? cases)
-           #f
-           (destructuring-bind (test #rest then) (first cases)
-             (bind ((then (concatenate `(begin) then)))
-               (if (== test else:)
-                   then
-                   `(if ,test
-                        ,then
-                        ,(concatenate `(cond)
-                                      (rest cases))))))))
-     "select"
-     (method (_ value test #rest cases)
-       (bind ((value-var (generate-symbol))
-              (infix? (and (instance? test <symbol>)
-                           (has? *infix* (symbol-name test))))
-              (test-var (if infix?
-                            test
-                            (generate-symbol))))
-         (bind-methods ((test-expression (test-value)
-                          `(,test-var ,value-var ,test-value)))
-           `((js:function js:null ()
-               ,(concatenate `(begin
-                               (js:var ,value-var ,value))
-                             (if infix? `() `((js:var ,test-var ,test)))
-                             `((js:return
-                                ,(concatenate
-                                  `(cond)
-                                  (map (method (case)
-                                         (destructuring-bind (tests #rest then) case
-                                           (if (== tests else:)
-                                               case
-                                               (concatenate
-                                                `(,(concatenate
-                                                    `(or)
-                                                    (map test-expression tests)))
-                                                then))))
-                                       cases))))))))))
-     "handler-case"
-     (method (_ body #rest conditions)
-       (bind ((condition-var (generate-symbol)))
-         `((js:function js:null ()
-             (begin
-               (js:try
-                (js:return ,body)
-                ,condition-var
-                ,(concatenate
-                  `(cond)
-                  (map (method (condition)
-                         (destructuring-bind ((type #rest arguments) #rest body)
-                             condition
-                           (concatenate `((instance? ,condition-var ,type))
-                                        (destructuring-bind (#key condition)
-                                            arguments
-                                          (if condition
-                                              `((js:var ,condition ,condition-var))
-                                              `()))
-                                        (prepend-return body))))
-                       conditions))))))))
-     "define-class"
-     (method (_ class superclass #rest slots)
-       `(define ,class
-            (%make-class
-             (js:escape ,class)
-             ,(first superclass)
-             ,(bind ((object `(make-object)))
-                (for-each ((slot slots))
-                          ()
-                  (if (instance? slot <array>)
-                      (begin
-                       (push-last object (symbol-name (first slot)))
-                       (push-last object `(method ()
-                                                  ,(second slot))))
-                      (begin
-                       (push-last object (symbol-name slot))
-                       (push-last object #f))))
-                object))))
-     "define-module"
-     (method (environment name #key (import []) (export []))
-       (set! (get environment "exports")
-             (map (method (name)
-                    (cond
-                     ((instance? name <symbol>)
-                      (escape-symbol name))
-                     ((setter-name? name)
-                      (escape-symbol (setter-symbol (second name))))
-                     (else: name)))
-                  export))
-       (concatenate
-        `(begin
-          (js:var *module* js:this))
-         (if (get environment "asynchronous?")
-             (begin
-              (push (get environment "post-processors")
-                    (bind ((module-name (symbol-name name)))
-                      (method (form)
-                        `(begin
-                          (js:comment ,(concatenate "@ sourceURL=" module-name))
-                          ((js:inline "parent.define") ,module-name
-                           ,(concatenate `(js:array)
-                                         (map symbol-name import))
-                           (js:function js:null (exports) ,form))))))
-              `())
-             (bind ((property (generate-symbol))
-                    (module (generate-symbol))
-                    (i (generate-symbol))
-                    (modules (generate-symbol)))
-               (concatenate
-                (if (empty? import)
-                    `()
-                    `((js:var ,modules ,(concatenate `(js:array)
-                                                     (map symbol-name import)))
-                      (js:for (((,i 0)
-                                (js:< ,i ,(size import))
-                                (js:+ ,i 1)))
-                        (js:var ,module (require (js:get-property ,modules ,i)))
-                        (js:for-in (,property ,module)
-                          (js:if ((js:get-property ,module "hasOwnProperty") ,property)
-                                 (js:set (js:get-property *module* ,property)
-                                         (js:get-property ,module ,property))))))))))))
-     "block"
-     (method (_ argument #rest body)
-        (destructuring-bind ((name)) argument
-          (if name
-              (bind ((condition (generate-symbol)))
-                `(js:try
-                  (js:return
-                   ,(concatenate `(bind ((,name (%make-non-local-exit-function
-                                                 ,(symbol-name name)))))
-                                 body))
-                  ,condition
-                  (if (and (%non-local-exit? ,condition)
-                           (js:=== (js:get-property ,condition "name")
-                                   ,(symbol-name name)))
-                      (js:return (js:get-property ,condition "value"))
-                      (js:throw ,condition))))
-              (concatenate `(begin) body))))
-     "for-each"
-     (method (_ clauses end #rest body)
-       (if (and (== (size clauses) 1)
-                (empty? end))
-           (destructuring-bind (item x) (first clauses)
-             (bind ((index (generate-symbol))
-                    (array (generate-symbol))
-                    (length (generate-symbol)))
-               `(bind ((,array ,x)
-                       (,length (size ,array)))
-                    ,(concatenate `(js:for (((,index 0)
-                                             (js:< ,index ,length)
-                                             (js:+ ,index 1)))
-                                           (js:var ,item (js:get-property ,array ,index)))
-                                  `(((js:function js:null (,item)
-                                       ,(concatenate `(begin)
-                                                     body))
-                                     ,item))))))
-           (bind ((temporaries (map (method (clause)
-                                      (concatenate [(generate-symbol)]
-                                                   clause))
-                                    clauses)))
-            `((js:function js:null ()
-                ,(concatenate `(begin)
-                              (map (method (clause)
-                                     `(js:var ,(first clause)))
-                                   clauses)
-                              (map (method (temporary)
-                                     `(js:var ,(first temporary)
-                                              ,(third temporary)))
-                                   temporaries)
-                              `(,(concatenate
-                                  `(js:while #t
-                                     (js:if (any? empty? ,(concatenate `(js:array)
-                                                                       (map first temporaries)))
-                                            (js:return #f)))
-                                  (map (method (temporary)
-                                         `(set! ,(second temporary)
-                                                (first ,(first temporary))))
-                                       temporaries)
-                                  (bind ((vars (map first clauses))
-                                         (real-body (unless (empty? body)
-                                                      (concatenate `((js:function js:null ,vars
-                                                                       ,(concatenate `(begin)
-                                                                                     body)))
-                                                                   vars))))
-                                    (if (empty? end)
-                                        `(,real-body)
-                                        `((js:if ,(first end)
-                                                 (js:return
-                                                   ,(if (empty? (rest end))
-                                                        #f
-                                                        (concatenate `(begin)
-                                                                     (rest end))))
-                                                 ,real-body))))
-                                  (map (method (temporary)
-                                         `(set! ,(first temporary)
-                                                (rest ,(first temporary))))
-                                       temporaries)))))))))
-     "bind-methods"
-     (method (_ bindings #rest body)
-        (concatenate `(bind
-                       ,(map (method (binding)
-                               (destructuring-bind (name arguments #rest body)
-                                   binding
-                               `(,name ,(function-declaration
-                                         name arguments body))))
-                             bindings))
-                     body))
-     "destructuring-bind"
-     (method (_ pattern value #rest body)
-       (bind ((target))
-         (bind-methods ((destructure (pattern value)
-                          (bind ((nested [])
-                                 (inner
-                                  `(method ,(map (method (var)
-                                                   (if (instance? var <array>)
-                                                       (bind ((temp (generate-symbol)))
-                                                         (push-last nested
-                                                                    `(,var ,temp))
-                                                         temp)
-                                                       var))
-                                                 pattern)))
-                                 (wrapper `(apply ,inner ,value)))
-                            (set! target inner)
-                            (for-each ((n nested))
-                                      ()
-                              (bind ((sub-wrapper (apply destructure n)))
-                                (push-last inner sub-wrapper)
-                                (set! inner (second sub-wrapper))))
-                            wrapper)))
-         (bind ((wrapping (destructure pattern value)))
-           (replace-subsequence! target body start: (size target))
-           wrapping))))
-     "bind-properties"
-     (method (_ properties object #rest body)
-       (bind ((object* (generate-symbol)))
-         `((js:function js:null (,object*)
-            ,(concatenate `(begin)
-                          (map (method (property)
-                                 `(js:var ,property
-                                          (js:get-property ,object*
-                                                           ,(symbol-name property))))
-                               properties)
-                          (prepend-return body)))
-           ,object)))
-     "call-next-method"
-     (method (_)
-       `((js:get-property next-method "apply") js:null js:arguments))
-     ;; optimizations / "inlining"
-     "instance?"
-     (method (_ object type)
-       (select type ==
-         (((S "<array>"))
-          `((js:inline "Array.isArray") ,object))
-         ;; (((S "<string>")
-         ;;   (S "<number>")
-         ;;   (S "<boolean>"))
-         ;;  `(js:=== (js:get-property ,object "constructor")
-         ;;           (js:inline ,(get *type-name->constructor-name*
-         ;;                            (symbol-name type)))))
-         (((S "<error>"))
-          `(js:instanceof ,object (js:inline "Error")))
-         (else:
-          `(js:call instance? ,object ,type))))
-     "make-array"
-     (method (_ #rest elements)
-       (concatenate `(js:array)
-                    elements))
-     "first"
-     (method (environment expression)
-       `(js:get-property ,expression 0))
-     "second"
-     (method (environment expression)
-       `(js:get-property ,expression 1))
-     "third"
-     (method (environment expression)
-       `(js:get-property ,expression 2))
-     "slice"
-     (method (_ array start end)
-       (concatenate `((js:get-property ,array "slice"))
-                    (if start `(,start) `())
-                    (if end `(,end) `())))
-     "rest"
-     (method (_ array)
-       `(slice ,array 1))
-     "as-array"
-     (method (_ arguments skip)
-       `((js:get-property [] "slice" "call")
-         ,arguments ,(js:or skip 0)))
-     "size"
-     (method (environment object)
-       (destructuring-bind (temp)
-           (request-temporaries environment 1)
-         `(begin
-           (set! ,temp ,object)
-           (js:or (js:and (true? ,temp)
-                          (js:get-property ,temp "length"))
-                  0))))
-     "has?"
-     (method (_ object property)
-       `((js:get-property ,object "hasOwnProperty")
-         ,property))
-     "but-last"
-     (method (_ array n)
-       (bind ((n (or n 1)))
-         `(slice ,array 0 ,(if (instance? n <number>)
-                               (* n -1)
-                               `(js:* ,n -1)))))
-     "push-last"
-     (method (environment array value)
-       (if (instance? array <symbol>)
-           `(begin
-             ((js:get-property ,array "push") ,value)
-             ,array)
-           (destructuring-bind (temp)
-               (request-temporaries environment 1)
-             `(begin
-               (set! ,temp ,array)
-               ((js:get-property ,temp "push") ,value)
-               ,temp))))
-     "push"
-     (method (environment array value)
-       (if (instance? array <symbol>)
-           `(begin
-             ((js:get-property ,array "unshift") ,value)
-             ,array)
-           (destructuring-bind (temp)
-               (request-temporaries environment 1)
-             `(begin
-               (set! ,temp ,array)
-               ((js:get-property ,temp "unshift") ,value)
-               ,temp))))
-     "pop"
-     (method (_ array)
-       `((js:get-property ,array "shift")))
-     "pop-last"
-     (method (_ array)
-       `((js:get-property ,array "pop")))
-     "reverse!"
-     (method (_ array)
-       `((js:get-property ,array "reverse")))
-     "as-string"
-     (method (_ object)
-       `((js:get-property ,object "toString")))
-     "as-number"
-     (method (_ object)
-       `((js:inline "Number") ,object))
-     "%concat"
-     (method (_ array1 array2)
-       `((js:get-property ,array1 "concat") ,array2))
-     "concatenate"
-     (method (_ object #rest rest)
-       (concatenate (if (instance? object <string>)
-                        `(js:+ ,object)
-                        `(js:call concatenate ,object))
-                    rest))
-     "=="
-     (method (_ #rest arguments)
-       (concatenate
-        (if (== (size arguments) 2)
-            `(js:===)
-            `(js:call ==))
-        arguments))))
-
-(define-function function-definer (macro-name definer-name #key type?)
-  (method (_ function-name arguments #rest body)
-    (destructuring-bind (setter? name)
-        (if (setter-name? function-name)
-            [#t (setter-symbol (second function-name))]
-            [#f function-name])
-      (when (not (or (instance? name <symbol>)
-                     setter?))
-        (signal (make <error> message:
-                      (concatenate macro-name ": name => symbol or (setter name)"))))
-      `(define ,name
-           ,(concatenate
-             `(,(S definer-name)
-                (js:escape ,name)
-                ,(function-declaration
-                  `(js:inline "__method__")
-                  arguments body))
-             (if type?
-                 `((js:inline ,(if (empty? arguments)
-                                   "null"
-                                   (bind ((head (first arguments)))
-                                         (if (and (instance? head <array>)
-                                                  (> (size head) 1))
-                                             (escape-symbol (second head))
-                                             "Object")))))
-                 `())
-             `((js:and (js:defined ,name) ,name)
-               ,setter?
-               ,(display-name (if setter?
-                                  (second function-name)
-                                  function-name)
-                              arguments setter?: setter?)))))))
-
-(for-each ((arguments [["define-function" "%make-function"]
-                       ["define-method" "%make-method" type?: #t]]))
-          ()
-  (set! (get *macros* (first arguments))
-        (apply function-definer arguments)))
-
-
-(for-each ((comparison ["=" "<" ">" "<=" ">="]))
-          ()
-  (set! (get *macros* comparison)
-        (method (_ #rest arguments)
-          (concatenate
-           (if (== (size arguments) 2)
-               `(,(S (concatenate "binary" comparison)))
-               `(js:call ,(S comparison)))
-           arguments))))
-
-(for-each ((op ["-" "+" "*" "/"]))
-          ()
-  (set! (get *macros* op)
-        (method (_ #rest arguments)
-          (concatenate
-           `(,(S (concatenate "js:" op)))
-           arguments))))
-
-
-(for-each ((name/op  [["inc!" "+"]
-                      ["dec!" "-"]]))
-          ()
-  (destructuring-bind (name op) name/op
-    (set! (get *macros* name)
-          (method (_ object value)
-            (if (or (not (instance? object <array>))
-                    (and (instance? object <array>)
-                         (or (== (first object)
-                                 (S "js:get-property"))
-                             (and (== (first object)
-                                      (S "get"))
-                                  (== (size object) 3)))))
-                `(,(S (concatenate "js:" op "="))
-                   ,(if (and (instance? object <array>)
-                             (== (first object)
-                                 (S "get")))
-                        (concatenate `(js:get-property)
-                                     (rest object))
-                        object)
-                   ,(or value 1))
-                `(set! ,object
-                       (,(S (concatenate "js:" op))
-                         ,object ,(or value 1))))))))
-
-
-(define *symbol-macros*
-  (make-object
-   "this-method" (method (_)
-                   `(js:inline "__method__"))
-   "next-method" (method (_)
-                   `(%next-method this-method))))
-
-(define *special-forms*
-    (make-object
-     "js:new" 1
-     "js:var" 1
-     "js:for-in" 1
-     "js:function" 2
-     "js:escape" #f
-     "js:inline" #f
-     "js:for"
-     (method (environment clauses #rest body)
-       (concatenate
-        `(js:for
-          ,(map (method (clause)
-                  (destructuring-bind ((var value) #rest rest) clause
-                    (concatenate
-                     [[var (macroexpand environment value)]]
-                     (map (curry macroexpand environment)
-                          rest))))
-                clauses))
-        (macroexpand environment body)))
-     "js:try"
-     (method (environment body var catch finally)
-       `(js:try
-         ,(macroexpand environment body)
-         ,var
-         ,(macroexpand environment catch)
-         ,(macroexpand environment finally)))))
-
-(define *unary*
-    (make-object
-     "js:-" "-"))
-
-(define *infix*
-    (make-object
-     "js:and" "&&"
-     "js:or" "||"
-     "js:+" "+"
-     "js:+=" "+="
-     "js:-" "-"
-     "js:-=" "-="
-     "js:*" "*"
-     "js:/" "/"
-     "js:%" "%"
-     "js:>" ">"
-     "js:<" "<"
-     "js:>=" ">="
-     "js:<=" "<="
-     "js:==" "=="
-     "js:===" "==="
-     "js:instanceof" "instanceof"
-     "js:&" "&"
-     "js:|" "|"))
-
-(define *symbols*
-    (make-object
-     "js:null" "null"
-     "js:this" "this"
-     "js:undefined" "undefined"
-     "js:arguments" "arguments"
-     "js:typeof" "typeof"))
-
-(define *symbol-escapes*
-    (make-object
-     "-" "_M_"
-     "+" "_PL_"
-     "!" "_B_"
-     "?" "_W_"
-     "%" "_PE_"
-     "#" "_H_"
-     "@" "_A_"
-     "*" "_ST_"
-     "/" "_SL_"
-     "=" "_E_"
-     ":" "_C_"
-     "<" "_LT_"
-     ">" "_GT_"
-     "_" "__"
-     "[" "_SO_"
-     "]" "_SC_"
-     "{" "_BO_"
-     "}" "_BC_"))
-
-(define *reserved*
-    (make-array
-     "break" "case" "catch" "continue" "default" "delete" "do" "else"
-     "finally" "for" "function" "if" "in" "instanceof" "new" "return"
-     "switch" "this" "throw" "try" "typeof" "var" "void" "while"
-     "with" "abstract" "boolean" "byte" "char" "class" "const"
-     "debugger" "double" "enum" "export" "extends" "final" "float"
-     "goto" "implements" "import" "int" "interface" "long" "native"
-     "package" "private" "protected" "public" "short" "static" "super"
-     "synchronized" "throws" "transient" "volatile" "null" "true" "false"
-     "arguments" "object" "number" "string" "array"))
+(define-function identifier-name (identifier)
+  (symbol-name
+   (if (setter-identifier? identifier)
+       (transform-setter-identifier (second identifier))
+       identifier)))
 
 (define *symbol-count* 0)
 
-(define-function generate-symbol ()
-  (bind ((symbol (make <symbol> name:
-                       (concatenate "_" (as-string *symbol-count*)))))
-    (inc! *symbol-count*)
-    (set! (get symbol "generated?") #t)
-    symbol))
+(define-function reset-symbol-counter! ()
+  (set! *symbol-count* 0))
 
-(define *hyphen-pattern*
-    (make <regexp>
-          pattern: "-(.)"
-          global?: #t))
+(define-function generate-symbol (prefix)
+  (bind ((name (concatenate
+                (if prefix
+                    (escape-name prefix)
+                    "g")
+                (as-string (inc! *symbol-count*))))
+         (result (symbol name)))
+    (set! (get result "generated?") #t)
+    result))
 
-(define-function escape (name)
-  ;; TODO: revert back to using regexp when
-  ;; https://bugzilla.mozilla.org/show_bug.cgi?id=634948
-  ;; is fixed
-  ;;
-  ;; (join (map (method (char)
-  ;;                (if-bind (replacement (get *symbol-escapes* char))
-  ;;                  replacement
-  ;;                  char))
-  ;;              (as-array replaced))
-  ;;         "")
-  (if (= name "-")
-      (get *symbol-escapes* name)
-      (bind ((upcase? #f)
-             (result ""))
-        (for-each ((char (as-array name)))
-                  ()
-          (if (= char "-")
-              (set! upcase? #t)
-              (bind ((char (if upcase?
-                               (as-uppercase char)
-                               char)))
-                (inc! result
-                      (if-bind (replacement (get *symbol-escapes* char))
-                               replacement
-                               char))
-                (set! upcase? #f))))
-        result)))
+(define-function bind! (env identifier)
+  (set! (get env "bound?" (symbol-name identifier))
+        #t))
 
-(define-function escape-symbol (symbol)
-  (bind ((name (symbol-name symbol)))
-    (cond
-      ((get symbol "generated?")
-       name)
-      ((member? name *reserved*)
-       (concatenate "_" name))
-      ((and (= (first name) "<")
-            (= (last name) ">")
-            (> (size name) 2))
-       (concatenate "_CL_"
-                    (escape (but-last (rest name)))))
-      ((and (= (first name) "*")
-            (= (last name) "*")
-            (> (size name) 2))
-       (as-uppercase
-        (escape (but-last (rest name)))))
-      (else:
-       (escape name)))))
+(define-function unbind! (env identifier)
+  (set! (get env "bound?" (symbol-name identifier))
+        #f))
 
-(define-function wrap-block (code)
+
+;;;; special forms
+
+;; utilities
+
+(define *special-forms*
+  (make-object))
+
+(define-function find-special-form (form env)
+  (when (expression? form)
+    (get *special-forms*
+         (symbol-name (first form)))))
+
+;; definitions
+(define-special-form %method (env arguments body)
+  (do (curry bind! env)
+      arguments)
+  (bind ((expanded-body
+          (macroexpand-all body env)))
+    (do (curry unbind! env)
+        arguments)
+    `(%method ,arguments
+       ,expanded-body)))
+
+(define-special-form
+  %set (env identifier value)
+  `(%set ,identifier ,(macroexpand-all value env)))
+
+(define-special-form define (env identifier value)
+  (bind! env identifier)
+  `(define ,identifier
+     ,(macroexpand-all value env)))
+
+;; TODO: make binding available inside value?
+;; (if so, also change alpha-convert,
+;;  find-free-variables)
+(define-special-form %bind (env binding body)
+  (destructuring-bind (var value) binding
+    (bind ((expanded-value
+            (macroexpand-all value env)))
+      (bind! env var)
+      (bind ((result
+              `(%bind (,var ,expanded-value)
+                      ,(macroexpand-all body env))))
+        (unbind! env var)
+        result))))
+
+;;;; core macros
+
+;; utilities
+
+(define *core-macros*
+  (make-object))
+
+(define-function maybe-begin (expressions)
+  (select (size expressions) ==
+    ((0) #f)
+    ((1) (first expressions))
+    (else:
+     (concatenate `(%begin)
+                  expressions))))
+
+;; => [required rest keys]
+(define-function analyze-lambda-list (list)
+  (bind-methods ((position (symbol)
+                   (find-key list (curry = symbol))))
+    (bind ((rest (position #rest))
+           (key (position #key)))
+      [(copy-sequence list
+                      end: (or rest key
+                               (size list)))
+       (when rest
+         (element list (inc rest)))
+       (when key
+         (copy-sequence list
+                        start: (inc key)))])))
+
+(define-function wrap (form #rest wrappers)
+  (reduce (method (result wrapper)
+            (wrapper result))
+          form
+          wrappers))
+
+(define-function wrap-rest/keys (body all required rest key)
+  (bind ((rest? rest)
+         (rest (or rest
+                   (unless (empty? key)
+                     (generate-symbol)))))
+    (wrap body
+          (method (body)
+            (if (empty? key)
+                body
+                (bind ((key-values
+                        (map (method (binding)
+                               (if (instance? binding <array>)
+                                   binding
+                                   [binding #f]))
+                             key)))
+                  `(bind-properties ,(map first key-values)
+                       (%keys ,rest
+                              ,(concatenate `(%object)
+                                            (reduce1 concatenate
+                                                     (map (method (key-value)
+                                                            (destructuring-bind (key value)
+                                                                key-value
+                                                              [(symbol-name key) value]))
+                                                          key-values))))
+                     ,body))))
+          (method (body)
+            (if (or rest? (not (empty? key)))
+                `(bind ((,rest (%native-call "$SL.call" ,all ,(size required))))
+                   ,body)
+                body)))))
+
+;; definitions
+
+(define-core-macro begin (_ #rest expressions)
+  (maybe-begin expressions))
+
+(define-core-macro method (_ arguments #rest body)
+  (destructuring-bind (required rest key)
+      (analyze-lambda-list arguments)
+    `(%method ,required
+       ,(wrap-rest/keys
+         (maybe-begin body)
+         (symbol "%all-arguments")
+         required rest key))))
+
+
+(define-core-macro bind (_ bindings #rest body)
+  (if (empty? bindings)
+      (maybe-begin body)
+      (reduce (method (body binding)
+                `(%bind
+                  ,(if (instance? binding <symbol>)
+                       `(,binding #f)
+                       binding)
+                  ,body))
+              (maybe-begin body)
+              (reverse bindings))))
+
+(define-core-macro if (_ test then else)
+  `(%if ,test ,then ,else))
+
+(define-core-macro set! (_ place #rest values)
+  (if (and (instance? place <array>)
+           (not (== (first place)
+                    (symbol "%get-property"))))
+      (concatenate `(,(transform-setter-identifier (first place)))
+                   (rest place)
+                   values)
+      `(%set ,place ,(first values))))
+
+
+(define-core-macro parallel-set! (_ var value #rest clauses)
+  (if (empty? clauses)
+      `(set! ,var ,value)
+      (bind ((temp (generate-symbol)))
+        `(bind ((,temp ,value))
+           ,(concatenate `(parallel-set!)
+                         clauses)
+           (set! ,var ,temp)))))
+
+
+(define-core-macro cond (_ #rest cases)
+  (unless (empty? cases)
+    (destructuring-bind (test #rest then) (first cases)
+      (bind ((then (maybe-begin then)))
+        (if (== test else:)
+            then
+            `(if ,test
+                 ,then
+                 ,(concatenate `(cond)
+                               (rest cases))))))))
+
+(define-core-macro when (_ test #rest body)
+  `(if ,test
+       ,(maybe-begin body)
+       #f))
+
+(define-core-macro unless (_ test #rest body)
+  `(if (not ,test)
+       ,(maybe-begin body)
+       #f))
+
+(define-core-macro and (_ #rest values)
+  (select (size values) ==
+    ((0) #t)
+    ((1) (first values))
+    (else: `(when ,(first values)
+              ,(concatenate `(and)
+                            (rest values))))))
+
+(define-core-macro or (_ #rest values)
+  (select (size values) ==
+    ((0) #f)
+    ((1) (first values))
+    (else:
+     (bind ((value (generate-symbol)))
+       `(bind ((,value ,(first values)))
+          (if ,value
+              ,value
+              ,(concatenate `(or)
+                            (rest values))))))))
+
+(define-core-macro if-bind (_ binding then else)
+  (destructuring-bind (var value) binding
+    (bind ((temp (generate-symbol)))
+      `(bind ((,temp ,value))
+         (if ,temp
+             (bind ((,var ,temp))
+               ,then)
+             ,else)))))
+
+(define-core-macro while (_ test #rest body)
+  `(%while ,test
+     ,(maybe-begin body)))
+
+(define-core-macro until (_ test #rest body)
+  (concatenate `(while (not ,test))
+               body))
+
+(define-core-macro dotimes (_ binding #rest body)
+  (bind ((temp (generate-symbol)))
+    (destructuring-bind (var count result) binding
+      `(bind ((,temp ,count))
+         ,(concatenate
+           `(for ((,var 0 (+ ,var 1)))
+                 ((>= ,var ,temp) ,(or result #f)))
+           body)))))
+
+(define-core-macro for (_ clauses end #rest body)
+  (bind ((init-clauses [])
+         (next-clauses [])
+         (vars (map first clauses)))
+    (for-each ((clause clauses))
+              ()
+      ;; init
+      (push-last init-clauses
+                 (slice clause 0 2))
+      ;; next
+      (push-last next-clauses
+                 (first clause))
+      (push-last next-clauses
+                 (third clause)))
+    `(bind ,init-clauses
+       ,(concatenate `(while ,(or (empty? end)
+                                  `(not ,(first end)))
+                        ,(concatenate
+                          `(,(concatenate `(method ,vars)
+                                          body))
+                          vars)
+                        ,(concatenate `(parallel-set!)
+                                      next-clauses)))
+       ,(unless (empty? (rest end))
+          (concatenate `(begin)
+                       (rest end))))))
+
+(define-core-macro for-each (_ clauses end #rest body)
+  (bind ((clauses
+          (map (method (clause)
+                 (concatenate [(generate-symbol)]
+                              clause))
+               clauses))
+         (end? (generate-symbol))
+         (values (generate-symbol))
+         (result (generate-symbol))
+         (body (concatenate
+                `(begin
+                  ;; rebind variables to create closure
+                  ,(bind ((vars (map second clauses)))
+                     (concatenate
+                      `(,(concatenate `(method ,vars)
+                                      ;; actual body
+                                      body))
+                      vars)))
+                ;; update temporary collection bindings
+                (map (method (clause)
+                       `(set! ,(first clause)
+                              (rest ,(first clause))))
+                     clauses)
+                `((set! ,values
+                        ,(concatenate `(%array)
+                                      (map first clauses)))))))
+    ;; evaluate each collection once
+    `(bind ,(concatenate
+             (map (method (clause)
+                    (destructuring-bind (temp var values) clause
+                      [temp values]))
+                  clauses)
+             `((,end? #f)
+               (,result #f)
+               (,values ,(concatenate `(%array)
+                                      (map first clauses)))))
+       ;; check exhaustion
+       (until (or ,end? (any? empty? ,values))
+         ;; bind each var to next element
+         (bind ,(map (method (clause)
+                       (destructuring-bind (temp var values) clause
+                         [var `(first ,temp)]))
+                     clauses)
+           ,(if-bind (end-test (first end))
+              `(if ,end-test
+                   (begin
+                    (set! ,result
+                          ,(maybe-begin
+                            ;; execute all result expressions, returning last; false if none
+                            (bind ((results (rest end)))
+                              (if (empty? results)
+                                  [#f]
+                                  results))))
+                    (set! ,end? #t))
+                   ,body)
+              body)))
+       ,result)))
+
+(define-core-macro bind-properties (_ properties object #rest body)
+  (bind ((object* (generate-symbol)))
+    (concatenate
+     `(bind ,(concatenate
+              `((,object* ,object))
+              (map (method (property)
+                     `(,property
+                       (%get-property ,object*
+                                      ,(symbol-name property))))
+                   properties)))
+     body)))
+
+(define-core-macro select (_ value test #rest cases)
+  (bind ((value* (generate-symbol))
+         (test* (generate-symbol)))
+    (bind-methods ((test-expression (test-value)
+                     `(,test* ,value* ,test-value)))
+      `(bind ((,value* ,value)
+              (,test* ,test))
+         ,(concatenate
+           `(cond)
+           (map (method (case)
+                  (destructuring-bind (tests #rest then) case
+                    (if (== tests else:)
+                        case
+                        (concatenate
+                         `(,(concatenate
+                             `(or)
+                             (map test-expression tests)))
+                         then))))
+                cases))))))
+
+(define-function destructure (bindings values body)
+  (if (instance? values <symbol>)
+      (destructuring-bind (required rest key)
+          (analyze-lambda-list bindings)
+        (bind ((i (size required)))
+          (reduce (method (body binding)
+                    (dec! i)
+                    (if (instance? binding <symbol>)
+                        `(bind ((,binding (element ,values ,i)))
+                           ,body)
+                        (destructure binding
+                                     `(%get-property ,values ,i)
+                                     body)))
+                  (wrap-rest/keys body
+                                  values
+                                  required rest key)
+                  (reverse required))))
+      ;; ensures values is only evaluated once
+      (bind ((var (generate-symbol)))
+        `(bind ((,var ,values))
+           ,(destructure bindings var body)))))
+
+(define-core-macro destructuring-bind (_ bindings values #rest body)
+  (destructure bindings values
+               (concatenate `(begin) body)))
+
+(define-core-macro bind-methods (_ bindings #rest body)
   (concatenate
-   "(function(){\n" code "\n})()"))
+   `(bind ,(map first bindings))
+   (map (method (binding)
+          (destructuring-bind (identifier arguments #rest body)
+              binding
+            `(set! ,identifier
+                   ,(concatenate `(method ,arguments)
+                                 body))))
+        bindings)
+   body))
 
-(define-function write-body (body)
-  (write-statements
-   (concatenate `(begin) body)))
+(define-core-macro inc! (_ object value)
+  `(set! ,object (+ ,object ,(or value 1))))
 
-(define *property-pattern*
-    (make <regexp>
-          pattern: "^[a-z_]+[a-z0-9]*$"
-          ignore-case?: #t))
+(define-core-macro dec! (_ object value)
+  `(set! ,object (- ,object ,(or value 1))))
 
-(define *writers*
-  (make-object
-   "js:call"
-   (method (_ head #rest tail)
-     (concatenate
-      ;; anonymous function call?
-      (if (and (instance? head <array>)
-               (instance? (first head) <symbol>)
-               (== (first head)
-                   (S "js:function")))
-          (concatenate "(" (write-expressions head) ")")
-          (write-expressions head))
-      "(" (join (map write-form tail) ", ") ")"))
-     "js:negative"
-     (method (_ object)
-       (concatenate
-        "(- " (write-expressions object) ")"))
-     "js:not"
-     (method (_ expression)
-       (concatenate
-        "!" (write-expressions expression)))
-     "begin"
-     (method (statements? #rest forms)
-       (cond
-        (statements?
-         (if (> (size forms) 1)
-             (join (concatenate
-                    (map (method (form)
-                           (concatenate
-                            (write-statements form)
-                            (if (and (instance? form <array>)
-                                     (== (first form)
-                                         (S "js:comment")))
-                                ""
-                                ";")))
-                         (but-last forms))
-                    (write-statements (last forms)))
-                   "\n")
-             (write-statements (first forms))))
-        ((> (size forms) 1)
-         (concatenate
-          "(" (join (map write-form forms) ", ") ")"))
+(define-core-macro + (_ #rest values)
+  (if (empty? values)
+      0
+      (concatenate `(%plus) values)))
+
+(define-core-macro - (_ minuend #rest subtrahends)
+  (if (empty? subtrahends)
+      `(%native-call "-" ,minuend)
+      (concatenate `(%minus ,minuend)
+                   subtrahends)))
+
+(define-core-macro * (_ #rest values)
+  (if (empty? values)
+      1
+      (concatenate `(%times) values)))
+
+(define-core-macro / (_ numerator #rest denominators)
+  (if (empty? denominators)
+      `(%divide 1 ,numerator)
+      (concatenate `(%divide ,numerator)
+                   denominators)))
+
+
+;; TODO: backend-specific
+(define-core-macro call-next-method (_)
+  `((%get-property next-method "apply")
+    (%native "null")
+    (%native "arguments")))
+
+(define-function transform-quoted (form)
+  (cond
+   ((instance? form <array>)
+    (if (and (not (empty? form))
+             (== (symbol-name (first form))
+                 "%comma"))
+        (second form)
+        (concatenate `(%array)
+                     (map transform-quoted
+                          form))))
+   ((instance? form <symbol>)
+    `(symbol ,(symbol-name form)))
+   (else:
+    form)))
+
+(define-core-macro %backquote (_ exp)
+  (transform-quoted exp))
+
+;; comma is only used as a marker and
+;; actually handled in backquote
+(define-core-macro %comma (_ value)
+  (signal (make <error> message: "comma not inside backquote")))
+
+(define *dot-name-error*
+  (make <error>
+        message: "unsupported name for call in dot"))
+
+(define-core-macro . (_ value #rest calls)
+  (reduce (method (value call)
+            (destructuring-bind (property #rest arguments) call
+              (concatenate
+               `((%get-property ,value
+                                ,(select property instance?
+                                   ((<string>)
+                                    property)
+                                   ((<symbol>)
+                                    (symbol-name property))
+                                   (else:
+                                    (signal *dot-name-error*)))))
+               arguments)))
+          value
+          calls))
+
+(define-function simplify-arguments (arguments)
+  (destructuring-bind (required rest key)
+      (analyze-lambda-list arguments)
+    (bind ((required
+            (map (method (argument)
+                   (if (instance? argument <array>)
+                       (first argument)
+                       argument))
+                 required)))
+      (concatenate
+       required
+       (if rest
+           (concatenate `(#rest) rest)
+           [])
+       (if key
+           (concatenate `(#key) key)
+           [])))))
+
+(define-function make-function-definer
+    (macro-name definer-name #key type/existing? record?)
+  (method (env identifier arguments #rest body)
+    (destructuring-bind (setter? identifier)
+        (if (setter-identifier? identifier)
+            [#t (transform-setter-identifier (second identifier))]
+            [#f identifier])
+      (unless (or (instance? identifier <symbol>)
+                  setter?)
+        (signal (make <error> message:
+                      (concatenate macro-name ": "
+                                   "name not <var> or (setter <var>)"))))
+      (when (and type/existing?
+                 (empty? arguments))
+        (signal (make <error> message:
+                      (concatenate macro-name ": "
+                                   "method has no arguments"))))
+      (bind ((simplified-arguments (simplify-arguments arguments))
+             (method-definition
+              (macroexpand-all
+               (concatenate `(method ,simplified-arguments)
+                            body)
+               env)))
+        (when record?
+          (set! (get env "module" "functions"
+                     (symbol-name identifier))
+                method-definition))
+        ;; result
+        `(define ,identifier
+           ,(concatenate
+             `(,(symbol definer-name)
+               (%native-name ,(symbol-name identifier))
+               ,method-definition
+               ,setter?)
+             (if type/existing?
+                 `(,(bind ((head (first arguments)))
+                      (if (and (instance? head <array>)
+                               (> (size head) 1))
+                          (second head)
+                          (symbol "<object>")))
+                   ,identifier)
+                 [])))))))
+
+(for-each ((arguments [["define-function" "%make-function"
+                        type/existing?: #f
+                        record?: #t]
+                       ["define-method" "%make-method"
+                        type/existing?: #t]]))
+          ()
+  (set! (get *core-macros* (first arguments))
+        (apply make-function-definer arguments)))
+
+
+(define-core-macro define-generic (_ identifier arguments)
+  `(define ,identifier
+     (%make-generic
+      (%native-name ,(symbol-name identifier)))))
+
+(define-core-macro define-class (_ identifier superclass #rest properties)
+  (bind ((object `(%object)))
+    (for-each ((property properties))
+              ()
+      (if (instance? property <array>)
+          (begin
+           (push-last object (symbol-name (first property)))
+           (push-last object `(method ()
+                                ,(second property))))
+          (begin
+           (push-last object (symbol-name property))
+           (push-last object #f))))
+    `(define ,identifier
+       (%make-class
+        ,(unless (empty? superclass)
+           (first superclass))
+        ,object))))
+
+;; TODO: identifiers: support setter identifiers
+(define-core-macro define-module (env _ #key (import []) (export [])
+                                             (compile-time-import [])
+                                             (inline []))
+  ;; exports
+  (set! (get env "module" "exports")
+        (map identifier-name export))
+  ;; compile-time imports
+  (do (method (import)
+        (bind ((module-name (symbol-name
+                             (if (instance? import <array>)
+                                 (first import)
+                                 import))))
+          (compile-time-import-module
+           env module-name
+           names: (when (instance? import <array>)
+                    (map identifier-name
+                         (rest import))))))
+      compile-time-import)
+  ;; inline
+  (set! (get env "module" "inline")
+        (map identifier-name inline))
+  ;; imports
+  (maybe-begin
+   (map (method (import)
+          (bind ((module-name (symbol-name
+                               (if (instance? import <array>)
+                                   (first import)
+                                   import))))
+            ;; TODO: support only:, except:, rename:, prefix:
+            (import-module (get env "module") module-name
+                           names: (when (instance? import <array>)
+                                    (map identifier-name
+                                         (rest import))))
+            (make-import-definition module-name env)))
+        import)))
+
+;; NOTE: requires module has been imported
+(define-function make-import-definition (module-name env)
+  (bind ((identifier (generate-symbol)))
+    (set! (get env "import-identifiers" module-name)
+          identifier)
+    `(define ,identifier
+       ((%native "require") ,module-name))))
+
+(define-core-macro define-macro (env identifier arguments #rest body)
+  `(begin
+    ,(concatenate
+      `(define-function ,identifier
+         ;; TODO: properly inject environment
+         ,(concatenate `(,(generate-symbol))
+                       arguments))
+      body)
+    (set! (%get-property ,identifier "%macro?") #t)))
+
+(define-core-macro define-symbol-macro (env identifier arguments #rest body)
+  `(begin
+    ;; ignore arguments
+    ,(concatenate `(define-function ,identifier ())
+                  body)
+    (set! (%get-property ,identifier "%symbol-macro?") #t)))
+
+
+;; TODO: inline make-object
+;;       (initialize with string keys, evaluate and set rest)
+
+
+(define-core-macro handler-case (_ body #rest cases)
+  (bind ((condition-var (generate-symbol)))
+    `(%try ,body ,condition-var
+           ,(concatenate
+             `(cond)
+             (map (method (case)
+                    (destructuring-bind ((type #key condition) #rest body) case
+                      (concatenate `((instance? ,condition-var ,type))
+                                   (if condition
+                                       `(,(concatenate
+                                           `(bind ((,condition ,condition-var)))
+                                           body))
+                                       body))))
+                  cases)))))
+
+;;;; lift defines
+
+;; replace defines with top-level %defines
+;; and local assignments
+
+(define-function lift-defines (exp env)
+  (lift-define exp env identity))
+
+(define-function lift-define (exp env k)
+  (if (expression? exp)
+      (select (symbol-name (first exp)) ==
+        (("%bind")
+         (destructuring-bind (_ (var value) body) exp
+           (lift-define
+            value env
+            (method (lvalue env)
+              (lift-define
+               body env
+               (method (lbody env)
+                 (k `(%bind (,var ,lvalue)
+                       ,lbody)
+                    env)))))))
+        (("%try")
+         (destructuring-bind (m e1 v e2) exp
+           (lift-define*
+            [e1 e2] env
+            (method (le* env)
+              (destructuring-bind (le1 le2) le*
+                (k `(,m ,le1 ,v ,le2)
+                   env))))))
+        (("%method" "%set")
+         (destructuring-bind (m e1 e2) exp
+           (lift-define
+            e2 env
+            (method (le2 env)
+              (k `(,m ,e1 ,le2)
+                 env)))))
+        (("%begin" "%if" "%while")
+         (destructuring-bind (m #rest e*) exp
+           (lift-define*
+            e* env
+            (method (le* env)
+              (k (concatenate [m] le*)
+                 env)))))
+        (("define")
+         (destructuring-bind (_ var value export?) exp
+           (bind ((name (symbol-name var)))
+             (if (has? (get env "defined?") name)
+                 (k `(%set ,var ,value)
+                    env)
+                 (begin
+                  (set! (get env "defined?" name) #t)
+                  `(%begin
+                    (%define ,var)
+                    ,(k `(%set ,var ,value)
+                        env)))))))
         (else:
-         (write-expressions (first forms)))))
-     "js:if"
-     (method (statements? test then else)
-       (if statements?
-           (concatenate
-            "if (" (write-expressions test) ") {\n"
-            (write-statements then)
-            "\n}"
-            (if else
-                (concatenate
-                 " else {\n" (write-statements else) "\n}")
-                ""))
-           (concatenate
-            "(" (write-expressions test)
-            " ? " (write-expressions then)
-            " : " (write-expressions else)
-            ")")))
-     "js:array"
-     (method (_ #rest elements)
-       (concatenate
-        "[" (join (map write-form elements) ", ") "]"))
-     "js:defined"
-     (method (_ expression)
-       (concatenate
-        "(typeof (" (write-expressions expression) ") !== 'undefined')"))
-     "js:delete"
-     (method (_ expression)
-       (concatenate "(delete (" (write-expressions expression) "))"))
-     "js:try"
-     (method (statements? body condition catch finally)
-       (bind ((result
-               (concatenate
-                "try {\n"
-                (write-statements body)
-                "\n} catch (" (write-expressions condition) ") {\n"
-                (if catch
-                    (write-statements catch)
-                    "")
-                "\n}"
-                (if finally
-                    (concatenate
-                     " finally {\n"
-                     (write-statements finally)
-                     "\n}")
-                  ""))))
-         (if statements?
-             result
-             (wrap-block result))))
-     "js:for-in"
-     (method (statements? variable/expression #rest body)
-        (destructuring-bind (variable expression) variable/expression
-          (bind ((result
-                  (concatenate
-                   "for (var " (write-expressions variable)
-                   " in " (write-expressions expression) ") {\n"
-                   (write-body body) "\n}")))
-            (if statements?
-                result
-                (wrap-block result)))))
-     "js:for"
-     (method (statements? clauses #rest body)
-       (bind ((inits [])
-              (tests [])
-              (nexts []))
-         (do (method (clause)
-               (destructuring-bind ((var value) test next) clause
-                 (bind ((set (S "js:set")))
-                   (push-last inits (write-expressions [set var value]))
-                   (push-last tests (write-expressions test))
-                   (push-last nexts (write-expressions [set var next])))))
-             clauses)
-         (bind ((result
-                 (concatenate
-                  "for (var "
-                  (join (map (method (parts)
-                               (join parts ", "))
-                             [inits tests nexts])
-                        "; ")
-                  ") {\n" (write-body body) "\n}")))
-         (if statements?
-             result
-             (wrap-block result)))))
-     "js:while"
-     (method (statements? test #rest body)
-       (bind ((result
-               (concatenate
-                "while (" (write-expressions test) ") {\n"
-                (write-body body) "\n}")))
-         (if statements?
-             result
-             (wrap-block result))))
-     "js:inline"
-     (method (_ identifier)
-       (as-string identifier))
-     "js:get-property"
-     (method (_ object #rest elements)
-       (concatenate
-        (if (instance? object <number>)
-            (concatenate "(" (write-expressions object) ")")
-            (write-expressions object))
-        (apply concatenate
-               (map (method (element)
-                      (if (and (instance? element <string>)
-                               (match *property-pattern* element)
-                               (not (member? element *reserved*)))
-                          (concatenate "." element)
-                          (concatenate "[" (write-expressions element) "]")))
-                    elements))))
-     "js:new"
-     (method (_ name #rest arguments)
-       (concatenate
-        "new " (write-expressions name)
-        " (" (join (map write-form arguments) ", ") ")"))
-     "js:var"
-     (method (_ name value)
-       (concatenate
-        "var " (write-expressions name)
-        (if (and value
-                 (not (== value (S "js:undefined"))))
-            (concatenate " = " (write-expressions value))
-            "")))
-     "js:set"
-     (method (_ name value)
-       (concatenate
-        (write-expressions name) " = "
-        (write-expressions value)))
-     "js:return"
-     (method (_ body)
-       (concatenate
-        "return " (write-expressions body)))
-     "js:function"
-     (method (_ name arguments body)
-       (concatenate
-        "function "
-        (if (and name
-                 (not (== name (S "js:null"))))
-            (if (instance? name <array>)
-                (write-expressions name)
-                (escape-symbol name))
-            (concatenate (escape-symbol (generate-symbol))
-                         "__lambda"))
-        " (" (join (map write-form arguments) ", ") ") {"
-        (if body
-            (concatenate "\n" (write-statements body) "\n")
-            "")
-        "}"))
-     "js:escape"
-     (method (_ symbol)
-       (write-expressions (escape-symbol symbol)))
-     "js:throw"
-     (method (statements? error)
-       (bind ((result (concatenate "throw " (write-expressions error))))
-             (if statements?
-                 result
-                 (wrap-block result))))
-     "js:comment"
-     (method (_ comment)
-       (if (position comment "\n")
-           (concatenate "/*" comment "*/")
-           (concatenate "//" comment)))
-     "make-object"
-     (method (_ #rest key-values)
-       (bind ((entries []))
-         (for ((i 0 (+ i 2)))
-              ((>= i (size key-values)))
-           (push-last entries
-                      (concatenate
-                       (write-expressions (element key-values i)) ":"
-                       (write-expressions (element key-values (+ i 1))))))
-         (concatenate "{" (join entries ",\n") "}")))))
+         (lift-define** exp env k)))
+      (k exp env)))
 
-(define-function compile (form #key statements? asynchronous?)
-  (bind ((post-processors [])
-         (temporaries [])
-         (environment (make-object
-                       "definitions" []
-                       "macros" (make-object)
-                       "temporaries" temporaries
-                       "post-processors" post-processors
-                       "asynchronous?" asynchronous?))
-         (expanded (macroexpand environment form)))
-    (unless (empty? post-processors)
-      (for-each ((processor post-processors))
-                ()
-        (set! expanded (processor expanded))))
-    (write-form expanded statements?)))
+(define-function lift-define* (exp* env k)
+  (if (empty? exp*)
+      (k [] env)
+      (lift-define** exp* env k)))
+
+(define-function lift-define** (exp env k)
+  (lift-define
+   (first exp) env
+   (method (t env)
+     (lift-define*
+      (rest exp) env
+      (method (t* env)
+        (k (concatenate [t] t*)
+           env))))))
 
 
+
+;;;; symbol macros
+
+;; utilities
+
+(define *core-symbol-macros*
+  (make-object))
+
+;; definitions
+
+(define-core-symbol-macro next-method (_)
+  `(%next-method %this-method))
+
+;;;; macro expansion
+
+(define-function find-macro-definition (form env)
+  ;; TODO: deep-get
+  (select form instance?
+    ((<array>)
+     (when (empty? form)
+       (signal "Empty form"))
+     (bind ((name (symbol-name (first form))))
+       (unless (get env "bound?" name)
+         (%get-property env "macros" name))))
+    ((<symbol>)
+     (bind ((name (symbol-name form)))
+       (unless (get env "bound?" name)
+         (%get-property env "symbol-macros" name))))))
+
+(define-function macroexpand-1 (form env)
+  (if-bind (macro (find-macro-definition form env))
+    (apply macro env (if (instance? form <array>)
+                         (rest form)
+                         form))
+    form))
+
+(define-function macroexpand (form env)
+  (bind ((done? #f))
+    (until done?
+      (bind ((expanded (macroexpand-1 form env)))
+        (set! done? (== expanded form))
+        (set! form expanded)))
+    form))
+
+(define-function macroexpand-all (form env)
+  (select form instance?
+    ((<array>)
+     (if (find-macro-definition form env)
+         (macroexpand-all (macroexpand form env) env)
+         (if-bind (expander (find-special-form form env))
+           (apply expander env (rest form))
+           (map (rcurry macroexpand-all env)
+                form))))
+    ((<symbol>)
+     (if (find-macro-definition form env)
+         (macroexpand-all (macroexpand form env) env)
+         form))
+    (else: form)))
+
+
+
+;;;; define free variables
+
+(define-function find-module-for-definition (definition-name env)
+  (any? (method (import)
+          (destructuring-bind (module names) import
+            (when (member? definition-name names)
+              module)))
+        (get env "module" "imports")))
+
+(define-function find-import-identifier (definition-name env)
+  (if-bind (module (find-module-for-definition definition-name env))
+    (get env "import-identifiers"
+         (get module "name"))))
+
+(define-function define-free-variables (exp env)
+  (bind ((variables
+          (set-subtract!
+           (set-subtract!
+            (find-free-variables exp)
+            (as-set (map symbol
+                         (object-properties (get env "defined?")))))
+           *defined?*)))
+    (if (empty? variables)
+        exp
+        (concatenate
+         `(%begin)
+         (map (method (variable)
+                (bind ((name (symbol-name variable)))
+                  (set! (get env "defined?" name) #t)
+                  (maybe-begin
+                   (concatenate
+                    `((%define ,variable))
+                    ;; imported?
+                    (if-bind (import-identifier (find-import-identifier name env))
+                      `((%set ,variable (%get-property ,import-identifier ,name)))
+                      [])))))
+              variables)
+         [exp]))))
+
+
+(define-function define-free-variables2 (exp env)
+  (bind ((free (set-subtract! (find-free-variables exp)
+                              *defined?*))
+         (variables (choose
+                     (method (variable)
+                       (not (has? (get env "definition-names")
+                                  (symbol-name variable))))
+                     free)))
+    (if (empty? variables)
+        exp
+        (concatenate
+         `(%begin)
+         (map (method (variable)
+                (bind (;; TODO: old name?
+                       (name (symbol-name variable)))
+                  ;; TODO: use "defined-after-inline" instead and subtract above?
+                  (set! (get env "defined?" name) #t)
+                  (maybe-begin
+                   (concatenate
+                    `((%define ,variable))
+                    ;; imported?
+                    (if-bind (old-import-identifier (find-import-identifier name env))
+                      (bind ((import-identifier
+                              (get env "new-identifiers"
+                                   (symbol-name old-import-identifier))))
+                        `((%set ,variable (%get-property ,import-identifier ,name))))
+                      [])))))
+              variables)
+         [exp]))))
+
+(define-function find-free-variables (exp)
+  (cond
+   ((and (instance? exp <array>)
+         (not (empty? exp)))
+    (bind ((head (first exp))
+           (name (and (instance? head <symbol>)
+                      (symbol-name head))))
+      (select name ==
+        (("%method")
+         (destructuring-bind (_ arguments body) exp
+           (set-subtract!
+            (find-free-variables body)
+            (as-set arguments))))
+        (("%bind")
+         (destructuring-bind (_ (var value) body) exp
+           ;; TODO: make binding available inside value?
+           ;; (if so, also change alpha-convert,
+           ;;  %bind special form)
+           (set-union!
+            (set-subtract!
+             (find-free-variables body)
+             (as-set [var]))
+            (find-free-variables value))))
+        (("%begin")
+         ;; %define will only appear in %begin,
+         ;; see previous pass lift-defines
+         (bind ((definitions []))
+           (set-subtract!
+            (as-set
+             (reduce (method (result e)
+                       (concatenate
+                        result
+                        (if (and (expression? e)
+                                 (== (first e)
+                                     (symbol "%define")))
+                            (begin
+                             (push-last definitions (second e))
+                             [])
+                            (find-free-variables e))))
+                     [] (rest exp)))
+            (as-set definitions))))
+        (("%try")
+         (destructuring-bind (_ e1 v e2) exp
+           (set-subtract!
+            (set-union!
+             (as-set (find-free-variables e1))
+             (as-set (find-free-variables e2)))
+            (as-set [v]))))
+        (("%set" "%if" "%while"
+          "%array" "%object" "%infix"
+          "%get-property" "%native-call"
+          "%plus" "%minus" "%times" "%divide")
+         (as-set (reduce concatenate []
+                         (map find-free-variables
+                              (rest exp)))))
+        (("%native" "%native-name" "%define")
+         (as-set []))
+        (else:
+         (reduce1 set-union!
+                  (map find-free-variables
+                       exp))))))
+   ((instance? exp <symbol>)
+    (as-set [exp]))
+   (else:
+    (as-set []))))
+
+
+;;;; alpha conversion
+
+;; "identifiers" => module name => symbol name => renaming+
+
+(define-function ensure-naming-structure (env module-name name)
+  ;; ensure renaming object for env
+  (unless (get env "identifiers" module-name)
+    (set! (get env "identifiers" module-name)
+          (make-object)))
+  ;; ensure renaming list for variable
+  (bind ((module-renamings (get env "identifiers" module-name)))
+    (unless (get module-renamings name)
+      (set! (get module-renamings name)
+            [])))
+  env)
+
+(define-function get-module-name/name (identifier)
+  [(or (get identifier "module") "")
+   (symbol-name identifier)])
+
+(define-function rename-identifiers (identifiers env)
+  (map (method (identifier)
+         (destructuring-bind (module-name name)
+             (get-module-name/name identifier)
+           (bind ((new-identifier (generate-symbol (unless (get identifier "generated?")
+                                                     name))))
+             (ensure-naming-structure env module-name name)
+             (push (get env "identifiers" module-name name)
+                   new-identifier)
+             new-identifier)))
+       identifiers))
+
+(define-function restore-identifiers (identifiers env)
+  (for-each ((identifier identifiers))
+            ()
+    (destructuring-bind (module-name name)
+        (get-module-name/name identifier)
+      (pop (get env "identifiers" module-name name)))))
+
+(define *not-found* (make-object))
+
+(define-function find-identifier (identifier env)
+  (destructuring-bind (module-name name)
+      (get-module-name/name identifier)
+    (if-bind (renamings (get env "identifiers"
+                             module-name name))
+      (first renamings)
+      *not-found*)))
+
+(define-function alpha-convert (form env)
+  (select form instance?
+    ((<array>)
+     (select (symbol-name (first form)) ==
+       (("%method")
+        (destructuring-bind (_ arguments body) form
+          (bind ((new-arguments (rename-identifiers arguments env))
+                 (new-body (alpha-convert body env))
+                 (result [_ new-arguments new-body]))
+            (restore-identifiers arguments env)
+            result)))
+       (("%bind")
+        (destructuring-bind (_ (var value) body) form
+          ;; TODO: make binding available inside value?
+          ;; (if so, also change find-free-variables,
+          ;;  %bind special form)
+          (bind ((new-value (alpha-convert value env)))
+            (destructuring-bind (new-var)
+                (rename-identifiers [var] env)
+              (bind ((result
+                      `(%bind (,new-var ,new-value)
+                         ,(alpha-convert body env))))
+                (restore-identifiers [var] env)
+                result)))))
+       (("%try")
+        (destructuring-bind (_ body var catch) form
+          (bind ((new-body (alpha-convert body env)))
+            (destructuring-bind (new-var)
+                (rename-identifiers [var] env)
+              (bind ((result
+                      `(%try ,new-body ,new-var
+                             ,(alpha-convert catch env))))
+                (restore-identifiers [var] env)
+                result)))))
+       (("%define")
+        ;; rename in future expression
+        ;; NOTE: modifies env!
+        (destructuring-bind (_ identifier) form
+          (destructuring-bind (module-name name)
+              (get-module-name/name identifier)
+            (bind ((new-identifier (generate-symbol)))
+              ;; TODO: refactor
+              ;; >>>
+              (ensure-naming-structure env module-name name)
+              (push-last (get env "identifiers" module-name name)
+                         new-identifier)
+              ;; register renaming of definition
+              (set! (get env "definition-names"
+                         (symbol-name new-identifier))
+                    name)
+              (set! (get env "new-identifiers" name)
+                    new-identifier)
+              ;; <<<
+              ;; update form
+              (set! (second form)
+                    new-identifier)
+              form))))
+       (else:
+        (map (rcurry alpha-convert env)
+             form))))
+    ((<symbol>)
+     (bind ((value (find-identifier form env)))
+       (if (== value *not-found*)
+           form
+           value)))
+    (else: form)))
+
+;;;; beta reduction
+
+;; ((L (x y) (+ x y)) a (+ a 1))
+;; => ((L (y) (+ a y)) (+ a 1))
+
+;; (define-function substitute-variables (variables new-variables env)
+;;   (bind ((env (wrap-object env)))
+;;     (for-each ((variable variables)
+;;                (new-variable new-variables))
+;;               ()
+;;       (set! (get env (symbol-name variable))
+;;             new-variable))
+;;     env))
+
+
+;;;; TODO: eliminate
+;;;; ((L () X)) => X
+;;;; (begin 1) => 1
+
+;;(define-function beta-reduce (form env)
+;;  (select form instance?
+;;    ((<array>)
+;;     ;; TODO: bind
+;;     (if (and (instance? (first form) <array>)
+;;              (== (symbol-name (first (first form))) "%method"))
+;;         (destructuring-bind ((_ arguments #rest body) #rest values)
+;;             form
+;;           ;; TODO: maybe also support constant values (numbers, etc.)
+;;           (bind ((variables [])
+;;                  (new-variables [])
+;;                  (new-arguments [])
+;;                  (new-values []))
+;;             (for-each ((argument arguments)
+;;                        (value values))
+;;                 ()
+;;               (if (atomic? value)
+;;                   (begin
+;;                    (push-last variables argument)
+;;                    (push-last new-variables value))
+;;                   (begin
+;;                    (push-last new-arguments argument)
+;;                    (push-last new-values value))))
+;;             (bind ((env (substitute-variables variables new-variables env)))
+;;               (concatenate `(,(concatenate `(%method ,new-arguments)
+;;                                            (beta-reduce body env)))
+;;                            new-values))))
+;;         (map (rcurry beta-reduce env)
+;;              form env)))
+;;    ((<symbol>)
+;;     ... (find-variable form env)
+;;        ... form)
+;;    (else: form)))
+
+
+
+;;; inlining
+
+(define-function inline (form env)
+  (if (and (instance? form <array>)
+           (not (empty? form)))
+      (if (instance? (first form) <symbol>)
+          (select (symbol-name (first form)) ==
+            ;; inline only last
+            (("%method" "%set")
+             (set! (last form)
+                   (inline (last form) env))
+             form)
+            (("%bind")
+             (destructuring-bind (_ binding body) form
+               (set! (second binding)
+                     (inline (second binding) env))
+               (set! (last form)
+                     (inline body env))
+               form))
+            (("%try")
+             (destructuring-bind (_ body var catch) form
+               (set! (second form)
+                     (inline body env))
+               (set! (last form)
+                     (inline catch env))
+               form))
+            ;; inline all arguments
+            (("%begin" "%if" "%while" "%array" "%object"
+              "%get-property" "%native-call" "%infix"
+              "%plus" "%minus" "%times" "%divide")
+             (concatenate [(first form)]
+                          (map (rcurry inline env)
+                               (rest form))))
+            ;; no inlining
+            (("%native" "%native-name" "%define")
+             form)
+            ;; application of function with name
+            (else:
+             (bind ((name (symbol-name (first form)))
+                    (definition-name (or (get env "definition-names" name)
+                                         name))
+                    (definition
+                      ;; local definition?
+                      (or (when (inline? (get env "module")
+                                         definition-name)
+                            (get env "module" "functions"
+                                 definition-name))
+                          ;; imported definition?
+                          (if-bind (module (find-module-for-definition
+                                            definition-name env))
+                            (when (inline? module definition-name)
+                              (get module "functions"
+                                   definition-name))))))
+               (if definition
+                   (inline-definition definition (rest form) env)
+                   ;; normal call
+                   (map (rcurry inline env)
+                        form)))))
+          ;; application of expression, can't be inlined
+          (map (rcurry inline env)
+               form))
+      ;; not an array
+      form))
+
+(define-function inline? (module definition-name)
+  (any? (curry == definition-name)
+        (get module "inline")))
+
+(define-function inline-definition (definition values env)
+  ;; TODO: move preparation to method definition?
+  ;; inlines definition itself and inlines values before., e.g. (not (not ...))
+  (destructuring-bind (_ arguments body) definition
+    ;; TODO: rest and keyword parameters
+    ;; rebind arguments, so values are only evaluated once
+    (bind ((body (reduce (method (body argument)
+                           `(%bind (,argument ,argument)
+                                   ,body))
+                         body
+                         (reverse arguments)))
+           (inlined (inline body env))
+           (prepared (alpha-convert inlined env)))
+      ;; create initial bindings
+      (dotimes (i (size arguments))
+        (bind ((argument (element arguments i))
+               (value (element values i)))
+          (destructuring-bind (module-name name)
+              (get-module-name/name argument)
+            (ensure-naming-structure env module-name name)
+            (push (get env "identifiers" module-name name)
+                  (if value
+                      (inline value env)
+                      `(%native "undefined"))))))
+      ;; rename
+      (bind ((result (alpha-convert body env)))
+        (restore-identifiers arguments env)
+        result))))
+
+
+;;;; ANF
+
+(define-function atomic? (expression)
+  (any? (curry instance? expression)
+        [<number> <boolean> <string> <symbol> <keyword>]))
+
+(define-function normalize-term (expression)
+  (normalize expression identity))
+
+(define-function normalize (exp k)
+  (if (and (instance? exp <array>)
+           (not (empty? exp)))
+      (select (symbol-name (first exp)) ==
+        (("%method")
+         (destructuring-bind (_ arguments body) exp
+           (k `(%method ,arguments
+                 ,(normalize-term body)))))
+        (("%begin")
+         (destructuring-bind (_ exp1 #rest e*) exp
+           (if (empty? e*)
+               (normalize exp1 k)
+               (normalize
+                exp1 (method (aexp1)
+                       `(%begin
+                         ,aexp1
+                         ,(normalize (concatenate
+                                      `(%begin) e*)
+                                     k)))))))
+        (("%bind")
+         (destructuring-bind (_ (var value) body) exp
+           (normalize
+            value (method (avalue)
+                   `(%bind (,var ,avalue)
+                      ,(normalize body k))))))
+        (("%if")
+         (destructuring-bind (_ test then else) exp
+           (normalize-value
+            test (method (atest)
+                   (k `(%if ,atest
+                            ,(normalize-term then)
+                            ,(normalize-term else)))))))
+        (("%while")
+         (destructuring-bind (_ test body) exp
+           (k (if (contains-statements? test)
+                  `(%while #t
+                     (%begin
+                      ,(normalize-term
+                        `(%if ,test
+                              ,(normalize-term body)
+                              (%native "break")
+                              #f))))
+                  `(%while
+                    ,(normalize-term test)
+                    ,(normalize-term body))))))
+        (("%try")
+         (destructuring-bind (_ body var catch) exp
+           (k `(%try
+                ,(normalize-term body)
+                ,var
+                ,(normalize-term catch)))))
+        (("%set")
+         ;; TODO: always normalize value?
+         (destructuring-bind (_ var value) exp
+           (normalize-value
+            value (method (avalue)
+                   (k `(%set ,var ,avalue))))))
+        (else:
+         (if (contains-statements? exp)
+             (normalize-all exp k)
+             (k (map normalize-term exp)))))
+      (k exp)))
+
+(define-function normalize-value (exp k)
+  (if (contains-statements? exp)
+      (normalize* exp k)
+      (k (if (instance? exp <array>)
+             (map normalize-term exp)
+             exp))))
+
+(define-function contains-statements? (exp)
+  (if (and (instance? exp <array>)
+           (not (empty? exp)))
+      (select (symbol-name (first exp)) ==
+        (("%begin" "%if" "%while" "%bind" "%try") #t)
+        (("%set")
+         (contains-statements? (last exp)))
+        (("%method") #f)
+        (else:
+         (any? contains-statements? exp)))
+      #f))
+
+(define-function normalize* (exp k)
+  (normalize
+   exp (method (aexp)
+         (if (atomic? aexp)
+             (k aexp)
+             (bind ((t (generate-symbol)))
+               `(%bind (,t ,aexp)
+                  ,(k t)))))))
+
+(define-function normalize** (exp* k)
+  (if (empty? exp*)
+      (k [])
+      (normalize-all exp* k)))
+
+(define-function normalize-all (exp k)
+  (normalize*
+   (first exp) (method (t)
+                 (normalize**
+                  (rest exp) (method (t*)
+                               (k (concatenate [t] t*)))))))
+
+
+;;;; statements
+
+;; "sink"/wrap return value with expression
+;; e.g. to assign or explicitly return
+
+;; NOTE: wrap-value, transform-statements and
+;; flatten-statements are destructive!
+;; => mutation of expressions reduces consing
+
+(define-function wrap-value (exp wrapper)
+  (if (instance? exp <array>)
+      (select (symbol-name (first exp)) ==
+        (("%begin" "%bind")
+         ;; wrap body
+         (set! (last exp)
+               (wrap-value (last exp) wrapper))
+         exp)
+        (("%if")
+         ;; wrap then and else
+         (set! (third exp)
+               (wrap-value (third exp) wrapper))
+         (set! (last exp)
+               (wrap-value (last exp) wrapper))
+         exp)
+        (("%while")
+         `(%begin
+           ,exp
+           ,(wrap-value #f wrapper)))
+        (("%try")
+         (set! (second exp)
+               (wrap-value (second exp) wrapper))
+         (set! (last exp)
+               (wrap-value (last exp) wrapper))
+         exp)
+        (else:
+         (concatenate wrapper [exp])))
+      (concatenate wrapper [exp])))
+
+
+(define-function add-explicit-return (exp)
+  (wrap-value exp `(%return)))
+
+;; after ANF: if value of binding is control-flow (%if, %while, etc.):
+;; turn into statement form, then "sink" assignment
+;; TODO: example from paper
+
+;; TODO: reuse/merge contains-statements?
+(define-function statement? (exp)
+  (and (instance? exp <array>)
+       (not (empty? exp))
+       (member? (first exp)
+                `(%if %while %begin %bind %try))))
+
+(define-function add-explicit-true (exp)
+  `((%native "$T") ,exp))
+
+(define-function transform-statements (exp env)
+  (if (instance? exp <array>)
+      (select (symbol-name (first exp)) ==
+        (("%method")
+         (set! (last exp)
+               (add-explicit-return
+                (transform-statements (last exp)
+                                      env)))
+         exp)
+        (("%begin")
+         (destructuring-bind (_ #rest exps) exp
+           (maybe-begin
+            (map (rcurry transform-statements env)
+                 exps))))
+        (("%bind")
+         (destructuring-bind (_ (var value) body) exp
+           (if (statement? value)
+               `(%bind (,var #f)
+                  (%begin
+                   ,(wrap-value
+                     (transform-statements value env)
+                     `(%set ,var))
+                   ,(transform-statements body env)))
+               `(%bind (,var
+                        ,(transform-statements value env))
+                  ,(transform-statements body env)))))
+        (("%if")
+         (destructuring-bind (_ test then else) exp
+           `(%if
+             ;; TODO: only if not boolean
+             ,(add-explicit-true test)
+             ,(transform-statements then env)
+             ,(transform-statements else env))))
+        (("%while")
+         (set! (second exp)
+               (add-explicit-true (second exp)))
+         (set! (third exp)
+               (transform-statements (third exp) env))
+         exp)
+        (("%try")
+         (set! (second exp)
+               (transform-statements (second exp) exp))
+         (set! (last exp)
+               (transform-statements (last exp) env))
+         exp)
+        (("%set")
+         (destructuring-bind (_ identifier value) exp
+           (bind ((value* (transform-statements value env))
+                  (definition-name
+                    (get env "definition-names"
+                         (symbol-name identifier))))
+             ;; check if exported definition
+             (if (and definition-name
+                      (member? definition-name
+                               (get env "module" "exports")))
+                 (begin
+                  (set! (first exp)
+                        (symbol "%begin"))
+                  (set! (second exp)
+                        `(%set ,identifier ,value*))
+                  (set! (third exp)
+                        `(%set (%get-property (%native "exports")
+                                              ,definition-name)
+                               ,identifier)))
+                 ;; no re-export, leave as is
+                 (set! (third exp) value*))))
+         exp)
+        (("%define")
+         `(%var (,(last exp) #f)))
+        (else:
+         (map (rcurry transform-statements env) exp)))
+      exp))
+
+
+
+;;;; symbol lifting
+
+(define-function lift-symbols (exp env)
+  (lift-symbol exp env identity))
+
+(define-function lift-symbol (exp env k)
+  (if (and (instance? exp <array>)
+           (not (empty? exp)))
+      (select (symbol-name (first exp)) ==
+        (("%bind")
+         (destructuring-bind (_ (var value) body) exp
+           (lift-symbol
+            value env
+            (method (lvalue env)
+              (lift-symbol
+               body env
+               (method (lbody env)
+                 (k `(%bind (,var ,lvalue)
+                       ,lbody)
+                    env)))))))
+        (("%method" "%set")
+         (destructuring-bind (m e1 e2) exp
+           (lift-symbol
+            e2 env
+            (method (le2 env)
+              (k `(,m ,e1 ,le2)
+                 env)))))
+        (("%begin" "%if" "%while")
+         (destructuring-bind (m #rest e*) exp
+           (lift-symbol*
+            e* env
+            (method (le* env)
+              (k (concatenate [m] le*)
+                 env)))))
+        (("%try")
+         (destructuring-bind (_ e1 v e2) exp
+           (lift-symbol*
+            [e1 e2] env
+            (method (le* env)
+              (destructuring-bind (le1 le2) le*
+                (k `(%try ,le1 ,v ,le2)
+                   env))))))
+        ;; TODO: fix, already renamed
+        (("symbol")
+         (destructuring-bind (_ name) exp
+           (lift-value
+            name exp "symbol" env k)))
+        (else:
+         (lift-symbol** exp env k)))
+      (select exp instance?
+        ((<keyword>)
+         (lift-value
+          (symbol-name exp) exp "keyword" env k))
+        ((<hash-symbol>)
+         (lift-value
+          (symbol-name exp) exp "hash" env k))
+        (else:
+         (k exp env)))))
+
+(define-function lift-value (name value type env k)
+  (if-bind (t (get env "lifted" type name))
+    (k t env)
+    (bind ((t (set! (get env "lifted" type name)
+                    (generate-symbol))))
+      `(%bind (,t ,value)
+         ,(k t env)))))
+
+(define-function lift-symbol* (exp* env k)
+  (if (empty? exp*)
+      (k [] env)
+      (lift-symbol** exp* env k)))
+
+(define-function lift-symbol** (exp env k)
+  (lift-symbol
+   (first exp) env
+   (method (t env)
+     (lift-symbol*
+      (rest exp) env
+      (method (t* env)
+        (k (concatenate [t] t*)
+           env))))))
+
+
+;;;; flatten-statements
+
+(define-function flatten-begins (exps)
+  (reduce1 concatenate
+           (map (method (exp)
+                  (bind ((flattened (flatten-statements exp)))
+                    (if (and (instance? flattened <array>)
+                             (not (empty? flattened))
+                             (== (first flattened)
+                                 (symbol "%begin")))
+                        (rest flattened)
+                        [flattened])))
+                exps)))
+
+(define-function var? (exp)
+  (and (expression? exp)
+       (== (first exp)
+           (symbol "%var"))))
+
+(define-function set? (exp)
+  (and (expression? exp)
+       (== (first exp)
+           (symbol "%set"))))
+
+(define-function method? (exp)
+  (and (expression? exp)
+       (== (first exp)
+           (symbol "%method"))))
+
+(define-function flatten-vars (exps)
+  (reduce (method (result exp)
+            (bind ((previous (and (not (empty? result))
+                                  (last result)))
+                   (previous-var? (and previous
+                                       (var? previous))))
+              (if (and previous-var? (var? exp))
+                  ;; add current bindings to previous
+                  (begin
+                   (do (method (binding)
+                         (push-last (last result)
+                                    binding))
+                       (rest exp))
+                   result)
+                  ;; add assignment to previous binding?
+                  (bind ((merge? (and previous-var? (set? exp)))
+                         (binding (and merge? (last (last result))))
+                         (identifier (and merge? (second exp))))
+                    (if (== (first binding)
+                            identifier)
+                        (begin
+                         (set! (second binding)
+                               (third exp))
+                         result)
+                        (concatenate result [exp]))))))
+          [] exps))
+
+(define-function flatten-statements (exp)
+  (if (instance? exp <array>)
+      (select (symbol-name (first exp)) ==
+        (("%method" "%while" "%set")
+         (set! (last exp)
+               (flatten-statements (last exp)))
+         exp)
+        (("%begin")
+         (destructuring-bind (_ #rest exps) exp
+           (maybe-begin
+            (flatten-vars
+             (flatten-begins exps)))))
+        (("%bind")
+         (destructuring-bind (_ binding body) exp
+           (flatten-statements
+            `(%begin
+              (%var ,binding)
+              ,body))))
+        (("%if")
+         (set! (third exp)
+               (flatten-statements (third exp)))
+         (set! (last exp)
+               (flatten-statements (last exp)))
+         exp)
+        (("%try")
+         (set! (second exp)
+               (flatten-statements (second exp)))
+         (set! (last exp)
+               (flatten-statements (last exp)))
+         exp)
+        (else:
+         (map flatten-statements exp)))
+      exp))
+
+
+
+;;;; compilation to JS
 
 (define *escaped*
   (make-object
@@ -1276,122 +1703,433 @@
    (slice "0000" 0 (- 4 (size string)))
    string))
 
-(define-function hex (code)
-  (fill-zeros ((js:get-property code "toString") 16)))
-
 (define-function escape-string (string)
   (join (map (method (char)
                (if-bind (escaped (get *escaped* char))
                  (concatenate "\\" escaped)
                  (bind ((code (char-code char)))
-                   (if (< 0x1f code  0x7f)
+                   (if (< 0x1f code 0x7f)
                        char
-                       (concatenate "\\u" (hex code))))))
+                       (concatenate
+                        "\\u" (fill-zeros (as-hex-string code)))))))
              (as-array string))
         ""))
 
-(define-function macroexpand (environment form)
-  (select form instance?
-    ((<array>)
-     ;; apply macros
-     (while (and (instance? form <array>)
-                 (instance? (first form) <symbol>)
-                 (or (has? *macros* (symbol-name (first form)))
-                     (has? (get environment "macros")
-                           (symbol-name (first form)))))
-       (bind ((macro (or (get *macros* (symbol-name (first form)))
-                         (get environment "macros"
-                              (symbol-name (first form))))))
-         (set! form (apply macro environment (rest form)))))
-     ;; still array?
-     (if (instance? form <array>)
-         (bind ((head (first form)))
-           ;; special?
-           (if (and (instance? head <symbol>)
-                    (has? *special-forms*
-                          (symbol-name head)))
-               (bind ((expander (get *special-forms*
-                                     (symbol-name head))))
-                 (select expander instance?
-                   ((<number>)
-                    (concatenate
-                     ;; skip n arguments, macroexpand rest
-                     (slice form 0 (inc expander))
-                     (map (curry macroexpand environment)
-                          (slice form (inc expander)))))
-                   ((<function>)
-                    ;; custom expander
-                    (apply expander environment
-                           (rest form)))
-                   (else:
-                    ;; form mustn't be expanded
-                    form)))
-               ;; not special
-               (map (curry macroexpand environment)
-                    form)))
-         ;; not an array
-         (macroexpand environment form)))
-    ((<symbol>)
-     ;; symbol-macro?
-     (if-bind (symbol-macro (get *symbol-macros*
-                                 (symbol-name form)))
-       (macroexpand environment
-                    (apply symbol-macro environment))
-       form))
-    (else: form)))
+(define *reserved*
+  ["break" "case" "catch" "continue" "default" "delete" "do" "else"
+   "finally" "for" "function" "if" "in" "instanceof" "new" "return"
+   "switch" "this" "throw" "try" "typeof" "var" "void" "while"
+   "with" "abstract" "boolean" "byte" "char" "class" "const"
+   "debugger" "double" "enum" "export" "extends" "final" "float"
+   "goto" "implements" "import" "int" "interface" "long" "native"
+   "package" "private" "protected" "public" "short" "static" "super"
+   "synchronized" "throws" "transient" "volatile" "null" "true" "false"
+   "arguments" "object" "number" "string" "array" "let" "yield"])
 
-(define-function write-form (form statements?)
-  (select form instance?
-    ;; array?
+(define *symbol-escapes*
+  (make-object
+   "-" "_"
+   "_" "__"
+   "&" "A"
+   "$" "B"
+   ":" "C"
+   "." "D"
+   "=" "E"
+   "^" "F"
+   ">" "G"
+   "#" "H"
+   "@" "I"
+   "~" "J"
+   ;; K: keyword
+   "<" "L"
+   "%" "M"
+   "!" "N"
+   ;; O
+   "+" "P"
+   "?" "Q"
+   ;; R: reserved
+   "/" "S"
+   "*" "T"
+   ;; U, V, W, X, Y
+   ;; Z: any other
+   ))
+
+(define-function escape-name (name)
+  (if (member? name *reserved*)
+      (concatenate "R" name)
+      (bind ((chars
+              (map (method (char)
+                     (cond
+                      ((has? *symbol-escapes* char)
+                       (get *symbol-escapes* char))
+                      ((match "\\w" char)
+                       char)
+                      (else:
+                       (concatenate
+                        "Z" (as-string (char-code char))))))
+                   (as-array name))))
+        (join chars ""))))
+
+(define-function valid-js-name? (identifier)
+  (and (not (member? identifier *reserved*))
+       (match "^\\w+$" identifier)))
+
+(define-function compile-js (exp env)
+  (select exp instance?
     ((<array>)
-     (bind ((head (first form))
-            (head-name (and head
-                            (symbol-name head)))
-            (tail (rest form)))
-       (cond
-         ;; unary?
-         ((and (instance? head <symbol>)
-               (has? *unary* head-name)
-               (== (size form) 2))
-          (concatenate "(" (get *unary* head-name) " "
-                       (write-expressions (second form)) ")"))
-         ;; infix?
-         ((and (instance? head <symbol>)
-               (has? *infix* head-name))
-          (bind ((infix (get *infix* head-name))
-                 (inside (join (map write-form tail)
-                               (concatenate " " infix " "))))
-              (concatenate "(" inside ")")))
-         ;; writer?
-         ((and (instance? head <symbol>)
-               (has? *writers* head-name))
-          (apply (get *writers* head-name)
-                 statements?
-                 tail))
-         (head
-          (apply (get *writers* "js:call")
-                 statements? head tail))
-         (else:
-          "[]"))))
-    ((<symbol>)
-     (if-bind (symbol (get *symbols* (symbol-name form)))
-       symbol
-       (escape-symbol form)))
-    ((<hash-symbol>)
-     (concatenate "_" (symbol-name form)))
-    ((<keyword>)
-     (concatenate "_k('" (symbol-name form) "')"))
-    ((<boolean>)
-     (if form "true" "false"))
-    ((<string>)
-     (concatenate "\"" (escape-string form) "\""))
+     (if (empty? exp)
+         (signal (make <error> message: "empty expression"))
+         (compile-js-exp exp env)))
     ((<number>)
-     (as-string form))
+     (as-string exp))
+    ((<boolean>)
+     (if exp "true" "false"))
+    ((<string>)
+     (concatenate "\"" (escape-string exp) "\""))
+    ((<hash-symbol>)
+     (concatenate
+      "$" (as-uppercase (symbol-name exp))))
+    ((<keyword>)
+     (concatenate
+      "$K(\"" (symbol-name exp) "\")"))
+    ((<symbol>)
+     (select exp ==
+       (((symbol "%this-method"))
+        (compile-js (get env "current-method")
+                    env))
+       (((symbol "%all-arguments"))
+        "arguments")
+       (else:
+        (if (get exp "generated?")
+            (concatenate "$" (symbol-name exp))
+            (escape-name (symbol-name exp))))))
     (else:
-     (description form))))
+     (description exp))))
 
-(define write-statements
-    (rcurry write-form #t))
+;; TODO: document as language
 
-(define write-expressions
-    (rcurry write-form #f))
+(define-function compile-js-exp (exp env)
+  (bind ((name (symbol-name (first exp))))
+    (select name ==
+      (("%native-call")
+       (destructuring-bind (_ operator #rest values) exp
+         (concatenate
+          operator (compile-js-call values env))))
+      (("%infix")
+       (destructuring-bind (_ operator #rest values) exp
+         (concatenate
+          "(" (join (map (rcurry compile-js env)
+                         values)
+                    (concatenate
+                     " " operator " "))
+          ")")))
+      (("%plus" "%minus" "%times" "%divide")
+       (compile-js-exp
+        (concatenate `(%infix ,(select name ==
+                                 (("%plus") "+")
+                                 (("%minus") "-")
+                                 (("%times") "*")
+                                 (("%divide") "/")))
+                     (rest exp))
+        env))
+      (("%array")
+       (destructuring-bind (_ #rest elements) exp
+         (concatenate
+          "[" (join (map (rcurry compile-js env)
+                         elements)
+                    ", ")
+          "]")))
+      (("%object")
+       (bind ((key-values (rest exp))
+              (entries []))
+         (dotimes (i (/ (size key-values) 2))
+           (push-last entries
+                      (concatenate
+                       (bind ((name (element key-values (* i 2))))
+                         (if (valid-js-name? name)
+                             name
+                             (compile-js name env)))
+                       ":" (compile-js
+                            (element key-values (+ (* i 2) 1))
+                            env))))
+         (concatenate
+          "{" (join entries ",\n") "}")))
+      (("%if")
+       (destructuring-bind (_ test then else) exp
+         (concatenate
+          "if (" (compile-js test env) ")\n"
+          (compile-js then env)
+          ;; optimization: default is false
+          (if (and else
+                   (not (= else `(%return #f))))
+              (concatenate
+               "\nelse " (compile-js else env))
+              ""))))
+      (("%while")
+       (destructuring-bind (_ test body) exp
+         (concatenate "while (" (compile-js test env) ")\n"
+                      (compile-js body env))))
+      (("%try")
+       (destructuring-bind (_ body var catch) exp
+         (concatenate "try {" (compile-js body env) "}\n"
+                      "catch (" (compile-js var env) ")\n"
+                      "{" (compile-js catch env) "}")))
+      (("%return")
+       (concatenate
+        "return " (compile-js (second exp) env)))
+      (("%begin")
+       (concatenate
+        "{" (join (map (rcurry compile-js env)
+                       (rest exp))
+                  ";\n")
+        "}"))
+      (("%set")
+       (destructuring-bind (_ var value) exp
+         (concatenate
+          (compile-js var env) " = "
+          (compile-js value env))))
+      (("%method")
+       (destructuring-bind (_ arguments body) exp
+         (bind ((name (generate-symbol))
+                (previous-method (get env "current-method")))
+           (concatenate
+            "function " (compile-js name env)
+            " (" (join (map (rcurry compile-js env)
+                            arguments)
+                       ", ")
+            ")\n"
+            (begin
+             (set! (get env "current-method") name)
+             (bind ((body* (compile-js body env)))
+               (set! (get env "current-method") previous-method)
+               (if (and (expression? body)
+                        (== (first body) (symbol "%begin")))
+                   body*
+                   (concatenate "{" body* "}"))))))))
+      (("%var")
+       (destructuring-bind (_ #rest bindings) exp
+         (concatenate
+          "var "
+          (join (map (method (binding)
+                       (destructuring-bind (var value)
+                           (if (instance? binding <array>)
+                               binding
+                               [binding #f])
+                         (concatenate
+                          (compile-js var env)
+                          (if value
+                              (concatenate
+                                " = " (compile-js value env))
+                              ""))))
+                     bindings)
+                ", "))))
+      (("%native")
+       (reduce1 concatenate
+                (map (method (e)
+                       (if (instance? e <symbol>)
+                           (compile-js e)
+                           (as-string e)))
+                     (rest exp))))
+      (("%native-name")
+       (concatenate
+        "\"" (escape-name (second exp)) "\""))
+      (("%get-property")
+       (destructuring-bind (_ object #rest properties) exp
+         (concatenate
+          (if (instance? object <number>)
+              (concatenate "(" (compile-js object env) ")")
+              (compile-js object env))
+          (reduce (method (result property)
+                    (concatenate
+                     result
+                     (if (and (instance? property <string>)
+                              (valid-js-name? property))
+                         (concatenate "." property)
+                         (concatenate "[" (compile-js property env) "]"))))
+                  "" properties))))
+      (else:
+       (destructuring-bind (function #rest values) exp
+         (concatenate
+          (bind ((function* (compile-js function env)))
+            (if (method? function)
+                (concatenate "(" function* ")")
+                function*))
+          (compile-js-call values env)))))))
+
+(define-function compile-js-call (values env)
+  (concatenate
+   "(" (join (map (rcurry compile-js env)
+                  values)
+             ", ")
+   ")"))
+
+
+;;;;
+
+(define-function read-program (source)
+  (read (make <string-stream>
+              string: (concatenate "(" source "\n)"))))
+
+(define-function compile-expression (exp env)
+  (reduce (method (result name/fn)
+            (destructuring-bind (name fn) name/fn
+;;              (format-out "### %s:\n" name)
+              (bind ((result (fn result)))
+;;                (format-out "%=\n" result)
+                result)))
+          exp
+          [["source" identity]
+           ["macroexpanded"
+            (rcurry macroexpand-all env)]
+           ["lifted defines"
+            (rcurry lift-defines env)]
+           ["defined free variables"
+            (rcurry define-free-variables env)]
+           ["alpha-converted"
+            (rcurry alpha-convert env)]
+           ["inline"
+            (rcurry inline env)]
+           ["defined free variables after inline"
+            (rcurry define-free-variables2 env)]
+           ["ANF"
+            normalize-term]
+           ["lifted symbols"
+            (rcurry lift-symbols env)]
+           ["statements"
+            (rcurry transform-statements env)]
+           ["flattened"
+            flatten-statements]
+           ["compiled"
+            (rcurry compile-js env)]]))
+
+;;;;
+
+(define path (%native-call "require" "path"))
+(define fs (%native-call "require" "fs"))
+(define vm (%native-call "require" "vm"))
+
+(define-function ensure-directory (directory)
+  (bind ((parent (. path ("dirname" directory))))
+    (unless (. path ("existsSync" parent))
+      (ensure-directory parent))
+    (unless (. path ("existsSync" directory))
+      (. fs ("mkdirSync" directory)))))
+
+(define-function executable-path (module-name)
+  (. path ("resolve" "build"
+           (concatenate module-name ".js"))))
+
+(define-function module-path (module-name)
+  (. path ("resolve" "build"
+           (concatenate module-name ".rm"))))
+
+(define-function source-path (module-name)
+  (. path ("resolve" "src"
+           (concatenate module-name ".ralph"))))
+
+
+(define-function recompile? (module-name)
+  (bind ((p (executable-path module-name)))
+    (or (not (. path ("existsSync" p)))
+        (bind ((p2 (source-path module-name)))
+          (< (get (. fs ("statSync" p)) "mtime")
+             (get (. fs ("statSync" p2)) "mtime"))))))
+
+
+(define-function compile-time-import-module (env module-name #key names)
+  (destructuring-bind (macros symbol-macros)
+      (if (== module-name "ralph/core")
+          [*core-macros* *core-symbol-macros*]
+          (begin
+           ;; ensure latest version is compiled
+           (compile-module module-name)
+           (bind ((definitions (%native-call "require" module-name))
+                  (macros (make-plain-object))
+                  (symbol-macros (make-plain-object)))
+             (do (method (name)
+                   (bind ((definition (get definitions name)))
+                     (cond
+                      ((get definition "%macro?")
+                       (set! (get macros name)
+                             definition))
+                      ((get definition "%symbol-macro?")
+                       (set! (get symbol-macros name)
+                             definition)))))
+                 (or names
+                     (object-properties definitions)))
+             [macros symbol-macros])))
+    (chain-object (get env "macros")
+                  macros)
+    (chain-object (get env "symbol-macros")
+                  symbol-macros)))
+
+
+(define-function import-module (module module-name #key names)
+  ;; TODO: open database first
+  (bind ((other-module (find-module module-name)))
+    (push (get module "imports")
+          [other-module
+           (or names
+               (get other-module "exports"))])
+    other-module))
+
+(define-function find-module (module-name)
+  (or (compile-module module-name)
+      (get *modules* module-name)
+      (read-module module-name)))
+
+(define-function read-module (module-name)
+  (bind ((p (module-path module-name)))
+    (when (. path ("existsSync" p))
+      (apply (curry make <module> name:)
+             (read (make <string-stream>
+                         string: (read-file p)))))))
+
+(define-function read-file (path)
+  (. fs ("readFileSync" path)
+     ("toString")))
+
+(define-function open-executable (module-name)
+  (bind ((p (executable-path module-name)))
+    (ensure-directory (. path ("dirname" p)))
+    (. fs ("openSync" p "w"))))
+
+(define-function compile-module (module-name)
+  (when (and (not (has? *modules* module-name))
+             ;; TODO: (recompile? module-name)
+             #t)
+    (bind ((module (make <module> name: module-name))
+           (env (make <environment> module: module))
+           (source (read-file (source-path module-name)))
+           (program (read-program source))
+           (executable (open-executable module-name)))
+      (set! (get *modules* module-name)
+            module)
+      (compile-time-import-module env "ralph/core")
+      ;; special case core?
+      (unless (== module-name "ralph/core")
+        ;; implicitly import and load core
+        (import-module module "ralph/core")
+        (push program
+              (make-import-definition "ralph/core" env)))
+      ;; compile
+      (do (method (expression)
+            (. fs ("writeSync" executable
+                   (concatenate
+                    (compile-expression expression env)
+                    "\n"))))
+          program)
+      (. fs ("closeSync" executable))
+      ;; write module
+      (. fs ("writeFileSync" (module-path module-name)
+             ;; ignore imports for now
+             (description [module-name
+                           exports: (get module "exports")])))
+      module)))
+
+;;;;
+
+(bind ((start (make <date>)))
+  (compile-module "ralph/compiler")
+  (compile-module "ralph/runtime.test")
+  (format-out "%d\n" (- (make <date>) start)))

@@ -1,0 +1,5 @@
+(define-module ralph/macro-test.c
+  export: (foo))
+
+(define-macro foo ()
+  3)

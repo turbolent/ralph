@@ -1,5 +1,5 @@
 (define-module ralph/test
-  import: (ralph/core ralph/format)
+  import: (ralph/format)
   export: (check-equal
            check-true
            check-false
@@ -7,17 +7,16 @@
            check-no-error
            check-instance?))
 
+(define *quiet* #t)
+
 (define-function report-success ((description <string>) (explanation <string>))
-  (format-out (if (== *environment* "browser")
-                  " <span style=\"color:green\">✓</span> %s: %s<br/>"
-                  " \u001B[32m✓\u001B[0m %s: %s\n")
+  (format-out (if *quiet* "." " \u001B[32m✓\u001B[0m %s: %s\n")
               description explanation))
 
 
 (define-function report-failure ((description <string>) (explanation <string>))
-  (format-out (if (== *environment* "browser")
-                  " <span style=\"color:red\">✘</span> %s: %s<br/>"
-                  " \u001B[31m✘\u001B[0m %s: %s\n")
+  (format-out "%s \u001B[31m✘\u001B[0m %s: %s\n"
+              (if *quiet* "\n" "")
               description explanation))
 
 (define-function check-equal ((description <string>) expected-value test-value)
@@ -64,27 +63,27 @@
                                   (condition-class <class>)
                                   (function <function>))
   (handler-case
-      (begin
-       (function)
-       (report-failure description
-                       (format-to-string
-                        "Condition %= should have been signaled."
-                        condition-class)))
-    ((condition-class)
-        (report-success description
-         (format-to-string "Condition %= was signaled."
-                           condition-class)))))
+   (begin
+    (function)
+    (report-failure description
+                    (format-to-string
+                     "Condition %= should have been signaled."
+                     condition-class)))
+   ((condition-class)
+    (report-success description
+                    (format-to-string "Condition %= was signaled."
+                                      condition-class)))))
 
 
 (define-function check-no-error ((description <string>) (function <function>))
   (handler-case
-      (begin
-       (function)
-       (report-success description "No error was signaled."))
-    ((<error> condition: condition)
-        (report-failure description
-         (format-to-string "Condition %= shouldn't have been signaled."
-                           condition)))))
+   (begin
+    (function)
+    (report-success description "No error was signaled."))
+   ((<error> condition: condition)
+    (report-failure description
+                    (format-to-string "Condition %= shouldn't have been signaled."
+                                      condition)))))
 
 
 (define-function check-instance? ((description <string>)

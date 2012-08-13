@@ -1,6 +1,7 @@
-(define-module tests/runtime-tests
-  import: (ralph/core ralph/test ralph/format
-           ralph/stream ralph/watch))
+(define-module ralph/runtime.test
+  import: (ralph/test
+           ralph/format
+           ralph/stream))
 
 ;; test expansion
 (define-function foo (if)
@@ -10,9 +11,9 @@
 
 ;; true?
 (check-false "true?: null isn't true"
-             (true? js:null))
+             (true? (%native "null")))
 (check-false "true?: undefined isn't true"
-             (true? js:undefined))
+             (true? (%native "undefined")))
 (check-true "true?: 0 is true"
             (true? 0))
 (check-true "true?: \"0\" is true"
@@ -34,13 +35,13 @@
 (check-false "equality: array with different contents"
              (= [1 3 4 2] [4 2 1 3]))
 (check-false "equality: undefined and #t"
-             (= js:undefined #t))
+             (= (%native "undefined") #t))
 (check-true "equality: undefined and #f"
-            (= js:undefined #f))
+            (= (%native "undefined") #f))
 (check-false "equality: object and undefined"
-             (= (make-object) js:undefined))
+             (= (make-object) (%native "undefined")))
 (check-false "equality: 0 and undefined"
-             (= 0 js:undefined))
+             (= 0 (%native "undefined")))
 
 ;; or
 (check-equal "or: \"\" is true"
@@ -113,31 +114,32 @@
 
 
 
-;; %parallel-set
+;; parallel-set!
 (bind ((i 0)
        (v 0))
-  (%parallel-set
+  (parallel-set!
    i 1
    v (inc i))
-  (check-equal "%parallel-set: i = 0 set to 1"
+  (check-equal "parallel-set!: i = 0 set to 1"
                1 i)
-  (check-equal "%parallel-set: v = 0 set to incremented i still 1"
+  (check-equal "parallel-set!: v = 0 set to incremented i still 1"
                1 v))
 
-;; block
-(check-true "block: without non-local-exit function"
-            (block () #t))
-(check-true "block: with non-local-exit function"
-            (block (return)
-              (return #t)
-              #f))
-(check-equal "block: invoke non-local-exit function with value"
-             2 (block (foo)
-                 1
-                 (foo 2)
-                 3))
+;; TODO
+; ;; block
+; (check-true "block: without non-local-exit function"
+;             (block () #t))
+; (check-true "block: with non-local-exit function"
+;             (block (return)
+;               (return #t)
+;               #f))
+; (check-equal "block: invoke non-local-exit function with value"
+;              2 (block (foo)
+;                  1
+;                  (foo 2)
+;                  3))
 
-;; TODO: not working
+;; signal
 (check-condition "signal <error>" <error>
                  (method ()
                    (signal (make <error> message: "!"))
@@ -230,9 +232,9 @@
 
 ;; instance?
 (check-true "instance?: \"test\" is a String"
-            (instance? "test" (js:inline "String")))
+            (instance? "test" (%native "String")))
 (check-true "instance?: 1 is a Number"
-            (instance? 1 (js:inline "Number")))
+            (instance? 1 (%native "Number")))
 (check-true "instance?: \"test\" is a <string>"
             (instance? "test" <string>))
 (check-true "instance?: 1 is a <number>"
@@ -268,17 +270,17 @@
              (instance? (make <a>) <c>))
 
 ;;
-(check-equal "type: js:null is <boolean>"
-             (type js:null) <boolean>)
-(check-equal "type: js:undefined is <boolean>"
-             (type js:undefined) <boolean>)
+(check-equal "type: null is <boolean>"
+             (type (%native "null")) <boolean>)
+(check-equal "type: undefined is <boolean>"
+             (type (%native "undefined")) <boolean>)
 
 ;; setter definition before getter
 (define-function (setter foo) (object new-value)
-  (set! (js:get-property object "foo") new-value))
+  (set! (%get-property object "foo") new-value))
 
 (define-function foo (object)
-  (js:get-property object "foo"))
+  (%get-property object "foo"))
 
 (bind ((bar (make <object>)))
   (set! (foo bar) 1)
@@ -290,6 +292,9 @@
              1 ((rcurry element 1) [0 1 2]))
 (check-true "any? and rcurry: x > 2 on 1, 2, 3, 4"
             (any? (rcurry > 2) [1 2 3 4]))
+(check-equal "any?"
+             0
+             (any? identity [0 ""]))
 
 (check-equal "size: array [1 2 3]"
              3 (size [1 2 3]))
@@ -343,54 +348,34 @@
                          skip: 2)))
 
 
-;; replace-subsequence
-(bind ((array [0 1 2 3 4 5 6 7 8 9])
-       (xs ["X" "X" "X"]))
-  (check-equal "replace-subsequence: array: 2..4"
-               xs
-               (copy-sequence
-                (replace-subsequence array xs start: 2 end: 4)
-                start: 2
-                end: 5))
-
-  (check-equal "replace-subsequence: array: 2.."
-               xs
-               (copy-sequence
-                (replace-subsequence array xs start: 2)
-                start: 2))
-
-  (check-equal "replace-subsequence: array: ..2"
-               xs
-               (copy-sequence
-                (replace-subsequence array xs end: 2)
-                end: 3))
-
-  (check-equal "replace-subsequence: array: insert at 2"
-               xs
-               (copy-sequence
-                (replace-subsequence array xs start: 2 end: 2)
-                start: 2
-                end: 5))
-
-  (check-equal "replace-subsequence: string"
-               "XXX"
-               (copy-sequence
-                (replace-subsequence "ABCDEFG" "XXX"
-                                     start: 5 end: 8)
-                start: 5)))
-
 ;; replace-subsequence!
-(bind ((generate-array (method ()
-                         [0 1 2 3 4 5]))
-       (xs ["X" "X" "X"]))
-  (bind ((x (generate-array)))
-    (replace-subsequence! x xs start: 2)
-    (check-equal "replace-subsequence!"
-                 [0 1 "X" "X" "X" 2 3 4 5] x))
-  (bind ((x (generate-array)))
-    (replace-subsequence! x xs start: 2 end: 4)
-    (check-equal "replace-subsequence!"
-                 [0 1 "X" "X" "X" 4 5] x)))
+(bind ((foo ["a" "b" "c" "d" "e"]))
+  (replace-subsequence! foo ["x" "y" "z"] end: 1)
+  (check-equal "replace-subsequence!: start only"
+               ["x" "y" "z" "b" "c" "d" "e"]
+               foo)
+  (replace-subsequence! foo ["x" "y" "z"] start: 4)
+  (check-equal "replace-subsequence!: end only"
+               ["x" "y" "z" "b" "x" "y" "z"]
+               foo)
+  (replace-subsequence! foo ["a" "b" "c"]
+                        start: 2 end: 4)
+  (check-equal "replace-subsequence!: start and end"
+               ["x" "y" "a" "b" "c" "x" "y" "z"]
+               foo))
+
+;; replace-subsequence
+(bind ((foo ["a" "b" "c" "d" "e"]))
+  (check-equal "replace-subsequence: start only"
+               ["x" "y" "z" "b" "c" "d" "e"]
+               (replace-subsequence foo ["x" "y" "z"] end: 1))
+  (check-equal "replace-subsequence: end only"
+               ["a" "b" "x" "y" "z"]
+               (replace-subsequence foo ["x" "y" "z"] start: 2))
+  (check-equal "replace-subsequence: start and end"
+               ["a" "b" "x" "y" "z" "e"]
+               (replace-subsequence foo ["x" "y" "z"]
+                                    start: 2 end: 4)))
 
 ;; destructuring-bind
 (destructuring-bind (a (b c) d ((e f) g))
@@ -448,16 +433,6 @@
                 #f)
                ((<error> condition: condition)
                 #f))))
-
-(check-true "if-bind: test is false, shouldn't be visible in then (ignore if optimized)"
-            (if-bind (a #f)
-              a
-              (handler-case
-               (begin
-                a
-                #f)
-               ((<error> condition: condition)
-                #t))))
 
 (define-generic test (object))
 
@@ -630,21 +605,6 @@
 (check-equal "remove: 2 from (1 2 3)"
              [1 3] (remove [1 2 3] 2))
 
-;; watch
-(bind ((fired? #f)
-       (foo (make-object "a" 1)))
-  (watch foo "a"
-         (method (property old-value new-value)
-           (check-equal "watch: old-value"
-                        1 old-value)
-           (check-equal "watch: new-value"
-                        2 new-value)
-           (check-equal "watch: property"
-                        "a" property)
-           (set! fired? #t)))
-  (set! (get foo "a") 2)
-  (check-true "watch: handler should be called" fired?))
-
 (define-class <x> ()
   x
   (a 1))
@@ -753,7 +713,7 @@
 
 (bind ((object (make-object)))
   (check-true "select: primitive test"
-              (select object js:===
+              (select object ==
                       (((make-object)) #f)
                       ((object) #t))))
 
@@ -833,3 +793,24 @@
 (check-equal "compose"
              3
              ((compose size rest) [1 2 3 4]))
+
+
+
+;; NOTE: add tests ABOVE!
+
+(define-function when ()
+  "WHEN")
+
+(check-equal "macroexpansion: respect bindings"
+             "WHEN" (when))
+
+(check-equal "macroexpansion: respect local bindings"
+             3 (bind ((unless (method () 3)))
+                 (unless)))
+
+(check-equal "macroexpansion: respect local method arguments"
+             3 ((method (unless)
+                  (unless))
+                (method () 3)))
+
+;; NOTE: DO NOT add new tests below! when is redefined

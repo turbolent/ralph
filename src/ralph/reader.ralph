@@ -1,15 +1,15 @@
 (define-module ralph/reader
-    import: (ralph/core ralph/stream ralph/regexp)
+    import: (ralph/stream ralph/regexp)
     export: (read))
 
 (define *number-patterns*
-    (map (curry make <regexp> ignore-case?: #t pattern:)
-         ["^[+-]?0x[0-9a-f]+"
-          "^[+-]?0[0-7]+"
-          "^[+-]?\\d+\\.?\\d*(?:e-?\\d*(?:\\d\\.?|\\.?\\d)\\d*)?"]))
+  (map (curry make <regexp> ignore-case?: #t pattern:)
+       ["^[+-]?0x[0-9a-f]+"
+        "^[+-]?0[0-7]+"
+        "^[+-]?\\d+\\.?\\d*(?:e-?\\d*(?:\\d\\.?|\\.?\\d)\\d*)?"]))
 
 (define *line-pattern*
-    (make <regexp> pattern: "(.*)[\n\r]?"))
+  (make <regexp> pattern: "(.*)[\n\r]?"))
 
 (define *whitespace-subpattern*
   ;; Vertical Tab, Form Feed, No-break space, Byte Order Mark
@@ -38,14 +38,14 @@
 
 (define-function make-atom (value)
   (select value ==
-    (("#t") (make-boolean #t))
-    (("#f") (make-boolean #f))
+    (("#t") #t)
+    (("#f") #f)
     (("#key") #key)
     (("#rest") #rest)
     (else:
      (if-bind (number (any? (rcurry match value)
                             *number-patterns*))
-       (make-number (first number))
+       (as-number (first number))
        (if (== (last value) ":")
            (keyword (but-last value))
            (symbol value))))))
@@ -75,7 +75,7 @@
                            (signal "bad escape sequence")))
                         char))
       (set! char (stream-read-element stream)))
-    (make-string (stream-contents result))))
+    (stream-contents result)))
 
 (define *wrapper-symbols* ["%backquote" "%comma"])
 
@@ -98,9 +98,9 @@
             ((";")
              (read-line stream))
             (("`")
-             (push-last stack [(symbol "%backquote")]))
+             (push-last stack [(symbol "%backquote" "ralph/core")]))
             ((",")
-             (push-last stack [(symbol "%comma")]))
+             (push-last stack [(symbol "%comma" "ralph/core")]))
             (("(")
              (push-last ends ")")
              (push-last stack []))

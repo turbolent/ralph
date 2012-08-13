@@ -1,42 +1,28 @@
-(function _10__lambda (_7, _9) {
-var MODULE = this;
-var _3 = ["ralph/core"];
-for (var _2 = 0; (_2 < 1); _2 = (_2 + 1)) {
-var _1 = require(_3[_2]);
-for (var _0 in _1) {
-if (_1.hasOwnProperty(_0)) {
-MODULE[_0] = _1[_0]
-}
-}
-};
-_CL_date = exports._CL_date = Date;
-initialize = _PE_makeMethod("initialize", function __method__ (date) {
-var rest = [].slice.call(arguments, 1);
-return (function _11__lambda (_arguments) {
-_arguments = asObject(rest);
-return (function _12__lambda (_5, _6) {
-_5 = [["timestamp", "setTime"], ["day", "setDate"], ["month", "setMonth"], ["year", "setYear"], ["minutes", "setMinutes"], ["seconds", "setSeconds"], ["hours", "setHours"], ["milliseconds", "setMilliseconds"]];
-_6 = (_7 = _5, ((true_W_(_7) && _7.length) || 0));
-return (function(){
-for (var _4 = 0; (_4 < _6); _4 = (_4 + 1)) {
-var setter = _5[_4];
-(function _13__lambda (setter) {
-apply(function _14__lambda (keyword, _function) {
-return (function _15__lambda (_8) {
-_8 = (_7 = _arguments, _9 = keyword, (_7 && _7.hasOwnProperty(_9) && _7[_9]));
-return (true_W_(_8) ? (function _16__lambda (value) {
-value = _8;
-return date[_function](value)
-})() : false)
-})()
-}, setter)
-})(setter)
-}
-})()
-})(((typeof (_5) !== 'undefined') && _5), false)
-})()
-}, _CL_date, ((typeof (initialize) !== 'undefined') && initialize), false, "(initialize <date> #rest rest)");
-localeTimeString = _PE_makeFunction("localeTimeString", function __method__ (date) {
-return date.toLocaleTimeString()
-}, ((typeof (localeTimeString) !== 'undefined') && localeTimeString), false, "(locale-time-string <object>)")
-})()
+var $g2013 = require("ralph/core")
+false
+{var $g2014 = Date;
+exports["<date>"] = $g2014}
+var $g2015 = [["timestamp", "setTime"], ["day", "setDate"], ["month", "setMonth"], ["year", "setYear"], ["minutes", "setMinutes"], ["seconds", "setSeconds"], ["hours", "setHours"], ["milliseconds", "setMilliseconds"]]
+var trueQ = $g2013["true?"], $g2022 = $g2013["%make-method"], $g2023 = $g2013.not, $g2024 = $g2013["any?"], $g2025 = $g2013["empty?"], $g2026 = $g2013.get, $g2027 = $g2013.element, $g2028 = $g2013.rest, $g2029 = $g2013.first, $g2030 = $g2013["as-object"], $g2031 = $g2022("initialize", function $g2054 ($date2032)
+{var $options2033 = $SL.call(arguments, 1), $rarguments2034 = $g2030($options2033), $g2035 = $g2015, $g2036, $g2037, $g2038 = [$g2035];
+while ($T(true))
+{var $g2039 = $g2036, $value2047;
+if ($T($g2039))
+$value2047 = $g2039
+else $value2047 = $g2024($g2025, $g2038);
+var $g2053 = !(trueQ($value2047));
+if ($T($g2053))
+{var $sequence2049 = $g2035, $setter2040 = $sequence2049[0];
+(function $g2055 ($setter2041)
+{var $keyword2042 = $g2027($setter2041, 0), $rfunction2043 = $g2027($setter2041, 1), $g2044 = $g2026($rarguments2034, $keyword2042);
+if ($T($g2044))
+{var $value2045 = $g2044;
+return $date2032[$rfunction2043]($value2045)}})($setter2040);
+var $sequence2051 = $g2035, $g2052 = $sequence2051.slice(1);
+$g2035 = $g2052;
+$g2038 = [$g2035]}
+else break};
+return $g2037}, false, $g2014, $g2031)
+{var $g2056 = $g2013["%make-function"], $g2057 = $g2056("locale_time_string", function $g2059 ($date2058)
+{return $date2058.toLocaleTimeString()}, false);
+exports["locale-time-string"] = $g2057}

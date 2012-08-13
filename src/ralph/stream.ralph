@@ -1,5 +1,4 @@
 (define-module ralph/stream
-  import: (ralph/core)
   export: (<stream>
            <string-stream>
            <file-stream>
@@ -102,9 +101,9 @@
             (replace-subsequence (get stream "string") string
                                  start: index
                                  end: end))
+      (set! (get stream "index") end)
       (set! (get stream "length")
-            (max end (get stream "length")))
-      (inc! (get stream "index") length)))
+            (max end (get stream "length")))))
   string)
 
 (define-method stream-contents ((stream <string-stream>))
@@ -121,16 +120,11 @@
   file)
 
 (define-method stream-write ((stream <file-stream>) (string <string>))
-  ((js:get-property stream "file" "write") string))
+  ((%get-property stream "file" "write") string))
 
 
 ;;;;
 
 (define *standard-out*
-  (if (== *environment* "browser")
-      (make <document-stream>)
-      (bind ((object (if (== *environment* "commonjs")
-                         (require "system")
-                         process)))
-        (make <file-stream>
-              file: (js:get-property object "stdout")))))
+  (make <file-stream>
+        file: (%get-property (%native "process") "stdout")))

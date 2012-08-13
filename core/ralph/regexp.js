@@ -1,40 +1,31 @@
-(function _10__lambda (_9) {
-var MODULE = this;
-var _3 = ["ralph/core"];
-for (var _2 = 0; (_2 < 1); _2 = (_2 + 1)) {
-var _1 = require(_3[_2]);
-for (var _0 in _1) {
-if (_1.hasOwnProperty(_0)) {
-MODULE[_0] = _1[_0]
-}
-}
-};
-_CL_regexp = exports._CL_regexp = RegExp;
-initialize = _PE_makeMethod("initialize", function __method__ (regexp) {
-var _4 = [].slice.call(arguments, 1);
-var pattern;
-var global_W_;
-var ignoreCase_W_;
-var multiline_W_;
-for (var _7 = 0; (_7 < _4.length); _7 = (_7 + 2)) {
-var _5 = _4[_7];
-var _6 = _4[(_7 + 1)];
-if (true_W_(keyword_W_(_5))) {
-(function _11__lambda () {
-var _8 = _5;
-return (true_W_((_9 = (_8 == _k('pattern')), (true_W_(_9) ? _9 : false))) ? pattern = _6 : (true_W_((_9 = (_8 == _k('global?')), (true_W_(_9) ? _9 : false))) ? global_W_ = _6 : (true_W_((_9 = (_8 == _k('ignore-case?')), (true_W_(_9) ? _9 : false))) ? ignoreCase_W_ = _6 : (true_W_((_9 = (_8 == _k('multiline?')), (true_W_(_9) ? _9 : false))) ? multiline_W_ = _6 : false))))
-})()
-}
-};
-return (true_W_(pattern) ? regexp.compile(pattern, concatenate((true_W_(global_W_) ? "g" : ""), (true_W_(ignoreCase_W_) ? "i" : ""), (true_W_(multiline_W_) ? "m" : ""))) : false)
-}, _CL_regexp, ((typeof (initialize) !== 'undefined') && initialize), false, "(initialize <regexp> #key pattern global? ignore-case? multiline?)");
-find = _PE_makeFunction("find", function __method__ (regexp, _string) {
-return (function _12__lambda (position) {
-position = _string.search(regexp);
-return (true_W_(binary_GT_(position, -1)) ? position : false)
-})()
-}, ((typeof (find) !== 'undefined') && find), false, "(find <regexp> <string>)");
-match = exports.match = _PE_makeFunction("match", function __method__ (regexp, _string) {
-return _string.match(regexp)
-}, ((typeof (match) !== 'undefined') && match), false, "(match <regexp> <string>)")
-})()
+var $g1715 = require("ralph/core")
+false
+{var $g1716 = RegExp;
+exports["<regexp>"] = $g1716}
+var $g1719 = $g1715["%make-method"], $g1720 = $g1715.concatenate, $g1721 = $g1715["%keys"], $g1722 = $g1719("initialize", function $g1734 ($regexp1723)
+{var $g1724 = $SL.call(arguments, 1), $g1725 = $g1721($g1724, {pattern:false,
+"global?":false,
+"ignore-case?":false,
+"multiline?":false}), $pattern1726 = $g1725.pattern, $globalq1727 = $g1725["global?"], $ignore_caseq1728 = $g1725["ignore-case?"], $multilineq1729 = $g1725["multiline?"];
+if ($T($pattern1726))
+{var $g1731;
+if ($T($globalq1727))
+$g1731 = "g"
+else $g1731 = "";
+var $g1732;
+if ($T($ignore_caseq1728))
+$g1732 = "i"
+else $g1732 = "";
+var $g1733;
+if ($T($multilineq1729))
+$g1733 = "m"
+else $g1733 = "";
+var $flags1730 = $g1720($g1731, $g1732, $g1733);
+return $regexp1723.compile($pattern1726)}}, false, $g1716, $g1722)
+var $g1735 = $g1715["%make-function"], $g1736 = $g1715[">"], $g1737 = $g1735("find", function $g1741 ($regexp1738, $rstring1739)
+{var $position1740 = $rstring1739.search($regexp1738);
+if ($T($g1736($position1740, -1)))
+return $position1740}, false)
+{var $g1742 = $g1735("match", function $g1745 ($regexp1743, $rstring1744)
+{return $rstring1744.match($regexp1743)}, false);
+exports.match = $g1742}
