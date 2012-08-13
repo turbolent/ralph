@@ -1,4 +1,4 @@
-(define-module ralph2/stream
+(define-module ralph/stream
   export: (<stream>
            <string-stream>
            <file-stream>

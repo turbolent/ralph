@@ -1,5 +1,5 @@
-var $g1605 = require("ralph2/core")
-var $g1607 = require("ralph2/stream")
+var $g1605 = require("ralph/core")
+var $g1607 = require("ralph/stream")
 var $g1608 = $g1605["%make-function"], $g1609 = $g1605["as-string"], $g1610 = $g1608("format_integer", function $g1612 ($rnumber1611)
 {return $g1609($rnumber1611)}, false)
 {var $g1697 = $K("message"), trueQ = $g1605["true?"], $g1617 = $g1605.description, $g1618 = $g1605.signal, $g1619 = $g1605.make, $g1620 = $g1605["<error>"], $g1621 = $g1605.concatenate, $g1622 = $g1605["=="], $g1623 = $g1605["as-lowercase"], $g1624 = $g1605.not, $g1625 = $g1605["empty?"], $g1626 = $g1605[">"], $g1627 = $g1607["stream-write"], $g1628 = $g1605.slice, $g1629 = $g1605.second, $g1630 = $g1605.element, $g1631 = $g1605.position, $g1632 = $g1608("format", function $g1698 ($stream1633, $control_string1634)

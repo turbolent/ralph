@@ -1,4 +1,4 @@
-var $g1490 = require("ralph2/core")
+var $g1490 = require("ralph/core")
 false
 {var $g1491 = $g1490["%make-class"], $g1492 = $g1490["<object>"], $g1493 = $g1491($g1492, {});
 exports["<stream>"] = $g1493}

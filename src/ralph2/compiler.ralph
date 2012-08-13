@@ -1,60 +1,12 @@
 
-(define-module ralph2/compiler
-  import: (ralph2/stream ralph2/format ralph2/regexp
-           ralph2/reader ralph2/date)
-  compile-time-import: (ralph2/compiler-macros))
+(define-module ralph/compiler
+  import: (ralph/stream ralph/format ralph/regexp
+           ralph/reader ralph/date)
+  compile-time-import: (ralph/compiler-macros))
 
 ;; NOTE: naming convention:
 ;; - identifier = symbol, name = string
-;; TODO: - form = any source object, expression = (<symbol> ...)
 ;; - verbed functions or predicates
-
-;; NOTE: no symbol expansion after macroexpand-all,
-;;       as ANF uses atomic? to decide if expression
-;;       has side-effects and needs to be normalized
-;;       (influences evaluation order)
-
-;; TODO: check destructuring-bind is optimized
-
-;; TODO: optimize == -> binary==
-
-;; TODO: optimize select: directly use function is variable
-;;       (eg. == => (== x "foo") => (binary==
-
-;; TODO: require.js: wrap in define
-
-;; TODO: how to optimize binary comparisons, concatenate,
-;;       instance?, binary get, get-setter, etc. ?
-
-;; TODO: refactor nodejs specific code into file stream
-
-;; TODO: constant propagation?/folding/elimination (ANF version of SCCP?)
-
-;; TODO: beta reduction of %method and %bind (check assignment)
-
-;; TODO: lambda lifting (only small gain)
-
-;; TODO: hygienic expansion:
-;;       - rename symbols before passing to expander
-;;       - rename after expansion
-;;       - lift external references
-
-;; TODO: signal warning in define-free-variables
-
-;; TODO: fix calling behaviour: var x = y.foo; x() VS y.foo()
-;;       problematic when normalization binds %get-property
-;;       => .bind?
-
-;; TODO: Clojure(Script) loop/recur
-
-;; TODO: ensure symbol-macro expanded before whole form
-
-;; TODO: update language definitions,
-;;       ensure each pass respects all cases correctly
-
-;; TODO: add dynamic binding?
-;;       (set temp, try, finally reset)
-
 
 ;;;; modules
 
@@ -2086,7 +2038,7 @@
 
 (define-function compile-time-import-module (env module-name #key names)
   (destructuring-bind (macros symbol-macros)
-      (if (== module-name "ralph2/core")
+      (if (== module-name "ralph/core")
           [*core-macros* *core-symbol-macros*]
           (begin
            ;; ensure latest version is compiled
@@ -2153,13 +2105,13 @@
            (executable (open-executable module-name)))
       (set! (get *modules* module-name)
             module)
-      (compile-time-import-module env "ralph2/core")
+      (compile-time-import-module env "ralph/core")
       ;; special case core?
-      (unless (== module-name "ralph2/core")
+      (unless (== module-name "ralph/core")
         ;; implicitly import and load core
-        (import-module module "ralph2/core")
+        (import-module module "ralph/core")
         (push program
-              (make-import-definition "ralph2/core" env)))
+              (make-import-definition "ralph/core" env)))
       ;; compile
       (do (method (expression)
             (. fs ("writeSync" executable
@@ -2178,6 +2130,6 @@
 ;;;;
 
 (bind ((start (make <date>)))
-  (compile-module "ralph2/compiler")
-  (compile-module "ralph2/runtime.test")
+  (compile-module "ralph/compiler")
+  (compile-module "ralph/runtime.test")
   (format-out "%d\n" (- (make <date>) start)))

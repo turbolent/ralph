@@ -1,4 +1,4 @@
-(define-module ralph2/date
+(define-module ralph/date
   export: (<date> locale-time-string)
   inline: (locale-time-string))
 

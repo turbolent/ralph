@@ -1,4 +1,4 @@
-(define-module ralph2/macro-test.c
+(define-module ralph/macro-test.c
   export: (foo))
 
 (define-macro foo ()

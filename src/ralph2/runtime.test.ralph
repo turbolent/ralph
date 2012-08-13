@@ -1,7 +1,7 @@
-(define-module ralph2/runtime.test
-  import: (ralph2/test
-           ralph2/format
-           ralph2/stream))
+(define-module ralph/runtime.test
+  import: (ralph/test
+           ralph/format
+           ralph/stream))
 
 ;; test expansion
 (define-function foo (if)

@@ -1,4 +1,4 @@
-var $g1715 = require("ralph2/core")
+var $g1715 = require("ralph/core")
 false
 {var $g1716 = RegExp;
 exports["<regexp>"] = $g1716}

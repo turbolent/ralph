@@ -1,7 +1,7 @@
-var $g1748 = require("ralph2/core")
+var $g1748 = require("ralph/core")
 {var $g1751, $g1752;
-$g1751 = require("ralph2/stream");
-$g1752 = require("ralph2/regexp")}
+$g1751 = require("ralph/stream");
+$g1752 = require("ralph/regexp")}
 var $g1758 = $K("ignore-case?"), $g1759 = $K("pattern"), $g1753 = $g1748.map, $g1754 = $g1748.curry, $g1755 = $g1748.make, $g1756 = $g1752["<regexp>"], $g1757 = $g1753($g1754($g1755, $g1756, $g1758, true, $g1759), ["^[+-]?0x[0-9a-f]+", "^[+-]?0[0-7]+", "^[+-]?\\d+\\.?\\d*(?:e-?\\d*(?:\\d\\.?|\\.?\\d)\\d*)?"])
 var $g1760 = $g1755($g1756, $g1759, "(.*)[\n\r]?")
 var $g1761 = "\t\n\r\v\f\u00a0\ufeff "
@@ -96,11 +96,11 @@ var $rchar1888 = $g1842($stream1877), $g1889 = $rchar1888, $g1890 = $g1797;
 if ($T($g1890($g1889, ";")))
 $g1787($stream1877)
 else if ($T($g1890($g1889, "`")))
-{var $rarray1926 = $stack1882, $value1927 = [$g1801("%backquote", "ralph2/core")];
+{var $rarray1926 = $stack1882, $value1927 = [$g1801("%backquote", "ralph/core")];
 $rarray1926.push($value1927);
 $rarray1926}
 else if ($T($g1890($g1889, ",")))
-{var $rarray1930 = $stack1882, $value1931 = [$g1801("%comma", "ralph2/core")];
+{var $rarray1930 = $stack1882, $value1931 = [$g1801("%comma", "ralph/core")];
 $rarray1930.push($value1931);
 $rarray1930}
 else if ($T($g1890($g1889, "(")))

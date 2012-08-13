@@ -1,5 +1,5 @@
-(define-module ralph2/test
-  import: (ralph2/format)
+(define-module ralph/test
+  import: (ralph/format)
   export: (check-equal
            check-true
            check-false
