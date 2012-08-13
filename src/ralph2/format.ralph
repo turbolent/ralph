@@ -1,5 +1,5 @@
-(define-module ralph2/format
-  import: (ralph2/stream)
+(define-module ralph/format
+  import: (ralph/stream)
   export: (format-out format-to-string format))
 
 ;; TODO:

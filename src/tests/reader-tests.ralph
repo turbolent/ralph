@@ -42,9 +42,9 @@
                      (read stream eof-value: 42))))
 
 
-(bind ((stream (make <string-stream> string: "\"quoted: \\\" \"")))
+(bind ((stream (make <string-stream> string: "\"quoted: \\\"Q\\\" \"")))
   (check-equal "quoted"
-               "quoted: \" "
+               "quoted: \"Q\" "
                (read stream)))
 
 (bind ((stream (make <string-stream> string: "\"bla\" \"  ")))

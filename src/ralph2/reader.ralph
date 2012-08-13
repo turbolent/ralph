@@ -1,5 +1,5 @@
-(define-module ralph2/reader
-    import: (ralph2/stream ralph2/regexp)
+(define-module ralph/reader
+    import: (ralph/stream ralph/regexp)
     export: (read))
 
 (define *number-patterns*
@@ -98,9 +98,9 @@
             ((";")
              (read-line stream))
             (("`")
-             (push-last stack [(symbol "%backquote" "ralph2/core")]))
+             (push-last stack [(symbol "%backquote" "ralph/core")]))
             ((",")
-             (push-last stack [(symbol "%comma" "ralph2/core")]))
+             (push-last stack [(symbol "%comma" "ralph/core")]))
             (("(")
              (push-last ends ")")
              (push-last stack []))

@@ -1,4 +1,4 @@
-(define-module ralph2/core
+(define-module ralph/core
   export: (<object> <string> <number> <array>
            <boolean> <function> <error>
            %make-function true? not size %inherit

@@ -1,7 +1,7 @@
-(define-module ralph2/macro-test.a
-  import: (ralph2/test)
-  compile-time-import: (ralph2/macro-test.b
-                        ralph2/macro-test.c))
+(define-module ralph/macro-test.a
+  import: (ralph/test)
+  compile-time-import: (ralph/macro-test.b
+                        ralph/macro-test.c))
 
 (define-function foo ()
   1)

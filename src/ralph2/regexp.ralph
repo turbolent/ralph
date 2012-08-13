@@ -1,4 +1,4 @@
-(define-module ralph2/regexp
+(define-module ralph/regexp
   export: (<regexp> match replace-all)
   inline: (match))
 
