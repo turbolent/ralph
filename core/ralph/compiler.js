@@ -1,1682 +1,1680 @@
 var $g1464 = require("ralph/core")
-{var $g2061, $g2062, $g2063, $g2064, $g2065;
-$g2061 = require("ralph/stream");
-$g2062 = require("ralph/format");
-$g2063 = require("ralph/regexp");
-$g2064 = require("ralph/reader");
-$g2065 = require("ralph/date")}
-var $g2066 = $g1464["make-object"], $g2067 = $g2066()
-var $g2068 = $g1464["%make-class"], $g2069 = $g1464["<object>"], $g2070 = $g2068($g2069, {name:false,
-exports:function $g2071 ()
+{var $g2052, $g2053, $g2054, $g2055, $g2056;
+$g2052 = require("ralph/stream");
+$g2053 = require("ralph/format");
+$g2054 = require("ralph/regexp");
+$g2055 = require("ralph/reader");
+$g2056 = require("ralph/date")}
+var $g2057 = $g1464["make-object"], $g2058 = $g2057()
+var $g2059 = $g1464["%make-class"], $g2060 = $g1464["<object>"], $g2061 = $g2059($g2060, {name:false,
+exports:function $g2062 ()
 {return []},
-imports:function $g2072 ()
+imports:function $g2063 ()
 {return []},
-inline:function $g2073 ()
+inline:function $g2064 ()
 {return []}})
-var $g2074 = $g1464.symbol, $g2075 = [$g2074("%all-arguments"), $g2074("%this-method")]
-var $g2076 = $g1464["make-plain-object"], $g2077 = $g2068($g2069, {module:false,
-macros:function $g2078 ()
-{return $g2076()},
-"symbol-macros":function $g2079 ()
-{return $g2076()},
-identifiers:function $g2080 ()
-{return $g2066()},
-"defined?":function $g2081 ()
-{return $g2066()},
-lifted:function $g2082 ()
-{return $g2066()},
-"import-identifiers":function $g2083 ()
-{return $g2076()}})
-var trueQ = $g1464["true?"], $g2084 = $g1464["%make-function"], $g2085 = $g1464["instance?"], $g2086 = $g1464["<array>"], $g2087 = $g1464.not, $g2088 = $g1464["empty?"], $g2089 = $g1464.first, $g2090 = $g1464["<symbol>"], $g2091 = $g2084("expressionQ", function $g2113 ($form2092)
-{if ($T($g2085($form2092, $g2086)))
-{var $sequence2104 = $form2092, $g2105 = $sequence2104, $g2106 = (($g2105 || false).length || 0), $g2107 = 0, $value2108 = ($g2106 === $g2107), $g2111 = !(trueQ($value2108));
-if ($T($g2111))
-{var $sequence2110 = $form2092, $g2112 = $sequence2110[0];
-return $g2085($g2112, $g2090)}}}, false)
-var $g2114 = $g1464.concatenate, $g2115 = $g1464["symbol-name"], $g2116 = $g2084("transform_setter_identifier", function $g2118 ($identifier2117)
-{return $g2074($g2114($g2115($identifier2117), "-setter"))}, false)
-var $g2119 = $g1464["=="], $g2120 = $g1464.size, $g2121 = $g1464["every?"], $g2122 = $g1464.rcurry, $g2123 = $g2084("setter_identifierQ", function $g2133 ($form2124)
-{if ($T($g2085($form2124, $g2086)))
-{var $robject2126 = $form2124, $g2129 = (($robject2126 || false).length || 0), $g2130 = $g2119($g2129, 2);
-if ($T($g2130))
-if ($T($g2121($g2122($g2085, $g2090), $form2124)))
-{var $sequence2128 = $form2124, $g2131 = $sequence2128[0], $g2132 = $g2115($g2131);
-return $g2119($g2132, "setter")}}}, false)
-var $g2134 = $g1464.second, $g2135 = $g2084("identifier_name", function $g2141 ($identifier2136)
-{var $g2140;
-if ($T($g2123($identifier2136)))
-{var $sequence2138 = $identifier2136, $g2139 = $sequence2138[1];
-$g2140 = $g2116($g2139)}
-else $g2140 = $identifier2136;
-return $g2115($g2140)}, false)
-var $g2142 = 0
-var $g2143 = $g2084("reset_symbol_counterN", function $g2144 ()
-{return $g2142 = 0}, false)
-var $g2145 = $g1464["get-setter"], $g2146, $g2147 = $g1464["as-string"], $g2148 = $g2084("generate_symbol", function $g2154 ($prefix2149)
-{var $g2152;
-if ($T($prefix2149))
-$g2152 = $g2146($prefix2149)
-else $g2152 = "g";
-var $g2153 = $g2147($g2142 = ($g2142 + 1)), $name2150 = $g2114($g2152, $g2153), $result2151 = $g2074($name2150);
-$g2145($result2151, "generated?", true);
-return $result2151}, false)
-var $g2155 = $g2084("bindN", function $g2158 ($env2156, $identifier2157)
-{return $g2145($env2156, "bound?", $g2115($identifier2157), true)}, false)
-var $g2159 = $g2084("unbindN", function $g2162 ($env2160, $identifier2161)
-{return $g2145($env2160, "bound?", $g2115($identifier2161), false)}, false)
-var $g2163 = $g2066()
-var $g2164 = $g1464.get, $g2165 = $g2084("find_special_form", function $g2172 ($form2166, $env2167)
-{if ($T($g2091($form2166)))
-{var $sequence2169 = $form2166, $g2170 = $sequence2169[0], $g2171 = $g2115($g2170);
-return $g2164($g2163, $g2171)}}, false)
-{var $g2173 = $g1464["do"], $g2174 = $g1464.curry, $g2175;
-$g2145($g2163, "%method", function $g2180 ($env2176, $rarguments2177, $body2178)
-{$g2173($g2174($g2155, $env2176), $rarguments2177);
-var $expanded_body2179 = $g2175($body2178, $env2176);
-$g2173($g2174($g2159, $env2176), $rarguments2177);
-return [$g2074("%method"), $rarguments2177, $expanded_body2179]})}
-$g2145($g2163, "%set", function $g2184 ($env2181, $identifier2182, $value2183)
-{return [$g2074("%set"), $identifier2182, $g2175($value2183, $env2181)]})
-$g2145($g2163, "define", function $g2188 ($env2185, $identifier2186, $value2187)
-{$g2155($env2185, $identifier2186);
-return [$g2074("define"), $identifier2186, $g2175($value2187, $env2185)]})
-{var $g2189 = $g1464.element;
-$g2145($g2163, "%bind", function $g2197 ($env2190, $binding2191, $body2192)
-{var $rvar2193 = $g2189($binding2191, 0), $value2194 = $g2189($binding2191, 1), $expanded_value2195 = $g2175($value2194, $env2190);
-$g2155($env2190, $rvar2193);
-var $result2196 = [$g2074("%bind"), [$rvar2193, $expanded_value2195], $g2175($body2192, $env2190)];
-$g2159($env2190, $rvar2193);
-return $result2196})}
-var $g2198 = $g2066()
-var $g2201 = $g2084("maybe_begin", function $g2209 ($expressions2202)
-{var $robject2206 = $expressions2202, $g2203 = (($robject2206 || false).length || 0), $g2204 = $g2119;
-if ($T($g2204($g2203, 0)))
+var $g2065 = $g1464.symbol, $g2066 = [$g2065("%all-arguments"), $g2065("%this-method")]
+var $g2067 = $g1464["make-plain-object"], $g2068 = $g2059($g2060, {module:false,
+macros:function $g2069 ()
+{return $g2067()},
+"symbol-macros":function $g2070 ()
+{return $g2067()},
+identifiers:function $g2071 ()
+{return $g2057()},
+"defined?":function $g2072 ()
+{return $g2057()},
+lifted:function $g2073 ()
+{return $g2057()},
+"import-identifiers":function $g2074 ()
+{return $g2067()}})
+var trueQ = $g1464["true?"], $g2075 = $g1464["%make-function"], $g2076 = $g1464["instance?"], $g2077 = $g1464["<array>"], $g2078 = $g1464.not, $g2079 = $g1464["empty?"], $g2080 = $g1464.first, $g2081 = $g1464["<symbol>"], $g2082 = $g2075("expressionQ", function $g2104 ($form2083)
+{if ($T($g2076($form2083, $g2077)))
+{var $sequence2095 = $form2083, $g2096 = $sequence2095, $g2097 = (($g2096 || false).length || 0), $g2098 = 0, $value2099 = ($g2097 === $g2098), $g2102 = !(trueQ($value2099));
+if ($T($g2102))
+{var $sequence2101 = $form2083, $g2103 = $sequence2101[0];
+return $g2076($g2103, $g2081)}}}, false)
+var $g2105 = $g1464.concatenate, $g2106 = $g1464["symbol-name"], $g2107 = $g2075("transform_setter_identifier", function $g2109 ($identifier2108)
+{return $g2065($g2105($g2106($identifier2108), "-setter"))}, false)
+var $g2110 = $g1464["=="], $g2111 = $g1464.size, $g2112 = $g1464["every?"], $g2113 = $g1464.rcurry, $g2114 = $g2075("setter_identifierQ", function $g2124 ($form2115)
+{if ($T($g2076($form2115, $g2077)))
+{var $robject2117 = $form2115, $g2120 = (($robject2117 || false).length || 0), $g2121 = $g2110($g2120, 2);
+if ($T($g2121))
+if ($T($g2112($g2113($g2076, $g2081), $form2115)))
+{var $sequence2119 = $form2115, $g2122 = $sequence2119[0], $g2123 = $g2106($g2122);
+return $g2110($g2123, "setter")}}}, false)
+var $g2125 = $g1464.second, $g2126 = $g2075("identifier_name", function $g2132 ($identifier2127)
+{var $g2131;
+if ($T($g2114($identifier2127)))
+{var $sequence2129 = $identifier2127, $g2130 = $sequence2129[1];
+$g2131 = $g2107($g2130)}
+else $g2131 = $identifier2127;
+return $g2106($g2131)}, false)
+var $g2133 = 0
+var $g2134 = $g2075("reset_symbol_counterN", function $g2135 ()
+{return $g2133 = 0}, false)
+var $g2136 = $g1464["get-setter"], $g2137, $g2138 = $g1464["as-string"], $g2139 = $g2075("generate_symbol", function $g2145 ($prefix2140)
+{var $g2143;
+if ($T($prefix2140))
+$g2143 = $g2137($prefix2140)
+else $g2143 = "g";
+var $g2144 = $g2138($g2133 = ($g2133 + 1)), $name2141 = $g2105($g2143, $g2144), $result2142 = $g2065($name2141);
+$g2136($result2142, "generated?", true);
+return $result2142}, false)
+var $g2146 = $g2075("bindN", function $g2149 ($env2147, $identifier2148)
+{return $g2136($env2147, "bound?", $g2106($identifier2148), true)}, false)
+var $g2150 = $g2075("unbindN", function $g2153 ($env2151, $identifier2152)
+{return $g2136($env2151, "bound?", $g2106($identifier2152), false)}, false)
+var $g2154 = $g2057()
+var $g2155 = $g1464.get, $g2156 = $g2075("find_special_form", function $g2163 ($form2157, $env2158)
+{if ($T($g2082($form2157)))
+{var $sequence2160 = $form2157, $g2161 = $sequence2160[0], $g2162 = $g2106($g2161);
+return $g2155($g2154, $g2162)}}, false)
+{var $g2164 = $g1464["do"], $g2165 = $g1464.curry, $g2166;
+$g2136($g2154, "%method", function $g2171 ($env2167, $rarguments2168, $body2169)
+{$g2164($g2165($g2146, $env2167), $rarguments2168);
+var $expanded_body2170 = $g2166($body2169, $env2167);
+$g2164($g2165($g2150, $env2167), $rarguments2168);
+return [$g2065("%method"), $rarguments2168, $expanded_body2170]})}
+$g2136($g2154, "%set", function $g2175 ($env2172, $identifier2173, $value2174)
+{return [$g2065("%set"), $identifier2173, $g2166($value2174, $env2172)]})
+$g2136($g2154, "define", function $g2179 ($env2176, $identifier2177, $value2178)
+{$g2146($env2176, $identifier2177);
+return [$g2065("define"), $identifier2177, $g2166($value2178, $env2176)]})
+$g2136($g2154, "%bind", function $g2187 ($env2180, $binding2181, $body2182)
+{var $rvar2183 = $binding2181[0], $value2184 = $binding2181[1], $expanded_value2185 = $g2166($value2184, $env2180);
+$g2146($env2180, $rvar2183);
+var $result2186 = [$g2065("%bind"), [$rvar2183, $expanded_value2185], $g2166($body2182, $env2180)];
+$g2150($env2180, $rvar2183);
+return $result2186})
+var $g2188 = $g2057()
+var $g2190 = $g2075("maybe_begin", function $g2197 ($expressions2191)
+{var $robject2194 = $expressions2191, $g2192 = (($robject2194 || false).length || 0);
+if ($T($g2110($g2192, 0)))
 return false
-else if ($T($g2204($g2203, 1)))
-{var $sequence2208 = $expressions2202;
-return $sequence2208[0]}
-else return $g2114([$g2074("%begin")], $expressions2202)}, false)
-var $g2236 = $REST, $g2237 = $KEY, $g2238 = $K("end"), $g2239 = $K("start"), $g2212 = $g1464["find-key"], $g2213 = $g1464["="], $g2214 = $g1464["copy-sequence"], $g2215 = $g1464.inc, $g2216 = $g2084("analyze_lambda_list", function $g2240 ($list2217)
-{var $position2218 = function $g2241 ($symbol2219)
-{return $g2212($list2217, $g2174($g2213, $symbol2219))}, $rest2220 = $position2218($g2236), $key2221 = $position2218($g2237), $g2222 = $rest2220, $g2230;
-if ($T($g2222))
-$g2230 = $g2222
-else {var $g2223 = $key2221;
-if ($T($g2223))
-$g2230 = $g2223
-else {var $robject2225 = $list2217;
-$g2230 = (($robject2225 || false).length || 0)}};
-var $g2231 = $g2214($list2217, $g2238, $g2230), $g2233;
-if ($T($rest2220))
-{var $rnumber2227 = $rest2220, $g2232 = ($rnumber2227 + 1);
-$g2233 = $g2189($list2217, $g2232)}
-else $g2233 = false;
-var $g2235;
-if ($T($key2221))
-{var $rnumber2229 = $key2221, $g2234 = ($rnumber2229 + 1);
-$g2235 = $g2214($list2217, $g2239, $g2234)}
-else $g2235 = false;
-return [$g2231, $g2233, $g2235]}, false)
-var $g2242 = $g1464.reduce, $g2243 = $g2084("wrap", function $g2248 ($form2244)
-{var $wrappers2245 = $SL.call(arguments, 1);
-return $g2242(function $g2249 ($result2246, $wrapper2247)
-{return $wrapper2247($result2246)}, $form2244, $wrappers2245)}, false)
-var trueQ = $g1464["true?"], $g2252 = $g1464.map, $g2253 = $g1464.reduce1, $g2254 = $g2084("wrap_restSkeys", function $g2349 ($body2255, $all2256, $required2257, $rest2258, $key2259)
-{var $restq2260 = $rest2258, $g2261 = $rest2258, $rest2262;
-if ($T($g2261))
-$rest2262 = $g2261
-else {var $sequence2282 = $key2259, $g2283 = $sequence2282, $g2284 = (($g2283 || false).length || 0), $g2285 = 0, $value2286 = ($g2284 === $g2285), $g2331 = !(trueQ($value2286));
+else if ($T($g2110($g2192, 1)))
+{var $sequence2196 = $expressions2191;
+return $sequence2196[0]}
+else return $g2105([$g2065("%begin")], $expressions2191)}, false)
+var $g2225 = $REST, $g2226 = $KEY, $g2227 = $K("end"), $g2228 = $K("start"), $g2200 = $g1464["find-key"], $g2201 = $g1464["="], $g2202 = $g1464["copy-sequence"], $g2203 = $g1464.element, $g2204 = $g1464.inc, $g2205 = $g2075("analyze_lambda_list", function $g2229 ($list2206)
+{var $position2207 = function $g2230 ($symbol2208)
+{return $g2200($list2206, $g2165($g2201, $symbol2208))}, $rest2209 = $position2207($g2225), $key2210 = $position2207($g2226), $g2211 = $rest2209, $g2219;
+if ($T($g2211))
+$g2219 = $g2211
+else {var $g2212 = $key2210;
+if ($T($g2212))
+$g2219 = $g2212
+else {var $robject2214 = $list2206;
+$g2219 = (($robject2214 || false).length || 0)}};
+var $g2220 = $g2202($list2206, $g2227, $g2219), $g2222;
+if ($T($rest2209))
+{var $rnumber2216 = $rest2209, $g2221 = ($rnumber2216 + 1);
+$g2222 = $g2203($list2206, $g2221)}
+else $g2222 = false;
+var $g2224;
+if ($T($key2210))
+{var $rnumber2218 = $key2210, $g2223 = ($rnumber2218 + 1);
+$g2224 = $g2202($list2206, $g2228, $g2223)}
+else $g2224 = false;
+return [$g2220, $g2222, $g2224]}, false)
+var $g2231 = $g1464.reduce, $g2232 = $g2075("wrap", function $g2237 ($form2233)
+{var $wrappers2234 = $SL.call(arguments, 1);
+return $g2231(function $g2238 ($result2235, $wrapper2236)
+{return $wrapper2236($result2235)}, $form2233, $wrappers2234)}, false)
+var trueQ = $g1464["true?"], $g2241 = $g1464.map, $g2242 = $g1464.reduce1, $g2243 = $g2075("wrap_restSkeys", function $g2338 ($body2244, $all2245, $required2246, $rest2247, $key2248)
+{var $restq2249 = $rest2247, $g2250 = $rest2247, $rest2251;
+if ($T($g2250))
+$rest2251 = $g2250
+else {var $sequence2271 = $key2248, $g2272 = $sequence2271, $g2273 = (($g2272 || false).length || 0), $g2274 = 0, $value2275 = ($g2273 === $g2274), $g2320 = !(trueQ($value2275));
+if ($T($g2320))
+$rest2251 = $g2139()
+else $rest2251 = false};
+return $g2232($body2244, function $g2339 ($body2252)
+{var $sequence2286 = $key2248, $g2287 = $sequence2286, $g2288 = (($g2287 || false).length || 0), $g2289 = 0, $g2321 = ($g2288 === $g2289);
+if ($T($g2321))
+return $body2252
+else {var $key_values2254 = $g2241(function $g2340 ($binding2253)
+{if ($T($g2076($binding2253, $g2077)))
+return $binding2253
+else return [$binding2253, false]}, $key2248), $g2322 = $g2065("bind-properties"), $g2323 = $g2241($g2080, $key_values2254), $g2324 = $g2065("%keys"), $g2325 = [$g2065("%object")], $rfunction2298 = $g2105, $values2299 = $g2241(function $g2341 ($key_value2255)
+{var $key2256 = $key_value2255[0], $value2257 = $key_value2255[1];
+return [$g2106($key2256), $value2257]}, $key_values2254), $g2300 = $values2299, $g2326 = $g2300[0], $g2301 = $values2299, $g2327 = $g2301.slice(1), $g2328 = $g2231($rfunction2298, $g2326, $g2327), $g2329 = $g2105($g2325, $g2328), $g2330 = [$g2324, $rest2251, $g2329];
+return [$g2322, $g2323, $g2330, $body2252]}}, function $g2342 ($body2258)
+{var $g2259 = $restq2249, $g2331;
+if ($T($g2259))
+$g2331 = $g2259
+else {var $sequence2313 = $key2248, $g2314 = $sequence2313, $g2315 = (($g2314 || false).length || 0), $g2316 = 0, $value2317 = ($g2315 === $g2316);
+$g2331 = !(trueQ($value2317))};
 if ($T($g2331))
-$rest2262 = $g2148()
-else $rest2262 = false};
-return $g2243($body2255, function $g2350 ($body2263)
-{var $sequence2297 = $key2259, $g2298 = $sequence2297, $g2299 = (($g2298 || false).length || 0), $g2300 = 0, $g2332 = ($g2299 === $g2300);
-if ($T($g2332))
-return $body2263
-else {var $key_values2265 = $g2252(function $g2351 ($binding2264)
-{if ($T($g2085($binding2264, $g2086)))
-return $binding2264
-else return [$binding2264, false]}, $key2259), $g2333 = $g2074("bind-properties"), $g2334 = $g2252($g2089, $key_values2265), $g2335 = $g2074("%keys"), $g2336 = [$g2074("%object")], $rfunction2309 = $g2114, $values2310 = $g2252(function $g2352 ($key_value2266)
-{var $key2267 = $g2189($key_value2266, 0), $value2268 = $g2189($key_value2266, 1);
-return [$g2115($key2267), $value2268]}, $key_values2265), $g2311 = $values2310, $g2337 = $g2311[0], $g2312 = $values2310, $g2338 = $g2312.slice(1), $g2339 = $g2242($rfunction2309, $g2337, $g2338), $g2340 = $g2114($g2336, $g2339), $g2341 = [$g2335, $rest2262, $g2340];
-return [$g2333, $g2334, $g2341, $body2263]}}, function $g2353 ($body2269)
-{var $g2270 = $restq2260, $g2342;
-if ($T($g2270))
-$g2342 = $g2270
-else {var $sequence2324 = $key2259, $g2325 = $sequence2324, $g2326 = (($g2325 || false).length || 0), $g2327 = 0, $value2328 = ($g2326 === $g2327);
-$g2342 = !(trueQ($value2328))};
-if ($T($g2342))
-{var $g2343 = $g2074("bind"), $g2344 = $g2074("%native-call"), $robject2330 = $required2257, $g2345 = (($robject2330 || false).length || 0), $g2346 = [$g2344, "$SL.call", $all2256, $g2345], $g2347 = [$rest2262, $g2346], $g2348 = [$g2347];
-return [$g2343, $g2348, $body2269]}
-else return $body2269})}, false)
-$g2145($g2198, "begin", function $g2356 ($__2354)
-{var $expressions2355 = $SL.call(arguments, 1);
-return $g2201($expressions2355)})
-$g2145($g2198, "method", function $g2365 ($__2358, $rarguments2359)
-{var $body2360 = $SL.call(arguments, 2), $g2361 = $g2216($rarguments2359), $required2362 = $g2189($g2361, 0), $rest2363 = $g2189($g2361, 1), $key2364 = $g2189($g2361, 2);
-return [$g2074("%method"), $required2362, $g2254($g2201($body2360), $g2074("%all-arguments"), $required2362, $rest2363, $key2364)]})
-{var $g2366 = $g1464.reverse;
-$g2145($g2198, "bind", function $g2389 ($__2367, $bindings2368)
-{var $body2369 = $SL.call(arguments, 2), $sequence2382 = $bindings2368, $g2383 = $sequence2382, $g2384 = (($g2383 || false).length || 0), $g2385 = 0, $g2386 = ($g2384 === $g2385);
-if ($T($g2386))
-return $g2201($body2369)
-else return $g2242(function $g2390 ($body2370, $binding2371)
-{var $g2387 = $g2074("%bind"), $g2388;
-if ($T($g2085($binding2371, $g2090)))
-$g2388 = [$binding2371, false]
-else $g2388 = $binding2371;
-return [$g2387, $g2388, $body2370]}, $g2201($body2369), $g2366($bindings2368))})}
-$g2145($g2198, "if", function $g2395 ($__2391, $test2392, $then2393, $relse2394)
-{return [$g2074("%if"), $test2392, $then2393, $relse2394]})
-{var trueQ = $g1464["true?"], $g2396 = $g1464.rest;
-$g2145($g2198, "set!", function $g2419 ($__2397, $place2398)
-{var $values2399 = $SL.call(arguments, 2), $g2412;
-if ($T($g2085($place2398, $g2086)))
-{var $sequence2402 = $place2398, $g2410 = $sequence2402[0], $g2411 = $g2074("%get-property"), $value2403 = $g2119($g2410, $g2411);
-$g2412 = !(trueQ($value2403))}
-else $g2412 = false;
-if ($T($g2412))
-{var $sequence2405 = $place2398, $g2413 = $sequence2405[0], $g2414 = $g2116($g2413), $g2415 = [$g2414], $sequence2407 = $place2398, $g2416 = $sequence2407.slice(1);
-return $g2114($g2415, $g2416, $values2399)}
-else {var $g2417 = $g2074("%set"), $sequence2409 = $values2399, $g2418 = $sequence2409[0];
-return [$g2417, $place2398, $g2418]}})}
-$g2145($g2198, "parallel-set!", function $g2440 ($__2420, $rvar2421, $value2422)
-{var $clauses2423 = $SL.call(arguments, 3), $sequence2435 = $clauses2423, $g2436 = $sequence2435, $g2437 = (($g2436 || false).length || 0), $g2438 = 0, $g2439 = ($g2437 === $g2438);
-if ($T($g2439))
-return [$g2074("set!"), $rvar2421, $value2422]
-else {var $temp2424 = $g2148();
-return [$g2074("bind"), [[$temp2424, $value2422]], $g2114([$g2074("parallel-set!")], $clauses2423), [$g2074("set!"), $rvar2421, $temp2424]]}})
-{var $g2473 = $K("else"), trueQ = $g1464["true?"];
-$g2145($g2198, "cond", function $g2474 ($__2442)
-{var $cases2443 = $SL.call(arguments, 1), $sequence2459 = $cases2443, $g2460 = $sequence2459, $g2461 = (($g2460 || false).length || 0), $g2462 = 0, $value2463 = ($g2461 === $g2462), $g2468 = !(trueQ($value2463));
-if ($T($g2468))
-{var $sequence2465 = $cases2443, $g2444 = $sequence2465[0], $test2445 = $g2189($g2444, 0), $then2446 = $SL.call($g2444, 1), $then2447 = $g2201($then2446);
-if ($T($g2119($test2445, $g2473)))
-return $then2447
-else {var $g2469 = $g2074("if"), $g2470 = [$g2074("cond")], $sequence2467 = $cases2443, $g2471 = $sequence2467.slice(1), $g2472 = $g2114($g2470, $g2471);
-return [$g2469, $test2445, $then2447, $g2472]}}})}
-$g2145($g2198, "when", function $g2478 ($__2475, $test2476)
-{var $body2477 = $SL.call(arguments, 2);
-return [$g2074("if"), $test2476, $g2201($body2477), false]})
-$g2145($g2198, "unless", function $g2482 ($__2479, $test2480)
-{var $body2481 = $SL.call(arguments, 2);
-return [$g2074("if"), [$g2074("not"), $test2480], $g2201($body2481), false]})
-$g2145($g2198, "and", function $g2502 ($__2485)
-{var $values2486 = $SL.call(arguments, 1), $robject2490 = $values2486, $g2487 = (($robject2490 || false).length || 0), $g2488 = $g2119;
-if ($T($g2488($g2487, 0)))
+{var $g2332 = $g2065("bind"), $g2333 = $g2065("%native-call"), $robject2319 = $required2246, $g2334 = (($robject2319 || false).length || 0), $g2335 = [$g2333, "$SL.call", $all2245, $g2334], $g2336 = [$rest2251, $g2335], $g2337 = [$g2336];
+return [$g2332, $g2337, $body2258]}
+else return $body2258})}, false)
+$g2136($g2188, "begin", function $g2345 ($__2343)
+{var $expressions2344 = $SL.call(arguments, 1);
+return $g2190($expressions2344)})
+$g2136($g2188, "method", function $g2354 ($__2347, $rarguments2348)
+{var $body2349 = $SL.call(arguments, 2), $g2350 = $g2205($rarguments2348), $required2351 = $g2350[0], $rest2352 = $g2350[1], $key2353 = $g2350[2];
+return [$g2065("%method"), $required2351, $g2243($g2190($body2349), $g2065("%all-arguments"), $required2351, $rest2352, $key2353)]})
+{var $g2355 = $g1464.reverse;
+$g2136($g2188, "bind", function $g2378 ($__2356, $bindings2357)
+{var $body2358 = $SL.call(arguments, 2), $sequence2371 = $bindings2357, $g2372 = $sequence2371, $g2373 = (($g2372 || false).length || 0), $g2374 = 0, $g2375 = ($g2373 === $g2374);
+if ($T($g2375))
+return $g2190($body2358)
+else return $g2231(function $g2379 ($body2359, $binding2360)
+{var $g2376 = $g2065("%bind"), $g2377;
+if ($T($g2076($binding2360, $g2081)))
+$g2377 = [$binding2360, false]
+else $g2377 = $binding2360;
+return [$g2376, $g2377, $body2359]}, $g2190($body2358), $g2355($bindings2357))})}
+$g2136($g2188, "if", function $g2384 ($__2380, $test2381, $then2382, $relse2383)
+{return [$g2065("%if"), $test2381, $then2382, $relse2383]})
+{var trueQ = $g1464["true?"], $g2385 = $g1464.rest;
+$g2136($g2188, "set!", function $g2408 ($__2386, $place2387)
+{var $values2388 = $SL.call(arguments, 2), $g2401;
+if ($T($g2076($place2387, $g2077)))
+{var $sequence2391 = $place2387, $g2399 = $sequence2391[0], $g2400 = $g2065("%get-property"), $value2392 = $g2110($g2399, $g2400);
+$g2401 = !(trueQ($value2392))}
+else $g2401 = false;
+if ($T($g2401))
+{var $sequence2394 = $place2387, $g2402 = $sequence2394[0], $g2403 = $g2107($g2402), $g2404 = [$g2403], $sequence2396 = $place2387, $g2405 = $sequence2396.slice(1);
+return $g2105($g2404, $g2405, $values2388)}
+else {var $g2406 = $g2065("%set"), $sequence2398 = $values2388, $g2407 = $sequence2398[0];
+return [$g2406, $place2387, $g2407]}})}
+$g2136($g2188, "parallel-set!", function $g2429 ($__2409, $rvar2410, $value2411)
+{var $clauses2412 = $SL.call(arguments, 3), $sequence2424 = $clauses2412, $g2425 = $sequence2424, $g2426 = (($g2425 || false).length || 0), $g2427 = 0, $g2428 = ($g2426 === $g2427);
+if ($T($g2428))
+return [$g2065("set!"), $rvar2410, $value2411]
+else {var $temp2413 = $g2139();
+return [$g2065("bind"), [[$temp2413, $value2411]], $g2105([$g2065("parallel-set!")], $clauses2412), [$g2065("set!"), $rvar2410, $temp2413]]}})
+{var $g2462 = $K("else"), trueQ = $g1464["true?"];
+$g2136($g2188, "cond", function $g2463 ($__2431)
+{var $cases2432 = $SL.call(arguments, 1), $sequence2448 = $cases2432, $g2449 = $sequence2448, $g2450 = (($g2449 || false).length || 0), $g2451 = 0, $value2452 = ($g2450 === $g2451), $g2457 = !(trueQ($value2452));
+if ($T($g2457))
+{var $sequence2454 = $cases2432, $g2433 = $sequence2454[0], $test2434 = $g2433[0], $then2435 = $SL.call($g2433, 1), $then2436 = $g2190($then2435);
+if ($T($g2110($test2434, $g2462)))
+return $then2436
+else {var $g2458 = $g2065("if"), $g2459 = [$g2065("cond")], $sequence2456 = $cases2432, $g2460 = $sequence2456.slice(1), $g2461 = $g2105($g2459, $g2460);
+return [$g2458, $test2434, $then2436, $g2461]}}})}
+$g2136($g2188, "when", function $g2467 ($__2464, $test2465)
+{var $body2466 = $SL.call(arguments, 2);
+return [$g2065("if"), $test2465, $g2190($body2466), false]})
+$g2136($g2188, "unless", function $g2471 ($__2468, $test2469)
+{var $body2470 = $SL.call(arguments, 2);
+return [$g2065("if"), [$g2065("not"), $test2469], $g2190($body2470), false]})
+$g2136($g2188, "and", function $g2489 ($__2473)
+{var $values2474 = $SL.call(arguments, 1), $robject2477 = $values2474, $g2475 = (($robject2477 || false).length || 0);
+if ($T($g2110($g2475, 0)))
 return true
-else if ($T($g2488($g2487, 1)))
-{var $sequence2492 = $values2486;
-return $sequence2492[0]}
-else {var $g2497 = $g2074("when"), $sequence2494 = $values2486, $g2498 = $sequence2494[0], $g2499 = [$g2074("and")], $sequence2496 = $values2486, $g2500 = $sequence2496.slice(1), $g2501 = $g2114($g2499, $g2500);
-return [$g2497, $g2498, $g2501]}})
-$g2145($g2198, "or", function $g2527 ($__2505)
-{var $values2506 = $SL.call(arguments, 1), $robject2511 = $values2506, $g2507 = (($robject2511 || false).length || 0), $g2508 = $g2119;
-if ($T($g2508($g2507, 0)))
+else if ($T($g2110($g2475, 1)))
+{var $sequence2479 = $values2474;
+return $sequence2479[0]}
+else {var $g2484 = $g2065("when"), $sequence2481 = $values2474, $g2485 = $sequence2481[0], $g2486 = [$g2065("and")], $sequence2483 = $values2474, $g2487 = $sequence2483.slice(1), $g2488 = $g2105($g2486, $g2487);
+return [$g2484, $g2485, $g2488]}})
+$g2136($g2188, "or", function $g2512 ($__2491)
+{var $values2492 = $SL.call(arguments, 1), $robject2496 = $values2492, $g2493 = (($robject2496 || false).length || 0);
+if ($T($g2110($g2493, 0)))
 return false
-else if ($T($g2508($g2507, 1)))
-{var $sequence2513 = $values2506;
-return $sequence2513[0]}
-else {var $value2509 = $g2148(), $g2518 = $g2074("bind"), $sequence2515 = $values2506, $g2519 = $sequence2515[0], $g2520 = [$value2509, $g2519], $g2521 = [$g2520], $g2522 = $g2074("if"), $g2523 = [$g2074("or")], $sequence2517 = $values2506, $g2524 = $sequence2517.slice(1), $g2525 = $g2114($g2523, $g2524), $g2526 = [$g2522, $value2509, $value2509, $g2525];
-return [$g2518, $g2521, $g2526]}})
-$g2145($g2198, "if-bind", function $g2535 ($__2528, $binding2529, $then2530, $relse2531)
-{var $rvar2532 = $g2189($binding2529, 0), $value2533 = $g2189($binding2529, 1), $temp2534 = $g2148();
-return [$g2074("bind"), [[$temp2534, $value2533]], [$g2074("if"), $temp2534, [$g2074("bind"), [[$rvar2532, $temp2534]], $then2530], $relse2531]]})
-$g2145($g2198, "while", function $g2539 ($__2536, $test2537)
-{var $body2538 = $SL.call(arguments, 2);
-return [$g2074("%while"), $test2537, $g2201($body2538)]})
-$g2145($g2198, "until", function $g2543 ($__2540, $test2541)
-{var $body2542 = $SL.call(arguments, 2);
-return $g2114([$g2074("while"), [$g2074("not"), $test2541]], $body2542)})
-$g2145($g2198, "dotimes", function $g2562 ($__2545, $binding2546)
-{var $body2547 = $SL.call(arguments, 2), $temp2548 = $g2148(), $rvar2549 = $g2189($binding2546, 0), $count2550 = $g2189($binding2546, 1), $result2551 = $g2189($binding2546, 2), $g2553 = $g2074("bind"), $g2554 = [[$temp2548, $count2550]], $g2555 = $g2074("for"), $g2556 = [[$rvar2549, 0, [$g2074("+"), $rvar2549, 1]]], $g2557 = [$g2074(">="), $rvar2549, $temp2548], $g2552 = $result2551, $g2558;
-if ($T($g2552))
-$g2558 = $g2552
-else $g2558 = false;
-var $g2559 = [$g2557, $g2558], $g2560 = [$g2555, $g2556, $g2559], $g2561 = $g2114($g2560, $body2547);
-return [$g2553, $g2554, $g2561]})
-{var trueQ = $g1464["true?"], $g2569 = $g1464["any?"], $g2570 = $g1464["push-last"], $g2571 = $g1464.slice, $g2572 = $g1464.third;
-$g2145($g2198, "for", function $g2667 ($__2573, $clauses2574, $end2575)
-{var $body2576 = $SL.call(arguments, 3), $init_clauses2577 = [], $next_clauses2578 = [], $vars2579 = $g2252($g2089, $clauses2574), $g2580 = $clauses2574, $g2581, $g2582, $g2583 = [$g2580];
+else if ($T($g2110($g2493, 1)))
+{var $sequence2498 = $values2492;
+return $sequence2498[0]}
+else {var $value2494 = $g2139(), $g2503 = $g2065("bind"), $sequence2500 = $values2492, $g2504 = $sequence2500[0], $g2505 = [$value2494, $g2504], $g2506 = [$g2505], $g2507 = $g2065("if"), $g2508 = [$g2065("or")], $sequence2502 = $values2492, $g2509 = $sequence2502.slice(1), $g2510 = $g2105($g2508, $g2509), $g2511 = [$g2507, $value2494, $value2494, $g2510];
+return [$g2503, $g2506, $g2511]}})
+$g2136($g2188, "if-bind", function $g2520 ($__2513, $binding2514, $then2515, $relse2516)
+{var $rvar2517 = $binding2514[0], $value2518 = $binding2514[1], $temp2519 = $g2139();
+return [$g2065("bind"), [[$temp2519, $value2518]], [$g2065("if"), $temp2519, [$g2065("bind"), [[$rvar2517, $temp2519]], $then2515], $relse2516]]})
+$g2136($g2188, "while", function $g2524 ($__2521, $test2522)
+{var $body2523 = $SL.call(arguments, 2);
+return [$g2065("%while"), $test2522, $g2190($body2523)]})
+$g2136($g2188, "until", function $g2528 ($__2525, $test2526)
+{var $body2527 = $SL.call(arguments, 2);
+return $g2105([$g2065("while"), [$g2065("not"), $test2526]], $body2527)})
+$g2136($g2188, "dotimes", function $g2547 ($__2530, $binding2531)
+{var $body2532 = $SL.call(arguments, 2), $temp2533 = $g2139(), $rvar2534 = $binding2531[0], $count2535 = $binding2531[1], $result2536 = $binding2531[2], $g2538 = $g2065("bind"), $g2539 = [[$temp2533, $count2535]], $g2540 = $g2065("for"), $g2541 = [[$rvar2534, 0, [$g2065("+"), $rvar2534, 1]]], $g2542 = [$g2065(">="), $rvar2534, $temp2533], $g2537 = $result2536, $g2543;
+if ($T($g2537))
+$g2543 = $g2537
+else $g2543 = false;
+var $g2544 = [$g2542, $g2543], $g2545 = [$g2540, $g2541, $g2544], $g2546 = $g2105($g2545, $body2532);
+return [$g2538, $g2539, $g2546]})
+{var trueQ = $g1464["true?"], $g2554 = $g1464["any?"], $g2555 = $g1464["push-last"], $g2556 = $g1464.slice, $g2557 = $g1464.third;
+$g2136($g2188, "for", function $g2652 ($__2558, $clauses2559, $end2560)
+{var $body2561 = $SL.call(arguments, 3), $init_clauses2562 = [], $next_clauses2563 = [], $vars2564 = $g2241($g2080, $clauses2559), $g2565 = $clauses2559, $g2566, $g2567, $g2568 = [$g2565];
 while ($T(true))
-{var $g2584 = $g2581, $value2589;
-if ($T($g2584))
-$value2589 = $g2584
-else $value2589 = $g2569($g2088, $g2583);
-var $g2653 = !(trueQ($value2589));
-if ($T($g2653))
-{var $sequence2591 = $g2580, $clause2585 = $sequence2591[0];
-(function $g2668 ($clause2586)
-{var $rarray2600 = $init_clauses2577, $rarray2597 = $clause2586, $start2598 = 0, $end2599 = 2, $value2601 = $rarray2597.slice($start2598, $end2599);
-$rarray2600.push($value2601);
-$rarray2600;
-var $rarray2606 = $next_clauses2578, $sequence2605 = $clause2586, $value2607 = $sequence2605[0];
-$rarray2606.push($value2607);
-$rarray2606;
-var $rarray2612 = $next_clauses2578, $sequence2611 = $clause2586, $value2613 = $sequence2611[2];
-$rarray2612.push($value2613);
-return $rarray2612})($clause2585);
-var $sequence2615 = $g2580, $g2652 = $sequence2615.slice(1);
-$g2580 = $g2652;
-$g2583 = [$g2580]}
+{var $g2569 = $g2566, $value2574;
+if ($T($g2569))
+$value2574 = $g2569
+else $value2574 = $g2554($g2079, $g2568);
+var $g2638 = !(trueQ($value2574));
+if ($T($g2638))
+{var $sequence2576 = $g2565, $clause2570 = $sequence2576[0];
+(function $g2653 ($clause2571)
+{var $rarray2585 = $init_clauses2562, $rarray2582 = $clause2571, $start2583 = 0, $end2584 = 2, $value2586 = $rarray2582.slice($start2583, $end2584);
+$rarray2585.push($value2586);
+$rarray2585;
+var $rarray2591 = $next_clauses2563, $sequence2590 = $clause2571, $value2592 = $sequence2590[0];
+$rarray2591.push($value2592);
+$rarray2591;
+var $rarray2597 = $next_clauses2563, $sequence2596 = $clause2571, $value2598 = $sequence2596[2];
+$rarray2597.push($value2598);
+return $rarray2597})($clause2570);
+var $sequence2600 = $g2565, $g2637 = $sequence2600.slice(1);
+$g2565 = $g2637;
+$g2568 = [$g2565]}
 else break};
-$g2582;
-var $g2654 = $g2074("bind"), $g2655 = $g2074("while"), $sequence2626 = $end2575, $g2627 = $sequence2626, $g2628 = (($g2627 || false).length || 0), $g2629 = 0, $g2587 = ($g2628 === $g2629), $g2658;
-if ($T($g2587))
-$g2658 = $g2587
-else {var $g2656 = $g2074("not"), $sequence2631 = $end2575, $g2657 = $sequence2631[0];
-$g2658 = [$g2656, $g2657]};
-var $g2659 = $g2114([$g2114([$g2074("method"), $vars2579], $body2576)], $vars2579), $g2660 = $g2114([$g2074("parallel-set!")], $next_clauses2578), $g2661 = [$g2655, $g2658, $g2659, $g2660], $g2662 = $g2114($g2661), $sequence2644 = $end2575, $sequence2645 = $sequence2644.slice(1), $g2646 = $sequence2645, $g2647 = (($g2646 || false).length || 0), $g2648 = 0, $value2649 = ($g2647 === $g2648), $g2663 = !(trueQ($value2649)), $g2666;
-if ($T($g2663))
-{var $g2664 = [$g2074("begin")], $sequence2651 = $end2575, $g2665 = $sequence2651.slice(1);
-$g2666 = $g2114($g2664, $g2665)}
-else $g2666 = false;
-return [$g2654, $init_clauses2577, $g2662, $g2666]})}
-$g2145($g2198, "for-each", function $g2743 ($__2670, $clauses2671, $end2672)
-{var $body2673 = $SL.call(arguments, 3), $clauses2675 = $g2252(function $g2744 ($clause2674)
-{return $g2114([$g2148()], $clause2674)}, $clauses2671), $endq2676 = $g2148(), $values2677 = $g2148(), $result2678 = $g2148(), $g2715 = $g2074("begin"), $vars2679 = $g2252($g2134, $clauses2675), $g2716 = $g2114([$g2114([$g2074("method"), $vars2679], $body2673)], $vars2679), $g2717 = [$g2715, $g2716], $g2723 = $g2252(function $g2745 ($clause2680)
-{var $g2718 = $g2074("set!"), $sequence2694 = $clause2680, $g2719 = $sequence2694[0], $g2720 = $g2074("rest"), $sequence2696 = $clause2680, $g2721 = $sequence2696[0], $g2722 = [$g2720, $g2721];
-return [$g2718, $g2719, $g2722]}, $clauses2675), $g2724 = [[$g2074("set!"), $values2677, $g2114([$g2074("%array")], $g2252($g2089, $clauses2675))]], $body2681 = $g2114($g2717, $g2723, $g2724), $g2725 = $g2074("bind"), $g2726 = $g2114($g2252(function $g2746 ($clause2682)
-{var $temp2683 = $g2189($clause2682, 0), $rvar2684 = $g2189($clause2682, 1), $values2685 = $g2189($clause2682, 2);
-return [$temp2683, $values2685]}, $clauses2675), [[$endq2676, false], [$result2678, false], [$values2677, $g2114([$g2074("%array")], $g2252($g2089, $clauses2675))]]), $g2727 = $g2074("until"), $g2728 = [$g2074("or"), $endq2676, [$g2074("any?"), $g2074("empty?"), $values2677]], $g2729 = $g2074("bind"), $g2730 = $g2252(function $g2747 ($clause2686)
-{var $temp2687 = $g2189($clause2686, 0), $rvar2688 = $g2189($clause2686, 1), $values2689 = $g2189($clause2686, 2);
-return [$rvar2688, [$g2074("first"), $temp2687]]}, $clauses2675), $sequence2698 = $end2672, $g2690 = $sequence2698[0], $g2740;
-if ($T($g2690))
-{var $end_test2691 = $g2690, $g2731 = $g2074("if"), $g2732 = $g2074("begin"), $g2733 = $g2074("set!"), $sequence2700 = $end2672, $results2692 = $sequence2700.slice(1), $sequence2711 = $results2692, $g2712 = $sequence2711, $g2713 = (($g2712 || false).length || 0), $g2714 = 0, $g2734 = ($g2713 === $g2714), $g2735;
-if ($T($g2734))
-$g2735 = [false]
-else $g2735 = $results2692;
-var $g2736 = $g2201($g2735), $g2737 = [$g2733, $result2678, $g2736], $g2738 = [$g2074("set!"), $endq2676, true], $g2739 = [$g2732, $g2737, $g2738];
-$g2740 = [$g2731, $end_test2691, $g2739, $body2681]}
-else $g2740 = $body2681;
-var $g2741 = [$g2729, $g2730, $g2740], $g2742 = [$g2727, $g2728, $g2741];
-return [$g2725, $g2726, $g2742, $result2678]})
-$g2145($g2198, "bind-properties", function $g2754 ($__2748, $properties2749, $robject2750)
-{var $body2751 = $SL.call(arguments, 3), $objectt2752 = $g2148();
-return $g2114([$g2074("bind"), $g2114([[$objectt2752, $robject2750]], $g2252(function $g2755 ($property2753)
-{return [$property2753, [$g2074("%get-property"), $objectt2752, $g2115($property2753)]]}, $properties2749))], $body2751)})
-$g2145($g2198, "select", function $g2767 ($__2756, $value2757, $test2758)
-{var $cases2759 = $SL.call(arguments, 3), $valuet2760 = $g2148(), $testt2761 = $g2148(), $test_expression2762 = function $g2768 ($test_value2763)
-{return [$testt2761, $valuet2760, $test_value2763]};
-return [$g2074("bind"), [[$valuet2760, $value2757], [$testt2761, $test2758]], $g2114([$g2074("cond")], $g2252(function $g2769 ($rcase2764)
-{var $tests2765 = $g2189($rcase2764, 0), $then2766 = $SL.call($rcase2764, 1);
-if ($T($g2119($tests2765, $g2473)))
-return $rcase2764
-else return $g2114([$g2114([$g2074("or")], $g2252($test_expression2762, $tests2765))], $then2766)}, $cases2759))]})
-var $g2771 = $g2084("destructure", function $g2785 ($bindings2772, $values2773, $body2774)
-{if ($T($g2085($values2773, $g2090)))
-{var $g2775 = $g2216($bindings2772), $required2776 = $g2189($g2775, 0), $rest2777 = $g2189($g2775, 1), $key2778 = $g2189($g2775, 2), $robject2784 = $required2776, $i2779 = (($robject2784 || false).length || 0);
-return $g2242(function $g2786 ($body2780, $binding2781)
-{$i2779 = ($i2779 - 1);
-if ($T($g2085($binding2781, $g2090)))
-return [$g2074("bind"), [[$binding2781, [$g2074("element"), $values2773, $i2779]]], $body2780]
-else return $g2771($binding2781, [$g2074("%get-property"), $values2773, $i2779], $body2780)}, $g2254($body2774, $values2773, $required2776, $rest2777, $key2778), $g2366($required2776))}
-else {var $rvar2782 = $g2148();
-return [$g2074("bind"), [[$rvar2782, $values2773]], $g2771($bindings2772, $rvar2782, $body2774)]}}, false)
-$g2145($g2198, "destructuring-bind", function $g2791 ($__2787, $bindings2788, $values2789)
-{var $body2790 = $SL.call(arguments, 3);
-return $g2771($bindings2788, $values2789, $g2114([$g2074("begin")], $body2790))})
-$g2145($g2198, "bind-methods", function $g2799 ($__2792, $bindings2793)
-{var $body2794 = $SL.call(arguments, 2);
-return $g2114([$g2074("bind"), $g2252($g2089, $bindings2793)], $g2252(function $g2800 ($binding2795)
-{var $identifier2796 = $g2189($binding2795, 0), $rarguments2797 = $g2189($binding2795, 1), $body2798 = $SL.call($binding2795, 2);
-return [$g2074("set!"), $identifier2796, $g2114([$g2074("method"), $rarguments2797], $body2798)]}, $bindings2793), $body2794)})
-$g2145($g2198, "inc!", function $g2810 ($__2802, $robject2803, $value2804)
-{var $g2806 = $g2074("set!"), $g2807 = $g2074("+"), $g2805 = $value2804, $g2808;
+$g2567;
+var $g2639 = $g2065("bind"), $g2640 = $g2065("while"), $sequence2611 = $end2560, $g2612 = $sequence2611, $g2613 = (($g2612 || false).length || 0), $g2614 = 0, $g2572 = ($g2613 === $g2614), $g2643;
+if ($T($g2572))
+$g2643 = $g2572
+else {var $g2641 = $g2065("not"), $sequence2616 = $end2560, $g2642 = $sequence2616[0];
+$g2643 = [$g2641, $g2642]};
+var $g2644 = $g2105([$g2105([$g2065("method"), $vars2564], $body2561)], $vars2564), $g2645 = $g2105([$g2065("parallel-set!")], $next_clauses2563), $g2646 = [$g2640, $g2643, $g2644, $g2645], $g2647 = $g2105($g2646), $sequence2629 = $end2560, $sequence2630 = $sequence2629.slice(1), $g2631 = $sequence2630, $g2632 = (($g2631 || false).length || 0), $g2633 = 0, $value2634 = ($g2632 === $g2633), $g2648 = !(trueQ($value2634)), $g2651;
+if ($T($g2648))
+{var $g2649 = [$g2065("begin")], $sequence2636 = $end2560, $g2650 = $sequence2636.slice(1);
+$g2651 = $g2105($g2649, $g2650)}
+else $g2651 = false;
+return [$g2639, $init_clauses2562, $g2647, $g2651]})}
+$g2136($g2188, "for-each", function $g2728 ($__2655, $clauses2656, $end2657)
+{var $body2658 = $SL.call(arguments, 3), $clauses2660 = $g2241(function $g2729 ($clause2659)
+{return $g2105([$g2139()], $clause2659)}, $clauses2656), $endq2661 = $g2139(), $values2662 = $g2139(), $result2663 = $g2139(), $g2700 = $g2065("begin"), $vars2664 = $g2241($g2125, $clauses2660), $g2701 = $g2105([$g2105([$g2065("method"), $vars2664], $body2658)], $vars2664), $g2702 = [$g2700, $g2701], $g2708 = $g2241(function $g2730 ($clause2665)
+{var $g2703 = $g2065("set!"), $sequence2679 = $clause2665, $g2704 = $sequence2679[0], $g2705 = $g2065("rest"), $sequence2681 = $clause2665, $g2706 = $sequence2681[0], $g2707 = [$g2705, $g2706];
+return [$g2703, $g2704, $g2707]}, $clauses2660), $g2709 = [[$g2065("set!"), $values2662, $g2105([$g2065("%array")], $g2241($g2080, $clauses2660))]], $body2666 = $g2105($g2702, $g2708, $g2709), $g2710 = $g2065("bind"), $g2711 = $g2105($g2241(function $g2731 ($clause2667)
+{var $temp2668 = $clause2667[0], $rvar2669 = $clause2667[1], $values2670 = $clause2667[2];
+return [$temp2668, $values2670]}, $clauses2660), [[$endq2661, false], [$result2663, false], [$values2662, $g2105([$g2065("%array")], $g2241($g2080, $clauses2660))]]), $g2712 = $g2065("until"), $g2713 = [$g2065("or"), $endq2661, [$g2065("any?"), $g2065("empty?"), $values2662]], $g2714 = $g2065("bind"), $g2715 = $g2241(function $g2732 ($clause2671)
+{var $temp2672 = $clause2671[0], $rvar2673 = $clause2671[1], $values2674 = $clause2671[2];
+return [$rvar2673, [$g2065("first"), $temp2672]]}, $clauses2660), $sequence2683 = $end2657, $g2675 = $sequence2683[0], $g2725;
+if ($T($g2675))
+{var $end_test2676 = $g2675, $g2716 = $g2065("if"), $g2717 = $g2065("begin"), $g2718 = $g2065("set!"), $sequence2685 = $end2657, $results2677 = $sequence2685.slice(1), $sequence2696 = $results2677, $g2697 = $sequence2696, $g2698 = (($g2697 || false).length || 0), $g2699 = 0, $g2719 = ($g2698 === $g2699), $g2720;
+if ($T($g2719))
+$g2720 = [false]
+else $g2720 = $results2677;
+var $g2721 = $g2190($g2720), $g2722 = [$g2718, $result2663, $g2721], $g2723 = [$g2065("set!"), $endq2661, true], $g2724 = [$g2717, $g2722, $g2723];
+$g2725 = [$g2716, $end_test2676, $g2724, $body2666]}
+else $g2725 = $body2666;
+var $g2726 = [$g2714, $g2715, $g2725], $g2727 = [$g2712, $g2713, $g2726];
+return [$g2710, $g2711, $g2727, $result2663]})
+$g2136($g2188, "bind-properties", function $g2739 ($__2733, $properties2734, $robject2735)
+{var $body2736 = $SL.call(arguments, 3), $objectt2737 = $g2139();
+return $g2105([$g2065("bind"), $g2105([[$objectt2737, $robject2735]], $g2241(function $g2740 ($property2738)
+{return [$property2738, [$g2065("%get-property"), $objectt2737, $g2106($property2738)]]}, $properties2734))], $body2736)})
+$g2136($g2188, "select", function $g2757 ($__2741, $value2742, $test2743)
+{var $cases2744 = $SL.call(arguments, 3), $valuet2745 = $g2139(), $testt2746;
+if ($T($g2076($test2743, $g2081)))
+$testt2746 = $test2743
+else $testt2746 = $g2139();
+var $test_expression2747 = function $g2758 ($test_value2748)
+{return [$testt2746, $valuet2745, $test_value2748]}, $g2752 = $g2065("bind"), $g2753 = [[$valuet2745, $value2742]], $g2754;
+if ($T($g2076($test2743, $g2081)))
+$g2754 = []
+else $g2754 = [[$testt2746, $test2743]];
+var $g2755 = $g2105($g2753, $g2754), $g2756 = $g2105([$g2065("cond")], $g2241(function $g2759 ($rcase2749)
+{var $tests2750 = $rcase2749[0], $then2751 = $SL.call($rcase2749, 1);
+if ($T($g2110($tests2750, $g2462)))
+return $rcase2749
+else return $g2105([$g2105([$g2065("or")], $g2241($test_expression2747, $tests2750))], $then2751)}, $cases2744));
+return [$g2752, $g2755, $g2756]})
+var $g2761 = $g2075("destructure", function $g2775 ($bindings2762, $values2763, $body2764)
+{if ($T($g2076($values2763, $g2081)))
+{var $g2765 = $g2205($bindings2762), $required2766 = $g2765[0], $rest2767 = $g2765[1], $key2768 = $g2765[2], $robject2774 = $required2766, $i2769 = (($robject2774 || false).length || 0);
+return $g2231(function $g2776 ($body2770, $binding2771)
+{$i2769 = ($i2769 - 1);
+if ($T($g2076($binding2771, $g2081)))
+return [$g2065("bind"), [[$binding2771, [$g2065("%get-property"), $values2763, $i2769]]], $body2770]
+else return $g2761($binding2771, [$g2065("%get-property"), $values2763, $i2769], $body2770)}, $g2243($body2764, $values2763, $required2766, $rest2767, $key2768), $g2355($required2766))}
+else {var $rvar2772 = $g2139();
+return [$g2065("bind"), [[$rvar2772, $values2763]], $g2761($bindings2762, $rvar2772, $body2764)]}}, false)
+$g2136($g2188, "destructuring-bind", function $g2781 ($__2777, $bindings2778, $values2779)
+{var $body2780 = $SL.call(arguments, 3);
+return $g2761($bindings2778, $values2779, $g2105([$g2065("begin")], $body2780))})
+$g2136($g2188, "bind-methods", function $g2789 ($__2782, $bindings2783)
+{var $body2784 = $SL.call(arguments, 2);
+return $g2105([$g2065("bind"), $g2241($g2080, $bindings2783)], $g2241(function $g2790 ($binding2785)
+{var $identifier2786 = $binding2785[0], $rarguments2787 = $binding2785[1], $body2788 = $SL.call($binding2785, 2);
+return [$g2065("set!"), $identifier2786, $g2105([$g2065("method"), $rarguments2787], $body2788)]}, $bindings2783), $body2784)})
+$g2136($g2188, "inc!", function $g2800 ($__2792, $robject2793, $value2794)
+{var $g2796 = $g2065("set!"), $g2797 = $g2065("+"), $g2795 = $value2794, $g2798;
+if ($T($g2795))
+$g2798 = $g2795
+else $g2798 = 1;
+var $g2799 = [$g2797, $robject2793, $g2798];
+return [$g2796, $robject2793, $g2799]})
+$g2136($g2188, "dec!", function $g2810 ($__2802, $robject2803, $value2804)
+{var $g2806 = $g2065("set!"), $g2807 = $g2065("-"), $g2805 = $value2804, $g2808;
 if ($T($g2805))
 $g2808 = $g2805
 else $g2808 = 1;
 var $g2809 = [$g2807, $robject2803, $g2808];
 return [$g2806, $robject2803, $g2809]})
-$g2145($g2198, "dec!", function $g2820 ($__2812, $robject2813, $value2814)
-{var $g2816 = $g2074("set!"), $g2817 = $g2074("-"), $g2815 = $value2814, $g2818;
-if ($T($g2815))
-$g2818 = $g2815
-else $g2818 = 1;
-var $g2819 = [$g2817, $robject2813, $g2818];
-return [$g2816, $robject2813, $g2819]})
-$g2145($g2198, "+", function $g2838 ($__2821)
-{var $values2822 = $SL.call(arguments, 1), $sequence2833 = $values2822, $g2834 = $sequence2833, $g2835 = (($g2834 || false).length || 0), $g2836 = 0, $g2837 = ($g2835 === $g2836);
-if ($T($g2837))
+$g2136($g2188, "+", function $g2828 ($__2811)
+{var $values2812 = $SL.call(arguments, 1), $sequence2823 = $values2812, $g2824 = $sequence2823, $g2825 = (($g2824 || false).length || 0), $g2826 = 0, $g2827 = ($g2825 === $g2826);
+if ($T($g2827))
 return 0
-else return $g2114([$g2074("%plus")], $values2822)})
-$g2145($g2198, "-", function $g2857 ($__2839, $minuend2840)
-{var $subtrahends2841 = $SL.call(arguments, 2), $sequence2852 = $subtrahends2841, $g2853 = $sequence2852, $g2854 = (($g2853 || false).length || 0), $g2855 = 0, $g2856 = ($g2854 === $g2855);
-if ($T($g2856))
-return [$g2074("%native-call"), "-", $minuend2840]
-else return $g2114([$g2074("%minus"), $minuend2840], $subtrahends2841)})
-$g2145($g2198, "*", function $g2875 ($__2858)
-{var $values2859 = $SL.call(arguments, 1), $sequence2870 = $values2859, $g2871 = $sequence2870, $g2872 = (($g2871 || false).length || 0), $g2873 = 0, $g2874 = ($g2872 === $g2873);
-if ($T($g2874))
+else return $g2105([$g2065("%plus")], $values2812)})
+$g2136($g2188, "-", function $g2847 ($__2829, $minuend2830)
+{var $subtrahends2831 = $SL.call(arguments, 2), $sequence2842 = $subtrahends2831, $g2843 = $sequence2842, $g2844 = (($g2843 || false).length || 0), $g2845 = 0, $g2846 = ($g2844 === $g2845);
+if ($T($g2846))
+return [$g2065("%native-call"), "-", $minuend2830]
+else return $g2105([$g2065("%minus"), $minuend2830], $subtrahends2831)})
+$g2136($g2188, "*", function $g2865 ($__2848)
+{var $values2849 = $SL.call(arguments, 1), $sequence2860 = $values2849, $g2861 = $sequence2860, $g2862 = (($g2861 || false).length || 0), $g2863 = 0, $g2864 = ($g2862 === $g2863);
+if ($T($g2864))
 return 1
-else return $g2114([$g2074("%times")], $values2859)})
-$g2145($g2198, "/", function $g2894 ($__2876, $numerator2877)
-{var $denominators2878 = $SL.call(arguments, 2), $sequence2889 = $denominators2878, $g2890 = $sequence2889, $g2891 = (($g2890 || false).length || 0), $g2892 = 0, $g2893 = ($g2891 === $g2892);
-if ($T($g2893))
-return [$g2074("%divide"), 1, $numerator2877]
-else return $g2114([$g2074("%divide"), $numerator2877], $denominators2878)})
-$g2145($g2198, "call-next-method", function $g2896 ($__2895)
-{return [[$g2074("%get-property"), $g2074("next-method"), "apply"], [$g2074("%native"), "null"], [$g2074("%native"), "arguments"]]})
-var trueQ = $g1464["true?"], $g2897 = $g2084("transform_quoted", function $g2923 ($form2898)
-{if ($T($g2085($form2898, $g2086)))
-{var $sequence2910 = $form2898, $g2911 = $sequence2910, $g2912 = (($g2911 || false).length || 0), $g2913 = 0, $value2914 = ($g2912 === $g2913), $g2919 = !(trueQ($value2914)), $g2922;
-if ($T($g2919))
-{var $sequence2916 = $form2898, $g2920 = $sequence2916[0], $g2921 = $g2115($g2920);
-$g2922 = $g2119($g2921, "%comma")}
-else $g2922 = false;
-if ($T($g2922))
-{var $sequence2918 = $form2898;
-return $sequence2918[1]}
-else return $g2114([$g2074("%array")], $g2252($g2897, $form2898))}
-else if ($T($g2085($form2898, $g2090)))
-return [$g2074("symbol"), $g2115($form2898)]
-else return $form2898}, false)
-$g2145($g2198, "%backquote", function $g2926 ($__2924, $exp2925)
-{return $g2897($exp2925)})
-{var $g2934 = $K("message"), $g2927 = $g1464.signal, $g2928 = $g1464.make, $g2929 = $g1464["<error>"];
-$g2145($g2198, "%comma", function $g2935 ($__2930, $value2931)
-{var $error2933 = $g2928($g2929, $g2934, "comma not inside backquote");
-throw($error2933);
+else return $g2105([$g2065("%times")], $values2849)})
+$g2136($g2188, "/", function $g2884 ($__2866, $numerator2867)
+{var $denominators2868 = $SL.call(arguments, 2), $sequence2879 = $denominators2868, $g2880 = $sequence2879, $g2881 = (($g2880 || false).length || 0), $g2882 = 0, $g2883 = ($g2881 === $g2882);
+if ($T($g2883))
+return [$g2065("%divide"), 1, $numerator2867]
+else return $g2105([$g2065("%divide"), $numerator2867], $denominators2868)})
+$g2136($g2188, "call-next-method", function $g2886 ($__2885)
+{return [[$g2065("%get-property"), $g2065("next-method"), "apply"], [$g2065("%native"), "null"], [$g2065("%native"), "arguments"]]})
+var trueQ = $g1464["true?"], $g2887 = $g2075("transform_quoted", function $g2913 ($form2888)
+{if ($T($g2076($form2888, $g2077)))
+{var $sequence2900 = $form2888, $g2901 = $sequence2900, $g2902 = (($g2901 || false).length || 0), $g2903 = 0, $value2904 = ($g2902 === $g2903), $g2909 = !(trueQ($value2904)), $g2912;
+if ($T($g2909))
+{var $sequence2906 = $form2888, $g2910 = $sequence2906[0], $g2911 = $g2106($g2910);
+$g2912 = $g2110($g2911, "%comma")}
+else $g2912 = false;
+if ($T($g2912))
+{var $sequence2908 = $form2888;
+return $sequence2908[1]}
+else return $g2105([$g2065("%array")], $g2241($g2887, $form2888))}
+else if ($T($g2076($form2888, $g2081)))
+return [$g2065("symbol"), $g2106($form2888)]
+else return $form2888}, false)
+$g2136($g2188, "%backquote", function $g2916 ($__2914, $exp2915)
+{return $g2887($exp2915)})
+{var $g2924 = $K("message"), $g2917 = $g1464.signal, $g2918 = $g1464.make, $g2919 = $g1464["<error>"];
+$g2136($g2188, "%comma", function $g2925 ($__2920, $value2921)
+{var $error2923 = $g2918($g2919, $g2924, "comma not inside backquote");
+throw($error2923);
 return false})}
-var $g2936 = $g2928($g2929, $g2934, "unsupported name for call in dot")
-{var $g2939 = $g1464["<string>"];
-$g2145($g2198, ".", function $g2955 ($__2940, $value2941)
-{var $calls2942 = $SL.call(arguments, 2);
-return $g2242(function $g2956 ($value2943, $call2944)
-{var $property2945 = $g2189($call2944, 0), $rarguments2946 = $SL.call($call2944, 1), $g2951 = $g2074("%get-property"), $g2947 = $property2945, $g2948 = $g2085, $g2952;
-if ($T($g2948($g2947, $g2939)))
-$g2952 = $property2945
-else if ($T($g2948($g2947, $g2090)))
-$g2952 = $g2115($property2945)
-else {var $error2950 = $g2936;
-throw($error2950);
-$g2952 = false};
-var $g2953 = [$g2951, $value2943, $g2952], $g2954 = [$g2953];
-return $g2114($g2954, $rarguments2946)}, $value2941, $calls2942)})}
-var $g2958 = $g2084("simplify_arguments", function $g2970 ($rarguments2959)
-{var $g2960 = $g2216($rarguments2959), $required2961 = $g2189($g2960, 0), $rest2962 = $g2189($g2960, 1), $key2963 = $g2189($g2960, 2), $required2965 = $g2252(function $g2971 ($argument2964)
-{if ($T($g2085($argument2964, $g2086)))
-{var $sequence2967 = $argument2964;
-return $sequence2967[0]}
-else return $argument2964}, $required2961), $g2968;
-if ($T($rest2962))
-$g2968 = $g2114([$g2236], $rest2962)
-else $g2968 = [];
-var $g2969;
-if ($T($key2963))
-$g2969 = $g2114([$g2237], $key2963)
-else $g2969 = [];
-return $g2114($required2965, $g2968, $g2969)}, false)
-var trueQ = $g1464["true?"], $g2976 = $g1464[">"], $g2977 = $g1464["%keys"], $g2978 = $g2084("make_function_definer", function $g3035 ($macro_name2979, $definer_name2980)
-{var $g2981 = $SL.call(arguments, 2), $g2982 = $g2977($g2981, {"type/existing?":false,
-"record?":false}), $typesexistingq2983 = $g2982["type/existing?"], $recordq2984 = $g2982["record?"];
-return function $g3036 ($env2985, $identifier2986, $rarguments2987)
-{var $body2988 = $SL.call(arguments, 3), $g2989;
-if ($T($g2123($identifier2986)))
-{var $sequence2997 = $identifier2986, $g3024 = $sequence2997[1], $g3025 = $g2116($g3024);
-$g2989 = [true, $g3025]}
-else $g2989 = [false, $identifier2986];
-var $setterq2990 = $g2189($g2989, 0), $identifier2991 = $g2189($g2989, 1), $g2992 = $g2085($identifier2991, $g2090), $value2999;
-if ($T($g2992))
-$value2999 = $g2992
-else $value2999 = $setterq2990;
-var $g3026 = !(trueQ($value2999));
-if ($T($g3026))
-{var $error3001 = $g2928($g2929, $g2934, $g2114($macro_name2979, ": ", "name not <var> or (setter <var>)"));
-throw($error3001);
+var $g2926 = $g2918($g2919, $g2924, "unsupported name for call in dot")
+{var $g2928 = $g1464["<string>"];
+$g2136($g2188, ".", function $g2943 ($__2929, $value2930)
+{var $calls2931 = $SL.call(arguments, 2);
+return $g2231(function $g2944 ($value2932, $call2933)
+{var $property2934 = $call2933[0], $rarguments2935 = $SL.call($call2933, 1), $g2939 = $g2065("%get-property"), $g2936 = $property2934, $g2940;
+if ($T($g2076($g2936, $g2928)))
+$g2940 = $property2934
+else if ($T($g2076($g2936, $g2081)))
+$g2940 = $g2106($property2934)
+else {var $error2938 = $g2926;
+throw($error2938);
+$g2940 = false};
+var $g2941 = [$g2939, $value2932, $g2940], $g2942 = [$g2941];
+return $g2105($g2942, $rarguments2935)}, $value2930, $calls2931)})}
+var $g2946 = $g2075("simplify_arguments", function $g2958 ($rarguments2947)
+{var $g2948 = $g2205($rarguments2947), $required2949 = $g2948[0], $rest2950 = $g2948[1], $key2951 = $g2948[2], $required2953 = $g2241(function $g2959 ($argument2952)
+{if ($T($g2076($argument2952, $g2077)))
+{var $sequence2955 = $argument2952;
+return $sequence2955[0]}
+else return $argument2952}, $required2949), $g2956;
+if ($T($rest2950))
+$g2956 = $g2105([$g2225], $rest2950)
+else $g2956 = [];
+var $g2957;
+if ($T($key2951))
+$g2957 = $g2105([$g2226], $key2951)
+else $g2957 = [];
+return $g2105($required2953, $g2956, $g2957)}, false)
+var trueQ = $g1464["true?"], $g2964 = $g1464[">"], $g2965 = $g1464["%keys"], $g2966 = $g2075("make_function_definer", function $g3023 ($macro_name2967, $definer_name2968)
+{var $g2969 = $SL.call(arguments, 2), $g2970 = $g2965($g2969, {"type/existing?":false,
+"record?":false}), $typesexistingq2971 = $g2970["type/existing?"], $recordq2972 = $g2970["record?"];
+return function $g3024 ($env2973, $identifier2974, $rarguments2975)
+{var $body2976 = $SL.call(arguments, 3), $g2977;
+if ($T($g2114($identifier2974)))
+{var $sequence2985 = $identifier2974, $g3012 = $sequence2985[1], $g3013 = $g2107($g3012);
+$g2977 = [true, $g3013]}
+else $g2977 = [false, $identifier2974];
+var $setterq2978 = $g2977[0], $identifier2979 = $g2977[1], $g2980 = $g2076($identifier2979, $g2081), $value2987;
+if ($T($g2980))
+$value2987 = $g2980
+else $value2987 = $setterq2978;
+var $g3014 = !(trueQ($value2987));
+if ($T($g3014))
+{var $error2989 = $g2918($g2919, $g2924, $g2105($macro_name2967, ": ", "name not <var> or (setter <var>)"));
+throw($error2989);
 false};
-var $g3027;
-if ($T($typesexistingq2983))
-{var $sequence3012 = $rarguments2987, $g3013 = $sequence3012, $g3014 = (($g3013 || false).length || 0), $g3015 = 0;
-$g3027 = ($g3014 === $g3015)}
-else $g3027 = false;
-if ($T($g3027))
-{var $error3017 = $g2928($g2929, $g2934, $g2114($macro_name2979, ": ", "method has no arguments"));
-throw($error3017);
+var $g3015;
+if ($T($typesexistingq2971))
+{var $sequence3000 = $rarguments2975, $g3001 = $sequence3000, $g3002 = (($g3001 || false).length || 0), $g3003 = 0;
+$g3015 = ($g3002 === $g3003)}
+else $g3015 = false;
+if ($T($g3015))
+{var $error3005 = $g2918($g2919, $g2924, $g2105($macro_name2967, ": ", "method has no arguments"));
+throw($error3005);
 false};
-var $simplified_arguments2993 = $g2958($rarguments2987), $method_definition2994 = $g2175($g2114([$g2074("method"), $simplified_arguments2993], $body2988), $env2985);
-if ($T($recordq2984))
-$g2145($env2985, "module", "functions", $g2115($identifier2991), $method_definition2994);
-var $g3028 = $g2074("define"), $g3029 = [$g2074($definer_name2980), [$g2074("%native-name"), $g2115($identifier2991)], $method_definition2994, $setterq2990], $g3033;
-if ($T($typesexistingq2983))
-{var $sequence3019 = $rarguments2987, $head2995 = $sequence3019[0], $g3031;
-if ($T($g2085($head2995, $g2086)))
-{var $robject3021 = $head2995, $g3030 = (($robject3021 || false).length || 0);
-$g3031 = $g2976($g3030, 1)}
-else $g3031 = false;
-var $g3032;
-if ($T($g3031))
-{var $sequence3023 = $head2995;
-$g3032 = $sequence3023[1]}
-else $g3032 = $g2074("<object>");
-$g3033 = [$g3032, $identifier2991]}
-else $g3033 = [];
-var $g3034 = $g2114($g3029, $g3033);
-return [$g3028, $identifier2991, $g3034]}}, false)
-{var $g3062 = $K("type/existing?"), $g3063 = $K("record?"), trueQ = $g1464["true?"], $g3042 = $g1464.apply, $g3043 = [["define-function", "%make-function", $g3062, false, $g3063, true], ["define-method", "%make-method", $g3062, true]], $g3044, $g3045, $g3046 = [$g3043];
+var $simplified_arguments2981 = $g2946($rarguments2975), $method_definition2982 = $g2166($g2105([$g2065("method"), $simplified_arguments2981], $body2976), $env2973);
+if ($T($recordq2972))
+$g2136($env2973, "module", "functions", $g2106($identifier2979), $method_definition2982);
+var $g3016 = $g2065("define"), $g3017 = [$g2065($definer_name2968), [$g2065("%native-name"), $g2106($identifier2979)], $method_definition2982, $setterq2978], $g3021;
+if ($T($typesexistingq2971))
+{var $sequence3007 = $rarguments2975, $head2983 = $sequence3007[0], $g3019;
+if ($T($g2076($head2983, $g2077)))
+{var $robject3009 = $head2983, $g3018 = (($robject3009 || false).length || 0);
+$g3019 = $g2964($g3018, 1)}
+else $g3019 = false;
+var $g3020;
+if ($T($g3019))
+{var $sequence3011 = $head2983;
+$g3020 = $sequence3011[1]}
+else $g3020 = $g2065("<object>");
+$g3021 = [$g3020, $identifier2979]}
+else $g3021 = [];
+var $g3022 = $g2105($g3017, $g3021);
+return [$g3016, $identifier2979, $g3022]}}, false)
+{var $g3050 = $K("type/existing?"), $g3051 = $K("record?"), trueQ = $g1464["true?"], $g3030 = $g1464.apply, $g3031 = [["define-function", "%make-function", $g3050, false, $g3051, true], ["define-method", "%make-method", $g3050, true]], $g3032, $g3033, $g3034 = [$g3031];
 while ($T(true))
-{var $g3047 = $g3044, $value3051;
-if ($T($g3047))
-$value3051 = $g3047
-else $value3051 = $g2569($g2088, $g3046);
-var $g3061 = !(trueQ($value3051));
-if ($T($g3061))
-{var $sequence3053 = $g3043, $rarguments3048 = $sequence3053[0];
-(function $g3064 ($rarguments3049)
-{var $sequence3055 = $rarguments3049, $g3058 = $sequence3055[0], $g3059 = $g3042($g2978, $rarguments3049);
-return $g2145($g2198, $g3058, $g3059)})($rarguments3048);
-var $sequence3057 = $g3043, $g3060 = $sequence3057.slice(1);
-$g3043 = $g3060;
-$g3046 = [$g3043]}
+{var $g3035 = $g3032, $value3039;
+if ($T($g3035))
+$value3039 = $g3035
+else $value3039 = $g2554($g2079, $g3034);
+var $g3049 = !(trueQ($value3039));
+if ($T($g3049))
+{var $sequence3041 = $g3031, $rarguments3036 = $sequence3041[0];
+(function $g3052 ($rarguments3037)
+{var $sequence3043 = $rarguments3037, $g3046 = $sequence3043[0], $g3047 = $g3030($g2966, $rarguments3037);
+return $g2136($g2188, $g3046, $g3047)})($rarguments3036);
+var $sequence3045 = $g3031, $g3048 = $sequence3045.slice(1);
+$g3031 = $g3048;
+$g3034 = [$g3031]}
 else break};
-$g3045}
-$g2145($g2198, "define-generic", function $g3068 ($__3065, $identifier3066, $rarguments3067)
-{return [$g2074("define"), $identifier3066, [$g2074("%make-generic"), [$g2074("%native-name"), $g2115($identifier3066)]]]})
+$g3033}
+$g2136($g2188, "define-generic", function $g3056 ($__3053, $identifier3054, $rarguments3055)
+{return [$g2065("define"), $identifier3054, [$g2065("%make-generic"), [$g2065("%native-name"), $g2106($identifier3054)]]]})
 {var trueQ = $g1464["true?"];
-$g2145($g2198, "define-class", function $g3141 ($__3074, $identifier3075, $superclass3076)
-{var $properties3077 = $SL.call(arguments, 3), $robject3078 = [$g2074("%object")], $g3079 = $properties3077, $g3080, $g3081, $g3082 = [$g3079];
+$g2136($g2188, "define-class", function $g3129 ($__3062, $identifier3063, $superclass3064)
+{var $properties3065 = $SL.call(arguments, 3), $robject3066 = [$g2065("%object")], $g3067 = $properties3065, $g3068, $g3069, $g3070 = [$g3067];
 while ($T(true))
-{var $g3083 = $g3080, $value3087;
-if ($T($g3083))
-$value3087 = $g3083
-else $value3087 = $g2569($g2088, $g3082);
-var $g3135 = !(trueQ($value3087));
-if ($T($g3135))
-{var $sequence3089 = $g3079, $property3084 = $sequence3089[0];
-(function $g3142 ($property3085)
-{if ($T($g2085($property3085, $g2086)))
-{var $rarray3094 = $robject3078, $sequence3093 = $property3085, $g3130 = $sequence3093[0], $value3095 = $g2115($g3130);
-$rarray3094.push($value3095);
-$rarray3094;
-var $rarray3100 = $robject3078, $g3131 = $g2074("method"), $g3132 = [], $sequence3099 = $property3085, $g3133 = $sequence3099[1], $value3101 = [$g3131, $g3132, $g3133];
-$rarray3100.push($value3101);
-return $rarray3100}
-else {var $rarray3104 = $robject3078, $value3105 = $g2115($property3085);
-$rarray3104.push($value3105);
-$rarray3104;
-var $rarray3108 = $robject3078, $value3109 = undefined;
-$rarray3108.push($value3109);
-return $rarray3108}})($property3084);
-var $sequence3111 = $g3079, $g3134 = $sequence3111.slice(1);
-$g3079 = $g3134;
-$g3082 = [$g3079]}
+{var $g3071 = $g3068, $value3075;
+if ($T($g3071))
+$value3075 = $g3071
+else $value3075 = $g2554($g2079, $g3070);
+var $g3123 = !(trueQ($value3075));
+if ($T($g3123))
+{var $sequence3077 = $g3067, $property3072 = $sequence3077[0];
+(function $g3130 ($property3073)
+{if ($T($g2076($property3073, $g2077)))
+{var $rarray3082 = $robject3066, $sequence3081 = $property3073, $g3118 = $sequence3081[0], $value3083 = $g2106($g3118);
+$rarray3082.push($value3083);
+$rarray3082;
+var $rarray3088 = $robject3066, $g3119 = $g2065("method"), $g3120 = [], $sequence3087 = $property3073, $g3121 = $sequence3087[1], $value3089 = [$g3119, $g3120, $g3121];
+$rarray3088.push($value3089);
+return $rarray3088}
+else {var $rarray3092 = $robject3066, $value3093 = $g2106($property3073);
+$rarray3092.push($value3093);
+$rarray3092;
+var $rarray3096 = $robject3066, $value3097 = undefined;
+$rarray3096.push($value3097);
+return $rarray3096}})($property3072);
+var $sequence3099 = $g3067, $g3122 = $sequence3099.slice(1);
+$g3067 = $g3122;
+$g3070 = [$g3067]}
 else break};
-$g3081;
-var $g3136 = $g2074("define"), $g3137 = $g2074("%make-class"), $sequence3123 = $superclass3076, $g3124 = $sequence3123, $g3125 = (($g3124 || false).length || 0), $g3126 = 0, $value3127 = ($g3125 === $g3126), $g3138 = !(trueQ($value3127)), $g3139;
-if ($T($g3138))
-{var $sequence3129 = $superclass3076;
-$g3139 = $sequence3129[0]}
-else $g3139 = false;
-var $g3140 = [$g3137, $g3139, $robject3078];
-return [$g3136, $identifier3075, $g3140]})}
-{var $g3175 = $K("names"), $g3145, $g3146, $g3147;
-$g2145($g2198, "define-module", function $g3176 ($env3148, $__3149)
-{var $g3150 = $SL.call(arguments, 2), $g3151 = $g2977($g3150, {"import":[],
+$g3069;
+var $g3124 = $g2065("define"), $g3125 = $g2065("%make-class"), $sequence3111 = $superclass3064, $g3112 = $sequence3111, $g3113 = (($g3112 || false).length || 0), $g3114 = 0, $value3115 = ($g3113 === $g3114), $g3126 = !(trueQ($value3115)), $g3127;
+if ($T($g3126))
+{var $sequence3117 = $superclass3064;
+$g3127 = $sequence3117[0]}
+else $g3127 = false;
+var $g3128 = [$g3125, $g3127, $robject3066];
+return [$g3124, $identifier3063, $g3128]})}
+{var $g3163 = $K("names"), $g3133, $g3134, $g3135;
+$g2136($g2188, "define-module", function $g3164 ($env3136, $__3137)
+{var $g3138 = $SL.call(arguments, 2), $g3139 = $g2965($g3138, {"import":[],
 "export":[],
 "compile-time-import":[],
-inline:[]}), $rimport3152 = $g3151["import"], $rexport3153 = $g3151["export"], $compile_time_import3154 = $g3151["compile-time-import"], $inline3155 = $g3151.inline;
-$g2145($env3148, "module", "exports", $g2252($g2135, $rexport3153));
-$g2173(function $g3177 ($rimport3156)
-{var $g3168;
-if ($T($g2085($rimport3156, $g2086)))
-{var $sequence3161 = $rimport3156;
-$g3168 = $sequence3161[0]}
-else $g3168 = $rimport3156;
-var $module_name3157 = $g2115($g3168), $g3170;
-if ($T($g2085($rimport3156, $g2086)))
-{var $sequence3163 = $rimport3156, $g3169 = $sequence3163.slice(1);
-$g3170 = $g2252($g2135, $g3169)}
-else $g3170 = false;
-return $g3145($env3148, $module_name3157, $g3175, $g3170)}, $compile_time_import3154);
-$g2145($env3148, "module", "inline", $g2252($g2135, $inline3155));
-return $g2201($g2252(function $g3178 ($rimport3158)
-{var $g3171;
-if ($T($g2085($rimport3158, $g2086)))
-{var $sequence3165 = $rimport3158;
-$g3171 = $sequence3165[0]}
-else $g3171 = $rimport3158;
-var $module_name3159 = $g2115($g3171), $g3172 = $g2164($env3148, "module"), $g3174;
-if ($T($g2085($rimport3158, $g2086)))
-{var $sequence3167 = $rimport3158, $g3173 = $sequence3167.slice(1);
-$g3174 = $g2252($g2135, $g3173)}
-else $g3174 = false;
-$g3146($g3172, $module_name3159, $g3175, $g3174);
-return $g3147($module_name3159, $env3148)}, $rimport3152))})}
-$g3147 = $g2084("make_import_definition", function $g3182 ($module_name3179, $env3180)
-{var $identifier3181 = $g2148();
-$g2145($env3180, "import-identifiers", $module_name3179, $identifier3181);
-return [$g2074("define"), $identifier3181, [[$g2074("%native"), "require"], $module_name3179]]}, false)
-$g2145($g2198, "define-macro", function $g3187 ($env3183, $identifier3184, $rarguments3185)
-{var $body3186 = $SL.call(arguments, 3);
-return [$g2074("begin"), $g2114([$g2074("define-function"), $identifier3184, $g2114([$g2148()], $rarguments3185)], $body3186), [$g2074("set!"), [$g2074("%get-property"), $identifier3184, "%macro?"], true]]})
-$g2145($g2198, "define-symbol-macro", function $g3192 ($env3188, $identifier3189, $rarguments3190)
-{var $body3191 = $SL.call(arguments, 3);
-return [$g2074("begin"), $g2114([$g2074("define-function"), $identifier3189, []], $body3191), [$g2074("set!"), [$g2074("%get-property"), $identifier3189, "%symbol-macro?"], true]]})
-$g2145($g2198, "handler-case", function $g3209 ($__3196, $body3197)
-{var $cases3198 = $SL.call(arguments, 2), $condition_var3199 = $g2148();
-return [$g2074("%try"), $body3197, $condition_var3199, $g2114([$g2074("cond")], $g2252(function $g3210 ($rcase3200)
-{var $g3201 = $rcase3200[0], $type3202 = $g2189($g3201, 0), $g3203 = $SL.call($g3201, 1), $g3204 = $g2977($g3203, {condition:false}), $condition3205 = $g3204.condition, $body3206 = $SL.call($rcase3200, 1), $g3207 = [[$g2074("instance?"), $condition_var3199, $type3202]], $g3208;
-if ($T($condition3205))
-$g3208 = [$g2114([$g2074("bind"), [[$condition3205, $condition_var3199]]], $body3206)]
-else $g3208 = $body3206;
-return $g2114($g3207, $g3208)}, $cases3198))]})
-var $g3211, $g3212 = $g1464.identity, $g3213 = $g2084("lift_defines", function $g3216 ($exp3214, $env3215)
-{return $g3211($exp3214, $env3215, $g3212)}, false)
-{var $g3223, $g3224 = $g1464["has?"], $g3225;
-$g3211 = $g2084("lift_define", function $g3275 ($exp3226, $env3227, $k3228)
-{if ($T($g2091($exp3226)))
-{var $sequence3266 = $exp3226, $g3271 = $sequence3266[0], $g3229 = $g2115($g3271), $g3230 = $g2119;
-if ($T($g3230($g3229, "%bind")))
-{var $__3231 = $g2189($exp3226, 0), $g3232 = $exp3226[1], $rvar3233 = $g2189($g3232, 0), $value3234 = $g2189($g3232, 1), $body3235 = $g2189($exp3226, 2);
-return $g3211($value3234, $env3227, function $g3276 ($lvalue3236, $env3237)
-{return $g3211($body3235, $env3237, function $g3277 ($lbody3238, $env3239)
-{return $k3228([$g2074("%bind"), [$rvar3233, $lvalue3236], $lbody3238], $env3239)})})}
-else if ($T($g3230($g3229, "%try")))
-{var $m3240 = $g2189($exp3226, 0), $e13241 = $g2189($exp3226, 1), $v3242 = $g2189($exp3226, 2), $e23243 = $g2189($exp3226, 3);
-return $g3223([$e13241, $e23243], $env3227, function $g3278 ($let3244, $env3245)
-{var $le13246 = $g2189($let3244, 0), $le23247 = $g2189($let3244, 1);
-return $k3228([$m3240, $le13246, $v3242, $le23247], $env3245)})}
-else {var $g3248 = $g3230($g3229, "%method"), $g3272;
-if ($T($g3248))
-$g3272 = $g3248
-else $g3272 = $g3230($g3229, "%set");
-if ($T($g3272))
-{var $m3249 = $g2189($exp3226, 0), $e13250 = $g2189($exp3226, 1), $e23251 = $g2189($exp3226, 2);
-return $g3211($e23251, $env3227, function $g3279 ($le23252, $env3253)
-{return $k3228([$m3249, $e13250, $le23252], $env3253)})}
-else {var $g3254 = $g3230($g3229, "%begin"), $g3273;
-if ($T($g3254))
-$g3273 = $g3254
-else {var $g3255 = $g3230($g3229, "%if");
-if ($T($g3255))
-$g3273 = $g3255
-else $g3273 = $g3230($g3229, "%while")};
-if ($T($g3273))
-{var $m3256 = $g2189($exp3226, 0), $et3257 = $SL.call($exp3226, 1);
-return $g3223($et3257, $env3227, function $g3280 ($let3258, $env3259)
-{return $k3228($g2114([$m3256], $let3258), $env3259)})}
-else if ($T($g3230($g3229, "define")))
-{var $__3260 = $g2189($exp3226, 0), $rvar3261 = $g2189($exp3226, 1), $value3262 = $g2189($exp3226, 2), $exportq3263 = $g2189($exp3226, 3), $name3264 = $g2115($rvar3261), $robject3269 = $g2164($env3227, "defined?"), $property3270 = $name3264, $g3274 = $HP.call($robject3269,$property3270);
-if ($T($g3274))
-return $k3228([$g2074("%set"), $rvar3261, $value3262], $env3227)
-else {$g2145($env3227, "defined?", $name3264, true);
-return [$g2074("%begin"), [$g2074("%define"), $rvar3261], $k3228([$g2074("%set"), $rvar3261, $value3262], $env3227)]}}
-else return $g3225($exp3226, $env3227, $k3228)}}}
-else return $k3228($exp3226, $env3227)}, false)}
-$g3223 = $g2084("lift_defineT", function $g3299 ($expt3281, $env3282, $k3283)
-{var $sequence3294 = $expt3281, $g3295 = $sequence3294, $g3296 = (($g3295 || false).length || 0), $g3297 = 0, $g3298 = ($g3296 === $g3297);
-if ($T($g3298))
-return $k3283([], $env3282)
-else return $g3225($expt3281, $env3282, $k3283)}, false)
-$g3225 = $g2084("lift_defineTT", function $g3315 ($exp3300, $env3301, $k3302)
-{var $sequence3308 = $exp3300, $g3311 = $sequence3308[0], $g3314 = function $g3316 ($t3303, $env3304)
-{var $sequence3310 = $exp3300, $g3312 = $sequence3310.slice(1), $g3313 = function $g3317 ($tt3305, $env3306)
-{return $k3302($g2114([$t3303], $tt3305), $env3306)};
-return $g3223($g3312, $env3304, $g3313)};
-return $g3211($g3311, $env3301, $g3314)}, false)
-var $g3318 = $g2066()
-$g2145($g3318, "next-method", function $g3320 ($__3319)
-{return [$g2074("%next-method"), $g2074("%this-method")]})
-var trueQ = $g1464["true?"], $g3323 = $g2084("find_macro_definition", function $g3356 ($form3324, $env3325)
-{var $g3326 = $form3324, $g3327 = $g2085;
-if ($T($g3327($g3326, $g2086)))
-{var $sequence3340 = $form3324, $g3341 = $sequence3340, $g3342 = (($g3341 || false).length || 0), $g3343 = 0, $g3352 = ($g3342 === $g3343);
-if ($T($g3352))
-{var $error3345 = "Empty form";
-throw($error3345);
+inline:[]}), $rimport3140 = $g3139["import"], $rexport3141 = $g3139["export"], $compile_time_import3142 = $g3139["compile-time-import"], $inline3143 = $g3139.inline;
+$g2136($env3136, "module", "exports", $g2241($g2126, $rexport3141));
+$g2164(function $g3165 ($rimport3144)
+{var $g3156;
+if ($T($g2076($rimport3144, $g2077)))
+{var $sequence3149 = $rimport3144;
+$g3156 = $sequence3149[0]}
+else $g3156 = $rimport3144;
+var $module_name3145 = $g2106($g3156), $g3158;
+if ($T($g2076($rimport3144, $g2077)))
+{var $sequence3151 = $rimport3144, $g3157 = $sequence3151.slice(1);
+$g3158 = $g2241($g2126, $g3157)}
+else $g3158 = false;
+return $g3133($env3136, $module_name3145, $g3163, $g3158)}, $compile_time_import3142);
+$g2136($env3136, "module", "inline", $g2241($g2126, $inline3143));
+return $g2190($g2241(function $g3166 ($rimport3146)
+{var $g3159;
+if ($T($g2076($rimport3146, $g2077)))
+{var $sequence3153 = $rimport3146;
+$g3159 = $sequence3153[0]}
+else $g3159 = $rimport3146;
+var $module_name3147 = $g2106($g3159), $g3160 = $g2155($env3136, "module"), $g3162;
+if ($T($g2076($rimport3146, $g2077)))
+{var $sequence3155 = $rimport3146, $g3161 = $sequence3155.slice(1);
+$g3162 = $g2241($g2126, $g3161)}
+else $g3162 = false;
+$g3134($g3160, $module_name3147, $g3163, $g3162);
+return $g3135($module_name3147, $env3136)}, $rimport3140))})}
+$g3135 = $g2075("make_import_definition", function $g3170 ($module_name3167, $env3168)
+{var $identifier3169 = $g2139();
+$g2136($env3168, "import-identifiers", $module_name3167, $identifier3169);
+return [$g2065("define"), $identifier3169, [[$g2065("%native"), "require"], $module_name3167]]}, false)
+$g2136($g2188, "define-macro", function $g3175 ($env3171, $identifier3172, $rarguments3173)
+{var $body3174 = $SL.call(arguments, 3);
+return [$g2065("begin"), $g2105([$g2065("define-function"), $identifier3172, $g2105([$g2139()], $rarguments3173)], $body3174), [$g2065("set!"), [$g2065("%get-property"), $identifier3172, "%macro?"], true]]})
+$g2136($g2188, "define-symbol-macro", function $g3180 ($env3176, $identifier3177, $rarguments3178)
+{var $body3179 = $SL.call(arguments, 3);
+return [$g2065("begin"), $g2105([$g2065("define-function"), $identifier3177, []], $body3179), [$g2065("set!"), [$g2065("%get-property"), $identifier3177, "%symbol-macro?"], true]]})
+$g2136($g2188, "handler-case", function $g3197 ($__3184, $body3185)
+{var $cases3186 = $SL.call(arguments, 2), $condition_var3187 = $g2139();
+return [$g2065("%try"), $body3185, $condition_var3187, $g2105([$g2065("cond")], $g2241(function $g3198 ($rcase3188)
+{var $g3189 = $rcase3188[0], $type3190 = $g3189[0], $g3191 = $SL.call($g3189, 1), $g3192 = $g2965($g3191, {condition:false}), $condition3193 = $g3192.condition, $body3194 = $SL.call($rcase3188, 1), $g3195 = [[$g2065("instance?"), $condition_var3187, $type3190]], $g3196;
+if ($T($condition3193))
+$g3196 = [$g2105([$g2065("bind"), [[$condition3193, $condition_var3187]]], $body3194)]
+else $g3196 = $body3194;
+return $g2105($g3195, $g3196)}, $cases3186))]})
+var $g3199, $g3200 = $g1464.identity, $g3201 = $g2075("lift_defines", function $g3204 ($exp3202, $env3203)
+{return $g3199($exp3202, $env3203, $g3200)}, false)
+{var $g3210, $g3211 = $g1464["has?"], $g3212;
+$g3199 = $g2075("lift_define", function $g3261 ($exp3213, $env3214, $k3215)
+{if ($T($g2082($exp3213)))
+{var $sequence3252 = $exp3213, $g3257 = $sequence3252[0], $g3216 = $g2106($g3257);
+if ($T($g2110($g3216, "%bind")))
+{var $__3217 = $exp3213[0], $g3218 = $exp3213[1], $rvar3219 = $g3218[0], $value3220 = $g3218[1], $body3221 = $exp3213[2];
+return $g3199($value3220, $env3214, function $g3262 ($lvalue3222, $env3223)
+{return $g3199($body3221, $env3223, function $g3263 ($lbody3224, $env3225)
+{return $k3215([$g2065("%bind"), [$rvar3219, $lvalue3222], $lbody3224], $env3225)})})}
+else if ($T($g2110($g3216, "%try")))
+{var $m3226 = $exp3213[0], $e13227 = $exp3213[1], $v3228 = $exp3213[2], $e23229 = $exp3213[3];
+return $g3210([$e13227, $e23229], $env3214, function $g3264 ($let3230, $env3231)
+{var $le13232 = $let3230[0], $le23233 = $let3230[1];
+return $k3215([$m3226, $le13232, $v3228, $le23233], $env3231)})}
+else {var $g3234 = $g2110($g3216, "%method"), $g3258;
+if ($T($g3234))
+$g3258 = $g3234
+else $g3258 = $g2110($g3216, "%set");
+if ($T($g3258))
+{var $m3235 = $exp3213[0], $e13236 = $exp3213[1], $e23237 = $exp3213[2];
+return $g3199($e23237, $env3214, function $g3265 ($le23238, $env3239)
+{return $k3215([$m3235, $e13236, $le23238], $env3239)})}
+else {var $g3240 = $g2110($g3216, "%begin"), $g3259;
+if ($T($g3240))
+$g3259 = $g3240
+else {var $g3241 = $g2110($g3216, "%if");
+if ($T($g3241))
+$g3259 = $g3241
+else $g3259 = $g2110($g3216, "%while")};
+if ($T($g3259))
+{var $m3242 = $exp3213[0], $et3243 = $SL.call($exp3213, 1);
+return $g3210($et3243, $env3214, function $g3266 ($let3244, $env3245)
+{return $k3215($g2105([$m3242], $let3244), $env3245)})}
+else if ($T($g2110($g3216, "define")))
+{var $__3246 = $exp3213[0], $rvar3247 = $exp3213[1], $value3248 = $exp3213[2], $exportq3249 = $exp3213[3], $name3250 = $g2106($rvar3247), $robject3255 = $g2155($env3214, "defined?"), $property3256 = $name3250, $g3260 = $HP.call($robject3255,$property3256);
+if ($T($g3260))
+return $k3215([$g2065("%set"), $rvar3247, $value3248], $env3214)
+else {$g2136($env3214, "defined?", $name3250, true);
+return [$g2065("%begin"), [$g2065("%define"), $rvar3247], $k3215([$g2065("%set"), $rvar3247, $value3248], $env3214)]}}
+else return $g3212($exp3213, $env3214, $k3215)}}}
+else return $k3215($exp3213, $env3214)}, false)}
+$g3210 = $g2075("lift_defineT", function $g3285 ($expt3267, $env3268, $k3269)
+{var $sequence3280 = $expt3267, $g3281 = $sequence3280, $g3282 = (($g3281 || false).length || 0), $g3283 = 0, $g3284 = ($g3282 === $g3283);
+if ($T($g3284))
+return $k3269([], $env3268)
+else return $g3212($expt3267, $env3268, $k3269)}, false)
+$g3212 = $g2075("lift_defineTT", function $g3301 ($exp3286, $env3287, $k3288)
+{var $sequence3294 = $exp3286, $g3297 = $sequence3294[0], $g3300 = function $g3302 ($t3289, $env3290)
+{var $sequence3296 = $exp3286, $g3298 = $sequence3296.slice(1), $g3299 = function $g3303 ($tt3291, $env3292)
+{return $k3288($g2105([$t3289], $tt3291), $env3292)};
+return $g3210($g3298, $env3290, $g3299)};
+return $g3199($g3297, $env3287, $g3300)}, false)
+var $g3304 = $g2057()
+$g2136($g3304, "next-method", function $g3306 ($__3305)
+{return [$g2065("%next-method"), $g2065("%this-method")]})
+var trueQ = $g1464["true?"], $g3308 = $g2075("find_macro_definition", function $g3340 ($form3309, $env3310)
+{var $g3311 = $form3309;
+if ($T($g2076($g3311, $g2077)))
+{var $sequence3324 = $form3309, $g3325 = $sequence3324, $g3326 = (($g3325 || false).length || 0), $g3327 = 0, $g3336 = ($g3326 === $g3327);
+if ($T($g3336))
+{var $error3329 = "Empty form";
+throw($error3329);
 false};
-var $sequence3347 = $form3324, $g3353 = $sequence3347[0], $name3328 = $g2115($g3353), $value3349 = $g2164($env3325, "bound?", $name3328), $g3354 = !(trueQ($value3349));
-if ($T($g3354))
-return $env3325.macros[$name3328]}
-else if ($T($g3327($g3326, $g2090)))
-{var $name3329 = $g2115($form3324), $value3351 = $g2164($env3325, "bound?", $name3329), $g3355 = !(trueQ($value3351));
-if ($T($g3355))
-return $env3325["symbol-macros"][$name3329]}}, false)
-var $g3358 = $g2084("macroexpand_1", function $g3366 ($form3359, $env3360)
-{var $g3361 = $g3323($form3359, $env3360);
-if ($T($g3361))
-{var $macro3362 = $g3361, $g3365;
-if ($T($g2085($form3359, $g2086)))
-{var $sequence3364 = $form3359;
-$g3365 = $sequence3364.slice(1)}
-else $g3365 = $form3359;
-return $g3042($macro3362, $env3360, $g3365)}
-else return $form3359}, false)
-var trueQ = $g1464["true?"], $g3367 = $g2084("macroexpand", function $g3375 ($form3368, $env3369)
-{var $doneq3370;
+var $sequence3331 = $form3309, $g3337 = $sequence3331[0], $name3312 = $g2106($g3337), $value3333 = $g2155($env3310, "bound?", $name3312), $g3338 = !(trueQ($value3333));
+if ($T($g3338))
+return $env3310.macros[$name3312]}
+else if ($T($g2076($g3311, $g2081)))
+{var $name3313 = $g2106($form3309), $value3335 = $g2155($env3310, "bound?", $name3313), $g3339 = !(trueQ($value3335));
+if ($T($g3339))
+return $env3310["symbol-macros"][$name3313]}}, false)
+var $g3342 = $g2075("macroexpand_1", function $g3350 ($form3343, $env3344)
+{var $g3345 = $g3308($form3343, $env3344);
+if ($T($g3345))
+{var $macro3346 = $g3345, $g3349;
+if ($T($g2076($form3343, $g2077)))
+{var $sequence3348 = $form3343;
+$g3349 = $sequence3348.slice(1)}
+else $g3349 = $form3343;
+return $g3030($macro3346, $env3344, $g3349)}
+else return $form3343}, false)
+var trueQ = $g1464["true?"], $g3351 = $g2075("macroexpand", function $g3359 ($form3352, $env3353)
+{var $doneq3354;
 while ($T(true))
-{var $value3373 = $doneq3370, $g3374 = !(trueQ($value3373));
-if ($T($g3374))
-{var $expanded3371 = $g3358($form3368, $env3369);
-$doneq3370 = $g2119($expanded3371, $form3368);
-$form3368 = $expanded3371}
+{var $value3357 = $doneq3354, $g3358 = !(trueQ($value3357));
+if ($T($g3358))
+{var $expanded3355 = $g3342($form3352, $env3353);
+$doneq3354 = $g2110($expanded3355, $form3352);
+$form3352 = $expanded3355}
 else break};
-return $form3368}, false)
-$g2175 = $g2084("macroexpand_all", function $g3388 ($form3379, $env3380)
-{var $g3381 = $form3379, $g3382 = $g2085;
-if ($T($g3382($g3381, $g2086)))
-if ($T($g3323($form3379, $env3380)))
-return $g2175($g3367($form3379, $env3380), $env3380)
-else {var $g3383 = $g2165($form3379, $env3380);
-if ($T($g3383))
-{var $expander3384 = $g3383, $sequence3386 = $form3379, $g3387 = $sequence3386.slice(1);
-return $g3042($expander3384, $env3380, $g3387)}
-else return $g2252($g2122($g2175, $env3380), $form3379)}
-else if ($T($g3382($g3381, $g2090)))
-if ($T($g3323($form3379, $env3380)))
-return $g2175($g3367($form3379, $env3380), $env3380)
-else return $form3379
-else return $form3379}, false)
-var $g3389 = $g1464["member?"], $g3390 = $g2084("find_module_for_definition", function $g3396 ($definition_name3391, $env3392)
-{return $g2569(function $g3397 ($rimport3393)
-{var $module3394 = $g2189($rimport3393, 0), $names3395 = $g2189($rimport3393, 1);
-if ($T($g3389($definition_name3391, $names3395)))
-return $module3394}, $g2164($env3392, "module", "imports"))}, false)
-var $g3399 = $g2084("find_import_identifier", function $g3404 ($definition_name3400, $env3401)
-{var $g3402 = $g3390($definition_name3400, $env3401);
-if ($T($g3402))
-{var $module3403 = $g3402;
-return $g2164($env3401, "import-identifiers", $g2164($module3403, "name"))}}, false)
-var $g3406 = $g1464["set-subtract!"], $g3407, $g3408 = $g1464["as-set"], $g3409 = $g1464["object-properties"], $g3410 = $g2084("define_free_variables", function $g3436 ($exp3411, $env3412)
-{var $variables3413 = $g3406($g3406($g3407($exp3411), $g3408($g2252($g2074, $g3409($g2164($env3412, "defined?"))))), $g2075), $sequence3428 = $variables3413, $g3429 = $sequence3428, $g3430 = (($g3429 || false).length || 0), $g3431 = 0, $g3432 = ($g3430 === $g3431);
-if ($T($g3432))
-return $exp3411
-else return $g2114([$g2074("%begin")], $g2252(function $g3437 ($variable3414)
-{var $name3415 = $g2115($variable3414);
-$g2145($env3412, "defined?", $name3415, true);
-var $g3433 = [[$g2074("%define"), $variable3414]], $g3416 = $g3399($name3415, $env3412), $g3434;
-if ($T($g3416))
-{var $import_identifier3417 = $g3416;
-$g3434 = [[$g2074("%set"), $variable3414, [$g2074("%get-property"), $import_identifier3417, $name3415]]]}
-else $g3434 = [];
-var $g3435 = $g2114($g3433, $g3434);
-return $g2201($g3435)}, $variables3413), [$exp3411])}, false)
-var trueQ = $g1464["true?"], $g3439 = $g1464.choose, $g3440 = $g2084("define_free_variables2", function $g3475 ($exp3441, $env3442)
-{var $free3443 = $g3406($g3407($exp3441), $g2075), $variables3445 = $g3439(function $g3476 ($variable3444)
-{var $robject3454 = $g2164($env3442, "definition-names"), $property3455 = $g2115($variable3444), $value3456 = $HP.call($robject3454,$property3455);
-return !(trueQ($value3456))}, $free3443), $sequence3467 = $variables3445, $g3468 = $sequence3467, $g3469 = (($g3468 || false).length || 0), $g3470 = 0, $g3471 = ($g3469 === $g3470);
-if ($T($g3471))
-return $exp3441
-else return $g2114([$g2074("%begin")], $g2252(function $g3477 ($variable3446)
-{var $name3447 = $g2115($variable3446);
-$g2145($env3442, "defined?", $name3447, true);
-var $g3472 = [[$g2074("%define"), $variable3446]], $g3448 = $g3399($name3447, $env3442), $g3473;
-if ($T($g3448))
-{var $old_import_identifier3449 = $g3448, $import_identifier3450 = $g2164($env3442, "new-identifiers", $g2115($old_import_identifier3449));
-$g3473 = [[$g2074("%set"), $variable3446, [$g2074("%get-property"), $import_identifier3450, $name3447]]]}
-else $g3473 = [];
-var $g3474 = $g2114($g3472, $g3473);
-return $g2201($g3474)}, $variables3445), [$exp3441])}, false)
-{var trueQ = $g1464["true?"], $g3494 = $g1464["set-union!"];
-$g3407 = $g2084("find_free_variables", function $g3589 ($exp3495)
-{var $g3570;
-if ($T($g2085($exp3495, $g2086)))
-{var $sequence3539 = $exp3495, $g3540 = $sequence3539, $g3541 = (($g3540 || false).length || 0), $g3542 = 0, $value3543 = ($g3541 === $g3542);
-$g3570 = !(trueQ($value3543))}
-else $g3570 = false;
-if ($T($g3570))
-{var $sequence3545 = $exp3495, $head3496 = $sequence3545[0], $name3497;
-if ($T($g2085($head3496, $g2090)))
-$name3497 = $g2115($head3496)
-else $name3497 = false;
-var $g3498 = $name3497, $g3499 = $g2119;
-if ($T($g3499($g3498, "%method")))
-{var $__3500 = $g2189($exp3495, 0), $rarguments3501 = $g2189($exp3495, 1), $body3502 = $g2189($exp3495, 2);
-return $g3406($g3407($body3502), $g3408($rarguments3501))}
-else if ($T($g3499($g3498, "%bind")))
-{var $__3503 = $g2189($exp3495, 0), $g3504 = $exp3495[1], $rvar3505 = $g2189($g3504, 0), $value3506 = $g2189($g3504, 1), $body3507 = $g2189($exp3495, 2);
-return $g3494($g3406($g3407($body3507), $g3408([$rvar3505])), $g3407($value3506))}
-else if ($T($g3499($g3498, "%begin")))
-{var $definitions3508 = [], $g3575 = function $g3590 ($result3509, $e3510)
-{var $g3573;
-if ($T($g2091($e3510)))
-{var $sequence3547 = $e3510, $g3571 = $sequence3547[0], $g3572 = $g2074("%define");
-$g3573 = $g2119($g3571, $g3572)}
-else $g3573 = false;
-var $g3574;
-if ($T($g3573))
-{var $rarray3552 = $definitions3508, $sequence3551 = $e3510, $value3553 = $sequence3551[1];
-$rarray3552.push($value3553);
-$rarray3552;
-$g3574 = []}
-else $g3574 = $g3407($e3510);
-return $g2114($result3509, $g3574)}, $g3576 = [], $sequence3555 = $exp3495, $g3577 = $sequence3555.slice(1), $g3578 = $g2242($g3575, $g3576, $g3577), $g3579 = $g3408($g3578), $g3580 = $g3408($definitions3508);
-return $g3406($g3579, $g3580)}
-else if ($T($g3499($g3498, "%try")))
-{var $__3511 = $g2189($exp3495, 0), $e13512 = $g2189($exp3495, 1), $v3513 = $g2189($exp3495, 2), $e23514 = $g2189($exp3495, 3);
-return $g3406($g3494($g3408($g3407($e13512)), $g3408($g3407($e23514))), $g3408([$v3513]))}
-else {var $g3515 = $g3499($g3498, "%set"), $g3581;
-if ($T($g3515))
-$g3581 = $g3515
-else {var $g3516 = $g3499($g3498, "%if");
-if ($T($g3516))
-$g3581 = $g3516
-else {var $g3517 = $g3499($g3498, "%while");
-if ($T($g3517))
-$g3581 = $g3517
-else {var $g3518 = $g3499($g3498, "%array");
-if ($T($g3518))
-$g3581 = $g3518
-else {var $g3519 = $g3499($g3498, "%object");
-if ($T($g3519))
-$g3581 = $g3519
-else {var $g3520 = $g3499($g3498, "%infix");
-if ($T($g3520))
-$g3581 = $g3520
-else {var $g3521 = $g3499($g3498, "%get-property");
-if ($T($g3521))
-$g3581 = $g3521
-else {var $g3522 = $g3499($g3498, "%native-call");
-if ($T($g3522))
-$g3581 = $g3522
-else {var $g3523 = $g3499($g3498, "%plus");
-if ($T($g3523))
-$g3581 = $g3523
-else {var $g3524 = $g3499($g3498, "%minus");
-if ($T($g3524))
-$g3581 = $g3524
-else {var $g3525 = $g3499($g3498, "%times");
-if ($T($g3525))
-$g3581 = $g3525
-else $g3581 = $g3499($g3498, "%divide")}}}}}}}}}};
+return $form3352}, false)
+$g2166 = $g2075("macroexpand_all", function $g3370 ($form3362, $env3363)
+{var $g3364 = $form3362;
+if ($T($g2076($g3364, $g2077)))
+if ($T($g3308($form3362, $env3363)))
+return $g2166($g3351($form3362, $env3363), $env3363)
+else {var $g3365 = $g2156($form3362, $env3363);
+if ($T($g3365))
+{var $expander3366 = $g3365, $sequence3368 = $form3362, $g3369 = $sequence3368.slice(1);
+return $g3030($expander3366, $env3363, $g3369)}
+else return $g2241($g2113($g2166, $env3363), $form3362)}
+else if ($T($g2076($g3364, $g2081)))
+if ($T($g3308($form3362, $env3363)))
+return $g2166($g3351($form3362, $env3363), $env3363)
+else return $form3362
+else return $form3362}, false)
+var $g3371 = $g1464["member?"], $g3372 = $g2075("find_module_for_definition", function $g3378 ($definition_name3373, $env3374)
+{return $g2554(function $g3379 ($rimport3375)
+{var $module3376 = $rimport3375[0], $names3377 = $rimport3375[1];
+if ($T($g3371($definition_name3373, $names3377)))
+return $module3376}, $g2155($env3374, "module", "imports"))}, false)
+var $g3381 = $g2075("find_import_identifier", function $g3386 ($definition_name3382, $env3383)
+{var $g3384 = $g3372($definition_name3382, $env3383);
+if ($T($g3384))
+{var $module3385 = $g3384;
+return $g2155($env3383, "import-identifiers", $g2155($module3385, "name"))}}, false)
+var $g3388 = $g1464["set-subtract!"], $g3389, $g3390 = $g1464["as-set"], $g3391 = $g1464["object-properties"], $g3392 = $g2075("define_free_variables", function $g3418 ($exp3393, $env3394)
+{var $variables3395 = $g3388($g3388($g3389($exp3393), $g3390($g2241($g2065, $g3391($g2155($env3394, "defined?"))))), $g2066), $sequence3410 = $variables3395, $g3411 = $sequence3410, $g3412 = (($g3411 || false).length || 0), $g3413 = 0, $g3414 = ($g3412 === $g3413);
+if ($T($g3414))
+return $exp3393
+else return $g2105([$g2065("%begin")], $g2241(function $g3419 ($variable3396)
+{var $name3397 = $g2106($variable3396);
+$g2136($env3394, "defined?", $name3397, true);
+var $g3415 = [[$g2065("%define"), $variable3396]], $g3398 = $g3381($name3397, $env3394), $g3416;
+if ($T($g3398))
+{var $import_identifier3399 = $g3398;
+$g3416 = [[$g2065("%set"), $variable3396, [$g2065("%get-property"), $import_identifier3399, $name3397]]]}
+else $g3416 = [];
+var $g3417 = $g2105($g3415, $g3416);
+return $g2190($g3417)}, $variables3395), [$exp3393])}, false)
+var trueQ = $g1464["true?"], $g3421 = $g1464.choose, $g3422 = $g2075("define_free_variables2", function $g3457 ($exp3423, $env3424)
+{var $free3425 = $g3388($g3389($exp3423), $g2066), $variables3427 = $g3421(function $g3458 ($variable3426)
+{var $robject3436 = $g2155($env3424, "definition-names"), $property3437 = $g2106($variable3426), $value3438 = $HP.call($robject3436,$property3437);
+return !(trueQ($value3438))}, $free3425), $sequence3449 = $variables3427, $g3450 = $sequence3449, $g3451 = (($g3450 || false).length || 0), $g3452 = 0, $g3453 = ($g3451 === $g3452);
+if ($T($g3453))
+return $exp3423
+else return $g2105([$g2065("%begin")], $g2241(function $g3459 ($variable3428)
+{var $name3429 = $g2106($variable3428);
+$g2136($env3424, "defined?", $name3429, true);
+var $g3454 = [[$g2065("%define"), $variable3428]], $g3430 = $g3381($name3429, $env3424), $g3455;
+if ($T($g3430))
+{var $old_import_identifier3431 = $g3430, $import_identifier3432 = $g2155($env3424, "new-identifiers", $g2106($old_import_identifier3431));
+$g3455 = [[$g2065("%set"), $variable3428, [$g2065("%get-property"), $import_identifier3432, $name3429]]]}
+else $g3455 = [];
+var $g3456 = $g2105($g3454, $g3455);
+return $g2190($g3456)}, $variables3427), [$exp3423])}, false)
+{var trueQ = $g1464["true?"], $g3475 = $g1464["set-union!"];
+$g3389 = $g2075("find_free_variables", function $g3569 ($exp3476)
+{var $g3550;
+if ($T($g2076($exp3476, $g2077)))
+{var $sequence3519 = $exp3476, $g3520 = $sequence3519, $g3521 = (($g3520 || false).length || 0), $g3522 = 0, $value3523 = ($g3521 === $g3522);
+$g3550 = !(trueQ($value3523))}
+else $g3550 = false;
+if ($T($g3550))
+{var $sequence3525 = $exp3476, $head3477 = $sequence3525[0], $name3478;
+if ($T($g2076($head3477, $g2081)))
+$name3478 = $g2106($head3477)
+else $name3478 = false;
+var $g3479 = $name3478;
+if ($T($g2110($g3479, "%method")))
+{var $__3480 = $exp3476[0], $rarguments3481 = $exp3476[1], $body3482 = $exp3476[2];
+return $g3388($g3389($body3482), $g3390($rarguments3481))}
+else if ($T($g2110($g3479, "%bind")))
+{var $__3483 = $exp3476[0], $g3484 = $exp3476[1], $rvar3485 = $g3484[0], $value3486 = $g3484[1], $body3487 = $exp3476[2];
+return $g3475($g3388($g3389($body3487), $g3390([$rvar3485])), $g3389($value3486))}
+else if ($T($g2110($g3479, "%begin")))
+{var $definitions3488 = [], $g3555 = function $g3570 ($result3489, $e3490)
+{var $g3553;
+if ($T($g2082($e3490)))
+{var $sequence3527 = $e3490, $g3551 = $sequence3527[0], $g3552 = $g2065("%define");
+$g3553 = $g2110($g3551, $g3552)}
+else $g3553 = false;
+var $g3554;
+if ($T($g3553))
+{var $rarray3532 = $definitions3488, $sequence3531 = $e3490, $value3533 = $sequence3531[1];
+$rarray3532.push($value3533);
+$rarray3532;
+$g3554 = []}
+else $g3554 = $g3389($e3490);
+return $g2105($result3489, $g3554)}, $g3556 = [], $sequence3535 = $exp3476, $g3557 = $sequence3535.slice(1), $g3558 = $g2231($g3555, $g3556, $g3557), $g3559 = $g3390($g3558), $g3560 = $g3390($definitions3488);
+return $g3388($g3559, $g3560)}
+else if ($T($g2110($g3479, "%try")))
+{var $__3491 = $exp3476[0], $e13492 = $exp3476[1], $v3493 = $exp3476[2], $e23494 = $exp3476[3];
+return $g3388($g3475($g3390($g3389($e13492)), $g3390($g3389($e23494))), $g3390([$v3493]))}
+else {var $g3495 = $g2110($g3479, "%set"), $g3561;
+if ($T($g3495))
+$g3561 = $g3495
+else {var $g3496 = $g2110($g3479, "%if");
+if ($T($g3496))
+$g3561 = $g3496
+else {var $g3497 = $g2110($g3479, "%while");
+if ($T($g3497))
+$g3561 = $g3497
+else {var $g3498 = $g2110($g3479, "%array");
+if ($T($g3498))
+$g3561 = $g3498
+else {var $g3499 = $g2110($g3479, "%object");
+if ($T($g3499))
+$g3561 = $g3499
+else {var $g3500 = $g2110($g3479, "%infix");
+if ($T($g3500))
+$g3561 = $g3500
+else {var $g3501 = $g2110($g3479, "%get-property");
+if ($T($g3501))
+$g3561 = $g3501
+else {var $g3502 = $g2110($g3479, "%native-call");
+if ($T($g3502))
+$g3561 = $g3502
+else {var $g3503 = $g2110($g3479, "%plus");
+if ($T($g3503))
+$g3561 = $g3503
+else {var $g3504 = $g2110($g3479, "%minus");
+if ($T($g3504))
+$g3561 = $g3504
+else {var $g3505 = $g2110($g3479, "%times");
+if ($T($g3505))
+$g3561 = $g3505
+else $g3561 = $g2110($g3479, "%divide")}}}}}}}}}};
+if ($T($g3561))
+{var $g3562 = [], $sequence3537 = $exp3476, $g3563 = $sequence3537.slice(1), $g3564 = $g2241($g3389, $g3563), $g3565 = $g2231($g2105, $g3562, $g3564);
+return $g3390($g3565)}
+else {var $g3506 = $g2110($g3479, "%native"), $g3566;
+if ($T($g3506))
+$g3566 = $g3506
+else {var $g3507 = $g2110($g3479, "%native-name");
+if ($T($g3507))
+$g3566 = $g3507
+else $g3566 = $g2110($g3479, "%define")};
+if ($T($g3566))
+return $g3390([])
+else {var $rfunction3546 = $g3475, $values3547 = $g2241($g3389, $exp3476), $g3548 = $values3547, $g3567 = $g3548[0], $g3549 = $values3547, $g3568 = $g3549.slice(1);
+return $g2231($rfunction3546, $g3567, $g3568)}}}}
+else if ($T($g2076($exp3476, $g2081)))
+return $g3390([$exp3476])
+else return $g3390([])}, false)}
+var trueQ = $g1464["true?"], $g3571 = $g2075("ensure_naming_structure", function $g3582 ($env3572, $module_name3573, $name3574)
+{var $value3577 = $g2155($env3572, "identifiers", $module_name3573), $g3580 = !(trueQ($value3577));
+if ($T($g3580))
+$g2136($env3572, "identifiers", $module_name3573, $g2057());
+var $module_renamings3575 = $g2155($env3572, "identifiers", $module_name3573), $value3579 = $g2155($module_renamings3575, $name3574), $g3581 = !(trueQ($value3579));
 if ($T($g3581))
-{var $g3582 = [], $sequence3557 = $exp3495, $g3583 = $sequence3557.slice(1), $g3584 = $g2252($g3407, $g3583), $g3585 = $g2242($g2114, $g3582, $g3584);
-return $g3408($g3585)}
-else {var $g3526 = $g3499($g3498, "%native"), $g3586;
-if ($T($g3526))
-$g3586 = $g3526
-else {var $g3527 = $g3499($g3498, "%native-name");
-if ($T($g3527))
-$g3586 = $g3527
-else $g3586 = $g3499($g3498, "%define")};
+$g2136($module_renamings3575, $name3574, []);
+return $env3572}, false)
+var $g3584 = $g2075("get_module_nameSname", function $g3589 ($identifier3585)
+{var $g3586 = $g2155($identifier3585, "module"), $g3587;
 if ($T($g3586))
-return $g3408([])
-else {var $rfunction3566 = $g3494, $values3567 = $g2252($g3407, $exp3495), $g3568 = $values3567, $g3587 = $g3568[0], $g3569 = $values3567, $g3588 = $g3569.slice(1);
-return $g2242($rfunction3566, $g3587, $g3588)}}}}
-else if ($T($g2085($exp3495, $g2090)))
-return $g3408([$exp3495])
-else return $g3408([])}, false)}
-var trueQ = $g1464["true?"], $g3591 = $g2084("ensure_naming_structure", function $g3602 ($env3592, $module_name3593, $name3594)
-{var $value3597 = $g2164($env3592, "identifiers", $module_name3593), $g3600 = !(trueQ($value3597));
-if ($T($g3600))
-$g2145($env3592, "identifiers", $module_name3593, $g2066());
-var $module_renamings3595 = $g2164($env3592, "identifiers", $module_name3593), $value3599 = $g2164($module_renamings3595, $name3594), $g3601 = !(trueQ($value3599));
-if ($T($g3601))
-$g2145($module_renamings3595, $name3594, []);
-return $env3592}, false)
-var $g3604 = $g2084("get_module_nameSname", function $g3609 ($identifier3605)
-{var $g3606 = $g2164($identifier3605, "module"), $g3607;
+$g3587 = $g3586
+else $g3587 = "";
+var $g3588 = $g2106($identifier3585);
+return [$g3587, $g3588]}, false)
+var trueQ = $g1464["true?"], $g3591 = $g1464.push, $g3592 = $g2075("rename_identifiers", function $g3608 ($identifiers3593, $env3594)
+{return $g2241(function $g3609 ($identifier3595)
+{var $g3596 = $g3584($identifier3595), $module_name3597 = $g3596[0], $name3598 = $g3596[1], $value3601 = $g2155($identifier3595, "generated?"), $g3606 = !(trueQ($value3601)), $g3607;
 if ($T($g3606))
-$g3607 = $g3606
-else $g3607 = "";
-var $g3608 = $g2115($identifier3605);
-return [$g3607, $g3608]}, false)
-var trueQ = $g1464["true?"], $g3611 = $g1464.push, $g3612 = $g2084("rename_identifiers", function $g3628 ($identifiers3613, $env3614)
-{return $g2252(function $g3629 ($identifier3615)
-{var $g3616 = $g3604($identifier3615), $module_name3617 = $g2189($g3616, 0), $name3618 = $g2189($g3616, 1), $value3621 = $g2164($identifier3615, "generated?"), $g3626 = !(trueQ($value3621)), $g3627;
-if ($T($g3626))
-$g3627 = $name3618
-else $g3627 = false;
-var $new_identifier3619 = $g2148($g3627);
-$g3591($env3614, $module_name3617, $name3618);
-var $rarray3624 = $g2164($env3614, "identifiers", $module_name3617, $name3618), $value3625 = $new_identifier3619;
-$rarray3624.unshift($value3625);
-$rarray3624;
-return $new_identifier3619}, $identifiers3613)}, false)
-var trueQ = $g1464["true?"], $g3636 = $g1464.pop, $g3637 = $g2084("restore_identifiers", function $g3660 ($identifiers3638, $env3639)
-{var $g3640 = $identifiers3638, $g3641, $g3642, $g3643 = [$g3640];
+$g3607 = $name3598
+else $g3607 = false;
+var $new_identifier3599 = $g2139($g3607);
+$g3571($env3594, $module_name3597, $name3598);
+var $rarray3604 = $g2155($env3594, "identifiers", $module_name3597, $name3598), $value3605 = $new_identifier3599;
+$rarray3604.unshift($value3605);
+$rarray3604;
+return $new_identifier3599}, $identifiers3593)}, false)
+var trueQ = $g1464["true?"], $g3616 = $g1464.pop, $g3617 = $g2075("restore_identifiers", function $g3640 ($identifiers3618, $env3619)
+{var $g3620 = $identifiers3618, $g3621, $g3622, $g3623 = [$g3620];
 while ($T(true))
-{var $g3644 = $g3641, $value3651;
-if ($T($g3644))
-$value3651 = $g3644
-else $value3651 = $g2569($g2088, $g3643);
-var $g3659 = !(trueQ($value3651));
-if ($T($g3659))
-{var $sequence3653 = $g3640, $identifier3645 = $sequence3653[0];
-(function $g3661 ($identifier3646)
-{var $g3647 = $g3604($identifier3646), $module_name3648 = $g2189($g3647, 0), $name3649 = $g2189($g3647, 1), $rarray3655 = $g2164($env3639, "identifiers", $module_name3648, $name3649);
-return $rarray3655.shift()})($identifier3645);
-var $sequence3657 = $g3640, $g3658 = $sequence3657.slice(1);
-$g3640 = $g3658;
-$g3643 = [$g3640]}
+{var $g3624 = $g3621, $value3631;
+if ($T($g3624))
+$value3631 = $g3624
+else $value3631 = $g2554($g2079, $g3623);
+var $g3639 = !(trueQ($value3631));
+if ($T($g3639))
+{var $sequence3633 = $g3620, $identifier3625 = $sequence3633[0];
+(function $g3641 ($identifier3626)
+{var $g3627 = $g3584($identifier3626), $module_name3628 = $g3627[0], $name3629 = $g3627[1], $rarray3635 = $g2155($env3619, "identifiers", $module_name3628, $name3629);
+return $rarray3635.shift()})($identifier3625);
+var $sequence3637 = $g3620, $g3638 = $sequence3637.slice(1);
+$g3620 = $g3638;
+$g3623 = [$g3620]}
 else break};
-return $g3642}, false)
-var $g3662 = $g2066()
-var $g3665 = $g2084("find_identifier", function $g3675 ($identifier3666, $env3667)
-{var $g3668 = $g3604($identifier3666), $module_name3669 = $g2189($g3668, 0), $name3670 = $g2189($g3668, 1), $g3671 = $g2164($env3667, "identifiers", $module_name3669, $name3670);
-if ($T($g3671))
-{var $renamings3672 = $g3671, $sequence3674 = $renamings3672;
-return $sequence3674[0]}
-else return $g3662}, false)
-var $g3684 = $g1464["second-setter"], $g3685 = $g2084("alpha_convert", function $g3733 ($form3686, $env3687)
-{var $g3688 = $form3686, $g3689 = $g2085;
-if ($T($g3689($g3688, $g2086)))
-{var $sequence3723 = $form3686, $g3732 = $sequence3723[0], $g3690 = $g2115($g3732), $g3691 = $g2119;
-if ($T($g3691($g3690, "%method")))
-{var $__3692 = $g2189($form3686, 0), $rarguments3693 = $g2189($form3686, 1), $body3694 = $g2189($form3686, 2), $new_arguments3695 = $g3612($rarguments3693, $env3687), $new_body3696 = $g3685($body3694, $env3687), $result3697 = [$__3692, $new_arguments3695, $new_body3696];
-$g3637($rarguments3693, $env3687);
-return $result3697}
-else if ($T($g3691($g3690, "%bind")))
-{var $__3698 = $g2189($form3686, 0), $g3699 = $form3686[1], $rvar3700 = $g2189($g3699, 0), $value3701 = $g2189($g3699, 1), $body3702 = $g2189($form3686, 2), $new_value3703 = $g3685($value3701, $env3687), $g3704 = $g3612([$rvar3700], $env3687), $new_var3705 = $g2189($g3704, 0), $result3706 = [$g2074("%bind"), [$new_var3705, $new_value3703], $g3685($body3702, $env3687)];
-$g3637([$rvar3700], $env3687);
-return $result3706}
-else if ($T($g3691($g3690, "%try")))
-{var $__3707 = $g2189($form3686, 0), $body3708 = $g2189($form3686, 1), $rvar3709 = $g2189($form3686, 2), $rcatch3710 = $g2189($form3686, 3), $new_body3711 = $g3685($body3708, $env3687), $g3712 = $g3612([$rvar3709], $env3687), $new_var3713 = $g2189($g3712, 0), $result3714 = [$g2074("%try"), $new_body3711, $new_var3713, $g3685($rcatch3710, $env3687)];
-$g3637([$rvar3709], $env3687);
-return $result3714}
-else if ($T($g3691($g3690, "%define")))
-{var $__3715 = $g2189($form3686, 0), $identifier3716 = $g2189($form3686, 1), $g3717 = $g3604($identifier3716), $module_name3718 = $g2189($g3717, 0), $name3719 = $g2189($g3717, 1), $new_identifier3720 = $g2148();
-$g3591($env3687, $module_name3718, $name3719);
-var $rarray3726 = $g2164($env3687, "identifiers", $module_name3718, $name3719), $value3727 = $new_identifier3720;
-$rarray3726.push($value3727);
-$rarray3726;
-$g2145($env3687, "definition-names", $g2115($new_identifier3720), $name3719);
-$g2145($env3687, "new-identifiers", $name3719, $new_identifier3720);
-var $rarray3730 = $form3686, $value3731 = $new_identifier3720;
-$rarray3730[1] = $value3731;
-return $form3686}
-else return $g2252($g2122($g3685, $env3687), $form3686)}
-else if ($T($g3689($g3688, $g2090)))
-{var $value3721 = $g3665($form3686, $env3687);
-if ($T($g2119($value3721, $g3662)))
-return $form3686
-else return $value3721}
-else return $form3686}, false)
-var trueQ = $g1464["true?"], dec = $g1464.dec, $g3753 = $g1464["last-setter"], $g3754 = $g1464.last, $g3755, $g3756, $g3757 = $g2084("inline", function $g3867 ($form3758, $env3759)
-{var $g3850;
-if ($T($g2085($form3758, $g2086)))
-{var $sequence3801 = $form3758, $g3802 = $sequence3801, $g3803 = (($g3802 || false).length || 0), $g3804 = 0, $value3805 = ($g3803 === $g3804);
-$g3850 = !(trueQ($value3805))}
-else $g3850 = false;
-if ($T($g3850))
-{var $sequence3807 = $form3758, $g3851 = $sequence3807[0], $g3852 = $g2085($g3851, $g2090);
-if ($T($g3852))
-{var $sequence3809 = $form3758, $g3853 = $sequence3809[0], $g3760 = $g2115($g3853), $g3761 = $g2119, $g3762 = $g3761($g3760, "%method"), $g3854;
-if ($T($g3762))
-$g3854 = $g3762
-else $g3854 = $g3761($g3760, "%set");
-if ($T($g3854))
-{var $rarray3822 = $form3758, $rarray3819 = $form3758, $g3820 = $rarray3819, $g3821 = (($g3820 || false).length || 0), $g3855 = ($g3821 - 1), $g3856 = $rarray3819[$g3855], $value3823 = $g3757($g3856, $env3759);
-$rarray3822[dec($g2120($rarray3822), 1)] = $value3823;
-return $form3758}
-else if ($T($g3761($g3760, "%bind")))
-{var $__3763 = $g2189($form3758, 0), $binding3764 = $g2189($form3758, 1), $body3765 = $g2189($form3758, 2), $rarray3828 = $binding3764, $sequence3827 = $binding3764, $g3857 = $sequence3827[1], $value3829 = $g3757($g3857, $env3759);
-$rarray3828[1] = $value3829;
-var $rarray3832 = $form3758, $value3833 = $g3757($body3765, $env3759);
-$rarray3832[dec($g2120($rarray3832), 1)] = $value3833;
-return $form3758}
-else if ($T($g3761($g3760, "%try")))
-{var $__3766 = $g2189($form3758, 0), $body3767 = $g2189($form3758, 1), $rvar3768 = $g2189($form3758, 2), $rcatch3769 = $g2189($form3758, 3), $rarray3836 = $form3758, $value3837 = $g3757($body3767, $env3759);
-$rarray3836[1] = $value3837;
-var $rarray3840 = $form3758, $value3841 = $g3757($rcatch3769, $env3759);
-$rarray3840[dec($g2120($rarray3840), 1)] = $value3841;
-return $form3758}
-else {var $g3770 = $g3761($g3760, "%begin"), $g3858;
-if ($T($g3770))
-$g3858 = $g3770
-else {var $g3771 = $g3761($g3760, "%if");
-if ($T($g3771))
-$g3858 = $g3771
-else {var $g3772 = $g3761($g3760, "%while");
-if ($T($g3772))
-$g3858 = $g3772
-else {var $g3773 = $g3761($g3760, "%array");
-if ($T($g3773))
-$g3858 = $g3773
-else {var $g3774 = $g3761($g3760, "%object");
-if ($T($g3774))
-$g3858 = $g3774
-else {var $g3775 = $g3761($g3760, "%get-property");
-if ($T($g3775))
-$g3858 = $g3775
-else {var $g3776 = $g3761($g3760, "%native-call");
-if ($T($g3776))
-$g3858 = $g3776
-else {var $g3777 = $g3761($g3760, "%infix");
-if ($T($g3777))
-$g3858 = $g3777
-else {var $g3778 = $g3761($g3760, "%plus");
-if ($T($g3778))
-$g3858 = $g3778
-else {var $g3779 = $g3761($g3760, "%minus");
-if ($T($g3779))
-$g3858 = $g3779
-else {var $g3780 = $g3761($g3760, "%times");
-if ($T($g3780))
-$g3858 = $g3780
-else $g3858 = $g3761($g3760, "%divide")}}}}}}}}}};
-if ($T($g3858))
-{var $sequence3843 = $form3758, $g3859 = $sequence3843[0], $g3860 = [$g3859], $g3861 = $g2122($g3757, $env3759), $sequence3845 = $form3758, $g3862 = $sequence3845.slice(1), $g3863 = $g2252($g3861, $g3862);
-return $g2114($g3860, $g3863)}
-else {var $g3781 = $g3761($g3760, "%native"), $g3864;
-if ($T($g3781))
-$g3864 = $g3781
-else {var $g3782 = $g3761($g3760, "%native-name");
-if ($T($g3782))
-$g3864 = $g3782
-else $g3864 = $g3761($g3760, "%define")};
-if ($T($g3864))
-return $form3758
-else {var $sequence3847 = $form3758, $g3865 = $sequence3847[0], $name3783 = $g2115($g3865), $g3784 = $g2164($env3759, "definition-names", $name3783), $definition_name3785;
-if ($T($g3784))
-$definition_name3785 = $g3784
-else $definition_name3785 = $name3783;
-var $g3786;
-if ($T($g3756($g2164($env3759, "module"), $definition_name3785)))
-$g3786 = $g2164($env3759, "module", "functions", $definition_name3785)
-else $g3786 = false;
-var $definition3789;
-if ($T($g3786))
-$definition3789 = $g3786
-else {var $g3787 = $g3390($definition_name3785, $env3759);
-if ($T($g3787))
-{var $module3788 = $g3787;
-if ($T($g3756($module3788, $definition_name3785)))
-$definition3789 = $g2164($module3788, "functions", $definition_name3785)
-else $definition3789 = false}
-else $definition3789 = false};
-if ($T($definition3789))
-{var $sequence3849 = $form3758, $g3866 = $sequence3849.slice(1);
-return $g3755($definition3789, $g3866, $env3759)}
-else return $g2252($g2122($g3757, $env3759), $form3758)}}}}
-else return $g2252($g2122($g3757, $env3759), $form3758)}
-else return $form3758}, false)
-$g3756 = $g2084("inlineQ", function $g3870 ($module3868, $definition_name3869)
-{return $g2569($g2174($g2119, $definition_name3869), $g2164($module3868, "inline"))}, false)
-{var trueQ = $g1464["true?"], $g3873 = $g1464[">="];
-$g3755 = $g2084("inline_definition", function $g3903 ($definition3874, $values3875, $env3876)
-{var $__3877 = $g2189($definition3874, 0), $rarguments3878 = $g2189($definition3874, 1), $body3879 = $g2189($definition3874, 2), $body3882 = $g2242(function $g3904 ($body3880, $argument3881)
-{return [$g2074("%bind"), [$argument3881, $argument3881], $body3880]}, $body3879, $g2366($rarguments3878)), $inlined3883 = $g3757($body3882, $env3876), $prepared3884 = $g3685($inlined3883, $env3876), $robject3895 = $rarguments3878, $g3885 = (($robject3895 || false).length || 0), $i3886 = 0;
+return $g3622}, false)
+var $g3642 = $g2057()
+var $g3645 = $g2075("find_identifier", function $g3655 ($identifier3646, $env3647)
+{var $g3648 = $g3584($identifier3646), $module_name3649 = $g3648[0], $name3650 = $g3648[1], $g3651 = $g2155($env3647, "identifiers", $module_name3649, $name3650);
+if ($T($g3651))
+{var $renamings3652 = $g3651, $sequence3654 = $renamings3652;
+return $sequence3654[0]}
+else return $g3642}, false)
+var $g3662 = $g1464["second-setter"], $g3663 = $g2075("alpha_convert", function $g3709 ($form3664, $env3665)
+{var $g3666 = $form3664;
+if ($T($g2076($g3666, $g2077)))
+{var $sequence3699 = $form3664, $g3708 = $sequence3699[0], $g3667 = $g2106($g3708);
+if ($T($g2110($g3667, "%method")))
+{var $__3668 = $form3664[0], $rarguments3669 = $form3664[1], $body3670 = $form3664[2], $new_arguments3671 = $g3592($rarguments3669, $env3665), $new_body3672 = $g3663($body3670, $env3665), $result3673 = [$__3668, $new_arguments3671, $new_body3672];
+$g3617($rarguments3669, $env3665);
+return $result3673}
+else if ($T($g2110($g3667, "%bind")))
+{var $__3674 = $form3664[0], $g3675 = $form3664[1], $rvar3676 = $g3675[0], $value3677 = $g3675[1], $body3678 = $form3664[2], $new_value3679 = $g3663($value3677, $env3665), $g3680 = $g3592([$rvar3676], $env3665), $new_var3681 = $g3680[0], $result3682 = [$g2065("%bind"), [$new_var3681, $new_value3679], $g3663($body3678, $env3665)];
+$g3617([$rvar3676], $env3665);
+return $result3682}
+else if ($T($g2110($g3667, "%try")))
+{var $__3683 = $form3664[0], $body3684 = $form3664[1], $rvar3685 = $form3664[2], $rcatch3686 = $form3664[3], $new_body3687 = $g3663($body3684, $env3665), $g3688 = $g3592([$rvar3685], $env3665), $new_var3689 = $g3688[0], $result3690 = [$g2065("%try"), $new_body3687, $new_var3689, $g3663($rcatch3686, $env3665)];
+$g3617([$rvar3685], $env3665);
+return $result3690}
+else if ($T($g2110($g3667, "%define")))
+{var $__3691 = $form3664[0], $identifier3692 = $form3664[1], $g3693 = $g3584($identifier3692), $module_name3694 = $g3693[0], $name3695 = $g3693[1], $new_identifier3696 = $g2139();
+$g3571($env3665, $module_name3694, $name3695);
+var $rarray3702 = $g2155($env3665, "identifiers", $module_name3694, $name3695), $value3703 = $new_identifier3696;
+$rarray3702.push($value3703);
+$rarray3702;
+$g2136($env3665, "definition-names", $g2106($new_identifier3696), $name3695);
+$g2136($env3665, "new-identifiers", $name3695, $new_identifier3696);
+var $rarray3706 = $form3664, $value3707 = $new_identifier3696;
+$rarray3706[1] = $value3707;
+return $form3664}
+else return $g2241($g2113($g3663, $env3665), $form3664)}
+else if ($T($g2076($g3666, $g2081)))
+{var $value3697 = $g3645($form3664, $env3665);
+if ($T($g2110($value3697, $g3642)))
+return $form3664
+else return $value3697}
+else return $form3664}, false)
+var trueQ = $g1464["true?"], dec = $g1464.dec, $g3728 = $g1464["last-setter"], $g3729 = $g1464.last, $g3730, $g3731, $g3732 = $g2075("inline", function $g3841 ($form3733, $env3734)
+{var $g3824;
+if ($T($g2076($form3733, $g2077)))
+{var $sequence3775 = $form3733, $g3776 = $sequence3775, $g3777 = (($g3776 || false).length || 0), $g3778 = 0, $value3779 = ($g3777 === $g3778);
+$g3824 = !(trueQ($value3779))}
+else $g3824 = false;
+if ($T($g3824))
+{var $sequence3781 = $form3733, $g3825 = $sequence3781[0], $g3826 = $g2076($g3825, $g2081);
+if ($T($g3826))
+{var $sequence3783 = $form3733, $g3827 = $sequence3783[0], $g3735 = $g2106($g3827), $g3736 = $g2110($g3735, "%method"), $g3828;
+if ($T($g3736))
+$g3828 = $g3736
+else $g3828 = $g2110($g3735, "%set");
+if ($T($g3828))
+{var $rarray3796 = $form3733, $rarray3793 = $form3733, $g3794 = $rarray3793, $g3795 = (($g3794 || false).length || 0), $g3829 = ($g3795 - 1), $g3830 = $rarray3793[$g3829], $value3797 = $g3732($g3830, $env3734);
+$rarray3796[dec($g2111($rarray3796), 1)] = $value3797;
+return $form3733}
+else if ($T($g2110($g3735, "%bind")))
+{var $__3737 = $form3733[0], $binding3738 = $form3733[1], $body3739 = $form3733[2], $rarray3802 = $binding3738, $sequence3801 = $binding3738, $g3831 = $sequence3801[1], $value3803 = $g3732($g3831, $env3734);
+$rarray3802[1] = $value3803;
+var $rarray3806 = $form3733, $value3807 = $g3732($body3739, $env3734);
+$rarray3806[dec($g2111($rarray3806), 1)] = $value3807;
+return $form3733}
+else if ($T($g2110($g3735, "%try")))
+{var $__3740 = $form3733[0], $body3741 = $form3733[1], $rvar3742 = $form3733[2], $rcatch3743 = $form3733[3], $rarray3810 = $form3733, $value3811 = $g3732($body3741, $env3734);
+$rarray3810[1] = $value3811;
+var $rarray3814 = $form3733, $value3815 = $g3732($rcatch3743, $env3734);
+$rarray3814[dec($g2111($rarray3814), 1)] = $value3815;
+return $form3733}
+else {var $g3744 = $g2110($g3735, "%begin"), $g3832;
+if ($T($g3744))
+$g3832 = $g3744
+else {var $g3745 = $g2110($g3735, "%if");
+if ($T($g3745))
+$g3832 = $g3745
+else {var $g3746 = $g2110($g3735, "%while");
+if ($T($g3746))
+$g3832 = $g3746
+else {var $g3747 = $g2110($g3735, "%array");
+if ($T($g3747))
+$g3832 = $g3747
+else {var $g3748 = $g2110($g3735, "%object");
+if ($T($g3748))
+$g3832 = $g3748
+else {var $g3749 = $g2110($g3735, "%get-property");
+if ($T($g3749))
+$g3832 = $g3749
+else {var $g3750 = $g2110($g3735, "%native-call");
+if ($T($g3750))
+$g3832 = $g3750
+else {var $g3751 = $g2110($g3735, "%infix");
+if ($T($g3751))
+$g3832 = $g3751
+else {var $g3752 = $g2110($g3735, "%plus");
+if ($T($g3752))
+$g3832 = $g3752
+else {var $g3753 = $g2110($g3735, "%minus");
+if ($T($g3753))
+$g3832 = $g3753
+else {var $g3754 = $g2110($g3735, "%times");
+if ($T($g3754))
+$g3832 = $g3754
+else $g3832 = $g2110($g3735, "%divide")}}}}}}}}}};
+if ($T($g3832))
+{var $sequence3817 = $form3733, $g3833 = $sequence3817[0], $g3834 = [$g3833], $g3835 = $g2113($g3732, $env3734), $sequence3819 = $form3733, $g3836 = $sequence3819.slice(1), $g3837 = $g2241($g3835, $g3836);
+return $g2105($g3834, $g3837)}
+else {var $g3755 = $g2110($g3735, "%native"), $g3838;
+if ($T($g3755))
+$g3838 = $g3755
+else {var $g3756 = $g2110($g3735, "%native-name");
+if ($T($g3756))
+$g3838 = $g3756
+else $g3838 = $g2110($g3735, "%define")};
+if ($T($g3838))
+return $form3733
+else {var $sequence3821 = $form3733, $g3839 = $sequence3821[0], $name3757 = $g2106($g3839), $g3758 = $g2155($env3734, "definition-names", $name3757), $definition_name3759;
+if ($T($g3758))
+$definition_name3759 = $g3758
+else $definition_name3759 = $name3757;
+var $g3760;
+if ($T($g3731($g2155($env3734, "module"), $definition_name3759)))
+$g3760 = $g2155($env3734, "module", "functions", $definition_name3759)
+else $g3760 = false;
+var $definition3763;
+if ($T($g3760))
+$definition3763 = $g3760
+else {var $g3761 = $g3372($definition_name3759, $env3734);
+if ($T($g3761))
+{var $module3762 = $g3761;
+if ($T($g3731($module3762, $definition_name3759)))
+$definition3763 = $g2155($module3762, "functions", $definition_name3759)
+else $definition3763 = false}
+else $definition3763 = false};
+if ($T($definition3763))
+{var $sequence3823 = $form3733, $g3840 = $sequence3823.slice(1);
+return $g3730($definition3763, $g3840, $env3734)}
+else return $g2241($g2113($g3732, $env3734), $form3733)}}}}
+else return $g2241($g2113($g3732, $env3734), $form3733)}
+else return $form3733}, false)
+$g3731 = $g2075("inlineQ", function $g3844 ($module3842, $definition_name3843)
+{return $g2554($g2165($g2110, $definition_name3843), $g2155($module3842, "inline"))}, false)
+{var trueQ = $g1464["true?"], $g3847 = $g1464[">="];
+$g3730 = $g2075("inline_definition", function $g3877 ($definition3848, $values3849, $env3850)
+{var $__3851 = $definition3848[0], $rarguments3852 = $definition3848[1], $body3853 = $definition3848[2], $body3856 = $g2231(function $g3878 ($body3854, $argument3855)
+{return [$g2065("%bind"), [$argument3855, $argument3855], $body3854]}, $body3853, $g2355($rarguments3852)), $inlined3857 = $g3732($body3856, $env3850), $prepared3858 = $g3663($inlined3857, $env3850), $robject3869 = $rarguments3852, $g3859 = (($robject3869 || false).length || 0), $i3860 = 0;
 while ($T(true))
-{var $value3897 = $g3873($i3886, $g3885), $g3902 = !(trueQ($value3897));
-if ($T($g3902))
-{(function $g3905 ($i3887)
-{var $argument3888 = $g2189($rarguments3878, $i3887), $value3889 = $g2189($values3875, $i3887), $g3890 = $g3604($argument3888), $module_name3891 = $g2189($g3890, 0), $name3892 = $g2189($g3890, 1);
-$g3591($env3876, $module_name3891, $name3892);
-var $rarray3900 = $g2164($env3876, "identifiers", $module_name3891, $name3892), $value3901;
-if ($T($value3889))
-$value3901 = $g3757($value3889, $env3876)
-else $value3901 = [$g2074("%native"), "undefined"];
-$rarray3900.unshift($value3901);
-return $rarray3900})($i3886);
-$i3886 = ($i3886 + 1)}
+{var $value3871 = $g3847($i3860, $g3859), $g3876 = !(trueQ($value3871));
+if ($T($g3876))
+{(function $g3879 ($i3861)
+{var $argument3862 = $g2203($rarguments3852, $i3861), $value3863 = $g2203($values3849, $i3861), $g3864 = $g3584($argument3862), $module_name3865 = $g3864[0], $name3866 = $g3864[1];
+$g3571($env3850, $module_name3865, $name3866);
+var $rarray3874 = $g2155($env3850, "identifiers", $module_name3865, $name3866), $value3875;
+if ($T($value3863))
+$value3875 = $g3732($value3863, $env3850)
+else $value3875 = [$g2065("%native"), "undefined"];
+$rarray3874.unshift($value3875);
+return $rarray3874})($i3860);
+$i3860 = ($i3860 + 1)}
 else break};
 false;
-var $result3893 = $g3685($body3882, $env3876);
-$g3637($rarguments3878, $env3876);
-return $result3893}, false)}
-var $g3906 = $g1464["<number>"], $g3907 = $g1464["<boolean>"], $g3908 = $g1464["<keyword>"], $g3909 = $g2084("atomicQ", function $g3911 ($expression3910)
-{return $g2569($g2174($g2085, $expression3910), [$g3906, $g3907, $g2939, $g2090, $g3908])}, false)
-var $g3912, $g3913 = $g2084("normalize_term", function $g3915 ($expression3914)
-{return $g3912($expression3914, $g3212)}, false)
-{var trueQ = $g1464["true?"], $g3919, $g3920, $g3921;
-$g3912 = $g2084("normalize", function $g3991 ($exp3922, $k3923)
-{var $g3987;
-if ($T($g2085($exp3922, $g2086)))
-{var $sequence3966 = $exp3922, $g3967 = $sequence3966, $g3968 = (($g3967 || false).length || 0), $g3969 = 0, $value3970 = ($g3968 === $g3969);
-$g3987 = !(trueQ($value3970))}
-else $g3987 = false;
-if ($T($g3987))
-{var $sequence3972 = $exp3922, $g3988 = $sequence3972[0], $g3924 = $g2115($g3988), $g3925 = $g2119;
-if ($T($g3925($g3924, "%method")))
-{var $__3926 = $g2189($exp3922, 0), $rarguments3927 = $g2189($exp3922, 1), $body3928 = $g2189($exp3922, 2);
-return $k3923([$g2074("%method"), $rarguments3927, $g3913($body3928)])}
-else if ($T($g3925($g3924, "%begin")))
-{var $__3929 = $g2189($exp3922, 0), $exp13930 = $g2189($exp3922, 1), $et3931 = $SL.call($exp3922, 2), $sequence3983 = $et3931, $g3984 = $sequence3983, $g3985 = (($g3984 || false).length || 0), $g3986 = 0, $g3989 = ($g3985 === $g3986);
-if ($T($g3989))
-return $g3912($exp13930, $k3923)
-else return $g3912($exp13930, function $g3992 ($aexp13932)
-{return [$g2074("%begin"), $aexp13932, $g3912($g2114([$g2074("%begin")], $et3931), $k3923)]})}
-else if ($T($g3925($g3924, "%bind")))
-{var $__3933 = $g2189($exp3922, 0), $g3934 = $exp3922[1], $rvar3935 = $g2189($g3934, 0), $value3936 = $g2189($g3934, 1), $body3937 = $g2189($exp3922, 2);
-return $g3912($value3936, function $g3993 ($avalue3938)
-{return [$g2074("%bind"), [$rvar3935, $avalue3938], $g3912($body3937, $k3923)]})}
-else if ($T($g3925($g3924, "%if")))
-{var $__3939 = $g2189($exp3922, 0), $test3940 = $g2189($exp3922, 1), $then3941 = $g2189($exp3922, 2), $relse3942 = $g2189($exp3922, 3);
-return $g3919($test3940, function $g3994 ($atest3943)
-{return $k3923([$g2074("%if"), $atest3943, $g3913($then3941), $g3913($relse3942)])})}
-else if ($T($g3925($g3924, "%while")))
-{var $__3944 = $g2189($exp3922, 0), $test3945 = $g2189($exp3922, 1), $body3946 = $g2189($exp3922, 2), $g3990;
-if ($T($g3920($test3945)))
-$g3990 = [$g2074("%while"), true, [$g2074("%begin"), $g3913([$g2074("%if"), $test3945, $g3913($body3946), [$g2074("%native"), "break"], false])]]
-else $g3990 = [$g2074("%while"), $g3913($test3945), $g3913($body3946)];
-return $k3923($g3990)}
-else if ($T($g3925($g3924, "%try")))
-{var $__3947 = $g2189($exp3922, 0), $body3948 = $g2189($exp3922, 1), $rvar3949 = $g2189($exp3922, 2), $rcatch3950 = $g2189($exp3922, 3);
-return $k3923([$g2074("%try"), $g3913($body3948), $rvar3949, $g3913($rcatch3950)])}
-else if ($T($g3925($g3924, "%set")))
-{var $__3951 = $g2189($exp3922, 0), $rvar3952 = $g2189($exp3922, 1), $value3953 = $g2189($exp3922, 2);
-return $g3919($value3953, function $g3995 ($avalue3954)
-{return $k3923([$g2074("%set"), $rvar3952, $avalue3954])})}
-else if ($T($g3920($exp3922)))
-return $g3921($exp3922, $k3923)
-else return $k3923($g2252($g3913, $exp3922))}
-else return $k3923($exp3922)}, false)}
-{var $g3996;
-$g3919 = $g2084("normalize_value", function $g4000 ($exp3997, $k3998)
-{if ($T($g3920($exp3997)))
-return $g3996($exp3997, $k3998)
-else {var $g3999;
-if ($T($g2085($exp3997, $g2086)))
-$g3999 = $g2252($g3913, $exp3997)
-else $g3999 = $exp3997;
-return $k3998($g3999)}}, false)}
+var $result3867 = $g3663($body3856, $env3850);
+$g3617($rarguments3852, $env3850);
+return $result3867}, false)}
+var $g3880 = $g1464["<number>"], $g3881 = $g1464["<boolean>"], $g3882 = $g1464["<keyword>"], $g3883 = $g2075("atomicQ", function $g3885 ($expression3884)
+{return $g2554($g2165($g2076, $expression3884), [$g3880, $g3881, $g2928, $g2081, $g3882])}, false)
+var $g3886, $g3887 = $g2075("normalize_term", function $g3889 ($expression3888)
+{return $g3886($expression3888, $g3200)}, false)
+{var trueQ = $g1464["true?"], $g3892, $g3893, $g3894;
+$g3886 = $g2075("normalize", function $g3963 ($exp3895, $k3896)
+{var $g3959;
+if ($T($g2076($exp3895, $g2077)))
+{var $sequence3938 = $exp3895, $g3939 = $sequence3938, $g3940 = (($g3939 || false).length || 0), $g3941 = 0, $value3942 = ($g3940 === $g3941);
+$g3959 = !(trueQ($value3942))}
+else $g3959 = false;
+if ($T($g3959))
+{var $sequence3944 = $exp3895, $g3960 = $sequence3944[0], $g3897 = $g2106($g3960);
+if ($T($g2110($g3897, "%method")))
+{var $__3898 = $exp3895[0], $rarguments3899 = $exp3895[1], $body3900 = $exp3895[2];
+return $k3896([$g2065("%method"), $rarguments3899, $g3887($body3900)])}
+else if ($T($g2110($g3897, "%begin")))
+{var $__3901 = $exp3895[0], $exp13902 = $exp3895[1], $et3903 = $SL.call($exp3895, 2), $sequence3955 = $et3903, $g3956 = $sequence3955, $g3957 = (($g3956 || false).length || 0), $g3958 = 0, $g3961 = ($g3957 === $g3958);
+if ($T($g3961))
+return $g3886($exp13902, $k3896)
+else return $g3886($exp13902, function $g3964 ($aexp13904)
+{return [$g2065("%begin"), $aexp13904, $g3886($g2105([$g2065("%begin")], $et3903), $k3896)]})}
+else if ($T($g2110($g3897, "%bind")))
+{var $__3905 = $exp3895[0], $g3906 = $exp3895[1], $rvar3907 = $g3906[0], $value3908 = $g3906[1], $body3909 = $exp3895[2];
+return $g3886($value3908, function $g3965 ($avalue3910)
+{return [$g2065("%bind"), [$rvar3907, $avalue3910], $g3886($body3909, $k3896)]})}
+else if ($T($g2110($g3897, "%if")))
+{var $__3911 = $exp3895[0], $test3912 = $exp3895[1], $then3913 = $exp3895[2], $relse3914 = $exp3895[3];
+return $g3892($test3912, function $g3966 ($atest3915)
+{return $k3896([$g2065("%if"), $atest3915, $g3887($then3913), $g3887($relse3914)])})}
+else if ($T($g2110($g3897, "%while")))
+{var $__3916 = $exp3895[0], $test3917 = $exp3895[1], $body3918 = $exp3895[2], $g3962;
+if ($T($g3893($test3917)))
+$g3962 = [$g2065("%while"), true, [$g2065("%begin"), $g3887([$g2065("%if"), $test3917, $g3887($body3918), [$g2065("%native"), "break"], false])]]
+else $g3962 = [$g2065("%while"), $g3887($test3917), $g3887($body3918)];
+return $k3896($g3962)}
+else if ($T($g2110($g3897, "%try")))
+{var $__3919 = $exp3895[0], $body3920 = $exp3895[1], $rvar3921 = $exp3895[2], $rcatch3922 = $exp3895[3];
+return $k3896([$g2065("%try"), $g3887($body3920), $rvar3921, $g3887($rcatch3922)])}
+else if ($T($g2110($g3897, "%set")))
+{var $__3923 = $exp3895[0], $rvar3924 = $exp3895[1], $value3925 = $exp3895[2];
+return $g3892($value3925, function $g3967 ($avalue3926)
+{return $k3896([$g2065("%set"), $rvar3924, $avalue3926])})}
+else if ($T($g3893($exp3895)))
+return $g3894($exp3895, $k3896)
+else return $k3896($g2241($g3887, $exp3895))}
+else return $k3896($exp3895)}, false)}
+{var $g3968;
+$g3892 = $g2075("normalize_value", function $g3972 ($exp3969, $k3970)
+{if ($T($g3893($exp3969)))
+return $g3968($exp3969, $k3970)
+else {var $g3971;
+if ($T($g2076($exp3969, $g2077)))
+$g3971 = $g2241($g3887, $exp3969)
+else $g3971 = $exp3969;
+return $k3970($g3971)}}, false)}
 {var trueQ = $g1464["true?"];
-$g3920 = $g2084("contains_statementsQ", function $g4047 ($exp4007)
-{var $g4042;
-if ($T($g2085($exp4007, $g2086)))
-{var $sequence4025 = $exp4007, $g4026 = $sequence4025, $g4027 = (($g4026 || false).length || 0), $g4028 = 0, $value4029 = ($g4027 === $g4028);
-$g4042 = !(trueQ($value4029))}
-else $g4042 = false;
-if ($T($g4042))
-{var $sequence4031 = $exp4007, $g4043 = $sequence4031[0], $g4008 = $g2115($g4043), $g4009 = $g2119, $g4010 = $g4009($g4008, "%begin"), $g4044;
-if ($T($g4010))
-$g4044 = $g4010
-else {var $g4011 = $g4009($g4008, "%if");
-if ($T($g4011))
-$g4044 = $g4011
-else {var $g4012 = $g4009($g4008, "%while");
+$g3893 = $g2075("contains_statementsQ", function $g4017 ($exp3978)
+{var $g4012;
+if ($T($g2076($exp3978, $g2077)))
+{var $sequence3995 = $exp3978, $g3996 = $sequence3995, $g3997 = (($g3996 || false).length || 0), $g3998 = 0, $value3999 = ($g3997 === $g3998);
+$g4012 = !(trueQ($value3999))}
+else $g4012 = false;
 if ($T($g4012))
-$g4044 = $g4012
-else {var $g4013 = $g4009($g4008, "%bind");
-if ($T($g4013))
-$g4044 = $g4013
-else $g4044 = $g4009($g4008, "%try")}}};
-if ($T($g4044))
+{var $sequence4001 = $exp3978, $g4013 = $sequence4001[0], $g3979 = $g2106($g4013), $g3980 = $g2110($g3979, "%begin"), $g4014;
+if ($T($g3980))
+$g4014 = $g3980
+else {var $g3981 = $g2110($g3979, "%if");
+if ($T($g3981))
+$g4014 = $g3981
+else {var $g3982 = $g2110($g3979, "%while");
+if ($T($g3982))
+$g4014 = $g3982
+else {var $g3983 = $g2110($g3979, "%bind");
+if ($T($g3983))
+$g4014 = $g3983
+else $g4014 = $g2110($g3979, "%try")}}};
+if ($T($g4014))
 return true
-else if ($T($g4009($g4008, "%set")))
-{var $rarray4039 = $exp4007, $g4040 = $rarray4039, $g4041 = (($g4040 || false).length || 0), $g4045 = ($g4041 - 1), $g4046 = $rarray4039[$g4045];
-return $g3920($g4046)}
-else if ($T($g4009($g4008, "%method")))
+else if ($T($g2110($g3979, "%set")))
+{var $rarray4009 = $exp3978, $g4010 = $rarray4009, $g4011 = (($g4010 || false).length || 0), $g4015 = ($g4011 - 1), $g4016 = $rarray4009[$g4015];
+return $g3893($g4016)}
+else if ($T($g2110($g3979, "%method")))
 return false
-else return $g2569($g3920, $exp4007)}}, false)}
-$g3996 = $g2084("normalizeT", function $g4052 ($exp4048, $k4049)
-{return $g3912($exp4048, function $g4053 ($aexp4050)
-{if ($T($g3909($aexp4050)))
-return $k4049($aexp4050)
-else {var $t4051 = $g2148();
-return [$g2074("%bind"), [$t4051, $aexp4050], $k4049($t4051)]}})}, false)
-var $g4054 = $g2084("normalizeTT", function $g4072 ($expt4055, $k4056)
-{var $sequence4067 = $expt4055, $g4068 = $sequence4067, $g4069 = (($g4068 || false).length || 0), $g4070 = 0, $g4071 = ($g4069 === $g4070);
-if ($T($g4071))
-return $k4056([])
-else return $g3921($expt4055, $k4056)}, false)
-$g3921 = $g2084("normalize_all", function $g4085 ($exp4073, $k4074)
-{var $sequence4078 = $exp4073, $g4081 = $sequence4078[0], $g4084 = function $g4086 ($t4075)
-{var $sequence4080 = $exp4073, $g4082 = $sequence4080.slice(1), $g4083 = function $g4087 ($tt4076)
-{return $k4074($g2114([$t4075], $tt4076))};
-return $g4054($g4082, $g4083)};
-return $g3996($g4081, $g4084)}, false)
-var $g4088 = $g2084("sccp", function $g4091 ($exp4089, $env4090)
-{return $exp4089}, false)
-var dec = $g1464.dec, $g4095 = $g1464["third-setter"], $g4096 = $g2084("wrap_value", function $g4168 ($exp4097, $wrapper4098)
-{if ($T($g2085($exp4097, $g2086)))
-{var $sequence4103 = $exp4097, $g4158 = $sequence4103[0], $g4099 = $g2115($g4158), $g4100 = $g2119, $g4101 = $g4100($g4099, "%begin"), $g4159;
-if ($T($g4101))
-$g4159 = $g4101
-else $g4159 = $g4100($g4099, "%bind");
-if ($T($g4159))
-{var $rarray4116 = $exp4097, $rarray4113 = $exp4097, $g4114 = $rarray4113, $g4115 = (($g4114 || false).length || 0), $g4160 = ($g4115 - 1), $g4161 = $rarray4113[$g4160], $value4117 = $g4096($g4161, $wrapper4098);
-$rarray4116[dec($g2120($rarray4116), 1)] = $value4117;
-return $exp4097}
-else if ($T($g4100($g4099, "%if")))
-{var $rarray4122 = $exp4097, $sequence4121 = $exp4097, $g4162 = $sequence4121[2], $value4123 = $g4096($g4162, $wrapper4098);
-$rarray4122[2] = $value4123;
-var $rarray4136 = $exp4097, $rarray4133 = $exp4097, $g4134 = $rarray4133, $g4135 = (($g4134 || false).length || 0), $g4163 = ($g4135 - 1), $g4164 = $rarray4133[$g4163], $value4137 = $g4096($g4164, $wrapper4098);
-$rarray4136[dec($g2120($rarray4136), 1)] = $value4137;
-return $exp4097}
-else if ($T($g4100($g4099, "%while")))
-return [$g2074("%begin"), $exp4097, $g4096(false, $wrapper4098)]
-else if ($T($g4100($g4099, "%try")))
-{var $rarray4142 = $exp4097, $sequence4141 = $exp4097, $g4165 = $sequence4141[1], $value4143 = $g4096($g4165, $wrapper4098);
-$rarray4142[1] = $value4143;
-var $rarray4156 = $exp4097, $rarray4153 = $exp4097, $g4154 = $rarray4153, $g4155 = (($g4154 || false).length || 0), $g4166 = ($g4155 - 1), $g4167 = $rarray4153[$g4166], $value4157 = $g4096($g4167, $wrapper4098);
-$rarray4156[dec($g2120($rarray4156), 1)] = $value4157;
-return $exp4097}
-else return $g2114($wrapper4098, [$exp4097])}
-else return $g2114($wrapper4098, [$exp4097])}, false)
-var $g4169 = $g2084("add_explicit_return", function $g4171 ($exp4170)
-{return $g4096($exp4170, [$g2074("%return")])}, false)
-var trueQ = $g1464["true?"], $g4172 = $g2084("statementQ", function $g4195 ($exp4173)
-{if ($T($g2085($exp4173, $g2086)))
-{var $sequence4185 = $exp4173, $g4186 = $sequence4185, $g4187 = (($g4186 || false).length || 0), $g4188 = 0, $value4189 = ($g4187 === $g4188), $g4192 = !(trueQ($value4189));
-if ($T($g4192))
-{var $sequence4191 = $exp4173, $g4193 = $sequence4191[0], $g4194 = [$g2074("%if"), $g2074("%while"), $g2074("%begin"), $g2074("%bind"), $g2074("%try")];
-return $g3389($g4193, $g4194)}}}, false)
-var $g4196 = $g2084("add_explicit_true", function $g4198 ($exp4197)
-{return [[$g2074("%native"), "$T"], $exp4197]}, false)
-var dec = $g1464.dec, $g4202 = $g1464["first-setter"], $g4203 = $g2084("transform_statements", function $g4312 ($exp4204, $env4205)
-{if ($T($g2085($exp4204, $g2086)))
-{var $sequence4225 = $exp4204, $g4298 = $sequence4225[0], $g4206 = $g2115($g4298), $g4207 = $g2119;
-if ($T($g4207($g4206, "%method")))
-{var $rarray4238 = $exp4204, $rarray4235 = $exp4204, $g4236 = $rarray4235, $g4237 = (($g4236 || false).length || 0), $g4299 = ($g4237 - 1), $g4300 = $rarray4235[$g4299], $g4301 = $g4203($g4300, $env4205), $value4239 = $g4169($g4301);
-$rarray4238[dec($g2120($rarray4238), 1)] = $value4239;
-return $exp4204}
-else if ($T($g4207($g4206, "%begin")))
-{var $__4208 = $g2189($exp4204, 0), $exps4209 = $SL.call($exp4204, 1);
-return $g2201($g2252($g2122($g4203, $env4205), $exps4209))}
-else if ($T($g4207($g4206, "%bind")))
-{var $__4210 = $g2189($exp4204, 0), $g4211 = $exp4204[1], $rvar4212 = $g2189($g4211, 0), $value4213 = $g2189($g4211, 1), $body4214 = $g2189($exp4204, 2);
-if ($T($g4172($value4213)))
-return [$g2074("%bind"), [$rvar4212, false], [$g2074("%begin"), $g4096($g4203($value4213, $env4205), [$g2074("%set"), $rvar4212]), $g4203($body4214, $env4205)]]
-else return [$g2074("%bind"), [$rvar4212, $g4203($value4213, $env4205)], $g4203($body4214, $env4205)]}
-else if ($T($g4207($g4206, "%if")))
-{var $__4215 = $g2189($exp4204, 0), $test4216 = $g2189($exp4204, 1), $then4217 = $g2189($exp4204, 2), $relse4218 = $g2189($exp4204, 3);
-return [$g2074("%if"), $g4196($test4216), $g4203($then4217, $env4205), $g4203($relse4218, $env4205)]}
-else if ($T($g4207($g4206, "%while")))
-{var $rarray4244 = $exp4204, $sequence4243 = $exp4204, $g4302 = $sequence4243[1], $value4245 = $g4196($g4302);
-$rarray4244[1] = $value4245;
-var $rarray4250 = $exp4204, $sequence4249 = $exp4204, $g4303 = $sequence4249[2], $value4251 = $g4203($g4303, $env4205);
-$rarray4250[2] = $value4251;
-return $exp4204}
-else if ($T($g4207($g4206, "%try")))
-{var $rarray4256 = $exp4204, $sequence4255 = $exp4204, $g4304 = $sequence4255[1], $value4257 = $g4203($g4304, $exp4204);
-$rarray4256[1] = $value4257;
-var $rarray4270 = $exp4204, $rarray4267 = $exp4204, $g4268 = $rarray4267, $g4269 = (($g4268 || false).length || 0), $g4305 = ($g4269 - 1), $g4306 = $rarray4267[$g4305], $value4271 = $g4203($g4306, $env4205);
-$rarray4270[dec($g2120($rarray4270), 1)] = $value4271;
-return $exp4204}
-else if ($T($g4207($g4206, "%set")))
-{var $__4219 = $g2189($exp4204, 0), $identifier4220 = $g2189($exp4204, 1), $value4221 = $g2189($exp4204, 2), $valuet4222 = $g4203($value4221, $env4205), $definition_name4223 = $g2164($env4205, "definition-names", $g2115($identifier4220)), $g4307;
-if ($T($definition_name4223))
-$g4307 = $g3389($definition_name4223, $g2164($env4205, "module", "exports"))
-else $g4307 = false;
-if ($T($g4307))
-{var $rarray4274 = $exp4204, $value4275 = $g2074("%begin");
-$rarray4274[0] = $value4275;
-var $rarray4278 = $exp4204, $value4279 = [$g2074("%set"), $identifier4220, $valuet4222];
-$rarray4278[1] = $value4279;
-var $rarray4282 = $exp4204, $value4283 = [$g2074("%set"), [$g2074("%get-property"), [$g2074("%native"), "exports"], $definition_name4223], $identifier4220];
-$rarray4282[2] = $value4283}
-else {var $rarray4286 = $exp4204, $value4287 = $valuet4222;
-$rarray4286[2] = $value4287};
-return $exp4204}
-else if ($T($g4207($g4206, "%define")))
-{var $g4308 = $g2074("%var"), $rarray4295 = $exp4204, $g4296 = $rarray4295, $g4297 = (($g4296 || false).length || 0), $g4309 = ($g4297 - 1), $g4310 = $rarray4295[$g4309], $g4311 = [$g4310, false];
-return [$g4308, $g4311]}
-else return $g2252($g2122($g4203, $env4205), $exp4204)}
-else return $exp4204}, false)
-var $g4313, $g4314 = $g2084("lift_symbols", function $g4317 ($exp4315, $env4316)
-{return $g4313($exp4315, $env4316, $g3212)}, false)
-{var trueQ = $g1464["true?"], $g4326, $g4327, $g4328, $g4329 = $g1464["<hash-symbol>"];
-$g4313 = $g2084("lift_symbol", function $g4390 ($exp4330, $env4331, $k4332)
-{var $g4386;
-if ($T($g2085($exp4330, $g2086)))
-{var $sequence4379 = $exp4330, $g4380 = $sequence4379, $g4381 = (($g4380 || false).length || 0), $g4382 = 0, $value4383 = ($g4381 === $g4382);
-$g4386 = !(trueQ($value4383))}
-else $g4386 = false;
-if ($T($g4386))
-{var $sequence4385 = $exp4330, $g4387 = $sequence4385[0], $g4333 = $g2115($g4387), $g4334 = $g2119;
-if ($T($g4334($g4333, "%bind")))
-{var $__4335 = $g2189($exp4330, 0), $g4336 = $exp4330[1], $rvar4337 = $g2189($g4336, 0), $value4338 = $g2189($g4336, 1), $body4339 = $g2189($exp4330, 2);
-return $g4313($value4338, $env4331, function $g4391 ($lvalue4340, $env4341)
-{return $g4313($body4339, $env4341, function $g4392 ($lbody4342, $env4343)
-{return $k4332([$g2074("%bind"), [$rvar4337, $lvalue4340], $lbody4342], $env4343)})})}
-else {var $g4344 = $g4334($g4333, "%method"), $g4388;
+else return $g2554($g3893, $exp3978)}}, false)}
+$g3968 = $g2075("normalizeT", function $g4022 ($exp4018, $k4019)
+{return $g3886($exp4018, function $g4023 ($aexp4020)
+{if ($T($g3883($aexp4020)))
+return $k4019($aexp4020)
+else {var $t4021 = $g2139();
+return [$g2065("%bind"), [$t4021, $aexp4020], $k4019($t4021)]}})}, false)
+var $g4024 = $g2075("normalizeTT", function $g4042 ($expt4025, $k4026)
+{var $sequence4037 = $expt4025, $g4038 = $sequence4037, $g4039 = (($g4038 || false).length || 0), $g4040 = 0, $g4041 = ($g4039 === $g4040);
+if ($T($g4041))
+return $k4026([])
+else return $g3894($expt4025, $k4026)}, false)
+$g3894 = $g2075("normalize_all", function $g4055 ($exp4043, $k4044)
+{var $sequence4048 = $exp4043, $g4051 = $sequence4048[0], $g4054 = function $g4056 ($t4045)
+{var $sequence4050 = $exp4043, $g4052 = $sequence4050.slice(1), $g4053 = function $g4057 ($tt4046)
+{return $k4044($g2105([$t4045], $tt4046))};
+return $g4024($g4052, $g4053)};
+return $g3968($g4051, $g4054)}, false)
+var dec = $g1464.dec, $g4060 = $g1464["third-setter"], $g4061 = $g2075("wrap_value", function $g4132 ($exp4062, $wrapper4063)
+{if ($T($g2076($exp4062, $g2077)))
+{var $sequence4067 = $exp4062, $g4122 = $sequence4067[0], $g4064 = $g2106($g4122), $g4065 = $g2110($g4064, "%begin"), $g4123;
+if ($T($g4065))
+$g4123 = $g4065
+else $g4123 = $g2110($g4064, "%bind");
+if ($T($g4123))
+{var $rarray4080 = $exp4062, $rarray4077 = $exp4062, $g4078 = $rarray4077, $g4079 = (($g4078 || false).length || 0), $g4124 = ($g4079 - 1), $g4125 = $rarray4077[$g4124], $value4081 = $g4061($g4125, $wrapper4063);
+$rarray4080[dec($g2111($rarray4080), 1)] = $value4081;
+return $exp4062}
+else if ($T($g2110($g4064, "%if")))
+{var $rarray4086 = $exp4062, $sequence4085 = $exp4062, $g4126 = $sequence4085[2], $value4087 = $g4061($g4126, $wrapper4063);
+$rarray4086[2] = $value4087;
+var $rarray4100 = $exp4062, $rarray4097 = $exp4062, $g4098 = $rarray4097, $g4099 = (($g4098 || false).length || 0), $g4127 = ($g4099 - 1), $g4128 = $rarray4097[$g4127], $value4101 = $g4061($g4128, $wrapper4063);
+$rarray4100[dec($g2111($rarray4100), 1)] = $value4101;
+return $exp4062}
+else if ($T($g2110($g4064, "%while")))
+return [$g2065("%begin"), $exp4062, $g4061(false, $wrapper4063)]
+else if ($T($g2110($g4064, "%try")))
+{var $rarray4106 = $exp4062, $sequence4105 = $exp4062, $g4129 = $sequence4105[1], $value4107 = $g4061($g4129, $wrapper4063);
+$rarray4106[1] = $value4107;
+var $rarray4120 = $exp4062, $rarray4117 = $exp4062, $g4118 = $rarray4117, $g4119 = (($g4118 || false).length || 0), $g4130 = ($g4119 - 1), $g4131 = $rarray4117[$g4130], $value4121 = $g4061($g4131, $wrapper4063);
+$rarray4120[dec($g2111($rarray4120), 1)] = $value4121;
+return $exp4062}
+else return $g2105($wrapper4063, [$exp4062])}
+else return $g2105($wrapper4063, [$exp4062])}, false)
+var $g4133 = $g2075("add_explicit_return", function $g4135 ($exp4134)
+{return $g4061($exp4134, [$g2065("%return")])}, false)
+var trueQ = $g1464["true?"], $g4136 = $g2075("statementQ", function $g4159 ($exp4137)
+{if ($T($g2076($exp4137, $g2077)))
+{var $sequence4149 = $exp4137, $g4150 = $sequence4149, $g4151 = (($g4150 || false).length || 0), $g4152 = 0, $value4153 = ($g4151 === $g4152), $g4156 = !(trueQ($value4153));
+if ($T($g4156))
+{var $sequence4155 = $exp4137, $g4157 = $sequence4155[0], $g4158 = [$g2065("%if"), $g2065("%while"), $g2065("%begin"), $g2065("%bind"), $g2065("%try")];
+return $g3371($g4157, $g4158)}}}, false)
+var $g4160 = $g2075("add_explicit_true", function $g4162 ($exp4161)
+{return [[$g2065("%native"), "$T"], $exp4161]}, false)
+var dec = $g1464.dec, $g4165 = $g1464["first-setter"], $g4166 = $g2075("transform_statements", function $g4274 ($exp4167, $env4168)
+{if ($T($g2076($exp4167, $g2077)))
+{var $sequence4187 = $exp4167, $g4260 = $sequence4187[0], $g4169 = $g2106($g4260);
+if ($T($g2110($g4169, "%method")))
+{var $rarray4200 = $exp4167, $rarray4197 = $exp4167, $g4198 = $rarray4197, $g4199 = (($g4198 || false).length || 0), $g4261 = ($g4199 - 1), $g4262 = $rarray4197[$g4261], $g4263 = $g4166($g4262, $env4168), $value4201 = $g4133($g4263);
+$rarray4200[dec($g2111($rarray4200), 1)] = $value4201;
+return $exp4167}
+else if ($T($g2110($g4169, "%begin")))
+{var $__4170 = $exp4167[0], $exps4171 = $SL.call($exp4167, 1);
+return $g2190($g2241($g2113($g4166, $env4168), $exps4171))}
+else if ($T($g2110($g4169, "%bind")))
+{var $__4172 = $exp4167[0], $g4173 = $exp4167[1], $rvar4174 = $g4173[0], $value4175 = $g4173[1], $body4176 = $exp4167[2];
+if ($T($g4136($value4175)))
+return [$g2065("%bind"), [$rvar4174, false], [$g2065("%begin"), $g4061($g4166($value4175, $env4168), [$g2065("%set"), $rvar4174]), $g4166($body4176, $env4168)]]
+else return [$g2065("%bind"), [$rvar4174, $g4166($value4175, $env4168)], $g4166($body4176, $env4168)]}
+else if ($T($g2110($g4169, "%if")))
+{var $__4177 = $exp4167[0], $test4178 = $exp4167[1], $then4179 = $exp4167[2], $relse4180 = $exp4167[3];
+return [$g2065("%if"), $g4160($test4178), $g4166($then4179, $env4168), $g4166($relse4180, $env4168)]}
+else if ($T($g2110($g4169, "%while")))
+{var $rarray4206 = $exp4167, $sequence4205 = $exp4167, $g4264 = $sequence4205[1], $value4207 = $g4160($g4264);
+$rarray4206[1] = $value4207;
+var $rarray4212 = $exp4167, $sequence4211 = $exp4167, $g4265 = $sequence4211[2], $value4213 = $g4166($g4265, $env4168);
+$rarray4212[2] = $value4213;
+return $exp4167}
+else if ($T($g2110($g4169, "%try")))
+{var $rarray4218 = $exp4167, $sequence4217 = $exp4167, $g4266 = $sequence4217[1], $value4219 = $g4166($g4266, $exp4167);
+$rarray4218[1] = $value4219;
+var $rarray4232 = $exp4167, $rarray4229 = $exp4167, $g4230 = $rarray4229, $g4231 = (($g4230 || false).length || 0), $g4267 = ($g4231 - 1), $g4268 = $rarray4229[$g4267], $value4233 = $g4166($g4268, $env4168);
+$rarray4232[dec($g2111($rarray4232), 1)] = $value4233;
+return $exp4167}
+else if ($T($g2110($g4169, "%set")))
+{var $__4181 = $exp4167[0], $identifier4182 = $exp4167[1], $value4183 = $exp4167[2], $valuet4184 = $g4166($value4183, $env4168), $definition_name4185 = $g2155($env4168, "definition-names", $g2106($identifier4182)), $g4269;
+if ($T($definition_name4185))
+$g4269 = $g3371($definition_name4185, $g2155($env4168, "module", "exports"))
+else $g4269 = false;
+if ($T($g4269))
+{var $rarray4236 = $exp4167, $value4237 = $g2065("%begin");
+$rarray4236[0] = $value4237;
+var $rarray4240 = $exp4167, $value4241 = [$g2065("%set"), $identifier4182, $valuet4184];
+$rarray4240[1] = $value4241;
+var $rarray4244 = $exp4167, $value4245 = [$g2065("%set"), [$g2065("%get-property"), [$g2065("%native"), "exports"], $definition_name4185], $identifier4182];
+$rarray4244[2] = $value4245}
+else {var $rarray4248 = $exp4167, $value4249 = $valuet4184;
+$rarray4248[2] = $value4249};
+return $exp4167}
+else if ($T($g2110($g4169, "%define")))
+{var $g4270 = $g2065("%var"), $rarray4257 = $exp4167, $g4258 = $rarray4257, $g4259 = (($g4258 || false).length || 0), $g4271 = ($g4259 - 1), $g4272 = $rarray4257[$g4271], $g4273 = [$g4272, false];
+return [$g4270, $g4273]}
+else return $g2241($g2113($g4166, $env4168), $exp4167)}
+else return $exp4167}, false)
+var $g4275, $g4276 = $g2075("lift_symbols", function $g4279 ($exp4277, $env4278)
+{return $g4275($exp4277, $env4278, $g3200)}, false)
+{var trueQ = $g1464["true?"], $g4286, $g4287, $g4288, $g4289 = $g1464["<hash-symbol>"];
+$g4275 = $g2075("lift_symbol", function $g4348 ($exp4290, $env4291, $k4292)
+{var $g4344;
+if ($T($g2076($exp4290, $g2077)))
+{var $sequence4337 = $exp4290, $g4338 = $sequence4337, $g4339 = (($g4338 || false).length || 0), $g4340 = 0, $value4341 = ($g4339 === $g4340);
+$g4344 = !(trueQ($value4341))}
+else $g4344 = false;
 if ($T($g4344))
-$g4388 = $g4344
-else $g4388 = $g4334($g4333, "%set");
-if ($T($g4388))
-{var $m4345 = $g2189($exp4330, 0), $e14346 = $g2189($exp4330, 1), $e24347 = $g2189($exp4330, 2);
-return $g4313($e24347, $env4331, function $g4393 ($le24348, $env4349)
-{return $k4332([$m4345, $e14346, $le24348], $env4349)})}
-else {var $g4350 = $g4334($g4333, "%begin"), $g4389;
-if ($T($g4350))
-$g4389 = $g4350
-else {var $g4351 = $g4334($g4333, "%if");
-if ($T($g4351))
-$g4389 = $g4351
-else $g4389 = $g4334($g4333, "%while")};
-if ($T($g4389))
-{var $m4352 = $g2189($exp4330, 0), $et4353 = $SL.call($exp4330, 1);
-return $g4326($et4353, $env4331, function $g4394 ($let4354, $env4355)
-{return $k4332($g2114([$m4352], $let4354), $env4355)})}
-else if ($T($g4334($g4333, "%try")))
-{var $__4356 = $g2189($exp4330, 0), $e14357 = $g2189($exp4330, 1), $v4358 = $g2189($exp4330, 2), $e24359 = $g2189($exp4330, 3);
-return $g4326([$e14357, $e24359], $env4331, function $g4395 ($let4360, $env4361)
-{var $le14362 = $g2189($let4360, 0), $le24363 = $g2189($let4360, 1);
-return $k4332([$g2074("%try"), $le14362, $v4358, $le24363], $env4361)})}
-else if ($T($g4334($g4333, "symbol")))
-{var $__4364 = $g2189($exp4330, 0), $name4365 = $g2189($exp4330, 1);
-return $g4327($name4365, $exp4330, "symbol", $env4331, $k4332)}
-else return $g4328($exp4330, $env4331, $k4332)}}}
-else {var $g4366 = $exp4330, $g4367 = $g2085;
-if ($T($g4367($g4366, $g3908)))
-return $g4327($g2115($exp4330), $exp4330, "keyword", $env4331, $k4332)
-else if ($T($g4367($g4366, $g4329)))
-return $g4327($g2115($exp4330), $exp4330, "hash", $env4331, $k4332)
-else return $k4332($exp4330, $env4331)}}, false)}
-$g4327 = $g2084("lift_value", function $g4405 ($name4397, $value4398, $type4399, $env4400, $k4401)
-{var $g4402 = $g2164($env4400, "lifted", $type4399, $name4397);
-if ($T($g4402))
-{var $t4403 = $g4402;
-return $k4401($t4403, $env4400)}
-else {var $t4404 = $g2145($env4400, "lifted", $type4399, $name4397, $g2148());
-return [$g2074("%bind"), [$t4404, $value4398], $k4401($t4404, $env4400)]}}, false)
-$g4326 = $g2084("lift_symbolT", function $g4424 ($expt4406, $env4407, $k4408)
-{var $sequence4419 = $expt4406, $g4420 = $sequence4419, $g4421 = (($g4420 || false).length || 0), $g4422 = 0, $g4423 = ($g4421 === $g4422);
-if ($T($g4423))
-return $k4408([], $env4407)
-else return $g4328($expt4406, $env4407, $k4408)}, false)
-$g4328 = $g2084("lift_symbolTT", function $g4440 ($exp4425, $env4426, $k4427)
-{var $sequence4433 = $exp4425, $g4436 = $sequence4433[0], $g4439 = function $g4441 ($t4428, $env4429)
-{var $sequence4435 = $exp4425, $g4437 = $sequence4435.slice(1), $g4438 = function $g4442 ($tt4430, $env4431)
-{return $k4427($g2114([$t4428], $tt4430), $env4431)};
-return $g4326($g4437, $env4429, $g4438)};
-return $g4313($g4436, $env4426, $g4439)}, false)
-var trueQ = $g1464["true?"], $g4443, $g4444 = $g2084("flatten_begins", function $g4486 ($exps4445)
-{var $rfunction4476 = $g2114, $values4477 = $g2252(function $g4487 ($exp4446)
-{var $flattened4447 = $g4443($exp4446), $g4483;
-if ($T($g2085($flattened4447, $g2086)))
-{var $sequence4467 = $flattened4447, $g4468 = $sequence4467, $g4469 = (($g4468 || false).length || 0), $g4470 = 0, $value4471 = ($g4469 === $g4470), $g4480 = !(trueQ($value4471));
-if ($T($g4480))
-{var $sequence4473 = $flattened4447, $g4481 = $sequence4473[0], $g4482 = $g2074("%begin");
-$g4483 = $g2119($g4481, $g4482)}
-else $g4483 = false}
-else $g4483 = false;
-if ($T($g4483))
-{var $sequence4475 = $flattened4447;
-return $sequence4475.slice(1)}
-else return [$flattened4447]}, $exps4445), $g4478 = $values4477, $g4484 = $g4478[0], $g4479 = $values4477, $g4485 = $g4479.slice(1);
-return $g2242($rfunction4476, $g4484, $g4485)}, false)
-var $g4488 = $g2084("varQ", function $g4494 ($exp4489)
-{if ($T($g2091($exp4489)))
-{var $sequence4491 = $exp4489, $g4492 = $sequence4491[0], $g4493 = $g2074("%var");
-return $g2119($g4492, $g4493)}}, false)
-var $g4495 = $g2084("setQ", function $g4501 ($exp4496)
-{if ($T($g2091($exp4496)))
-{var $sequence4498 = $exp4496, $g4499 = $sequence4498[0], $g4500 = $g2074("%set");
-return $g2119($g4499, $g4500)}}, false)
-var $g4502 = $g2084("methodQ", function $g4508 ($exp4503)
-{if ($T($g2091($exp4503)))
-{var $sequence4505 = $exp4503, $g4506 = $sequence4505[0], $g4507 = $g2074("%method");
-return $g2119($g4506, $g4507)}}, false)
-var trueQ = $g1464["true?"], $g4509 = $g2084("flatten_vars", function $g4601 ($exps4510)
-{return $g2242(function $g4602 ($result4511, $exp4512)
-{var $sequence4530 = $result4511, $g4531 = $sequence4530, $g4532 = (($g4531 || false).length || 0), $g4533 = 0, $value4534 = ($g4532 === $g4533), $g4591 = !(trueQ($value4534)), $previous4513;
-if ($T($g4591))
-{var $rarray4542 = $result4511, $g4543 = $rarray4542, $g4544 = (($g4543 || false).length || 0), $g4592 = ($g4544 - 1);
-$previous4513 = $rarray4542[$g4592]}
-else $previous4513 = false;
-var $previous_varq4514;
-if ($T($previous4513))
-$previous_varq4514 = $g4488($previous4513)
-else $previous_varq4514 = false;
-var $g4593;
-if ($T($previous_varq4514))
-$g4593 = $g4488($exp4512)
-else $g4593 = false;
-if ($T($g4593))
-{var $g4595 = function $g4603 ($binding4515)
-{var $rarray4554 = $result4511, $g4555 = $rarray4554, $g4556 = (($g4555 || false).length || 0), $g4594 = ($g4556 - 1), $rarray4557 = $rarray4554[$g4594], $value4558 = $binding4515;
-$rarray4557.push($value4558);
-return $rarray4557}, $sequence4560 = $exp4512, $g4596 = $sequence4560.slice(1);
-$g2173($g4595, $g4596);
-return $result4511}
-else {var $mergeq4516;
-if ($T($previous_varq4514))
-$mergeq4516 = $g4495($exp4512)
-else $mergeq4516 = false;
-var $binding4517;
-if ($T($mergeq4516))
-{var $rarray4575 = $result4511, $g4576 = $rarray4575, $g4577 = (($g4576 || false).length || 0), $g4597 = ($g4577 - 1), $rarray4578 = $rarray4575[$g4597], $g4579 = $rarray4578, $g4580 = (($g4579 || false).length || 0), $g4598 = ($g4580 - 1);
-$binding4517 = $rarray4578[$g4598]}
-else $binding4517 = false;
-var $identifier4518;
-if ($T($mergeq4516))
-{var $sequence4582 = $exp4512;
-$identifier4518 = $sequence4582[1]}
-else $identifier4518 = false;
-var $sequence4584 = $binding4517, $g4599 = $sequence4584[0], $g4600 = $g2119($g4599, $identifier4518);
-if ($T($g4600))
-{var $rarray4589 = $binding4517, $sequence4588 = $exp4512, $value4590 = $sequence4588[2];
-$rarray4589[1] = $value4590;
-return $result4511}
-else return $g2114($result4511, [$exp4512])}}, [], $exps4510)}, false)
+{var $sequence4343 = $exp4290, $g4345 = $sequence4343[0], $g4293 = $g2106($g4345);
+if ($T($g2110($g4293, "%bind")))
+{var $__4294 = $exp4290[0], $g4295 = $exp4290[1], $rvar4296 = $g4295[0], $value4297 = $g4295[1], $body4298 = $exp4290[2];
+return $g4275($value4297, $env4291, function $g4349 ($lvalue4299, $env4300)
+{return $g4275($body4298, $env4300, function $g4350 ($lbody4301, $env4302)
+{return $k4292([$g2065("%bind"), [$rvar4296, $lvalue4299], $lbody4301], $env4302)})})}
+else {var $g4303 = $g2110($g4293, "%method"), $g4346;
+if ($T($g4303))
+$g4346 = $g4303
+else $g4346 = $g2110($g4293, "%set");
+if ($T($g4346))
+{var $m4304 = $exp4290[0], $e14305 = $exp4290[1], $e24306 = $exp4290[2];
+return $g4275($e24306, $env4291, function $g4351 ($le24307, $env4308)
+{return $k4292([$m4304, $e14305, $le24307], $env4308)})}
+else {var $g4309 = $g2110($g4293, "%begin"), $g4347;
+if ($T($g4309))
+$g4347 = $g4309
+else {var $g4310 = $g2110($g4293, "%if");
+if ($T($g4310))
+$g4347 = $g4310
+else $g4347 = $g2110($g4293, "%while")};
+if ($T($g4347))
+{var $m4311 = $exp4290[0], $et4312 = $SL.call($exp4290, 1);
+return $g4286($et4312, $env4291, function $g4352 ($let4313, $env4314)
+{return $k4292($g2105([$m4311], $let4313), $env4314)})}
+else if ($T($g2110($g4293, "%try")))
+{var $__4315 = $exp4290[0], $e14316 = $exp4290[1], $v4317 = $exp4290[2], $e24318 = $exp4290[3];
+return $g4286([$e14316, $e24318], $env4291, function $g4353 ($let4319, $env4320)
+{var $le14321 = $let4319[0], $le24322 = $let4319[1];
+return $k4292([$g2065("%try"), $le14321, $v4317, $le24322], $env4320)})}
+else if ($T($g2110($g4293, "symbol")))
+{var $__4323 = $exp4290[0], $name4324 = $exp4290[1];
+return $g4287($name4324, $exp4290, "symbol", $env4291, $k4292)}
+else return $g4288($exp4290, $env4291, $k4292)}}}
+else {var $g4325 = $exp4290;
+if ($T($g2076($g4325, $g3882)))
+return $g4287($g2106($exp4290), $exp4290, "keyword", $env4291, $k4292)
+else if ($T($g2076($g4325, $g4289)))
+return $g4287($g2106($exp4290), $exp4290, "hash", $env4291, $k4292)
+else return $k4292($exp4290, $env4291)}}, false)}
+$g4287 = $g2075("lift_value", function $g4363 ($name4355, $value4356, $type4357, $env4358, $k4359)
+{var $g4360 = $g2155($env4358, "lifted", $type4357, $name4355);
+if ($T($g4360))
+{var $t4361 = $g4360;
+return $k4359($t4361, $env4358)}
+else {var $t4362 = $g2136($env4358, "lifted", $type4357, $name4355, $g2139());
+return [$g2065("%bind"), [$t4362, $value4356], $k4359($t4362, $env4358)]}}, false)
+$g4286 = $g2075("lift_symbolT", function $g4382 ($expt4364, $env4365, $k4366)
+{var $sequence4377 = $expt4364, $g4378 = $sequence4377, $g4379 = (($g4378 || false).length || 0), $g4380 = 0, $g4381 = ($g4379 === $g4380);
+if ($T($g4381))
+return $k4366([], $env4365)
+else return $g4288($expt4364, $env4365, $k4366)}, false)
+$g4288 = $g2075("lift_symbolTT", function $g4398 ($exp4383, $env4384, $k4385)
+{var $sequence4391 = $exp4383, $g4394 = $sequence4391[0], $g4397 = function $g4399 ($t4386, $env4387)
+{var $sequence4393 = $exp4383, $g4395 = $sequence4393.slice(1), $g4396 = function $g4400 ($tt4388, $env4389)
+{return $k4385($g2105([$t4386], $tt4388), $env4389)};
+return $g4286($g4395, $env4387, $g4396)};
+return $g4275($g4394, $env4384, $g4397)}, false)
+var trueQ = $g1464["true?"], $g4401, $g4402 = $g2075("flatten_begins", function $g4444 ($exps4403)
+{var $rfunction4434 = $g2105, $values4435 = $g2241(function $g4445 ($exp4404)
+{var $flattened4405 = $g4401($exp4404), $g4441;
+if ($T($g2076($flattened4405, $g2077)))
+{var $sequence4425 = $flattened4405, $g4426 = $sequence4425, $g4427 = (($g4426 || false).length || 0), $g4428 = 0, $value4429 = ($g4427 === $g4428), $g4438 = !(trueQ($value4429));
+if ($T($g4438))
+{var $sequence4431 = $flattened4405, $g4439 = $sequence4431[0], $g4440 = $g2065("%begin");
+$g4441 = $g2110($g4439, $g4440)}
+else $g4441 = false}
+else $g4441 = false;
+if ($T($g4441))
+{var $sequence4433 = $flattened4405;
+return $sequence4433.slice(1)}
+else return [$flattened4405]}, $exps4403), $g4436 = $values4435, $g4442 = $g4436[0], $g4437 = $values4435, $g4443 = $g4437.slice(1);
+return $g2231($rfunction4434, $g4442, $g4443)}, false)
+var $g4446 = $g2075("varQ", function $g4452 ($exp4447)
+{if ($T($g2082($exp4447)))
+{var $sequence4449 = $exp4447, $g4450 = $sequence4449[0], $g4451 = $g2065("%var");
+return $g2110($g4450, $g4451)}}, false)
+var $g4453 = $g2075("setQ", function $g4459 ($exp4454)
+{if ($T($g2082($exp4454)))
+{var $sequence4456 = $exp4454, $g4457 = $sequence4456[0], $g4458 = $g2065("%set");
+return $g2110($g4457, $g4458)}}, false)
+var $g4460 = $g2075("methodQ", function $g4466 ($exp4461)
+{if ($T($g2082($exp4461)))
+{var $sequence4463 = $exp4461, $g4464 = $sequence4463[0], $g4465 = $g2065("%method");
+return $g2110($g4464, $g4465)}}, false)
+var trueQ = $g1464["true?"], $g4467 = $g2075("flatten_vars", function $g4559 ($exps4468)
+{return $g2231(function $g4560 ($result4469, $exp4470)
+{var $sequence4488 = $result4469, $g4489 = $sequence4488, $g4490 = (($g4489 || false).length || 0), $g4491 = 0, $value4492 = ($g4490 === $g4491), $g4549 = !(trueQ($value4492)), $previous4471;
+if ($T($g4549))
+{var $rarray4500 = $result4469, $g4501 = $rarray4500, $g4502 = (($g4501 || false).length || 0), $g4550 = ($g4502 - 1);
+$previous4471 = $rarray4500[$g4550]}
+else $previous4471 = false;
+var $previous_varq4472;
+if ($T($previous4471))
+$previous_varq4472 = $g4446($previous4471)
+else $previous_varq4472 = false;
+var $g4551;
+if ($T($previous_varq4472))
+$g4551 = $g4446($exp4470)
+else $g4551 = false;
+if ($T($g4551))
+{var $g4553 = function $g4561 ($binding4473)
+{var $rarray4512 = $result4469, $g4513 = $rarray4512, $g4514 = (($g4513 || false).length || 0), $g4552 = ($g4514 - 1), $rarray4515 = $rarray4512[$g4552], $value4516 = $binding4473;
+$rarray4515.push($value4516);
+return $rarray4515}, $sequence4518 = $exp4470, $g4554 = $sequence4518.slice(1);
+$g2164($g4553, $g4554);
+return $result4469}
+else {var $mergeq4474;
+if ($T($previous_varq4472))
+$mergeq4474 = $g4453($exp4470)
+else $mergeq4474 = false;
+var $binding4475;
+if ($T($mergeq4474))
+{var $rarray4533 = $result4469, $g4534 = $rarray4533, $g4535 = (($g4534 || false).length || 0), $g4555 = ($g4535 - 1), $rarray4536 = $rarray4533[$g4555], $g4537 = $rarray4536, $g4538 = (($g4537 || false).length || 0), $g4556 = ($g4538 - 1);
+$binding4475 = $rarray4536[$g4556]}
+else $binding4475 = false;
+var $identifier4476;
+if ($T($mergeq4474))
+{var $sequence4540 = $exp4470;
+$identifier4476 = $sequence4540[1]}
+else $identifier4476 = false;
+var $sequence4542 = $binding4475, $g4557 = $sequence4542[0], $g4558 = $g2110($g4557, $identifier4476);
+if ($T($g4558))
+{var $rarray4547 = $binding4475, $sequence4546 = $exp4470, $value4548 = $sequence4546[2];
+$rarray4547[1] = $value4548;
+return $result4469}
+else return $g2105($result4469, [$exp4470])}}, [], $exps4468)}, false)
 {var dec = $g1464.dec;
-$g4443 = $g2084("flatten_statements", function $g4684 ($exp4608)
-{if ($T($g2085($exp4608, $g2086)))
-{var $sequence4619 = $exp4608, $g4674 = $sequence4619[0], $g4609 = $g2115($g4674), $g4610 = $g2119, $g4611 = $g4610($g4609, "%method"), $g4675;
-if ($T($g4611))
-$g4675 = $g4611
-else {var $g4612 = $g4610($g4609, "%while");
-if ($T($g4612))
-$g4675 = $g4612
-else $g4675 = $g4610($g4609, "%set")};
-if ($T($g4675))
-{var $rarray4632 = $exp4608, $rarray4629 = $exp4608, $g4630 = $rarray4629, $g4631 = (($g4630 || false).length || 0), $g4676 = ($g4631 - 1), $g4677 = $rarray4629[$g4676], $value4633 = $g4443($g4677);
-$rarray4632[dec($g2120($rarray4632), 1)] = $value4633;
-return $exp4608}
-else if ($T($g4610($g4609, "%begin")))
-{var $__4613 = $g2189($exp4608, 0), $exps4614 = $SL.call($exp4608, 1);
-return $g2201($g4509($g4444($exps4614)))}
-else if ($T($g4610($g4609, "%bind")))
-{var $__4615 = $g2189($exp4608, 0), $binding4616 = $g2189($exp4608, 1), $body4617 = $g2189($exp4608, 2);
-return $g4443([$g2074("%begin"), [$g2074("%var"), $binding4616], $body4617])}
-else if ($T($g4610($g4609, "%if")))
-{var $rarray4638 = $exp4608, $sequence4637 = $exp4608, $g4678 = $sequence4637[2], $value4639 = $g4443($g4678);
-$rarray4638[2] = $value4639;
-var $rarray4652 = $exp4608, $rarray4649 = $exp4608, $g4650 = $rarray4649, $g4651 = (($g4650 || false).length || 0), $g4679 = ($g4651 - 1), $g4680 = $rarray4649[$g4679], $value4653 = $g4443($g4680);
-$rarray4652[dec($g2120($rarray4652), 1)] = $value4653;
-return $exp4608}
-else if ($T($g4610($g4609, "%try")))
-{var $rarray4658 = $exp4608, $sequence4657 = $exp4608, $g4681 = $sequence4657[1], $value4659 = $g4443($g4681);
-$rarray4658[1] = $value4659;
-var $rarray4672 = $exp4608, $rarray4669 = $exp4608, $g4670 = $rarray4669, $g4671 = (($g4670 || false).length || 0), $g4682 = ($g4671 - 1), $g4683 = $rarray4669[$g4682], $value4673 = $g4443($g4683);
-$rarray4672[dec($g2120($rarray4672), 1)] = $value4673;
-return $exp4608}
-else return $g2252($g4443, $exp4608)}
-else return $exp4608}, false)}
-var $g4685 = $g2066("\"", "\"", "\\", "\\", "\b", "b", "\f", "f", "\n", "n", "\r", "r", "\v", "v", "\t", "t")
-var $g4686 = $g2084("fill_zeros", function $g4698 ($rstring4687)
-{var $rarray4693 = "0000", $start4694 = 0, $robject4692 = $rstring4687, $g4696 = (($robject4692 || false).length || 0), $end4695 = (4 - $g4696), $g4697 = $rarray4693.slice($start4694, $end4695);
-return $g2114($g4697, $rstring4687)}, false)
-var $g4700 = $g1464.join, $g4701 = $g1464["<"], $g4702 = $g1464["as-hex-string"], $g4703 = $g1464["char-code"], $g4704 = $g1464["as-array"], $g4705 = $g2084("escape_string", function $g4724 ($rstring4706)
-{var $g4721 = function $g4725 ($rchar4707)
-{var $g4708 = $g2164($g4685, $rchar4707);
-if ($T($g4708))
-{var $escaped4709 = $g4708;
-return $g2114("\\", $escaped4709)}
-else {var $rchar4712 = $rchar4707, $code4710 = $rchar4712.charCodeAt(0);
-if ($T($g4701(31, $code4710, 127)))
-return $rchar4707
-else {var $rnumber4714 = $code4710, $g4719 = $rnumber4714.toString(16), $g4720 = $g4686($g4719);
-return $g2114("\\u", $g4720)}}}, $rarguments4717 = $rstring4706, $skip4718 = undefined, $g4722 = $SL.call($rarguments4717, ($skip4718 || 0)), $g4723 = $g2252($g4721, $g4722);
-return $g4700($g4723, "")}, false)
-var $g4726 = ["break", "case", "catch", "continue", "default", "delete", "do", "else", "finally", "for", "function", "if", "in", "instanceof", "new", "return", "switch", "this", "throw", "try", "typeof", "var", "void", "while", "with", "abstract", "boolean", "byte", "char", "class", "const", "debugger", "double", "enum", "export", "extends", "final", "float", "goto", "implements", "import", "int", "interface", "long", "native", "package", "private", "protected", "public", "short", "static", "super", "synchronized", "throws", "transient", "volatile", "null", "true", "false", "arguments", "object", "number", "string", "array", "let", "yield"]
-var $g4727 = $g2066("-", "_", "_", "__", "&", "A", "$", "B", ":", "C", ".", "D", "=", "E", "^", "F", ">", "G", "#", "H", "@", "I", "~", "J", "<", "L", "%", "M", "!", "N", "+", "P", "?", "Q", "/", "S", "*", "T")
-{var $g4728 = $g2063.match;
-$g2146 = $g2084("escape_name", function $g4752 ($name4729)
-{if ($T($g3389($name4729, $g4726)))
-return $g2114("R", $name4729)
-else {var $g4750 = function $g4753 ($rchar4730)
-{var $robject4734 = $g4727, $property4735 = $rchar4730, $g4746 = $HP.call($robject4734,$property4735);
-if ($T($g4746))
-return $g2164($g4727, $rchar4730)
-else {var $regexp4738 = "\\w", $rstring4739 = $rchar4730, $g4747 = $rstring4739.match($regexp4738);
-if ($T($g4747))
-return $rchar4730
-else {var $rchar4741 = $rchar4730, $g4748 = $rchar4741.charCodeAt(0), $g4749 = $g2147($g4748);
-return $g2114("Z", $g4749)}}}, $rarguments4744 = $name4729, $skip4745 = undefined, $g4751 = $SL.call($rarguments4744, ($skip4745 || 0)), $chars4731 = $g2252($g4750, $g4751);
-return $g4700($chars4731, "")}}, false)}
-var trueQ = $g1464["true?"], $g4754 = $g2084("valid_js_nameQ", function $g4763 ($identifier4755)
-{var $value4757 = $g3389($identifier4755, $g4726), $g4762 = !(trueQ($value4757));
-if ($T($g4762))
-{var $regexp4760 = "^\\w+$", $rstring4761 = $identifier4755;
-return $rstring4761.match($regexp4760)}}, false)
-var $g4768, $g4769 = $g1464["as-uppercase"], $g4770 = $g1464.description, $g4771 = $g2084("compile_js", function $g4798 ($exp4772, $env4773)
-{var $g4774 = $exp4772, $g4775 = $g2085;
-if ($T($g4775($g4774, $g2086)))
-{var $sequence4788 = $exp4772, $g4789 = $sequence4788, $g4790 = (($g4789 || false).length || 0), $g4791 = 0, $g4796 = ($g4790 === $g4791);
-if ($T($g4796))
-{var $error4793 = $g2928($g2929, $g2934, "empty expression");
-throw($error4793);
+$g4401 = $g2075("flatten_statements", function $g4640 ($exp4565)
+{if ($T($g2076($exp4565, $g2077)))
+{var $sequence4575 = $exp4565, $g4630 = $sequence4575[0], $g4566 = $g2106($g4630), $g4567 = $g2110($g4566, "%method"), $g4631;
+if ($T($g4567))
+$g4631 = $g4567
+else {var $g4568 = $g2110($g4566, "%while");
+if ($T($g4568))
+$g4631 = $g4568
+else $g4631 = $g2110($g4566, "%set")};
+if ($T($g4631))
+{var $rarray4588 = $exp4565, $rarray4585 = $exp4565, $g4586 = $rarray4585, $g4587 = (($g4586 || false).length || 0), $g4632 = ($g4587 - 1), $g4633 = $rarray4585[$g4632], $value4589 = $g4401($g4633);
+$rarray4588[dec($g2111($rarray4588), 1)] = $value4589;
+return $exp4565}
+else if ($T($g2110($g4566, "%begin")))
+{var $__4569 = $exp4565[0], $exps4570 = $SL.call($exp4565, 1);
+return $g2190($g4467($g4402($exps4570)))}
+else if ($T($g2110($g4566, "%bind")))
+{var $__4571 = $exp4565[0], $binding4572 = $exp4565[1], $body4573 = $exp4565[2];
+return $g4401([$g2065("%begin"), [$g2065("%var"), $binding4572], $body4573])}
+else if ($T($g2110($g4566, "%if")))
+{var $rarray4594 = $exp4565, $sequence4593 = $exp4565, $g4634 = $sequence4593[2], $value4595 = $g4401($g4634);
+$rarray4594[2] = $value4595;
+var $rarray4608 = $exp4565, $rarray4605 = $exp4565, $g4606 = $rarray4605, $g4607 = (($g4606 || false).length || 0), $g4635 = ($g4607 - 1), $g4636 = $rarray4605[$g4635], $value4609 = $g4401($g4636);
+$rarray4608[dec($g2111($rarray4608), 1)] = $value4609;
+return $exp4565}
+else if ($T($g2110($g4566, "%try")))
+{var $rarray4614 = $exp4565, $sequence4613 = $exp4565, $g4637 = $sequence4613[1], $value4615 = $g4401($g4637);
+$rarray4614[1] = $value4615;
+var $rarray4628 = $exp4565, $rarray4625 = $exp4565, $g4626 = $rarray4625, $g4627 = (($g4626 || false).length || 0), $g4638 = ($g4627 - 1), $g4639 = $rarray4625[$g4638], $value4629 = $g4401($g4639);
+$rarray4628[dec($g2111($rarray4628), 1)] = $value4629;
+return $exp4565}
+else return $g2241($g4401, $exp4565)}
+else return $exp4565}, false)}
+var $g4641 = $g2057("\"", "\"", "\\", "\\", "\b", "b", "\f", "f", "\n", "n", "\r", "r", "\v", "v", "\t", "t")
+var $g4642 = $g2075("fill_zeros", function $g4654 ($rstring4643)
+{var $rarray4649 = "0000", $start4650 = 0, $robject4648 = $rstring4643, $g4652 = (($robject4648 || false).length || 0), $end4651 = (4 - $g4652), $g4653 = $rarray4649.slice($start4650, $end4651);
+return $g2105($g4653, $rstring4643)}, false)
+var $g4656 = $g1464.join, $g4657 = $g1464["<"], $g4658 = $g1464["as-hex-string"], $g4659 = $g1464["char-code"], $g4660 = $g1464["as-array"], $g4661 = $g2075("escape_string", function $g4680 ($rstring4662)
+{var $g4677 = function $g4681 ($rchar4663)
+{var $g4664 = $g2155($g4641, $rchar4663);
+if ($T($g4664))
+{var $escaped4665 = $g4664;
+return $g2105("\\", $escaped4665)}
+else {var $rchar4668 = $rchar4663, $code4666 = $rchar4668.charCodeAt(0);
+if ($T($g4657(31, $code4666, 127)))
+return $rchar4663
+else {var $rnumber4670 = $code4666, $g4675 = $rnumber4670.toString(16), $g4676 = $g4642($g4675);
+return $g2105("\\u", $g4676)}}}, $rarguments4673 = $rstring4662, $skip4674 = undefined, $g4678 = $SL.call($rarguments4673, ($skip4674 || 0)), $g4679 = $g2241($g4677, $g4678);
+return $g4656($g4679, "")}, false)
+var $g4682 = ["break", "case", "catch", "continue", "default", "delete", "do", "else", "finally", "for", "function", "if", "in", "instanceof", "new", "return", "switch", "this", "throw", "try", "typeof", "var", "void", "while", "with", "abstract", "boolean", "byte", "char", "class", "const", "debugger", "double", "enum", "export", "extends", "final", "float", "goto", "implements", "import", "int", "interface", "long", "native", "package", "private", "protected", "public", "short", "static", "super", "synchronized", "throws", "transient", "volatile", "null", "true", "false", "arguments", "object", "number", "string", "array", "let", "yield"]
+var $g4683 = $g2057("-", "_", "_", "__", "&", "A", "$", "B", ":", "C", ".", "D", "=", "E", "^", "F", ">", "G", "#", "H", "@", "I", "~", "J", "<", "L", "%", "M", "!", "N", "+", "P", "?", "Q", "/", "S", "*", "T")
+{var $g4684 = $g2054.match;
+$g2137 = $g2075("escape_name", function $g4708 ($name4685)
+{if ($T($g3371($name4685, $g4682)))
+return $g2105("R", $name4685)
+else {var $g4706 = function $g4709 ($rchar4686)
+{var $robject4690 = $g4683, $property4691 = $rchar4686, $g4702 = $HP.call($robject4690,$property4691);
+if ($T($g4702))
+return $g2155($g4683, $rchar4686)
+else {var $regexp4694 = "\\w", $rstring4695 = $rchar4686, $g4703 = $rstring4695.match($regexp4694);
+if ($T($g4703))
+return $rchar4686
+else {var $rchar4697 = $rchar4686, $g4704 = $rchar4697.charCodeAt(0), $g4705 = $g2138($g4704);
+return $g2105("Z", $g4705)}}}, $rarguments4700 = $name4685, $skip4701 = undefined, $g4707 = $SL.call($rarguments4700, ($skip4701 || 0)), $chars4687 = $g2241($g4706, $g4707);
+return $g4656($chars4687, "")}}, false)}
+var trueQ = $g1464["true?"], $g4710 = $g2075("valid_js_nameQ", function $g4719 ($identifier4711)
+{var $value4713 = $g3371($identifier4711, $g4682), $g4718 = !(trueQ($value4713));
+if ($T($g4718))
+{var $regexp4716 = "^\\w+$", $rstring4717 = $identifier4711;
+return $rstring4717.match($regexp4716)}}, false)
+var $g4722, $g4723 = $g1464["as-uppercase"], $g4724 = $g1464.description, $g4725 = $g2075("compile_js", function $g4750 ($exp4726, $env4727)
+{var $g4728 = $exp4726;
+if ($T($g2076($g4728, $g2077)))
+{var $sequence4740 = $exp4726, $g4741 = $sequence4740, $g4742 = (($g4741 || false).length || 0), $g4743 = 0, $g4748 = ($g4742 === $g4743);
+if ($T($g4748))
+{var $error4745 = $g2918($g2919, $g2924, "empty expression");
+throw($error4745);
 return false}
-else return $g4768($exp4772, $env4773)}
-else if ($T($g4775($g4774, $g3906)))
-return $g2147($exp4772)
-else if ($T($g4775($g4774, $g3907)))
-if ($T($exp4772))
+else return $g4722($exp4726, $env4727)}
+else if ($T($g2076($g4728, $g3880)))
+return $g2138($exp4726)
+else if ($T($g2076($g4728, $g3881)))
+if ($T($exp4726))
 return "true"
 else return "false"
-else if ($T($g4775($g4774, $g2939)))
-return $g2114("\"", $g4705($exp4772), "\"")
-else if ($T($g4775($g4774, $g4329)))
-{var $rstring4795 = $g2115($exp4772), $g4797 = $rstring4795.toUpperCase();
-return $g2114("$", $g4797)}
-else if ($T($g4775($g4774, $g3908)))
-return $g2114("$K(\"", $g2115($exp4772), "\")")
-else if ($T($g4775($g4774, $g2090)))
-{var $g4776 = $exp4772, $g4777 = $g2119;
-if ($T($g4777($g4776, $g2074("%this-method"))))
-return $g4771($g2164($env4773, "current-method"), $env4773)
-else if ($T($g4777($g4776, $g2074("%all-arguments"))))
+else if ($T($g2076($g4728, $g2928)))
+return $g2105("\"", $g4661($exp4726), "\"")
+else if ($T($g2076($g4728, $g4289)))
+{var $rstring4747 = $g2106($exp4726), $g4749 = $rstring4747.toUpperCase();
+return $g2105("$", $g4749)}
+else if ($T($g2076($g4728, $g3882)))
+return $g2105("$K(\"", $g2106($exp4726), "\")")
+else if ($T($g2076($g4728, $g2081)))
+{var $g4729 = $exp4726;
+if ($T($g2110($g4729, $g2065("%this-method"))))
+return $g4725($g2155($env4727, "current-method"), $env4727)
+else if ($T($g2110($g4729, $g2065("%all-arguments"))))
 return "arguments"
-else if ($T($g2164($exp4772, "generated?")))
-return $g2114("$", $g2115($exp4772))
-else return $g2146($g2115($exp4772))}
-else return $g4770($exp4772)}, false)
-{var trueQ = $g1464["true?"], $g4808;
-$g4768 = $g2084("compile_js_exp", function $g4947 ($exp4809, $env4810)
-{var $sequence4869 = $exp4809, $g4906 = $sequence4869[0], $name4811 = $g2115($g4906), $g4812 = $name4811, $g4813 = $g2119;
-if ($T($g4813($g4812, "%native-call")))
-{var $__4814 = $g2189($exp4809, 0), $operator4815 = $g2189($exp4809, 1), $values4816 = $SL.call($exp4809, 2);
-return $g2114($operator4815, $g4808($values4816, $env4810))}
-else if ($T($g4813($g4812, "%infix")))
-{var $__4817 = $g2189($exp4809, 0), $operator4818 = $g2189($exp4809, 1), $values4819 = $SL.call($exp4809, 2);
-return $g2114("(", $g4700($g2252($g2122($g4771, $env4810), $values4819), $g2114(" ", $operator4818, " ")), ")")}
-else {var $g4820 = $g4813($g4812, "%plus"), $g4907;
-if ($T($g4820))
-$g4907 = $g4820
-else {var $g4821 = $g4813($g4812, "%minus");
-if ($T($g4821))
-$g4907 = $g4821
-else {var $g4822 = $g4813($g4812, "%times");
-if ($T($g4822))
-$g4907 = $g4822
-else $g4907 = $g4813($g4812, "%divide")}};
-if ($T($g4907))
-{var $g4908 = $g2074("%infix"), $g4823 = $name4811, $g4824 = $g2119, $g4909;
-if ($T($g4824($g4823, "%plus")))
-$g4909 = "+"
-else if ($T($g4824($g4823, "%minus")))
-$g4909 = "-"
-else if ($T($g4824($g4823, "%times")))
-$g4909 = "*"
-else if ($T($g4824($g4823, "%divide")))
-$g4909 = "/"
-else $g4909 = false;
-var $g4910 = [$g4908, $g4909], $sequence4871 = $exp4809, $g4911 = $sequence4871.slice(1), $g4912 = $g2114($g4910, $g4911);
-return $g4768($g4912, $env4810)}
-else if ($T($g4813($g4812, "%array")))
-{var $__4825 = $g2189($exp4809, 0), $elements4826 = $SL.call($exp4809, 1);
-return $g2114("[", $g4700($g2252($g2122($g4771, $env4810), $elements4826), ", "), "]")}
-else if ($T($g4813($g4812, "%object")))
-{var $sequence4873 = $exp4809, $key_values4827 = $sequence4873.slice(1), $entries4828 = [], $robject4875 = $key_values4827, $g4913 = (($robject4875 || false).length || 0), $g4829 = ($g4913 / 2), $i4830 = 0;
+else if ($T($g2155($exp4726, "generated?")))
+return $g2105("$", $g2106($exp4726))
+else return $g2137($g2106($exp4726))}
+else return $g4724($exp4726)}, false)
+{var trueQ = $g1464["true?"], $g4758;
+$g4722 = $g2075("compile_js_exp", function $g4895 ($exp4759, $env4760)
+{var $sequence4817 = $exp4759, $g4854 = $sequence4817[0], $name4761 = $g2106($g4854), $g4762 = $name4761;
+if ($T($g2110($g4762, "%native-call")))
+{var $__4763 = $exp4759[0], $operator4764 = $exp4759[1], $values4765 = $SL.call($exp4759, 2);
+return $g2105($operator4764, $g4758($values4765, $env4760))}
+else if ($T($g2110($g4762, "%infix")))
+{var $__4766 = $exp4759[0], $operator4767 = $exp4759[1], $values4768 = $SL.call($exp4759, 2);
+return $g2105("(", $g4656($g2241($g2113($g4725, $env4760), $values4768), $g2105(" ", $operator4767, " ")), ")")}
+else {var $g4769 = $g2110($g4762, "%plus"), $g4855;
+if ($T($g4769))
+$g4855 = $g4769
+else {var $g4770 = $g2110($g4762, "%minus");
+if ($T($g4770))
+$g4855 = $g4770
+else {var $g4771 = $g2110($g4762, "%times");
+if ($T($g4771))
+$g4855 = $g4771
+else $g4855 = $g2110($g4762, "%divide")}};
+if ($T($g4855))
+{var $g4856 = $g2065("%infix"), $g4772 = $name4761, $g4857;
+if ($T($g2110($g4772, "%plus")))
+$g4857 = "+"
+else if ($T($g2110($g4772, "%minus")))
+$g4857 = "-"
+else if ($T($g2110($g4772, "%times")))
+$g4857 = "*"
+else if ($T($g2110($g4772, "%divide")))
+$g4857 = "/"
+else $g4857 = false;
+var $g4858 = [$g4856, $g4857], $sequence4819 = $exp4759, $g4859 = $sequence4819.slice(1), $g4860 = $g2105($g4858, $g4859);
+return $g4722($g4860, $env4760)}
+else if ($T($g2110($g4762, "%array")))
+{var $__4773 = $exp4759[0], $elements4774 = $SL.call($exp4759, 1);
+return $g2105("[", $g4656($g2241($g2113($g4725, $env4760), $elements4774), ", "), "]")}
+else if ($T($g2110($g4762, "%object")))
+{var $sequence4821 = $exp4759, $key_values4775 = $sequence4821.slice(1), $entries4776 = [], $robject4823 = $key_values4775, $g4861 = (($robject4823 || false).length || 0), $g4777 = ($g4861 / 2), $i4778 = 0;
 while ($T(true))
-{var $value4877 = $g3873($i4830, $g4829), $g4916 = !(trueQ($value4877));
-if ($T($g4916))
-{(function $g4948 ($i4831)
-{var $rarray4880 = $entries4828, $name4832 = $g2189($key_values4827, ($i4831 * 2)), $g4914;
-if ($T($g4754($name4832)))
-$g4914 = $name4832
-else $g4914 = $g4771($name4832, $env4810);
-var $g4915 = $g4771($g2189($key_values4827, (($i4831 * 2) + 1)), $env4810), $value4881 = $g2114($g4914, ":", $g4915);
-$rarray4880.push($value4881);
-return $rarray4880})($i4830);
-$i4830 = ($i4830 + 1)}
+{var $value4825 = $g3847($i4778, $g4777), $g4864 = !(trueQ($value4825));
+if ($T($g4864))
+{(function $g4896 ($i4779)
+{var $rarray4828 = $entries4776, $name4780 = $g2203($key_values4775, ($i4779 * 2)), $g4862;
+if ($T($g4710($name4780)))
+$g4862 = $name4780
+else $g4862 = $g4725($name4780, $env4760);
+var $g4863 = $g4725($g2203($key_values4775, (($i4779 * 2) + 1)), $env4760), $value4829 = $g2105($g4862, ":", $g4863);
+$rarray4828.push($value4829);
+return $rarray4828})($i4778);
+$i4778 = ($i4778 + 1)}
 else break};
 false;
-return $g2114("{", $g4700($entries4828, ",\n"), "}")}
-else if ($T($g4813($g4812, "%if")))
-{var $__4833 = $g2189($exp4809, 0), $test4834 = $g2189($exp4809, 1), $then4835 = $g2189($exp4809, 2), $relse4836 = $g2189($exp4809, 3), $g4917 = $g4771($test4834, $env4810), $g4918 = $g4771($then4835, $env4810), $g4919;
-if ($T($relse4836))
-{var $value4883 = $g2213($relse4836, [$g2074("%return"), false]);
-$g4919 = !(trueQ($value4883))}
-else $g4919 = false;
-var $g4920;
-if ($T($g4919))
-$g4920 = $g2114("\nelse ", $g4771($relse4836, $env4810))
-else $g4920 = "";
-return $g2114("if (", $g4917, ")\n", $g4918, $g4920)}
-else if ($T($g4813($g4812, "%while")))
-{var $__4837 = $g2189($exp4809, 0), $test4838 = $g2189($exp4809, 1), $body4839 = $g2189($exp4809, 2);
-return $g2114("while (", $g4771($test4838, $env4810), ")\n", $g4771($body4839, $env4810))}
-else if ($T($g4813($g4812, "%try")))
-{var $__4840 = $g2189($exp4809, 0), $body4841 = $g2189($exp4809, 1), $rvar4842 = $g2189($exp4809, 2), $rcatch4843 = $g2189($exp4809, 3);
-return $g2114("try {", $g4771($body4841, $env4810), "}\n", "catch (", $g4771($rvar4842, $env4810), ")\n", "{", $g4771($rcatch4843, $env4810), "}")}
-else if ($T($g4813($g4812, "%return")))
-{var $sequence4885 = $exp4809, $g4921 = $sequence4885[1], $g4922 = $g4771($g4921, $env4810);
-return $g2114("return ", $g4922)}
-else if ($T($g4813($g4812, "%begin")))
-{var $g4923 = $g2122($g4771, $env4810), $sequence4887 = $exp4809, $g4924 = $sequence4887.slice(1), $g4925 = $g2252($g4923, $g4924), $g4926 = $g4700($g4925, ";\n");
-return $g2114("{", $g4926, "}")}
-else if ($T($g4813($g4812, "%set")))
-{var $__4844 = $g2189($exp4809, 0), $rvar4845 = $g2189($exp4809, 1), $value4846 = $g2189($exp4809, 2);
-return $g2114($g4771($rvar4845, $env4810), " = ", $g4771($value4846, $env4810))}
-else if ($T($g4813($g4812, "%method")))
-{var $__4847 = $g2189($exp4809, 0), $rarguments4848 = $g2189($exp4809, 1), $body4849 = $g2189($exp4809, 2), $name4850 = $g2148(), $previous_method4851 = $g2164($env4810, "current-method"), $g4927 = $g4771($name4850, $env4810), $g4928 = $g4700($g2252($g2122($g4771, $env4810), $rarguments4848), ", ");
-$g2145($env4810, "current-method", $name4850);
-var $bodyt4852 = $g4771($body4849, $env4810);
-$g2145($env4810, "current-method", $previous_method4851);
-var $g4931;
-if ($T($g2091($body4849)))
-{var $sequence4889 = $body4849, $g4929 = $sequence4889[0], $g4930 = $g2074("%begin");
-$g4931 = $g2119($g4929, $g4930)}
-else $g4931 = false;
-var $g4932;
-if ($T($g4931))
-$g4932 = $bodyt4852
-else $g4932 = $g2114("{", $bodyt4852, "}");
-return $g2114("function ", $g4927, " (", $g4928, ")\n", $g4932)}
-else if ($T($g4813($g4812, "%var")))
-{var $__4853 = $g2189($exp4809, 0), $bindings4854 = $SL.call($exp4809, 1);
-return $g2114("var ", $g4700($g2252(function $g4949 ($binding4855)
-{var $g4856;
-if ($T($g2085($binding4855, $g2086)))
-$g4856 = $binding4855
-else $g4856 = [$binding4855, false];
-var $rvar4857 = $g2189($g4856, 0), $value4858 = $g2189($g4856, 1), $g4933 = $g4771($rvar4857, $env4810), $g4934;
-if ($T($value4858))
-$g4934 = $g2114(" = ", $g4771($value4858, $env4810))
-else $g4934 = "";
-return $g2114($g4933, $g4934)}, $bindings4854), ", "))}
-else if ($T($g4813($g4812, "%native")))
-{var $rfunction4900 = $g2114, $g4935 = function $g4950 ($e4859)
-{if ($T($g2085($e4859, $g2090)))
-return $g4771($e4859)
-else return $g2147($e4859)}, $sequence4899 = $exp4809, $g4936 = $sequence4899.slice(1), $values4901 = $g2252($g4935, $g4936), $g4902 = $values4901, $g4937 = $g4902[0], $g4903 = $values4901, $g4938 = $g4903.slice(1);
-return $g2242($rfunction4900, $g4937, $g4938)}
-else if ($T($g4813($g4812, "%native-name")))
-{var $sequence4905 = $exp4809, $g4939 = $sequence4905[1], $g4940 = $g2146($g4939);
-return $g2114("\"", $g4940, "\"")}
-else if ($T($g4813($g4812, "%get-property")))
-{var $__4860 = $g2189($exp4809, 0), $robject4861 = $g2189($exp4809, 1), $properties4862 = $SL.call($exp4809, 2), $g4941;
-if ($T($g2085($robject4861, $g3906)))
-$g4941 = $g2114("(", $g4771($robject4861, $env4810), ")")
-else $g4941 = $g4771($robject4861, $env4810);
-var $g4944 = $g2242(function $g4951 ($result4863, $property4864)
-{var $g4942;
-if ($T($g2085($property4864, $g2939)))
-$g4942 = $g4754($property4864)
-else $g4942 = false;
-var $g4943;
-if ($T($g4942))
-$g4943 = $g2114(".", $property4864)
-else $g4943 = $g2114("[", $g4771($property4864, $env4810), "]");
-return $g2114($result4863, $g4943)}, "", $properties4862);
-return $g2114($g4941, $g4944)}
-else {var $rfunction4865 = $g2189($exp4809, 0), $values4866 = $SL.call($exp4809, 1), $functiont4867 = $g4771($rfunction4865, $env4810), $g4945;
-if ($T($g4502($rfunction4865)))
-$g4945 = $g2114("(", $functiont4867, ")")
-else $g4945 = $functiont4867;
-var $g4946 = $g4808($values4866, $env4810);
-return $g2114($g4945, $g4946)}}}, false)}
-$g4808 = $g2084("compile_js_call", function $g4954 ($values4952, $env4953)
-{return $g2114("(", $g4700($g2252($g2122($g4771, $env4953), $values4952), ", "), ")")}, false)
-var $g4959 = $K("string"), $g4955 = $g2064.read, $g4956 = $g2061["<string-stream>"], $g4957 = $g2084("read_program", function $g4960 ($source4958)
-{return $g4955($g2928($g4956, $g4959, $g2114("(", $source4958, "\n)")))}, false)
-var $g4961 = $g2084("compile_expression", function $g4973 ($exp4962, $env4963)
-{return $g2242(function $g4974 ($result4964, $namesfn4965)
-{var $name4966 = $g2189($namesfn4965, 0), $fn4967 = $g2189($namesfn4965, 1), $result4968 = $fn4967($result4964);
-return $result4968}, $exp4962, [["source", $g3212], ["macroexpanded", $g2122($g2175, $env4963)], ["lifted defines", $g2122($g3213, $env4963)], ["defined free variables", $g2122($g3410, $env4963)], ["alpha-converted", $g2122($g3685, $env4963)], ["inline", $g2122($g3757, $env4963)], ["defined free variables after inline", $g2122($g3440, $env4963)], ["ANF", $g3913], ["SCCP", function $g4975 ($exp4969)
-{var $result4970 = $g4088($exp4969, $env4963);
-return $result4970}], ["lifted symbols", $g2122($g4314, $env4963)], ["statements", $g2122($g4203, $env4963)], ["flattened", function $g4976 ($exp4971)
-{var $result4972 = $g4443($exp4971);
-return $result4972}], ["compiled", $g2122($g4771, $env4963)]])}, false)
-var $g4977 = require("path")
-var $g4978 = require("fs")
-var $g4979 = require("vm")
-var trueQ = $g1464["true?"], $g4980 = $g2084("ensure_directory", function $g4989 ($directory4981)
-{var $parent4982 = $g4977.dirname($directory4981), $value4984 = $g4977.existsSync($parent4982), $g4987 = !(trueQ($value4984));
-if ($T($g4987))
-$g4980($parent4982);
-var $value4986 = $g4977.existsSync($directory4981), $g4988 = !(trueQ($value4986));
-if ($T($g4988))
-return $g4978.mkdirSync($directory4981)}, false)
-var $g4990 = $g2084("executable_path", function $g4992 ($module_name4991)
-{return $g4977.resolve("build", $g2114($module_name4991, ".js"))}, false)
-var $g4993 = $g2084("module_path", function $g4995 ($module_name4994)
-{return $g4977.resolve("build", $g2114($module_name4994, ".rm"))}, false)
-var $g4996 = $g2084("source_path", function $g4998 ($module_name4997)
-{return $g4977.resolve("src", $g2114($module_name4997, ".ralph"))}, false)
-var trueQ = $g1464["true?"], $g5000 = $g2084("recompileQ", function $g5007 ($module_name5001)
-{var $p5002 = $g4990($module_name5001), $value5006 = $g4977.existsSync($p5002), $g5003 = !(trueQ($value5006));
-if ($T($g5003))
-return $g5003
-else {var $p25004 = $g4996($module_name5001);
-return $g4701($g2164($g4978.statSync($p5002), "mtime"), $g2164($g4978.statSync($p25004), "mtime"))}}, false)
-{var $g5012 = $g1464["chain-object"], $g5013;
-$g3145 = $g2084("compile_time_import_module", function $g5030 ($env5014, $module_name5015)
-{var $g5016 = $SL.call(arguments, 2), $g5017 = $g2977($g5016, {names:false}), $names5018 = $g5017.names, $g5025;
-if ($T($g2119($module_name5015, "ralph/core")))
-$g5025 = [$g2198, $g3318]
-else {$g5013($module_name5015);
-var $definitions5019 = require($module_name5015), $macros5020 = $g2076(), $symbol_macros5021 = $g2076(), $g5028 = function $g5031 ($name5022)
-{var $definition5023 = $g2164($definitions5019, $name5022);
-if ($T($g2164($definition5023, "%macro?")))
-return $g2145($macros5020, $name5022, $definition5023)
-else if ($T($g2164($definition5023, "%symbol-macro?")))
-return $g2145($symbol_macros5021, $name5022, $definition5023)}, $g5024 = $names5018, $g5029;
-if ($T($g5024))
-$g5029 = $g5024
-else $g5029 = $g3409($definitions5019);
-$g2173($g5028, $g5029);
-$g5025 = [$macros5020, $symbol_macros5021]};
-var $macros5026 = $g2189($g5025, 0), $symbol_macros5027 = $g2189($g5025, 1);
-$g5012($g2164($env5014, "macros"), $macros5026);
-return $g5012($g2164($env5014, "symbol-macros"), $symbol_macros5027)}, false)}
-{var $g5035;
-$g3146 = $g2084("import_module", function $g5048 ($module5036, $module_name5037)
-{var $g5038 = $SL.call(arguments, 2), $g5039 = $g2977($g5038, {names:false}), $names5040 = $g5039.names, $other_module5041 = $g5035($module_name5037), $rarray5045 = $g2164($module5036, "imports"), $g5042 = $names5040, $g5047;
-if ($T($g5042))
-$g5047 = $g5042
-else $g5047 = $g2164($other_module5041, "exports");
-var $value5046 = [$other_module5041, $g5047];
-$rarray5045.unshift($value5046);
-$rarray5045;
-return $other_module5041}, false)}
-{var $g5051;
-$g5035 = $g2084("find_module", function $g5055 ($module_name5052)
-{var $g5053 = $g5013($module_name5052);
-if ($T($g5053))
-return $g5053
-else {var $g5054 = $g2164($g2067, $module_name5052);
-if ($T($g5054))
-return $g5054
-else return $g5051($module_name5052)}}, false)}
-{var $g5059 = $K("name"), $g5056;
-$g5051 = $g2084("read_module", function $g5060 ($module_name5057)
-{var $p5058 = $g4993($module_name5057);
-if ($T($g4977.existsSync($p5058)))
-return $g3042($g2174($g2928, $g2070, $g5059), $g4955($g2928($g4956, $g4959, $g5056($p5058))))}, false)}
-$g5056 = $g2084("read_file", function $g5062 ($path5061)
-{return $g4978.readFileSync($path5061).toString()}, false)
-var $g5063 = $g2084("open_executable", function $g5066 ($module_name5064)
-{var $p5065 = $g4990($module_name5064);
-$g4980($g4977.dirname($p5065));
-return $g4978.openSync($p5065, "w")}, false)
-{var $g5089 = $K("module"), $g5090 = $K("exports"), trueQ = $g1464["true?"];
-$g5013 = $g2084("compile_module", function $g5091 ($module_name5067)
-{var $robject5077 = $g2067, $property5078 = $module_name5067, $value5079 = $HP.call($robject5077,$property5078), $g5086 = !(trueQ($value5079)), $g5087;
-if ($T($g5086))
-$g5087 = true
-else $g5087 = false;
-if ($T($g5087))
-{var $module5068 = $g2928($g2070, $g5059, $module_name5067), $env5069 = $g2928($g2077, $g5089, $module5068), $source5070 = $g5056($g4996($module_name5067)), $program5071 = $g4957($source5070), $executable5072 = $g5063($module_name5067);
-$g2145($g2067, $module_name5067, $module5068);
-$g3145($env5069, "ralph/core");
-var $value5081 = $g2119($module_name5067, "ralph/core"), $g5088 = !(trueQ($value5081));
-if ($T($g5088))
-{$g3146($module5068, "ralph/core");
-var $rarray5084 = $program5071, $value5085 = $g3147("ralph/core", $env5069);
-$rarray5084.unshift($value5085);
-$rarray5084};
-$g2173(function $g5092 ($expression5073)
-{return $g4978.writeSync($executable5072, $g2114($g4961($expression5073, $env5069), "\n"))}, $program5071);
-$g4978.closeSync($executable5072);
-$g4978.writeFileSync($g4993($module_name5067), $g4770([$module_name5067, $g5090, $g2164($module5068, "exports")]));
-return $module5068}}, false)}
-{var $g5093 = $g2062["format-out"], $g5094 = $g2065["<date>"], $start5095 = $g2928($g5094);
-$g5013("ralph/compiler");
-$g5013("ralph/runtime.test");
-$g5093("%d\n", ($g2928($g5094) - $start5095))}
+return $g2105("{", $g4656($entries4776, ",\n"), "}")}
+else if ($T($g2110($g4762, "%if")))
+{var $__4781 = $exp4759[0], $test4782 = $exp4759[1], $then4783 = $exp4759[2], $relse4784 = $exp4759[3], $g4865 = $g4725($test4782, $env4760), $g4866 = $g4725($then4783, $env4760), $g4867;
+if ($T($relse4784))
+{var $value4831 = $g2201($relse4784, [$g2065("%return"), false]);
+$g4867 = !(trueQ($value4831))}
+else $g4867 = false;
+var $g4868;
+if ($T($g4867))
+$g4868 = $g2105("\nelse ", $g4725($relse4784, $env4760))
+else $g4868 = "";
+return $g2105("if (", $g4865, ")\n", $g4866, $g4868)}
+else if ($T($g2110($g4762, "%while")))
+{var $__4785 = $exp4759[0], $test4786 = $exp4759[1], $body4787 = $exp4759[2];
+return $g2105("while (", $g4725($test4786, $env4760), ")\n", $g4725($body4787, $env4760))}
+else if ($T($g2110($g4762, "%try")))
+{var $__4788 = $exp4759[0], $body4789 = $exp4759[1], $rvar4790 = $exp4759[2], $rcatch4791 = $exp4759[3];
+return $g2105("try {", $g4725($body4789, $env4760), "}\n", "catch (", $g4725($rvar4790, $env4760), ")\n", "{", $g4725($rcatch4791, $env4760), "}")}
+else if ($T($g2110($g4762, "%return")))
+{var $sequence4833 = $exp4759, $g4869 = $sequence4833[1], $g4870 = $g4725($g4869, $env4760);
+return $g2105("return ", $g4870)}
+else if ($T($g2110($g4762, "%begin")))
+{var $g4871 = $g2113($g4725, $env4760), $sequence4835 = $exp4759, $g4872 = $sequence4835.slice(1), $g4873 = $g2241($g4871, $g4872), $g4874 = $g4656($g4873, ";\n");
+return $g2105("{", $g4874, "}")}
+else if ($T($g2110($g4762, "%set")))
+{var $__4792 = $exp4759[0], $rvar4793 = $exp4759[1], $value4794 = $exp4759[2];
+return $g2105($g4725($rvar4793, $env4760), " = ", $g4725($value4794, $env4760))}
+else if ($T($g2110($g4762, "%method")))
+{var $__4795 = $exp4759[0], $rarguments4796 = $exp4759[1], $body4797 = $exp4759[2], $name4798 = $g2139(), $previous_method4799 = $g2155($env4760, "current-method"), $g4875 = $g4725($name4798, $env4760), $g4876 = $g4656($g2241($g2113($g4725, $env4760), $rarguments4796), ", ");
+$g2136($env4760, "current-method", $name4798);
+var $bodyt4800 = $g4725($body4797, $env4760);
+$g2136($env4760, "current-method", $previous_method4799);
+var $g4879;
+if ($T($g2082($body4797)))
+{var $sequence4837 = $body4797, $g4877 = $sequence4837[0], $g4878 = $g2065("%begin");
+$g4879 = $g2110($g4877, $g4878)}
+else $g4879 = false;
+var $g4880;
+if ($T($g4879))
+$g4880 = $bodyt4800
+else $g4880 = $g2105("{", $bodyt4800, "}");
+return $g2105("function ", $g4875, " (", $g4876, ")\n", $g4880)}
+else if ($T($g2110($g4762, "%var")))
+{var $__4801 = $exp4759[0], $bindings4802 = $SL.call($exp4759, 1);
+return $g2105("var ", $g4656($g2241(function $g4897 ($binding4803)
+{var $g4804;
+if ($T($g2076($binding4803, $g2077)))
+$g4804 = $binding4803
+else $g4804 = [$binding4803, false];
+var $rvar4805 = $g4804[0], $value4806 = $g4804[1], $g4881 = $g4725($rvar4805, $env4760), $g4882;
+if ($T($value4806))
+$g4882 = $g2105(" = ", $g4725($value4806, $env4760))
+else $g4882 = "";
+return $g2105($g4881, $g4882)}, $bindings4802), ", "))}
+else if ($T($g2110($g4762, "%native")))
+{var $rfunction4848 = $g2105, $g4883 = function $g4898 ($e4807)
+{if ($T($g2076($e4807, $g2081)))
+return $g4725($e4807)
+else return $g2138($e4807)}, $sequence4847 = $exp4759, $g4884 = $sequence4847.slice(1), $values4849 = $g2241($g4883, $g4884), $g4850 = $values4849, $g4885 = $g4850[0], $g4851 = $values4849, $g4886 = $g4851.slice(1);
+return $g2231($rfunction4848, $g4885, $g4886)}
+else if ($T($g2110($g4762, "%native-name")))
+{var $sequence4853 = $exp4759, $g4887 = $sequence4853[1], $g4888 = $g2137($g4887);
+return $g2105("\"", $g4888, "\"")}
+else if ($T($g2110($g4762, "%get-property")))
+{var $__4808 = $exp4759[0], $robject4809 = $exp4759[1], $properties4810 = $SL.call($exp4759, 2), $g4889;
+if ($T($g2076($robject4809, $g3880)))
+$g4889 = $g2105("(", $g4725($robject4809, $env4760), ")")
+else $g4889 = $g4725($robject4809, $env4760);
+var $g4892 = $g2231(function $g4899 ($result4811, $property4812)
+{var $g4890;
+if ($T($g2076($property4812, $g2928)))
+$g4890 = $g4710($property4812)
+else $g4890 = false;
+var $g4891;
+if ($T($g4890))
+$g4891 = $g2105(".", $property4812)
+else $g4891 = $g2105("[", $g4725($property4812, $env4760), "]");
+return $g2105($result4811, $g4891)}, "", $properties4810);
+return $g2105($g4889, $g4892)}
+else {var $rfunction4813 = $exp4759[0], $values4814 = $SL.call($exp4759, 1), $functiont4815 = $g4725($rfunction4813, $env4760), $g4893;
+if ($T($g4460($rfunction4813)))
+$g4893 = $g2105("(", $functiont4815, ")")
+else $g4893 = $functiont4815;
+var $g4894 = $g4758($values4814, $env4760);
+return $g2105($g4893, $g4894)}}}, false)}
+$g4758 = $g2075("compile_js_call", function $g4902 ($values4900, $env4901)
+{return $g2105("(", $g4656($g2241($g2113($g4725, $env4901), $values4900), ", "), ")")}, false)
+var $g4907 = $K("string"), $g4903 = $g2055.read, $g4904 = $g2052["<string-stream>"], $g4905 = $g2075("read_program", function $g4908 ($source4906)
+{return $g4903($g2918($g4904, $g4907, $g2105("(", $source4906, "\n)")))}, false)
+var $g4909 = $g2075("compile_expression", function $g4917 ($exp4910, $env4911)
+{return $g2231(function $g4918 ($result4912, $namesfn4913)
+{var $name4914 = $namesfn4913[0], $fn4915 = $namesfn4913[1], $result4916 = $fn4915($result4912);
+return $result4916}, $exp4910, [["source", $g3200], ["macroexpanded", $g2113($g2166, $env4911)], ["lifted defines", $g2113($g3201, $env4911)], ["defined free variables", $g2113($g3392, $env4911)], ["alpha-converted", $g2113($g3663, $env4911)], ["inline", $g2113($g3732, $env4911)], ["defined free variables after inline", $g2113($g3422, $env4911)], ["ANF", $g3887], ["lifted symbols", $g2113($g4276, $env4911)], ["statements", $g2113($g4166, $env4911)], ["flattened", $g4401], ["compiled", $g2113($g4725, $env4911)]])}, false)
+var $g4919 = require("path")
+var $g4920 = require("fs")
+var $g4921 = require("vm")
+var trueQ = $g1464["true?"], $g4922 = $g2075("ensure_directory", function $g4931 ($directory4923)
+{var $parent4924 = $g4919.dirname($directory4923), $value4926 = $g4919.existsSync($parent4924), $g4929 = !(trueQ($value4926));
+if ($T($g4929))
+$g4922($parent4924);
+var $value4928 = $g4919.existsSync($directory4923), $g4930 = !(trueQ($value4928));
+if ($T($g4930))
+return $g4920.mkdirSync($directory4923)}, false)
+var $g4932 = $g2075("executable_path", function $g4934 ($module_name4933)
+{return $g4919.resolve("build", $g2105($module_name4933, ".js"))}, false)
+var $g4935 = $g2075("module_path", function $g4937 ($module_name4936)
+{return $g4919.resolve("build", $g2105($module_name4936, ".rm"))}, false)
+var $g4938 = $g2075("source_path", function $g4940 ($module_name4939)
+{return $g4919.resolve("src", $g2105($module_name4939, ".ralph"))}, false)
+var trueQ = $g1464["true?"], $g4942 = $g2075("recompileQ", function $g4949 ($module_name4943)
+{var $p4944 = $g4932($module_name4943), $value4948 = $g4919.existsSync($p4944), $g4945 = !(trueQ($value4948));
+if ($T($g4945))
+return $g4945
+else {var $p24946 = $g4938($module_name4943);
+return $g4657($g2155($g4920.statSync($p4944), "mtime"), $g2155($g4920.statSync($p24946), "mtime"))}}, false)
+{var $g4954 = $g1464["chain-object"], $g4955;
+$g3133 = $g2075("compile_time_import_module", function $g4972 ($env4956, $module_name4957)
+{var $g4958 = $SL.call(arguments, 2), $g4959 = $g2965($g4958, {names:false}), $names4960 = $g4959.names, $g4967;
+if ($T($g2110($module_name4957, "ralph/core")))
+$g4967 = [$g2188, $g3304]
+else {$g4955($module_name4957);
+var $definitions4961 = require($module_name4957), $macros4962 = $g2067(), $symbol_macros4963 = $g2067(), $g4970 = function $g4973 ($name4964)
+{var $definition4965 = $g2155($definitions4961, $name4964);
+if ($T($g2155($definition4965, "%macro?")))
+return $g2136($macros4962, $name4964, $definition4965)
+else if ($T($g2155($definition4965, "%symbol-macro?")))
+return $g2136($symbol_macros4963, $name4964, $definition4965)}, $g4966 = $names4960, $g4971;
+if ($T($g4966))
+$g4971 = $g4966
+else $g4971 = $g3391($definitions4961);
+$g2164($g4970, $g4971);
+$g4967 = [$macros4962, $symbol_macros4963]};
+var $macros4968 = $g4967[0], $symbol_macros4969 = $g4967[1];
+$g4954($g2155($env4956, "macros"), $macros4968);
+return $g4954($g2155($env4956, "symbol-macros"), $symbol_macros4969)}, false)}
+{var $g4977;
+$g3134 = $g2075("import_module", function $g4990 ($module4978, $module_name4979)
+{var $g4980 = $SL.call(arguments, 2), $g4981 = $g2965($g4980, {names:false}), $names4982 = $g4981.names, $other_module4983 = $g4977($module_name4979), $rarray4987 = $g2155($module4978, "imports"), $g4984 = $names4982, $g4989;
+if ($T($g4984))
+$g4989 = $g4984
+else $g4989 = $g2155($other_module4983, "exports");
+var $value4988 = [$other_module4983, $g4989];
+$rarray4987.unshift($value4988);
+$rarray4987;
+return $other_module4983}, false)}
+{var $g4993;
+$g4977 = $g2075("find_module", function $g4997 ($module_name4994)
+{var $g4995 = $g4955($module_name4994);
+if ($T($g4995))
+return $g4995
+else {var $g4996 = $g2155($g2058, $module_name4994);
+if ($T($g4996))
+return $g4996
+else return $g4993($module_name4994)}}, false)}
+{var $g5001 = $K("name"), $g4998;
+$g4993 = $g2075("read_module", function $g5002 ($module_name4999)
+{var $p5000 = $g4935($module_name4999);
+if ($T($g4919.existsSync($p5000)))
+return $g3030($g2165($g2918, $g2061, $g5001), $g4903($g2918($g4904, $g4907, $g4998($p5000))))}, false)}
+$g4998 = $g2075("read_file", function $g5004 ($path5003)
+{return $g4920.readFileSync($path5003).toString()}, false)
+var $g5005 = $g2075("open_executable", function $g5008 ($module_name5006)
+{var $p5007 = $g4932($module_name5006);
+$g4922($g4919.dirname($p5007));
+return $g4920.openSync($p5007, "w")}, false)
+{var $g5031 = $K("module"), $g5032 = $K("exports"), trueQ = $g1464["true?"];
+$g4955 = $g2075("compile_module", function $g5033 ($module_name5009)
+{var $robject5019 = $g2058, $property5020 = $module_name5009, $value5021 = $HP.call($robject5019,$property5020), $g5028 = !(trueQ($value5021)), $g5029;
+if ($T($g5028))
+$g5029 = $g4942($module_name5009)
+else $g5029 = false;
+if ($T($g5029))
+{var $module5010 = $g2918($g2061, $g5001, $module_name5009), $env5011 = $g2918($g2068, $g5031, $module5010), $source5012 = $g4998($g4938($module_name5009)), $program5013 = $g4905($source5012), $executable5014 = $g5005($module_name5009);
+$g2136($g2058, $module_name5009, $module5010);
+$g3133($env5011, "ralph/core");
+var $value5023 = $g2110($module_name5009, "ralph/core"), $g5030 = !(trueQ($value5023));
+if ($T($g5030))
+{$g3134($module5010, "ralph/core");
+var $rarray5026 = $program5013, $value5027 = $g3135("ralph/core", $env5011);
+$rarray5026.unshift($value5027);
+$rarray5026};
+$g2164(function $g5034 ($expression5015)
+{return $g4920.writeSync($executable5014, $g2105($g4909($expression5015, $env5011), "\n"))}, $program5013);
+$g4920.closeSync($executable5014);
+$g4920.writeFileSync($g4935($module_name5009), $g4724([$module_name5009, $g5032, $g2155($module5010, "exports")]));
+return $module5010}}, false);
+exports["compile-module"] = $g4955}

@@ -2,7 +2,8 @@
 (define-module ralph/compiler
   import: (ralph/stream ralph/format ralph/regexp
            ralph/reader ralph/date)
-  compile-time-import: (ralph/compiler-macros))
+  compile-time-import: (ralph/compiler-macros)
+  export: (compile-module))
 
 ;; NOTE: naming convention:
 ;; - identifier = symbol, name = string
@@ -2106,8 +2107,7 @@
 
 (define-function compile-module (module-name)
   (when (and (not (has? *modules* module-name))
-             ;; TODO: (recompile? module-name)
-             #t)
+             (recompile? module-name))
     (bind ((module (make <module> name: module-name))
            (env (make <environment> module: module))
            (source (read-file (source-path module-name)))
@@ -2136,10 +2136,3 @@
              (description [module-name
                            exports: (get module "exports")])))
       module)))
-
-;;;;
-
-(bind ((start (make <date>)))
-  (compile-module "ralph/compiler")
-  (compile-module "ralph/runtime.test")
-  (format-out "%d\n" (- (make <date>) start)))
