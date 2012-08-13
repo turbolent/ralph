@@ -793,3 +793,24 @@
 (check-equal "compose"
              3
              ((compose size rest) [1 2 3 4]))
+
+
+
+;; NOTE: add tests ABOVE!
+
+(define-function when ()
+  "WHEN")
+
+(check-equal "macroexpansion: respect bindings"
+             "WHEN" (when))
+
+(check-equal "macroexpansion: respect local bindings"
+             3 (bind ((unless (method () 3)))
+                 (unless)))
+
+(check-equal "macroexpansion: respect local method arguments"
+             3 ((method (unless)
+                  (unless))
+                (method () 3)))
+
+;; NOTE: DO NOT add new tests below! when is redefined
