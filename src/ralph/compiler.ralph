@@ -652,6 +652,18 @@
            (first superclass))
         ,object))))
 
+(define-function get-import-module-name/options (import)
+  [;; module-name
+   (symbol-name
+    (if (instance? import <array>)
+        (first import)
+        import))
+   ;; options
+   (if (instance? import <array>)
+       (rest import)
+       [])])
+
+
 ;; TODO: identifiers: support setter identifiers
 (define-core-macro define-module (env _ #key (import []) (export [])
                                              (compile-time-import [])
@@ -661,15 +673,10 @@
         (map identifier-name export))
   ;; compile-time imports
   (do (method (import)
-        (bind ((module-name (symbol-name
-                             (if (instance? import <array>)
-                                 (first import)
-                                 import))))
-          (compile-time-import-module
-           env module-name
-           names: (when (instance? import <array>)
-                    (map identifier-name
-                         (rest import))))))
+        (destructuring-bind (module-name options)
+            (get-import-module-name/options import)
+          (apply compile-time-import-module
+                 env module-name options)))
       compile-time-import)
   ;; inline
   (set! (get env "module" "inline")
@@ -677,15 +684,10 @@
   ;; imports
   (maybe-begin
    (map (method (import)
-          (bind ((module-name (symbol-name
-                               (if (instance? import <array>)
-                                   (first import)
-                                   import))))
-            ;; TODO: support only:, except:, rename:, prefix:
-            (import-module (get env "module") module-name
-                           names: (when (instance? import <array>)
-                                    (map identifier-name
-                                         (rest import))))
+          (destructuring-bind (module-name options)
+              (get-import-module-name/options import)
+            (apply import-module (get env "module")
+                   module-name options)
             (make-import-definition module-name env)))
         import)))
 
@@ -873,17 +875,23 @@
 
 ;;;; define free variables
 
-(define-function find-module-for-definition (definition-name env)
+(define-function find-module/import-name (definition-name env)
   (any? (method (import)
           (destructuring-bind (module names) import
-            (when (member? definition-name names)
-              module)))
+            (any? (method (name)
+                    (destructuring-bind (import-name new-name)
+                        (if (instance? name <array>)
+                            name
+                            [name name])
+                      (when (== definition-name
+                                new-name)
+                        [module import-name])))
+                  names)))
         (get env "module" "imports")))
 
-(define-function find-import-identifier (definition-name env)
-  (if-bind (module (find-module-for-definition definition-name env))
-    (get env "import-identifiers"
-         (get module "name"))))
+(define-function find-import-identifier (module env)
+  (get env "import-identifiers"
+       (get module "name")))
 
 (define-function define-free-variables (exp env)
   (bind ((variables
@@ -904,9 +912,12 @@
                    (concatenate
                     `((%define ,variable))
                     ;; imported?
-                    (if-bind (import-identifier (find-import-identifier name env))
-                      `((%set ,variable (%get-property ,import-identifier ,name)))
-                      [])))))
+                    (bind ((module/import-name (find-module/import-name name env)))
+                      (if module/import-name
+                          (destructuring-bind (module import-name) module/import-name
+                            (bind ((import-identifier (find-import-identifier module env)))
+                              `((%set ,variable (%get-property ,import-identifier ,import-name)))))
+                          []))))))
               variables)
          [exp]))))
 
@@ -932,12 +943,14 @@
                    (concatenate
                     `((%define ,variable))
                     ;; imported?
-                    (if-bind (old-import-identifier (find-import-identifier name env))
-                      (bind ((import-identifier
-                              (get env "new-identifiers"
-                                   (symbol-name old-import-identifier))))
-                        `((%set ,variable (%get-property ,import-identifier ,name))))
-                      [])))))
+                    (bind ((module/import-name (find-module/import-name name env)))
+                      (if module/import-name
+                          (destructuring-bind (module import-name) module/import-name
+                            (bind ((old-import-identifier (find-import-identifier module env))
+                                   (import-identifier (get env "new-identifiers"
+                                                           (symbol-name old-import-identifier))))
+                              `((%set ,variable (%get-property ,import-identifier ,import-name)))))
+                          []))))))
               variables)
          [exp]))))
 
@@ -1227,11 +1240,14 @@
                             (get env "module" "functions"
                                  definition-name))
                           ;; imported definition?
-                          (if-bind (module (find-module-for-definition
-                                            definition-name env))
-                            (when (inline? module definition-name)
-                              (get module "functions"
-                                   definition-name))))))
+                          (if-bind (module/import-name
+                                    (find-module/import-name
+                                     definition-name env))
+                            (destructuring-bind (module import-name)
+                                module/import-name
+                              (when (inline? module import-name)
+                                (get module "functions"
+                                     import-name)))))))
                (if definition
                    (inline-definition definition (rest form) env)
                    ;; normal call
@@ -1243,8 +1259,8 @@
       ;; not an array
       form))
 
-(define-function inline? (module definition-name)
-  (any? (curry == definition-name)
+(define-function inline? (module name)
+  (any? (curry == name)
         (get module "inline")))
 
 (define-function inline-definition (definition values env)
@@ -2047,7 +2063,7 @@
              (get (. fs ("statSync" p2)) "mtime"))))))
 
 
-(define-function compile-time-import-module (env module-name #key names)
+(define-function compile-time-import-module (env module-name #key options)
   (destructuring-bind (macros symbol-macros)
       (if (== module-name "ralph/core")
           [*core-macros* *core-symbol-macros*]
@@ -2066,8 +2082,8 @@
                       ((get definition "%symbol-macro?")
                        (set! (get symbol-macros name)
                              definition)))))
-                 (or names
-                     (object-properties definitions)))
+                 (apply process-names (object-properties definitions)
+                        options))
              [macros symbol-macros])))
     (chain-object (get env "macros")
                   macros)
@@ -2075,13 +2091,41 @@
                   symbol-macros)))
 
 
-(define-function import-module (module module-name #key names)
+(define-function process-names (all #key only exclude prefix rename)
+  (bind-methods ((resolve (exp)
+                   (if (instance? exp <string>)
+                       exp
+                       (identifier-name exp))))
+    (bind ((names (as-set (if (instance? only <array>)
+                              (map resolve only)
+                              all)))
+           (result [])
+           (renamings (as-object (map resolve
+                                      (or rename [])))))
+      ;; remove all from exclude
+      (do (curry remove! names)
+          (map resolve exclude))
+      ;; rename overwrites only
+      (set-union! names
+                  (object-properties renamings))
+      ;; prefix or rename
+      (for-each ((name names))
+                ()
+          (push-last result
+                     (if-bind (renaming (get renamings name))
+                       [name renaming]
+                       (if (instance? prefix <string>)
+                           [name (concatenate prefix name)]
+                           name))))
+      result)))
+
+(define-function import-module (module module-name #rest options)
   ;; TODO: open database first
   (bind ((other-module (find-module module-name)))
     (push (get module "imports")
           [other-module
-           (or names
-               (get other-module "exports"))])
+                   (apply process-names (get other-module "exports")
+                          options)])
     other-module))
 
 (define-function find-module (module-name)

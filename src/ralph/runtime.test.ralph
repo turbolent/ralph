@@ -1,7 +1,8 @@
 (define-module ralph/runtime.test
   import: (ralph/test
            ralph/format
-           ralph/stream))
+           ralph/stream
+           (ralph/date rename: (<date> <foobar>))))
 
 ;; test expansion
 (define-function foo (if)
@@ -795,7 +796,6 @@
              ((compose size rest) [1 2 3 4]))
 
 
-
 ;; NOTE: add tests ABOVE!
 
 (define-function when ()
@@ -814,3 +814,6 @@
                 (method () 3)))
 
 ;; NOTE: DO NOT add new tests below! when is redefined
+
+(check-no-error "import renaming"
+                (curry make <foobar>))
