@@ -1,5 +1,5 @@
 (define-module ralph/reader
-    import: (ralph/stream ralph/regexp)
+    import: (ralph/stream ralph/format ralph/regexp)
     export: (read))
 
 (define *number-patterns*
