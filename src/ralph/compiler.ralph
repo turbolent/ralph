@@ -2134,5 +2134,6 @@
       (. fs ("writeFileSync" (module-path module-name)
              ;; ignore imports for now
              (description [module-name
-                           exports: (get module "exports")])))
+                           exports: (get module "exports")
+                           inline: (get module "inline")])))
       module)))
