@@ -1,9 +1,10 @@
 
 (define-module ralph/compiler
   import: (ralph/stream ralph/format ralph/regexp
-           ralph/reader ralph/date ralph/file-system)
+           ralph/reader ralph/file-system)
   compile-time-import: (ralph/compiler-macros)
-  export: (compile-module))
+  export: (compile-module
+           analyze-dependencies))
 
 ;; NOTE: naming convention:
 ;; - identifier = symbol, name = string
@@ -26,6 +27,7 @@
   (exports [])
   ;; [module name*]*
   (imports [])
+  (dependencies [])
   ;; name*
   (inline []))
 
@@ -2105,18 +2107,23 @@
 
 (define-function import-module (module module-name #rest options)
   ;; TODO: open database first
-  (bind ((other-module (find-module module-name)))
-    (push (get module "imports")
-          [other-module
-                   (apply process-names (get other-module "exports")
-                          options)])
-    other-module))
+  (if-bind (other-module (find-module module-name))
+    (begin
+     (push (get module "imports")
+           [other-module
+            (apply process-names (get other-module "exports")
+                   options)])
+     (push (get module "dependencies")
+           module-name)
+     other-module)
+    (signal (concatenate "unable to import module '"
+                         module-name "'"))))
 
 (define-function find-module (module-name)
   (or (compile-module module-name)
       (get *modules* module-name)
-      (read-module "src" module-name)
-      (read-module "build" module-name)))
+      (read-module "build" module-name)
+      (read-module "src" module-name)))
 
 (define-function read-module (base-path module-name)
   (bind ((path (module-path base-path module-name)))
@@ -2132,6 +2139,9 @@
       (set! (get *modules* module-name)
             module)))
   (when (recompile? module-name)
+    (unless (file-exists? (source-path module-name))
+      (signal (concatenate "unable to compile module '"
+                           module-name "'")))
     (bind ((module (make <module> name: module-name))
            (env (make <environment> module: module))
            (source (read-file (source-path module-name)))
@@ -2160,5 +2170,26 @@
                   ;; ignore imports for now
                   (description [module-name
                                 exports: (get module "exports")
-                                inline: (get module "inline")]))
+                                inline: (get module "inline")
+                                dependencies: (get module "dependencies")]))
       module)))
+
+
+;; required loading order
+(define-function analyze-dependencies (module-name)
+  (if-bind (module (find-module module-name))
+    (begin
+     (set! (get *modules* module-name)
+           module)
+     (bind-properties (dependencies) module
+       (bind ((result (copy-sequence dependencies)))
+         (do (method (dependency)
+               (do (method (sub-dependency)
+                     (when (member? sub-dependency result)
+                       (remove! result sub-dependency))
+                     (push result sub-dependency))
+                   (analyze-dependencies dependency)))
+             dependencies)
+         result)))
+    (signal (concatenate "unable to find-module '"
+                         module-name "'"))))
