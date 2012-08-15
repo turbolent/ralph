@@ -21,6 +21,7 @@
 
 (define-class <module> (<object>)
   name
+  native?
   ;; name*
   (exports [])
   ;; [module name*]*
@@ -2046,8 +2047,8 @@
   (. path ("resolve" "build"
            (concatenate module-name ".js"))))
 
-(define-function module-path (module-name)
-  (. path ("resolve" "build"
+(define-function module-path (p module-name)
+  (. path ("resolve" p
            (concatenate module-name ".rm"))))
 
 (define-function source-path (module-name)
@@ -2099,7 +2100,6 @@
     (bind ((names (as-set (if (instance? only <array>)
                               (map resolve only)
                               all)))
-           (result [])
            (renamings (as-object (map resolve
                                       (or rename [])))))
       ;; remove all from exclude
@@ -2109,15 +2109,13 @@
       (set-union! names
                   (object-properties renamings))
       ;; prefix or rename
-      (for-each ((name names))
-                ()
-          (push-last result
-                     (if-bind (renaming (get renamings name))
-                       [name renaming]
-                       (if (instance? prefix <string>)
-                           [name (concatenate prefix name)]
-                           name))))
-      result)))
+      (map (method (name)
+             (if-bind (renaming (get renamings name))
+               [name renaming]
+               (if (instance? prefix <string>)
+                   [name (concatenate prefix name)]
+                   name)))
+           names))))
 
 (define-function import-module (module module-name #rest options)
   ;; TODO: open database first
@@ -2131,14 +2129,15 @@
 (define-function find-module (module-name)
   (or (compile-module module-name)
       (get *modules* module-name)
-      (read-module module-name)))
+      (read-module "src" module-name)
+      (read-module "build" module-name)))
 
-(define-function read-module (module-name)
-  (bind ((p (module-path module-name)))
-    (when (. path ("existsSync" p))
+(define-function read-module (p module-name)
+  (bind ((p2 (module-path p module-name)))
+    (when (. path ("existsSync" p2))
       (apply (curry make <module> name:)
              (read (make <string-stream>
-                         string: (read-file p)))))))
+                         string: (read-file p2)))))))
 
 (define-function read-file (path)
   (. fs ("readFileSync" path)
@@ -2150,8 +2149,15 @@
     (. fs ("openSync" p "w"))))
 
 (define-function compile-module (module-name)
-  (when (and (not (has? *modules* module-name))
-             (recompile? module-name))
+  ;; module in source directory? (native)
+  (unless (has? *modules* module-name)
+    (if-bind (module (read-module "src" module-name))
+      (set! (get *modules* module-name)
+            module)))
+  (when (and (not (get *modules* module-name "native?"))
+             ;; TODO (recompile? module-name)
+             #t
+             )
     (bind ((module (make <module> name: module-name))
            (env (make <environment> module: module))
            (source (read-file (source-path module-name)))
@@ -2175,7 +2181,7 @@
           program)
       (. fs ("closeSync" executable))
       ;; write module
-      (. fs ("writeFileSync" (module-path module-name)
+      (. fs ("writeFileSync" (module-path "build" module-name)
              ;; ignore imports for now
              (description [module-name
                            exports: (get module "exports")
