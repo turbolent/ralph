@@ -1,0 +1,27 @@
+(define-module ralph/file-system
+  import: ((path only: (dirname))
+           (fs rename: ("existsSync" file-exists?
+                        "mkdirSync" mkdir-sync)))
+  export: (ensure-directories-exist
+           path-directory
+           path-parent-directory))
+
+(define-function path-directory (path)
+  (concatenate
+   (dirname (if (== (last path) "/")
+                (concatenate path "/")
+                path))
+   "/"))
+
+(define-function path-parent-directory (path)
+  (bind ((result (dirname (but-last (path-directory path)))))
+    (concatenate result "/")))
+
+(define-function ensure-directories-exist (path)
+  (bind ((directory (path-directory path))
+         (parent (path-parent-directory directory)))
+    (unless (file-exists? parent)
+      (ensure-directories-exist parent))
+    (unless (file-exists? directory)
+      (mkdir-sync directory))
+    path))

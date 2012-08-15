@@ -1,0 +1,4 @@
+("path"
+ native?: #t
+ exports: ("normalize" "join" "resolve" "relative"
+           "dirname" "basename" "extname" "sep"))
