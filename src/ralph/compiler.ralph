@@ -1,7 +1,7 @@
 
 (define-module ralph/compiler
   import: (ralph/stream ralph/format ralph/regexp
-           ralph/reader ralph/date)
+           ralph/reader ralph/date ralph/file-system)
   compile-time-import: (ralph/compiler-macros)
   export: (compile-module))
 
@@ -2032,37 +2032,23 @@
 
 ;;;;
 
-(define path (%native-call "require" "path"))
-(define fs (%native-call "require" "fs"))
-(define vm (%native-call "require" "vm"))
-
-(define-function ensure-directory (directory)
-  (bind ((parent (. path ("dirname" directory))))
-    (unless (. path ("existsSync" parent))
-      (ensure-directory parent))
-    (unless (. path ("existsSync" directory))
-      (. fs ("mkdirSync" directory)))))
-
 (define-function executable-path (module-name)
-  (. path ("resolve" "build"
-           (concatenate module-name ".js"))))
+  (resolve-path "build" (concatenate module-name ".js")))
 
-(define-function module-path (p module-name)
-  (. path ("resolve" p
-           (concatenate module-name ".rm"))))
+(define-function module-path (base-path module-name)
+  (resolve-path base-path
+                (concatenate module-name ".rm")))
 
 (define-function source-path (module-name)
-  (. path ("resolve" "src"
-           (concatenate module-name ".ralph"))))
-
+  (resolve-path "src" (concatenate module-name ".ralph")))
 
 (define-function recompile? (module-name)
-  (bind ((p (executable-path module-name)))
-    (or (not (. path ("existsSync" p)))
-        (bind ((p2 (source-path module-name)))
-          (< (get (. fs ("statSync" p)) "mtime")
-             (get (. fs ("statSync" p2)) "mtime"))))))
-
+  (and (not (get *modules* module-name "native?"))
+       (bind ((path (executable-path module-name)))
+         (or (not (file-exists? path))
+             (bind ((path2 (source-path module-name)))
+               (< (get (file-properties path) "modification-date")
+                  (get (file-properties path2) "modification-date")))))))
 
 (define-function compile-time-import-module (env module-name #key options)
   (destructuring-bind (macros symbol-macros)
@@ -2132,21 +2118,12 @@
       (read-module "src" module-name)
       (read-module "build" module-name)))
 
-(define-function read-module (p module-name)
-  (bind ((p2 (module-path p module-name)))
-    (when (. path ("existsSync" p2))
+(define-function read-module (base-path module-name)
+  (bind ((path (module-path base-path module-name)))
+    (when (file-exists? path)
       (apply (curry make <module> name:)
              (read (make <string-stream>
-                         string: (read-file p2)))))))
-
-(define-function read-file (path)
-  (. fs ("readFileSync" path)
-     ("toString")))
-
-(define-function open-executable (module-name)
-  (bind ((p (executable-path module-name)))
-    (ensure-directory (. path ("dirname" p)))
-    (. fs ("openSync" p "w"))))
+                         string: (read-file path)))))))
 
 (define-function compile-module (module-name)
   ;; module in source directory? (native)
@@ -2154,15 +2131,12 @@
     (if-bind (module (read-module "src" module-name))
       (set! (get *modules* module-name)
             module)))
-  (when (and (not (get *modules* module-name "native?"))
-             ;; TODO (recompile? module-name)
-             #t
-             )
+  (when (recompile? module-name)
     (bind ((module (make <module> name: module-name))
            (env (make <environment> module: module))
            (source (read-file (source-path module-name)))
            (program (read-program source))
-           (executable (open-executable module-name)))
+           (result ""))
       (set! (get *modules* module-name)
             module)
       (compile-time-import-module env "ralph/core")
@@ -2174,16 +2148,17 @@
               (make-import-definition "ralph/core" env)))
       ;; compile
       (do (method (expression)
-            (. fs ("writeSync" executable
-                   (concatenate
-                    (compile-expression expression env)
-                    "\n"))))
+            (bind ((code (compile-expression expression env)))
+              (set! result
+                    (concatenate result code "\n"))))
           program)
-      (. fs ("closeSync" executable))
+      ;; write executable
+      (write-file (executable-path module-name)
+                  result)
       ;; write module
-      (. fs ("writeFileSync" (module-path "build" module-name)
-             ;; ignore imports for now
-             (description [module-name
-                           exports: (get module "exports")
-                           inline: (get module "inline")])))
+      (write-file (module-path "build" module-name)
+                  ;; ignore imports for now
+                  (description [module-name
+                                exports: (get module "exports")
+                                inline: (get module "inline")]))
       module)))

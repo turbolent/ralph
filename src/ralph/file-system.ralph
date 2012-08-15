@@ -1,10 +1,24 @@
 (define-module ralph/file-system
-  import: ((path only: (dirname))
-           (fs rename: ("existsSync" file-exists?
-                        "mkdirSync" mkdir-sync)))
+  import: ((path only: (dirname resolve))
+           (fs rename: ("existsSync" exists-sync
+                        "mkdirSync" mkdir-sync
+                        "statSync" stat-sync
+                        "lstatSync" lstat-sync
+                        "readFileSync" read-file-sync
+                        "writeFileSync" write-file-sync)))
   export: (ensure-directories-exist
            path-directory
-           path-parent-directory))
+           path-parent-directory
+           resolve-path
+           file-properties
+           file-type
+           read-file
+           write-file
+           file-exists?))
+
+(define resolve-path resolve)
+
+(define file-exists? exists-sync)
 
 (define-function path-directory (path)
   (concatenate
@@ -13,9 +27,15 @@
                 path))
    "/"))
 
+(define-function strip-trailing-slashes (path)
+  (while (== (last path) "/")
+    (set! path (but-last path)))
+  path)
+
 (define-function path-parent-directory (path)
-  (bind ((result (dirname (but-last (path-directory path)))))
-    (concatenate result "/")))
+  (bind ((path* (strip-trailing-slashes
+                 (path-directory path))))
+    (concatenate (dirname path*) "/")))
 
 (define-function ensure-directories-exist (path)
   (bind ((directory (path-directory path))
@@ -25,3 +45,40 @@
     (unless (file-exists? directory)
       (mkdir-sync directory))
     path))
+
+(define *file-properties-mapping*
+  (make-object "modification-date" "mtime"
+               "creation-date" "ctime"
+               "access-date" "atime"))
+
+;; TODO: lstat?
+(define-function file-properties (path)
+  (when (file-exists? path)
+    (bind ((stats (stat-sync path))
+           (result (make-object)))
+      (for-each ((mapping *file-properties-mapping*))
+                ()
+        (destructuring-bind (setter getter) mapping
+          (set! (get result setter)
+                (get stats getter))))
+      result)))
+
+(define-function file-type (path)
+  (when (file-exists? path)
+    (bind ((stat (lstat-sync path)))
+      (cond
+       ((. stat ("isFile")) "file")
+       ((. stat ("isDirectory")) "directory" )
+       ((. stat ("isSymbolicLink")) "link")
+       ((. stat ("isBlockDevice")) "block-device")
+       ((. stat ("isCharacterDevice")) "character-device")
+       ((. stat ("isFIFO")) "fifo")
+       ((. stat ("isSocket")) "socket")))))
+
+(define-function read-file (path)
+  (when (file-exists? path)
+    (as-string (read-file-sync path))))
+
+(define-function write-file (path content)
+  (ensure-directories-exist path)
+  (write-file-sync path content))
