@@ -1,1 +1,1 @@
-("ralph/compiler" exports: ("compile-module"))
+("ralph/compiler" exports: ("compile-module") inline: ())

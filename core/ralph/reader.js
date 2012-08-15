@@ -1,153 +1,154 @@
 var $g1746 = require("ralph/core")
-{var $g1749, $g1750;
-$g1749 = require("ralph/stream");
-$g1750 = require("ralph/regexp")}
-var $g1756 = $K("ignore-case?"), $g1757 = $K("pattern"), $g1751 = $g1746.map, $g1752 = $g1746.curry, $g1753 = $g1746.make, $g1754 = $g1750["<regexp>"], $g1755 = $g1751($g1752($g1753, $g1754, $g1756, true, $g1757), ["^[+-]?0x[0-9a-f]+", "^[+-]?0[0-7]+", "^[+-]?\\d+\\.?\\d*(?:e-?\\d*(?:\\d\\.?|\\.?\\d)\\d*)?"])
-var $g1758 = $g1753($g1754, $g1757, "(.*)[\n\r]?")
-var $g1759 = "\t\n\r\v\f\u00a0\ufeff "
-var $g1760 = $g1746.concatenate, $g1761 = $g1753($g1754, $g1757, $g1760("[", $g1759, "]*"))
-var $g1762 = $g1753($g1754, $g1757, $g1760("[^\\[\\]();`,", $g1759, "]+"))
-var $g1764 = $g1746["%make-function"], $g1765 = $g1749["stream-read"], $g1766 = $g1746.size, $g1767 = $g1746.first, $g1768 = $g1750.match, $g1769 = $g1749["stream-remaining-contents"], $g1770 = $g1764("match_stream", function $g1784 ($regexp1771, $stream1772)
-{var $regexp1777 = $regexp1771, $rstring1778 = $g1769($stream1772), $g1773 = $rstring1778.match($regexp1777);
-if ($T($g1773))
-{var $result1774 = $g1773, $sequence1781 = $result1774, $robject1782 = $sequence1781[0], $g1783 = (($robject1782 || false).length || 0);
-$g1765($stream1772, $g1783);
-return $result1774}}, false)
-var $g1785 = $g1764("read_line", function $g1787 ($stream1786)
-{return $g1770($g1758, $stream1786)}, false)
-var $g1788 = $g1764("read_whitespace", function $g1790 ($stream1789)
-{return $g1770($g1761, $stream1789)}, false)
-var $g1827 = $KEY, $g1828 = $REST, $g1793 = $g1746["=="], $g1794 = $g1746["as-number"], $g1795 = $g1746.last, $g1796 = $g1746.keyword, $g1797 = $g1746["but-last"], $g1798 = $g1746.symbol, $g1799 = $g1746["any?"], $g1800 = $g1746.rcurry, $g1801 = $g1764("make_atom", function $g1829 ($value1802)
-{var $g1803 = $value1802;
-if ($T($g1793($g1803, "#t")))
+{var $g1750, $g1751, $g1752;
+$g1750 = require("ralph/stream");
+$g1751 = require("ralph/format");
+$g1752 = require("ralph/regexp")}
+var $g1758 = $K("ignore-case?"), $g1759 = $K("pattern"), $g1753 = $g1746.map, $g1754 = $g1746.curry, $g1755 = $g1746.make, $g1756 = $g1752["<regexp>"], $g1757 = $g1753($g1754($g1755, $g1756, $g1758, true, $g1759), ["^[+-]?0x[0-9a-f]+", "^[+-]?0[0-7]+", "^[+-]?\\d+\\.?\\d*(?:e-?\\d*(?:\\d\\.?|\\.?\\d)\\d*)?"])
+var $g1760 = $g1755($g1756, $g1759, "(.*)[\n\r]?")
+var $g1761 = "\t\n\r\v\f\u00a0\ufeff "
+var $g1762 = $g1746.concatenate, $g1763 = $g1755($g1756, $g1759, $g1762("[", $g1761, "]*"))
+var $g1764 = $g1755($g1756, $g1759, $g1762("[^\\[\\]();`,", $g1761, "]+"))
+var $g1766 = $g1746["%make-function"], $g1767 = $g1750["stream-read"], $g1768 = $g1746.size, $g1769 = $g1746.first, $g1770 = $g1752.match, $g1771 = $g1750["stream-remaining-contents"], $g1772 = $g1766("match_stream", function $g1786 ($regexp1773, $stream1774)
+{var $regexp1779 = $regexp1773, $rstring1780 = $g1771($stream1774), $g1775 = $rstring1780.match($regexp1779);
+if ($T($g1775))
+{var $result1776 = $g1775, $sequence1783 = $result1776, $robject1784 = $sequence1783[0], $g1785 = (($robject1784 || false).length || 0);
+$g1767($stream1774, $g1785);
+return $result1776}}, false)
+var $g1787 = $g1766("read_line", function $g1789 ($stream1788)
+{return $g1772($g1760, $stream1788)}, false)
+var $g1790 = $g1766("read_whitespace", function $g1792 ($stream1791)
+{return $g1772($g1763, $stream1791)}, false)
+var $g1829 = $KEY, $g1830 = $REST, $g1795 = $g1746["=="], $g1796 = $g1746["as-number"], $g1797 = $g1746.last, $g1798 = $g1746.keyword, $g1799 = $g1746["but-last"], $g1800 = $g1746.symbol, $g1801 = $g1746["any?"], $g1802 = $g1746.rcurry, $g1803 = $g1766("make_atom", function $g1831 ($value1804)
+{var $g1805 = $value1804;
+if ($T($g1795($g1805, "#t")))
 return true
-else if ($T($g1793($g1803, "#f")))
+else if ($T($g1795($g1805, "#f")))
 return false
-else if ($T($g1793($g1803, "#key")))
-return $g1827
-else if ($T($g1793($g1803, "#rest")))
-return $g1828
-else {var $g1804 = $g1799($g1800($g1768, $value1802), $g1755);
-if ($T($g1804))
-{var $rnumber1805 = $g1804, $sequence1807 = $rnumber1805, $g1822 = $sequence1807[0];
-return $g1794($g1822)}
-else {var $rarray1815 = $value1802, $g1816 = $rarray1815, $g1817 = (($g1816 || false).length || 0), $g1823 = ($g1817 - 1), $g1824 = $rarray1815[$g1823], $g1825 = $g1793($g1824, ":");
-if ($T($g1825))
-{var $rarray1820 = $value1802, $n1821 = undefined, $g1826 = $rarray1820.slice(0, (($n1821 || 1) * -1));
-return $g1796($g1826)}
-else return $g1798($value1802)}}}, false)
-var $g1853 = $K("radix"), trueQ = $g1746["true?"], $g1831 = $g1746.not, $g1832 = $g1749["stream-at-end?"], $g1833 = $g1746.signal, $g1834 = $g1749["stream-write"], $g1835 = $g1746["code-char"], $g1836 = $g1746["parse-integer"], $g1837 = $g1749["stream-read-element"], $g1838 = $g1749["stream-contents"], $g1839 = $g1749["<string-stream>"], $g1840 = $g1764("read_string", function $g1854 ($stream1841)
-{var $result1842 = $g1753($g1839), $rchar1843 = $g1837($stream1841);
+else if ($T($g1795($g1805, "#key")))
+return $g1829
+else if ($T($g1795($g1805, "#rest")))
+return $g1830
+else {var $g1806 = $g1801($g1802($g1770, $value1804), $g1757);
+if ($T($g1806))
+{var $rnumber1807 = $g1806, $sequence1809 = $rnumber1807, $g1824 = $sequence1809[0];
+return $g1796($g1824)}
+else {var $rarray1817 = $value1804, $g1818 = $rarray1817, $g1819 = (($g1818 || false).length || 0), $g1825 = ($g1819 - 1), $g1826 = $rarray1817[$g1825], $g1827 = $g1795($g1826, ":");
+if ($T($g1827))
+{var $rarray1822 = $value1804, $n1823 = undefined, $g1828 = $rarray1822.slice(0, (($n1823 || 1) * -1));
+return $g1798($g1828)}
+else return $g1800($value1804)}}}, false)
+var $g1855 = $K("radix"), trueQ = $g1746["true?"], $g1833 = $g1746.not, $g1834 = $g1750["stream-at-end?"], $g1835 = $g1746.signal, $g1836 = $g1750["stream-write"], $g1837 = $g1746["code-char"], $g1838 = $g1746["parse-integer"], $g1839 = $g1750["stream-read-element"], $g1840 = $g1750["stream-contents"], $g1841 = $g1750["<string-stream>"], $g1842 = $g1766("read_string", function $g1856 ($stream1843)
+{var $result1844 = $g1755($g1841), $rchar1845 = $g1839($stream1843);
 while ($T(true))
-{var $value1846 = $g1793($rchar1843, "\""), $g1852 = !(trueQ($value1846));
-if ($T($g1852))
-{if ($T($g1832($stream1841)))
-{var $error1848 = "missing end of string";
-throw($error1848);
-false};
-var $g1851;
-if ($T($g1793($rchar1843, "\\")))
-{var $g1844 = $g1837($stream1841);
-if ($T($g1793($g1844, "\"")))
-$g1851 = "\""
-else if ($T($g1793($g1844, "\\")))
-$g1851 = "\\"
-else if ($T($g1793($g1844, "b")))
-$g1851 = "\b"
-else if ($T($g1793($g1844, "f")))
-$g1851 = "\f"
-else if ($T($g1793($g1844, "n")))
-$g1851 = "\n"
-else if ($T($g1793($g1844, "r")))
-$g1851 = "\r"
-else if ($T($g1793($g1844, "t")))
-$g1851 = "\t"
-else if ($T($g1793($g1844, "v")))
-$g1851 = "\v"
-else if ($T($g1793($g1844, "u")))
-$g1851 = $g1835($g1836($g1765($stream1841, 4), $g1853, 16))
-else {var $error1850 = "bad escape sequence";
+{var $value1848 = $g1795($rchar1845, "\""), $g1854 = !(trueQ($value1848));
+if ($T($g1854))
+{if ($T($g1834($stream1843)))
+{var $error1850 = "missing end of string";
 throw($error1850);
-$g1851 = false}}
-else $g1851 = $rchar1843;
-$g1834($result1842, $g1851);
-$rchar1843 = $g1837($stream1841)}
+false};
+var $g1853;
+if ($T($g1795($rchar1845, "\\")))
+{var $g1846 = $g1839($stream1843);
+if ($T($g1795($g1846, "\"")))
+$g1853 = "\""
+else if ($T($g1795($g1846, "\\")))
+$g1853 = "\\"
+else if ($T($g1795($g1846, "b")))
+$g1853 = "\b"
+else if ($T($g1795($g1846, "f")))
+$g1853 = "\f"
+else if ($T($g1795($g1846, "n")))
+$g1853 = "\n"
+else if ($T($g1795($g1846, "r")))
+$g1853 = "\r"
+else if ($T($g1795($g1846, "t")))
+$g1853 = "\t"
+else if ($T($g1795($g1846, "v")))
+$g1853 = "\v"
+else if ($T($g1795($g1846, "u")))
+$g1853 = $g1837($g1838($g1767($stream1843, 4), $g1855, 16))
+else {var $error1852 = "bad escape sequence";
+throw($error1852);
+$g1853 = false}}
+else $g1853 = $rchar1845;
+$g1836($result1844, $g1853);
+$rchar1845 = $g1839($stream1843)}
 else break};
-return $g1838($result1842)}, false)
-var $g1855 = ["%backquote", "%comma"]
-{var trueQ = $g1746["true?"], $g1861 = $g1746["push-last"], $g1862 = $g1746["member?"], $g1863 = $g1746["symbol-name"], $g1864 = $g1746["pop-last"], $g1865, $g1866 = $g1749["stream-unread-element"], $g1867 = $g1746["empty?"], $g1868 = $g1746["%keys"], $g1869 = $g1764("read", function $g2000 ($stream1870)
-{var $g1871 = $SL.call(arguments, 1), $g1872 = $g1868($g1871, {"eof-error?":true,
-"eof-value":false}), $eof_errorq1873 = $g1872["eof-error?"], $eof_value1874 = $g1872["eof-value"], $stack1875 = [[]], $ends1876 = [], $add_to_stackn1877, $add_lastn1878;
-$add_to_stackn1877 = function $g2001 ($value1879)
-{var $rarray1895 = $stack1875, $g1896 = $rarray1895, $g1897 = (($g1896 || false).length || 0), $g1986 = ($g1897 - 1), $rarray1898 = $rarray1895[$g1986], $value1899 = $value1879;
-$rarray1898.push($value1899);
-$rarray1898;
-var $rarray1908 = $stack1875, $g1909 = $rarray1908, $g1910 = (($g1909 || false).length || 0), $g1987 = ($g1910 - 1), $sequence1911 = $rarray1908[$g1987], $g1988 = $sequence1911[0], $g1989 = $g1863($g1988), $g1990 = $g1862($g1989, $g1855);
-if ($T($g1990))
-return $add_lastn1878()};
-$add_lastn1878 = function $g2002 ()
-{var $rarray1913 = $stack1875, $value1880 = $rarray1913.pop();
-return $add_to_stackn1877($value1880)};
+return $g1840($result1844)}, false)
+var $g1857 = ["%backquote", "%comma"]
+{var trueQ = $g1746["true?"], $g1863 = $g1746["push-last"], $g1864 = $g1746["member?"], $g1865 = $g1746["symbol-name"], $g1866 = $g1746["pop-last"], $g1867 = $g1751["format-to-string"], $g1868 = $g1750["stream-unread-element"], $g1869 = $g1746["empty?"], $g1870 = $g1746["%keys"], $g1871 = $g1766("read", function $g2002 ($stream1872)
+{var $g1873 = $SL.call(arguments, 1), $g1874 = $g1870($g1873, {"eof-error?":true,
+"eof-value":false}), $eof_errorq1875 = $g1874["eof-error?"], $eof_value1876 = $g1874["eof-value"], $stack1877 = [[]], $ends1878 = [], $add_to_stackn1879, $add_lastn1880;
+$add_to_stackn1879 = function $g2003 ($value1881)
+{var $rarray1897 = $stack1877, $g1898 = $rarray1897, $g1899 = (($g1898 || false).length || 0), $g1988 = ($g1899 - 1), $rarray1900 = $rarray1897[$g1988], $value1901 = $value1881;
+$rarray1900.push($value1901);
+$rarray1900;
+var $rarray1910 = $stack1877, $g1911 = $rarray1910, $g1912 = (($g1911 || false).length || 0), $g1989 = ($g1912 - 1), $sequence1913 = $rarray1910[$g1989], $g1990 = $sequence1913[0], $g1991 = $g1865($g1990), $g1992 = $g1864($g1991, $g1857);
+if ($T($g1992))
+return $add_lastn1880()};
+$add_lastn1880 = function $g2004 ()
+{var $rarray1915 = $stack1877, $value1882 = $rarray1915.pop();
+return $add_to_stackn1879($value1882)};
 while ($T(true))
-{var $value1915 = $g1832($stream1870), $g1997 = !(trueQ($value1915));
-if ($T($g1997))
-{$g1788($stream1870);
-var $rchar1881 = $g1837($stream1870), $g1882 = $rchar1881;
-if ($T($g1793($g1882, ";")))
-$g1785($stream1870)
-else if ($T($g1793($g1882, "`")))
-{var $rarray1918 = $stack1875, $value1919 = [$g1798("%backquote", "ralph/core")];
-$rarray1918.push($value1919);
-$rarray1918}
-else if ($T($g1793($g1882, ",")))
-{var $rarray1922 = $stack1875, $value1923 = [$g1798("%comma", "ralph/core")];
-$rarray1922.push($value1923);
-$rarray1922}
-else if ($T($g1793($g1882, "(")))
-{var $rarray1926 = $ends1876, $value1927 = ")";
-$rarray1926.push($value1927);
-$rarray1926;
-var $rarray1930 = $stack1875, $value1931 = [];
-$rarray1930.push($value1931);
-$rarray1930}
-else if ($T($g1793($g1882, "[")))
-{var $rarray1934 = $ends1876, $value1935 = "]";
-$rarray1934.push($value1935);
-$rarray1934;
-var $rarray1938 = $stack1875, $value1939 = [$g1798("%array")];
-$rarray1938.push($value1939);
-$rarray1938}
-else {var $rarray1947 = $ends1876, $g1948 = $rarray1947, $g1949 = (($g1948 || false).length || 0), $g1991 = ($g1949 - 1), $g1992 = $rarray1947[$g1991], $g1993 = $g1793($g1882, $g1992);
-if ($T($g1993))
-{var $rarray1951 = $ends1876;
-$rarray1951.pop();
-$add_lastn1878()}
-else {var $g1883 = $g1793($g1882, ")"), $g1994;
-if ($T($g1883))
-$g1994 = $g1883
-else $g1994 = $g1793($g1882, "]");
-if ($T($g1994))
-{var $error1953 = $g1865("too many closings: %=", $rchar1881);
-throw($error1953);
-false}
-else if ($T($g1793($g1882, "\"")))
-$add_to_stackn1877($g1840($stream1870))
-else {$g1866($stream1870);
-var $sequence1955 = $g1770($g1762, $stream1870), $g1995 = $sequence1955[0], $g1996 = $g1801($g1995);
-$add_to_stackn1877($g1996)}}};
-$g1788($stream1870)}
-else break};
-var $sequence1966 = $ends1876, $g1967 = $sequence1966, $g1968 = (($g1967 || false).length || 0), $g1969 = 0, $g1998 = ($g1968 === $g1969);
-if ($T($g1998))
-{var $rarray1978 = $stack1875, $g1979 = $rarray1978, $g1980 = (($g1979 || false).length || 0), $g1999 = ($g1980 - 1), $sequence1981 = $rarray1978[$g1999], $value1884 = $sequence1981[0], $g1885 = $value1884;
+{var $value1917 = $g1834($stream1872), $g1999 = !(trueQ($value1917));
+if ($T($g1999))
+{$g1790($stream1872);
+var $rchar1883 = $g1839($stream1872), $g1884 = $rchar1883;
+if ($T($g1795($g1884, ";")))
+$g1787($stream1872)
+else if ($T($g1795($g1884, "`")))
+{var $rarray1920 = $stack1877, $value1921 = [$g1800("%backquote", "ralph/core")];
+$rarray1920.push($value1921);
+$rarray1920}
+else if ($T($g1795($g1884, ",")))
+{var $rarray1924 = $stack1877, $value1925 = [$g1800("%comma", "ralph/core")];
+$rarray1924.push($value1925);
+$rarray1924}
+else if ($T($g1795($g1884, "(")))
+{var $rarray1928 = $ends1878, $value1929 = ")";
+$rarray1928.push($value1929);
+$rarray1928;
+var $rarray1932 = $stack1877, $value1933 = [];
+$rarray1932.push($value1933);
+$rarray1932}
+else if ($T($g1795($g1884, "[")))
+{var $rarray1936 = $ends1878, $value1937 = "]";
+$rarray1936.push($value1937);
+$rarray1936;
+var $rarray1940 = $stack1877, $value1941 = [$g1800("%array")];
+$rarray1940.push($value1941);
+$rarray1940}
+else {var $rarray1949 = $ends1878, $g1950 = $rarray1949, $g1951 = (($g1950 || false).length || 0), $g1993 = ($g1951 - 1), $g1994 = $rarray1949[$g1993], $g1995 = $g1795($g1884, $g1994);
+if ($T($g1995))
+{var $rarray1953 = $ends1878;
+$rarray1953.pop();
+$add_lastn1880()}
+else {var $g1885 = $g1795($g1884, ")"), $g1996;
 if ($T($g1885))
-return $g1885
-else if ($T($eof_errorq1873))
-{var $error1983 = "no object";
-throw($error1983);
-return false}
-else return $eof_value1874}
-else {var $error1985 = $g1865("missing closings: %=", $ends1876);
+$g1996 = $g1885
+else $g1996 = $g1795($g1884, "]");
+if ($T($g1996))
+{var $error1955 = $g1867("too many closings: %=", $rchar1883);
+throw($error1955);
+false}
+else if ($T($g1795($g1884, "\"")))
+$add_to_stackn1879($g1842($stream1872))
+else {$g1868($stream1872);
+var $sequence1957 = $g1772($g1764, $stream1872), $g1997 = $sequence1957[0], $g1998 = $g1803($g1997);
+$add_to_stackn1879($g1998)}}};
+$g1790($stream1872)}
+else break};
+var $sequence1968 = $ends1878, $g1969 = $sequence1968, $g1970 = (($g1969 || false).length || 0), $g1971 = 0, $g2000 = ($g1970 === $g1971);
+if ($T($g2000))
+{var $rarray1980 = $stack1877, $g1981 = $rarray1980, $g1982 = (($g1981 || false).length || 0), $g2001 = ($g1982 - 1), $sequence1983 = $rarray1980[$g2001], $value1886 = $sequence1983[0], $g1887 = $value1886;
+if ($T($g1887))
+return $g1887
+else if ($T($eof_errorq1875))
+{var $error1985 = "no object";
 throw($error1985);
+return false}
+else return $eof_value1876}
+else {var $error1987 = $g1867("missing closings: %=", $ends1878);
+throw($error1987);
 return false}}, false);
-exports.read = $g1869}
+exports.read = $g1871}

@@ -1,28 +1,28 @@
-var $g2005 = require("ralph/core")
+var $g2007 = require("ralph/core")
 false
-{var $g2006 = Date;
-exports["<date>"] = $g2006}
-var $g2007 = [["timestamp", "setTime"], ["day", "setDate"], ["month", "setMonth"], ["year", "setYear"], ["minutes", "setMinutes"], ["seconds", "setSeconds"], ["hours", "setHours"], ["milliseconds", "setMilliseconds"]]
-var trueQ = $g2005["true?"], $g2014 = $g2005["%make-method"], $g2015 = $g2005.not, $g2016 = $g2005["any?"], $g2017 = $g2005["empty?"], $g2018 = $g2005.get, $g2019 = $g2005.rest, $g2020 = $g2005.first, $g2021 = $g2005["as-object"], $g2022 = $g2014("initialize", function $g2045 ($date2023)
-{var $options2024 = $SL.call(arguments, 1), $rarguments2025 = $g2021($options2024), $g2026 = $g2007, $g2027, $g2028, $g2029 = [$g2026];
+{var $g2008 = Date;
+exports["<date>"] = $g2008}
+var $g2009 = [["timestamp", "setTime"], ["day", "setDate"], ["month", "setMonth"], ["year", "setYear"], ["minutes", "setMinutes"], ["seconds", "setSeconds"], ["hours", "setHours"], ["milliseconds", "setMilliseconds"]]
+var trueQ = $g2007["true?"], $g2016 = $g2007["%make-method"], $g2017 = $g2007.not, $g2018 = $g2007["any?"], $g2019 = $g2007["empty?"], $g2020 = $g2007.get, $g2021 = $g2007.rest, $g2022 = $g2007.first, $g2023 = $g2007["as-object"], $g2024 = $g2016("initialize", function $g2047 ($date2025)
+{var $options2026 = $SL.call(arguments, 1), $rarguments2027 = $g2023($options2026), $g2028 = $g2009, $g2029, $g2030, $g2031 = [$g2028];
 while ($T(true))
-{var $g2030 = $g2027, $value2038;
-if ($T($g2030))
-$value2038 = $g2030
-else $value2038 = $g2016($g2017, $g2029);
-var $g2044 = !(trueQ($value2038));
-if ($T($g2044))
-{var $sequence2040 = $g2026, $setter2031 = $sequence2040[0];
-(function $g2046 ($setter2032)
-{var $keyword2033 = $setter2032[0], $rfunction2034 = $setter2032[1], $g2035 = $g2018($rarguments2025, $keyword2033);
-if ($T($g2035))
-{var $value2036 = $g2035;
-return $date2023[$rfunction2034]($value2036)}})($setter2031);
-var $sequence2042 = $g2026, $g2043 = $sequence2042.slice(1);
-$g2026 = $g2043;
-$g2029 = [$g2026]}
+{var $g2032 = $g2029, $value2040;
+if ($T($g2032))
+$value2040 = $g2032
+else $value2040 = $g2018($g2019, $g2031);
+var $g2046 = !(trueQ($value2040));
+if ($T($g2046))
+{var $sequence2042 = $g2028, $setter2033 = $sequence2042[0];
+(function $g2048 ($setter2034)
+{var $keyword2035 = $setter2034[0], $rfunction2036 = $setter2034[1], $g2037 = $g2020($rarguments2027, $keyword2035);
+if ($T($g2037))
+{var $value2038 = $g2037;
+return $date2025[$rfunction2036]($value2038)}})($setter2033);
+var $sequence2044 = $g2028, $g2045 = $sequence2044.slice(1);
+$g2028 = $g2045;
+$g2031 = [$g2028]}
 else break};
-return $g2028}, false, $g2006, $g2022)
-{var $g2047 = $g2005["%make-function"], $g2048 = $g2047("locale_time_string", function $g2050 ($date2049)
-{return $date2049.toLocaleTimeString()}, false);
-exports["locale-time-string"] = $g2048}
+return $g2030}, false, $g2008, $g2024)
+{var $g2049 = $g2007["%make-function"], $g2050 = $g2049("locale_time_string", function $g2052 ($date2051)
+{return $date2051.toLocaleTimeString()}, false);
+exports["locale-time-string"] = $g2050}

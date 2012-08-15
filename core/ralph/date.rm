@@ -1,1 +1,1 @@
-("ralph/date" exports: ("<date>" "locale-time-string"))
+("ralph/date" exports: ("<date>" "locale-time-string") inline: ("locale-time-string"))
