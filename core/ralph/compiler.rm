@@ -1,1 +1,1 @@
-("ralph/compiler" exports: ("compile-module") inline: ())
+("ralph/compiler" exports: ("compile-module" "analyze-dependencies") inline: () dependencies: ("ralph/file-system" "ralph/reader" "ralph/regexp" "ralph/format" "ralph/stream" "ralph/core"))

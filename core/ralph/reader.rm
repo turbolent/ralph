@@ -1,1 +1,1 @@
-("ralph/reader" exports: ("read") inline: ())
+("ralph/reader" exports: ("read") inline: () dependencies: ("ralph/regexp" "ralph/format" "ralph/stream" "ralph/core"))

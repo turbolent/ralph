@@ -1,1 +1,1 @@
-("ralph/regexp" exports: ("<regexp>" "match" "replace-all") inline: ("match"))
+("ralph/regexp" exports: ("<regexp>" "match" "replace-all") inline: ("match") dependencies: ("ralph/core"))

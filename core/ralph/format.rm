@@ -1,1 +1,1 @@
-("ralph/format" exports: ("format-out" "format-to-string" "format") inline: ())
+("ralph/format" exports: ("format-out" "format-to-string" "format") inline: () dependencies: ("ralph/stream" "ralph/core"))
