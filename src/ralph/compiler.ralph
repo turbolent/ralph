@@ -95,8 +95,8 @@
 (define-function generate-symbol (prefix)
   (bind ((name (concatenate
                 (if prefix
-                    (escape-name prefix)
-                    "g")
+                    (concatenate prefix "_")
+                    "$")
                 (as-string (inc! *symbol-count*))))
          (result (symbol name)))
     (set! (get result "generated?") #t)
@@ -1066,8 +1066,9 @@
   (map (method (identifier)
          (destructuring-bind (module-name name)
              (get-module-name/name identifier)
-           (bind ((new-identifier (generate-symbol (unless (get identifier "generated?")
-                                                     name))))
+           (bind ((new-identifier (generate-symbol
+                                   (unless (get identifier "generated?")
+                                     name))))
              (ensure-naming-structure env module-name name)
              (push (get env "identifiers" module-name name)
                    new-identifier)
@@ -1848,9 +1849,7 @@
        (((symbol "%all-arguments"))
         "arguments")
        (else:
-        (if (get exp "generated?")
-            (concatenate "$" (symbol-name exp))
-            (escape-name (symbol-name exp))))))
+        (escape-name (symbol-name exp)))))
     (else:
      (description exp))))
 
