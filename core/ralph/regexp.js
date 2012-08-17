@@ -1,31 +1,31 @@
-var $g1713 = require("ralph/core")
+var $g1758 = require("ralph/core")
 false
-{var $g1714 = RegExp;
-exports["<regexp>"] = $g1714}
-var $g1717 = $g1713["%make-method"], $g1718 = $g1713.concatenate, $g1719 = $g1713["%keys"], $g1720 = $g1717("initialize", function $g1732 ($regexp1721)
-{var $g1722 = $SL.call(arguments, 1), $g1723 = $g1719($g1722, {pattern:false,
+{var $g1759 = RegExp;
+exports["<regexp>"] = $g1759}
+var $g1762 = $g1758["%make-method"], $g1763 = $g1758.concatenate, $g1764 = $g1758["%keys"], $g1765 = $g1762("initialize", function $g1777 ($regexp1766)
+{var $g1767 = $SL.call(arguments, 1), $g1768 = $g1764($g1767, {pattern:false,
 "global?":false,
 "ignore-case?":false,
-"multiline?":false}), $pattern1724 = $g1723.pattern, $globalq1725 = $g1723["global?"], $ignore_caseq1726 = $g1723["ignore-case?"], $multilineq1727 = $g1723["multiline?"];
-if ($T($pattern1724))
-{var $g1729;
-if ($T($globalq1725))
-$g1729 = "g"
-else $g1729 = "";
-var $g1730;
-if ($T($ignore_caseq1726))
-$g1730 = "i"
-else $g1730 = "";
-var $g1731;
-if ($T($multilineq1727))
-$g1731 = "m"
-else $g1731 = "";
-var $flags1728 = $g1718($g1729, $g1730, $g1731);
-return $regexp1721.compile($pattern1724)}}, false, $g1714, $g1720)
-var $g1733 = $g1713["%make-function"], $g1734 = $g1713[">"], $g1735 = $g1733("find", function $g1739 ($regexp1736, $rstring1737)
-{var $position1738 = $rstring1737.search($regexp1736);
-if ($T($g1734($position1738, -1)))
-return $position1738}, false)
-{var $g1740 = $g1733("match", function $g1743 ($regexp1741, $rstring1742)
-{return $rstring1742.match($regexp1741)}, false);
-exports.match = $g1740}
+"multiline?":false}), $pattern1769 = $g1768.pattern, $globalq1770 = $g1768["global?"], $ignore_caseq1771 = $g1768["ignore-case?"], $multilineq1772 = $g1768["multiline?"];
+if ($T($pattern1769))
+{var $g1774;
+if ($T($globalq1770))
+$g1774 = "g"
+else $g1774 = "";
+var $g1775;
+if ($T($ignore_caseq1771))
+$g1775 = "i"
+else $g1775 = "";
+var $g1776;
+if ($T($multilineq1772))
+$g1776 = "m"
+else $g1776 = "";
+var $flags1773 = $g1763($g1774, $g1775, $g1776);
+return $regexp1766.compile($pattern1769)}}, false, $g1759, $g1765)
+var $g1778 = $g1758["%make-function"], $g1779 = $g1758[">"], $g1780 = $g1778("find", function $g1784 ($regexp1781, $rstring1782)
+{var $position1783 = $rstring1782.search($regexp1781);
+if ($T($g1779($position1783, -1)))
+return $position1783}, false)
+{var $g1785 = $g1778("match", function $g1788 ($regexp1786, $rstring1787)
+{return $rstring1787.match($regexp1786)}, false);
+exports.match = $g1785}

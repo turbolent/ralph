@@ -1,85 +1,85 @@
-var $g2007 = require("ralph/core")
-{var $g2010, $g2011;
-$g2010 = require("path");
-$g2011 = require("fs")}
-{var $g2012 = $g2010.resolve, $g2013 = $g2012;
-exports["resolve-path"] = $g2013}
-{var $g2014 = $g2011.existsSync, $g2015 = $g2014;
-exports["file-exists?"] = $g2015}
-{var $g2016 = $g2007["%make-function"], $g2017 = $g2007.concatenate, $g2018 = $g2010.dirname, $g2019 = $g2007["=="], $g2020 = $g2007.last, $g2021 = $g2016("path_directory", function $g2038 ($path2022)
-{var $rarray2030 = $path2022, $g2031 = $rarray2030, $g2032 = (($g2031 || false).length || 0), $g2033 = ($g2032 - 1), $g2034 = $rarray2030[$g2033], $g2035 = $g2019($g2034, "/"), $g2036;
-if ($T($g2035))
-$g2036 = $g2017($path2022, "/")
-else $g2036 = $path2022;
-var $g2037 = $g2018($g2036);
-return $g2017($g2037, "/")}, false);
-exports["path-directory"] = $g2021}
-var $g2039 = $g2007["but-last"], $g2040 = $g2016("strip_trailing_slashes", function $g2060 ($path2041)
+var $g2077 = require("ralph/core")
+{var $g2080, $g2081;
+$g2080 = require("path");
+$g2081 = require("fs")}
+{var $g2082 = $g2080.resolve, $g2083 = $g2082;
+exports["resolve-path"] = $g2083}
+{var $g2084 = $g2081.existsSync, $g2085 = $g2084;
+exports["file-exists?"] = $g2085}
+{var $g2086 = $g2077["%make-function"], $g2087 = $g2077.concatenate, $g2088 = $g2080.dirname, $g2089 = $g2077["=="], $g2090 = $g2077.last, $g2091 = $g2086("path_directory", function $g2108 ($path2092)
+{var $rarray2100 = $path2092, $g2101 = $rarray2100, $g2102 = (($g2101 || false).length || 0), $g2103 = ($g2102 - 1), $g2104 = $rarray2100[$g2103], $g2105 = $g2089($g2104, "/"), $g2106;
+if ($T($g2105))
+$g2106 = $g2087($path2092, "/")
+else $g2106 = $path2092;
+var $g2107 = $g2088($g2106);
+return $g2087($g2107, "/")}, false);
+exports["path-directory"] = $g2091}
+var $g2109 = $g2077["but-last"], $g2110 = $g2086("strip_trailing_slashes", function $g2130 ($path2111)
 {while ($T(true))
-{var $rarray2049 = $path2041, $g2050 = $rarray2049, $g2051 = (($g2050 || false).length || 0), $g2057 = ($g2051 - 1), $g2058 = $rarray2049[$g2057], $g2059 = $g2019($g2058, "/");
-if ($T($g2059))
-{var $rarray2054 = $path2041, $n2055 = undefined, $g2056 = $rarray2054.slice(0, (($n2055 || 1) * -1));
-$path2041 = $g2056}
+{var $rarray2119 = $path2111, $g2120 = $rarray2119, $g2121 = (($g2120 || false).length || 0), $g2127 = ($g2121 - 1), $g2128 = $rarray2119[$g2127], $g2129 = $g2089($g2128, "/");
+if ($T($g2129))
+{var $rarray2124 = $path2111, $n2125 = undefined, $g2126 = $rarray2124.slice(0, (($n2125 || 1) * -1));
+$path2111 = $g2126}
 else break};
-return $path2041}, false)
-{var $g2061 = $g2016("path_parent_directory", function $g2064 ($path2062)
-{var $patht2063 = $g2040($g2021($path2062));
-return $g2017($g2018($patht2063), "/")}, false);
-exports["path-parent-directory"] = $g2061}
-{var trueQ = $g2007["true?"], $g2065 = $g2007.not, $g2066 = $g2011.mkdirSync, $g2067 = $g2016("ensure_directories_exist", function $g2077 ($path2068)
-{var $directory2069 = $g2021($path2068), $parent2070 = $g2061($directory2069), $value2072 = $g2015($parent2070), $g2075 = !(trueQ($value2072));
-if ($T($g2075))
-$g2067($parent2070);
-var $value2074 = $g2015($directory2069), $g2076 = !(trueQ($value2074));
-if ($T($g2076))
-$g2066($directory2069);
-return $path2068}, false);
-exports["ensure-directories-exist"] = $g2067}
-var $g2078 = $g2007["make-object"], $g2079 = $g2078("modification-date", "mtime", "creation-date", "ctime", "access-date", "atime")
-{var trueQ = $g2007["true?"], $g2085 = $g2007["any?"], $g2086 = $g2007["empty?"], $g2087 = $g2007["get-setter"], $g2088 = $g2007.get, $g2089 = $g2007.rest, $g2090 = $g2007.first, $g2091 = $g2011.statSync, $g2092 = $g2016("file_properties", function $g2113 ($path2093)
-{if ($T($g2015($path2093)))
-{var $stats2094 = $g2091($path2093), $result2095 = $g2078(), $g2096 = $g2079, $g2097, $g2098, $g2099 = [$g2096];
+return $path2111}, false)
+{var $g2131 = $g2086("path_parent_directory", function $g2134 ($path2132)
+{var $patht2133 = $g2110($g2091($path2132));
+return $g2087($g2088($patht2133), "/")}, false);
+exports["path-parent-directory"] = $g2131}
+{var trueQ = $g2077["true?"], $g2135 = $g2077.not, $g2136 = $g2081.mkdirSync, $g2137 = $g2086("ensure_directories_exist", function $g2147 ($path2138)
+{var $directory2139 = $g2091($path2138), $parent2140 = $g2131($directory2139), $value2142 = $g2085($parent2140), $g2145 = !(trueQ($value2142));
+if ($T($g2145))
+$g2137($parent2140);
+var $value2144 = $g2085($directory2139), $g2146 = !(trueQ($value2144));
+if ($T($g2146))
+$g2136($directory2139);
+return $path2138}, false);
+exports["ensure-directories-exist"] = $g2137}
+var $g2148 = [["modification-date", "mtime"], ["creation-date", "ctime"], ["access-date", "atime"]]
+{var trueQ = $g2077["true?"], $g2154 = $g2077["any?"], $g2155 = $g2077["empty?"], $g2156 = $g2077["get-setter"], $g2157 = $g2077.get, $g2158 = $g2077.rest, $g2159 = $g2077.first, $g2160 = $g2077["make-object"], $g2161 = $g2081.statSync, $g2162 = $g2086("file_properties", function $g2183 ($path2163)
+{if ($T($g2085($path2163)))
+{var $stats2164 = $g2161($path2163), $result2165 = $g2160(), $g2166 = $g2148, $g2167, $g2168, $g2169 = [$g2166];
 while ($T(true))
-{var $g2100 = $g2097, $value2106;
-if ($T($g2100))
-$value2106 = $g2100
-else $value2106 = $g2085($g2086, $g2099);
-var $g2112 = !(trueQ($value2106));
-if ($T($g2112))
-{var $sequence2108 = $g2096, $mapping2101 = $sequence2108[0];
-(function $g2114 ($mapping2102)
-{var $setter2103 = $mapping2102[0], $getter2104 = $mapping2102[1];
-return $g2087($result2095, $setter2103, $g2088($stats2094, $getter2104))})($mapping2101);
-var $sequence2110 = $g2096, $g2111 = $sequence2110.slice(1);
-$g2096 = $g2111;
-$g2099 = [$g2096]}
+{var $g2170 = $g2167, $value2176;
+if ($T($g2170))
+$value2176 = $g2170
+else $value2176 = $g2154($g2155, $g2169);
+var $g2182 = !(trueQ($value2176));
+if ($T($g2182))
+{var $sequence2178 = $g2166, $mapping2171 = $sequence2178[0];
+(function $g2184 ($mapping2172)
+{var $setter2173 = $mapping2172[0], $getter2174 = $mapping2172[1];
+return $g2156($result2165, $setter2173, $g2157($stats2164, $getter2174))})($mapping2171);
+var $sequence2180 = $g2166, $g2181 = $sequence2180.slice(1);
+$g2166 = $g2181;
+$g2169 = [$g2166]}
 else break};
-$g2098;
-return $result2095}}, false);
-exports["file-properties"] = $g2092}
-{var $g2115 = $g2011.lstatSync, $g2116 = $g2016("file_type", function $g2119 ($path2117)
-{if ($T($g2015($path2117)))
-{var $stat2118 = $g2115($path2117);
-if ($T($stat2118.isFile()))
+$g2168;
+return $result2165}}, false);
+exports["file-properties"] = $g2162}
+{var $g2185 = $g2081.lstatSync, $g2186 = $g2086("file_type", function $g2189 ($path2187)
+{if ($T($g2085($path2187)))
+{var $stat2188 = $g2185($path2187);
+if ($T($stat2188.isFile()))
 return "file"
-else if ($T($stat2118.isDirectory()))
+else if ($T($stat2188.isDirectory()))
 return "directory"
-else if ($T($stat2118.isSymbolicLink()))
+else if ($T($stat2188.isSymbolicLink()))
 return "link"
-else if ($T($stat2118.isBlockDevice()))
+else if ($T($stat2188.isBlockDevice()))
 return "block-device"
-else if ($T($stat2118.isCharacterDevice()))
+else if ($T($stat2188.isCharacterDevice()))
 return "character-device"
-else if ($T($stat2118.isFIFO()))
+else if ($T($stat2188.isFIFO()))
 return "fifo"
-else if ($T($stat2118.isSocket()))
+else if ($T($stat2188.isSocket()))
 return "socket"}}, false);
-exports["file-type"] = $g2116}
-{var $g2120 = $g2007["as-string"], $g2121 = $g2011.readFileSync, $g2122 = $g2016("read_file", function $g2124 ($path2123)
-{if ($T($g2015($path2123)))
-return $g2120($g2121($path2123))}, false);
-exports["read-file"] = $g2122}
-{var $g2125 = $g2011.writeFileSync, $g2126 = $g2016("write_file", function $g2129 ($path2127, $content2128)
-{$g2067($path2127);
-return $g2125($path2127, $content2128)}, false);
-exports["write-file"] = $g2126}
+exports["file-type"] = $g2186}
+{var $g2190 = $g2077["as-string"], $g2191 = $g2081.readFileSync, $g2192 = $g2086("read_file", function $g2194 ($path2193)
+{if ($T($g2085($path2193)))
+return $g2190($g2191($path2193))}, false);
+exports["read-file"] = $g2192}
+{var $g2195 = $g2081.writeFileSync, $g2196 = $g2086("write_file", function $g2199 ($path2197, $content2198)
+{$g2137($path2197);
+return $g2195($path2197, $content2198)}, false);
+exports["write-file"] = $g2196}
