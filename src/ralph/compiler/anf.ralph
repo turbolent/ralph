@@ -1,0 +1,115 @@
+(define-module ralph/compiler/anf
+  import: (ralph/compiler/utilities)
+  export: (normalize-term))
+
+
+(define-function atomic? (expression)
+  (any? (curry instance? expression)
+        [<number> <boolean> <string> <symbol> <keyword>]))
+
+(define-function contains-statements? (exp)
+  (if (and (instance? exp <array>)
+           (not (empty? exp)))
+      (select (symbol-name (first exp)) ==
+        (("%begin" "%if" "%while" "%bind" "%try") #t)
+        (("%set")
+         (contains-statements? (last exp)))
+        (("%method") #f)
+        (else:
+         (any? contains-statements? exp)))
+      #f))
+
+
+(define-function normalize-term (expression)
+  (normalize expression identity))
+
+(define-function normalize (exp k)
+  (if (and (instance? exp <array>)
+           (not (empty? exp)))
+      (select (symbol-name (first exp)) ==
+        (("%method")
+         (destructuring-bind (_ arguments body) exp
+           (k `(%method ,arguments
+                 ,(normalize-term body)))))
+        (("%begin")
+         (destructuring-bind (_ exp1 #rest e*) exp
+           (if (empty? e*)
+               (normalize exp1 k)
+               (normalize
+                exp1 (method (aexp1)
+                       `(%begin
+                         ,aexp1
+                         ,(normalize (concatenate
+                                      `(%begin) e*)
+                                     k)))))))
+        (("%bind")
+         (destructuring-bind (_ (var value) body) exp
+           (normalize
+            value (method (avalue)
+                   `(%bind (,var ,avalue)
+                      ,(normalize body k))))))
+        (("%if")
+         (destructuring-bind (_ test then else) exp
+           (normalize-value
+            test (method (atest)
+                   (k `(%if ,atest
+                            ,(normalize-term then)
+                            ,(normalize-term else)))))))
+        (("%while")
+         (destructuring-bind (_ test body) exp
+           (k (if (contains-statements? test)
+                  `(%while #t
+                     (%begin
+                      ,(normalize-term
+                        `(%if ,test
+                              ,(normalize-term body)
+                              (%native "break")
+                              #f))))
+                  `(%while
+                    ,(normalize-term test)
+                    ,(normalize-term body))))))
+        (("%try")
+         (destructuring-bind (_ body var catch) exp
+           (k `(%try
+                ,(normalize-term body)
+                ,var
+                ,(normalize-term catch)))))
+        (("%set")
+         ;; TODO: always normalize value?
+         (destructuring-bind (_ var value) exp
+           (normalize-value
+            value (method (avalue)
+                   (k `(%set ,var ,avalue))))))
+        (else:
+         (if (contains-statements? exp)
+             (normalize-all exp k)
+             (k (map normalize-term exp)))))
+      (k exp)))
+
+(define-function normalize-value (exp k)
+  (if (contains-statements? exp)
+      (normalize* exp k)
+      (k (if (instance? exp <array>)
+             (map normalize-term exp)
+             exp))))
+
+(define-function normalize* (exp k)
+  (normalize
+   exp (method (aexp)
+         (if (atomic? aexp)
+             (k aexp)
+             (bind ((t (generate-symbol)))
+               `(%bind (,t ,aexp)
+                  ,(k t)))))))
+
+(define-function normalize** (exp* k)
+  (if (empty? exp*)
+      (k [])
+      (normalize-all exp* k)))
+
+(define-function normalize-all (exp k)
+  (normalize*
+   (first exp) (method (t)
+                 (normalize**
+                  (rest exp) (method (t*)
+                               (k (concatenate [t] t*)))))))

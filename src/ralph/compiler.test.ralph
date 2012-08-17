@@ -1,7 +1,9 @@
 
 (define-module ralph/compiler.test
-  import: (ralph/test ralph/stream
-           ralph/reader ralph/compiler))
+  import: (ralph/test ralph/stream ralph/reader
+           ralph/compiler
+           ralph/compiler/anf
+           ralph/compiler/utilities))
 
 (define-function make-core-environment ()
   (make <environment>
@@ -479,8 +481,6 @@
                (alpha-convert expanded
                               *environment*)))
 
-
-
 (reset-symbol-counter!)
 (bind ((expanded
         (macroexpand-all `((method (a b)
@@ -500,10 +500,6 @@
                  1 2)
                (alpha-convert expanded
                               *environment*)))
-
-(check-true "atomic? on number" (atomic? 1))
-
-(check-false "atomic? on array" (atomic? []))
 
 (reset-symbol-counter!)
 (check-equal "ANF: simple expression"
