@@ -47,9 +47,9 @@
     path))
 
 (define *file-properties-mapping*
-  (make-object "modification-date" "mtime"
-               "creation-date" "ctime"
-               "access-date" "atime"))
+  [["modification-date" "mtime"]
+   ["creation-date" "ctime"]
+   ["access-date" "atime"]])
 
 ;; TODO: lstat?
 (define-function file-properties (path)
