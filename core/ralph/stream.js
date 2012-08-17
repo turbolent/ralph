@@ -1,115 +1,115 @@
-var $g1470 = require("ralph/core")
+var B1490 = require("ralph/core")
 false
-{var $g1471 = $g1470["%make-class"], $g1472 = $g1470["<object>"], $g1473 = $g1471($g1472, {});
-exports["<stream>"] = $g1473}
-{var $g1474 = $g1470["%make-generic"], $g1475 = $g1474("stream_close");
-exports["stream-close"] = $g1475}
-{var $g1476 = $g1474("stream_openQ");
-exports["stream-open?"] = $g1476}
-{var $g1477 = $g1474("stream_at_endQ");
-exports["stream-at-end?"] = $g1477}
-{var $g1478 = $g1474("stream_peek");
-exports["stream-peek"] = $g1478}
-{var $g1479 = $g1474("stream_read");
-exports["stream-read"] = $g1479}
-{var $g1480 = $g1474("stream_read_element");
-exports["stream-read-element"] = $g1480}
-{var $g1481 = $g1474("stream_read_to_end");
-exports["stream-read-to-end"] = $g1481}
-{var $g1482 = $g1474("stream_read_through");
-exports["stream-read-through"] = $g1482}
-{var $g1483 = $g1474("stream_unread_element");
-exports["stream-unread-element"] = $g1483}
-{var $g1484 = $g1474("stream_write");
-exports["stream-write"] = $g1484}
-{var $g1485 = $g1474("stream_contents");
-exports["stream-contents"] = $g1485}
-{var $g1486 = $g1474("stream_remaining_contents");
-exports["stream-remaining-contents"] = $g1486}
-{var $g1487 = $g1471($g1473, {"string":function $g1488 ()
+{var B1491 = B1490["%make-class"], B1492 = B1490["<object>"], B1493 = B1491(B1492, {});
+exports["<stream>"] = B1493}
+{var B1494 = B1490["%make-generic"], B1495 = B1494("stream_close");
+exports["stream-close"] = B1495}
+{var B1496 = B1494("stream_openQ");
+exports["stream-open?"] = B1496}
+{var B1497 = B1494("stream_at_endQ");
+exports["stream-at-end?"] = B1497}
+{var B1498 = B1494("stream_peek");
+exports["stream-peek"] = B1498}
+{var B1499 = B1494("stream_read");
+exports["stream-read"] = B1499}
+{var B1500 = B1494("stream_read_element");
+exports["stream-read-element"] = B1500}
+{var B1501 = B1494("stream_read_to_end");
+exports["stream-read-to-end"] = B1501}
+{var B1502 = B1494("stream_read_through");
+exports["stream-read-through"] = B1502}
+{var B1503 = B1494("stream_unread_element");
+exports["stream-unread-element"] = B1503}
+{var B1504 = B1494("stream_write");
+exports["stream-write"] = B1504}
+{var B1505 = B1494("stream_contents");
+exports["stream-contents"] = B1505}
+{var B1506 = B1494("stream_remaining_contents");
+exports["stream-remaining-contents"] = B1506}
+{var B1507 = B1491(B1493, {"string":function B1508 ()
 {return ""},
-index:function $g1489 ()
+index:function B1509 ()
 {return 0},
-length:function $g1490 ()
+length:function B1510 ()
 {return 0}});
-exports["<string-stream>"] = $g1487}
-var $g1491 = $g1470["%make-method"], $g1492 = $g1470.apply, $g1493 = $g1470["%next-method"], $g1494 = $g1470["get-setter"], $g1495 = $g1470.size, $g1496 = $g1470.get, $g1497 = $g1491("initialize", function $g1503 ($stream1498)
-{var $rest1499 = $SL.call(arguments, 1);
-$g1492($g1493($g1503), $stream1498, $rest1499);
-var $robject1501 = $g1496($stream1498, "string"), $g1502 = (($robject1501 || false).length || 0);
-return $g1494($stream1498, "length", $g1502)}, false, $g1487, $g1497)
-{var $g1504 = $g1470["=="];
-$g1477 = $g1491("stream_at_endQ", function $g1506 ($stream1505)
-{return $g1504($g1496($stream1505, "index"), $g1496($stream1505, "length"))}, false, $g1487, $g1477);
-exports["stream-at-end?"] = $g1477}
-{var $g1507 = $g1470.element;
-$g1478 = $g1491("stream_peek", function $g1509 ($stream1508)
-{return $g1507($g1496($stream1508, "string"), $g1496($stream1508, "index"))}, false, $g1487, $g1478);
-exports["stream-peek"] = $g1478}
-{var trueQ = $g1470["true?"], $g1510 = $g1470.not;
-$g1480 = $g1491("stream_read_element", function $g1516 ($stream1511)
-{var $value1514 = $g1477($stream1511), $g1515 = !(trueQ($value1514));
-if ($T($g1515))
-{var $element1512 = $g1478($stream1511);
-$g1494($stream1511, "index", ($g1496($stream1511, "index") + 1));
-return $element1512}}, false, $g1487, $g1480);
-exports["stream-read-element"] = $g1480}
-{var trueQ = $g1470["true?"], $g1518 = $g1470[">="], $g1519 = $g1470.concatenate, $g1520 = $g1470.inc;
-$g1479 = $g1491("stream_read", function $g1533 ($stream1521, $n1522)
-{var $result1523 = "", $i1524 = 0;
+exports["<string-stream>"] = B1507}
+var B1511 = B1490["%make-method"], B1512 = B1490.apply, B1513 = B1490["%next-method"], B1514 = B1490["get-setter"], B1515 = B1490.size, B1516 = B1490.get, B1517 = B1511("initialize", function B1523 (stream__1518)
+{var rest__1519 = $SL.call(arguments, 1);
+B1512(B1513(B1523), stream__1518, rest__1519);
+var object__1521 = B1516(stream__1518, "string"), B1522 = ((object__1521 || false).length || 0);
+return B1514(stream__1518, "length", B1522)}, false, B1507, B1517)
+{var B1524 = B1490["=="];
+B1497 = B1511("stream_at_endQ", function B1526 (stream__1525)
+{return B1524(B1516(stream__1525, "index"), B1516(stream__1525, "length"))}, false, B1507, B1497);
+exports["stream-at-end?"] = B1497}
+{var B1527 = B1490.element;
+B1498 = B1511("stream_peek", function B1529 (stream__1528)
+{return B1527(B1516(stream__1528, "string"), B1516(stream__1528, "index"))}, false, B1507, B1498);
+exports["stream-peek"] = B1498}
+{var trueQ = B1490["true?"], B1530 = B1490.not;
+B1500 = B1511("stream_read_element", function B1536 (stream__1531)
+{var value__1534 = B1497(stream__1531), B1535 = !(trueQ(value__1534));
+if ($T(B1535))
+{var element__1532 = B1498(stream__1531);
+B1514(stream__1531, "index", (B1516(stream__1531, "index") + 1));
+return element__1532}}, false, B1507, B1500);
+exports["stream-read-element"] = B1500}
+{var trueQ = B1490["true?"], B1538 = B1490[">="], B1539 = B1490.concatenate, B1540 = B1490.inc;
+B1499 = B1511("stream_read", function B1553 (stream__1541, n__1542)
+{var result__1543 = "", i__1544 = 0;
 while ($T(true))
-{var $g1525 = $g1477($stream1521), $value1528;
-if ($T($g1525))
-$value1528 = $g1525
-else $value1528 = $g1518($i1524, $n1522);
-var $g1532 = !(trueQ($value1528));
-if ($T($g1532))
-{(function $g1534 ($i1526)
-{return $result1523 = $g1519($result1523, $g1480($stream1521))})($i1524);
-var $rnumber1530 = $i1524, $g1531 = ($rnumber1530 + 1);
-$i1524 = $g1531}
+{var B1545 = B1497(stream__1541), value__1548;
+if ($T(B1545))
+value__1548 = B1545
+else value__1548 = B1538(i__1544, n__1542);
+var B1552 = !(trueQ(value__1548));
+if ($T(B1552))
+{(function B1554 (i__1546)
+{return result__1543 = B1539(result__1543, B1500(stream__1541))})(i__1544);
+var number__1550 = i__1544, B1551 = (number__1550 + 1);
+i__1544 = B1551}
 else break};
-return $result1523}, false, $g1487, $g1479);
-exports["stream-read"] = $g1479}
-{var trueQ = $g1470["true?"];
-$g1482 = $g1491("stream_read_through", function $g1543 ($stream1536, $element1537)
-{var $foundq1538;
+return result__1543}, false, B1507, B1499);
+exports["stream-read"] = B1499}
+{var trueQ = B1490["true?"];
+B1502 = B1511("stream_read_through", function B1563 (stream__1556, element__1557)
+{var foundQ__1558;
 while ($T(true))
-{var $g1539 = $g1477($stream1536), $value1541;
-if ($T($g1539))
-$value1541 = $g1539
-else $value1541 = $foundq1538;
-var $g1542 = !(trueQ($value1541));
-if ($T($g1542))
-$foundq1538 = $g1504($g1480($stream1536), $element1537)
+{var B1559 = B1497(stream__1556), value__1561;
+if ($T(B1559))
+value__1561 = B1559
+else value__1561 = foundQ__1558;
+var B1562 = !(trueQ(value__1561));
+if ($T(B1562))
+foundQ__1558 = B1524(B1500(stream__1556), element__1557)
 else break};
-return false}, false, $g1487, $g1482);
-exports["stream-read-through"] = $g1482}
-{var $g1544 = $g1470.max, $g1545 = $g1470.dec;
-$g1483 = $g1491("stream_unread_element", function $g1551 ($stream1546)
-{var $rnumber1548 = $g1496($stream1546, "index"), $g1549 = ($rnumber1548 - 1), $g1550 = $g1544(0, $g1549);
-return $g1494($stream1546, "index", $g1550)}, false, $g1487, $g1483);
-exports["stream-unread-element"] = $g1483}
-{var $g1562 = $K("start"), $g1563 = $K("end"), $g1553 = $g1470["replace-subsequence"];
-$g1484 = $g1491("stream_write", function $g1564 ($stream1554, $rstring1555)
-{var $g1556 = $stream1554, $index1557 = $g1556.index, $robject1561 = $rstring1555, $length1558 = (($robject1561 || false).length || 0), $end1559 = ($index1557 + $length1558);
-$g1494($stream1554, "string", $g1553($g1496($stream1554, "string"), $rstring1555, $g1562, $index1557, $g1563, $end1559));
-$g1494($stream1554, "index", $end1559);
-$g1494($stream1554, "length", $g1544($end1559, $g1496($stream1554, "length")));
-return $rstring1555}, false, $g1487, $g1484);
-exports["stream-write"] = $g1484}
-{$g1485 = $g1491("stream_contents", function $g1566 ($stream1565)
-{return $g1496($stream1565, "string")}, false, $g1487, $g1485);
-exports["stream-contents"] = $g1485}
-{var $g1567 = $g1470.slice;
-$g1486 = $g1491("stream_remaining_contents", function $g1575 ($stream1568)
-{var $rarray1572 = $g1496($stream1568, "string"), $start1573 = $g1496($stream1568, "index"), $end1574 = undefined;
-return $rarray1572.slice($start1573, $end1574)}, false, $g1487, $g1486);
-exports["stream-remaining-contents"] = $g1486}
-{var $g1576 = $g1471($g1473, {file:false});
-exports["<file-stream>"] = $g1576}
-{$g1484 = $g1491("stream_write", function $g1579 ($stream1577, $rstring1578)
-{return $stream1577.file.write($rstring1578)}, false, $g1576, $g1484);
-exports["stream-write"] = $g1484}
-{var $g1582 = $K("file"), $g1580 = $g1470.make, $g1581 = $g1580($g1576, $g1582, process.stdout);
-exports["*standard-out*"] = $g1581}
+return false}, false, B1507, B1502);
+exports["stream-read-through"] = B1502}
+{var B1564 = B1490.max, B1565 = B1490.dec;
+B1503 = B1511("stream_unread_element", function B1571 (stream__1566)
+{var number__1568 = B1516(stream__1566, "index"), B1569 = (number__1568 - 1), B1570 = B1564(0, B1569);
+return B1514(stream__1566, "index", B1570)}, false, B1507, B1503);
+exports["stream-unread-element"] = B1503}
+{var B1582 = $K("start"), B1583 = $K("end"), B1573 = B1490["replace-subsequence"];
+B1504 = B1511("stream_write", function B1584 (stream__1574, string__1575)
+{var B1576 = stream__1574, index__1577 = B1576.index, object__1581 = string__1575, length__1578 = ((object__1581 || false).length || 0), end__1579 = (index__1577 + length__1578);
+B1514(stream__1574, "string", B1573(B1516(stream__1574, "string"), string__1575, B1582, index__1577, B1583, end__1579));
+B1514(stream__1574, "index", end__1579);
+B1514(stream__1574, "length", B1564(end__1579, B1516(stream__1574, "length")));
+return string__1575}, false, B1507, B1504);
+exports["stream-write"] = B1504}
+{B1505 = B1511("stream_contents", function B1586 (stream__1585)
+{return B1516(stream__1585, "string")}, false, B1507, B1505);
+exports["stream-contents"] = B1505}
+{var B1587 = B1490.slice;
+B1506 = B1511("stream_remaining_contents", function B1595 (stream__1588)
+{var array__1592 = B1516(stream__1588, "string"), start__1593 = B1516(stream__1588, "index"), end__1594 = undefined;
+return array__1592.slice(start__1593, end__1594)}, false, B1507, B1506);
+exports["stream-remaining-contents"] = B1506}
+{var B1596 = B1491(B1493, {file:false});
+exports["<file-stream>"] = B1596}
+{B1504 = B1511("stream_write", function B1599 (stream__1597, string__1598)
+{return stream__1597.file.write(string__1598)}, false, B1596, B1504);
+exports["stream-write"] = B1504}
+{var B1602 = $K("file"), B1600 = B1490.make, B1601 = B1600(B1596, B1602, process.stdout);
+exports["*standard-out*"] = B1601}

@@ -1,1558 +1,1738 @@
-var $g2 = require("ralph/core")
-{var $g8, $g9, $g10, $g11, $g12;
-$g8 = require("ralph/stream");
-$g9 = require("ralph/format");
-$g10 = require("ralph/regexp");
-$g11 = require("ralph/reader");
-$g12 = require("ralph/file-system")}
-var $g13 = $g2["make-object"], $g14 = $g13()
-{var $g15 = $g2["%make-class"], $g16 = $g2["<object>"], $g17 = $g15($g16, {name:false,
+var B1464 = require("ralph/core")
+{var B2131, B2132, B2133, B2134, B2135;
+B2131 = require("ralph/stream");
+B2132 = require("ralph/format");
+B2133 = require("ralph/regexp");
+B2134 = require("ralph/reader");
+B2135 = require("ralph/file-system")}
+var B2136 = B1464["make-object"], B2137 = B2136()
+{var B2138 = B1464["%make-class"], B2139 = B1464["<object>"], B2140 = B2138(B2139, {name:false,
 "native?":false,
-exports:function $g18 ()
+exports:function B2141 ()
 {return []},
-imports:function $g19 ()
+imports:function B2142 ()
 {return []},
-dependencies:function $g20 ()
+dependencies:function B2143 ()
 {return []},
-inline:function $g21 ()
+inline:function B2144 ()
 {return []}});
-exports["<module>"] = $g17}
-var $g22 = $g2.symbol, $g23 = [$g22("%all-arguments"), $g22("%this-method")]
-{var $g24 = $g2["make-plain-object"], $g25 = $g15($g16, {module:false,
-macros:function $g26 ()
-{return $g24()},
-"symbol-macros":function $g27 ()
-{return $g24()},
-identifiers:function $g28 ()
-{return $g13()},
-"defined?":function $g29 ()
-{return $g13()},
-lifted:function $g30 ()
-{return $g13()},
-"import-identifiers":function $g31 ()
-{return $g24()}});
-exports["<environment>"] = $g25}
-var $g32 = $g2["%make-function"], $g33 = $g2["instance?"], $g34 = $g2["<array>"], $g35 = $g2.not, $g36 = $g2["empty?"], $g37 = $g2.first, $g38 = $g2["<symbol>"], $g39 = $g32("expressionQ", function $g41 ($form40)
-{if ($T($g33($form40, $g34)))
-if ($T($g35($g36($form40))))
-return $g33($g37($form40), $g38)}, false)
-var $g42 = $g2.concatenate, $g43 = $g2["symbol-name"], $g44 = $g32("transform_setter_identifier", function $g46 ($identifier45)
-{return $g22($g42($g43($identifier45), "-setter"))}, false)
-var $g47 = $g2["=="], $g48 = $g2.size, $g49 = $g2["every?"], $g50 = $g2.rcurry, $g51 = $g32("setter_identifierQ", function $g53 ($form52)
-{if ($T($g33($form52, $g34)))
-if ($T($g47($g48($form52), 2)))
-if ($T($g49($g50($g33, $g38), $form52)))
-return $g47($g43($g37($form52)), "setter")}, false)
-var $g54 = $g2.second, $g55 = $g32("identifier_name", function $g58 ($identifier56)
-{var $g57;
-if ($T($g51($identifier56)))
-$g57 = $g44($g54($identifier56))
-else $g57 = $identifier56;
-return $g43($g57)}, false)
-var $g59 = 0
-{var $g60 = $g32("reset_symbol_counterN", function $g61 ()
-{return $g59 = 0}, false);
-exports["reset-symbol-counter!"] = $g60}
-var $g62 = $g2["get-setter"], $g63, $g64 = $g2["as-string"], $g65 = $g32("generate_symbol", function $g71 ($prefix66)
-{var $g69;
-if ($T($prefix66))
-$g69 = $g63($prefix66)
-else $g69 = "g";
-var $g70 = $g64($g59 = ($g59 + 1)), $name67 = $g42($g69, $g70), $result68 = $g22($name67);
-$g62($result68, "generated?", true);
-return $result68}, false)
-var $g72 = $g32("bindN", function $g75 ($env73, $identifier74)
-{return $g62($env73, "bound?", $g43($identifier74), true)}, false)
-var $g76 = $g32("unbindN", function $g79 ($env77, $identifier78)
-{return $g62($env77, "bound?", $g43($identifier78), false)}, false)
-var $g80 = $g13()
-var $g81 = $g2.get, $g82 = $g32("find_special_form", function $g85 ($form83, $env84)
-{if ($T($g39($form83)))
-return $g81($g80, $g43($g37($form83)))}, false)
-{var $g86 = $g2["do"], $g87 = $g2.curry, $g88;
-$g62($g80, "%method", function $g93 ($env89, $rarguments90, $body91)
-{$g86($g87($g72, $env89), $rarguments90);
-var $expanded_body92 = $g88($body91, $env89);
-$g86($g87($g76, $env89), $rarguments90);
-return [$g22("%method"), $rarguments90, $expanded_body92]})}
-$g62($g80, "%set", function $g97 ($env94, $identifier95, $value96)
-{return [$g22("%set"), $identifier95, $g88($value96, $env94)]})
-$g62($g80, "define", function $g101 ($env98, $identifier99, $value100)
-{$g72($env98, $identifier99);
-return [$g22("define"), $identifier99, $g88($value100, $env98)]})
-$g62($g80, "%bind", function $g109 ($env102, $binding103, $body104)
-{var $rvar105 = $binding103[0], $value106 = $binding103[1], $expanded_value107 = $g88($value106, $env102);
-$g72($env102, $rvar105);
-var $result108 = [$g22("%bind"), [$rvar105, $expanded_value107], $g88($body104, $env102)];
-$g76($env102, $rvar105);
-return $result108})
-{var $g110 = $g13();
-exports["*core-macros*"] = $g110}
-var $g112 = $g32("maybe_begin", function $g115 ($expressions113)
-{var $g114 = $g48($expressions113);
-if ($T($g47($g114, 0)))
+exports["<module>"] = B2140}
+var B2145 = B1464.symbol, B2146 = [B2145("%all-arguments"), B2145("%this-method")]
+{var B2147 = B1464["make-plain-object"], B2148 = B2138(B2139, {module:false,
+macros:function B2149 ()
+{return B2147()},
+"symbol-macros":function B2150 ()
+{return B2147()},
+identifiers:function B2151 ()
+{return B2136()},
+"defined?":function B2152 ()
+{return B2136()},
+lifted:function B2153 ()
+{return B2136()},
+"import-identifiers":function B2154 ()
+{return B2147()}});
+exports["<environment>"] = B2148}
+var trueQ = B1464["true?"], B2155 = B1464["%make-function"], B2156 = B1464["instance?"], B2157 = B1464["<array>"], B2158 = B1464.not, B2159 = B1464["empty?"], B2160 = B1464.first, B2161 = B1464["<symbol>"], B2162 = B2155("expressionQ", function B2184 (form__2163)
+{if ($T(B2156(form__2163, B2157)))
+{var sequence__2175 = form__2163, B2176 = sequence__2175, B2177 = ((B2176 || false).length || 0), B2178 = 0, value__2179 = (B2177 === B2178), B2182 = !(trueQ(value__2179));
+if ($T(B2182))
+{var sequence__2181 = form__2163, B2183 = sequence__2181[0];
+return B2156(B2183, B2161)}}}, false)
+var B2185 = B1464.concatenate, B2186 = B1464["symbol-name"], B2187 = B2155("transform_setter_identifier", function B2189 (identifier__2188)
+{return B2145(B2185(B2186(identifier__2188), "-setter"))}, false)
+var B2190 = B1464["=="], B2191 = B1464.size, B2192 = B1464["every?"], B2193 = B1464.rcurry, B2194 = B2155("setter_identifierQ", function B2204 (form__2195)
+{if ($T(B2156(form__2195, B2157)))
+{var object__2197 = form__2195, B2200 = ((object__2197 || false).length || 0), B2201 = B2190(B2200, 2);
+if ($T(B2201))
+if ($T(B2192(B2193(B2156, B2161), form__2195)))
+{var sequence__2199 = form__2195, B2202 = sequence__2199[0], B2203 = B2186(B2202);
+return B2190(B2203, "setter")}}}, false)
+var B2205 = B1464.second, B2206 = B2155("identifier_name", function B2212 (identifier__2207)
+{var B2211;
+if ($T(B2194(identifier__2207)))
+{var sequence__2209 = identifier__2207, B2210 = sequence__2209[1];
+B2211 = B2187(B2210)}
+else B2211 = identifier__2207;
+return B2186(B2211)}, false)
+var B2213 = 0
+{var B2214 = B2155("reset_symbol_counterN", function B2215 ()
+{return B2213 = 0}, false);
+exports["reset-symbol-counter!"] = B2214}
+var B2216 = B1464["get-setter"], B2217 = B1464["as-string"], B2218 = B2155("generate_symbol", function B2224 (prefix__2219)
+{var B2222;
+if ($T(prefix__2219))
+B2222 = B2185(prefix__2219, "_")
+else B2222 = "$";
+var B2223 = B2217(B2213 = (B2213 + 1)), name__2220 = B2185(B2222, B2223), result__2221 = B2145(name__2220);
+B2216(result__2221, "generated?", true);
+return result__2221}, false)
+var B2225 = B2155("bindN", function B2228 (env__2226, identifier__2227)
+{return B2216(env__2226, "bound?", B2186(identifier__2227), true)}, false)
+var B2229 = B2155("unbindN", function B2232 (env__2230, identifier__2231)
+{return B2216(env__2230, "bound?", B2186(identifier__2231), false)}, false)
+var B2233 = B2136()
+var B2234 = B1464.get, B2235 = B2155("find_special_form", function B2242 (form__2236, env__2237)
+{if ($T(B2162(form__2236)))
+{var sequence__2239 = form__2236, B2240 = sequence__2239[0], B2241 = B2186(B2240);
+return B2234(B2233, B2241)}}, false)
+{var B2243 = B1464["do"], B2244 = B1464.curry, B2245;
+B2216(B2233, "%method", function B2250 (env__2246, arguments__2247, body__2248)
+{B2243(B2244(B2225, env__2246), arguments__2247);
+var expanded_body__2249 = B2245(body__2248, env__2246);
+B2243(B2244(B2229, env__2246), arguments__2247);
+return [B2145("%method"), arguments__2247, expanded_body__2249]})}
+B2216(B2233, "%set", function B2254 (env__2251, identifier__2252, value__2253)
+{return [B2145("%set"), identifier__2252, B2245(value__2253, env__2251)]})
+B2216(B2233, "define", function B2258 (env__2255, identifier__2256, value__2257)
+{B2225(env__2255, identifier__2256);
+return [B2145("define"), identifier__2256, B2245(value__2257, env__2255)]})
+B2216(B2233, "%bind", function B2266 (env__2259, binding__2260, body__2261)
+{var var__2262 = binding__2260[0], value__2263 = binding__2260[1], expanded_value__2264 = B2245(value__2263, env__2259);
+B2225(env__2259, var__2262);
+var result__2265 = [B2145("%bind"), [var__2262, expanded_value__2264], B2245(body__2261, env__2259)];
+B2229(env__2259, var__2262);
+return result__2265})
+{var B2267 = B2136();
+exports["*core-macros*"] = B2267}
+var B2269 = B2155("maybe_begin", function B2276 (expressions__2270)
+{var object__2273 = expressions__2270, B2271 = ((object__2273 || false).length || 0);
+if ($T(B2190(B2271, 0)))
 return false
-else if ($T($g47($g114, 1)))
-return $g37($expressions113)
-else return $g42([$g22("%begin")], $expressions113)}, false)
-{var $g135 = $REST, $g136 = $KEY, $g137 = $K("end"), $g138 = $K("start"), $g118 = $g2["find-key"], $g119 = $g2["="], $g120 = $g2["copy-sequence"], $g121 = $g2.element, $g122 = $g2.inc, $g123 = $g32("analyze_lambda_list", function $g139 ($list124)
-{var $position125 = function $g140 ($symbol126)
-{return $g118($list124, $g87($g119, $symbol126))}, $rest127 = $position125($g135), $key128 = $position125($g136), $g129 = $rest127, $g131;
-if ($T($g129))
-$g131 = $g129
-else {var $g130 = $key128;
-if ($T($g130))
-$g131 = $g130
-else $g131 = $g48($list124)};
-var $g132 = $g120($list124, $g137, $g131), $g133;
-if ($T($rest127))
-$g133 = $g121($list124, $g122($rest127))
-else $g133 = false;
-var $g134;
-if ($T($key128))
-$g134 = $g120($list124, $g138, $g122($key128))
-else $g134 = false;
-return [$g132, $g133, $g134]}, false);
-exports["analyze-lambda-list"] = $g123}
-var $g141 = $g2.reduce, $g142 = $g32("wrap", function $g147 ($form143)
-{var $wrappers144 = $SL.call(arguments, 1);
-return $g141(function $g148 ($result145, $wrapper146)
-{return $wrapper146($result145)}, $form143, $wrappers144)}, false)
-var $g151 = $g2.map, $g152 = $g2.reduce1, $g153 = $g32("wrap_restSkeys", function $g171 ($body154, $all155, $required156, $rest157, $key158)
-{var $restq159 = $rest157, $g160 = $rest157, $rest161;
-if ($T($g160))
-$rest161 = $g160
-else if ($T($g35($g36($key158))))
-$rest161 = $g65()
-else $rest161 = false;
-return $g142($body154, function $g172 ($body162)
-{if ($T($g36($key158)))
-return $body162
-else {var $key_values164 = $g151(function $g173 ($binding163)
-{if ($T($g33($binding163, $g34)))
-return $binding163
-else return [$binding163, false]}, $key158);
-return [$g22("bind-properties"), $g151($g37, $key_values164), [$g22("%keys"), $rest161, $g42([$g22("%object")], $g152($g42, $g151(function $g174 ($key_value165)
-{var $key166 = $key_value165[0], $value167 = $key_value165[1];
-return [$g43($key166), $value167]}, $key_values164)))], $body162]}}, function $g175 ($body168)
-{var $g169 = $restq159, $g170;
-if ($T($g169))
-$g170 = $g169
-else $g170 = $g35($g36($key158));
-if ($T($g170))
-return [$g22("bind"), [[$rest161, [$g22("%native-call"), "$SL.call", $all155, $g48($required156)]]], $body168]
-else return $body168})}, false)
-$g62($g110, "begin", function $g178 ($__176)
-{var $expressions177 = $SL.call(arguments, 1);
-return $g112($expressions177)})
-$g62($g110, "method", function $g187 ($__180, $rarguments181)
-{var $body182 = $SL.call(arguments, 2), $g183 = $g123($rarguments181), $required184 = $g183[0], $rest185 = $g183[1], $key186 = $g183[2];
-return [$g22("%method"), $required184, $g153($g112($body182), $g22("%all-arguments"), $required184, $rest185, $key186)]})
-{var $g188 = $g2.reverse;
-$g62($g110, "bind", function $g196 ($__189, $bindings190)
-{var $body191 = $SL.call(arguments, 2);
-if ($T($g36($bindings190)))
-return $g112($body191)
-else return $g141(function $g197 ($body192, $binding193)
-{var $g194 = $g22("%bind"), $g195;
-if ($T($g33($binding193, $g38)))
-$g195 = [$binding193, false]
-else $g195 = $binding193;
-return [$g194, $g195, $body192]}, $g112($body191), $g188($bindings190))})}
-$g62($g110, "if", function $g202 ($__198, $test199, $then200, $relse201)
-{return [$g22("%if"), $test199, $then200, $relse201]})
-{var $g203 = $g2.rest;
-$g62($g110, "set!", function $g208 ($__204, $place205)
-{var $values206 = $SL.call(arguments, 2), $g207;
-if ($T($g33($place205, $g34)))
-$g207 = $g35($g47($g37($place205), $g22("%get-property")))
-else $g207 = false;
-if ($T($g207))
-return $g42([$g44($g37($place205))], $g203($place205), $values206)
-else return [$g22("%set"), $place205, $g37($values206)]})}
-$g62($g110, "parallel-set!", function $g214 ($__209, $rvar210, $value211)
-{var $clauses212 = $SL.call(arguments, 3);
-if ($T($g36($clauses212)))
-return [$g22("set!"), $rvar210, $value211]
-else {var $temp213 = $g65();
-return [$g22("bind"), [[$temp213, $value211]], $g42([$g22("parallel-set!")], $clauses212), [$g22("set!"), $rvar210, $temp213]]}})
-{var $g222 = $K("else");
-$g62($g110, "cond", function $g223 ($__216)
-{var $cases217 = $SL.call(arguments, 1);
-if ($T($g35($g36($cases217))))
-{var $g218 = $g37($cases217), $test219 = $g218[0], $then220 = $SL.call($g218, 1), $then221 = $g112($then220);
-if ($T($g47($test219, $g222)))
-return $then221
-else return [$g22("if"), $test219, $then221, $g42([$g22("cond")], $g203($cases217))]}})}
-$g62($g110, "when", function $g227 ($__224, $test225)
-{var $body226 = $SL.call(arguments, 2);
-return [$g22("if"), $test225, $g112($body226), false]})
-$g62($g110, "unless", function $g231 ($__228, $test229)
-{var $body230 = $SL.call(arguments, 2);
-return [$g22("if"), [$g22("not"), $test229], $g112($body230), false]})
-$g62($g110, "and", function $g236 ($__233)
-{var $values234 = $SL.call(arguments, 1), $g235 = $g48($values234);
-if ($T($g47($g235, 0)))
+else if ($T(B2190(B2271, 1)))
+{var sequence__2275 = expressions__2270;
+return sequence__2275[0]}
+else return B2185([B2145("%begin")], expressions__2270)}, false)
+{var B2304 = $REST, B2305 = $KEY, B2306 = $K("end"), B2307 = $K("start"), B2279 = B1464["find-key"], B2280 = B1464["="], B2281 = B1464["copy-sequence"], B2282 = B1464.element, B2283 = B1464.inc, B2284 = B2155("analyze_lambda_list", function B2308 (list__2285)
+{var position__2286 = function B2309 (symbol__2287)
+{return B2279(list__2285, B2244(B2280, symbol__2287))}, rest__2288 = position__2286(B2304), key__2289 = position__2286(B2305), B2290 = rest__2288, B2298;
+if ($T(B2290))
+B2298 = B2290
+else {var B2291 = key__2289;
+if ($T(B2291))
+B2298 = B2291
+else {var object__2293 = list__2285;
+B2298 = ((object__2293 || false).length || 0)}};
+var B2299 = B2281(list__2285, B2306, B2298), B2301;
+if ($T(rest__2288))
+{var number__2295 = rest__2288, B2300 = (number__2295 + 1);
+B2301 = B2282(list__2285, B2300)}
+else B2301 = false;
+var B2303;
+if ($T(key__2289))
+{var number__2297 = key__2289, B2302 = (number__2297 + 1);
+B2303 = B2281(list__2285, B2307, B2302)}
+else B2303 = false;
+return [B2299, B2301, B2303]}, false);
+exports["analyze-lambda-list"] = B2284}
+var B2310 = B1464.reduce, B2311 = B2155("wrap", function B2316 (form__2312)
+{var wrappers__2313 = $SL.call(arguments, 1);
+return B2310(function B2317 (result__2314, wrapper__2315)
+{return wrapper__2315(result__2314)}, form__2312, wrappers__2313)}, false)
+var trueQ = B1464["true?"], B2320 = B1464.map, B2321 = B1464.reduce1, B2322 = B2155("wrap_restSkeys", function B2417 (body__2323, all__2324, required__2325, rest__2326, key__2327)
+{var restQ__2328 = rest__2326, B2329 = rest__2326, rest__2330;
+if ($T(B2329))
+rest__2330 = B2329
+else {var sequence__2350 = key__2327, B2351 = sequence__2350, B2352 = ((B2351 || false).length || 0), B2353 = 0, value__2354 = (B2352 === B2353), B2399 = !(trueQ(value__2354));
+if ($T(B2399))
+rest__2330 = B2218()
+else rest__2330 = false};
+return B2311(body__2323, function B2418 (body__2331)
+{var sequence__2365 = key__2327, B2366 = sequence__2365, B2367 = ((B2366 || false).length || 0), B2368 = 0, B2400 = (B2367 === B2368);
+if ($T(B2400))
+return body__2331
+else {var key_values__2333 = B2320(function B2419 (binding__2332)
+{if ($T(B2156(binding__2332, B2157)))
+return binding__2332
+else return [binding__2332, false]}, key__2327), B2401 = B2145("bind-properties"), B2402 = B2320(B2160, key_values__2333), B2403 = B2145("%keys"), B2404 = [B2145("%object")], function__2377 = B2185, values__2378 = B2320(function B2420 (key_value__2334)
+{var key__2335 = key_value__2334[0], value__2336 = key_value__2334[1];
+return [B2186(key__2335), value__2336]}, key_values__2333), B2379 = values__2378, B2405 = B2379[0], B2380 = values__2378, B2406 = B2380.slice(1), B2407 = B2310(function__2377, B2405, B2406), B2408 = B2185(B2404, B2407), B2409 = [B2403, rest__2330, B2408];
+return [B2401, B2402, B2409, body__2331]}}, function B2421 (body__2337)
+{var B2338 = restQ__2328, B2410;
+if ($T(B2338))
+B2410 = B2338
+else {var sequence__2392 = key__2327, B2393 = sequence__2392, B2394 = ((B2393 || false).length || 0), B2395 = 0, value__2396 = (B2394 === B2395);
+B2410 = !(trueQ(value__2396))};
+if ($T(B2410))
+{var B2411 = B2145("bind"), B2412 = B2145("%native-call"), object__2398 = required__2325, B2413 = ((object__2398 || false).length || 0), B2414 = [B2412, "$SL.call", all__2324, B2413], B2415 = [rest__2330, B2414], B2416 = [B2415];
+return [B2411, B2416, body__2337]}
+else return body__2337})}, false)
+B2216(B2267, "begin", function B2424 (____2422)
+{var expressions__2423 = $SL.call(arguments, 1);
+return B2269(expressions__2423)})
+B2216(B2267, "method", function B2433 (____2426, arguments__2427)
+{var body__2428 = $SL.call(arguments, 2), B2429 = B2284(arguments__2427), required__2430 = B2429[0], rest__2431 = B2429[1], key__2432 = B2429[2];
+return [B2145("%method"), required__2430, B2322(B2269(body__2428), B2145("%all-arguments"), required__2430, rest__2431, key__2432)]})
+{var B2434 = B1464.reverse;
+B2216(B2267, "bind", function B2457 (____2435, bindings__2436)
+{var body__2437 = $SL.call(arguments, 2), sequence__2450 = bindings__2436, B2451 = sequence__2450, B2452 = ((B2451 || false).length || 0), B2453 = 0, B2454 = (B2452 === B2453);
+if ($T(B2454))
+return B2269(body__2437)
+else return B2310(function B2458 (body__2438, binding__2439)
+{var B2455 = B2145("%bind"), B2456;
+if ($T(B2156(binding__2439, B2161)))
+B2456 = [binding__2439, false]
+else B2456 = binding__2439;
+return [B2455, B2456, body__2438]}, B2269(body__2437), B2434(bindings__2436))})}
+B2216(B2267, "if", function B2463 (____2459, test__2460, then__2461, else__2462)
+{return [B2145("%if"), test__2460, then__2461, else__2462]})
+{var trueQ = B1464["true?"], B2464 = B1464.rest;
+B2216(B2267, "set!", function B2487 (____2465, place__2466)
+{var values__2467 = $SL.call(arguments, 2), B2480;
+if ($T(B2156(place__2466, B2157)))
+{var sequence__2470 = place__2466, B2478 = sequence__2470[0], B2479 = B2145("%get-property"), value__2471 = B2190(B2478, B2479);
+B2480 = !(trueQ(value__2471))}
+else B2480 = false;
+if ($T(B2480))
+{var sequence__2473 = place__2466, B2481 = sequence__2473[0], B2482 = B2187(B2481), B2483 = [B2482], sequence__2475 = place__2466, B2484 = sequence__2475.slice(1);
+return B2185(B2483, B2484, values__2467)}
+else {var B2485 = B2145("%set"), sequence__2477 = values__2467, B2486 = sequence__2477[0];
+return [B2485, place__2466, B2486]}})}
+B2216(B2267, "parallel-set!", function B2508 (____2488, var__2489, value__2490)
+{var clauses__2491 = $SL.call(arguments, 3), sequence__2503 = clauses__2491, B2504 = sequence__2503, B2505 = ((B2504 || false).length || 0), B2506 = 0, B2507 = (B2505 === B2506);
+if ($T(B2507))
+return [B2145("set!"), var__2489, value__2490]
+else {var temp__2492 = B2218();
+return [B2145("bind"), [[temp__2492, value__2490]], B2185([B2145("parallel-set!")], clauses__2491), [B2145("set!"), var__2489, temp__2492]]}})
+{var B2541 = $K("else"), trueQ = B1464["true?"];
+B2216(B2267, "cond", function B2542 (____2510)
+{var cases__2511 = $SL.call(arguments, 1), sequence__2527 = cases__2511, B2528 = sequence__2527, B2529 = ((B2528 || false).length || 0), B2530 = 0, value__2531 = (B2529 === B2530), B2536 = !(trueQ(value__2531));
+if ($T(B2536))
+{var sequence__2533 = cases__2511, B2512 = sequence__2533[0], test__2513 = B2512[0], then__2514 = $SL.call(B2512, 1), then__2515 = B2269(then__2514);
+if ($T(B2190(test__2513, B2541)))
+return then__2515
+else {var B2537 = B2145("if"), B2538 = [B2145("cond")], sequence__2535 = cases__2511, B2539 = sequence__2535.slice(1), B2540 = B2185(B2538, B2539);
+return [B2537, test__2513, then__2515, B2540]}}})}
+B2216(B2267, "when", function B2546 (____2543, test__2544)
+{var body__2545 = $SL.call(arguments, 2);
+return [B2145("if"), test__2544, B2269(body__2545), false]})
+B2216(B2267, "unless", function B2550 (____2547, test__2548)
+{var body__2549 = $SL.call(arguments, 2);
+return [B2145("if"), [B2145("not"), test__2548], B2269(body__2549), false]})
+B2216(B2267, "and", function B2568 (____2552)
+{var values__2553 = $SL.call(arguments, 1), object__2556 = values__2553, B2554 = ((object__2556 || false).length || 0);
+if ($T(B2190(B2554, 0)))
 return true
-else if ($T($g47($g235, 1)))
-return $g37($values234)
-else return [$g22("when"), $g37($values234), $g42([$g22("and")], $g203($values234))]})
-$g62($g110, "or", function $g242 ($__238)
-{var $values239 = $SL.call(arguments, 1), $g240 = $g48($values239);
-if ($T($g47($g240, 0)))
+else if ($T(B2190(B2554, 1)))
+{var sequence__2558 = values__2553;
+return sequence__2558[0]}
+else {var B2563 = B2145("when"), sequence__2560 = values__2553, B2564 = sequence__2560[0], B2565 = [B2145("and")], sequence__2562 = values__2553, B2566 = sequence__2562.slice(1), B2567 = B2185(B2565, B2566);
+return [B2563, B2564, B2567]}})
+B2216(B2267, "or", function B2591 (____2570)
+{var values__2571 = $SL.call(arguments, 1), object__2575 = values__2571, B2572 = ((object__2575 || false).length || 0);
+if ($T(B2190(B2572, 0)))
 return false
-else if ($T($g47($g240, 1)))
-return $g37($values239)
-else {var $value241 = $g65();
-return [$g22("bind"), [[$value241, $g37($values239)]], [$g22("if"), $value241, $value241, $g42([$g22("or")], $g203($values239))]]}})
-$g62($g110, "if-bind", function $g250 ($__243, $binding244, $then245, $relse246)
-{var $rvar247 = $binding244[0], $value248 = $binding244[1], $temp249 = $g65();
-return [$g22("bind"), [[$temp249, $value248]], [$g22("if"), $temp249, [$g22("bind"), [[$rvar247, $temp249]], $then245], $relse246]]})
-$g62($g110, "while", function $g254 ($__251, $test252)
-{var $body253 = $SL.call(arguments, 2);
-return [$g22("%while"), $test252, $g112($body253)]})
-$g62($g110, "until", function $g258 ($__255, $test256)
-{var $body257 = $SL.call(arguments, 2);
-return $g42([$g22("while"), [$g22("not"), $test256]], $body257)})
-$g62($g110, "dotimes", function $g277 ($__260, $binding261)
-{var $body262 = $SL.call(arguments, 2), $temp263 = $g65(), $rvar264 = $binding261[0], $count265 = $binding261[1], $result266 = $binding261[2], $g268 = $g22("bind"), $g269 = [[$temp263, $count265]], $g270 = $g22("for"), $g271 = [[$rvar264, 0, [$g22("+"), $rvar264, 1]]], $g272 = [$g22(">="), $rvar264, $temp263], $g267 = $result266, $g273;
-if ($T($g267))
-$g273 = $g267
-else $g273 = false;
-var $g274 = [$g272, $g273], $g275 = [$g270, $g271, $g274], $g276 = $g42($g275, $body262);
-return [$g268, $g269, $g276]})
-{var $g284 = $g2["any?"], $g285 = $g2["push-last"], $g286 = $g2.slice, $g287 = $g2.third;
-$g62($g110, "for", function $g313 ($__288, $clauses289, $end290)
-{var $body291 = $SL.call(arguments, 3), $init_clauses292 = [], $next_clauses293 = [], $vars294 = $g151($g37, $clauses289), $g295 = $clauses289, $g296, $g297, $g298 = [$g295];
+else if ($T(B2190(B2572, 1)))
+{var sequence__2577 = values__2571;
+return sequence__2577[0]}
+else {var value__2573 = B2218(), B2582 = B2145("bind"), sequence__2579 = values__2571, B2583 = sequence__2579[0], B2584 = [value__2573, B2583], B2585 = [B2584], B2586 = B2145("if"), B2587 = [B2145("or")], sequence__2581 = values__2571, B2588 = sequence__2581.slice(1), B2589 = B2185(B2587, B2588), B2590 = [B2586, value__2573, value__2573, B2589];
+return [B2582, B2585, B2590]}})
+B2216(B2267, "if-bind", function B2599 (____2592, binding__2593, then__2594, else__2595)
+{var var__2596 = binding__2593[0], value__2597 = binding__2593[1], temp__2598 = B2218();
+return [B2145("bind"), [[temp__2598, value__2597]], [B2145("if"), temp__2598, [B2145("bind"), [[var__2596, temp__2598]], then__2594], else__2595]]})
+B2216(B2267, "while", function B2603 (____2600, test__2601)
+{var body__2602 = $SL.call(arguments, 2);
+return [B2145("%while"), test__2601, B2269(body__2602)]})
+B2216(B2267, "until", function B2607 (____2604, test__2605)
+{var body__2606 = $SL.call(arguments, 2);
+return B2185([B2145("while"), [B2145("not"), test__2605]], body__2606)})
+B2216(B2267, "dotimes", function B2626 (____2609, binding__2610)
+{var body__2611 = $SL.call(arguments, 2), temp__2612 = B2218(), var__2613 = binding__2610[0], count__2614 = binding__2610[1], result__2615 = binding__2610[2], B2617 = B2145("bind"), B2618 = [[temp__2612, count__2614]], B2619 = B2145("for"), B2620 = [[var__2613, 0, [B2145("+"), var__2613, 1]]], B2621 = [B2145(">="), var__2613, temp__2612], B2616 = result__2615, B2622;
+if ($T(B2616))
+B2622 = B2616
+else B2622 = false;
+var B2623 = [B2621, B2622], B2624 = [B2619, B2620, B2623], B2625 = B2185(B2624, body__2611);
+return [B2617, B2618, B2625]})
+{var trueQ = B1464["true?"], B2633 = B1464["any?"], B2634 = B1464["push-last"], B2635 = B1464.slice, B2636 = B1464.third;
+B2216(B2267, "for", function B2731 (____2637, clauses__2638, end__2639)
+{var body__2640 = $SL.call(arguments, 3), init_clauses__2641 = [], next_clauses__2642 = [], vars__2643 = B2320(B2160, clauses__2638), B2644 = clauses__2638, B2645, B2646, B2647 = [B2644];
 while ($T(true))
-{var $g299 = $g296, $g303;
-if ($T($g299))
-$g303 = $g299
-else $g303 = $g284($g36, $g298);
-var $g304 = $g35($g303);
-if ($T($g304))
-{var $clause300 = $g37($g295);
-(function $g314 ($clause301)
-{$g285($init_clauses292, $g286($clause301, 0, 2));
-$g285($next_clauses293, $g37($clause301));
-return $g285($next_clauses293, $g287($clause301))})($clause300);
-$g295 = $g203($g295);
-$g298 = [$g295]}
+{var B2648 = B2645, value__2653;
+if ($T(B2648))
+value__2653 = B2648
+else value__2653 = B2633(B2159, B2647);
+var B2717 = !(trueQ(value__2653));
+if ($T(B2717))
+{var sequence__2655 = B2644, clause__2649 = sequence__2655[0];
+(function B2732 (clause__2650)
+{var array__2664 = init_clauses__2641, array__2661 = clause__2650, start__2662 = 0, end__2663 = 2, value__2665 = array__2661.slice(start__2662, end__2663);
+array__2664.push(value__2665);
+array__2664;
+var array__2670 = next_clauses__2642, sequence__2669 = clause__2650, value__2671 = sequence__2669[0];
+array__2670.push(value__2671);
+array__2670;
+var array__2676 = next_clauses__2642, sequence__2675 = clause__2650, value__2677 = sequence__2675[2];
+array__2676.push(value__2677);
+return array__2676})(clause__2649);
+var sequence__2679 = B2644, B2716 = sequence__2679.slice(1);
+B2644 = B2716;
+B2647 = [B2644]}
 else break};
-$g297;
-var $g305 = $g22("bind"), $g306 = $g22("while"), $g302 = $g36($end290), $g307;
-if ($T($g302))
-$g307 = $g302
-else $g307 = [$g22("not"), $g37($end290)];
-var $g308 = $g42([$g42([$g22("method"), $vars294], $body291)], $vars294), $g309 = $g42([$g22("parallel-set!")], $next_clauses293), $g310 = [$g306, $g307, $g308, $g309], $g311 = $g42($g310), $g312;
-if ($T($g35($g36($g203($end290)))))
-$g312 = $g42([$g22("begin")], $g203($end290))
-else $g312 = false;
-return [$g305, $init_clauses292, $g311, $g312]})}
-$g62($g110, "for-each", function $g361 ($__316, $clauses317, $end318)
-{var $body319 = $SL.call(arguments, 3), $clauses321 = $g151(function $g362 ($clause320)
-{return $g42([$g65()], $clause320)}, $clauses317), $endq322 = $g65(), $values323 = $g65(), $result324 = $g65(), $g339 = $g22("begin"), $vars325 = $g151($g54, $clauses321), $g340 = $g42([$g42([$g22("method"), $vars325], $body319)], $vars325), $g341 = [$g339, $g340], $g342 = $g151(function $g363 ($clause326)
-{return [$g22("set!"), $g37($clause326), [$g22("rest"), $g37($clause326)]]}, $clauses321), $g343 = [[$g22("set!"), $values323, $g42([$g22("%array")], $g151($g37, $clauses321))]], $body327 = $g42($g341, $g342, $g343), $g344 = $g22("bind"), $g345 = $g42($g151(function $g364 ($clause328)
-{var $temp329 = $clause328[0], $rvar330 = $clause328[1], $values331 = $clause328[2];
-return [$temp329, $values331]}, $clauses321), [[$endq322, false], [$result324, false], [$values323, $g42([$g22("%array")], $g151($g37, $clauses321))]]), $g346 = $g22("until"), $g347 = [$g22("or"), $endq322, [$g22("any?"), $g22("empty?"), $values323]], $g348 = $g22("bind"), $g349 = $g151(function $g365 ($clause332)
-{var $temp333 = $clause332[0], $rvar334 = $clause332[1], $values335 = $clause332[2];
-return [$rvar334, [$g22("first"), $temp333]]}, $clauses321), $g336 = $g37($end318), $g358;
-if ($T($g336))
-{var $end_test337 = $g336, $g350 = $g22("if"), $g351 = $g22("begin"), $g352 = $g22("set!"), $results338 = $g203($end318), $g353;
-if ($T($g36($results338)))
-$g353 = [false]
-else $g353 = $results338;
-var $g354 = $g112($g353), $g355 = [$g352, $result324, $g354], $g356 = [$g22("set!"), $endq322, true], $g357 = [$g351, $g355, $g356];
-$g358 = [$g350, $end_test337, $g357, $body327]}
-else $g358 = $body327;
-var $g359 = [$g348, $g349, $g358], $g360 = [$g346, $g347, $g359];
-return [$g344, $g345, $g360, $result324]})
-$g62($g110, "bind-properties", function $g372 ($__366, $properties367, $robject368)
-{var $body369 = $SL.call(arguments, 3), $objectt370 = $g65();
-return $g42([$g22("bind"), $g42([[$objectt370, $robject368]], $g151(function $g373 ($property371)
-{return [$property371, [$g22("%get-property"), $objectt370, $g43($property371)]]}, $properties367))], $body369)})
-$g62($g110, "select", function $g390 ($__374, $value375, $test376)
-{var $cases377 = $SL.call(arguments, 3), $valuet378 = $g65(), $testt379;
-if ($T($g33($test376, $g38)))
-$testt379 = $test376
-else $testt379 = $g65();
-var $test_expression380 = function $g391 ($test_value381)
-{return [$testt379, $valuet378, $test_value381]}, $g385 = $g22("bind"), $g386 = [[$valuet378, $value375]], $g387;
-if ($T($g33($test376, $g38)))
-$g387 = []
-else $g387 = [[$testt379, $test376]];
-var $g388 = $g42($g386, $g387), $g389 = $g42([$g22("cond")], $g151(function $g392 ($rcase382)
-{var $tests383 = $rcase382[0], $then384 = $SL.call($rcase382, 1);
-if ($T($g47($tests383, $g222)))
-return $rcase382
-else return $g42([$g42([$g22("or")], $g151($test_expression380, $tests383))], $then384)}, $cases377));
-return [$g385, $g388, $g389]})
-var $g394 = $g32("destructure", function $g406 ($bindings395, $values396, $body397)
-{if ($T($g33($values396, $g38)))
-{var $g398 = $g123($bindings395), $required399 = $g398[0], $rest400 = $g398[1], $key401 = $g398[2], $i402 = $g48($required399);
-return $g141(function $g407 ($body403, $binding404)
-{$i402 = ($i402 - 1);
-if ($T($g33($binding404, $g38)))
-return [$g22("bind"), [[$binding404, [$g22("%get-property"), $values396, $i402]]], $body403]
-else return $g394($binding404, [$g22("%get-property"), $values396, $i402], $body403)}, $g153($body397, $values396, $required399, $rest400, $key401), $g188($required399))}
-else {var $rvar405 = $g65();
-return [$g22("bind"), [[$rvar405, $values396]], $g394($bindings395, $rvar405, $body397)]}}, false)
-$g62($g110, "destructuring-bind", function $g412 ($__408, $bindings409, $values410)
-{var $body411 = $SL.call(arguments, 3);
-return $g394($bindings409, $values410, $g42([$g22("begin")], $body411))})
-$g62($g110, "bind-methods", function $g420 ($__413, $bindings414)
-{var $body415 = $SL.call(arguments, 2);
-return $g42([$g22("bind"), $g151($g37, $bindings414)], $g151(function $g421 ($binding416)
-{var $identifier417 = $binding416[0], $rarguments418 = $binding416[1], $body419 = $SL.call($binding416, 2);
-return [$g22("set!"), $identifier417, $g42([$g22("method"), $rarguments418], $body419)]}, $bindings414), $body415)})
-$g62($g110, "inc!", function $g431 ($__423, $robject424, $value425)
-{var $g427 = $g22("set!"), $g428 = $g22("+"), $g426 = $value425, $g429;
-if ($T($g426))
-$g429 = $g426
-else $g429 = 1;
-var $g430 = [$g428, $robject424, $g429];
-return [$g427, $robject424, $g430]})
-$g62($g110, "dec!", function $g441 ($__433, $robject434, $value435)
-{var $g437 = $g22("set!"), $g438 = $g22("-"), $g436 = $value435, $g439;
-if ($T($g436))
-$g439 = $g436
-else $g439 = 1;
-var $g440 = [$g438, $robject434, $g439];
-return [$g437, $robject434, $g440]})
-$g62($g110, "+", function $g444 ($__442)
-{var $values443 = $SL.call(arguments, 1);
-if ($T($g36($values443)))
+B2646;
+var B2718 = B2145("bind"), B2719 = B2145("while"), sequence__2690 = end__2639, B2691 = sequence__2690, B2692 = ((B2691 || false).length || 0), B2693 = 0, B2651 = (B2692 === B2693), B2722;
+if ($T(B2651))
+B2722 = B2651
+else {var B2720 = B2145("not"), sequence__2695 = end__2639, B2721 = sequence__2695[0];
+B2722 = [B2720, B2721]};
+var B2723 = B2185([B2185([B2145("method"), vars__2643], body__2640)], vars__2643), B2724 = B2185([B2145("parallel-set!")], next_clauses__2642), B2725 = [B2719, B2722, B2723, B2724], B2726 = B2185(B2725), sequence__2708 = end__2639, sequence__2709 = sequence__2708.slice(1), B2710 = sequence__2709, B2711 = ((B2710 || false).length || 0), B2712 = 0, value__2713 = (B2711 === B2712), B2727 = !(trueQ(value__2713)), B2730;
+if ($T(B2727))
+{var B2728 = [B2145("begin")], sequence__2715 = end__2639, B2729 = sequence__2715.slice(1);
+B2730 = B2185(B2728, B2729)}
+else B2730 = false;
+return [B2718, init_clauses__2641, B2726, B2730]})}
+B2216(B2267, "for-each", function B2807 (____2734, clauses__2735, end__2736)
+{var body__2737 = $SL.call(arguments, 3), clauses__2739 = B2320(function B2808 (clause__2738)
+{return B2185([B2218()], clause__2738)}, clauses__2735), endQ__2740 = B2218(), values__2741 = B2218(), result__2742 = B2218(), B2779 = B2145("begin"), vars__2743 = B2320(B2205, clauses__2739), B2780 = B2185([B2185([B2145("method"), vars__2743], body__2737)], vars__2743), B2781 = [B2779, B2780], B2787 = B2320(function B2809 (clause__2744)
+{var B2782 = B2145("set!"), sequence__2758 = clause__2744, B2783 = sequence__2758[0], B2784 = B2145("rest"), sequence__2760 = clause__2744, B2785 = sequence__2760[0], B2786 = [B2784, B2785];
+return [B2782, B2783, B2786]}, clauses__2739), B2788 = [[B2145("set!"), values__2741, B2185([B2145("%array")], B2320(B2160, clauses__2739))]], body__2745 = B2185(B2781, B2787, B2788), B2789 = B2145("bind"), B2790 = B2185(B2320(function B2810 (clause__2746)
+{var temp__2747 = clause__2746[0], var__2748 = clause__2746[1], values__2749 = clause__2746[2];
+return [temp__2747, values__2749]}, clauses__2739), [[endQ__2740, false], [result__2742, false], [values__2741, B2185([B2145("%array")], B2320(B2160, clauses__2739))]]), B2791 = B2145("until"), B2792 = [B2145("or"), endQ__2740, [B2145("any?"), B2145("empty?"), values__2741]], B2793 = B2145("bind"), B2794 = B2320(function B2811 (clause__2750)
+{var temp__2751 = clause__2750[0], var__2752 = clause__2750[1], values__2753 = clause__2750[2];
+return [var__2752, [B2145("first"), temp__2751]]}, clauses__2739), sequence__2762 = end__2736, B2754 = sequence__2762[0], B2804;
+if ($T(B2754))
+{var end_test__2755 = B2754, B2795 = B2145("if"), B2796 = B2145("begin"), B2797 = B2145("set!"), sequence__2764 = end__2736, results__2756 = sequence__2764.slice(1), sequence__2775 = results__2756, B2776 = sequence__2775, B2777 = ((B2776 || false).length || 0), B2778 = 0, B2798 = (B2777 === B2778), B2799;
+if ($T(B2798))
+B2799 = [false]
+else B2799 = results__2756;
+var B2800 = B2269(B2799), B2801 = [B2797, result__2742, B2800], B2802 = [B2145("set!"), endQ__2740, true], B2803 = [B2796, B2801, B2802];
+B2804 = [B2795, end_test__2755, B2803, body__2745]}
+else B2804 = body__2745;
+var B2805 = [B2793, B2794, B2804], B2806 = [B2791, B2792, B2805];
+return [B2789, B2790, B2806, result__2742]})
+B2216(B2267, "bind-properties", function B2818 (____2812, properties__2813, object__2814)
+{var body__2815 = $SL.call(arguments, 3), objectT__2816 = B2218();
+return B2185([B2145("bind"), B2185([[objectT__2816, object__2814]], B2320(function B2819 (property__2817)
+{return [property__2817, [B2145("%get-property"), objectT__2816, B2186(property__2817)]]}, properties__2813))], body__2815)})
+B2216(B2267, "select", function B2836 (____2820, value__2821, test__2822)
+{var cases__2823 = $SL.call(arguments, 3), valueT__2824 = B2218(), testT__2825;
+if ($T(B2156(test__2822, B2161)))
+testT__2825 = test__2822
+else testT__2825 = B2218();
+var test_expression__2826 = function B2837 (test_value__2827)
+{return [testT__2825, valueT__2824, test_value__2827]}, B2831 = B2145("bind"), B2832 = [[valueT__2824, value__2821]], B2833;
+if ($T(B2156(test__2822, B2161)))
+B2833 = []
+else B2833 = [[testT__2825, test__2822]];
+var B2834 = B2185(B2832, B2833), B2835 = B2185([B2145("cond")], B2320(function B2838 (case__2828)
+{var tests__2829 = case__2828[0], then__2830 = $SL.call(case__2828, 1);
+if ($T(B2190(tests__2829, B2541)))
+return case__2828
+else return B2185([B2185([B2145("or")], B2320(test_expression__2826, tests__2829))], then__2830)}, cases__2823));
+return [B2831, B2834, B2835]})
+var B2840 = B2155("destructure", function B2854 (bindings__2841, values__2842, body__2843)
+{if ($T(B2156(values__2842, B2161)))
+{var B2844 = B2284(bindings__2841), required__2845 = B2844[0], rest__2846 = B2844[1], key__2847 = B2844[2], object__2853 = required__2845, i__2848 = ((object__2853 || false).length || 0);
+return B2310(function B2855 (body__2849, binding__2850)
+{i__2848 = (i__2848 - 1);
+if ($T(B2156(binding__2850, B2161)))
+return [B2145("bind"), [[binding__2850, [B2145("%get-property"), values__2842, i__2848]]], body__2849]
+else return B2840(binding__2850, [B2145("%get-property"), values__2842, i__2848], body__2849)}, B2322(body__2843, values__2842, required__2845, rest__2846, key__2847), B2434(required__2845))}
+else {var var__2851 = B2218();
+return [B2145("bind"), [[var__2851, values__2842]], B2840(bindings__2841, var__2851, body__2843)]}}, false)
+B2216(B2267, "destructuring-bind", function B2860 (____2856, bindings__2857, values__2858)
+{var body__2859 = $SL.call(arguments, 3);
+return B2840(bindings__2857, values__2858, B2185([B2145("begin")], body__2859))})
+B2216(B2267, "bind-methods", function B2868 (____2861, bindings__2862)
+{var body__2863 = $SL.call(arguments, 2);
+return B2185([B2145("bind"), B2320(B2160, bindings__2862)], B2320(function B2869 (binding__2864)
+{var identifier__2865 = binding__2864[0], arguments__2866 = binding__2864[1], body__2867 = $SL.call(binding__2864, 2);
+return [B2145("set!"), identifier__2865, B2185([B2145("method"), arguments__2866], body__2867)]}, bindings__2862), body__2863)})
+B2216(B2267, "inc!", function B2879 (____2871, object__2872, value__2873)
+{var B2875 = B2145("set!"), B2876 = B2145("+"), B2874 = value__2873, B2877;
+if ($T(B2874))
+B2877 = B2874
+else B2877 = 1;
+var B2878 = [B2876, object__2872, B2877];
+return [B2875, object__2872, B2878]})
+B2216(B2267, "dec!", function B2889 (____2881, object__2882, value__2883)
+{var B2885 = B2145("set!"), B2886 = B2145("-"), B2884 = value__2883, B2887;
+if ($T(B2884))
+B2887 = B2884
+else B2887 = 1;
+var B2888 = [B2886, object__2882, B2887];
+return [B2885, object__2882, B2888]})
+B2216(B2267, "+", function B2907 (____2890)
+{var values__2891 = $SL.call(arguments, 1), sequence__2902 = values__2891, B2903 = sequence__2902, B2904 = ((B2903 || false).length || 0), B2905 = 0, B2906 = (B2904 === B2905);
+if ($T(B2906))
 return 0
-else return $g42([$g22("%plus")], $values443)})
-$g62($g110, "-", function $g448 ($__445, $minuend446)
-{var $subtrahends447 = $SL.call(arguments, 2);
-if ($T($g36($subtrahends447)))
-return [$g22("%native-call"), "-", $minuend446]
-else return $g42([$g22("%minus"), $minuend446], $subtrahends447)})
-$g62($g110, "*", function $g451 ($__449)
-{var $values450 = $SL.call(arguments, 1);
-if ($T($g36($values450)))
+else return B2185([B2145("%plus")], values__2891)})
+B2216(B2267, "-", function B2926 (____2908, minuend__2909)
+{var subtrahends__2910 = $SL.call(arguments, 2), sequence__2921 = subtrahends__2910, B2922 = sequence__2921, B2923 = ((B2922 || false).length || 0), B2924 = 0, B2925 = (B2923 === B2924);
+if ($T(B2925))
+return [B2145("%native-call"), "-", minuend__2909]
+else return B2185([B2145("%minus"), minuend__2909], subtrahends__2910)})
+B2216(B2267, "*", function B2944 (____2927)
+{var values__2928 = $SL.call(arguments, 1), sequence__2939 = values__2928, B2940 = sequence__2939, B2941 = ((B2940 || false).length || 0), B2942 = 0, B2943 = (B2941 === B2942);
+if ($T(B2943))
 return 1
-else return $g42([$g22("%times")], $values450)})
-$g62($g110, "/", function $g455 ($__452, $numerator453)
-{var $denominators454 = $SL.call(arguments, 2);
-if ($T($g36($denominators454)))
-return [$g22("%divide"), 1, $numerator453]
-else return $g42([$g22("%divide"), $numerator453], $denominators454)})
-$g62($g110, "call-next-method", function $g457 ($__456)
-{return [[$g22("%get-property"), $g22("next-method"), "apply"], [$g22("%native"), "null"], [$g22("%native"), "arguments"]]})
-var $g458 = $g32("transform_quoted", function $g461 ($form459)
-{if ($T($g33($form459, $g34)))
-{var $g460;
-if ($T($g35($g36($form459))))
-$g460 = $g47($g43($g37($form459)), "%comma")
-else $g460 = false;
-if ($T($g460))
-return $g54($form459)
-else return $g42([$g22("%array")], $g151($g458, $form459))}
-else if ($T($g33($form459, $g38)))
-return [$g22("symbol"), $g43($form459)]
-else return $form459}, false)
-$g62($g110, "%backquote", function $g464 ($__462, $exp463)
-{return $g458($exp463)})
-{var $g470 = $K("message"), $g465 = $g2.signal, $g466 = $g2.make, $g467 = $g2["<error>"];
-$g62($g110, "%comma", function $g471 ($__468, $value469)
-{return $g465($g466($g467, $g470, "comma not inside backquote"))})}
-var $g472 = $g466($g467, $g470, "unsupported name for call in dot")
-{var $g474 = $g2["<string>"];
-$g62($g110, ".", function $g487 ($__475, $value476)
-{var $calls477 = $SL.call(arguments, 2);
-return $g141(function $g488 ($value478, $call479)
-{var $property480 = $call479[0], $rarguments481 = $SL.call($call479, 1), $g483 = $g22("%get-property"), $g482 = $property480, $g484;
-if ($T($g33($g482, $g474)))
-$g484 = $property480
-else if ($T($g33($g482, $g38)))
-$g484 = $g43($property480)
-else $g484 = $g465($g472);
-var $g485 = [$g483, $value478, $g484], $g486 = [$g485];
-return $g42($g486, $rarguments481)}, $value476, $calls477)})}
-var $g490 = $g32("simplify_arguments", function $g500 ($rarguments491)
-{var $g492 = $g123($rarguments491), $required493 = $g492[0], $rest494 = $g492[1], $key495 = $g492[2], $required497 = $g151(function $g501 ($argument496)
-{if ($T($g33($argument496, $g34)))
-return $g37($argument496)
-else return $argument496}, $required493), $g498;
-if ($T($rest494))
-$g498 = $g42([$g135], $rest494)
-else $g498 = [];
-var $g499;
-if ($T($key495))
-$g499 = $g42([$g136], $key495)
-else $g499 = [];
-return $g42($required497, $g498, $g499)}, false)
-var $g506 = $g2[">"], $g507 = $g2["%keys"], $g508 = $g32("make_function_definer", function $g535 ($macro_name509, $definer_name510)
-{var $g511 = $SL.call(arguments, 2), $g512 = $g507($g511, {"type/existing?":false,
-"record?":false}), $typesexistingq513 = $g512["type/existing?"], $recordq514 = $g512["record?"];
-return function $g536 ($env515, $identifier516, $rarguments517)
-{var $body518 = $SL.call(arguments, 3), $g519;
-if ($T($g51($identifier516)))
-$g519 = [true, $g44($g54($identifier516))]
-else $g519 = [false, $identifier516];
-var $setterq520 = $g519[0], $identifier521 = $g519[1], $g522 = $g33($identifier521, $g38), $g526;
-if ($T($g522))
-$g526 = $g522
-else $g526 = $setterq520;
-var $g527 = $g35($g526);
-if ($T($g527))
-$g465($g466($g467, $g470, $g42($macro_name509, ": ", "name not <var> or (setter <var>)")));
-var $g528;
-if ($T($typesexistingq513))
-$g528 = $g36($rarguments517)
-else $g528 = false;
-if ($T($g528))
-$g465($g466($g467, $g470, $g42($macro_name509, ": ", "method has no arguments")));
-var $simplified_arguments523 = $g490($rarguments517), $method_definition524 = $g88($g42([$g22("method"), $simplified_arguments523], $body518), $env515);
-if ($T($recordq514))
-$g62($env515, "module", "functions", $g43($identifier521), $method_definition524);
-var $g529 = $g22("define"), $g530 = [$g22($definer_name510), [$g22("%native-name"), $g43($identifier521)], $method_definition524, $setterq520], $g533;
-if ($T($typesexistingq513))
-{var $head525 = $g37($rarguments517), $g531;
-if ($T($g33($head525, $g34)))
-$g531 = $g506($g48($head525), 1)
-else $g531 = false;
-var $g532;
-if ($T($g531))
-$g532 = $g54($head525)
-else $g532 = $g22("<object>");
-$g533 = [$g532, $identifier521]}
-else $g533 = [];
-var $g534 = $g42($g530, $g533);
-return [$g529, $identifier521, $g534]}}, false)
-{var $g552 = $K("type/existing?"), $g553 = $K("record?"), $g542 = $g2.apply, $g543 = [["define-function", "%make-function", $g552, false, $g553, true], ["define-method", "%make-method", $g552, true]], $g544, $g545, $g546 = [$g543];
+else return B2185([B2145("%times")], values__2928)})
+B2216(B2267, "/", function B2963 (____2945, numerator__2946)
+{var denominators__2947 = $SL.call(arguments, 2), sequence__2958 = denominators__2947, B2959 = sequence__2958, B2960 = ((B2959 || false).length || 0), B2961 = 0, B2962 = (B2960 === B2961);
+if ($T(B2962))
+return [B2145("%divide"), 1, numerator__2946]
+else return B2185([B2145("%divide"), numerator__2946], denominators__2947)})
+B2216(B2267, "call-next-method", function B2965 (____2964)
+{return [[B2145("%get-property"), B2145("next-method"), "apply"], [B2145("%native"), "null"], [B2145("%native"), "arguments"]]})
+var trueQ = B1464["true?"], B2966 = B2155("transform_quoted", function B2992 (form__2967)
+{if ($T(B2156(form__2967, B2157)))
+{var sequence__2979 = form__2967, B2980 = sequence__2979, B2981 = ((B2980 || false).length || 0), B2982 = 0, value__2983 = (B2981 === B2982), B2988 = !(trueQ(value__2983)), B2991;
+if ($T(B2988))
+{var sequence__2985 = form__2967, B2989 = sequence__2985[0], B2990 = B2186(B2989);
+B2991 = B2190(B2990, "%comma")}
+else B2991 = false;
+if ($T(B2991))
+{var sequence__2987 = form__2967;
+return sequence__2987[1]}
+else return B2185([B2145("%array")], B2320(B2966, form__2967))}
+else if ($T(B2156(form__2967, B2161)))
+return [B2145("symbol"), B2186(form__2967)]
+else return form__2967}, false)
+B2216(B2267, "%backquote", function B2995 (____2993, exp__2994)
+{return B2966(exp__2994)})
+{var B3003 = $K("message"), B2996 = B1464.signal, B2997 = B1464.make, B2998 = B1464["<error>"];
+B2216(B2267, "%comma", function B3004 (____2999, value__3000)
+{var error__3002 = B2997(B2998, B3003, "comma not inside backquote");
+throw(error__3002);
+return false})}
+var B3005 = B2997(B2998, B3003, "unsupported name for call in dot")
+{var B3007 = B1464["<string>"];
+B2216(B2267, ".", function B3022 (____3008, value__3009)
+{var calls__3010 = $SL.call(arguments, 2);
+return B2310(function B3023 (value__3011, call__3012)
+{var property__3013 = call__3012[0], arguments__3014 = $SL.call(call__3012, 1), B3018 = B2145("%get-property"), B3015 = property__3013, B3019;
+if ($T(B2156(B3015, B3007)))
+B3019 = property__3013
+else if ($T(B2156(B3015, B2161)))
+B3019 = B2186(property__3013)
+else {var error__3017 = B3005;
+throw(error__3017);
+B3019 = false};
+var B3020 = [B3018, value__3011, B3019], B3021 = [B3020];
+return B2185(B3021, arguments__3014)}, value__3009, calls__3010)})}
+var B3025 = B2155("simplify_arguments", function B3037 (arguments__3026)
+{var B3027 = B2284(arguments__3026), required__3028 = B3027[0], rest__3029 = B3027[1], key__3030 = B3027[2], required__3032 = B2320(function B3038 (argument__3031)
+{if ($T(B2156(argument__3031, B2157)))
+{var sequence__3034 = argument__3031;
+return sequence__3034[0]}
+else return argument__3031}, required__3028), B3035;
+if ($T(rest__3029))
+B3035 = B2185([B2304], rest__3029)
+else B3035 = [];
+var B3036;
+if ($T(key__3030))
+B3036 = B2185([B2305], key__3030)
+else B3036 = [];
+return B2185(required__3032, B3035, B3036)}, false)
+var trueQ = B1464["true?"], B3043 = B1464[">"], B3044 = B1464["%keys"], B3045 = B2155("make_function_definer", function B3102 (macro_name__3046, definer_name__3047)
+{var B3048 = $SL.call(arguments, 2), B3049 = B3044(B3048, {"type/existing?":false,
+"record?":false}), typeSexistingQ__3050 = B3049["type/existing?"], recordQ__3051 = B3049["record?"];
+return function B3103 (env__3052, identifier__3053, arguments__3054)
+{var body__3055 = $SL.call(arguments, 3), B3056;
+if ($T(B2194(identifier__3053)))
+{var sequence__3064 = identifier__3053, B3091 = sequence__3064[1], B3092 = B2187(B3091);
+B3056 = [true, B3092]}
+else B3056 = [false, identifier__3053];
+var setterQ__3057 = B3056[0], identifier__3058 = B3056[1], B3059 = B2156(identifier__3058, B2161), value__3066;
+if ($T(B3059))
+value__3066 = B3059
+else value__3066 = setterQ__3057;
+var B3093 = !(trueQ(value__3066));
+if ($T(B3093))
+{var error__3068 = B2997(B2998, B3003, B2185(macro_name__3046, ": ", "name not <var> or (setter <var>)"));
+throw(error__3068);
+false};
+var B3094;
+if ($T(typeSexistingQ__3050))
+{var sequence__3079 = arguments__3054, B3080 = sequence__3079, B3081 = ((B3080 || false).length || 0), B3082 = 0;
+B3094 = (B3081 === B3082)}
+else B3094 = false;
+if ($T(B3094))
+{var error__3084 = B2997(B2998, B3003, B2185(macro_name__3046, ": ", "method has no arguments"));
+throw(error__3084);
+false};
+var simplified_arguments__3060 = B3025(arguments__3054), method_definition__3061 = B2245(B2185([B2145("method"), simplified_arguments__3060], body__3055), env__3052);
+if ($T(recordQ__3051))
+B2216(env__3052, "module", "functions", B2186(identifier__3058), method_definition__3061);
+var B3095 = B2145("define"), B3096 = [B2145(definer_name__3047), [B2145("%native-name"), B2186(identifier__3058)], method_definition__3061, setterQ__3057], B3100;
+if ($T(typeSexistingQ__3050))
+{var sequence__3086 = arguments__3054, head__3062 = sequence__3086[0], B3098;
+if ($T(B2156(head__3062, B2157)))
+{var object__3088 = head__3062, B3097 = ((object__3088 || false).length || 0);
+B3098 = B3043(B3097, 1)}
+else B3098 = false;
+var B3099;
+if ($T(B3098))
+{var sequence__3090 = head__3062;
+B3099 = sequence__3090[1]}
+else B3099 = B2145("<object>");
+B3100 = [B3099, identifier__3058]}
+else B3100 = [];
+var B3101 = B2185(B3096, B3100);
+return [B3095, identifier__3058, B3101]}}, false)
+{var B3129 = $K("type/existing?"), B3130 = $K("record?"), trueQ = B1464["true?"], B3109 = B1464.apply, B3110 = [["define-function", "%make-function", B3129, false, B3130, true], ["define-method", "%make-method", B3129, true]], B3111, B3112, B3113 = [B3110];
 while ($T(true))
-{var $g547 = $g544, $g550;
-if ($T($g547))
-$g550 = $g547
-else $g550 = $g284($g36, $g546);
-var $g551 = $g35($g550);
-if ($T($g551))
-{var $rarguments548 = $g37($g543);
-(function $g554 ($rarguments549)
-{return $g62($g110, $g37($rarguments549), $g542($g508, $rarguments549))})($rarguments548);
-$g543 = $g203($g543);
-$g546 = [$g543]}
+{var B3114 = B3111, value__3118;
+if ($T(B3114))
+value__3118 = B3114
+else value__3118 = B2633(B2159, B3113);
+var B3128 = !(trueQ(value__3118));
+if ($T(B3128))
+{var sequence__3120 = B3110, arguments__3115 = sequence__3120[0];
+(function B3131 (arguments__3116)
+{var sequence__3122 = arguments__3116, B3125 = sequence__3122[0], B3126 = B3109(B3045, arguments__3116);
+return B2216(B2267, B3125, B3126)})(arguments__3115);
+var sequence__3124 = B3110, B3127 = sequence__3124.slice(1);
+B3110 = B3127;
+B3113 = [B3110]}
 else break};
-$g545}
-$g62($g110, "define-generic", function $g558 ($__555, $identifier556, $rarguments557)
-{return [$g22("define"), $identifier556, [$g22("%make-generic"), [$g22("%native-name"), $g43($identifier556)]]]})
-$g62($g110, "define-class", function $g582 ($__564, $identifier565, $superclass566)
-{var $properties567 = $SL.call(arguments, 3), $robject568 = [$g22("%object")], $g569 = $properties567, $g570, $g571, $g572 = [$g569];
+B3112}
+B2216(B2267, "define-generic", function B3135 (____3132, identifier__3133, arguments__3134)
+{return [B2145("define"), identifier__3133, [B2145("%make-generic"), [B2145("%native-name"), B2186(identifier__3133)]]]})
+{var trueQ = B1464["true?"];
+B2216(B2267, "define-class", function B3208 (____3141, identifier__3142, superclass__3143)
+{var properties__3144 = $SL.call(arguments, 3), object__3145 = [B2145("%object")], B3146 = properties__3144, B3147, B3148, B3149 = [B3146];
 while ($T(true))
-{var $g573 = $g570, $g576;
-if ($T($g573))
-$g576 = $g573
-else $g576 = $g284($g36, $g572);
-var $g577 = $g35($g576);
-if ($T($g577))
-{var $property574 = $g37($g569);
-(function $g583 ($property575)
-{if ($T($g33($property575, $g34)))
-{$g285($robject568, $g43($g37($property575)));
-return $g285($robject568, [$g22("method"), [], $g54($property575)])}
-else {$g285($robject568, $g43($property575));
-return $g285($robject568, false)}})($property574);
-$g569 = $g203($g569);
-$g572 = [$g569]}
+{var B3150 = B3147, value__3154;
+if ($T(B3150))
+value__3154 = B3150
+else value__3154 = B2633(B2159, B3149);
+var B3202 = !(trueQ(value__3154));
+if ($T(B3202))
+{var sequence__3156 = B3146, property__3151 = sequence__3156[0];
+(function B3209 (property__3152)
+{if ($T(B2156(property__3152, B2157)))
+{var array__3161 = object__3145, sequence__3160 = property__3152, B3197 = sequence__3160[0], value__3162 = B2186(B3197);
+array__3161.push(value__3162);
+array__3161;
+var array__3167 = object__3145, B3198 = B2145("method"), B3199 = [], sequence__3166 = property__3152, B3200 = sequence__3166[1], value__3168 = [B3198, B3199, B3200];
+array__3167.push(value__3168);
+return array__3167}
+else {var array__3171 = object__3145, value__3172 = B2186(property__3152);
+array__3171.push(value__3172);
+array__3171;
+var array__3175 = object__3145, value__3176 = undefined;
+array__3175.push(value__3176);
+return array__3175}})(property__3151);
+var sequence__3178 = B3146, B3201 = sequence__3178.slice(1);
+B3146 = B3201;
+B3149 = [B3146]}
 else break};
-$g571;
-var $g578 = $g22("define"), $g579 = $g22("%make-class"), $g580;
-if ($T($g35($g36($superclass566))))
-$g580 = $g37($superclass566)
-else $g580 = false;
-var $g581 = [$g579, $g580, $robject568];
-return [$g578, $identifier565, $g581]})
-var $g584 = $g32("get_import_module_nameSoptions", function $g589 ($rimport585)
-{var $g586;
-if ($T($g33($rimport585, $g34)))
-$g586 = $g37($rimport585)
-else $g586 = $rimport585;
-var $g587 = $g43($g586), $g588;
-if ($T($g33($rimport585, $g34)))
-$g588 = $g203($rimport585)
-else $g588 = [];
-return [$g587, $g588]}, false)
-{var $g594, $g595, $g596;
-$g62($g110, "define-module", function $g613 ($env597, $__598)
-{var $g599 = $SL.call(arguments, 2), $g600 = $g507($g599, {"import":[],
+B3148;
+var B3203 = B2145("define"), B3204 = B2145("%make-class"), sequence__3190 = superclass__3143, B3191 = sequence__3190, B3192 = ((B3191 || false).length || 0), B3193 = 0, value__3194 = (B3192 === B3193), B3205 = !(trueQ(value__3194)), B3206;
+if ($T(B3205))
+{var sequence__3196 = superclass__3143;
+B3206 = sequence__3196[0]}
+else B3206 = false;
+var B3207 = [B3204, B3206, object__3145];
+return [B3203, identifier__3142, B3207]})}
+var B3210 = B2155("get_import_module_nameSoptions", function B3219 (import__3211)
+{var B3216;
+if ($T(B2156(import__3211, B2157)))
+{var sequence__3213 = import__3211;
+B3216 = sequence__3213[0]}
+else B3216 = import__3211;
+var B3217 = B2186(B3216), B3218;
+if ($T(B2156(import__3211, B2157)))
+{var sequence__3215 = import__3211;
+B3218 = sequence__3215.slice(1)}
+else B3218 = [];
+return [B3217, B3218]}, false)
+{var B3224, B3225, B3226;
+B2216(B2267, "define-module", function B3243 (env__3227, ____3228)
+{var B3229 = $SL.call(arguments, 2), B3230 = B3044(B3229, {"import":[],
 "export":[],
 "compile-time-import":[],
-inline:[]}), $rimport601 = $g600["import"], $rexport602 = $g600["export"], $compile_time_import603 = $g600["compile-time-import"], $inline604 = $g600.inline;
-$g62($env597, "module", "exports", $g151($g55, $rexport602));
-$g86(function $g614 ($rimport605)
-{var $g606 = $g584($rimport605), $module_name607 = $g606[0], $options608 = $g606[1];
-return $g542($g594, $env597, $module_name607, $options608)}, $compile_time_import603);
-$g62($env597, "module", "inline", $g151($g55, $inline604));
-return $g112($g151(function $g615 ($rimport609)
-{var $g610 = $g584($rimport609), $module_name611 = $g610[0], $options612 = $g610[1];
-$g542($g595, $g81($env597, "module"), $module_name611, $options612);
-return $g596($module_name611, $env597)}, $rimport601))})}
-$g596 = $g32("make_import_definition", function $g619 ($module_name616, $env617)
-{var $identifier618 = $g65();
-$g62($env617, "import-identifiers", $module_name616, $identifier618);
-return [$g22("define"), $identifier618, [[$g22("%native"), "require"], $module_name616]]}, false)
-$g62($g110, "define-macro", function $g624 ($env620, $identifier621, $rarguments622)
-{var $body623 = $SL.call(arguments, 3);
-return [$g22("begin"), $g42([$g22("define-function"), $identifier621, $g42([$g65()], $rarguments622)], $body623), [$g22("set!"), [$g22("%get-property"), $identifier621, "%macro?"], true]]})
-$g62($g110, "define-symbol-macro", function $g629 ($env625, $identifier626, $rarguments627)
-{var $body628 = $SL.call(arguments, 3);
-return [$g22("begin"), $g42([$g22("define-function"), $identifier626, []], $body628), [$g22("set!"), [$g22("%get-property"), $identifier626, "%symbol-macro?"], true]]})
-$g62($g110, "handler-case", function $g646 ($__633, $body634)
-{var $cases635 = $SL.call(arguments, 2), $condition_var636 = $g65();
-return [$g22("%try"), $body634, $condition_var636, $g42([$g22("cond")], $g151(function $g647 ($rcase637)
-{var $g638 = $rcase637[0], $type639 = $g638[0], $g640 = $SL.call($g638, 1), $g641 = $g507($g640, {condition:false}), $condition642 = $g641.condition, $body643 = $SL.call($rcase637, 1), $g644 = [[$g22("instance?"), $condition_var636, $type639]], $g645;
-if ($T($condition642))
-$g645 = [$g42([$g22("bind"), [[$condition642, $condition_var636]]], $body643)]
-else $g645 = $body643;
-return $g42($g644, $g645)}, $cases635))]})
-{var $g648, $g649 = $g2.identity, $g650 = $g32("lift_defines", function $g653 ($exp651, $env652)
-{return $g648($exp651, $env652, $g649)}, false);
-exports["lift-defines"] = $g650}
-{var $g659, $g660 = $g2["has?"], $g661;
-$g648 = $g32("lift_define", function $g702 ($exp662, $env663, $k664)
-{if ($T($g39($exp662)))
-{var $g665 = $g43($g37($exp662));
-if ($T($g47($g665, "%bind")))
-{var $__666 = $exp662[0], $g667 = $exp662[1], $rvar668 = $g667[0], $value669 = $g667[1], $body670 = $exp662[2];
-return $g648($value669, $env663, function $g703 ($lvalue671, $env672)
-{return $g648($body670, $env672, function $g704 ($lbody673, $env674)
-{return $k664([$g22("%bind"), [$rvar668, $lvalue671], $lbody673], $env674)})})}
-else if ($T($g47($g665, "%try")))
-{var $m675 = $exp662[0], $e1676 = $exp662[1], $v677 = $exp662[2], $e2678 = $exp662[3];
-return $g659([$e1676, $e2678], $env663, function $g705 ($let679, $env680)
-{var $le1681 = $let679[0], $le2682 = $let679[1];
-return $k664([$m675, $le1681, $v677, $le2682], $env680)})}
-else {var $g683 = $g47($g665, "%method"), $g700;
-if ($T($g683))
-$g700 = $g683
-else $g700 = $g47($g665, "%set");
-if ($T($g700))
-{var $m684 = $exp662[0], $e1685 = $exp662[1], $e2686 = $exp662[2];
-return $g648($e2686, $env663, function $g706 ($le2687, $env688)
-{return $k664([$m684, $e1685, $le2687], $env688)})}
-else {var $g689 = $g47($g665, "%begin"), $g701;
-if ($T($g689))
-$g701 = $g689
-else {var $g690 = $g47($g665, "%if");
-if ($T($g690))
-$g701 = $g690
-else $g701 = $g47($g665, "%while")};
-if ($T($g701))
-{var $m691 = $exp662[0], $et692 = $SL.call($exp662, 1);
-return $g659($et692, $env663, function $g707 ($let693, $env694)
-{return $k664($g42([$m691], $let693), $env694)})}
-else if ($T($g47($g665, "define")))
-{var $__695 = $exp662[0], $rvar696 = $exp662[1], $value697 = $exp662[2], $exportq698 = $exp662[3], $name699 = $g43($rvar696);
-if ($T($g660($g81($env663, "defined?"), $name699)))
-return $k664([$g22("%set"), $rvar696, $value697], $env663)
-else {$g62($env663, "defined?", $name699, true);
-return [$g22("%begin"), [$g22("%define"), $rvar696], $k664([$g22("%set"), $rvar696, $value697], $env663)]}}
-else return $g661($exp662, $env663, $k664)}}}
-else return $k664($exp662, $env663)}, false)}
-$g659 = $g32("lift_defineT", function $g711 ($expt708, $env709, $k710)
-{if ($T($g36($expt708)))
-return $k710([], $env709)
-else return $g661($expt708, $env709, $k710)}, false)
-$g661 = $g32("lift_defineTT", function $g719 ($exp712, $env713, $k714)
-{return $g648($g37($exp712), $env713, function $g720 ($t715, $env716)
-{return $g659($g203($exp712), $env716, function $g721 ($tt717, $env718)
-{return $k714($g42([$t715], $tt717), $env718)})})}, false)
-{var $g722 = $g13();
-exports["*core-symbol-macros*"] = $g722}
-$g62($g722, "next-method", function $g724 ($__723)
-{return [$g22("%next-method"), $g22("%this-method")]})
-var $g726 = $g32("find_macro_definition", function $g732 ($form727, $env728)
-{var $g729 = $form727;
-if ($T($g33($g729, $g34)))
-{if ($T($g36($form727)))
-$g465("Empty form");
-var $name730 = $g43($g37($form727));
-if ($T($g35($g81($env728, "bound?", $name730))))
-return $env728.macros[$name730]}
-else if ($T($g33($g729, $g38)))
-{var $name731 = $g43($form727);
-if ($T($g35($g81($env728, "bound?", $name731))))
-return $env728["symbol-macros"][$name731]}}, false)
-{var $g734 = $g32("macroexpand_1", function $g740 ($form735, $env736)
-{var $g737 = $g726($form735, $env736);
-if ($T($g737))
-{var $macro738 = $g737, $g739;
-if ($T($g33($form735, $g34)))
-$g739 = $g203($form735)
-else $g739 = $form735;
-return $g542($macro738, $env736, $g739)}
-else return $form735}, false);
-exports["macroexpand-1"] = $g734}
-{var $g741 = $g32("macroexpand", function $g746 ($form742, $env743)
-{var $doneq744;
-while ($T($g35($doneq744)))
-{var $expanded745 = $g734($form742, $env743);
-$doneq744 = $g47($expanded745, $form742);
-$form742 = $expanded745};
-return $form742}, false);
-exports.macroexpand = $g741}
-{$g88 = $g32("macroexpand_all", function $g754 ($form749, $env750)
-{var $g751 = $form749;
-if ($T($g33($g751, $g34)))
-if ($T($g726($form749, $env750)))
-return $g88($g741($form749, $env750), $env750)
-else {var $g752 = $g82($form749, $env750);
-if ($T($g752))
-{var $expander753 = $g752;
-return $g542($expander753, $env750, $g203($form749))}
-else return $g151($g50($g88, $env750), $form749)}
-else if ($T($g33($g751, $g38)))
-if ($T($g726($form749, $env750)))
-return $g88($g741($form749, $env750), $env750)
-else return $form749
-else return $form749}, false);
-exports["macroexpand-all"] = $g88}
-var $g756 = $g32("find_moduleSimport_name", function $g766 ($definition_name757, $env758)
-{return $g284(function $g767 ($rimport759)
-{var $module760 = $rimport759[0], $names761 = $rimport759[1];
-return $g284(function $g768 ($name762)
-{var $g763;
-if ($T($g33($name762, $g34)))
-$g763 = $name762
-else $g763 = [$name762, $name762];
-var $import_name764 = $g763[0], $new_name765 = $g763[1];
-if ($T($g47($definition_name757, $new_name765)))
-return [$module760, $import_name764]}, $names761)}, $g81($env758, "module", "imports"))}, false)
-var $g769 = $g32("find_import_identifier", function $g772 ($module770, $env771)
-{return $g81($env771, "import-identifiers", $g81($module770, "name"))}, false)
-{var $g773 = $g2["set-subtract!"], $g774, $g775 = $g2["as-set"], $g776 = $g2["object-properties"], $g777 = $g32("define_free_variables", function $g790 ($exp778, $env779)
-{var $variables780 = $g773($g773($g774($exp778), $g775($g151($g22, $g776($g81($env779, "defined?"))))), $g23);
-if ($T($g36($variables780)))
-return $exp778
-else return $g42([$g22("%begin")], $g151(function $g791 ($variable781)
-{var $name782 = $g43($variable781);
-$g62($env779, "defined?", $name782, true);
-var $g787 = [[$g22("%define"), $variable781]], $modulesimport_name783 = $g756($name782, $env779), $g788;
-if ($T($modulesimport_name783))
-{var $module784 = $modulesimport_name783[0], $import_name785 = $modulesimport_name783[1], $import_identifier786 = $g769($module784, $env779);
-$g788 = [[$g22("%set"), $variable781, [$g22("%get-property"), $import_identifier786, $import_name785]]]}
-else $g788 = [];
-var $g789 = $g42($g787, $g788);
-return $g112($g789)}, $variables780), [$exp778])}, false);
-exports["define-free-variables"] = $g777}
-var $g792 = $g2.choose, $g793 = $g32("define_free_variables2", function $g809 ($exp794, $env795)
-{var $free796 = $g773($g774($exp794), $g23), $variables798 = $g792(function $g810 ($variable797)
-{return $g35($g660($g81($env795, "definition-names"), $g43($variable797)))}, $free796);
-if ($T($g36($variables798)))
-return $exp794
-else return $g42([$g22("%begin")], $g151(function $g811 ($variable799)
-{var $name800 = $g43($variable799);
-$g62($env795, "defined?", $name800, true);
-var $g806 = [[$g22("%define"), $variable799]], $modulesimport_name801 = $g756($name800, $env795), $g807;
-if ($T($modulesimport_name801))
-{var $module802 = $modulesimport_name801[0], $import_name803 = $modulesimport_name801[1], $old_import_identifier804 = $g769($module802, $env795), $import_identifier805 = $g81($env795, "new-identifiers", $g43($old_import_identifier804));
-$g807 = [[$g22("%set"), $variable799, [$g22("%get-property"), $import_identifier805, $import_name803]]]}
-else $g807 = [];
-var $g808 = $g42($g806, $g807);
-return $g112($g808)}, $variables798), [$exp794])}, false)
-{var $g827 = $g2["set-union!"];
-$g774 = $g32("find_free_variables", function $g865 ($exp828)
-{var $g860;
-if ($T($g33($exp828, $g34)))
-$g860 = $g35($g36($exp828))
-else $g860 = false;
-if ($T($g860))
-{var $head829 = $g37($exp828), $name830;
-if ($T($g33($head829, $g38)))
-$name830 = $g43($head829)
-else $name830 = false;
-var $g831 = $name830;
-if ($T($g47($g831, "%method")))
-{var $__832 = $exp828[0], $rarguments833 = $exp828[1], $body834 = $exp828[2];
-return $g773($g774($body834), $g775($rarguments833))}
-else if ($T($g47($g831, "%bind")))
-{var $__835 = $exp828[0], $g836 = $exp828[1], $rvar837 = $g836[0], $value838 = $g836[1], $body839 = $exp828[2];
-return $g827($g773($g774($body839), $g775([$rvar837])), $g774($value838))}
-else if ($T($g47($g831, "%begin")))
-{var $definitions840 = [];
-return $g773($g775($g141(function $g866 ($result841, $e842)
-{var $g861;
-if ($T($g39($e842)))
-$g861 = $g47($g37($e842), $g22("%define"))
-else $g861 = false;
-var $g862;
-if ($T($g861))
-{$g285($definitions840, $g54($e842));
-$g862 = []}
-else $g862 = $g774($e842);
-return $g42($result841, $g862)}, [], $g203($exp828))), $g775($definitions840))}
-else if ($T($g47($g831, "%try")))
-{var $__843 = $exp828[0], $e1844 = $exp828[1], $v845 = $exp828[2], $e2846 = $exp828[3];
-return $g773($g827($g775($g774($e1844)), $g775($g774($e2846))), $g775([$v845]))}
-else {var $g847 = $g47($g831, "%set"), $g863;
-if ($T($g847))
-$g863 = $g847
-else {var $g848 = $g47($g831, "%if");
-if ($T($g848))
-$g863 = $g848
-else {var $g849 = $g47($g831, "%while");
-if ($T($g849))
-$g863 = $g849
-else {var $g850 = $g47($g831, "%array");
-if ($T($g850))
-$g863 = $g850
-else {var $g851 = $g47($g831, "%object");
-if ($T($g851))
-$g863 = $g851
-else {var $g852 = $g47($g831, "%infix");
-if ($T($g852))
-$g863 = $g852
-else {var $g853 = $g47($g831, "%get-property");
-if ($T($g853))
-$g863 = $g853
-else {var $g854 = $g47($g831, "%native-call");
-if ($T($g854))
-$g863 = $g854
-else {var $g855 = $g47($g831, "%plus");
-if ($T($g855))
-$g863 = $g855
-else {var $g856 = $g47($g831, "%minus");
-if ($T($g856))
-$g863 = $g856
-else {var $g857 = $g47($g831, "%times");
-if ($T($g857))
-$g863 = $g857
-else $g863 = $g47($g831, "%divide")}}}}}}}}}};
-if ($T($g863))
-return $g775($g141($g42, [], $g151($g774, $g203($exp828))))
-else {var $g858 = $g47($g831, "%native"), $g864;
-if ($T($g858))
-$g864 = $g858
-else {var $g859 = $g47($g831, "%native-name");
-if ($T($g859))
-$g864 = $g859
-else $g864 = $g47($g831, "%define")};
-if ($T($g864))
-return $g775([])
-else return $g152($g827, $g151($g774, $exp828))}}}
-else if ($T($g33($exp828, $g38)))
-return $g775([$exp828])
-else return $g775([])}, false)}
-var $g867 = $g32("ensure_naming_structure", function $g872 ($env868, $module_name869, $name870)
-{if ($T($g35($g81($env868, "identifiers", $module_name869))))
-$g62($env868, "identifiers", $module_name869, $g13());
-var $module_renamings871 = $g81($env868, "identifiers", $module_name869);
-if ($T($g35($g81($module_renamings871, $name870))))
-$g62($module_renamings871, $name870, []);
-return $env868}, false)
-var $g874 = $g32("get_module_nameSname", function $g879 ($identifier875)
-{var $g876 = $g81($identifier875, "module"), $g877;
-if ($T($g876))
-$g877 = $g876
-else $g877 = "";
-var $g878 = $g43($identifier875);
-return [$g877, $g878]}, false)
-var $g881 = $g2.push, $g882 = $g32("rename_identifiers", function $g891 ($identifiers883, $env884)
-{return $g151(function $g892 ($identifier885)
-{var $g886 = $g874($identifier885), $module_name887 = $g886[0], $name888 = $g886[1], $g890;
-if ($T($g35($g81($identifier885, "generated?"))))
-$g890 = $name888
-else $g890 = false;
-var $new_identifier889 = $g65($g890);
-$g867($env884, $module_name887, $name888);
-$g881($g81($env884, "identifiers", $module_name887, $name888), $new_identifier889);
-return $new_identifier889}, $identifiers883)}, false)
-var $g899 = $g2.pop, $g900 = $g32("restore_identifiers", function $g915 ($identifiers901, $env902)
-{var $g903 = $identifiers901, $g904, $g905, $g906 = [$g903];
+inline:[]}), import__3231 = B3230["import"], export__3232 = B3230["export"], compile_time_import__3233 = B3230["compile-time-import"], inline__3234 = B3230.inline;
+B2216(env__3227, "module", "exports", B2320(B2206, export__3232));
+B2243(function B3244 (import__3235)
+{var B3236 = B3210(import__3235), module_name__3237 = B3236[0], options__3238 = B3236[1];
+return B3109(B3224, env__3227, module_name__3237, options__3238)}, compile_time_import__3233);
+B2216(env__3227, "module", "inline", B2320(B2206, inline__3234));
+return B2269(B2320(function B3245 (import__3239)
+{var B3240 = B3210(import__3239), module_name__3241 = B3240[0], options__3242 = B3240[1];
+B3109(B3225, B2234(env__3227, "module"), module_name__3241, options__3242);
+return B3226(module_name__3241, env__3227)}, import__3231))})}
+B3226 = B2155("make_import_definition", function B3249 (module_name__3246, env__3247)
+{var identifier__3248 = B2218();
+B2216(env__3247, "import-identifiers", module_name__3246, identifier__3248);
+return [B2145("define"), identifier__3248, [[B2145("%native"), "require"], module_name__3246]]}, false)
+B2216(B2267, "define-macro", function B3254 (env__3250, identifier__3251, arguments__3252)
+{var body__3253 = $SL.call(arguments, 3);
+return [B2145("begin"), B2185([B2145("define-function"), identifier__3251, B2185([B2218()], arguments__3252)], body__3253), [B2145("set!"), [B2145("%get-property"), identifier__3251, "%macro?"], true]]})
+B2216(B2267, "define-symbol-macro", function B3259 (env__3255, identifier__3256, arguments__3257)
+{var body__3258 = $SL.call(arguments, 3);
+return [B2145("begin"), B2185([B2145("define-function"), identifier__3256, []], body__3258), [B2145("set!"), [B2145("%get-property"), identifier__3256, "%symbol-macro?"], true]]})
+B2216(B2267, "handler-case", function B3276 (____3263, body__3264)
+{var cases__3265 = $SL.call(arguments, 2), condition_var__3266 = B2218();
+return [B2145("%try"), body__3264, condition_var__3266, B2185([B2145("cond")], B2320(function B3277 (case__3267)
+{var B3268 = case__3267[0], type__3269 = B3268[0], B3270 = $SL.call(B3268, 1), B3271 = B3044(B3270, {condition:false}), condition__3272 = B3271.condition, body__3273 = $SL.call(case__3267, 1), B3274 = [[B2145("instance?"), condition_var__3266, type__3269]], B3275;
+if ($T(condition__3272))
+B3275 = [B2185([B2145("bind"), [[condition__3272, condition_var__3266]]], body__3273)]
+else B3275 = body__3273;
+return B2185(B3274, B3275)}, cases__3265))]})
+{var B3278, B3279 = B1464.identity, B3280 = B2155("lift_defines", function B3283 (exp__3281, env__3282)
+{return B3278(exp__3281, env__3282, B3279)}, false);
+exports["lift-defines"] = B3280}
+{var B3289, B3290 = B1464["has?"], B3291;
+B3278 = B2155("lift_define", function B3340 (exp__3292, env__3293, k__3294)
+{if ($T(B2162(exp__3292)))
+{var sequence__3331 = exp__3292, B3336 = sequence__3331[0], B3295 = B2186(B3336);
+if ($T(B2190(B3295, "%bind")))
+{var ____3296 = exp__3292[0], B3297 = exp__3292[1], var__3298 = B3297[0], value__3299 = B3297[1], body__3300 = exp__3292[2];
+return B3278(value__3299, env__3293, function B3341 (lvalue__3301, env__3302)
+{return B3278(body__3300, env__3302, function B3342 (lbody__3303, env__3304)
+{return k__3294([B2145("%bind"), [var__3298, lvalue__3301], lbody__3303], env__3304)})})}
+else if ($T(B2190(B3295, "%try")))
+{var m__3305 = exp__3292[0], e1__3306 = exp__3292[1], v__3307 = exp__3292[2], e2__3308 = exp__3292[3];
+return B3289([e1__3306, e2__3308], env__3293, function B3343 (leT__3309, env__3310)
+{var le1__3311 = leT__3309[0], le2__3312 = leT__3309[1];
+return k__3294([m__3305, le1__3311, v__3307, le2__3312], env__3310)})}
+else {var B3313 = B2190(B3295, "%method"), B3337;
+if ($T(B3313))
+B3337 = B3313
+else B3337 = B2190(B3295, "%set");
+if ($T(B3337))
+{var m__3314 = exp__3292[0], e1__3315 = exp__3292[1], e2__3316 = exp__3292[2];
+return B3278(e2__3316, env__3293, function B3344 (le2__3317, env__3318)
+{return k__3294([m__3314, e1__3315, le2__3317], env__3318)})}
+else {var B3319 = B2190(B3295, "%begin"), B3338;
+if ($T(B3319))
+B3338 = B3319
+else {var B3320 = B2190(B3295, "%if");
+if ($T(B3320))
+B3338 = B3320
+else B3338 = B2190(B3295, "%while")};
+if ($T(B3338))
+{var m__3321 = exp__3292[0], eT__3322 = $SL.call(exp__3292, 1);
+return B3289(eT__3322, env__3293, function B3345 (leT__3323, env__3324)
+{return k__3294(B2185([m__3321], leT__3323), env__3324)})}
+else if ($T(B2190(B3295, "define")))
+{var ____3325 = exp__3292[0], var__3326 = exp__3292[1], value__3327 = exp__3292[2], exportQ__3328 = exp__3292[3], name__3329 = B2186(var__3326), object__3334 = B2234(env__3293, "defined?"), property__3335 = name__3329, B3339 = $HP.call(object__3334,property__3335);
+if ($T(B3339))
+return k__3294([B2145("%set"), var__3326, value__3327], env__3293)
+else {B2216(env__3293, "defined?", name__3329, true);
+return [B2145("%begin"), [B2145("%define"), var__3326], k__3294([B2145("%set"), var__3326, value__3327], env__3293)]}}
+else return B3291(exp__3292, env__3293, k__3294)}}}
+else return k__3294(exp__3292, env__3293)}, false)}
+B3289 = B2155("lift_defineT", function B3364 (expT__3346, env__3347, k__3348)
+{var sequence__3359 = expT__3346, B3360 = sequence__3359, B3361 = ((B3360 || false).length || 0), B3362 = 0, B3363 = (B3361 === B3362);
+if ($T(B3363))
+return k__3348([], env__3347)
+else return B3291(expT__3346, env__3347, k__3348)}, false)
+B3291 = B2155("lift_defineTT", function B3380 (exp__3365, env__3366, k__3367)
+{var sequence__3373 = exp__3365, B3376 = sequence__3373[0], B3379 = function B3381 (t__3368, env__3369)
+{var sequence__3375 = exp__3365, B3377 = sequence__3375.slice(1), B3378 = function B3382 (tT__3370, env__3371)
+{return k__3367(B2185([t__3368], tT__3370), env__3371)};
+return B3289(B3377, env__3369, B3378)};
+return B3278(B3376, env__3366, B3379)}, false)
+{var B3383 = B2136();
+exports["*core-symbol-macros*"] = B3383}
+B2216(B3383, "next-method", function B3385 (____3384)
+{return [B2145("%next-method"), B2145("%this-method")]})
+var trueQ = B1464["true?"], B3387 = B2155("find_macro_definition", function B3419 (form__3388, env__3389)
+{var B3390 = form__3388;
+if ($T(B2156(B3390, B2157)))
+{var sequence__3403 = form__3388, B3404 = sequence__3403, B3405 = ((B3404 || false).length || 0), B3406 = 0, B3415 = (B3405 === B3406);
+if ($T(B3415))
+{var error__3408 = "Empty form";
+throw(error__3408);
+false};
+var sequence__3410 = form__3388, B3416 = sequence__3410[0], name__3391 = B2186(B3416), value__3412 = B2234(env__3389, "bound?", name__3391), B3417 = !(trueQ(value__3412));
+if ($T(B3417))
+return env__3389.macros[name__3391]}
+else if ($T(B2156(B3390, B2161)))
+{var name__3392 = B2186(form__3388), value__3414 = B2234(env__3389, "bound?", name__3392), B3418 = !(trueQ(value__3414));
+if ($T(B3418))
+return env__3389["symbol-macros"][name__3392]}}, false)
+{var B3421 = B2155("macroexpand_1", function B3429 (form__3422, env__3423)
+{var B3424 = B3387(form__3422, env__3423);
+if ($T(B3424))
+{var macro__3425 = B3424, B3428;
+if ($T(B2156(form__3422, B2157)))
+{var sequence__3427 = form__3422;
+B3428 = sequence__3427.slice(1)}
+else B3428 = form__3422;
+return B3109(macro__3425, env__3423, B3428)}
+else return form__3422}, false);
+exports["macroexpand-1"] = B3421}
+{var trueQ = B1464["true?"], B3430 = B2155("macroexpand", function B3438 (form__3431, env__3432)
+{var doneQ__3433;
 while ($T(true))
-{var $g907 = $g904, $g913;
-if ($T($g907))
-$g913 = $g907
-else $g913 = $g284($g36, $g906);
-var $g914 = $g35($g913);
-if ($T($g914))
-{var $identifier908 = $g37($g903);
-(function $g916 ($identifier909)
-{var $g910 = $g874($identifier909), $module_name911 = $g910[0], $name912 = $g910[1];
-return $g899($g81($env902, "identifiers", $module_name911, $name912))})($identifier908);
-$g903 = $g203($g903);
-$g906 = [$g903]}
+{var value__3436 = doneQ__3433, B3437 = !(trueQ(value__3436));
+if ($T(B3437))
+{var expanded__3434 = B3421(form__3431, env__3432);
+doneQ__3433 = B2190(expanded__3434, form__3431);
+form__3431 = expanded__3434}
 else break};
-return $g905}, false)
-var $g917 = $g13()
-var $g920 = $g32("find_identifier", function $g928 ($identifier921, $env922)
-{var $g923 = $g874($identifier921), $module_name924 = $g923[0], $name925 = $g923[1], $g926 = $g81($env922, "identifiers", $module_name924, $name925);
-if ($T($g926))
-{var $renamings927 = $g926;
-return $g37($renamings927)}
-else return $g917}, false)
-{var $g935 = $g2["second-setter"], $g936 = $g32("alpha_convert", function $g971 ($form937, $env938)
-{var $g939 = $form937;
-if ($T($g33($g939, $g34)))
-{var $g940 = $g43($g37($form937));
-if ($T($g47($g940, "%method")))
-{var $__941 = $form937[0], $rarguments942 = $form937[1], $body943 = $form937[2], $new_arguments944 = $g882($rarguments942, $env938), $new_body945 = $g936($body943, $env938), $result946 = [$__941, $new_arguments944, $new_body945];
-$g900($rarguments942, $env938);
-return $result946}
-else if ($T($g47($g940, "%bind")))
-{var $__947 = $form937[0], $g948 = $form937[1], $rvar949 = $g948[0], $value950 = $g948[1], $body951 = $form937[2], $new_value952 = $g936($value950, $env938), $g953 = $g882([$rvar949], $env938), $new_var954 = $g953[0], $result955 = [$g22("%bind"), [$new_var954, $new_value952], $g936($body951, $env938)];
-$g900([$rvar949], $env938);
-return $result955}
-else if ($T($g47($g940, "%try")))
-{var $__956 = $form937[0], $body957 = $form937[1], $rvar958 = $form937[2], $rcatch959 = $form937[3], $new_body960 = $g936($body957, $env938), $g961 = $g882([$rvar958], $env938), $new_var962 = $g961[0], $result963 = [$g22("%try"), $new_body960, $new_var962, $g936($rcatch959, $env938)];
-$g900([$rvar958], $env938);
-return $result963}
-else if ($T($g47($g940, "%define")))
-{var $__964 = $form937[0], $identifier965 = $form937[1], $g966 = $g874($identifier965), $module_name967 = $g966[0], $name968 = $g966[1], $new_identifier969 = $g65();
-$g867($env938, $module_name967, $name968);
-$g285($g81($env938, "identifiers", $module_name967, $name968), $new_identifier969);
-$g62($env938, "definition-names", $g43($new_identifier969), $name968);
-$g62($env938, "new-identifiers", $name968, $new_identifier969);
-$g935($form937, $new_identifier969);
-return $form937}
-else return $g151($g50($g936, $env938), $form937)}
-else if ($T($g33($g939, $g38)))
-{var $value970 = $g920($form937, $env938);
-if ($T($g47($value970, $g917)))
-return $form937
-else return $value970}
-else return $form937}, false);
-exports["alpha-convert"] = $g936}
-var $g990 = $g2["last-setter"], $g991 = $g2.last, $g992, $g993, $g994 = $g32("inline", function $g1032 ($form995, $env996)
-{var $g1028;
-if ($T($g33($form995, $g34)))
-$g1028 = $g35($g36($form995))
-else $g1028 = false;
-if ($T($g1028))
-if ($T($g33($g37($form995), $g38)))
-{var $g997 = $g43($g37($form995)), $g998 = $g47($g997, "%method"), $g1029;
-if ($T($g998))
-$g1029 = $g998
-else $g1029 = $g47($g997, "%set");
-if ($T($g1029))
-{$g990($form995, $g994($g991($form995), $env996));
-return $form995}
-else if ($T($g47($g997, "%bind")))
-{var $__999 = $form995[0], $binding1000 = $form995[1], $body1001 = $form995[2];
-$g935($binding1000, $g994($g54($binding1000), $env996));
-$g990($form995, $g994($body1001, $env996));
-return $form995}
-else if ($T($g47($g997, "%try")))
-{var $__1002 = $form995[0], $body1003 = $form995[1], $rvar1004 = $form995[2], $rcatch1005 = $form995[3];
-$g935($form995, $g994($body1003, $env996));
-$g990($form995, $g994($rcatch1005, $env996));
-return $form995}
-else {var $g1006 = $g47($g997, "%begin"), $g1030;
-if ($T($g1006))
-$g1030 = $g1006
-else {var $g1007 = $g47($g997, "%if");
-if ($T($g1007))
-$g1030 = $g1007
-else {var $g1008 = $g47($g997, "%while");
-if ($T($g1008))
-$g1030 = $g1008
-else {var $g1009 = $g47($g997, "%array");
-if ($T($g1009))
-$g1030 = $g1009
-else {var $g1010 = $g47($g997, "%object");
-if ($T($g1010))
-$g1030 = $g1010
-else {var $g1011 = $g47($g997, "%get-property");
-if ($T($g1011))
-$g1030 = $g1011
-else {var $g1012 = $g47($g997, "%native-call");
-if ($T($g1012))
-$g1030 = $g1012
-else {var $g1013 = $g47($g997, "%infix");
-if ($T($g1013))
-$g1030 = $g1013
-else {var $g1014 = $g47($g997, "%plus");
-if ($T($g1014))
-$g1030 = $g1014
-else {var $g1015 = $g47($g997, "%minus");
-if ($T($g1015))
-$g1030 = $g1015
-else {var $g1016 = $g47($g997, "%times");
-if ($T($g1016))
-$g1030 = $g1016
-else $g1030 = $g47($g997, "%divide")}}}}}}}}}};
-if ($T($g1030))
-return $g42([$g37($form995)], $g151($g50($g994, $env996), $g203($form995)))
-else {var $g1017 = $g47($g997, "%native"), $g1031;
-if ($T($g1017))
-$g1031 = $g1017
-else {var $g1018 = $g47($g997, "%native-name");
-if ($T($g1018))
-$g1031 = $g1018
-else $g1031 = $g47($g997, "%define")};
-if ($T($g1031))
-return $form995
-else {var $name1019 = $g43($g37($form995)), $g1020 = $g81($env996, "definition-names", $name1019), $definition_name1021;
-if ($T($g1020))
-$definition_name1021 = $g1020
-else $definition_name1021 = $name1019;
-var $g1022;
-if ($T($g993($g81($env996, "module"), $definition_name1021)))
-$g1022 = $g81($env996, "module", "functions", $definition_name1021)
-else $g1022 = false;
-var $definition1027;
-if ($T($g1022))
-$definition1027 = $g1022
-else {var $g1023 = $g756($definition_name1021, $env996);
-if ($T($g1023))
-{var $modulesimport_name1024 = $g1023, $module1025 = $modulesimport_name1024[0], $import_name1026 = $modulesimport_name1024[1];
-if ($T($g993($module1025, $import_name1026)))
-$definition1027 = $g81($module1025, "functions", $import_name1026)
-else $definition1027 = false}
-else $definition1027 = false};
-if ($T($definition1027))
-return $g992($definition1027, $g203($form995), $env996)
-else return $g151($g50($g994, $env996), $form995)}}}}
-else return $g151($g50($g994, $env996), $form995)
-else return $form995}, false)
-$g993 = $g32("inlineQ", function $g1035 ($module1033, $name1034)
-{return $g284($g87($g47, $name1034), $g81($module1033, "inline"))}, false)
-{var $g1038 = $g2[">="];
-$g992 = $g32("inline_definition", function $g1061 ($definition1039, $values1040, $env1041)
-{var $__1042 = $definition1039[0], $rarguments1043 = $definition1039[1], $body1044 = $definition1039[2], $body1047 = $g141(function $g1062 ($body1045, $argument1046)
-{return [$g22("%bind"), [$argument1046, $argument1046], $body1045]}, $body1044, $g188($rarguments1043)), $inlined1048 = $g994($body1047, $env1041), $prepared1049 = $g936($inlined1048, $env1041), $g1050 = $g48($rarguments1043), $i1051 = 0;
-while ($T($g35($g1038($i1051, $g1050))))
-{(function $g1063 ($i1052)
-{var $argument1053 = $g121($rarguments1043, $i1052), $value1054 = $g121($values1040, $i1052), $g1055 = $g874($argument1053), $module_name1056 = $g1055[0], $name1057 = $g1055[1];
-$g867($env1041, $module_name1056, $name1057);
-var $g1059 = $g81($env1041, "identifiers", $module_name1056, $name1057), $g1060;
-if ($T($value1054))
-$g1060 = $g994($value1054, $env1041)
-else $g1060 = [$g22("%native"), "undefined"];
-return $g881($g1059, $g1060)})($i1051);
-$i1051 = ($i1051 + 1)};
+return form__3431}, false);
+exports.macroexpand = B3430}
+{B2245 = B2155("macroexpand_all", function B3449 (form__3441, env__3442)
+{var B3443 = form__3441;
+if ($T(B2156(B3443, B2157)))
+if ($T(B3387(form__3441, env__3442)))
+return B2245(B3430(form__3441, env__3442), env__3442)
+else {var B3444 = B2235(form__3441, env__3442);
+if ($T(B3444))
+{var expander__3445 = B3444, sequence__3447 = form__3441, B3448 = sequence__3447.slice(1);
+return B3109(expander__3445, env__3442, B3448)}
+else return B2320(B2193(B2245, env__3442), form__3441)}
+else if ($T(B2156(B3443, B2161)))
+if ($T(B3387(form__3441, env__3442)))
+return B2245(B3430(form__3441, env__3442), env__3442)
+else return form__3441
+else return form__3441}, false);
+exports["macroexpand-all"] = B2245}
+var B3451 = B2155("find_moduleSimport_name", function B3461 (definition_name__3452, env__3453)
+{return B2633(function B3462 (import__3454)
+{var module__3455 = import__3454[0], names__3456 = import__3454[1];
+return B2633(function B3463 (name__3457)
+{var B3458;
+if ($T(B2156(name__3457, B2157)))
+B3458 = name__3457
+else B3458 = [name__3457, name__3457];
+var import_name__3459 = B3458[0], new_name__3460 = B3458[1];
+if ($T(B2190(definition_name__3452, new_name__3460)))
+return [module__3455, import_name__3459]}, names__3456)}, B2234(env__3453, "module", "imports"))}, false)
+var B3464 = B2155("find_import_identifier", function B3467 (module__3465, env__3466)
+{return B2234(env__3466, "import-identifiers", B2234(module__3465, "name"))}, false)
+{var B3468 = B1464["set-subtract!"], B3469, B3470 = B1464["as-set"], B3471 = B1464["object-properties"], B3472 = B2155("define_free_variables", function B3500 (exp__3473, env__3474)
+{var variables__3475 = B3468(B3468(B3469(exp__3473), B3470(B2320(B2145, B3471(B2234(env__3474, "defined?"))))), B2146), sequence__3492 = variables__3475, B3493 = sequence__3492, B3494 = ((B3493 || false).length || 0), B3495 = 0, B3496 = (B3494 === B3495);
+if ($T(B3496))
+return exp__3473
+else return B2185([B2145("%begin")], B2320(function B3501 (variable__3476)
+{var name__3477 = B2186(variable__3476);
+B2216(env__3474, "defined?", name__3477, true);
+var B3497 = [[B2145("%define"), variable__3476]], moduleSimport_name__3478 = B3451(name__3477, env__3474), B3498;
+if ($T(moduleSimport_name__3478))
+{var module__3479 = moduleSimport_name__3478[0], import_name__3480 = moduleSimport_name__3478[1], import_identifier__3481 = B3464(module__3479, env__3474);
+B3498 = [[B2145("%set"), variable__3476, [B2145("%get-property"), import_identifier__3481, import_name__3480]]]}
+else B3498 = [];
+var B3499 = B2185(B3497, B3498);
+return B2269(B3499)}, variables__3475), [exp__3473])}, false);
+exports["define-free-variables"] = B3472}
+var trueQ = B1464["true?"], B3502 = B1464.choose, B3503 = B2155("define_free_variables2", function B3540 (exp__3504, env__3505)
+{var free__3506 = B3468(B3469(exp__3504), B2146), variables__3508 = B3502(function B3541 (variable__3507)
+{var object__3519 = B2234(env__3505, "definition-names"), property__3520 = B2186(variable__3507), value__3521 = $HP.call(object__3519,property__3520);
+return !(trueQ(value__3521))}, free__3506), sequence__3532 = variables__3508, B3533 = sequence__3532, B3534 = ((B3533 || false).length || 0), B3535 = 0, B3536 = (B3534 === B3535);
+if ($T(B3536))
+return exp__3504
+else return B2185([B2145("%begin")], B2320(function B3542 (variable__3509)
+{var name__3510 = B2186(variable__3509);
+B2216(env__3505, "defined?", name__3510, true);
+var B3537 = [[B2145("%define"), variable__3509]], moduleSimport_name__3511 = B3451(name__3510, env__3505), B3538;
+if ($T(moduleSimport_name__3511))
+{var module__3512 = moduleSimport_name__3511[0], import_name__3513 = moduleSimport_name__3511[1], old_import_identifier__3514 = B3464(module__3512, env__3505), import_identifier__3515 = B2234(env__3505, "new-identifiers", B2186(old_import_identifier__3514));
+B3538 = [[B2145("%set"), variable__3509, [B2145("%get-property"), import_identifier__3515, import_name__3513]]]}
+else B3538 = [];
+var B3539 = B2185(B3537, B3538);
+return B2269(B3539)}, variables__3508), [exp__3504])}, false)
+{var trueQ = B1464["true?"], B3558 = B1464["set-union!"];
+B3469 = B2155("find_free_variables", function B3652 (exp__3559)
+{var B3633;
+if ($T(B2156(exp__3559, B2157)))
+{var sequence__3602 = exp__3559, B3603 = sequence__3602, B3604 = ((B3603 || false).length || 0), B3605 = 0, value__3606 = (B3604 === B3605);
+B3633 = !(trueQ(value__3606))}
+else B3633 = false;
+if ($T(B3633))
+{var sequence__3608 = exp__3559, head__3560 = sequence__3608[0], name__3561;
+if ($T(B2156(head__3560, B2161)))
+name__3561 = B2186(head__3560)
+else name__3561 = false;
+var B3562 = name__3561;
+if ($T(B2190(B3562, "%method")))
+{var ____3563 = exp__3559[0], arguments__3564 = exp__3559[1], body__3565 = exp__3559[2];
+return B3468(B3469(body__3565), B3470(arguments__3564))}
+else if ($T(B2190(B3562, "%bind")))
+{var ____3566 = exp__3559[0], B3567 = exp__3559[1], var__3568 = B3567[0], value__3569 = B3567[1], body__3570 = exp__3559[2];
+return B3558(B3468(B3469(body__3570), B3470([var__3568])), B3469(value__3569))}
+else if ($T(B2190(B3562, "%begin")))
+{var definitions__3571 = [], B3638 = function B3653 (result__3572, e__3573)
+{var B3636;
+if ($T(B2162(e__3573)))
+{var sequence__3610 = e__3573, B3634 = sequence__3610[0], B3635 = B2145("%define");
+B3636 = B2190(B3634, B3635)}
+else B3636 = false;
+var B3637;
+if ($T(B3636))
+{var array__3615 = definitions__3571, sequence__3614 = e__3573, value__3616 = sequence__3614[1];
+array__3615.push(value__3616);
+array__3615;
+B3637 = []}
+else B3637 = B3469(e__3573);
+return B2185(result__3572, B3637)}, B3639 = [], sequence__3618 = exp__3559, B3640 = sequence__3618.slice(1), B3641 = B2310(B3638, B3639, B3640), B3642 = B3470(B3641), B3643 = B3470(definitions__3571);
+return B3468(B3642, B3643)}
+else if ($T(B2190(B3562, "%try")))
+{var ____3574 = exp__3559[0], e1__3575 = exp__3559[1], v__3576 = exp__3559[2], e2__3577 = exp__3559[3];
+return B3468(B3558(B3470(B3469(e1__3575)), B3470(B3469(e2__3577))), B3470([v__3576]))}
+else {var B3578 = B2190(B3562, "%set"), B3644;
+if ($T(B3578))
+B3644 = B3578
+else {var B3579 = B2190(B3562, "%if");
+if ($T(B3579))
+B3644 = B3579
+else {var B3580 = B2190(B3562, "%while");
+if ($T(B3580))
+B3644 = B3580
+else {var B3581 = B2190(B3562, "%array");
+if ($T(B3581))
+B3644 = B3581
+else {var B3582 = B2190(B3562, "%object");
+if ($T(B3582))
+B3644 = B3582
+else {var B3583 = B2190(B3562, "%infix");
+if ($T(B3583))
+B3644 = B3583
+else {var B3584 = B2190(B3562, "%get-property");
+if ($T(B3584))
+B3644 = B3584
+else {var B3585 = B2190(B3562, "%native-call");
+if ($T(B3585))
+B3644 = B3585
+else {var B3586 = B2190(B3562, "%plus");
+if ($T(B3586))
+B3644 = B3586
+else {var B3587 = B2190(B3562, "%minus");
+if ($T(B3587))
+B3644 = B3587
+else {var B3588 = B2190(B3562, "%times");
+if ($T(B3588))
+B3644 = B3588
+else B3644 = B2190(B3562, "%divide")}}}}}}}}}};
+if ($T(B3644))
+{var B3645 = [], sequence__3620 = exp__3559, B3646 = sequence__3620.slice(1), B3647 = B2320(B3469, B3646), B3648 = B2310(B2185, B3645, B3647);
+return B3470(B3648)}
+else {var B3589 = B2190(B3562, "%native"), B3649;
+if ($T(B3589))
+B3649 = B3589
+else {var B3590 = B2190(B3562, "%native-name");
+if ($T(B3590))
+B3649 = B3590
+else B3649 = B2190(B3562, "%define")};
+if ($T(B3649))
+return B3470([])
+else {var function__3629 = B3558, values__3630 = B2320(B3469, exp__3559), B3631 = values__3630, B3650 = B3631[0], B3632 = values__3630, B3651 = B3632.slice(1);
+return B2310(function__3629, B3650, B3651)}}}}
+else if ($T(B2156(exp__3559, B2161)))
+return B3470([exp__3559])
+else return B3470([])}, false)}
+var trueQ = B1464["true?"], B3654 = B2155("ensure_naming_structure", function B3665 (env__3655, module_name__3656, name__3657)
+{var value__3660 = B2234(env__3655, "identifiers", module_name__3656), B3663 = !(trueQ(value__3660));
+if ($T(B3663))
+B2216(env__3655, "identifiers", module_name__3656, B2136());
+var module_renamings__3658 = B2234(env__3655, "identifiers", module_name__3656), value__3662 = B2234(module_renamings__3658, name__3657), B3664 = !(trueQ(value__3662));
+if ($T(B3664))
+B2216(module_renamings__3658, name__3657, []);
+return env__3655}, false)
+var B3667 = B2155("get_module_nameSname", function B3672 (identifier__3668)
+{var B3669 = B2234(identifier__3668, "module"), B3670;
+if ($T(B3669))
+B3670 = B3669
+else B3670 = "";
+var B3671 = B2186(identifier__3668);
+return [B3670, B3671]}, false)
+var trueQ = B1464["true?"], B3674 = B1464.push, B3675 = B2155("rename_identifiers", function B3691 (identifiers__3676, env__3677)
+{return B2320(function B3692 (identifier__3678)
+{var B3679 = B3667(identifier__3678), module_name__3680 = B3679[0], name__3681 = B3679[1], value__3684 = B2234(identifier__3678, "generated?"), B3689 = !(trueQ(value__3684)), B3690;
+if ($T(B3689))
+B3690 = name__3681
+else B3690 = false;
+var new_identifier__3682 = B2218(B3690);
+B3654(env__3677, module_name__3680, name__3681);
+var array__3687 = B2234(env__3677, "identifiers", module_name__3680, name__3681), value__3688 = new_identifier__3682;
+array__3687.unshift(value__3688);
+array__3687;
+return new_identifier__3682}, identifiers__3676)}, false)
+var trueQ = B1464["true?"], B3699 = B1464.pop, B3700 = B2155("restore_identifiers", function B3723 (identifiers__3701, env__3702)
+{var B3703 = identifiers__3701, B3704, B3705, B3706 = [B3703];
+while ($T(true))
+{var B3707 = B3704, value__3714;
+if ($T(B3707))
+value__3714 = B3707
+else value__3714 = B2633(B2159, B3706);
+var B3722 = !(trueQ(value__3714));
+if ($T(B3722))
+{var sequence__3716 = B3703, identifier__3708 = sequence__3716[0];
+(function B3724 (identifier__3709)
+{var B3710 = B3667(identifier__3709), module_name__3711 = B3710[0], name__3712 = B3710[1], array__3718 = B2234(env__3702, "identifiers", module_name__3711, name__3712);
+return array__3718.shift()})(identifier__3708);
+var sequence__3720 = B3703, B3721 = sequence__3720.slice(1);
+B3703 = B3721;
+B3706 = [B3703]}
+else break};
+return B3705}, false)
+var B3725 = B2136()
+var B3728 = B2155("find_identifier", function B3738 (identifier__3729, env__3730)
+{var B3731 = B3667(identifier__3729), module_name__3732 = B3731[0], name__3733 = B3731[1], B3734 = B2234(env__3730, "identifiers", module_name__3732, name__3733);
+if ($T(B3734))
+{var renamings__3735 = B3734, sequence__3737 = renamings__3735;
+return sequence__3737[0]}
+else return B3725}, false)
+{var B3745 = B1464["second-setter"], B3746 = B2155("alpha_convert", function B3792 (form__3747, env__3748)
+{var B3749 = form__3747;
+if ($T(B2156(B3749, B2157)))
+{var sequence__3782 = form__3747, B3791 = sequence__3782[0], B3750 = B2186(B3791);
+if ($T(B2190(B3750, "%method")))
+{var ____3751 = form__3747[0], arguments__3752 = form__3747[1], body__3753 = form__3747[2], new_arguments__3754 = B3675(arguments__3752, env__3748), new_body__3755 = B3746(body__3753, env__3748), result__3756 = [____3751, new_arguments__3754, new_body__3755];
+B3700(arguments__3752, env__3748);
+return result__3756}
+else if ($T(B2190(B3750, "%bind")))
+{var ____3757 = form__3747[0], B3758 = form__3747[1], var__3759 = B3758[0], value__3760 = B3758[1], body__3761 = form__3747[2], new_value__3762 = B3746(value__3760, env__3748), B3763 = B3675([var__3759], env__3748), new_var__3764 = B3763[0], result__3765 = [B2145("%bind"), [new_var__3764, new_value__3762], B3746(body__3761, env__3748)];
+B3700([var__3759], env__3748);
+return result__3765}
+else if ($T(B2190(B3750, "%try")))
+{var ____3766 = form__3747[0], body__3767 = form__3747[1], var__3768 = form__3747[2], catch__3769 = form__3747[3], new_body__3770 = B3746(body__3767, env__3748), B3771 = B3675([var__3768], env__3748), new_var__3772 = B3771[0], result__3773 = [B2145("%try"), new_body__3770, new_var__3772, B3746(catch__3769, env__3748)];
+B3700([var__3768], env__3748);
+return result__3773}
+else if ($T(B2190(B3750, "%define")))
+{var ____3774 = form__3747[0], identifier__3775 = form__3747[1], B3776 = B3667(identifier__3775), module_name__3777 = B3776[0], name__3778 = B3776[1], new_identifier__3779 = B2218();
+B3654(env__3748, module_name__3777, name__3778);
+var array__3785 = B2234(env__3748, "identifiers", module_name__3777, name__3778), value__3786 = new_identifier__3779;
+array__3785.push(value__3786);
+array__3785;
+B2216(env__3748, "definition-names", B2186(new_identifier__3779), name__3778);
+B2216(env__3748, "new-identifiers", name__3778, new_identifier__3779);
+var array__3789 = form__3747, value__3790 = new_identifier__3779;
+array__3789[1] = value__3790;
+return form__3747}
+else return B2320(B2193(B3746, env__3748), form__3747)}
+else if ($T(B2156(B3749, B2161)))
+{var value__3780 = B3728(form__3747, env__3748);
+if ($T(B2190(value__3780, B3725)))
+return form__3747
+else return value__3780}
+else return form__3747}, false);
+exports["alpha-convert"] = B3746}
+var trueQ = B1464["true?"], dec = B1464.dec, B3811 = B1464["last-setter"], B3812 = B1464.last, B3813, B3814, B3815 = B2155("inline", function B3926 (form__3816, env__3817)
+{var B3909;
+if ($T(B2156(form__3816, B2157)))
+{var sequence__3860 = form__3816, B3861 = sequence__3860, B3862 = ((B3861 || false).length || 0), B3863 = 0, value__3864 = (B3862 === B3863);
+B3909 = !(trueQ(value__3864))}
+else B3909 = false;
+if ($T(B3909))
+{var sequence__3866 = form__3816, B3910 = sequence__3866[0], B3911 = B2156(B3910, B2161);
+if ($T(B3911))
+{var sequence__3868 = form__3816, B3912 = sequence__3868[0], B3818 = B2186(B3912), B3819 = B2190(B3818, "%method"), B3913;
+if ($T(B3819))
+B3913 = B3819
+else B3913 = B2190(B3818, "%set");
+if ($T(B3913))
+{var array__3881 = form__3816, array__3878 = form__3816, B3879 = array__3878, B3880 = ((B3879 || false).length || 0), B3914 = (B3880 - 1), B3915 = array__3878[B3914], value__3882 = B3815(B3915, env__3817);
+array__3881[dec(B2191(array__3881), 1)] = value__3882;
+return form__3816}
+else if ($T(B2190(B3818, "%bind")))
+{var ____3820 = form__3816[0], binding__3821 = form__3816[1], body__3822 = form__3816[2], array__3887 = binding__3821, sequence__3886 = binding__3821, B3916 = sequence__3886[1], value__3888 = B3815(B3916, env__3817);
+array__3887[1] = value__3888;
+var array__3891 = form__3816, value__3892 = B3815(body__3822, env__3817);
+array__3891[dec(B2191(array__3891), 1)] = value__3892;
+return form__3816}
+else if ($T(B2190(B3818, "%try")))
+{var ____3823 = form__3816[0], body__3824 = form__3816[1], var__3825 = form__3816[2], catch__3826 = form__3816[3], array__3895 = form__3816, value__3896 = B3815(body__3824, env__3817);
+array__3895[1] = value__3896;
+var array__3899 = form__3816, value__3900 = B3815(catch__3826, env__3817);
+array__3899[dec(B2191(array__3899), 1)] = value__3900;
+return form__3816}
+else {var B3827 = B2190(B3818, "%begin"), B3917;
+if ($T(B3827))
+B3917 = B3827
+else {var B3828 = B2190(B3818, "%if");
+if ($T(B3828))
+B3917 = B3828
+else {var B3829 = B2190(B3818, "%while");
+if ($T(B3829))
+B3917 = B3829
+else {var B3830 = B2190(B3818, "%array");
+if ($T(B3830))
+B3917 = B3830
+else {var B3831 = B2190(B3818, "%object");
+if ($T(B3831))
+B3917 = B3831
+else {var B3832 = B2190(B3818, "%get-property");
+if ($T(B3832))
+B3917 = B3832
+else {var B3833 = B2190(B3818, "%native-call");
+if ($T(B3833))
+B3917 = B3833
+else {var B3834 = B2190(B3818, "%infix");
+if ($T(B3834))
+B3917 = B3834
+else {var B3835 = B2190(B3818, "%plus");
+if ($T(B3835))
+B3917 = B3835
+else {var B3836 = B2190(B3818, "%minus");
+if ($T(B3836))
+B3917 = B3836
+else {var B3837 = B2190(B3818, "%times");
+if ($T(B3837))
+B3917 = B3837
+else B3917 = B2190(B3818, "%divide")}}}}}}}}}};
+if ($T(B3917))
+{var sequence__3902 = form__3816, B3918 = sequence__3902[0], B3919 = [B3918], B3920 = B2193(B3815, env__3817), sequence__3904 = form__3816, B3921 = sequence__3904.slice(1), B3922 = B2320(B3920, B3921);
+return B2185(B3919, B3922)}
+else {var B3838 = B2190(B3818, "%native"), B3923;
+if ($T(B3838))
+B3923 = B3838
+else {var B3839 = B2190(B3818, "%native-name");
+if ($T(B3839))
+B3923 = B3839
+else B3923 = B2190(B3818, "%define")};
+if ($T(B3923))
+return form__3816
+else {var sequence__3906 = form__3816, B3924 = sequence__3906[0], name__3840 = B2186(B3924), B3841 = B2234(env__3817, "definition-names", name__3840), definition_name__3842;
+if ($T(B3841))
+definition_name__3842 = B3841
+else definition_name__3842 = name__3840;
+var B3843;
+if ($T(B3814(B2234(env__3817, "module"), definition_name__3842)))
+B3843 = B2234(env__3817, "module", "functions", definition_name__3842)
+else B3843 = false;
+var definition__3848;
+if ($T(B3843))
+definition__3848 = B3843
+else {var B3844 = B3451(definition_name__3842, env__3817);
+if ($T(B3844))
+{var moduleSimport_name__3845 = B3844, module__3846 = moduleSimport_name__3845[0], import_name__3847 = moduleSimport_name__3845[1];
+if ($T(B3814(module__3846, import_name__3847)))
+definition__3848 = B2234(module__3846, "functions", import_name__3847)
+else definition__3848 = false}
+else definition__3848 = false};
+if ($T(definition__3848))
+{var sequence__3908 = form__3816, B3925 = sequence__3908.slice(1);
+return B3813(definition__3848, B3925, env__3817)}
+else return B2320(B2193(B3815, env__3817), form__3816)}}}}
+else return B2320(B2193(B3815, env__3817), form__3816)}
+else return form__3816}, false)
+B3814 = B2155("inlineQ", function B3929 (module__3927, name__3928)
+{return B2633(B2244(B2190, name__3928), B2234(module__3927, "inline"))}, false)
+{var trueQ = B1464["true?"], B3932 = B1464[">="];
+B3813 = B2155("inline_definition", function B3962 (definition__3933, values__3934, env__3935)
+{var ____3936 = definition__3933[0], arguments__3937 = definition__3933[1], body__3938 = definition__3933[2], body__3941 = B2310(function B3963 (body__3939, argument__3940)
+{return [B2145("%bind"), [argument__3940, argument__3940], body__3939]}, body__3938, B2434(arguments__3937)), inlined__3942 = B3815(body__3941, env__3935), prepared__3943 = B3746(inlined__3942, env__3935), object__3954 = arguments__3937, B3944 = ((object__3954 || false).length || 0), i__3945 = 0;
+while ($T(true))
+{var value__3956 = B3932(i__3945, B3944), B3961 = !(trueQ(value__3956));
+if ($T(B3961))
+{(function B3964 (i__3946)
+{var argument__3947 = B2282(arguments__3937, i__3946), value__3948 = B2282(values__3934, i__3946), B3949 = B3667(argument__3947), module_name__3950 = B3949[0], name__3951 = B3949[1];
+B3654(env__3935, module_name__3950, name__3951);
+var array__3959 = B2234(env__3935, "identifiers", module_name__3950, name__3951), value__3960;
+if ($T(value__3948))
+value__3960 = B3815(value__3948, env__3935)
+else value__3960 = [B2145("%native"), "undefined"];
+array__3959.unshift(value__3960);
+return array__3959})(i__3945);
+i__3945 = (i__3945 + 1)}
+else break};
 false;
-var $result1058 = $g936($body1047, $env1041);
-$g900($rarguments1043, $env1041);
-return $result1058}, false)}
-{var $g1064 = $g2["<number>"], $g1065 = $g2["<boolean>"], $g1066 = $g2["<keyword>"], $g1067 = $g32("atomicQ", function $g1069 ($expression1068)
-{return $g284($g87($g33, $expression1068), [$g1064, $g1065, $g474, $g38, $g1066])}, false);
-exports["atomic?"] = $g1067}
-{var $g1070, $g1071 = $g32("normalize_term", function $g1073 ($expression1072)
-{return $g1070($expression1072, $g649)}, false);
-exports["normalize-term"] = $g1071}
-{var $g1076, $g1077, $g1078;
-$g1070 = $g32("normalize", function $g1113 ($exp1079, $k1080)
-{var $g1111;
-if ($T($g33($exp1079, $g34)))
-$g1111 = $g35($g36($exp1079))
-else $g1111 = false;
-if ($T($g1111))
-{var $g1081 = $g43($g37($exp1079));
-if ($T($g47($g1081, "%method")))
-{var $__1082 = $exp1079[0], $rarguments1083 = $exp1079[1], $body1084 = $exp1079[2];
-return $k1080([$g22("%method"), $rarguments1083, $g1071($body1084)])}
-else if ($T($g47($g1081, "%begin")))
-{var $__1085 = $exp1079[0], $exp11086 = $exp1079[1], $et1087 = $SL.call($exp1079, 2);
-if ($T($g36($et1087)))
-return $g1070($exp11086, $k1080)
-else return $g1070($exp11086, function $g1114 ($aexp11088)
-{return [$g22("%begin"), $aexp11088, $g1070($g42([$g22("%begin")], $et1087), $k1080)]})}
-else if ($T($g47($g1081, "%bind")))
-{var $__1089 = $exp1079[0], $g1090 = $exp1079[1], $rvar1091 = $g1090[0], $value1092 = $g1090[1], $body1093 = $exp1079[2];
-return $g1070($value1092, function $g1115 ($avalue1094)
-{return [$g22("%bind"), [$rvar1091, $avalue1094], $g1070($body1093, $k1080)]})}
-else if ($T($g47($g1081, "%if")))
-{var $__1095 = $exp1079[0], $test1096 = $exp1079[1], $then1097 = $exp1079[2], $relse1098 = $exp1079[3];
-return $g1076($test1096, function $g1116 ($atest1099)
-{return $k1080([$g22("%if"), $atest1099, $g1071($then1097), $g1071($relse1098)])})}
-else if ($T($g47($g1081, "%while")))
-{var $__1100 = $exp1079[0], $test1101 = $exp1079[1], $body1102 = $exp1079[2], $g1112;
-if ($T($g1077($test1101)))
-$g1112 = [$g22("%while"), true, [$g22("%begin"), $g1071([$g22("%if"), $test1101, $g1071($body1102), [$g22("%native"), "break"], false])]]
-else $g1112 = [$g22("%while"), $g1071($test1101), $g1071($body1102)];
-return $k1080($g1112)}
-else if ($T($g47($g1081, "%try")))
-{var $__1103 = $exp1079[0], $body1104 = $exp1079[1], $rvar1105 = $exp1079[2], $rcatch1106 = $exp1079[3];
-return $k1080([$g22("%try"), $g1071($body1104), $rvar1105, $g1071($rcatch1106)])}
-else if ($T($g47($g1081, "%set")))
-{var $__1107 = $exp1079[0], $rvar1108 = $exp1079[1], $value1109 = $exp1079[2];
-return $g1076($value1109, function $g1117 ($avalue1110)
-{return $k1080([$g22("%set"), $rvar1108, $avalue1110])})}
-else if ($T($g1077($exp1079)))
-return $g1078($exp1079, $k1080)
-else return $k1080($g151($g1071, $exp1079))}
-else return $k1080($exp1079)}, false)}
-{var $g1118;
-$g1076 = $g32("normalize_value", function $g1122 ($exp1119, $k1120)
-{if ($T($g1077($exp1119)))
-return $g1118($exp1119, $k1120)
-else {var $g1121;
-if ($T($g33($exp1119, $g34)))
-$g1121 = $g151($g1071, $exp1119)
-else $g1121 = $exp1119;
-return $k1120($g1121)}}, false)}
-$g1077 = $g32("contains_statementsQ", function $g1136 ($exp1128)
-{var $g1134;
-if ($T($g33($exp1128, $g34)))
-$g1134 = $g35($g36($exp1128))
-else $g1134 = false;
-if ($T($g1134))
-{var $g1129 = $g43($g37($exp1128)), $g1130 = $g47($g1129, "%begin"), $g1135;
-if ($T($g1130))
-$g1135 = $g1130
-else {var $g1131 = $g47($g1129, "%if");
-if ($T($g1131))
-$g1135 = $g1131
-else {var $g1132 = $g47($g1129, "%while");
-if ($T($g1132))
-$g1135 = $g1132
-else {var $g1133 = $g47($g1129, "%bind");
-if ($T($g1133))
-$g1135 = $g1133
-else $g1135 = $g47($g1129, "%try")}}};
-if ($T($g1135))
+var result__3952 = B3746(body__3941, env__3935);
+B3700(arguments__3937, env__3935);
+return result__3952}, false)}
+{var B3965 = B1464["<number>"], B3966 = B1464["<boolean>"], B3967 = B1464["<keyword>"], B3968 = B2155("atomicQ", function B3970 (expression__3969)
+{return B2633(B2244(B2156, expression__3969), [B3965, B3966, B3007, B2161, B3967])}, false);
+exports["atomic?"] = B3968}
+{var B3971, B3972 = B2155("normalize_term", function B3974 (expression__3973)
+{return B3971(expression__3973, B3279)}, false);
+exports["normalize-term"] = B3972}
+{var trueQ = B1464["true?"], B3977, B3978, B3979;
+B3971 = B2155("normalize", function B4048 (exp__3980, k__3981)
+{var B4044;
+if ($T(B2156(exp__3980, B2157)))
+{var sequence__4023 = exp__3980, B4024 = sequence__4023, B4025 = ((B4024 || false).length || 0), B4026 = 0, value__4027 = (B4025 === B4026);
+B4044 = !(trueQ(value__4027))}
+else B4044 = false;
+if ($T(B4044))
+{var sequence__4029 = exp__3980, B4045 = sequence__4029[0], B3982 = B2186(B4045);
+if ($T(B2190(B3982, "%method")))
+{var ____3983 = exp__3980[0], arguments__3984 = exp__3980[1], body__3985 = exp__3980[2];
+return k__3981([B2145("%method"), arguments__3984, B3972(body__3985)])}
+else if ($T(B2190(B3982, "%begin")))
+{var ____3986 = exp__3980[0], exp1__3987 = exp__3980[1], eT__3988 = $SL.call(exp__3980, 2), sequence__4040 = eT__3988, B4041 = sequence__4040, B4042 = ((B4041 || false).length || 0), B4043 = 0, B4046 = (B4042 === B4043);
+if ($T(B4046))
+return B3971(exp1__3987, k__3981)
+else return B3971(exp1__3987, function B4049 (aexp1__3989)
+{return [B2145("%begin"), aexp1__3989, B3971(B2185([B2145("%begin")], eT__3988), k__3981)]})}
+else if ($T(B2190(B3982, "%bind")))
+{var ____3990 = exp__3980[0], B3991 = exp__3980[1], var__3992 = B3991[0], value__3993 = B3991[1], body__3994 = exp__3980[2];
+return B3971(value__3993, function B4050 (avalue__3995)
+{return [B2145("%bind"), [var__3992, avalue__3995], B3971(body__3994, k__3981)]})}
+else if ($T(B2190(B3982, "%if")))
+{var ____3996 = exp__3980[0], test__3997 = exp__3980[1], then__3998 = exp__3980[2], else__3999 = exp__3980[3];
+return B3977(test__3997, function B4051 (atest__4000)
+{return k__3981([B2145("%if"), atest__4000, B3972(then__3998), B3972(else__3999)])})}
+else if ($T(B2190(B3982, "%while")))
+{var ____4001 = exp__3980[0], test__4002 = exp__3980[1], body__4003 = exp__3980[2], B4047;
+if ($T(B3978(test__4002)))
+B4047 = [B2145("%while"), true, [B2145("%begin"), B3972([B2145("%if"), test__4002, B3972(body__4003), [B2145("%native"), "break"], false])]]
+else B4047 = [B2145("%while"), B3972(test__4002), B3972(body__4003)];
+return k__3981(B4047)}
+else if ($T(B2190(B3982, "%try")))
+{var ____4004 = exp__3980[0], body__4005 = exp__3980[1], var__4006 = exp__3980[2], catch__4007 = exp__3980[3];
+return k__3981([B2145("%try"), B3972(body__4005), var__4006, B3972(catch__4007)])}
+else if ($T(B2190(B3982, "%set")))
+{var ____4008 = exp__3980[0], var__4009 = exp__3980[1], value__4010 = exp__3980[2];
+return B3977(value__4010, function B4052 (avalue__4011)
+{return k__3981([B2145("%set"), var__4009, avalue__4011])})}
+else if ($T(B3978(exp__3980)))
+return B3979(exp__3980, k__3981)
+else return k__3981(B2320(B3972, exp__3980))}
+else return k__3981(exp__3980)}, false)}
+{var B4053;
+B3977 = B2155("normalize_value", function B4057 (exp__4054, k__4055)
+{if ($T(B3978(exp__4054)))
+return B4053(exp__4054, k__4055)
+else {var B4056;
+if ($T(B2156(exp__4054, B2157)))
+B4056 = B2320(B3972, exp__4054)
+else B4056 = exp__4054;
+return k__4055(B4056)}}, false)}
+{var trueQ = B1464["true?"];
+B3978 = B2155("contains_statementsQ", function B4102 (exp__4063)
+{var B4097;
+if ($T(B2156(exp__4063, B2157)))
+{var sequence__4080 = exp__4063, B4081 = sequence__4080, B4082 = ((B4081 || false).length || 0), B4083 = 0, value__4084 = (B4082 === B4083);
+B4097 = !(trueQ(value__4084))}
+else B4097 = false;
+if ($T(B4097))
+{var sequence__4086 = exp__4063, B4098 = sequence__4086[0], B4064 = B2186(B4098), B4065 = B2190(B4064, "%begin"), B4099;
+if ($T(B4065))
+B4099 = B4065
+else {var B4066 = B2190(B4064, "%if");
+if ($T(B4066))
+B4099 = B4066
+else {var B4067 = B2190(B4064, "%while");
+if ($T(B4067))
+B4099 = B4067
+else {var B4068 = B2190(B4064, "%bind");
+if ($T(B4068))
+B4099 = B4068
+else B4099 = B2190(B4064, "%try")}}};
+if ($T(B4099))
 return true
-else if ($T($g47($g1129, "%set")))
-return $g1077($g991($exp1128))
-else if ($T($g47($g1129, "%method")))
+else if ($T(B2190(B4064, "%set")))
+{var array__4094 = exp__4063, B4095 = array__4094, B4096 = ((B4095 || false).length || 0), B4100 = (B4096 - 1), B4101 = array__4094[B4100];
+return B3978(B4101)}
+else if ($T(B2190(B4064, "%method")))
 return false
-else return $g284($g1077, $exp1128)}}, false)
-$g1118 = $g32("normalizeT", function $g1141 ($exp1137, $k1138)
-{return $g1070($exp1137, function $g1142 ($aexp1139)
-{if ($T($g1067($aexp1139)))
-return $k1138($aexp1139)
-else {var $t1140 = $g65();
-return [$g22("%bind"), [$t1140, $aexp1139], $k1138($t1140)]}})}, false)
-var $g1143 = $g32("normalizeTT", function $g1146 ($expt1144, $k1145)
-{if ($T($g36($expt1144)))
-return $k1145([])
-else return $g1078($expt1144, $k1145)}, false)
-$g1078 = $g32("normalize_all", function $g1151 ($exp1147, $k1148)
-{return $g1118($g37($exp1147), function $g1152 ($t1149)
-{return $g1143($g203($exp1147), function $g1153 ($tt1150)
-{return $k1148($g42([$t1149], $tt1150))})})}, false)
-var $g1156 = $g2["third-setter"], $g1157 = $g32("wrap_value", function $g1163 ($exp1158, $wrapper1159)
-{if ($T($g33($exp1158, $g34)))
-{var $g1160 = $g43($g37($exp1158)), $g1161 = $g47($g1160, "%begin"), $g1162;
-if ($T($g1161))
-$g1162 = $g1161
-else $g1162 = $g47($g1160, "%bind");
-if ($T($g1162))
-{$g990($exp1158, $g1157($g991($exp1158), $wrapper1159));
-return $exp1158}
-else if ($T($g47($g1160, "%if")))
-{$g1156($exp1158, $g1157($g287($exp1158), $wrapper1159));
-$g990($exp1158, $g1157($g991($exp1158), $wrapper1159));
-return $exp1158}
-else if ($T($g47($g1160, "%while")))
-return [$g22("%begin"), $exp1158, $g1157(false, $wrapper1159)]
-else if ($T($g47($g1160, "%try")))
-{$g935($exp1158, $g1157($g54($exp1158), $wrapper1159));
-$g990($exp1158, $g1157($g991($exp1158), $wrapper1159));
-return $exp1158}
-else return $g42($wrapper1159, [$exp1158])}
-else return $g42($wrapper1159, [$exp1158])}, false)
-var $g1164 = $g32("add_explicit_return", function $g1166 ($exp1165)
-{return $g1157($exp1165, [$g22("%return")])}, false)
-var $g1167 = $g2["member?"], $g1168 = $g32("statementQ", function $g1170 ($exp1169)
-{if ($T($g33($exp1169, $g34)))
-if ($T($g35($g36($exp1169))))
-return $g1167($g37($exp1169), [$g22("%if"), $g22("%while"), $g22("%begin"), $g22("%bind"), $g22("%try")])}, false)
-var $g1171 = $g32("add_explicit_true", function $g1173 ($exp1172)
-{return [[$g22("%native"), "$T"], $exp1172]}, false)
-{var $g1176 = $g2["first-setter"], $g1177 = $g32("transform_statements", function $g1198 ($exp1178, $env1179)
-{if ($T($g33($exp1178, $g34)))
-{var $g1180 = $g43($g37($exp1178));
-if ($T($g47($g1180, "%method")))
-{$g990($exp1178, $g1164($g1177($g991($exp1178), $env1179)));
-return $exp1178}
-else if ($T($g47($g1180, "%begin")))
-{var $__1181 = $exp1178[0], $exps1182 = $SL.call($exp1178, 1);
-return $g112($g151($g50($g1177, $env1179), $exps1182))}
-else if ($T($g47($g1180, "%bind")))
-{var $__1183 = $exp1178[0], $g1184 = $exp1178[1], $rvar1185 = $g1184[0], $value1186 = $g1184[1], $body1187 = $exp1178[2];
-if ($T($g1168($value1186)))
-return [$g22("%bind"), [$rvar1185, false], [$g22("%begin"), $g1157($g1177($value1186, $env1179), [$g22("%set"), $rvar1185]), $g1177($body1187, $env1179)]]
-else return [$g22("%bind"), [$rvar1185, $g1177($value1186, $env1179)], $g1177($body1187, $env1179)]}
-else if ($T($g47($g1180, "%if")))
-{var $__1188 = $exp1178[0], $test1189 = $exp1178[1], $then1190 = $exp1178[2], $relse1191 = $exp1178[3];
-return [$g22("%if"), $g1171($test1189), $g1177($then1190, $env1179), $g1177($relse1191, $env1179)]}
-else if ($T($g47($g1180, "%while")))
-{$g935($exp1178, $g1171($g54($exp1178)));
-$g1156($exp1178, $g1177($g287($exp1178), $env1179));
-return $exp1178}
-else if ($T($g47($g1180, "%try")))
-{$g935($exp1178, $g1177($g54($exp1178), $exp1178));
-$g990($exp1178, $g1177($g991($exp1178), $env1179));
-return $exp1178}
-else if ($T($g47($g1180, "%set")))
-{var $__1192 = $exp1178[0], $identifier1193 = $exp1178[1], $value1194 = $exp1178[2], $valuet1195 = $g1177($value1194, $env1179), $definition_name1196 = $g81($env1179, "definition-names", $g43($identifier1193)), $g1197;
-if ($T($definition_name1196))
-$g1197 = $g1167($definition_name1196, $g81($env1179, "module", "exports"))
-else $g1197 = false;
-if ($T($g1197))
-{$g1176($exp1178, $g22("%begin"));
-$g935($exp1178, [$g22("%set"), $identifier1193, $valuet1195]);
-$g1156($exp1178, [$g22("%set"), [$g22("%get-property"), [$g22("%native"), "exports"], $definition_name1196], $identifier1193])}
-else $g1156($exp1178, $valuet1195);
-return $exp1178}
-else if ($T($g47($g1180, "%define")))
-return [$g22("%var"), [$g991($exp1178), false]]
-else return $g151($g50($g1177, $env1179), $exp1178)}
-else return $exp1178}, false);
-exports["transform-statements"] = $g1177}
-{var $g1199, $g1200 = $g32("lift_symbols", function $g1203 ($exp1201, $env1202)
-{return $g1199($exp1201, $env1202, $g649)}, false);
-exports["lift-symbols"] = $g1200}
-{var $g1210, $g1211, $g1212, $g1213 = $g2["<hash-symbol>"];
-$g1199 = $g32("lift_symbol", function $g1253 ($exp1214, $env1215, $k1216)
-{var $g1250;
-if ($T($g33($exp1214, $g34)))
-$g1250 = $g35($g36($exp1214))
-else $g1250 = false;
-if ($T($g1250))
-{var $g1217 = $g43($g37($exp1214));
-if ($T($g47($g1217, "%bind")))
-{var $__1218 = $exp1214[0], $g1219 = $exp1214[1], $rvar1220 = $g1219[0], $value1221 = $g1219[1], $body1222 = $exp1214[2];
-return $g1199($value1221, $env1215, function $g1254 ($lvalue1223, $env1224)
-{return $g1199($body1222, $env1224, function $g1255 ($lbody1225, $env1226)
-{return $k1216([$g22("%bind"), [$rvar1220, $lvalue1223], $lbody1225], $env1226)})})}
-else {var $g1227 = $g47($g1217, "%method"), $g1251;
-if ($T($g1227))
-$g1251 = $g1227
-else $g1251 = $g47($g1217, "%set");
-if ($T($g1251))
-{var $m1228 = $exp1214[0], $e11229 = $exp1214[1], $e21230 = $exp1214[2];
-return $g1199($e21230, $env1215, function $g1256 ($le21231, $env1232)
-{return $k1216([$m1228, $e11229, $le21231], $env1232)})}
-else {var $g1233 = $g47($g1217, "%begin"), $g1252;
-if ($T($g1233))
-$g1252 = $g1233
-else {var $g1234 = $g47($g1217, "%if");
-if ($T($g1234))
-$g1252 = $g1234
-else $g1252 = $g47($g1217, "%while")};
-if ($T($g1252))
-{var $m1235 = $exp1214[0], $et1236 = $SL.call($exp1214, 1);
-return $g1210($et1236, $env1215, function $g1257 ($let1237, $env1238)
-{return $k1216($g42([$m1235], $let1237), $env1238)})}
-else if ($T($g47($g1217, "%try")))
-{var $__1239 = $exp1214[0], $e11240 = $exp1214[1], $v1241 = $exp1214[2], $e21242 = $exp1214[3];
-return $g1210([$e11240, $e21242], $env1215, function $g1258 ($let1243, $env1244)
-{var $le11245 = $let1243[0], $le21246 = $let1243[1];
-return $k1216([$g22("%try"), $le11245, $v1241, $le21246], $env1244)})}
-else if ($T($g47($g1217, "symbol")))
-{var $__1247 = $exp1214[0], $name1248 = $exp1214[1];
-return $g1211($name1248, $exp1214, "symbol", $env1215, $k1216)}
-else return $g1212($exp1214, $env1215, $k1216)}}}
-else {var $g1249 = $exp1214;
-if ($T($g33($g1249, $g1066)))
-return $g1211($g43($exp1214), $exp1214, "keyword", $env1215, $k1216)
-else if ($T($g33($g1249, $g1213)))
-return $g1211($g43($exp1214), $exp1214, "hash", $env1215, $k1216)
-else return $k1216($exp1214, $env1215)}}, false)}
-$g1211 = $g32("lift_value", function $g1268 ($name1260, $value1261, $type1262, $env1263, $k1264)
-{var $g1265 = $g81($env1263, "lifted", $type1262, $name1260);
-if ($T($g1265))
-{var $t1266 = $g1265;
-return $k1264($t1266, $env1263)}
-else {var $t1267 = $g62($env1263, "lifted", $type1262, $name1260, $g65());
-return [$g22("%bind"), [$t1267, $value1261], $k1264($t1267, $env1263)]}}, false)
-$g1210 = $g32("lift_symbolT", function $g1272 ($expt1269, $env1270, $k1271)
-{if ($T($g36($expt1269)))
-return $k1271([], $env1270)
-else return $g1212($expt1269, $env1270, $k1271)}, false)
-$g1212 = $g32("lift_symbolTT", function $g1280 ($exp1273, $env1274, $k1275)
-{return $g1199($g37($exp1273), $env1274, function $g1281 ($t1276, $env1277)
-{return $g1210($g203($exp1273), $env1277, function $g1282 ($tt1278, $env1279)
-{return $k1275($g42([$t1276], $tt1278), $env1279)})})}, false)
-var $g1283, $g1284 = $g32("flatten_begins", function $g1289 ($exps1285)
-{return $g152($g42, $g151(function $g1290 ($exp1286)
-{var $flattened1287 = $g1283($exp1286), $g1288;
-if ($T($g33($flattened1287, $g34)))
-if ($T($g35($g36($flattened1287))))
-$g1288 = $g47($g37($flattened1287), $g22("%begin"))
-else $g1288 = false
-else $g1288 = false;
-if ($T($g1288))
-return $g203($flattened1287)
-else return [$flattened1287]}, $exps1285))}, false)
-var $g1291 = $g32("varQ", function $g1293 ($exp1292)
-{if ($T($g39($exp1292)))
-return $g47($g37($exp1292), $g22("%var"))}, false)
-var $g1294 = $g32("setQ", function $g1296 ($exp1295)
-{if ($T($g39($exp1295)))
-return $g47($g37($exp1295), $g22("%set"))}, false)
-var $g1297 = $g32("methodQ", function $g1299 ($exp1298)
-{if ($T($g39($exp1298)))
-return $g47($g37($exp1298), $g22("%method"))}, false)
-var $g1300 = $g32("flatten_vars", function $g1311 ($exps1301)
-{return $g141(function $g1312 ($result1302, $exp1303)
-{var $previous1304;
-if ($T($g35($g36($result1302))))
-$previous1304 = $g991($result1302)
-else $previous1304 = false;
-var $previous_varq1305;
-if ($T($previous1304))
-$previous_varq1305 = $g1291($previous1304)
-else $previous_varq1305 = false;
-var $g1310;
-if ($T($previous_varq1305))
-$g1310 = $g1291($exp1303)
-else $g1310 = false;
-if ($T($g1310))
-{$g86(function $g1313 ($binding1306)
-{return $g285($g991($result1302), $binding1306)}, $g203($exp1303));
-return $result1302}
-else {var $mergeq1307;
-if ($T($previous_varq1305))
-$mergeq1307 = $g1294($exp1303)
-else $mergeq1307 = false;
-var $binding1308;
-if ($T($mergeq1307))
-$binding1308 = $g991($g991($result1302))
-else $binding1308 = false;
-var $identifier1309;
-if ($T($mergeq1307))
-$identifier1309 = $g54($exp1303)
-else $identifier1309 = false;
-if ($T($g47($g37($binding1308), $identifier1309)))
-{$g935($binding1308, $g287($exp1303));
-return $result1302}
-else return $g42($result1302, [$exp1303])}}, [], $exps1301)}, false)
-{$g1283 = $g32("flatten_statements", function $g1327 ($exp1317)
-{if ($T($g33($exp1317, $g34)))
-{var $g1318 = $g43($g37($exp1317)), $g1319 = $g47($g1318, "%method"), $g1326;
-if ($T($g1319))
-$g1326 = $g1319
-else {var $g1320 = $g47($g1318, "%while");
-if ($T($g1320))
-$g1326 = $g1320
-else $g1326 = $g47($g1318, "%set")};
-if ($T($g1326))
-{$g990($exp1317, $g1283($g991($exp1317)));
-return $exp1317}
-else if ($T($g47($g1318, "%begin")))
-{var $__1321 = $exp1317[0], $exps1322 = $SL.call($exp1317, 1);
-return $g112($g1300($g1284($exps1322)))}
-else if ($T($g47($g1318, "%bind")))
-{var $__1323 = $exp1317[0], $binding1324 = $exp1317[1], $body1325 = $exp1317[2];
-return $g1283([$g22("%begin"), [$g22("%var"), $binding1324], $body1325])}
-else if ($T($g47($g1318, "%if")))
-{$g1156($exp1317, $g1283($g287($exp1317)));
-$g990($exp1317, $g1283($g991($exp1317)));
-return $exp1317}
-else if ($T($g47($g1318, "%try")))
-{$g935($exp1317, $g1283($g54($exp1317)));
-$g990($exp1317, $g1283($g991($exp1317)));
-return $exp1317}
-else return $g151($g1283, $exp1317)}
-else return $exp1317}, false);
-exports["flatten-statements"] = $g1283}
-var $g1328 = $g13("\"", "\"", "\\", "\\", "\b", "b", "\f", "f", "\n", "n", "\r", "r", "\v", "v", "\t", "t")
-var $g1329 = $g32("fill_zeros", function $g1331 ($rstring1330)
-{return $g42($g286("0000", 0, (4 - $g48($rstring1330))), $rstring1330)}, false)
-var $g1333 = $g2.join, $g1334 = $g2["<"], $g1335 = $g2["as-hex-string"], $g1336 = $g2["char-code"], $g1337 = $g2["as-array"], $g1338 = $g32("escape_string", function $g1344 ($rstring1339)
-{return $g1333($g151(function $g1345 ($rchar1340)
-{var $g1341 = $g81($g1328, $rchar1340);
-if ($T($g1341))
-{var $escaped1342 = $g1341;
-return $g42("\\", $escaped1342)}
-else {var $code1343 = $g1336($rchar1340);
-if ($T($g1334(31, $code1343, 127)))
-return $rchar1340
-else return $g42("\\u", $g1329($g1335($code1343)))}}, $g1337($rstring1339)), "")}, false)
-var $g1346 = ["break", "case", "catch", "continue", "default", "delete", "do", "else", "finally", "for", "function", "if", "in", "instanceof", "new", "return", "switch", "this", "throw", "try", "typeof", "var", "void", "while", "with", "abstract", "boolean", "byte", "char", "class", "const", "debugger", "double", "enum", "export", "extends", "final", "float", "goto", "implements", "import", "int", "interface", "long", "native", "package", "private", "protected", "public", "short", "static", "super", "synchronized", "throws", "transient", "volatile", "null", "true", "false", "arguments", "object", "number", "string", "array", "let", "yield"]
-var $g1347 = $g13("-", "_", "_", "__", "&", "A", "$", "B", ":", "C", ".", "D", "=", "E", "^", "F", ">", "G", "#", "H", "@", "I", "~", "J", "<", "L", "%", "M", "!", "N", "+", "P", "?", "Q", "/", "S", "*", "T")
-{var $g1348 = $g10.match;
-$g63 = $g32("escape_name", function $g1352 ($name1349)
-{if ($T($g1167($name1349, $g1346)))
-return $g42("R", $name1349)
-else {var $chars1351 = $g151(function $g1353 ($rchar1350)
-{if ($T($g660($g1347, $rchar1350)))
-return $g81($g1347, $rchar1350)
-else if ($T($g1348("\\w", $rchar1350)))
-return $rchar1350
-else return $g42("Z", $g64($g1336($rchar1350)))}, $g1337($name1349));
-return $g1333($chars1351, "")}}, false)}
-var $g1354 = $g32("valid_js_nameQ", function $g1356 ($identifier1355)
-{if ($T($g35($g1167($identifier1355, $g1346))))
-return $g1348("^\\w+$", $identifier1355)}, false)
-var $g1359, $g1360 = $g2["as-uppercase"], $g1361 = $g2.description, $g1362 = $g32("compile_js", function $g1367 ($exp1363, $env1364)
-{var $g1365 = $exp1363;
-if ($T($g33($g1365, $g34)))
-if ($T($g36($exp1363)))
-return $g465($g466($g467, $g470, "empty expression"))
-else return $g1359($exp1363, $env1364)
-else if ($T($g33($g1365, $g1064)))
-return $g64($exp1363)
-else if ($T($g33($g1365, $g1065)))
-if ($T($exp1363))
+else return B2633(B3978, exp__4063)}}, false)}
+B4053 = B2155("normalizeT", function B4107 (exp__4103, k__4104)
+{return B3971(exp__4103, function B4108 (aexp__4105)
+{if ($T(B3968(aexp__4105)))
+return k__4104(aexp__4105)
+else {var t__4106 = B2218();
+return [B2145("%bind"), [t__4106, aexp__4105], k__4104(t__4106)]}})}, false)
+var B4109 = B2155("normalizeTT", function B4127 (expT__4110, k__4111)
+{var sequence__4122 = expT__4110, B4123 = sequence__4122, B4124 = ((B4123 || false).length || 0), B4125 = 0, B4126 = (B4124 === B4125);
+if ($T(B4126))
+return k__4111([])
+else return B3979(expT__4110, k__4111)}, false)
+B3979 = B2155("normalize_all", function B4140 (exp__4128, k__4129)
+{var sequence__4133 = exp__4128, B4136 = sequence__4133[0], B4139 = function B4141 (t__4130)
+{var sequence__4135 = exp__4128, B4137 = sequence__4135.slice(1), B4138 = function B4142 (tT__4131)
+{return k__4129(B2185([t__4130], tT__4131))};
+return B4109(B4137, B4138)};
+return B4053(B4136, B4139)}, false)
+var dec = B1464.dec, B4145 = B1464["third-setter"], B4146 = B2155("wrap_value", function B4217 (exp__4147, wrapper__4148)
+{if ($T(B2156(exp__4147, B2157)))
+{var sequence__4152 = exp__4147, B4207 = sequence__4152[0], B4149 = B2186(B4207), B4150 = B2190(B4149, "%begin"), B4208;
+if ($T(B4150))
+B4208 = B4150
+else B4208 = B2190(B4149, "%bind");
+if ($T(B4208))
+{var array__4165 = exp__4147, array__4162 = exp__4147, B4163 = array__4162, B4164 = ((B4163 || false).length || 0), B4209 = (B4164 - 1), B4210 = array__4162[B4209], value__4166 = B4146(B4210, wrapper__4148);
+array__4165[dec(B2191(array__4165), 1)] = value__4166;
+return exp__4147}
+else if ($T(B2190(B4149, "%if")))
+{var array__4171 = exp__4147, sequence__4170 = exp__4147, B4211 = sequence__4170[2], value__4172 = B4146(B4211, wrapper__4148);
+array__4171[2] = value__4172;
+var array__4185 = exp__4147, array__4182 = exp__4147, B4183 = array__4182, B4184 = ((B4183 || false).length || 0), B4212 = (B4184 - 1), B4213 = array__4182[B4212], value__4186 = B4146(B4213, wrapper__4148);
+array__4185[dec(B2191(array__4185), 1)] = value__4186;
+return exp__4147}
+else if ($T(B2190(B4149, "%while")))
+return [B2145("%begin"), exp__4147, B4146(false, wrapper__4148)]
+else if ($T(B2190(B4149, "%try")))
+{var array__4191 = exp__4147, sequence__4190 = exp__4147, B4214 = sequence__4190[1], value__4192 = B4146(B4214, wrapper__4148);
+array__4191[1] = value__4192;
+var array__4205 = exp__4147, array__4202 = exp__4147, B4203 = array__4202, B4204 = ((B4203 || false).length || 0), B4215 = (B4204 - 1), B4216 = array__4202[B4215], value__4206 = B4146(B4216, wrapper__4148);
+array__4205[dec(B2191(array__4205), 1)] = value__4206;
+return exp__4147}
+else return B2185(wrapper__4148, [exp__4147])}
+else return B2185(wrapper__4148, [exp__4147])}, false)
+var B4218 = B2155("add_explicit_return", function B4220 (exp__4219)
+{return B4146(exp__4219, [B2145("%return")])}, false)
+var trueQ = B1464["true?"], B4221 = B1464["member?"], B4222 = B2155("statementQ", function B4245 (exp__4223)
+{if ($T(B2156(exp__4223, B2157)))
+{var sequence__4235 = exp__4223, B4236 = sequence__4235, B4237 = ((B4236 || false).length || 0), B4238 = 0, value__4239 = (B4237 === B4238), B4242 = !(trueQ(value__4239));
+if ($T(B4242))
+{var sequence__4241 = exp__4223, B4243 = sequence__4241[0], B4244 = [B2145("%if"), B2145("%while"), B2145("%begin"), B2145("%bind"), B2145("%try")];
+return B4221(B4243, B4244)}}}, false)
+var B4246 = B2155("add_explicit_true", function B4248 (exp__4247)
+{return [[B2145("%native"), "$T"], exp__4247]}, false)
+{var dec = B1464.dec, B4251 = B1464["first-setter"], B4252 = B2155("transform_statements", function B4360 (exp__4253, env__4254)
+{if ($T(B2156(exp__4253, B2157)))
+{var sequence__4273 = exp__4253, B4346 = sequence__4273[0], B4255 = B2186(B4346);
+if ($T(B2190(B4255, "%method")))
+{var array__4286 = exp__4253, array__4283 = exp__4253, B4284 = array__4283, B4285 = ((B4284 || false).length || 0), B4347 = (B4285 - 1), B4348 = array__4283[B4347], B4349 = B4252(B4348, env__4254), value__4287 = B4218(B4349);
+array__4286[dec(B2191(array__4286), 1)] = value__4287;
+return exp__4253}
+else if ($T(B2190(B4255, "%begin")))
+{var ____4256 = exp__4253[0], exps__4257 = $SL.call(exp__4253, 1);
+return B2269(B2320(B2193(B4252, env__4254), exps__4257))}
+else if ($T(B2190(B4255, "%bind")))
+{var ____4258 = exp__4253[0], B4259 = exp__4253[1], var__4260 = B4259[0], value__4261 = B4259[1], body__4262 = exp__4253[2];
+if ($T(B4222(value__4261)))
+return [B2145("%bind"), [var__4260, false], [B2145("%begin"), B4146(B4252(value__4261, env__4254), [B2145("%set"), var__4260]), B4252(body__4262, env__4254)]]
+else return [B2145("%bind"), [var__4260, B4252(value__4261, env__4254)], B4252(body__4262, env__4254)]}
+else if ($T(B2190(B4255, "%if")))
+{var ____4263 = exp__4253[0], test__4264 = exp__4253[1], then__4265 = exp__4253[2], else__4266 = exp__4253[3];
+return [B2145("%if"), B4246(test__4264), B4252(then__4265, env__4254), B4252(else__4266, env__4254)]}
+else if ($T(B2190(B4255, "%while")))
+{var array__4292 = exp__4253, sequence__4291 = exp__4253, B4350 = sequence__4291[1], value__4293 = B4246(B4350);
+array__4292[1] = value__4293;
+var array__4298 = exp__4253, sequence__4297 = exp__4253, B4351 = sequence__4297[2], value__4299 = B4252(B4351, env__4254);
+array__4298[2] = value__4299;
+return exp__4253}
+else if ($T(B2190(B4255, "%try")))
+{var array__4304 = exp__4253, sequence__4303 = exp__4253, B4352 = sequence__4303[1], value__4305 = B4252(B4352, exp__4253);
+array__4304[1] = value__4305;
+var array__4318 = exp__4253, array__4315 = exp__4253, B4316 = array__4315, B4317 = ((B4316 || false).length || 0), B4353 = (B4317 - 1), B4354 = array__4315[B4353], value__4319 = B4252(B4354, env__4254);
+array__4318[dec(B2191(array__4318), 1)] = value__4319;
+return exp__4253}
+else if ($T(B2190(B4255, "%set")))
+{var ____4267 = exp__4253[0], identifier__4268 = exp__4253[1], value__4269 = exp__4253[2], valueT__4270 = B4252(value__4269, env__4254), definition_name__4271 = B2234(env__4254, "definition-names", B2186(identifier__4268)), B4355;
+if ($T(definition_name__4271))
+B4355 = B4221(definition_name__4271, B2234(env__4254, "module", "exports"))
+else B4355 = false;
+if ($T(B4355))
+{var array__4322 = exp__4253, value__4323 = B2145("%begin");
+array__4322[0] = value__4323;
+var array__4326 = exp__4253, value__4327 = [B2145("%set"), identifier__4268, valueT__4270];
+array__4326[1] = value__4327;
+var array__4330 = exp__4253, value__4331 = [B2145("%set"), [B2145("%get-property"), [B2145("%native"), "exports"], definition_name__4271], identifier__4268];
+array__4330[2] = value__4331}
+else {var array__4334 = exp__4253, value__4335 = valueT__4270;
+array__4334[2] = value__4335};
+return exp__4253}
+else if ($T(B2190(B4255, "%define")))
+{var B4356 = B2145("%var"), array__4343 = exp__4253, B4344 = array__4343, B4345 = ((B4344 || false).length || 0), B4357 = (B4345 - 1), B4358 = array__4343[B4357], B4359 = [B4358, false];
+return [B4356, B4359]}
+else return B2320(B2193(B4252, env__4254), exp__4253)}
+else return exp__4253}, false);
+exports["transform-statements"] = B4252}
+{var B4361, B4362 = B2155("lift_symbols", function B4365 (exp__4363, env__4364)
+{return B4361(exp__4363, env__4364, B3279)}, false);
+exports["lift-symbols"] = B4362}
+{var trueQ = B1464["true?"], B4372, B4373, B4374, B4375 = B1464["<hash-symbol>"];
+B4361 = B2155("lift_symbol", function B4434 (exp__4376, env__4377, k__4378)
+{var B4430;
+if ($T(B2156(exp__4376, B2157)))
+{var sequence__4423 = exp__4376, B4424 = sequence__4423, B4425 = ((B4424 || false).length || 0), B4426 = 0, value__4427 = (B4425 === B4426);
+B4430 = !(trueQ(value__4427))}
+else B4430 = false;
+if ($T(B4430))
+{var sequence__4429 = exp__4376, B4431 = sequence__4429[0], B4379 = B2186(B4431);
+if ($T(B2190(B4379, "%bind")))
+{var ____4380 = exp__4376[0], B4381 = exp__4376[1], var__4382 = B4381[0], value__4383 = B4381[1], body__4384 = exp__4376[2];
+return B4361(value__4383, env__4377, function B4435 (lvalue__4385, env__4386)
+{return B4361(body__4384, env__4386, function B4436 (lbody__4387, env__4388)
+{return k__4378([B2145("%bind"), [var__4382, lvalue__4385], lbody__4387], env__4388)})})}
+else {var B4389 = B2190(B4379, "%method"), B4432;
+if ($T(B4389))
+B4432 = B4389
+else B4432 = B2190(B4379, "%set");
+if ($T(B4432))
+{var m__4390 = exp__4376[0], e1__4391 = exp__4376[1], e2__4392 = exp__4376[2];
+return B4361(e2__4392, env__4377, function B4437 (le2__4393, env__4394)
+{return k__4378([m__4390, e1__4391, le2__4393], env__4394)})}
+else {var B4395 = B2190(B4379, "%begin"), B4433;
+if ($T(B4395))
+B4433 = B4395
+else {var B4396 = B2190(B4379, "%if");
+if ($T(B4396))
+B4433 = B4396
+else B4433 = B2190(B4379, "%while")};
+if ($T(B4433))
+{var m__4397 = exp__4376[0], eT__4398 = $SL.call(exp__4376, 1);
+return B4372(eT__4398, env__4377, function B4438 (leT__4399, env__4400)
+{return k__4378(B2185([m__4397], leT__4399), env__4400)})}
+else if ($T(B2190(B4379, "%try")))
+{var ____4401 = exp__4376[0], e1__4402 = exp__4376[1], v__4403 = exp__4376[2], e2__4404 = exp__4376[3];
+return B4372([e1__4402, e2__4404], env__4377, function B4439 (leT__4405, env__4406)
+{var le1__4407 = leT__4405[0], le2__4408 = leT__4405[1];
+return k__4378([B2145("%try"), le1__4407, v__4403, le2__4408], env__4406)})}
+else if ($T(B2190(B4379, "symbol")))
+{var ____4409 = exp__4376[0], name__4410 = exp__4376[1];
+return B4373(name__4410, exp__4376, "symbol", env__4377, k__4378)}
+else return B4374(exp__4376, env__4377, k__4378)}}}
+else {var B4411 = exp__4376;
+if ($T(B2156(B4411, B3967)))
+return B4373(B2186(exp__4376), exp__4376, "keyword", env__4377, k__4378)
+else if ($T(B2156(B4411, B4375)))
+return B4373(B2186(exp__4376), exp__4376, "hash", env__4377, k__4378)
+else return k__4378(exp__4376, env__4377)}}, false)}
+B4373 = B2155("lift_value", function B4449 (name__4441, value__4442, type__4443, env__4444, k__4445)
+{var B4446 = B2234(env__4444, "lifted", type__4443, name__4441);
+if ($T(B4446))
+{var t__4447 = B4446;
+return k__4445(t__4447, env__4444)}
+else {var t__4448 = B2216(env__4444, "lifted", type__4443, name__4441, B2218());
+return [B2145("%bind"), [t__4448, value__4442], k__4445(t__4448, env__4444)]}}, false)
+B4372 = B2155("lift_symbolT", function B4468 (expT__4450, env__4451, k__4452)
+{var sequence__4463 = expT__4450, B4464 = sequence__4463, B4465 = ((B4464 || false).length || 0), B4466 = 0, B4467 = (B4465 === B4466);
+if ($T(B4467))
+return k__4452([], env__4451)
+else return B4374(expT__4450, env__4451, k__4452)}, false)
+B4374 = B2155("lift_symbolTT", function B4484 (exp__4469, env__4470, k__4471)
+{var sequence__4477 = exp__4469, B4480 = sequence__4477[0], B4483 = function B4485 (t__4472, env__4473)
+{var sequence__4479 = exp__4469, B4481 = sequence__4479.slice(1), B4482 = function B4486 (tT__4474, env__4475)
+{return k__4471(B2185([t__4472], tT__4474), env__4475)};
+return B4372(B4481, env__4473, B4482)};
+return B4361(B4480, env__4470, B4483)}, false)
+var trueQ = B1464["true?"], B4487, B4488 = B2155("flatten_begins", function B4530 (exps__4489)
+{var function__4520 = B2185, values__4521 = B2320(function B4531 (exp__4490)
+{var flattened__4491 = B4487(exp__4490), B4527;
+if ($T(B2156(flattened__4491, B2157)))
+{var sequence__4511 = flattened__4491, B4512 = sequence__4511, B4513 = ((B4512 || false).length || 0), B4514 = 0, value__4515 = (B4513 === B4514), B4524 = !(trueQ(value__4515));
+if ($T(B4524))
+{var sequence__4517 = flattened__4491, B4525 = sequence__4517[0], B4526 = B2145("%begin");
+B4527 = B2190(B4525, B4526)}
+else B4527 = false}
+else B4527 = false;
+if ($T(B4527))
+{var sequence__4519 = flattened__4491;
+return sequence__4519.slice(1)}
+else return [flattened__4491]}, exps__4489), B4522 = values__4521, B4528 = B4522[0], B4523 = values__4521, B4529 = B4523.slice(1);
+return B2310(function__4520, B4528, B4529)}, false)
+var B4532 = B2155("varQ", function B4538 (exp__4533)
+{if ($T(B2162(exp__4533)))
+{var sequence__4535 = exp__4533, B4536 = sequence__4535[0], B4537 = B2145("%var");
+return B2190(B4536, B4537)}}, false)
+var B4539 = B2155("setQ", function B4545 (exp__4540)
+{if ($T(B2162(exp__4540)))
+{var sequence__4542 = exp__4540, B4543 = sequence__4542[0], B4544 = B2145("%set");
+return B2190(B4543, B4544)}}, false)
+var B4546 = B2155("methodQ", function B4552 (exp__4547)
+{if ($T(B2162(exp__4547)))
+{var sequence__4549 = exp__4547, B4550 = sequence__4549[0], B4551 = B2145("%method");
+return B2190(B4550, B4551)}}, false)
+var trueQ = B1464["true?"], B4553 = B2155("flatten_vars", function B4645 (exps__4554)
+{return B2310(function B4646 (result__4555, exp__4556)
+{var sequence__4574 = result__4555, B4575 = sequence__4574, B4576 = ((B4575 || false).length || 0), B4577 = 0, value__4578 = (B4576 === B4577), B4635 = !(trueQ(value__4578)), previous__4557;
+if ($T(B4635))
+{var array__4586 = result__4555, B4587 = array__4586, B4588 = ((B4587 || false).length || 0), B4636 = (B4588 - 1);
+previous__4557 = array__4586[B4636]}
+else previous__4557 = false;
+var previous_varQ__4558;
+if ($T(previous__4557))
+previous_varQ__4558 = B4532(previous__4557)
+else previous_varQ__4558 = false;
+var B4637;
+if ($T(previous_varQ__4558))
+B4637 = B4532(exp__4556)
+else B4637 = false;
+if ($T(B4637))
+{var B4639 = function B4647 (binding__4559)
+{var array__4598 = result__4555, B4599 = array__4598, B4600 = ((B4599 || false).length || 0), B4638 = (B4600 - 1), array__4601 = array__4598[B4638], value__4602 = binding__4559;
+array__4601.push(value__4602);
+return array__4601}, sequence__4604 = exp__4556, B4640 = sequence__4604.slice(1);
+B2243(B4639, B4640);
+return result__4555}
+else {var mergeQ__4560;
+if ($T(previous_varQ__4558))
+mergeQ__4560 = B4539(exp__4556)
+else mergeQ__4560 = false;
+var binding__4561;
+if ($T(mergeQ__4560))
+{var array__4619 = result__4555, B4620 = array__4619, B4621 = ((B4620 || false).length || 0), B4641 = (B4621 - 1), array__4622 = array__4619[B4641], B4623 = array__4622, B4624 = ((B4623 || false).length || 0), B4642 = (B4624 - 1);
+binding__4561 = array__4622[B4642]}
+else binding__4561 = false;
+var identifier__4562;
+if ($T(mergeQ__4560))
+{var sequence__4626 = exp__4556;
+identifier__4562 = sequence__4626[1]}
+else identifier__4562 = false;
+var sequence__4628 = binding__4561, B4643 = sequence__4628[0], B4644 = B2190(B4643, identifier__4562);
+if ($T(B4644))
+{var array__4633 = binding__4561, sequence__4632 = exp__4556, value__4634 = sequence__4632[2];
+array__4633[1] = value__4634;
+return result__4555}
+else return B2185(result__4555, [exp__4556])}}, [], exps__4554)}, false)
+{var dec = B1464.dec;
+B4487 = B2155("flatten_statements", function B4726 (exp__4651)
+{if ($T(B2156(exp__4651, B2157)))
+{var sequence__4661 = exp__4651, B4716 = sequence__4661[0], B4652 = B2186(B4716), B4653 = B2190(B4652, "%method"), B4717;
+if ($T(B4653))
+B4717 = B4653
+else {var B4654 = B2190(B4652, "%while");
+if ($T(B4654))
+B4717 = B4654
+else B4717 = B2190(B4652, "%set")};
+if ($T(B4717))
+{var array__4674 = exp__4651, array__4671 = exp__4651, B4672 = array__4671, B4673 = ((B4672 || false).length || 0), B4718 = (B4673 - 1), B4719 = array__4671[B4718], value__4675 = B4487(B4719);
+array__4674[dec(B2191(array__4674), 1)] = value__4675;
+return exp__4651}
+else if ($T(B2190(B4652, "%begin")))
+{var ____4655 = exp__4651[0], exps__4656 = $SL.call(exp__4651, 1);
+return B2269(B4553(B4488(exps__4656)))}
+else if ($T(B2190(B4652, "%bind")))
+{var ____4657 = exp__4651[0], binding__4658 = exp__4651[1], body__4659 = exp__4651[2];
+return B4487([B2145("%begin"), [B2145("%var"), binding__4658], body__4659])}
+else if ($T(B2190(B4652, "%if")))
+{var array__4680 = exp__4651, sequence__4679 = exp__4651, B4720 = sequence__4679[2], value__4681 = B4487(B4720);
+array__4680[2] = value__4681;
+var array__4694 = exp__4651, array__4691 = exp__4651, B4692 = array__4691, B4693 = ((B4692 || false).length || 0), B4721 = (B4693 - 1), B4722 = array__4691[B4721], value__4695 = B4487(B4722);
+array__4694[dec(B2191(array__4694), 1)] = value__4695;
+return exp__4651}
+else if ($T(B2190(B4652, "%try")))
+{var array__4700 = exp__4651, sequence__4699 = exp__4651, B4723 = sequence__4699[1], value__4701 = B4487(B4723);
+array__4700[1] = value__4701;
+var array__4714 = exp__4651, array__4711 = exp__4651, B4712 = array__4711, B4713 = ((B4712 || false).length || 0), B4724 = (B4713 - 1), B4725 = array__4711[B4724], value__4715 = B4487(B4725);
+array__4714[dec(B2191(array__4714), 1)] = value__4715;
+return exp__4651}
+else return B2320(B4487, exp__4651)}
+else return exp__4651}, false);
+exports["flatten-statements"] = B4487}
+var B4727 = B2136("\"", "\"", "\\", "\\", "\b", "b", "\f", "f", "\n", "n", "\r", "r", "\v", "v", "\t", "t")
+var B4728 = B2155("fill_zeros", function B4740 (string__4729)
+{var array__4735 = "0000", start__4736 = 0, object__4734 = string__4729, B4738 = ((object__4734 || false).length || 0), end__4737 = (4 - B4738), B4739 = array__4735.slice(start__4736, end__4737);
+return B2185(B4739, string__4729)}, false)
+var B4742 = B1464.join, B4743 = B1464["<"], B4744 = B1464["as-hex-string"], B4745 = B1464["char-code"], B4746 = B1464["as-array"], B4747 = B2155("escape_string", function B4766 (string__4748)
+{var B4763 = function B4767 (char__4749)
+{var B4750 = B2234(B4727, char__4749);
+if ($T(B4750))
+{var escaped__4751 = B4750;
+return B2185("\\", escaped__4751)}
+else {var char__4754 = char__4749, code__4752 = char__4754.charCodeAt(0);
+if ($T(B4743(31, code__4752, 127)))
+return char__4749
+else {var number__4756 = code__4752, B4761 = number__4756.toString(16), B4762 = B4728(B4761);
+return B2185("\\u", B4762)}}}, arguments__4759 = string__4748, skip__4760 = undefined, B4764 = $SL.call(arguments__4759, (skip__4760 || 0)), B4765 = B2320(B4763, B4764);
+return B4742(B4765, "")}, false)
+var B4768 = ["break", "case", "catch", "continue", "default", "delete", "do", "else", "finally", "for", "function", "if", "in", "instanceof", "new", "return", "switch", "this", "throw", "try", "typeof", "var", "void", "while", "with", "abstract", "boolean", "byte", "char", "class", "const", "debugger", "double", "enum", "export", "extends", "final", "float", "goto", "implements", "import", "int", "interface", "long", "native", "package", "private", "protected", "public", "short", "static", "super", "synchronized", "throws", "transient", "volatile", "null", "true", "false", "arguments", "object", "number", "string", "array", "let", "yield"]
+var B4769 = B2136("-", "_", "_", "__", "&", "A", "$", "B", ":", "C", ".", "D", "=", "E", "^", "F", ">", "G", "#", "H", "@", "I", "~", "J", "<", "L", "%", "M", "!", "N", "+", "P", "?", "Q", "/", "S", "*", "T")
+var B4770 = B2133.match, B4771 = B2155("escape_name", function B4795 (name__4772)
+{if ($T(B4221(name__4772, B4768)))
+return B2185("R", name__4772)
+else {var B4793 = function B4796 (char__4773)
+{var object__4777 = B4769, property__4778 = char__4773, B4789 = $HP.call(object__4777,property__4778);
+if ($T(B4789))
+return B2234(B4769, char__4773)
+else {var regexp__4781 = "\\w", string__4782 = char__4773, B4790 = string__4782.match(regexp__4781);
+if ($T(B4790))
+return char__4773
+else {var char__4784 = char__4773, B4791 = char__4784.charCodeAt(0), B4792 = B2217(B4791);
+return B2185("Z", B4792)}}}, arguments__4787 = name__4772, skip__4788 = undefined, B4794 = $SL.call(arguments__4787, (skip__4788 || 0)), chars__4774 = B2320(B4793, B4794);
+return B4742(chars__4774, "")}}, false)
+var trueQ = B1464["true?"], B4797 = B2155("valid_js_nameQ", function B4806 (identifier__4798)
+{var value__4800 = B4221(identifier__4798, B4768), B4805 = !(trueQ(value__4800));
+if ($T(B4805))
+{var regexp__4803 = "^\\w+$", string__4804 = identifier__4798;
+return string__4804.match(regexp__4803)}}, false)
+var B4809, B4810 = B1464["as-uppercase"], B4811 = B1464.description, B4812 = B2155("compile_js", function B4837 (exp__4813, env__4814)
+{var B4815 = exp__4813;
+if ($T(B2156(B4815, B2157)))
+{var sequence__4827 = exp__4813, B4828 = sequence__4827, B4829 = ((B4828 || false).length || 0), B4830 = 0, B4835 = (B4829 === B4830);
+if ($T(B4835))
+{var error__4832 = B2997(B2998, B3003, "empty expression");
+throw(error__4832);
+return false}
+else return B4809(exp__4813, env__4814)}
+else if ($T(B2156(B4815, B3965)))
+return B2217(exp__4813)
+else if ($T(B2156(B4815, B3966)))
+if ($T(exp__4813))
 return "true"
 else return "false"
-else if ($T($g33($g1365, $g474)))
-return $g42("\"", $g1338($exp1363), "\"")
-else if ($T($g33($g1365, $g1213)))
-return $g42("$", $g1360($g43($exp1363)))
-else if ($T($g33($g1365, $g1066)))
-return $g42("$K(\"", $g43($exp1363), "\")")
-else if ($T($g33($g1365, $g38)))
-{var $g1366 = $exp1363;
-if ($T($g47($g1366, $g22("%this-method"))))
-return $g1362($g81($env1364, "current-method"), $env1364)
-else if ($T($g47($g1366, $g22("%all-arguments"))))
+else if ($T(B2156(B4815, B3007)))
+return B2185("\"", B4747(exp__4813), "\"")
+else if ($T(B2156(B4815, B4375)))
+{var string__4834 = B2186(exp__4813), B4836 = string__4834.toUpperCase();
+return B2185("$", B4836)}
+else if ($T(B2156(B4815, B3967)))
+return B2185("$K(\"", B2186(exp__4813), "\")")
+else if ($T(B2156(B4815, B2161)))
+{var B4816 = exp__4813;
+if ($T(B2190(B4816, B2145("%this-method"))))
+return B4812(B2234(env__4814, "current-method"), env__4814)
+else if ($T(B2190(B4816, B2145("%all-arguments"))))
 return "arguments"
-else if ($T($g81($exp1363, "generated?")))
-return $g42("$", $g43($exp1363))
-else return $g63($g43($exp1363))}
-else return $g1361($exp1363)}, false)
-{var $g1375;
-$g1359 = $g32("compile_js_exp", function $g1458 ($exp1376, $env1377)
-{var $name1378 = $g43($g37($exp1376)), $g1379 = $name1378;
-if ($T($g47($g1379, "%native-call")))
-{var $__1380 = $exp1376[0], $operator1381 = $exp1376[1], $values1382 = $SL.call($exp1376, 2);
-return $g42($operator1381, $g1375($values1382, $env1377))}
-else if ($T($g47($g1379, "%infix")))
-{var $__1383 = $exp1376[0], $operator1384 = $exp1376[1], $values1385 = $SL.call($exp1376, 2);
-return $g42("(", $g1333($g151($g50($g1362, $env1377), $values1385), $g42(" ", $operator1384, " ")), ")")}
-else {var $g1386 = $g47($g1379, "%plus"), $g1433;
-if ($T($g1386))
-$g1433 = $g1386
-else {var $g1387 = $g47($g1379, "%minus");
-if ($T($g1387))
-$g1433 = $g1387
-else {var $g1388 = $g47($g1379, "%times");
-if ($T($g1388))
-$g1433 = $g1388
-else $g1433 = $g47($g1379, "%divide")}};
-if ($T($g1433))
-{var $g1434 = $g22("%infix"), $g1389 = $name1378, $g1435;
-if ($T($g47($g1389, "%plus")))
-$g1435 = "+"
-else if ($T($g47($g1389, "%minus")))
-$g1435 = "-"
-else if ($T($g47($g1389, "%times")))
-$g1435 = "*"
-else if ($T($g47($g1389, "%divide")))
-$g1435 = "/"
-else $g1435 = false;
-var $g1436 = [$g1434, $g1435], $g1437 = $g203($exp1376), $g1438 = $g42($g1436, $g1437);
-return $g1359($g1438, $env1377)}
-else if ($T($g47($g1379, "%array")))
-{var $__1390 = $exp1376[0], $elements1391 = $SL.call($exp1376, 1);
-return $g42("[", $g1333($g151($g50($g1362, $env1377), $elements1391), ", "), "]")}
-else if ($T($g47($g1379, "%object")))
-{var $key_values1392 = $g203($exp1376), $entries1393 = [], $g1394 = ($g48($key_values1392) / 2), $i1395 = 0;
-while ($T($g35($g1038($i1395, $g1394))))
-{(function $g1459 ($i1396)
-{var $name1397 = $g121($key_values1392, ($i1396 * 2)), $g1439;
-if ($T($g1354($name1397)))
-$g1439 = $name1397
-else $g1439 = $g1362($name1397, $env1377);
-var $g1440 = $g1362($g121($key_values1392, (($i1396 * 2) + 1)), $env1377), $g1441 = $g42($g1439, ":", $g1440);
-return $g285($entries1393, $g1441)})($i1395);
-$i1395 = ($i1395 + 1)};
+else return B4771(B2186(exp__4813))}
+else return B4811(exp__4813)}, false)
+{var trueQ = B1464["true?"], B4845;
+B4809 = B2155("compile_js_exp", function B4982 (exp__4846, env__4847)
+{var sequence__4904 = exp__4846, B4941 = sequence__4904[0], name__4848 = B2186(B4941), B4849 = name__4848;
+if ($T(B2190(B4849, "%native-call")))
+{var ____4850 = exp__4846[0], operator__4851 = exp__4846[1], values__4852 = $SL.call(exp__4846, 2);
+return B2185(operator__4851, B4845(values__4852, env__4847))}
+else if ($T(B2190(B4849, "%infix")))
+{var ____4853 = exp__4846[0], operator__4854 = exp__4846[1], values__4855 = $SL.call(exp__4846, 2);
+return B2185("(", B4742(B2320(B2193(B4812, env__4847), values__4855), B2185(" ", operator__4854, " ")), ")")}
+else {var B4856 = B2190(B4849, "%plus"), B4942;
+if ($T(B4856))
+B4942 = B4856
+else {var B4857 = B2190(B4849, "%minus");
+if ($T(B4857))
+B4942 = B4857
+else {var B4858 = B2190(B4849, "%times");
+if ($T(B4858))
+B4942 = B4858
+else B4942 = B2190(B4849, "%divide")}};
+if ($T(B4942))
+{var B4943 = B2145("%infix"), B4859 = name__4848, B4944;
+if ($T(B2190(B4859, "%plus")))
+B4944 = "+"
+else if ($T(B2190(B4859, "%minus")))
+B4944 = "-"
+else if ($T(B2190(B4859, "%times")))
+B4944 = "*"
+else if ($T(B2190(B4859, "%divide")))
+B4944 = "/"
+else B4944 = false;
+var B4945 = [B4943, B4944], sequence__4906 = exp__4846, B4946 = sequence__4906.slice(1), B4947 = B2185(B4945, B4946);
+return B4809(B4947, env__4847)}
+else if ($T(B2190(B4849, "%array")))
+{var ____4860 = exp__4846[0], elements__4861 = $SL.call(exp__4846, 1);
+return B2185("[", B4742(B2320(B2193(B4812, env__4847), elements__4861), ", "), "]")}
+else if ($T(B2190(B4849, "%object")))
+{var sequence__4908 = exp__4846, key_values__4862 = sequence__4908.slice(1), entries__4863 = [], object__4910 = key_values__4862, B4948 = ((object__4910 || false).length || 0), B4864 = (B4948 / 2), i__4865 = 0;
+while ($T(true))
+{var value__4912 = B3932(i__4865, B4864), B4951 = !(trueQ(value__4912));
+if ($T(B4951))
+{(function B4983 (i__4866)
+{var array__4915 = entries__4863, name__4867 = B2282(key_values__4862, (i__4866 * 2)), B4949;
+if ($T(B4797(name__4867)))
+B4949 = name__4867
+else B4949 = B4812(name__4867, env__4847);
+var B4950 = B4812(B2282(key_values__4862, ((i__4866 * 2) + 1)), env__4847), value__4916 = B2185(B4949, ":", B4950);
+array__4915.push(value__4916);
+return array__4915})(i__4865);
+i__4865 = (i__4865 + 1)}
+else break};
 false;
-return $g42("{", $g1333($entries1393, ",\n"), "}")}
-else if ($T($g47($g1379, "%if")))
-{var $__1398 = $exp1376[0], $test1399 = $exp1376[1], $then1400 = $exp1376[2], $relse1401 = $exp1376[3], $g1442 = $g1362($test1399, $env1377), $g1443 = $g1362($then1400, $env1377), $g1444;
-if ($T($relse1401))
-$g1444 = $g35($g119($relse1401, [$g22("%return"), false]))
-else $g1444 = false;
-var $g1445;
-if ($T($g1444))
-$g1445 = $g42("\nelse ", $g1362($relse1401, $env1377))
-else $g1445 = "";
-return $g42("if (", $g1442, ")\n", $g1443, $g1445)}
-else if ($T($g47($g1379, "%while")))
-{var $__1402 = $exp1376[0], $test1403 = $exp1376[1], $body1404 = $exp1376[2];
-return $g42("while (", $g1362($test1403, $env1377), ")\n", $g1362($body1404, $env1377))}
-else if ($T($g47($g1379, "%try")))
-{var $__1405 = $exp1376[0], $body1406 = $exp1376[1], $rvar1407 = $exp1376[2], $rcatch1408 = $exp1376[3];
-return $g42("try {", $g1362($body1406, $env1377), "}\n", "catch (", $g1362($rvar1407, $env1377), ")\n", "{", $g1362($rcatch1408, $env1377), "}")}
-else if ($T($g47($g1379, "%return")))
-return $g42("return ", $g1362($g54($exp1376), $env1377))
-else if ($T($g47($g1379, "%begin")))
-return $g42("{", $g1333($g151($g50($g1362, $env1377), $g203($exp1376)), ";\n"), "}")
-else if ($T($g47($g1379, "%set")))
-{var $__1409 = $exp1376[0], $rvar1410 = $exp1376[1], $value1411 = $exp1376[2];
-return $g42($g1362($rvar1410, $env1377), " = ", $g1362($value1411, $env1377))}
-else if ($T($g47($g1379, "%method")))
-{var $__1412 = $exp1376[0], $rarguments1413 = $exp1376[1], $body1414 = $exp1376[2], $name1415 = $g65(), $previous_method1416 = $g81($env1377, "current-method"), $g1446 = $g1362($name1415, $env1377), $g1447 = $g1333($g151($g50($g1362, $env1377), $rarguments1413), ", ");
-$g62($env1377, "current-method", $name1415);
-var $bodyt1417 = $g1362($body1414, $env1377);
-$g62($env1377, "current-method", $previous_method1416);
-var $g1448;
-if ($T($g39($body1414)))
-$g1448 = $g47($g37($body1414), $g22("%begin"))
-else $g1448 = false;
-var $g1449;
-if ($T($g1448))
-$g1449 = $bodyt1417
-else $g1449 = $g42("{", $bodyt1417, "}");
-return $g42("function ", $g1446, " (", $g1447, ")\n", $g1449)}
-else if ($T($g47($g1379, "%var")))
-{var $__1418 = $exp1376[0], $bindings1419 = $SL.call($exp1376, 1);
-return $g42("var ", $g1333($g151(function $g1460 ($binding1420)
-{var $g1421;
-if ($T($g33($binding1420, $g34)))
-$g1421 = $binding1420
-else $g1421 = [$binding1420, false];
-var $rvar1422 = $g1421[0], $value1423 = $g1421[1], $g1450 = $g1362($rvar1422, $env1377), $g1451;
-if ($T($value1423))
-$g1451 = $g42(" = ", $g1362($value1423, $env1377))
-else $g1451 = "";
-return $g42($g1450, $g1451)}, $bindings1419), ", "))}
-else if ($T($g47($g1379, "%native")))
-return $g152($g42, $g151(function $g1461 ($e1424)
-{if ($T($g33($e1424, $g38)))
-return $g1362($e1424)
-else return $g64($e1424)}, $g203($exp1376)))
-else if ($T($g47($g1379, "%native-name")))
-return $g42("\"", $g63($g54($exp1376)), "\"")
-else if ($T($g47($g1379, "%get-property")))
-{var $__1425 = $exp1376[0], $robject1426 = $exp1376[1], $properties1427 = $SL.call($exp1376, 2), $g1452;
-if ($T($g33($robject1426, $g1064)))
-$g1452 = $g42("(", $g1362($robject1426, $env1377), ")")
-else $g1452 = $g1362($robject1426, $env1377);
-var $g1455 = $g141(function $g1462 ($result1428, $property1429)
-{var $g1453;
-if ($T($g33($property1429, $g474)))
-$g1453 = $g1354($property1429)
-else $g1453 = false;
-var $g1454;
-if ($T($g1453))
-$g1454 = $g42(".", $property1429)
-else $g1454 = $g42("[", $g1362($property1429, $env1377), "]");
-return $g42($result1428, $g1454)}, "", $properties1427);
-return $g42($g1452, $g1455)}
-else {var $rfunction1430 = $exp1376[0], $values1431 = $SL.call($exp1376, 1), $functiont1432 = $g1362($rfunction1430, $env1377), $g1456;
-if ($T($g1297($rfunction1430)))
-$g1456 = $g42("(", $functiont1432, ")")
-else $g1456 = $functiont1432;
-var $g1457 = $g1375($values1431, $env1377);
-return $g42($g1456, $g1457)}}}, false)}
-$g1375 = $g32("compile_js_call", function $g1465 ($values1463, $env1464)
-{return $g42("(", $g1333($g151($g50($g1362, $env1464), $values1463), ", "), ")")}, false)
-var $g1470 = $K("string"), $g1466 = $g11.read, $g1467 = $g8["<string-stream>"], $g1468 = $g32("read_program", function $g1471 ($source1469)
-{return $g1466($g466($g1467, $g1470, $g42("(", $source1469, "\n)")))}, false)
-{var $g1472 = $g32("compile_expression", function $g1480 ($exp1473, $env1474)
-{return $g141(function $g1481 ($result1475, $namesfn1476)
-{var $name1477 = $namesfn1476[0], $fn1478 = $namesfn1476[1], $result1479 = $fn1478($result1475);
-return $result1479}, $exp1473, [["source", $g649], ["macroexpanded", $g50($g88, $env1474)], ["lifted defines", $g50($g650, $env1474)], ["defined free variables", $g50($g777, $env1474)], ["alpha-converted", $g50($g936, $env1474)], ["inline", $g50($g994, $env1474)], ["defined free variables after inline", $g50($g793, $env1474)], ["ANF", $g1071], ["lifted symbols", $g50($g1200, $env1474)], ["statements", $g50($g1177, $env1474)], ["flattened", $g1283], ["compiled", $g50($g1362, $env1474)]])}, false);
-exports["compile-expression"] = $g1472}
-var $g1482 = $g12["resolve-path"], $g1483 = $g32("executable_path", function $g1485 ($module_name1484)
-{return $g1482("build", $g42($module_name1484, ".js"))}, false)
-var $g1486 = $g32("module_path", function $g1489 ($base_path1487, $module_name1488)
-{return $g1482($base_path1487, $g42($module_name1488, ".rm"))}, false)
-var $g1490 = $g32("source_path", function $g1492 ($module_name1491)
-{return $g1482("src", $g42($module_name1491, ".ralph"))}, false)
-var $g1494 = $g12["file-properties"], $g1495 = $g12["file-exists?"], $g1496 = $g32("recompileQ", function $g1503 ($module_name1497)
-{if ($T($g35($g81($g14, $module_name1497, "native?"))))
-{var $path1498 = $g1483($module_name1497), $g1499 = $g35($g1495($path1498));
-if ($T($g1499))
-return $g1499
-else {var $path21500 = $g1490($module_name1497), $date11501 = $g81($g1494($path1498), "modification-date"), $date21502 = $g81($g1494($path21500), "modification-date");
-console.error(">>>", $date11501, "VS", $date21502);
-return $g1334($date11501, $date21502)}}}, false)
-{var $g1507 = $g2["chain-object"], $g1508, $g1509;
-$g594 = $g32("compile_time_import_module", function $g1523 ($env1510, $module_name1511)
-{var $g1512 = $SL.call(arguments, 2), $g1513 = $g507($g1512, {options:false}), $options1514 = $g1513.options, $g1520;
-if ($T($g47($module_name1511, "ralph/core")))
-$g1520 = [$g110, $g722]
-else {$g1508($module_name1511);
-var $definitions1515 = require($module_name1511), $macros1516 = $g24(), $symbol_macros1517 = $g24();
-$g86(function $g1524 ($name1518)
-{var $definition1519 = $g81($definitions1515, $name1518);
-if ($T($g81($definition1519, "%macro?")))
-return $g62($macros1516, $name1518, $definition1519)
-else if ($T($g81($definition1519, "%symbol-macro?")))
-return $g62($symbol_macros1517, $name1518, $definition1519)}, $g542($g1509, $g776($definitions1515), $options1514));
-$g1520 = [$macros1516, $symbol_macros1517]};
-var $macros1521 = $g1520[0], $symbol_macros1522 = $g1520[1];
-$g1507($g81($env1510, "macros"), $macros1521);
-return $g1507($g81($env1510, "symbol-macros"), $symbol_macros1522)}, false)}
-{var $g1529 = $g2["remove!"], $g1530 = $g2["as-object"];
-$g1509 = $g32("process_names", function $g1549 ($all1531)
-{var $g1532 = $SL.call(arguments, 1), $g1533 = $g507($g1532, {only:false,
+return B2185("{", B4742(entries__4863, ",\n"), "}")}
+else if ($T(B2190(B4849, "%if")))
+{var ____4868 = exp__4846[0], test__4869 = exp__4846[1], then__4870 = exp__4846[2], else__4871 = exp__4846[3], B4952 = B4812(test__4869, env__4847), B4953 = B4812(then__4870, env__4847), B4954;
+if ($T(else__4871))
+{var value__4918 = B2280(else__4871, [B2145("%return"), false]);
+B4954 = !(trueQ(value__4918))}
+else B4954 = false;
+var B4955;
+if ($T(B4954))
+B4955 = B2185("\nelse ", B4812(else__4871, env__4847))
+else B4955 = "";
+return B2185("if (", B4952, ")\n", B4953, B4955)}
+else if ($T(B2190(B4849, "%while")))
+{var ____4872 = exp__4846[0], test__4873 = exp__4846[1], body__4874 = exp__4846[2];
+return B2185("while (", B4812(test__4873, env__4847), ")\n", B4812(body__4874, env__4847))}
+else if ($T(B2190(B4849, "%try")))
+{var ____4875 = exp__4846[0], body__4876 = exp__4846[1], var__4877 = exp__4846[2], catch__4878 = exp__4846[3];
+return B2185("try {", B4812(body__4876, env__4847), "}\n", "catch (", B4812(var__4877, env__4847), ")\n", "{", B4812(catch__4878, env__4847), "}")}
+else if ($T(B2190(B4849, "%return")))
+{var sequence__4920 = exp__4846, B4956 = sequence__4920[1], B4957 = B4812(B4956, env__4847);
+return B2185("return ", B4957)}
+else if ($T(B2190(B4849, "%begin")))
+{var B4958 = B2193(B4812, env__4847), sequence__4922 = exp__4846, B4959 = sequence__4922.slice(1), B4960 = B2320(B4958, B4959), B4961 = B4742(B4960, ";\n");
+return B2185("{", B4961, "}")}
+else if ($T(B2190(B4849, "%set")))
+{var ____4879 = exp__4846[0], var__4880 = exp__4846[1], value__4881 = exp__4846[2];
+return B2185(B4812(var__4880, env__4847), " = ", B4812(value__4881, env__4847))}
+else if ($T(B2190(B4849, "%method")))
+{var ____4882 = exp__4846[0], arguments__4883 = exp__4846[1], body__4884 = exp__4846[2], name__4885 = B2218(), previous_method__4886 = B2234(env__4847, "current-method"), B4962 = B4812(name__4885, env__4847), B4963 = B4742(B2320(B2193(B4812, env__4847), arguments__4883), ", ");
+B2216(env__4847, "current-method", name__4885);
+var bodyT__4887 = B4812(body__4884, env__4847);
+B2216(env__4847, "current-method", previous_method__4886);
+var B4966;
+if ($T(B2162(body__4884)))
+{var sequence__4924 = body__4884, B4964 = sequence__4924[0], B4965 = B2145("%begin");
+B4966 = B2190(B4964, B4965)}
+else B4966 = false;
+var B4967;
+if ($T(B4966))
+B4967 = bodyT__4887
+else B4967 = B2185("{", bodyT__4887, "}");
+return B2185("function ", B4962, " (", B4963, ")\n", B4967)}
+else if ($T(B2190(B4849, "%var")))
+{var ____4888 = exp__4846[0], bindings__4889 = $SL.call(exp__4846, 1);
+return B2185("var ", B4742(B2320(function B4984 (binding__4890)
+{var B4891;
+if ($T(B2156(binding__4890, B2157)))
+B4891 = binding__4890
+else B4891 = [binding__4890, false];
+var var__4892 = B4891[0], value__4893 = B4891[1], B4968 = B4812(var__4892, env__4847), B4969;
+if ($T(value__4893))
+B4969 = B2185(" = ", B4812(value__4893, env__4847))
+else B4969 = "";
+return B2185(B4968, B4969)}, bindings__4889), ", "))}
+else if ($T(B2190(B4849, "%native")))
+{var function__4935 = B2185, B4970 = function B4985 (e__4894)
+{if ($T(B2156(e__4894, B2161)))
+return B4812(e__4894)
+else return B2217(e__4894)}, sequence__4934 = exp__4846, B4971 = sequence__4934.slice(1), values__4936 = B2320(B4970, B4971), B4937 = values__4936, B4972 = B4937[0], B4938 = values__4936, B4973 = B4938.slice(1);
+return B2310(function__4935, B4972, B4973)}
+else if ($T(B2190(B4849, "%native-name")))
+{var sequence__4940 = exp__4846, B4974 = sequence__4940[1], B4975 = B4771(B4974);
+return B2185("\"", B4975, "\"")}
+else if ($T(B2190(B4849, "%get-property")))
+{var ____4895 = exp__4846[0], object__4896 = exp__4846[1], properties__4897 = $SL.call(exp__4846, 2), B4976;
+if ($T(B2156(object__4896, B3965)))
+B4976 = B2185("(", B4812(object__4896, env__4847), ")")
+else B4976 = B4812(object__4896, env__4847);
+var B4979 = B2310(function B4986 (result__4898, property__4899)
+{var B4977;
+if ($T(B2156(property__4899, B3007)))
+B4977 = B4797(property__4899)
+else B4977 = false;
+var B4978;
+if ($T(B4977))
+B4978 = B2185(".", property__4899)
+else B4978 = B2185("[", B4812(property__4899, env__4847), "]");
+return B2185(result__4898, B4978)}, "", properties__4897);
+return B2185(B4976, B4979)}
+else {var function__4900 = exp__4846[0], values__4901 = $SL.call(exp__4846, 1), functionT__4902 = B4812(function__4900, env__4847), B4980;
+if ($T(B4546(function__4900)))
+B4980 = B2185("(", functionT__4902, ")")
+else B4980 = functionT__4902;
+var B4981 = B4845(values__4901, env__4847);
+return B2185(B4980, B4981)}}}, false)}
+B4845 = B2155("compile_js_call", function B4989 (values__4987, env__4988)
+{return B2185("(", B4742(B2320(B2193(B4812, env__4988), values__4987), ", "), ")")}, false)
+var B4994 = $K("string"), B4990 = B2134.read, B4991 = B2131["<string-stream>"], B4992 = B2155("read_program", function B4995 (source__4993)
+{return B4990(B2997(B4991, B4994, B2185("(", source__4993, "\n)")))}, false)
+{var B4996 = B2155("compile_expression", function B5004 (exp__4997, env__4998)
+{return B2310(function B5005 (result__4999, nameSfn__5000)
+{var name__5001 = nameSfn__5000[0], fn__5002 = nameSfn__5000[1], result__5003 = fn__5002(result__4999);
+return result__5003}, exp__4997, [["source", B3279], ["macroexpanded", B2193(B2245, env__4998)], ["lifted defines", B2193(B3280, env__4998)], ["defined free variables", B2193(B3472, env__4998)], ["alpha-converted", B2193(B3746, env__4998)], ["inline", B2193(B3815, env__4998)], ["defined free variables after inline", B2193(B3503, env__4998)], ["ANF", B3972], ["lifted symbols", B2193(B4362, env__4998)], ["statements", B2193(B4252, env__4998)], ["flattened", B4487], ["compiled", B2193(B4812, env__4998)]])}, false);
+exports["compile-expression"] = B4996}
+var B5006 = B2135["resolve-path"], B5007 = B2155("executable_path", function B5009 (module_name__5008)
+{return B5006("build", B2185(module_name__5008, ".js"))}, false)
+var B5010 = B2155("module_path", function B5013 (base_path__5011, module_name__5012)
+{return B5006(base_path__5011, B2185(module_name__5012, ".rm"))}, false)
+var B5014 = B2155("source_path", function B5016 (module_name__5015)
+{return B5006("src", B2185(module_name__5015, ".ralph"))}, false)
+var trueQ = B1464["true?"], B5018 = B2135["file-properties"], B5019 = B2135["file-exists?"], B5020 = B2155("recompileQ", function B5030 (module_name__5021)
+{var value__5026 = B2234(B2137, module_name__5021, "native?"), B5029 = !(trueQ(value__5026));
+if ($T(B5029))
+{var path__5022 = B5007(module_name__5021), value__5028 = B5019(path__5022), B5023 = !(trueQ(value__5028));
+if ($T(B5023))
+return B5023
+else {var path2__5024 = B5014(module_name__5021);
+return B4743(B2234(B5018(path__5022), "modification-date"), B2234(B5018(path2__5024), "modification-date"))}}}, false)
+{var B5034 = B1464["chain-object"], B5035, B5036;
+B3224 = B2155("compile_time_import_module", function B5050 (env__5037, module_name__5038)
+{var B5039 = $SL.call(arguments, 2), B5040 = B3044(B5039, {options:false}), options__5041 = B5040.options, B5047;
+if ($T(B2190(module_name__5038, "ralph/core")))
+B5047 = [B2267, B3383]
+else {B5035(module_name__5038);
+var definitions__5042 = require(module_name__5038), macros__5043 = B2147(), symbol_macros__5044 = B2147();
+B2243(function B5051 (name__5045)
+{var definition__5046 = B2234(definitions__5042, name__5045);
+if ($T(B2234(definition__5046, "%macro?")))
+return B2216(macros__5043, name__5045, definition__5046)
+else if ($T(B2234(definition__5046, "%symbol-macro?")))
+return B2216(symbol_macros__5044, name__5045, definition__5046)}, B3109(B5036, B3471(definitions__5042), options__5041));
+B5047 = [macros__5043, symbol_macros__5044]};
+var macros__5048 = B5047[0], symbol_macros__5049 = B5047[1];
+B5034(B2234(env__5037, "macros"), macros__5048);
+return B5034(B2234(env__5037, "symbol-macros"), symbol_macros__5049)}, false)}
+{var B5056 = B1464["remove!"], B5057 = B1464["as-object"];
+B5036 = B2155("process_names", function B5076 (all__5058)
+{var B5059 = $SL.call(arguments, 1), B5060 = B3044(B5059, {only:false,
 exclude:false,
 prefix:false,
-rename:false}), $only1534 = $g1533.only, $exclude1535 = $g1533.exclude, $prefix1536 = $g1533.prefix, $rename1537 = $g1533.rename, $resolve1538 = function $g1550 ($exp1539)
-{if ($T($g33($exp1539, $g474)))
-return $exp1539
-else return $g55($exp1539)}, $g1546;
-if ($T($g33($only1534, $g34)))
-$g1546 = $g151($resolve1538, $only1534)
-else $g1546 = $all1531;
-var $names1540 = $g775($g1546), $g1541 = $rename1537, $g1547;
-if ($T($g1541))
-$g1547 = $g1541
-else $g1547 = [];
-var $g1548 = $g151($resolve1538, $g1547), $renamings1542 = $g1530($g1548);
-$g86($g87($g1529, $names1540), $g151($resolve1538, $exclude1535));
-$g827($names1540, $g776($renamings1542));
-return $g151(function $g1551 ($name1543)
-{var $g1544 = $g81($renamings1542, $name1543);
-if ($T($g1544))
-{var $renaming1545 = $g1544;
-return [$name1543, $renaming1545]}
-else if ($T($g33($prefix1536, $g474)))
-return [$name1543, $g42($prefix1536, $name1543)]
-else return $name1543}, $names1540)}, false)}
-{var $g1553;
-$g595 = $g32("import_module", function $g1559 ($module1554, $module_name1555)
-{var $options1556 = $SL.call(arguments, 2), $g1557 = $g1553($module_name1555);
-if ($T($g1557))
-{var $other_module1558 = $g1557;
-$g881($g81($module1554, "imports"), [$other_module1558, $g542($g1509, $g81($other_module1558, "exports"), $options1556)]);
-$g881($g81($module1554, "dependencies"), $module_name1555);
-return $other_module1558}
-else return $g465($g42("unable to import module '", $module_name1555, "'"))}, false)}
-{var $g1563;
-$g1553 = $g32("find_module", function $g1568 ($module_name1564)
-{var $g1565 = $g1508($module_name1564);
-if ($T($g1565))
-return $g1565
-else {var $g1566 = $g81($g14, $module_name1564);
-if ($T($g1566))
-return $g1566
-else {var $g1567 = $g1563("build", $module_name1564);
-if ($T($g1567))
-return $g1567
-else return $g1563("src", $module_name1564)}}}, false)}
-{var $g1573 = $K("name"), $g1569 = $g12["read-file"];
-$g1563 = $g32("read_module", function $g1574 ($base_path1570, $module_name1571)
-{var $path1572 = $g1486($base_path1570, $module_name1571);
-if ($T($g1495($path1572)))
-return $g542($g87($g466, $g17, $g1573), $g1466($g466($g1467, $g1470, $g1569($path1572))))}, false)}
-{var $g1587 = $K("module"), $g1588 = $K("exports"), $g1589 = $K("inline"), $g1590 = $K("dependencies"), $g1576 = $g12["write-file"];
-$g1508 = $g32("compile_module", function $g1591 ($module_name1577)
-{if ($T($g35($g660($g14, $module_name1577))))
-{var $g1578 = $g1563("src", $module_name1577);
-if ($T($g1578))
-{var $module1579 = $g1578;
-$g62($g14, $module_name1577, $module1579)}};
-if ($T($g1496($module_name1577)))
-{if ($T($g35($g1495($g1490($module_name1577)))))
-$g465($g42("unable to compile module '", $module_name1577, "'"));
-var $module1580 = $g466($g17, $g1573, $module_name1577), $env1581 = $g466($g25, $g1587, $module1580), $source1582 = $g1569($g1490($module_name1577)), $program1583 = $g1468($source1582), $result1584 = "";
-$g62($g14, $module_name1577, $module1580);
-$g594($env1581, "ralph/core");
-if ($T($g35($g47($module_name1577, "ralph/core"))))
-{$g595($module1580, "ralph/core");
-$g881($program1583, $g596("ralph/core", $env1581))};
-$g86(function $g1592 ($expression1585)
-{var $code1586 = $g1472($expression1585, $env1581);
-return $result1584 = $g42($result1584, $code1586, "\n")}, $program1583);
-$g1576($g1483($module_name1577), $result1584);
-$g1576($g1486("build", $module_name1577), $g1361([$module_name1577, $g1588, $g81($module1580, "exports"), $g1589, $g81($module1580, "inline"), $g1590, $g81($module1580, "dependencies")]));
-return $module1580}}, false);
-exports["compile-module"] = $g1508}
-{var $g1595 = $g32("analyze_dependencies", function $g1604 ($module_name1596)
-{var $g1597 = $g1553($module_name1596);
-if ($T($g1597))
-{var $module1598 = $g1597;
-$g62($g14, $module_name1596, $module1598);
-var $g1599 = $module1598, $dependencies1600 = $g1599.dependencies, $result1601 = $g120($dependencies1600);
-$g86(function $g1605 ($dependency1602)
-{return $g86(function $g1606 ($sub_dependency1603)
-{if ($T($g1167($sub_dependency1603, $result1601)))
-$g1529($result1601, $sub_dependency1603);
-return $g881($result1601, $sub_dependency1603)}, $g1595($dependency1602))}, $dependencies1600);
-return $result1601}
-else return $g465($g42("unable to find-module '", $module_name1596, "'"))}, false);
-exports["analyze-dependencies"] = $g1595}
+rename:false}), only__5061 = B5060.only, exclude__5062 = B5060.exclude, prefix__5063 = B5060.prefix, rename__5064 = B5060.rename, resolve__5065 = function B5077 (exp__5066)
+{if ($T(B2156(exp__5066, B3007)))
+return exp__5066
+else return B2206(exp__5066)}, B5073;
+if ($T(B2156(only__5061, B2157)))
+B5073 = B2320(resolve__5065, only__5061)
+else B5073 = all__5058;
+var names__5067 = B3470(B5073), B5068 = rename__5064, B5074;
+if ($T(B5068))
+B5074 = B5068
+else B5074 = [];
+var B5075 = B2320(resolve__5065, B5074), renamings__5069 = B5057(B5075);
+B2243(B2244(B5056, names__5067), B2320(resolve__5065, exclude__5062));
+B3558(names__5067, B3471(renamings__5069));
+return B2320(function B5078 (name__5070)
+{var B5071 = B2234(renamings__5069, name__5070);
+if ($T(B5071))
+{var renaming__5072 = B5071;
+return [name__5070, renaming__5072]}
+else if ($T(B2156(prefix__5063, B3007)))
+return [name__5070, B2185(prefix__5063, name__5070)]
+else return name__5070}, names__5067)}, false)}
+{var B5080;
+B3225 = B2155("import_module", function B5096 (module__5081, module_name__5082)
+{var options__5083 = $SL.call(arguments, 2), B5084 = B5080(module_name__5082);
+if ($T(B5084))
+{var other_module__5085 = B5084, array__5088 = B2234(module__5081, "imports"), value__5089 = [other_module__5085, B3109(B5036, B2234(other_module__5085, "exports"), options__5083)];
+array__5088.unshift(value__5089);
+array__5088;
+var array__5092 = B2234(module__5081, "dependencies"), value__5093 = module_name__5082;
+array__5092.unshift(value__5093);
+array__5092;
+return other_module__5085}
+else {var error__5095 = B2185("unable to import module '", module_name__5082, "'");
+throw(error__5095);
+return false}}, false)}
+{var B5100;
+B5080 = B2155("find_module", function B5105 (module_name__5101)
+{var B5102 = B5035(module_name__5101);
+if ($T(B5102))
+return B5102
+else {var B5103 = B2234(B2137, module_name__5101);
+if ($T(B5103))
+return B5103
+else {var B5104 = B5100("build", module_name__5101);
+if ($T(B5104))
+return B5104
+else return B5100("src", module_name__5101)}}}, false)}
+{var B5110 = $K("name"), B5106 = B2135["read-file"];
+B5100 = B2155("read_module", function B5111 (base_path__5107, module_name__5108)
+{var path__5109 = B5010(base_path__5107, module_name__5108);
+if ($T(B5019(path__5109)))
+return B3109(B2244(B2997, B2140, B5110), B4990(B2997(B4991, B4994, B5106(path__5109))))}, false)}
+{var B5143 = $K("module"), B5144 = $K("exports"), B5145 = $K("inline"), B5146 = $K("dependencies"), trueQ = B1464["true?"], B5113 = B2135["write-file"];
+B5035 = B2155("compile_module", function B5147 (module_name__5114)
+{var object__5127 = B2137, property__5128 = module_name__5114, value__5129 = $HP.call(object__5127,property__5128), B5140 = !(trueQ(value__5129));
+if ($T(B5140))
+{var B5115 = B5100("src", module_name__5114);
+if ($T(B5115))
+{var module__5116 = B5115;
+B2216(B2137, module_name__5114, module__5116)}};
+if ($T(B5020(module_name__5114)))
+{var value__5131 = B5019(B5014(module_name__5114)), B5141 = !(trueQ(value__5131));
+if ($T(B5141))
+{var error__5133 = B2185("unable to compile module '", module_name__5114, "'");
+throw(error__5133);
+false};
+var module__5117 = B2997(B2140, B5110, module_name__5114), env__5118 = B2997(B2148, B5143, module__5117), source__5119 = B5106(B5014(module_name__5114)), program__5120 = B4992(source__5119), result__5121 = "";
+B2216(B2137, module_name__5114, module__5117);
+B3224(env__5118, "ralph/core");
+var value__5135 = B2190(module_name__5114, "ralph/core"), B5142 = !(trueQ(value__5135));
+if ($T(B5142))
+{B3225(module__5117, "ralph/core");
+var array__5138 = program__5120, value__5139 = B3226("ralph/core", env__5118);
+array__5138.unshift(value__5139);
+array__5138};
+B2243(function B5148 (expression__5122)
+{var code__5123 = B4996(expression__5122, env__5118);
+return result__5121 = B2185(result__5121, code__5123, "\n")}, program__5120);
+B5113(B5007(module_name__5114), result__5121);
+B5113(B5010("build", module_name__5114), B4811([module_name__5114, B5144, B2234(module__5117, "exports"), B5145, B2234(module__5117, "inline"), B5146, B2234(module__5117, "dependencies")]));
+return module__5117}}, false);
+exports["compile-module"] = B5035}
+{var B5151 = B2155("analyze_dependencies", function B5166 (module_name__5152)
+{var B5153 = B5080(module_name__5152);
+if ($T(B5153))
+{var module__5154 = B5153;
+B2216(B2137, module_name__5152, module__5154);
+var B5155 = module__5154, dependencies__5156 = B5155.dependencies, result__5157 = B2281(dependencies__5156);
+B2243(function B5167 (dependency__5158)
+{return B2243(function B5168 (sub_dependency__5159)
+{if ($T(B4221(sub_dependency__5159, result__5157)))
+B5056(result__5157, sub_dependency__5159);
+var array__5162 = result__5157, value__5163 = sub_dependency__5159;
+array__5162.unshift(value__5163);
+return array__5162}, B5151(dependency__5158))}, dependencies__5156);
+return result__5157}
+else {var error__5165 = B2185("unable to find-module '", module_name__5152, "'");
+throw(error__5165);
+return false}}, false);
+exports["analyze-dependencies"] = B5151}

@@ -1,70 +1,70 @@
-var $g1468 = require("ralph/core")
-var $g1584 = require("ralph/stream")
-var $g1585 = $g1468["%make-function"], $g1586 = $g1468["as-string"], $g1587 = $g1585("format_integer", function $g1589 ($rnumber1588)
-{return $g1586($rnumber1588)}, false)
-{var $g1672 = $K("message"), trueQ = $g1468["true?"], $g1593 = $g1468["=="], $g1594 = $g1468.description, $g1595 = $g1468.signal, $g1596 = $g1468.make, $g1597 = $g1468["<error>"], $g1598 = $g1468.concatenate, $g1599 = $g1468["as-lowercase"], $g1600 = $g1468.not, $g1601 = $g1468["empty?"], $g1602 = $g1468[">"], $g1603 = $g1584["stream-write"], $g1604 = $g1468.slice, $g1605 = $g1468.second, $g1606 = $g1468.element, $g1607 = $g1468.position, $g1608 = $g1585("format", function $g1673 ($stream1609, $control_string1610)
-{var $args1611 = $SL.call(arguments, 2);
+var B1605 = require("ralph/core")
+var B1607 = require("ralph/stream")
+var B1608 = B1605["%make-function"], B1609 = B1605["as-string"], B1610 = B1608("format_integer", function B1612 (number__1611)
+{return B1609(number__1611)}, false)
+{var B1695 = $K("message"), trueQ = B1605["true?"], B1616 = B1605["=="], B1617 = B1605.description, B1618 = B1605.signal, B1619 = B1605.make, B1620 = B1605["<error>"], B1621 = B1605.concatenate, B1622 = B1605["as-lowercase"], B1623 = B1605.not, B1624 = B1605["empty?"], B1625 = B1605[">"], B1626 = B1607["stream-write"], B1627 = B1605.slice, B1628 = B1605.second, B1629 = B1605.element, B1630 = B1605.position, B1631 = B1608("format", function B1696 (stream__1632, control_string__1633)
+{var args__1634 = $SL.call(arguments, 2);
 "Format a string and write it to a stream.";
-var $dispatch1612 = function $g1674 ($rchar1613, $arg1614)
-{var $rstring1624 = $rchar1613, $g1615 = $rstring1624.toLowerCase(), $g1616 = $g1593($g1615, "s"), $g1665;
-if ($T($g1616))
-$g1665 = $g1616
-else $g1665 = $g1593($g1615, "c");
-if ($T($g1665))
-return $arg1614
-else if ($T($g1593($g1615, "=")))
-{var $g1617 = $g1594($arg1614);
-if ($T($g1617))
-return $g1617
+var dispatch__1635 = function B1697 (char__1636, arg__1637)
+{var string__1647 = char__1636, B1638 = string__1647.toLowerCase(), B1639 = B1616(B1638, "s"), B1688;
+if ($T(B1639))
+B1688 = B1639
+else B1688 = B1616(B1638, "c");
+if ($T(B1688))
+return arg__1637
+else if ($T(B1616(B1638, "=")))
+{var B1640 = B1617(arg__1637);
+if ($T(B1640))
+return B1640
 else return ""}
-else if ($T($g1593($g1615, "b")))
-return $g1587($arg1614, 2)
-else if ($T($g1593($g1615, "o")))
-return $g1587($arg1614, 8)
-else if ($T($g1593($g1615, "d")))
-return $g1587($arg1614, 10)
-else if ($T($g1593($g1615, "x")))
-return $g1587($arg1614, 16)
-else if ($T($g1593($g1615, "m")))
-{$arg1614($stream1609);
+else if ($T(B1616(B1638, "b")))
+return B1610(arg__1637, 2)
+else if ($T(B1616(B1638, "o")))
+return B1610(arg__1637, 8)
+else if ($T(B1616(B1638, "d")))
+return B1610(arg__1637, 10)
+else if ($T(B1616(B1638, "x")))
+return B1610(arg__1637, 16)
+else if ($T(B1616(B1638, "m")))
+{arg__1637(stream__1632);
 return ""}
-else {var $error1626 = $g1596($g1597, $g1672, $g1598("Unknown format dispatch character ", $rchar1613));
-throw($error1626);
-return false}}, $index1618 = 0;
+else {var error__1649 = B1619(B1620, B1695, B1621("Unknown format dispatch character ", char__1636));
+throw(error__1649);
+return false}}, index__1641 = 0;
 while ($T(true))
-{var $sequence1638 = $control_string1610, $g1639 = $sequence1638, $g1640 = (($g1639 || false).length || 0), $g1641 = 0, $value1642 = ($g1640 === $g1641), $g1671 = !(trueQ($value1642));
-if ($T($g1671))
-{var $next_dispatch1619 = $g1607($control_string1610, "%");
-if ($T($g1602($next_dispatch1619, 0)))
-{var $rarray1646 = $control_string1610, $start1647 = 0, $end1648 = $next_dispatch1619, $g1666 = $rarray1646.slice($start1647, $end1648);
-$g1603($stream1609, $g1666);
-var $rarray1652 = $control_string1610, $start1653 = $next_dispatch1619, $end1654 = undefined, $g1667 = $rarray1652.slice($start1653, $end1654);
-$control_string1610 = $g1667}
-else if ($T($next_dispatch1619))
-{var $arg1620 = $g1606($args1611, $index1618), $sequence1656 = $control_string1610, $rchar1621 = $sequence1656[1], $percent1622 = $g1593($rchar1621, "%"), $g1668;
-if ($T($percent1622))
-$g1668 = "%"
-else $g1668 = $dispatch1612($rchar1621, $arg1620);
-$g1603($stream1609, $g1668);
-var $rarray1660 = $control_string1610, $start1661 = 2, $end1662 = undefined, $g1669 = $rarray1660.slice($start1661, $end1662);
-$control_string1610 = $g1669;
-var $value1664 = $percent1622, $g1670 = !(trueQ($value1664));
-if ($T($g1670))
-$index1618 = ($index1618 + 1)}
-else {$g1603($stream1609, $control_string1610);
-$control_string1610 = ""}}
+{var sequence__1661 = control_string__1633, B1662 = sequence__1661, B1663 = ((B1662 || false).length || 0), B1664 = 0, value__1665 = (B1663 === B1664), B1694 = !(trueQ(value__1665));
+if ($T(B1694))
+{var next_dispatch__1642 = B1630(control_string__1633, "%");
+if ($T(B1625(next_dispatch__1642, 0)))
+{var array__1669 = control_string__1633, start__1670 = 0, end__1671 = next_dispatch__1642, B1689 = array__1669.slice(start__1670, end__1671);
+B1626(stream__1632, B1689);
+var array__1675 = control_string__1633, start__1676 = next_dispatch__1642, end__1677 = undefined, B1690 = array__1675.slice(start__1676, end__1677);
+control_string__1633 = B1690}
+else if ($T(next_dispatch__1642))
+{var arg__1643 = B1629(args__1634, index__1641), sequence__1679 = control_string__1633, char__1644 = sequence__1679[1], percent__1645 = B1616(char__1644, "%"), B1691;
+if ($T(percent__1645))
+B1691 = "%"
+else B1691 = dispatch__1635(char__1644, arg__1643);
+B1626(stream__1632, B1691);
+var array__1683 = control_string__1633, start__1684 = 2, end__1685 = undefined, B1692 = array__1683.slice(start__1684, end__1685);
+control_string__1633 = B1692;
+var value__1687 = percent__1645, B1693 = !(trueQ(value__1687));
+if ($T(B1693))
+index__1641 = (index__1641 + 1)}
+else {B1626(stream__1632, control_string__1633);
+control_string__1633 = ""}}
 else break};
 return false}, false);
-exports.format = $g1608}
-{var $g1675 = $g1468.apply, $g1676 = $g1584["*standard-out*"], $g1677 = $g1585("format_out", function $g1680 ($control_string1678)
-{var $args1679 = $SL.call(arguments, 1);
+exports.format = B1631}
+{var B1698 = B1605.apply, B1699 = B1607["*standard-out*"], B1700 = B1608("format_out", function B1703 (control_string__1701)
+{var args__1702 = $SL.call(arguments, 1);
 "Formats arguments to *standard-out*.";
-return $g1675($g1608, $g1676, $control_string1678, $args1679)}, false);
-exports["format-out"] = $g1677}
-{var $g1681 = $g1584["stream-contents"], $g1682 = $g1584["<string-stream>"], $g1683 = $g1585("format_to_string", function $g1687 ($control_string1684)
-{var $args1685 = $SL.call(arguments, 1);
+return B1698(B1631, B1699, control_string__1701, args__1702)}, false);
+exports["format-out"] = B1700}
+{var B1704 = B1607["stream-contents"], B1705 = B1607["<string-stream>"], B1706 = B1608("format_to_string", function B1710 (control_string__1707)
+{var args__1708 = $SL.call(arguments, 1);
 "Process a format string and return the result as another string.\nThis function effectively calls format and returns the result as a string.";
-var $stream1686 = $g1596($g1682);
-$g1675($g1608, $stream1686, $control_string1684, $args1685);
-return $g1681($stream1686)}, false);
-exports["format-to-string"] = $g1683}
+var stream__1709 = B1619(B1705);
+B1698(B1631, stream__1709, control_string__1707, args__1708);
+return B1704(stream__1709)}, false);
+exports["format-to-string"] = B1706}
