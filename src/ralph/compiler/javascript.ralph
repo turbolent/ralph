@@ -1,0 +1,277 @@
+(define-module ralph/compiler/javascript
+  import: (ralph/regexp ralph/compiler/utilities)
+  export: (compile-js))
+
+(define *escaped*
+  (make-object
+   "\"" "\""
+   "\\" "\\"
+   "\b" "b"
+   "\f" "f"
+   "\n" "n"
+   "\r" "r"
+   "\v" "v"
+   "\t" "t"))
+
+(define-function fill-zeros (string)
+  (concatenate
+   (slice "0000" 0 (- 4 (size string)))
+   string))
+
+(define-function escape-string (string)
+  (join (map (method (char)
+               (if-bind (escaped (get *escaped* char))
+                 (concatenate "\\" escaped)
+                 (bind ((code (char-code char)))
+                   (if (< 0x1f code 0x7f)
+                       char
+                       (concatenate
+                        "\\u" (fill-zeros (as-hex-string code)))))))
+             (as-array string))
+        ""))
+
+(define *reserved*
+  ["break" "case" "catch" "continue" "default" "delete" "do" "else"
+   "finally" "for" "function" "if" "in" "instanceof" "new" "return"
+   "switch" "this" "throw" "try" "typeof" "var" "void" "while"
+   "with" "abstract" "boolean" "byte" "char" "class" "const"
+   "debugger" "double" "enum" "export" "extends" "final" "float"
+   "goto" "implements" "import" "int" "interface" "long" "native"
+   "package" "private" "protected" "public" "short" "static" "super"
+   "synchronized" "throws" "transient" "volatile" "null" "true" "false"
+   "arguments" "object" "number" "string" "array" "let" "yield"])
+
+(define *symbol-escapes*
+  (make-object
+   "-" "_"
+   "_" "__"
+   "&" "A"
+   "$" "B"
+   ":" "C"
+   "." "D"
+   "=" "E"
+   "^" "F"
+   ">" "G"
+   "#" "H"
+   "@" "I"
+   "~" "J"
+   ;; K: keyword
+   "<" "L"
+   "%" "M"
+   "!" "N"
+   ;; O
+   "+" "P"
+   "?" "Q"
+   ;; R: reserved
+   "/" "S"
+   "*" "T"
+   ;; U, V, W, X, Y
+   ;; Z: any other
+   ))
+
+(define-function escape-name (name)
+  (if (member? name *reserved*)
+      (concatenate "R" name)
+      (bind ((chars
+              (map (method (char)
+                     (cond
+                      ((has? *symbol-escapes* char)
+                       (get *symbol-escapes* char))
+                      ((match "\\w" char)
+                       char)
+                      (else:
+                       (concatenate
+                        "Z" (as-string (char-code char))))))
+                   (as-array name))))
+        (join chars ""))))
+
+(define-function valid-js-name? (identifier)
+  (and (not (member? identifier *reserved*))
+       (match "^\\w+$" identifier)))
+
+(define-function compile-js (exp env)
+  (select exp instance?
+    ((<array>)
+     (if (empty? exp)
+         (signal (make <error> message: "empty expression"))
+         (compile-js-exp exp env)))
+    ((<number>)
+     (as-string exp))
+    ((<boolean>)
+     (if exp "true" "false"))
+    ((<string>)
+     (concatenate "\"" (escape-string exp) "\""))
+    ((<hash-symbol>)
+     (concatenate
+      "$" (as-uppercase (symbol-name exp))))
+    ((<keyword>)
+     (concatenate
+      "$K(\"" (symbol-name exp) "\")"))
+    ((<symbol>)
+     (select exp ==
+       (((symbol "%this-method"))
+        (compile-js (get env "current-method")
+                    env))
+       (((symbol "%all-arguments"))
+        "arguments")
+       (else:
+        (escape-name (symbol-name exp)))))
+    (else:
+     (description exp))))
+
+;; TODO: document as language
+
+(define-function compile-js-exp (exp env)
+  (bind ((name (symbol-name (first exp))))
+    (select name ==
+      (("%native-call")
+       (destructuring-bind (_ operator #rest values) exp
+         (concatenate
+          operator (compile-js-call values env))))
+      (("%infix")
+       (destructuring-bind (_ operator #rest values) exp
+         (concatenate
+          "(" (join (map (rcurry compile-js env)
+                         values)
+                    (concatenate
+                     " " operator " "))
+          ")")))
+      (("%plus" "%minus" "%times" "%divide")
+       (compile-js-exp
+        (concatenate `(%infix ,(select name ==
+                                 (("%plus") "+")
+                                 (("%minus") "-")
+                                 (("%times") "*")
+                                 (("%divide") "/")))
+                     (rest exp))
+        env))
+      (("%array")
+       (destructuring-bind (_ #rest elements) exp
+         (concatenate
+          "[" (join (map (rcurry compile-js env)
+                         elements)
+                    ", ")
+          "]")))
+      (("%object")
+       (bind ((key-values (rest exp))
+              (entries []))
+         (dotimes (i (/ (size key-values) 2))
+           (push-last entries
+                      (concatenate
+                       (bind ((name (element key-values (* i 2))))
+                         (if (valid-js-name? name)
+                             name
+                             (compile-js name env)))
+                       ":" (compile-js
+                            (element key-values (+ (* i 2) 1))
+                            env))))
+         (concatenate
+          "{" (join entries ",\n") "}")))
+      (("%if")
+       (destructuring-bind (_ test then else) exp
+         (concatenate
+          "if (" (compile-js test env) ")\n"
+          (compile-js then env)
+          ;; optimization: default is false
+          (if (and else
+                   (not (= else `(%return #f))))
+              (concatenate
+               "\nelse " (compile-js else env))
+              ""))))
+      (("%while")
+       (destructuring-bind (_ test body) exp
+         (concatenate "while (" (compile-js test env) ")\n"
+                      (compile-js body env))))
+      (("%try")
+       (destructuring-bind (_ body var catch) exp
+         (concatenate "try {" (compile-js body env) "}\n"
+                      "catch (" (compile-js var env) ")\n"
+                      "{" (compile-js catch env) "}")))
+      (("%return")
+       (concatenate
+        "return " (compile-js (second exp) env)))
+      (("%begin")
+       (concatenate
+        "{" (join (map (rcurry compile-js env)
+                       (rest exp))
+                  ";\n")
+        "}"))
+      (("%set")
+       (destructuring-bind (_ var value) exp
+         (concatenate
+          (compile-js var env) " = "
+          (compile-js value env))))
+      (("%method")
+       (destructuring-bind (_ arguments body) exp
+         (bind ((name (generate-symbol))
+                (previous-method (get env "current-method")))
+           (concatenate
+            "function " (compile-js name env)
+            " (" (join (map (rcurry compile-js env)
+                            arguments)
+                       ", ")
+            ")\n"
+            (begin
+             (set! (get env "current-method") name)
+             (bind ((body* (compile-js body env)))
+               (set! (get env "current-method") previous-method)
+               (if (and (expression? body)
+                        (== (first body) (symbol "%begin")))
+                   body*
+                   (concatenate "{" body* "}"))))))))
+      (("%var")
+       (destructuring-bind (_ #rest bindings) exp
+         (concatenate
+          "var "
+          (join (map (method (binding)
+                       (destructuring-bind (var value)
+                           (if (instance? binding <array>)
+                               binding
+                               [binding #f])
+                         (concatenate
+                          (compile-js var env)
+                          (if value
+                              (concatenate
+                                " = " (compile-js value env))
+                              ""))))
+                     bindings)
+                ", "))))
+      (("%native")
+       (reduce1 concatenate
+                (map (method (e)
+                       (if (instance? e <symbol>)
+                           (compile-js e)
+                           (as-string e)))
+                     (rest exp))))
+      (("%native-name")
+       (concatenate
+        "\"" (escape-name (second exp)) "\""))
+      (("%get-property")
+       (destructuring-bind (_ object #rest properties) exp
+         (concatenate
+          (if (instance? object <number>)
+              (concatenate "(" (compile-js object env) ")")
+              (compile-js object env))
+          (reduce (method (result property)
+                    (concatenate
+                     result
+                     (if (and (instance? property <string>)
+                              (valid-js-name? property))
+                         (concatenate "." property)
+                         (concatenate "[" (compile-js property env) "]"))))
+                  "" properties))))
+      (else:
+       (destructuring-bind (function #rest values) exp
+         (concatenate
+          (bind ((function* (compile-js function env)))
+            (if (method? function)
+                (concatenate "(" function* ")")
+                function*))
+          (compile-js-call values env)))))))
+
+(define-function compile-js-call (values env)
+  (concatenate
+   "(" (join (map (rcurry compile-js env)
+                  values)
+             ", ")
+   ")"))

@@ -1,7 +1,8 @@
 (define-module ralph/compiler/utilities
   export: (expression? transform-setter-identifier
            setter-identifier? identifier-name
-           reset-symbol-counter! generate-symbol))
+           reset-symbol-counter! generate-symbol
+           var? set? method?))
 
 ;;;; utilities
 
@@ -9,6 +10,21 @@
   (and (instance? form <array>)
        (not (empty? form))
        (instance? (first form) <symbol>)))
+
+(define-function var? (exp)
+  (and (expression? exp)
+       (== (first exp)
+           (symbol "%var"))))
+
+(define-function set? (exp)
+  (and (expression? exp)
+       (== (first exp)
+           (symbol "%set"))))
+
+(define-function method? (exp)
+  (and (expression? exp)
+       (== (first exp)
+           (symbol "%method"))))
 
 (define-function transform-setter-identifier (identifier)
   (symbol (concatenate (symbol-name identifier)
