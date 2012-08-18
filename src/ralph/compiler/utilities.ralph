@@ -2,6 +2,7 @@
   export: (expression? transform-setter-identifier
            setter-identifier? identifier-name
            reset-symbol-counter! generate-symbol
+           maybe-begin
            var? set? method?))
 
 ;;;; utilities
@@ -58,3 +59,12 @@
          (result (symbol name)))
     (set! (get result "generated?") #t)
     result))
+
+
+(define-function maybe-begin (expressions)
+  (select (size expressions) ==
+    ((0) #f)
+    ((1) (first expressions))
+    (else:
+     (concatenate `(%begin)
+                  expressions))))

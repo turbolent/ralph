@@ -3,6 +3,7 @@
   import: (ralph/test ralph/stream ralph/reader
            ralph/compiler
            ralph/compiler/anf
+           ralph/compiler/flattening
            ralph/compiler/utilities))
 
 (define-function make-core-environment ()
