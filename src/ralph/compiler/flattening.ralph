@@ -1,12 +1,12 @@
 (define-module ralph/compiler/flattening
   import: (ralph/compiler/utilities)
-  export: (flatten-statements))
+  export: (flatten-statements!))
 
 
 (define-function flatten-begins (exps)
   (reduce1 concatenate
            (map (method (exp)
-                  (bind ((flattened (flatten-statements exp)))
+                  (bind ((flattened (flatten-statements! exp)))
                     (if (and (instance? flattened <array>)
                              (not (empty? flattened))
                              (== (first flattened)
@@ -16,7 +16,7 @@
                 exps)))
 
 
-(define-function flatten-vars (exps)
+(define-function flatten-vars! (exps)
   (reduce (method (result exp)
             (bind ((previous (and (not (empty? result))
                                   (last result)))
@@ -43,36 +43,36 @@
                         (concatenate result [exp]))))))
           [] exps))
 
-(define-function flatten-statements (exp)
+(define-function flatten-statements! (exp)
   (if (instance? exp <array>)
       (select (symbol-name (first exp)) ==
         (("%method" "%while" "%set")
          (set! (last exp)
-               (flatten-statements (last exp)))
+               (flatten-statements! (last exp)))
          exp)
         (("%begin")
          (destructuring-bind (_ #rest exps) exp
            (maybe-begin
-            (flatten-vars
+            (flatten-vars!
              (flatten-begins exps)))))
         (("%bind")
          (destructuring-bind (_ binding body) exp
-           (flatten-statements
+           (flatten-statements!
             `(%begin
               (%var ,binding)
               ,body))))
         (("%if")
          (set! (third exp)
-               (flatten-statements (third exp)))
+               (flatten-statements! (third exp)))
          (set! (last exp)
-               (flatten-statements (last exp)))
+               (flatten-statements! (last exp)))
          exp)
         (("%try")
          (set! (second exp)
-               (flatten-statements (second exp)))
+               (flatten-statements! (second exp)))
          (set! (last exp)
-               (flatten-statements (last exp)))
+               (flatten-statements! (last exp)))
          exp)
         (else:
-         (map flatten-statements exp)))
+         (map flatten-statements! exp)))
       exp))

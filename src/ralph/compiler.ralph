@@ -4,6 +4,7 @@
            ralph/reader ralph/file-system
            ralph/compiler/utilities
            ralph/compiler/anf
+           ralph/compiler/statements
            ralph/compiler/flattening
            ralph/compiler/javascript)
   compile-time-import: (ralph/compiler-macros)
@@ -17,9 +18,7 @@
            ;; for testing purposes
            *core-symbol-macros*
            *core-macros*
-           reset-symbol-counter!
            alpha-convert
-           transform-statements
            define-free-variables
            analyze-lambda-list
            lift-symbols
@@ -1115,60 +1114,6 @@
            value)))
     (else: form)))
 
-;;;; beta reduction
-
-;; ((L (x y) (+ x y)) a (+ a 1))
-;; => ((L (y) (+ a y)) (+ a 1))
-
-;; (define-function substitute-variables (variables new-variables env)
-;;   (bind ((env (wrap-object env)))
-;;     (for-each ((variable variables)
-;;                (new-variable new-variables))
-;;               ()
-;;       (set! (get env (symbol-name variable))
-;;             new-variable))
-;;     env))
-
-
-;;;; TODO: eliminate
-;;;; ((L () X)) => X
-;;;; (begin 1) => 1
-
-;;(define-function beta-reduce (form env)
-;;  (select form instance?
-;;    ((<array>)
-;;     ;; TODO: bind
-;;     (if (and (instance? (first form) <array>)
-;;              (== (symbol-name (first (first form))) "%method"))
-;;         (destructuring-bind ((_ arguments #rest body) #rest values)
-;;             form
-;;           ;; TODO: maybe also support constant values (numbers, etc.)
-;;           (bind ((variables [])
-;;                  (new-variables [])
-;;                  (new-arguments [])
-;;                  (new-values []))
-;;             (for-each ((argument arguments)
-;;                        (value values))
-;;                 ()
-;;               (if (atomic? value)
-;;                   (begin
-;;                    (push-last variables argument)
-;;                    (push-last new-variables value))
-;;                   (begin
-;;                    (push-last new-arguments argument)
-;;                    (push-last new-values value))))
-;;             (bind ((env (substitute-variables variables new-variables env)))
-;;               (concatenate `(,(concatenate `(%method ,new-arguments)
-;;                                            (beta-reduce body env)))
-;;                            new-values))))
-;;         (map (rcurry beta-reduce env)
-;;              form env)))
-;;    ((<symbol>)
-;;     ... (find-variable form env)
-;;        ... form)
-;;    (else: form)))
-
-
 
 ;;; inlining
 
@@ -1269,139 +1214,6 @@
       (bind ((result (alpha-convert body env)))
         (restore-identifiers arguments env)
         result))))
-
-
-
-
-;;;; statements
-
-;; "sink"/wrap return value with expression
-;; e.g. to assign or explicitly return
-
-;; NOTE: wrap-value, transform-statements and
-;; flatten-statements are destructive!
-;; => mutation of expressions reduces consing
-
-(define-function wrap-value (exp wrapper)
-  (if (instance? exp <array>)
-      (select (symbol-name (first exp)) ==
-        (("%begin" "%bind")
-         ;; wrap body
-         (set! (last exp)
-               (wrap-value (last exp) wrapper))
-         exp)
-        (("%if")
-         ;; wrap then and else
-         (set! (third exp)
-               (wrap-value (third exp) wrapper))
-         (set! (last exp)
-               (wrap-value (last exp) wrapper))
-         exp)
-        (("%while")
-         `(%begin
-           ,exp
-           ,(wrap-value #f wrapper)))
-        (("%try")
-         (set! (second exp)
-               (wrap-value (second exp) wrapper))
-         (set! (last exp)
-               (wrap-value (last exp) wrapper))
-         exp)
-        (else:
-         (concatenate wrapper [exp])))
-      (concatenate wrapper [exp])))
-
-
-(define-function add-explicit-return (exp)
-  (wrap-value exp `(%return)))
-
-;; after ANF: if value of binding is control-flow (%if, %while, etc.):
-;; turn into statement form, then "sink" assignment
-;; TODO: example from paper
-
-;; TODO: reuse/merge contains-statements?
-(define-function statement? (exp)
-  (and (instance? exp <array>)
-       (not (empty? exp))
-       (member? (first exp)
-                `(%if %while %begin %bind %try))))
-
-(define-function add-explicit-true (exp)
-  `((%native "$T") ,exp))
-
-(define-function transform-statements (exp env)
-  (if (instance? exp <array>)
-      (select (symbol-name (first exp)) ==
-        (("%method")
-         (set! (last exp)
-               (add-explicit-return
-                (transform-statements (last exp)
-                                      env)))
-         exp)
-        (("%begin")
-         (destructuring-bind (_ #rest exps) exp
-           (maybe-begin
-            (map (rcurry transform-statements env)
-                 exps))))
-        (("%bind")
-         (destructuring-bind (_ (var value) body) exp
-           (if (statement? value)
-               `(%bind (,var #f)
-                  (%begin
-                   ,(wrap-value
-                     (transform-statements value env)
-                     `(%set ,var))
-                   ,(transform-statements body env)))
-               `(%bind (,var
-                        ,(transform-statements value env))
-                  ,(transform-statements body env)))))
-        (("%if")
-         (destructuring-bind (_ test then else) exp
-           `(%if
-             ;; TODO: only if not boolean
-             ,(add-explicit-true test)
-             ,(transform-statements then env)
-             ,(transform-statements else env))))
-        (("%while")
-         (set! (second exp)
-               (add-explicit-true (second exp)))
-         (set! (third exp)
-               (transform-statements (third exp) env))
-         exp)
-        (("%try")
-         (set! (second exp)
-               (transform-statements (second exp) exp))
-         (set! (last exp)
-               (transform-statements (last exp) env))
-         exp)
-        (("%set")
-         (destructuring-bind (_ identifier value) exp
-           (bind ((value* (transform-statements value env))
-                  (definition-name
-                    (get env "definition-names"
-                         (symbol-name identifier))))
-             ;; check if exported definition
-             (if (and definition-name
-                      (member? definition-name
-                               (get env "module" "exports")))
-                 (begin
-                  (set! (first exp)
-                        (symbol "%begin"))
-                  (set! (second exp)
-                        `(%set ,identifier ,value*))
-                  (set! (third exp)
-                        `(%set (%get-property (%native "exports")
-                                              ,definition-name)
-                               ,identifier)))
-                 ;; no re-export, leave as is
-                 (set! (third exp) value*))))
-         exp)
-        (("%define")
-         `(%var (,(last exp) #f)))
-        (else:
-         (map (rcurry transform-statements env) exp)))
-      exp))
-
 
 
 ;;;; symbol lifting
@@ -1521,9 +1333,9 @@
            ["lifted symbols"
             (rcurry lift-symbols env)]
            ["statements"
-            (rcurry transform-statements env)]
+            (rcurry transform-statements! env)]
            ["flattened"
-            flatten-statements]
+            flatten-statements!]
            ["compiled"
             (rcurry compile-js env)]]))
 
