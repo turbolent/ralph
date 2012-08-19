@@ -502,7 +502,7 @@
                      (map transform-quoted
                           form))))
    ((instance? form <symbol>)
-    `(symbol ,(symbol-name form)))
+    `(%symbol ,(symbol-name form)))
    (else:
     form)))
 
@@ -908,7 +908,7 @@
          (as-set (reduce concatenate []
                          (map find-free-variables
                               (rest exp)))))
-        (("%native" "%native-name" "%define")
+        (("%native" "%native-name" "%define" "%symbol")
          (as-set []))
         (else:
          (reduce1 set-union!
@@ -1065,7 +1065,7 @@
                 (k `(%try ,le1 ,v ,le2)
                    env))))))
         ;; TODO: fix, already renamed
-        (("symbol")
+        (("%symbol")
          (destructuring-bind (_ name) exp
            (lift-value name exp "symbol" env k)))
         (else:

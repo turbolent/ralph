@@ -260,6 +260,8 @@
                          (concatenate "." property)
                          (concatenate "[" (compile-js property env) "]"))))
                   "" properties))))
+      (("%symbol")
+       (concatenate "$S" (compile-js-call (rest exp) env)))
       (else:
        (destructuring-bind (function #rest values) exp
          (concatenate
