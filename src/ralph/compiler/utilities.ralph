@@ -2,7 +2,7 @@
   export: (expression? transform-setter-identifier
            setter-identifier? identifier-name
            reset-symbol-counter! generate-symbol
-           maybe-begin
+           maybe-begin get-module-name/name
            var? set? method?))
 
 ;;;; utilities
@@ -68,3 +68,7 @@
     (else:
      (concatenate `(%begin)
                   expressions))))
+
+(define-function get-module-name/name (identifier)
+  [(or (get identifier "module") "")
+   (symbol-name identifier)])
