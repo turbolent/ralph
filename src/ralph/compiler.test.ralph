@@ -2,6 +2,7 @@
 (define-module ralph/compiler.test
   import: (ralph/test ralph/stream ralph/reader
            ralph/compiler
+           ralph/compiler/define-lifting
            ralph/compiler/alpha
            ralph/compiler/anf
            ralph/compiler/statements

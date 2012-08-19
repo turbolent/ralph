@@ -4,6 +4,7 @@
            ralph/reader ralph/file-system
            ralph/compiler/utilities
            ralph/compiler/alpha
+           ralph/compiler/define-lifting
            ralph/compiler/anf
            ralph/compiler/statements
            ralph/compiler/flattening
@@ -22,7 +23,6 @@
            define-free-variables
            analyze-lambda-list
            lift-symbols
-           lift-defines
            atomic?))
 
 ;; NOTE: naming convention:
@@ -712,83 +712,6 @@
                                        body))))
                   cases)))))
 
-;;;; lift defines
-
-;; replace defines with top-level %defines
-;; and local assignments
-
-(define-function lift-defines (exp env)
-  (lift-define exp env identity))
-
-(define-function lift-define (exp env k)
-  (if (expression? exp)
-      (select (symbol-name (first exp)) ==
-        (("%bind")
-         (destructuring-bind (_ (var value) body) exp
-           (lift-define
-            value env
-            (method (lvalue env)
-              (lift-define
-               body env
-               (method (lbody env)
-                 (k `(%bind (,var ,lvalue)
-                       ,lbody)
-                    env)))))))
-        (("%try")
-         (destructuring-bind (m e1 v e2) exp
-           (lift-define*
-            [e1 e2] env
-            (method (le* env)
-              (destructuring-bind (le1 le2) le*
-                (k `(,m ,le1 ,v ,le2)
-                   env))))))
-        (("%method" "%set")
-         (destructuring-bind (m e1 e2) exp
-           (lift-define
-            e2 env
-            (method (le2 env)
-              (k `(,m ,e1 ,le2)
-                 env)))))
-        (("%begin" "%if" "%while")
-         (destructuring-bind (m #rest e*) exp
-           (lift-define*
-            e* env
-            (method (le* env)
-              (k (concatenate [m] le*)
-                 env)))))
-        (("define")
-         (destructuring-bind (_ var value export?) exp
-           (bind ((name (symbol-name var)))
-             (if (has? (get env "defined?") name)
-                 (k `(%set ,var ,value)
-                    env)
-                 (begin
-                  (set! (get env "defined?" name) #t)
-                  `(%begin
-                    (%define ,var)
-                    ,(k `(%set ,var ,value)
-                        env)))))))
-        (else:
-         (lift-define** exp env k)))
-      (k exp env)))
-
-(define-function lift-define* (exp* env k)
-  (if (empty? exp*)
-      (k [] env)
-      (lift-define** exp* env k)))
-
-(define-function lift-define** (exp env k)
-  (lift-define
-   (first exp) env
-   (method (t env)
-     (lift-define*
-      (rest exp) env
-      (method (t* env)
-        (k (concatenate [t] t*)
-           env))))))
-
-
-
 ;;;; symbol macros
 
 ;; utilities
@@ -1144,17 +1067,14 @@
         ;; TODO: fix, already renamed
         (("symbol")
          (destructuring-bind (_ name) exp
-           (lift-value
-            name exp "symbol" env k)))
+           (lift-value name exp "symbol" env k)))
         (else:
          (lift-symbol** exp env k)))
       (select exp instance?
         ((<keyword>)
-         (lift-value
-          (symbol-name exp) exp "keyword" env k))
+         (lift-value (symbol-name exp) exp "keyword" env k))
         ((<hash-symbol>)
-         (lift-value
-          (symbol-name exp) exp "hash" env k))
+         (lift-value (symbol-name exp) exp "hash" env k))
         (else:
          (k exp env)))))
 
