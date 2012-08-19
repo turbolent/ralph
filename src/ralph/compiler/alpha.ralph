@@ -103,10 +103,16 @@
               (set! (get env "new-identifiers" name)
                     new-identifier)
               ;; <<<
-              ;; update form
-              (set! (second form)
-                    new-identifier)
-              form))))
+              `(%define ,new-identifier)))))
+       ;; skip
+       (("%if" "%while" "%set" "%begin" "%get-property" "%object"
+         "%array" "%native" "%native-call" "%infix"
+         "%minus" "%plus" "%times" "%divide")
+        (concatenate [(first form)]
+                     (map (rcurry alpha-convert env)
+                          (rest form))))
+       ;; none
+       (("%native-name") form)
        (else:
         (map (rcurry alpha-convert env)
              form))))
