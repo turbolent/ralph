@@ -146,7 +146,7 @@ exports.reduce1 = B138}
 {var B149;
 B137 = B8("reduce", function B162 (function__150, initial_value__151, values__152)
 {var value__153 = initial_value__151, object__158 = values__152, B154 = ((object__158 || false).length || 0), i__155 = 0;
-while ($T(true))
+while (true)
 {var value__160 = B149(i__155, B154), B161 = !(B13(value__160));
 if ($T(B161))
 {(function B163 (i__156)
@@ -202,7 +202,7 @@ exports.rcurry = B241}
 exports.always = B252}
 {var B257 = B8("repeatedly", function B271 (function__258, count__259)
 {var result__260 = [], B261 = count__259, i__262 = 0;
-while ($T(true))
+while (true)
 {var value__265 = B149(i__262, B261), B270 = !(B13(value__265));
 if ($T(B270))
 {(function B272 (i__263)
@@ -323,7 +323,7 @@ return B137(B500, object__498, rest__499)}, false);
 exports.concatenate = B497}
 {var B503 = B8("compare", function B537 (function__504, object__505, objects__506)
 {var failedQ__507;
-while ($T(true))
+while (true)
 {var B508 = failedQ__507, value__525;
 if ($T(B508))
 value__525 = B508
@@ -359,7 +359,7 @@ B542 = B466("binaryE", function B602 (array1__563, array2__564)
 {var object__578 = array1__563, object1__581 = ((object__578 || false).length || 0), object__580 = array2__564, object2__582 = ((object__580 || false).length || 0), B597 = (object1__581 === object2__582);
 if ($T(B597))
 {var B565 = array1__563, B566 = array2__564, B567, B568, B569 = [B565, B566];
-while ($T(true))
+while (true)
 {var B570 = B567, value__585;
 if ($T(B570))
 value__585 = B570
@@ -441,7 +441,7 @@ return B503(B654, object__661, objects__662)}, false);
 exports[">="] = B149}
 {var B664 = B8("as_object", function B685 (property_list__665)
 {var array__673 = property_list__665, start__674 = undefined, end__675 = undefined, list__666 = array__673.slice(start__674, end__675), result__667 = {};
-while ($T(true))
+while (true)
 {var object__677 = list__666, B683 = ((object__677 || false).length || 0), B684 = B649(B683, 0);
 if ($T(B684))
 {var array__679 = list__666, key__668 = array__679.shift(), array__681 = list__666, value__669 = array__681.shift(), B682;
@@ -502,7 +502,7 @@ $S = B724
 exports["symbol-name"] = B738}
 {B180 = B8("Mkeys", function B759 (key_values__741, defaults__742)
 {var i__743 = 0;
-while ($T(true))
+while (true)
 {var object__749 = key_values__741, B757 = ((object__749 || false).length || 0), value__750 = (i__743 >= B757), B758 = !(B13(value__750));
 if ($T(B758))
 {(function B760 (i__744)
@@ -570,7 +570,7 @@ return B137(function__894, B898, B899)}, false);
 exports.interpose = B881}
 {B562 = B8("anyQ", function B918 (function__903, values__904)
 {var value__905, object__911 = values__904, n__906 = ((object__911 || false).length || 0), i__907 = 0;
-while ($T(true))
+while (true)
 {var B908 = value__905, value__913;
 if ($T(B908))
 value__913 = B908
@@ -599,7 +599,7 @@ exports["every?"] = B931}
 {var arrays__948 = $SL.call(arguments, 1), result__949 = [], sequence__968 = arrays__948, sequence__969 = sequence__968.slice(1), B970 = sequence__969, B971 = ((B970 || false).length || 0), B972 = 0, B991 = (B971 === B972);
 if ($T(B991))
 {var sequence__974 = arrays__948, B950 = sequence__974[0], B951, B952, B953 = [B950];
-while ($T(true))
+while (true)
 {var B954 = B951, value__976;
 if ($T(B954))
 value__976 = B954
@@ -616,7 +616,7 @@ B950 = B992;
 B953 = [B950]}
 else break};
 B952}
-else while ($T(true))
+else while (true)
 {var value__986 = B562(B66, arrays__948), B994 = !(B13(value__986));
 if ($T(B994))
 {var array__989 = result__949, value__990 = B211(function__947, B946(B90, arrays__948));
@@ -630,7 +630,7 @@ exports.map = B946}
 {var arrays__1004 = $SL.call(arguments, 1), sequence__1023 = arrays__1004, sequence__1024 = sequence__1023.slice(1), B1025 = sequence__1024, B1026 = ((B1025 || false).length || 0), B1027 = 0, B1038 = (B1026 === B1027);
 if ($T(B1038))
 {var sequence__1029 = arrays__1004, B1005 = sequence__1029[0], B1006, B1007, B1008 = [B1005];
-while ($T(true))
+while (true)
 {var B1009 = B1006, value__1031;
 if ($T(B1009))
 value__1031 = B1009
@@ -645,7 +645,7 @@ B1005 = B1039;
 B1008 = [B1005]}
 else break};
 B1007}
-else while ($T(true))
+else while (true)
 {var value__1037 = B562(B66, arrays__1004), B1041 = !(B13(value__1037));
 if ($T(B1041))
 {B211(function__1003, B946(B90, arrays__1004));
@@ -655,7 +655,7 @@ return false}, false);
 exports["do"] = B1002}
 {B765 = B8("choose", function B1071 (function__1049, array__1050)
 {var result__1051 = [], B1052 = array__1050, B1053, B1054, B1055 = [B1052];
-while ($T(true))
+while (true)
 {var B1056 = B1053, value__1060;
 if ($T(B1056))
 value__1060 = B1056
@@ -694,7 +694,7 @@ exports.make = B722}
 {var B1100 = $SL.call(arguments, 1), B1101 = B180(B1100, {"inherited?":false}), inheritedQ__1102 = B1101["inherited?"], result__1103 = [];
 if ($T(B447(object__1099, B4)))
 {var object__1109 = object__1099, B1104 = ((object__1109 || false).length || 0), i__1105 = 0;
-while ($T(true))
+while (true)
 {var value__1111 = B149(i__1105, B1104), B1116 = !(B13(value__1111));
 if ($T(B1116))
 {(function B1118 (i__1106)
@@ -744,7 +744,7 @@ $KEY = key__1150}
 $REST = rest__1151}
 {B723 = B8("get", function B1182 (object__1157)
 {var properties__1158 = $SL.call(arguments, 1), result__1159, B1160 = properties__1158, B1161, B1162, B1163 = [B1160];
-while ($T(true))
+while (true)
 {var B1164 = B1161, value__1168;
 if ($T(B1164))
 value__1168 = B1164
@@ -861,7 +861,7 @@ return false}, false);
 exports.signal = B1262}
 {var B1270 = B8("extendN", function B1288 (object1__1271, object2__1272)
 {var B1273 = B766(object2__1272), B1274, B1275, B1276 = [B1273];
-while ($T(true))
+while (true)
 {var B1277 = B1274, value__1281;
 if ($T(B1277))
 value__1281 = B1277
@@ -880,7 +880,7 @@ return object1__1271}, false);
 exports["extend!"] = B1270}
 {var B1297 = B8("as_property_list", function B1326 (object__1298)
 {var B1299 = $SL.call(arguments, 1), B1300 = B180(B1299, {"keywords?":false}), keywordsQ__1301 = B1300["keywords?"], result__1302 = [], B1303 = B766(object__1298), B1304, B1305, B1306 = [B1303];
-while ($T(true))
+while (true)
 {var B1307 = B1304, value__1311;
 if ($T(B1307))
 value__1311 = B1307
@@ -907,7 +907,7 @@ return result__1302}, false);
 exports["as-property-list"] = B1297}
 {var B1335 = B8("as_association_list", function B1362 (object__1336)
 {var B1337 = $SL.call(arguments, 1), B1338 = B180(B1337, {"keywords?":false}), keywordsQ__1339 = B1338["keywords?"], result__1340 = [], B1341 = B766(object__1336), B1342, B1343, B1344 = [B1341];
-while ($T(true))
+while (true)
 {var B1345 = B1342, value__1349;
 if ($T(B1345))
 value__1349 = B1345

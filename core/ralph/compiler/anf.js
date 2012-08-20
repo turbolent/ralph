@@ -1,119 +1,129 @@
-var B2662 = require("ralph/core")
-var B2664 = require("ralph/compiler/utilities")
-var B2665 = B2662["%make-function"], B2666 = B2662["any?"], B2667 = B2662.curry, B2668 = B2662["instance?"], B2669 = B2662["<number>"], B2670 = B2662["<boolean>"], B2671 = B2662["<string>"], B2672 = B2662["<symbol>"], B2673 = B2662["<keyword>"], B2674 = B2665("atomicQ", function B2676 (expression__2675)
-{return B2666(B2667(B2668, expression__2675), [B2669, B2670, B2671, B2672, B2673])}, false)
-var trueQ = B2662["true?"], B2682 = B2662["<array>"], B2683 = B2662.not, B2684 = B2662["empty?"], B2685 = B2662["=="], B2686 = B2662.last, B2687 = B2662["symbol-name"], B2688 = B2662.first, B2689 = B2665("contains_statementsQ", function B2729 (exp__2690)
-{var B2724;
-if ($T(B2668(exp__2690, B2682)))
-{var sequence__2707 = exp__2690, B2708 = sequence__2707, B2709 = ((B2708 || false).length || 0), B2710 = 0, value__2711 = (B2709 === B2710);
-B2724 = !(trueQ(value__2711))}
-else B2724 = false;
-if ($T(B2724))
-{var sequence__2713 = exp__2690, B2725 = sequence__2713[0], B2691 = B2687(B2725), B2692 = B2685(B2691, "%begin"), B2726;
-if ($T(B2692))
-B2726 = B2692
-else {var B2693 = B2685(B2691, "%if");
-if ($T(B2693))
-B2726 = B2693
-else {var B2694 = B2685(B2691, "%while");
-if ($T(B2694))
-B2726 = B2694
-else {var B2695 = B2685(B2691, "%bind");
-if ($T(B2695))
-B2726 = B2695
-else B2726 = B2685(B2691, "%try")}}};
-if ($T(B2726))
+var B3032 = require("ralph/core")
+var B3034 = require("ralph/compiler/utilities")
+var B3035 = B3032["%make-function"], B3036 = B3032["any?"], B3037 = B3032.curry, B3038 = B3032["instance?"], B3039 = B3032["<number>"], B3040 = B3032["<boolean>"], B3041 = B3032["<string>"], B3042 = B3032["<symbol>"], B3043 = B3032["<keyword>"], B3044 = B3035("atomicQ", function B3046 (expression__3045)
+{return B3036(B3037(B3038, expression__3045), [B3039, B3040, B3041, B3042, B3043])}, false)
+var trueQ = B3032["true?"], B3052 = B3032["<array>"], B3053 = B3032.not, B3054 = B3032["empty?"], B3055 = B3032["binary=="], B3056 = B3032.last, B3057 = B3032["symbol-name"], B3058 = B3032.first, B3059 = B3035("contains_statementsQ", function B3129 (exp__3060)
+{var B3122;
+if ($T(B3038(exp__3060, B3052)))
+{var sequence__3077 = exp__3060, B3078 = sequence__3077, B3079 = ((B3078 || false).length || 0), B3080 = 0, value__3081 = (B3079 === B3080);
+B3122 = !(trueQ(value__3081))}
+else B3122 = false;
+if ($T(B3122))
+{var sequence__3083 = exp__3060, B3123 = sequence__3083[0], B3061 = B3057(B3123), object1__3086 = B3061, object2__3087 = "%begin", B3062 = (object1__3086 === object2__3087), B3124;
+if ($T(B3062))
+B3124 = B3062
+else {var object1__3090 = B3061, object2__3091 = "%if", B3063 = (object1__3090 === object2__3091);
+if ($T(B3063))
+B3124 = B3063
+else {var object1__3094 = B3061, object2__3095 = "%while", B3064 = (object1__3094 === object2__3095);
+if ($T(B3064))
+B3124 = B3064
+else {var object1__3098 = B3061, object2__3099 = "%bind", B3065 = (object1__3098 === object2__3099);
+if ($T(B3065))
+B3124 = B3065
+else {var object1__3102 = B3061, object2__3103 = "%try";
+B3124 = (object1__3102 === object2__3103)}}}};
+if ($T(B3124))
 return true
-else if ($T(B2685(B2691, "%set")))
-{var array__2721 = exp__2690, B2722 = array__2721, B2723 = ((B2722 || false).length || 0), B2727 = (B2723 - 1), B2728 = array__2721[B2727];
-return B2689(B2728)}
-else if ($T(B2685(B2691, "%method")))
+else {var object1__3106 = B3061, object2__3107 = "%set", B3125 = (object1__3106 === object2__3107);
+if ($T(B3125))
+{var array__3115 = exp__3060, B3116 = array__3115, B3117 = ((B3116 || false).length || 0), B3126 = (B3117 - 1), B3127 = array__3115[B3126];
+return B3059(B3127)}
+else {var object1__3120 = B3061, object2__3121 = "%method", B3128 = (object1__3120 === object2__3121);
+if ($T(B3128))
 return false
-else return B2666(B2689, exp__2690)}}, false)
-{var B2730, B2731 = B2662.identity, B2732 = B2665("normalize_term", function B2734 (expression__2733)
-{return B2730(expression__2733, B2731)}, false);
-exports["normalize-term"] = B2732}
-{var B2829 = $S("%method"), B2830 = $S("%begin"), B2831 = $S("%bind"), B2832 = $S("%if"), B2833 = $S("%while"), B2834 = $S("%native"), B2835 = $S("%try"), B2836 = $S("%set"), B2837 = $S("%array"), B2838 = $S("%object"), B2839 = $S("%get-property"), B2840 = $S("%infix"), B2841 = $S("%native-call"), B2842 = $S("%native-name"), B2843 = $S("%plus"), B2844 = $S("%minus"), B2845 = $S("%times"), B2846 = $S("%divide"), trueQ = B2662["true?"], B2738 = B2662.concatenate, B2739, B2740, B2741 = B2664["expression?"], B2742 = B2662["member?"], B2743 = B2662.map, B2744 = B2662.rest;
-B2730 = B2665("normalize", function B2847 (exp__2745, k__2746)
-{var B2816;
-if ($T(B2668(exp__2745, B2682)))
-{var sequence__2789 = exp__2745, B2790 = sequence__2789, B2791 = ((B2790 || false).length || 0), B2792 = 0, value__2793 = (B2791 === B2792);
-B2816 = !(trueQ(value__2793))}
-else B2816 = false;
-if ($T(B2816))
-{var sequence__2795 = exp__2745, B2817 = sequence__2795[0], B2747 = B2687(B2817);
-if ($T(B2685(B2747, "%method")))
-{var ____2748 = exp__2745[0], arguments__2749 = exp__2745[1], body__2750 = exp__2745[2];
-return k__2746([B2829, arguments__2749, B2732(body__2750)])}
-else if ($T(B2685(B2747, "%begin")))
-{var ____2751 = exp__2745[0], exp1__2752 = exp__2745[1], eT__2753 = $SL.call(exp__2745, 2), sequence__2806 = eT__2753, B2807 = sequence__2806, B2808 = ((B2807 || false).length || 0), B2809 = 0, B2818 = (B2808 === B2809);
-if ($T(B2818))
-return B2730(exp1__2752, k__2746)
-else return B2730(exp1__2752, function B2848 (aexp1__2754)
-{return [B2830, aexp1__2754, B2730(B2738([B2830], eT__2753), k__2746)]})}
-else if ($T(B2685(B2747, "%bind")))
-{var ____2755 = exp__2745[0], B2756 = exp__2745[1], var__2757 = B2756[0], value__2758 = B2756[1], body__2759 = exp__2745[2];
-return B2730(value__2758, function B2849 (avalue__2760)
-{return [B2831, [var__2757, avalue__2760], B2730(body__2759, k__2746)]})}
-else if ($T(B2685(B2747, "%if")))
-{var ____2761 = exp__2745[0], test__2762 = exp__2745[1], then__2763 = exp__2745[2], else__2764 = exp__2745[3];
-return B2739(test__2762, function B2850 (atest__2765)
-{return k__2746([B2832, atest__2765, B2732(then__2763), B2732(else__2764)])})}
-else if ($T(B2685(B2747, "%while")))
-{var ____2766 = exp__2745[0], test__2767 = exp__2745[1], body__2768 = exp__2745[2], B2819;
-if ($T(B2689(test__2767)))
-B2819 = [B2833, true, [B2830, B2732([B2832, test__2767, B2732(body__2768), [B2834, "break"], false])]]
-else B2819 = [B2833, B2732(test__2767), B2732(body__2768)];
-return k__2746(B2819)}
-else if ($T(B2685(B2747, "%try")))
-{var ____2769 = exp__2745[0], body__2770 = exp__2745[1], var__2771 = exp__2745[2], catch__2772 = exp__2745[3];
-return k__2746([B2835, B2732(body__2770), var__2771, B2732(catch__2772)])}
-else if ($T(B2685(B2747, "%set")))
-{var ____2773 = exp__2745[0], var__2774 = exp__2745[1], value__2775 = exp__2745[2];
-return B2739(value__2775, function B2851 (avalue__2776)
-{return k__2746([B2836, var__2774, avalue__2776])})}
-else {var B2777 = B2685(B2747, "%define"), B2820;
-if ($T(B2777))
-B2820 = B2777
-else B2820 = B2685(B2747, "%symbol");
-if ($T(B2820))
-return k__2746(exp__2745)
-else if ($T(B2689(exp__2745)))
-return B2740(exp__2745, k__2746)
-else {var B2823;
-if ($T(B2741(exp__2745)))
-{var sequence__2811 = exp__2745, B2821 = sequence__2811[0], B2822 = [B2837, B2838, B2839, B2840, B2834, B2841, B2842, B2843, B2844, B2845, B2846];
-B2823 = B2742(B2821, B2822)}
-else B2823 = false;
-if ($T(B2823))
-{var sequence__2813 = exp__2745, B2824 = sequence__2813[0], B2825 = [B2824], sequence__2815 = exp__2745, B2826 = sequence__2815.slice(1), B2827 = B2743(B2732, B2826), B2828 = B2738(B2825, B2827);
-return k__2746(B2828)}
-else return k__2746(B2743(B2732, exp__2745))}}}
-else return k__2746(exp__2745)}, false)}
-{var B2852;
-B2739 = B2665("normalize_value", function B2856 (exp__2853, k__2854)
-{if ($T(B2689(exp__2853)))
-return B2852(exp__2853, k__2854)
-else {var B2855;
-if ($T(B2668(exp__2853, B2682)))
-B2855 = B2743(B2732, exp__2853)
-else B2855 = exp__2853;
-return k__2854(B2855)}}, false)}
-{var B2857 = B2664["generate-symbol"];
-B2852 = B2665("normalizeT", function B2862 (exp__2858, k__2859)
-{return B2730(exp__2858, function B2863 (aexp__2860)
-{if ($T(B2674(aexp__2860)))
-return k__2859(aexp__2860)
-else {var t__2861 = B2857();
-return [B2831, [t__2861, aexp__2860], k__2859(t__2861)]}})}, false)}
-var B2864 = B2665("normalizeTT", function B2882 (expT__2865, k__2866)
-{var sequence__2877 = expT__2865, B2878 = sequence__2877, B2879 = ((B2878 || false).length || 0), B2880 = 0, B2881 = (B2879 === B2880);
-if ($T(B2881))
-return k__2866([])
-else return B2740(expT__2865, k__2866)}, false)
-B2740 = B2665("normalize_all", function B2895 (exp__2883, k__2884)
-{var sequence__2888 = exp__2883, B2891 = sequence__2888[0], B2894 = function B2896 (t__2885)
-{var sequence__2890 = exp__2883, B2892 = sequence__2890.slice(1), B2893 = function B2897 (tT__2886)
-{return k__2884(B2738([t__2885], tT__2886))};
-return B2864(B2892, B2893)};
-return B2852(B2891, B2894)}, false)
+else return B3036(B3059, exp__3060)}}}}, false)
+{var B3130, B3131 = B3032.identity, B3132 = B3035("normalize_term", function B3134 (expression__3133)
+{return B3130(expression__3133, B3131)}, false);
+exports["normalize-term"] = B3132}
+{var B3272 = $S("%method"), B3273 = $S("%begin"), B3274 = $S("%bind"), B3275 = $S("%if"), B3276 = $S("%while"), B3277 = $S("%native"), B3278 = $S("%try"), B3279 = $S("%set"), B3280 = $S("%array"), B3281 = $S("%object"), B3282 = $S("%get-property"), B3283 = $S("%infix"), B3284 = $S("%native-call"), B3285 = $S("%native-name"), B3286 = $S("%plus"), B3287 = $S("%minus"), B3288 = $S("%times"), B3289 = $S("%divide"), trueQ = B3032["true?"], B3138 = B3032.concatenate, B3139, B3140, B3141 = B3034["expression?"], B3142 = B3032["member?"], B3143 = B3032.map, B3144 = B3032.rest;
+B3130 = B3035("normalize", function B3290 (exp__3145, k__3146)
+{var B3252;
+if ($T(B3038(exp__3145, B3052)))
+{var sequence__3189 = exp__3145, B3190 = sequence__3189, B3191 = ((B3190 || false).length || 0), B3192 = 0, value__3193 = (B3191 === B3192);
+B3252 = !(trueQ(value__3193))}
+else B3252 = false;
+if ($T(B3252))
+{var sequence__3195 = exp__3145, B3253 = sequence__3195[0], B3147 = B3057(B3253), object1__3198 = B3147, object2__3199 = "%method", B3254 = (object1__3198 === object2__3199);
+if ($T(B3254))
+{var ____3148 = exp__3145[0], arguments__3149 = exp__3145[1], body__3150 = exp__3145[2];
+return k__3146([B3272, arguments__3149, B3132(body__3150)])}
+else {var object1__3202 = B3147, object2__3203 = "%begin", B3255 = (object1__3202 === object2__3203);
+if ($T(B3255))
+{var ____3151 = exp__3145[0], exp1__3152 = exp__3145[1], eT__3153 = $SL.call(exp__3145, 2), sequence__3214 = eT__3153, B3215 = sequence__3214, B3216 = ((B3215 || false).length || 0), B3217 = 0, B3256 = (B3216 === B3217);
+if ($T(B3256))
+return B3130(exp1__3152, k__3146)
+else return B3130(exp1__3152, function B3291 (aexp1__3154)
+{return [B3273, aexp1__3154, B3130(B3138([B3273], eT__3153), k__3146)]})}
+else {var object1__3220 = B3147, object2__3221 = "%bind", B3257 = (object1__3220 === object2__3221);
+if ($T(B3257))
+{var ____3155 = exp__3145[0], B3156 = exp__3145[1], var__3157 = B3156[0], value__3158 = B3156[1], body__3159 = exp__3145[2];
+return B3130(value__3158, function B3292 (avalue__3160)
+{return [B3274, [var__3157, avalue__3160], B3130(body__3159, k__3146)]})}
+else {var object1__3224 = B3147, object2__3225 = "%if", B3258 = (object1__3224 === object2__3225);
+if ($T(B3258))
+{var ____3161 = exp__3145[0], test__3162 = exp__3145[1], then__3163 = exp__3145[2], else__3164 = exp__3145[3];
+return B3139(test__3162, function B3293 (atest__3165)
+{return k__3146([B3275, atest__3165, B3132(then__3163), B3132(else__3164)])})}
+else {var object1__3228 = B3147, object2__3229 = "%while", B3259 = (object1__3228 === object2__3229);
+if ($T(B3259))
+{var ____3166 = exp__3145[0], test__3167 = exp__3145[1], body__3168 = exp__3145[2], B3260;
+if ($T(B3059(test__3167)))
+B3260 = [B3276, true, [B3273, B3132([B3275, test__3167, B3132(body__3168), [B3277, "break"], false])]]
+else B3260 = [B3276, B3132(test__3167), B3132(body__3168)];
+return k__3146(B3260)}
+else {var object1__3232 = B3147, object2__3233 = "%try", B3261 = (object1__3232 === object2__3233);
+if ($T(B3261))
+{var ____3169 = exp__3145[0], body__3170 = exp__3145[1], var__3171 = exp__3145[2], catch__3172 = exp__3145[3];
+return k__3146([B3278, B3132(body__3170), var__3171, B3132(catch__3172)])}
+else {var object1__3236 = B3147, object2__3237 = "%set", B3262 = (object1__3236 === object2__3237);
+if ($T(B3262))
+{var ____3173 = exp__3145[0], var__3174 = exp__3145[1], value__3175 = exp__3145[2];
+return B3139(value__3175, function B3294 (avalue__3176)
+{return k__3146([B3279, var__3174, avalue__3176])})}
+else {var object1__3240 = B3147, object2__3241 = "%define", B3177 = (object1__3240 === object2__3241), B3263;
+if ($T(B3177))
+B3263 = B3177
+else {var object1__3244 = B3147, object2__3245 = "%symbol";
+B3263 = (object1__3244 === object2__3245)};
+if ($T(B3263))
+return k__3146(exp__3145)
+else if ($T(B3059(exp__3145)))
+return B3140(exp__3145, k__3146)
+else {var B3266;
+if ($T(B3141(exp__3145)))
+{var sequence__3247 = exp__3145, B3264 = sequence__3247[0], B3265 = [B3280, B3281, B3282, B3283, B3277, B3284, B3285, B3286, B3287, B3288, B3289];
+B3266 = B3142(B3264, B3265)}
+else B3266 = false;
+if ($T(B3266))
+{var sequence__3249 = exp__3145, B3267 = sequence__3249[0], B3268 = [B3267], sequence__3251 = exp__3145, B3269 = sequence__3251.slice(1), B3270 = B3143(B3132, B3269), B3271 = B3138(B3268, B3270);
+return k__3146(B3271)}
+else return k__3146(B3143(B3132, exp__3145))}}}}}}}}}
+else return k__3146(exp__3145)}, false)}
+{var B3295;
+B3139 = B3035("normalize_value", function B3299 (exp__3296, k__3297)
+{if ($T(B3059(exp__3296)))
+return B3295(exp__3296, k__3297)
+else {var B3298;
+if ($T(B3038(exp__3296, B3052)))
+B3298 = B3143(B3132, exp__3296)
+else B3298 = exp__3296;
+return k__3297(B3298)}}, false)}
+{var B3300 = B3034["generate-symbol"];
+B3295 = B3035("normalizeT", function B3305 (exp__3301, k__3302)
+{return B3130(exp__3301, function B3306 (aexp__3303)
+{if ($T(B3044(aexp__3303)))
+return k__3302(aexp__3303)
+else {var t__3304 = B3300();
+return [B3274, [t__3304, aexp__3303], k__3302(t__3304)]}})}, false)}
+var B3307 = B3035("normalizeTT", function B3325 (expT__3308, k__3309)
+{var sequence__3320 = expT__3308, B3321 = sequence__3320, B3322 = ((B3321 || false).length || 0), B3323 = 0, B3324 = (B3322 === B3323);
+if ($T(B3324))
+return k__3309([])
+else return B3140(expT__3308, k__3309)}, false)
+B3140 = B3035("normalize_all", function B3338 (exp__3326, k__3327)
+{var sequence__3331 = exp__3326, B3334 = sequence__3331[0], B3337 = function B3339 (t__3328)
+{var sequence__3333 = exp__3326, B3335 = sequence__3333.slice(1), B3336 = function B3340 (tT__3329)
+{return k__3327(B3138([t__3328], tT__3329))};
+return B3307(B3335, B3336)};
+return B3295(B3334, B3337)}, false)

@@ -1,70 +1,77 @@
 var B1468 = require("ralph/core")
-var B1583 = require("ralph/stream")
-var B1584 = B1468["%make-function"], B1585 = B1468["as-string"], B1586 = B1584("format_integer", function B1588 (number__1587)
-{return B1585(number__1587)}, false)
-{var B1671 = $K("message"), trueQ = B1468["true?"], B1592 = B1468["=="], B1593 = B1468.description, B1594 = B1468.signal, B1595 = B1468.make, B1596 = B1468["<error>"], B1597 = B1468.concatenate, B1598 = B1468["as-lowercase"], B1599 = B1468.not, B1600 = B1468["empty?"], B1601 = B1468[">"], B1602 = B1583["stream-write"], B1603 = B1468.slice, B1604 = B1468.second, B1605 = B1468.element, B1606 = B1468.position, B1607 = B1584("format", function B1672 (stream__1608, control_string__1609)
-{var args__1610 = $SL.call(arguments, 2);
+var B1592 = require("ralph/stream")
+var B1593 = B1468["%make-function"], B1594 = B1468["as-string"], B1595 = B1593("format_integer", function B1597 (number__1596)
+{return B1594(number__1596)}, false)
+{var B1722 = $K("message"), trueQ = B1468["true?"], B1601 = B1468["binary=="], B1602 = B1468.description, B1603 = B1468.signal, B1604 = B1468.make, B1605 = B1468["<error>"], B1606 = B1468.concatenate, B1607 = B1468["as-lowercase"], B1608 = B1468.not, B1609 = B1468["empty?"], B1610 = B1468[">"], B1611 = B1592["stream-write"], B1612 = B1468.slice, B1613 = B1468.second, B1614 = B1468.element, B1615 = B1468.position, B1616 = B1593("format", function B1723 (stream__1617, control_string__1618)
+{var args__1619 = $SL.call(arguments, 2);
 "Format a string and write it to a stream.";
-var dispatch__1611 = function B1673 (char__1612, arg__1613)
-{var string__1623 = char__1612, B1614 = string__1623.toLowerCase(), B1615 = B1592(B1614, "s"), B1664;
-if ($T(B1615))
-B1664 = B1615
-else B1664 = B1592(B1614, "c");
-if ($T(B1664))
-return arg__1613
-else if ($T(B1592(B1614, "=")))
-{var B1616 = B1593(arg__1613);
-if ($T(B1616))
-return B1616
+var dispatch__1620 = function B1724 (char__1621, arg__1622)
+{var string__1632 = char__1621, B1623 = string__1632.toLowerCase(), object1__1635 = B1623, object2__1636 = "s", B1624 = (object1__1635 === object2__1636), B1709;
+if ($T(B1624))
+B1709 = B1624
+else {var object1__1639 = B1623, object2__1640 = "c";
+B1709 = (object1__1639 === object2__1640)};
+if ($T(B1709))
+return arg__1622
+else {var object1__1643 = B1623, object2__1644 = "=", B1710 = (object1__1643 === object2__1644);
+if ($T(B1710))
+{var B1625 = B1602(arg__1622);
+if ($T(B1625))
+return B1625
 else return ""}
-else if ($T(B1592(B1614, "b")))
-return B1586(arg__1613, 2)
-else if ($T(B1592(B1614, "o")))
-return B1586(arg__1613, 8)
-else if ($T(B1592(B1614, "d")))
-return B1586(arg__1613, 10)
-else if ($T(B1592(B1614, "x")))
-return B1586(arg__1613, 16)
-else if ($T(B1592(B1614, "m")))
-{arg__1613(stream__1608);
+else {var object1__1647 = B1623, object2__1648 = "b", B1711 = (object1__1647 === object2__1648);
+if ($T(B1711))
+return B1595(arg__1622, 2)
+else {var object1__1651 = B1623, object2__1652 = "o", B1712 = (object1__1651 === object2__1652);
+if ($T(B1712))
+return B1595(arg__1622, 8)
+else {var object1__1655 = B1623, object2__1656 = "d", B1713 = (object1__1655 === object2__1656);
+if ($T(B1713))
+return B1595(arg__1622, 10)
+else {var object1__1659 = B1623, object2__1660 = "x", B1714 = (object1__1659 === object2__1660);
+if ($T(B1714))
+return B1595(arg__1622, 16)
+else {var object1__1663 = B1623, object2__1664 = "m", B1715 = (object1__1663 === object2__1664);
+if ($T(B1715))
+{arg__1622(stream__1617);
 return ""}
-else {var error__1625 = B1595(B1596, B1671, B1597("Unknown format dispatch character ", char__1612));
-throw(error__1625);
-return false}}, index__1617 = 0;
-while ($T(true))
-{var sequence__1637 = control_string__1609, B1638 = sequence__1637, B1639 = ((B1638 || false).length || 0), B1640 = 0, value__1641 = (B1639 === B1640), B1670 = !(trueQ(value__1641));
-if ($T(B1670))
-{var next_dispatch__1618 = B1606(control_string__1609, "%");
-if ($T(B1601(next_dispatch__1618, 0)))
-{var array__1645 = control_string__1609, start__1646 = 0, end__1647 = next_dispatch__1618, B1665 = array__1645.slice(start__1646, end__1647);
-B1602(stream__1608, B1665);
-var array__1651 = control_string__1609, start__1652 = next_dispatch__1618, end__1653 = undefined, B1666 = array__1651.slice(start__1652, end__1653);
-control_string__1609 = B1666}
-else if ($T(next_dispatch__1618))
-{var arg__1619 = B1605(args__1610, index__1617), sequence__1655 = control_string__1609, char__1620 = sequence__1655[1], percent__1621 = B1592(char__1620, "%"), B1667;
-if ($T(percent__1621))
-B1667 = "%"
-else B1667 = dispatch__1611(char__1620, arg__1619);
-B1602(stream__1608, B1667);
-var array__1659 = control_string__1609, start__1660 = 2, end__1661 = undefined, B1668 = array__1659.slice(start__1660, end__1661);
-control_string__1609 = B1668;
-var value__1663 = percent__1621, B1669 = !(trueQ(value__1663));
-if ($T(B1669))
-index__1617 = (index__1617 + 1)}
-else {B1602(stream__1608, control_string__1609);
-control_string__1609 = ""}}
+else {var error__1666 = B1604(B1605, B1722, B1606("Unknown format dispatch character ", char__1621));
+throw(error__1666);
+return false}}}}}}}}, index__1626 = 0;
+while (true)
+{var sequence__1678 = control_string__1618, B1679 = sequence__1678, B1680 = ((B1679 || false).length || 0), B1681 = 0, value__1682 = (B1680 === B1681), B1721 = !(trueQ(value__1682));
+if ($T(B1721))
+{var next_dispatch__1627 = B1615(control_string__1618, "%");
+if ($T(B1610(next_dispatch__1627, 0)))
+{var array__1686 = control_string__1618, start__1687 = 0, end__1688 = next_dispatch__1627, B1716 = array__1686.slice(start__1687, end__1688);
+B1611(stream__1617, B1716);
+var array__1692 = control_string__1618, start__1693 = next_dispatch__1627, end__1694 = undefined, B1717 = array__1692.slice(start__1693, end__1694);
+control_string__1618 = B1717}
+else if ($T(next_dispatch__1627))
+{var arg__1628 = B1614(args__1619, index__1626), sequence__1696 = control_string__1618, char__1629 = sequence__1696[1], object1__1699 = char__1629, object2__1700 = "%", percent__1630 = (object1__1699 === object2__1700), B1718;
+if ($T(percent__1630))
+B1718 = "%"
+else B1718 = dispatch__1620(char__1629, arg__1628);
+B1611(stream__1617, B1718);
+var array__1704 = control_string__1618, start__1705 = 2, end__1706 = undefined, B1719 = array__1704.slice(start__1705, end__1706);
+control_string__1618 = B1719;
+var value__1708 = percent__1630, B1720 = !(trueQ(value__1708));
+if ($T(B1720))
+index__1626 = (index__1626 + 1)}
+else {B1611(stream__1617, control_string__1618);
+control_string__1618 = ""}}
 else break};
 return false}, false);
-exports.format = B1607}
-{var B1674 = B1468.apply, B1675 = B1583["*standard-out*"], B1676 = B1584("format_out", function B1679 (control_string__1677)
-{var args__1678 = $SL.call(arguments, 1);
+exports.format = B1616}
+{var B1725 = B1468.apply, B1726 = B1592["*standard-out*"], B1727 = B1593("format_out", function B1730 (control_string__1728)
+{var args__1729 = $SL.call(arguments, 1);
 "Formats arguments to *standard-out*.";
-return B1674(B1607, B1675, control_string__1677, args__1678)}, false);
-exports["format-out"] = B1676}
-{var B1680 = B1583["stream-contents"], B1681 = B1583["<string-stream>"], B1682 = B1584("format_to_string", function B1686 (control_string__1683)
-{var args__1684 = $SL.call(arguments, 1);
+return B1725(B1616, B1726, control_string__1728, args__1729)}, false);
+exports["format-out"] = B1727}
+{var B1731 = B1592["stream-contents"], B1732 = B1592["<string-stream>"], B1733 = B1593("format_to_string", function B1737 (control_string__1734)
+{var args__1735 = $SL.call(arguments, 1);
 "Process a format string and return the result as another string.\nThis function effectively calls format and returns the result as a string.";
-var stream__1685 = B1595(B1681);
-B1674(B1607, stream__1685, control_string__1683, args__1684);
-return B1680(stream__1685)}, false);
-exports["format-to-string"] = B1682}
+var stream__1736 = B1604(B1732);
+B1725(B1616, stream__1736, control_string__1734, args__1735);
+return B1731(stream__1736)}, false);
+exports["format-to-string"] = B1733}
