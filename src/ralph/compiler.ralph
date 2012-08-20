@@ -712,6 +712,20 @@
                                        body))))
                   cases)))))
 
+(define-core-macro get-setter (_ object property #rest properties/value)
+  (if (== (size properties/value) 1)
+      `(%set (%get-property ,object ,property)
+             ,(first properties/value))
+      (concatenate `(%call get-setter ,object ,property)
+                   properties/value)))
+
+(define-core-macro symbol (_ name)
+  (if (instance? name <string>)
+      `(%symbol ,name)
+      `(%call symbol ,name)))
+
+
+
 ;;;; symbol macros
 
 ;; utilities
