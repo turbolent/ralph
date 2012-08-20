@@ -398,16 +398,16 @@
 
 (reset-symbol-counter!)
 (check-equal "alpha-convert: single method"
-             `(%method x (a_1) 1)
+             `(%method x_1 (a_2) 1)
              (alpha-convert `(%method x (a) 1)
                             *environment*))
 
 (reset-symbol-counter!)
 (check-equal "alpha-convert: nested methods"
-             `((%method x (a_1)
-                 ((%method y (a_2)
-                    a_2)
-                  a_1))
+             `((%method x_1 (a_2)
+                 ((%method y_3 (a_4)
+                    a_4)
+                  a_2))
                1)
              (alpha-convert `((%method x (a)
                                 ((%method y (a)
@@ -421,8 +421,8 @@
              `(%begin
                (%define $1)
                (bar $1)
-               (%method x (a_2)
-                 a_2))
+               (%method x_2 (a_3)
+                 a_3))
              (alpha-convert `(%begin
                               (%define a)
                               (bar a)
@@ -500,8 +500,8 @@
                expanded)
   (reset-symbol-counter!)
   (check-equal ""
-               `((%method $1 (a_1 b_2)
-                   (%plus a_1 b_2))
+               `((%method $1 (a_2 b_3)
+                   (%plus a_2 b_3))
                  1 2)
                (alpha-convert expanded
                               *environment*)))
@@ -785,8 +785,8 @@
 (check-equal "ANF: if in expression"
              `(%method $1 ()
                 (bar (%method $2 (item)
-                       (%bind ($1 (%if a b c))
-                         (baz $1 item)))))
+                       (%bind ($3 (%if a b c))
+                         (baz $3 item)))))
              (normalize-term
               (macroexpand-all
                `(method ()
@@ -899,13 +899,13 @@
                              (%if ((%native "$T") x)
                                   (%return 1)
                                   (%return 2))))
-                  (%bind ($2 #f)
+                  (%bind ($3 #f)
                     (%begin
                      (%begin
                       (%while ((%native "$T") (> y 2))
                         (%set y (%minus y 1)))
-                      (%set $2 #f))
-                     ($1 $2)))))
+                      (%set $3 #f))
+                     ($2 $3)))))
              (transform-statements!
                (normalize-term
                 (macroexpand-all
