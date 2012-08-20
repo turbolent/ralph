@@ -28,8 +28,8 @@
            (not (empty? exp)))
       (select (symbol-name (first exp)) ==
         (("%method")
-         (destructuring-bind (_ arguments body) exp
-           (k `(%method ,arguments
+         (destructuring-bind (_ name arguments body) exp
+           (k `(%method ,name ,arguments
                  ,(normalize-term body)))))
         (("%begin")
          (destructuring-bind (_ exp1 #rest e*) exp

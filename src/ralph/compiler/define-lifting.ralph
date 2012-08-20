@@ -31,12 +31,19 @@
               (destructuring-bind (le1 le2) le*
                 (k `(,m ,le1 ,v ,le2)
                    env))))))
-        (("%method" "%set")
-         (destructuring-bind (m e1 e2) exp
+        (("%set")
+         (destructuring-bind (_ e1 e2) exp
            (lift-define
             e2 env
             (method (le2 env)
-              (k `(,m ,e1 ,le2)
+              (k `(%set ,e1 ,le2)
+                 env)))))
+        (("%method")
+         (destructuring-bind (_ name arguments body) exp
+           (lift-define
+            body env
+            (method (lbody env)
+              (k `(%method ,name ,arguments ,lbody)
                  env)))))
         (("%begin" "%if" "%while"  "%array"
           "%object" "%get-property" "%infix"

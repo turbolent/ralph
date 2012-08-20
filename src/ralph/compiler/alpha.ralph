@@ -55,10 +55,10 @@
     ((<array>)
      (select (symbol-name (first form)) ==
        (("%method")
-        (destructuring-bind (_ arguments body) form
+        (destructuring-bind (_ name arguments body) form
           (bind ((new-arguments (rename-identifiers arguments env))
                  (new-body (alpha-convert body env))
-                 (result [_ new-arguments new-body]))
+                 (result `(%method ,name ,new-arguments ,new-body)))
             (restore-identifiers arguments env)
             result)))
        (("%bind")

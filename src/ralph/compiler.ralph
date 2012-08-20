@@ -87,14 +87,14 @@
          (symbol-name (first form)))))
 
 ;; definitions
-(define-special-form %method (env arguments body)
+(define-special-form %method (env name arguments body)
   (do (curry bind! env)
       arguments)
   (bind ((expanded-body
           (macroexpand-all body env)))
     (do (curry unbind! env)
         arguments)
-    `(%method ,arguments
+    `(%method ,name ,arguments
        ,expanded-body)))
 
 (define-special-form
@@ -184,15 +184,18 @@
 (define-core-macro begin (_ #rest expressions)
   (maybe-begin expressions))
 
-(define-core-macro method (_ arguments #rest body)
+(define-function named-method (name arguments body)
   (destructuring-bind (required rest key)
       (analyze-lambda-list arguments)
-    `(%method ,required
+    `(%method ,name ,required
        ,(wrap-rest/keys
-         (maybe-begin body)
+         body
          (symbol "%all-arguments")
          required rest key))))
 
+(define-core-macro method (_ arguments #rest body)
+  (named-method (generate-symbol) arguments
+                (maybe-begin body)))
 
 (define-core-macro bind (_ bindings #rest body)
   (if (empty? bindings)
@@ -572,8 +575,8 @@
       (bind ((simplified-arguments (simplify-arguments arguments))
              (method-definition
               (macroexpand-all
-               (concatenate `(method ,simplified-arguments)
-                            body)
+               (named-method identifier simplified-arguments
+                             (maybe-begin body))
                env)))
         (when record?
           (set! (get env "module" "functions"
@@ -888,7 +891,7 @@
                       (symbol-name head))))
       (select name ==
         (("%method")
-         (destructuring-bind (_ arguments body) exp
+         (destructuring-bind (_ name arguments body) exp
            (set-subtract!
             (find-free-variables body)
             (as-set arguments))))
@@ -1021,12 +1024,12 @@
 (define-function inline-definition (definition values env)
   ;; TODO: move preparation to method definition?
   ;; inlines definition itself and inlines values before., e.g. (not (not ...))
-  (destructuring-bind (_ arguments body) definition
+  (destructuring-bind (_ name arguments body) definition
     ;; TODO: rest and keyword parameters
     ;; rebind arguments, so values are only evaluated once
     (bind ((body (reduce (method (body argument)
                            `(%bind (,argument ,argument)
-                                   ,body))
+                              ,body))
                          body
                          (reverse arguments)))
            (inlined (inline body env))
@@ -1068,12 +1071,19 @@
                  (k `(%bind (,var ,lvalue)
                        ,lbody)
                     env)))))))
-        (("%method" "%set")
-         (destructuring-bind (m e1 e2) exp
+        (("%set")
+         (destructuring-bind (_ e1 e2) exp
            (lift-symbol
             e2 env
             (method (le2 env)
-              (k `(,m ,e1 ,le2)
+              (k `(%set ,e1 ,le2)
+                 env)))))
+        (("%method")
+         (destructuring-bind (_ name arguments body) exp
+           (lift-symbol
+            body env
+            (method (lbody env)
+              (k `(%method ,name ,arguments ,lbody)
                  env)))))
         (("%begin" "%if" "%while" "%array"
           "%object" "%get-property" "%infix"

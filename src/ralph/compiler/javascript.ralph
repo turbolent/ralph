@@ -202,9 +202,8 @@
           (compile-js var env) " = "
           (compile-js value env))))
       (("%method")
-       (destructuring-bind (_ arguments body) exp
-         (bind ((name (generate-symbol))
-                (previous-method (get env "current-method")))
+       (destructuring-bind (_ name arguments body) exp
+         (bind ((previous-method (get env "current-method")))
            (concatenate
             "function " (compile-js name env)
             " (" (join (map (rcurry compile-js env)
