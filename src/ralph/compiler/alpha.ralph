@@ -56,11 +56,15 @@
      (select (symbol-name (first form)) ==
        (("%method")
         (destructuring-bind (_ name arguments body) form
-          (bind ((new-arguments (rename-identifiers arguments env))
-                 (new-body (alpha-convert body env))
-                 (result `(%method ,name ,new-arguments ,new-body)))
-            (restore-identifiers arguments env)
-            result)))
+          (bind ((identifiers (concatenate [name] arguments))
+                 (new-identifiers (rename-identifiers identifiers env))
+                 (new-body (alpha-convert body env)))
+            (destructuring-bind (new-name #rest new-arguments)
+                new-identifiers
+              (bind ((result `(%method ,new-name ,new-arguments
+                                 ,new-body)))
+                (restore-identifiers identifiers env)
+                result)))))
        (("%bind")
         (destructuring-bind (_ (var value) body) form
           ;; TODO: make binding available inside value?
