@@ -248,8 +248,9 @@
              (analyze-lambda-list []))
 
 
+(reset-symbol-counter!)
 (check-equal "macroexpand-all: normal method"
-             `(%method (a)
+             `(%method $1 (a)
                 a)
              (macroexpand-all `(method (a)
                                  a)
@@ -257,11 +258,11 @@
 
 (reset-symbol-counter!)
 (check-equal "macroexpand-all: method with rest and keyword arguments"
-             `(%method (a b)
+             `(%method $1 (a b)
                 (%bind (r (%native-call "$SL.call" %all-arguments 2))
-                  (%bind ($1 (%keys r (%object "c" 1 "d" 2)))
-                    (%bind (c (%get-property $1 "c"))
-                      (%bind (d (%get-property $1 "d"))
+                  (%bind ($2 (%keys r (%object "c" 1 "d" 2)))
+                    (%bind (c (%get-property $2 "c"))
+                      (%bind (d (%get-property $2 "d"))
                         (foo c))))))
              (macroexpand-all `(method (a b #rest r #key (c 1) (d 2))
                                  (foo c))
@@ -274,7 +275,7 @@
                   (%begin
                    (%while (not (>= i $1))
                      (%begin
-                      ((%method (i)
+                      ((%method $2 (i)
                          (foo i))
                        i)
                       (%set i (%plus i 1))))
@@ -303,7 +304,7 @@
                                                (bar b)))
                                      (%set $3 #t))
                                     (%begin
-                                     ((%method (a b)
+                                     ((%method $8 (a b)
                                         (baz a b))
                                       a b)
                                      (%set $1 (rest $1))
@@ -338,7 +339,7 @@
                                   (%set $5 #t)
                                   (%set $3 #t))
                                  (%begin
-                                  ((%method (a b) #f) a b)
+                                  ((%method $7 (a b) #f) a b)
                                   (%set $1 (rest $1))
                                   (%set $2 (rest $2))
                                   (%set $4 (%array $1 $2)))))))
@@ -397,19 +398,19 @@
 
 (reset-symbol-counter!)
 (check-equal "alpha-convert: single method"
-             `(%method (a_1) 1)
-             (alpha-convert `(%method (a) 1)
+             `(%method x (a_1) 1)
+             (alpha-convert `(%method x (a) 1)
                             *environment*))
 
 (reset-symbol-counter!)
 (check-equal "alpha-convert: nested methods"
-             `((%method (a_1)
-                 ((%method (a_2)
+             `((%method x (a_1)
+                 ((%method y (a_2)
                     a_2)
                   a_1))
                1)
-             (alpha-convert `((%method (a)
-                                ((%method (a)
+             (alpha-convert `((%method x (a)
+                                ((%method y (a)
                                    a)
                                  a))
                               1)
@@ -420,12 +421,12 @@
              `(%begin
                (%define $1)
                (bar $1)
-               (%method (a_2)
+               (%method x (a_2)
                  a_2))
              (alpha-convert `(%begin
                               (%define a)
                               (bar a)
-                              (%method (a)
+                              (%method x (a)
                                a))
                             *environment*))
 
@@ -493,13 +494,13 @@
                          *environment*)))
 
   (check-equal ""
-               `((%method (a b)
+               `((%method $1 (a b)
                    (%plus a b))
                  1 2)
                expanded)
   (reset-symbol-counter!)
   (check-equal ""
-               `((%method (a_1 b_2)
+               `((%method $1 (a_1 b_2)
                    (%plus a_1 b_2))
                  1 2)
                (alpha-convert expanded
@@ -563,8 +564,8 @@
 
 (reset-symbol-counter!)
 (check-equal "ANF: application"
-             `(%bind (id (%method (x) x))
-                (%bind (apply (%method (f x) (f x)))
+             `(%bind (id (%method $1 (x) x))
+                (%bind (apply (%method $2 (f x) (f x)))
                   ((id apply) (id 3))))
              (normalize-term
               (macroexpand-all
@@ -575,8 +576,8 @@
 
 (reset-symbol-counter!)
 (check-equal "ANF: method"
-             `(%method (a)
-                (%method (b)
+             `(%method $1 (a)
+                (%method $2 (b)
                   (%begin
                    (%minus a b)
                    (%plus (%minus a b) b))))
@@ -699,7 +700,7 @@
                                   (%begin
                                    (%set run? #f)
                                    23))))
-                  (== value #f)))
+                  (binary== value #f)))
              (normalize-term
               (macroexpand-all
                `(bind ((run? #t)
@@ -782,8 +783,8 @@
 
 (reset-symbol-counter!)
 (check-equal "ANF: if in expression"
-             `(%method ()
-                (bar (%method (item)
+             `(%method $1 ()
+                (bar (%method $2 (item)
                        (%bind ($1 (%if a b c))
                          (baz $1 item)))))
              (normalize-term
@@ -796,11 +797,11 @@
 
 (reset-symbol-counter!)
 (check-equal "ANF: if in expression 2"
-             `(%method ()
-                (bar (%method (item)
-                       (%bind ($1 (%if c b a))
-                         (%bind ($2 (%if a b c))
-                           ($1 $2 item))))))
+             `(%method $1 ()
+                (bar (%method $2 (item)
+                       (%bind ($3 (%if c b a))
+                         (%bind ($4 (%if a b c))
+                           ($3 $4 item))))))
              (normalize-term
               (macroexpand-all
                `(method ()
@@ -894,7 +895,7 @@
 (reset-symbol-counter!)
 (check-equal "statements: value of while applied to method"
              `(%bind (y 5)
-                (%bind ($1 (%method (x)
+                (%bind ($2 (%method $1 (x)
                              (%if ((%native "$T") x)
                                   (%return 1)
                                   (%return 2))))
@@ -970,11 +971,11 @@
 (reset-symbol-counter!)
 (bind ((module (make-core-environment)))
   (check-equal "lift-symbols: method"
-               `(%bind ($1 (%symbol "a"))
+               `(%bind ($2 (%symbol "a"))
                   (%begin
                    23
-                   (%method (x)
-                     $1)))
+                   (%method $1 (x)
+                     $2)))
                (lift-symbols
                 (macroexpand-all
                  `(begin
@@ -986,8 +987,8 @@
 
 (reset-symbol-counter!)
 (bind ((module (make-core-environment)))
-  (check-equal "lift-symbols: method"
-               `(%method (symbol)
+  (check-equal "lift-symbols: method 2"
+               `(%method $1 (symbol)
                   symbol)
                (lift-symbols
                 (macroexpand-all
@@ -1136,8 +1137,8 @@
                  (%begin
                   (%define bar)
                   (%begin
-                   (%set foo (%method () (bar)))
-                   (%set bar (%method () 1))
+                   (%set foo (%method $1 () (bar)))
+                   (%set bar (%method $2 () 1))
                    (foo))))
                (define-free-variables
                  (lift-defines
@@ -1163,7 +1164,7 @@
                  (%define bar2)
                  (%begin
                   (%define foo2)
-                  (%set foo2 (%method ()
+                  (%set foo2 (%method $1 ()
                                (bar2)))))
                (define-free-variables
                  (lift-defines
