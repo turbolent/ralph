@@ -1,59 +1,98 @@
-var B2441 = require("ralph/core")
-var B2443 = require("ralph/compiler/utilities")
-{var B2444 = B2441["%make-function"], B2445, B2446 = B2441.identity, B2447 = B2444("lift_defines", function B2450 (exp__2448, env__2449)
-{return B2445(exp__2448, env__2449, B2446)}, false);
-exports["lift-defines"] = B2447}
-{var B2514 = $S("%bind"), B2515 = $S("%set"), B2516 = $S("%begin"), B2517 = $S("%define"), B2456 = B2443["expression?"], B2457 = B2441["=="], B2458, B2459 = B2441.concatenate, B2460 = B2441["has?"], B2461 = B2441.get, B2462 = B2441["get-setter"], B2463 = B2441["symbol-name"], B2464, B2465 = B2441.first;
-B2445 = B2444("lift_define", function B2518 (exp__2466, env__2467, k__2468)
-{if ($T(B2456(exp__2466)))
-{var sequence__2505 = exp__2466, B2510 = sequence__2505[0], B2469 = B2463(B2510);
-if ($T(B2457(B2469, "%bind")))
-{var ____2470 = exp__2466[0], B2471 = exp__2466[1], var__2472 = B2471[0], value__2473 = B2471[1], body__2474 = exp__2466[2];
-return B2445(value__2473, env__2467, function B2519 (lvalue__2475, env__2476)
-{return B2445(body__2474, env__2476, function B2520 (lbody__2477, env__2478)
-{return k__2468([B2514, [var__2472, lvalue__2475], lbody__2477], env__2478)})})}
-else if ($T(B2457(B2469, "%try")))
-{var m__2479 = exp__2466[0], e1__2480 = exp__2466[1], v__2481 = exp__2466[2], e2__2482 = exp__2466[3];
-return B2458([e1__2480, e2__2482], env__2467, function B2521 (leT__2483, env__2484)
-{var le1__2485 = leT__2483[0], le2__2486 = leT__2483[1];
-return k__2468([m__2479, le1__2485, v__2481, le2__2486], env__2484)})}
-else {var B2487 = B2457(B2469, "%method"), B2511;
-if ($T(B2487))
-B2511 = B2487
-else B2511 = B2457(B2469, "%set");
-if ($T(B2511))
-{var m__2488 = exp__2466[0], e1__2489 = exp__2466[1], e2__2490 = exp__2466[2];
-return B2445(e2__2490, env__2467, function B2522 (le2__2491, env__2492)
-{return k__2468([m__2488, e1__2489, le2__2491], env__2492)})}
-else {var B2493 = B2457(B2469, "%begin"), B2512;
-if ($T(B2493))
-B2512 = B2493
-else {var B2494 = B2457(B2469, "%if");
-if ($T(B2494))
-B2512 = B2494
-else B2512 = B2457(B2469, "%while")};
-if ($T(B2512))
-{var m__2495 = exp__2466[0], eT__2496 = $SL.call(exp__2466, 1);
-return B2458(eT__2496, env__2467, function B2523 (leT__2497, env__2498)
-{return k__2468(B2459([m__2495], leT__2497), env__2498)})}
-else if ($T(B2457(B2469, "define")))
-{var ____2499 = exp__2466[0], var__2500 = exp__2466[1], value__2501 = exp__2466[2], exportQ__2502 = exp__2466[3], name__2503 = B2463(var__2500), object__2508 = B2461(env__2467, "defined?"), property__2509 = name__2503, B2513 = $HP.call(object__2508,property__2509);
-if ($T(B2513))
-return k__2468([B2515, var__2500, value__2501], env__2467)
-else {B2462(env__2467, "defined?", name__2503, true);
-return [B2516, [B2517, var__2500], k__2468([B2515, var__2500, value__2501], env__2467)]}}
-else return B2464(exp__2466, env__2467, k__2468)}}}
-else return k__2468(exp__2466, env__2467)}, false)}
-{var B2524 = B2441["empty?"];
-B2458 = B2444("lift_defineT", function B2543 (expT__2525, env__2526, k__2527)
-{var sequence__2538 = expT__2525, B2539 = sequence__2538, B2540 = ((B2539 || false).length || 0), B2541 = 0, B2542 = (B2540 === B2541);
-if ($T(B2542))
-return k__2527([], env__2526)
-else return B2464(expT__2525, env__2526, k__2527)}, false)}
-{var B2544 = B2441.rest;
-B2464 = B2444("lift_defineTT", function B2560 (exp__2545, env__2546, k__2547)
-{var sequence__2553 = exp__2545, B2556 = sequence__2553[0], B2559 = function B2561 (t__2548, env__2549)
-{var sequence__2555 = exp__2545, B2557 = sequence__2555.slice(1), B2558 = function B2562 (tT__2550, env__2551)
-{return k__2547(B2459([t__2548], tT__2550), env__2551)};
-return B2458(B2557, env__2549, B2558)};
-return B2445(B2556, env__2546, B2559)}, false)}
+var B2513 = require("ralph/core")
+var B2515 = require("ralph/compiler/utilities")
+{var B2516 = B2513["%make-function"], B2517, B2518 = B2513.identity, B2519 = B2516("lift_defines", function B2522 (exp__2520, env__2521)
+{return B2517(exp__2520, env__2521, B2518)}, false);
+exports["lift-defines"] = B2519}
+{var B2611 = $S("%bind"), B2612 = $S("%set"), B2613 = $S("%begin"), B2614 = $S("%define"), B2540 = B2515["expression?"], B2541 = B2513["=="], B2542, B2543 = B2513.concatenate, B2544 = B2513["has?"], B2545 = B2513.get, B2546 = B2513["get-setter"], B2547 = B2513["symbol-name"], B2548, B2549 = B2513.first;
+B2517 = B2516("lift_define", function B2615 (exp__2550, env__2551, k__2552)
+{if ($T(B2540(exp__2550)))
+{var sequence__2601 = exp__2550, B2606 = sequence__2601[0], B2553 = B2547(B2606);
+if ($T(B2541(B2553, "%bind")))
+{var ____2554 = exp__2550[0], B2555 = exp__2550[1], var__2556 = B2555[0], value__2557 = B2555[1], body__2558 = exp__2550[2];
+return B2517(value__2557, env__2551, function B2616 (lvalue__2559, env__2560)
+{return B2517(body__2558, env__2560, function B2617 (lbody__2561, env__2562)
+{return k__2552([B2611, [var__2556, lvalue__2559], lbody__2561], env__2562)})})}
+else if ($T(B2541(B2553, "%try")))
+{var m__2563 = exp__2550[0], e1__2564 = exp__2550[1], v__2565 = exp__2550[2], e2__2566 = exp__2550[3];
+return B2542([e1__2564, e2__2566], env__2551, function B2618 (leT__2567, env__2568)
+{var le1__2569 = leT__2567[0], le2__2570 = leT__2567[1];
+return k__2552([m__2563, le1__2569, v__2565, le2__2570], env__2568)})}
+else {var B2571 = B2541(B2553, "%method"), B2607;
+if ($T(B2571))
+B2607 = B2571
+else B2607 = B2541(B2553, "%set");
+if ($T(B2607))
+{var m__2572 = exp__2550[0], e1__2573 = exp__2550[1], e2__2574 = exp__2550[2];
+return B2517(e2__2574, env__2551, function B2619 (le2__2575, env__2576)
+{return k__2552([m__2572, e1__2573, le2__2575], env__2576)})}
+else {var B2577 = B2541(B2553, "%begin"), B2608;
+if ($T(B2577))
+B2608 = B2577
+else {var B2578 = B2541(B2553, "%if");
+if ($T(B2578))
+B2608 = B2578
+else {var B2579 = B2541(B2553, "%while");
+if ($T(B2579))
+B2608 = B2579
+else {var B2580 = B2541(B2553, "%array");
+if ($T(B2580))
+B2608 = B2580
+else {var B2581 = B2541(B2553, "%object");
+if ($T(B2581))
+B2608 = B2581
+else {var B2582 = B2541(B2553, "%get-property");
+if ($T(B2582))
+B2608 = B2582
+else {var B2583 = B2541(B2553, "%infix");
+if ($T(B2583))
+B2608 = B2583
+else {var B2584 = B2541(B2553, "%native");
+if ($T(B2584))
+B2608 = B2584
+else {var B2585 = B2541(B2553, "%native-name");
+if ($T(B2585))
+B2608 = B2585
+else {var B2586 = B2541(B2553, "%native-call");
+if ($T(B2586))
+B2608 = B2586
+else {var B2587 = B2541(B2553, "%plus");
+if ($T(B2587))
+B2608 = B2587
+else {var B2588 = B2541(B2553, "%minus");
+if ($T(B2588))
+B2608 = B2588
+else {var B2589 = B2541(B2553, "%times");
+if ($T(B2589))
+B2608 = B2589
+else B2608 = B2541(B2553, "%divide")}}}}}}}}}}}};
+if ($T(B2608))
+{var m__2590 = exp__2550[0], eT__2591 = $SL.call(exp__2550, 1);
+return B2542(eT__2591, env__2551, function B2620 (leT__2592, env__2593)
+{return k__2552(B2543([m__2590], leT__2592), env__2593)})}
+else {var B2594 = B2541(B2553, "%define"), B2609;
+if ($T(B2594))
+B2609 = B2594
+else B2609 = B2541(B2553, "%symbol");
+if ($T(B2609))
+return k__2552(exp__2550)
+else if ($T(B2541(B2553, "define")))
+{var ____2595 = exp__2550[0], var__2596 = exp__2550[1], value__2597 = exp__2550[2], exportQ__2598 = exp__2550[3], name__2599 = B2547(var__2596), object__2604 = B2545(env__2551, "defined?"), property__2605 = name__2599, B2610 = $HP.call(object__2604,property__2605);
+if ($T(B2610))
+return k__2552([B2612, var__2596, value__2597], env__2551)
+else {B2546(env__2551, "defined?", name__2599, true);
+return [B2613, [B2614, var__2596], k__2552([B2612, var__2596, value__2597], env__2551)]}}
+else return B2548(exp__2550, env__2551, k__2552)}}}}
+else return k__2552(exp__2550, env__2551)}, false)}
+{var B2621 = B2513["empty?"];
+B2542 = B2516("lift_defineT", function B2640 (expT__2622, env__2623, k__2624)
+{var sequence__2635 = expT__2622, B2636 = sequence__2635, B2637 = ((B2636 || false).length || 0), B2638 = 0, B2639 = (B2637 === B2638);
+if ($T(B2639))
+return k__2624([], env__2623)
+else return B2548(expT__2622, env__2623, k__2624)}, false)}
+{var B2641 = B2513.rest;
+B2548 = B2516("lift_defineTT", function B2657 (exp__2642, env__2643, k__2644)
+{var sequence__2650 = exp__2642, B2653 = sequence__2650[0], B2656 = function B2658 (t__2645, env__2646)
+{var sequence__2652 = exp__2642, B2654 = sequence__2652.slice(1), B2655 = function B2659 (tT__2647, env__2648)
+{return k__2644(B2543([t__2645], tT__2647), env__2648)};
+return B2542(B2654, env__2646, B2655)};
+return B2517(B2653, env__2643, B2656)}, false)}

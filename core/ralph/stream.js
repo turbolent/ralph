@@ -1,115 +1,115 @@
-var B1495 = require("ralph/core")
+var B1470 = require("ralph/core")
 false
-{var B1496 = B1495["%make-class"], B1497 = B1495["<object>"], B1498 = B1496(B1497, {});
-exports["<stream>"] = B1498}
-{var B1499 = B1495["%make-generic"], B1500 = B1499("stream_close");
-exports["stream-close"] = B1500}
-{var B1501 = B1499("stream_openQ");
-exports["stream-open?"] = B1501}
-{var B1502 = B1499("stream_at_endQ");
-exports["stream-at-end?"] = B1502}
-{var B1503 = B1499("stream_peek");
-exports["stream-peek"] = B1503}
-{var B1504 = B1499("stream_read");
-exports["stream-read"] = B1504}
-{var B1505 = B1499("stream_read_element");
-exports["stream-read-element"] = B1505}
-{var B1506 = B1499("stream_read_to_end");
-exports["stream-read-to-end"] = B1506}
-{var B1507 = B1499("stream_read_through");
-exports["stream-read-through"] = B1507}
-{var B1508 = B1499("stream_unread_element");
-exports["stream-unread-element"] = B1508}
-{var B1509 = B1499("stream_write");
-exports["stream-write"] = B1509}
-{var B1510 = B1499("stream_contents");
-exports["stream-contents"] = B1510}
-{var B1511 = B1499("stream_remaining_contents");
-exports["stream-remaining-contents"] = B1511}
-{var B1512 = B1496(B1498, {"string":function B1513 ()
+{var B1471 = B1470["%make-class"], B1472 = B1470["<object>"], B1473 = B1471(B1472, {});
+exports["<stream>"] = B1473}
+{var B1474 = B1470["%make-generic"], B1475 = B1474("stream_close");
+exports["stream-close"] = B1475}
+{var B1476 = B1474("stream_openQ");
+exports["stream-open?"] = B1476}
+{var B1477 = B1474("stream_at_endQ");
+exports["stream-at-end?"] = B1477}
+{var B1478 = B1474("stream_peek");
+exports["stream-peek"] = B1478}
+{var B1479 = B1474("stream_read");
+exports["stream-read"] = B1479}
+{var B1480 = B1474("stream_read_element");
+exports["stream-read-element"] = B1480}
+{var B1481 = B1474("stream_read_to_end");
+exports["stream-read-to-end"] = B1481}
+{var B1482 = B1474("stream_read_through");
+exports["stream-read-through"] = B1482}
+{var B1483 = B1474("stream_unread_element");
+exports["stream-unread-element"] = B1483}
+{var B1484 = B1474("stream_write");
+exports["stream-write"] = B1484}
+{var B1485 = B1474("stream_contents");
+exports["stream-contents"] = B1485}
+{var B1486 = B1474("stream_remaining_contents");
+exports["stream-remaining-contents"] = B1486}
+{var B1487 = B1471(B1473, {"string":function B1488 ()
 {return ""},
-index:function B1514 ()
+index:function B1489 ()
 {return 0},
-length:function B1515 ()
+length:function B1490 ()
 {return 0}});
-exports["<string-stream>"] = B1512}
-var B1516 = B1495["%make-method"], B1517 = B1495.apply, B1518 = B1495["%next-method"], B1519 = B1495["get-setter"], B1520 = B1495.size, B1521 = B1495.get, B1522 = B1516("initialize", function B1528 (stream__1523)
-{var rest__1524 = $SL.call(arguments, 1);
-B1517(B1518(B1528), stream__1523, rest__1524);
-var object__1526 = B1521(stream__1523, "string"), B1527 = ((object__1526 || false).length || 0);
-return B1519(stream__1523, "length", B1527)}, false, B1512, B1522)
-{var B1529 = B1495["=="];
-B1502 = B1516("stream_at_endQ", function B1531 (stream__1530)
-{return B1529(B1521(stream__1530, "index"), B1521(stream__1530, "length"))}, false, B1512, B1502);
-exports["stream-at-end?"] = B1502}
-{var B1532 = B1495.element;
-B1503 = B1516("stream_peek", function B1534 (stream__1533)
-{return B1532(B1521(stream__1533, "string"), B1521(stream__1533, "index"))}, false, B1512, B1503);
-exports["stream-peek"] = B1503}
-{var trueQ = B1495["true?"], B1535 = B1495.not;
-B1505 = B1516("stream_read_element", function B1541 (stream__1536)
-{var value__1539 = B1502(stream__1536), B1540 = !(trueQ(value__1539));
-if ($T(B1540))
-{var element__1537 = B1503(stream__1536);
-B1519(stream__1536, "index", (B1521(stream__1536, "index") + 1));
-return element__1537}}, false, B1512, B1505);
-exports["stream-read-element"] = B1505}
-{var trueQ = B1495["true?"], B1543 = B1495[">="], B1544 = B1495.concatenate, B1545 = B1495.inc;
-B1504 = B1516("stream_read", function B1558 (stream__1546, n__1547)
-{var result__1548 = "", i__1549 = 0;
+exports["<string-stream>"] = B1487}
+var B1491 = B1470["%make-method"], B1492 = B1470.apply, B1493 = B1470["%next-method"], B1494 = B1470.size, B1495 = B1470.get, B1496 = B1491("initialize", function B1502 (stream__1497)
+{var rest__1498 = $SL.call(arguments, 1);
+B1492(B1493(B1502), stream__1497, rest__1498);
+var object__1500 = B1495(stream__1497, "string"), B1501 = ((object__1500 || false).length || 0);
+return stream__1497.length = B1501}, false, B1487, B1496)
+{var B1503 = B1470["=="];
+B1477 = B1491("stream_at_endQ", function B1505 (stream__1504)
+{return B1503(B1495(stream__1504, "index"), B1495(stream__1504, "length"))}, false, B1487, B1477);
+exports["stream-at-end?"] = B1477}
+{var B1506 = B1470.element;
+B1478 = B1491("stream_peek", function B1508 (stream__1507)
+{return B1506(B1495(stream__1507, "string"), B1495(stream__1507, "index"))}, false, B1487, B1478);
+exports["stream-peek"] = B1478}
+{var trueQ = B1470["true?"], B1509 = B1470.not;
+B1480 = B1491("stream_read_element", function B1515 (stream__1510)
+{var value__1513 = B1477(stream__1510), B1514 = !(trueQ(value__1513));
+if ($T(B1514))
+{var element__1511 = B1478(stream__1510);
+stream__1510.index = (B1495(stream__1510, "index") + 1);
+return element__1511}}, false, B1487, B1480);
+exports["stream-read-element"] = B1480}
+{var trueQ = B1470["true?"], B1517 = B1470[">="], B1518 = B1470.concatenate, B1519 = B1470.inc;
+B1479 = B1491("stream_read", function B1532 (stream__1520, n__1521)
+{var result__1522 = "", i__1523 = 0;
 while ($T(true))
-{var B1550 = B1502(stream__1546), value__1553;
-if ($T(B1550))
-value__1553 = B1550
-else value__1553 = B1543(i__1549, n__1547);
-var B1557 = !(trueQ(value__1553));
-if ($T(B1557))
-{(function B1559 (i__1551)
-{return result__1548 = B1544(result__1548, B1505(stream__1546))})(i__1549);
-var number__1555 = i__1549, B1556 = (number__1555 + 1);
-i__1549 = B1556}
+{var B1524 = B1477(stream__1520), value__1527;
+if ($T(B1524))
+value__1527 = B1524
+else value__1527 = B1517(i__1523, n__1521);
+var B1531 = !(trueQ(value__1527));
+if ($T(B1531))
+{(function B1533 (i__1525)
+{return result__1522 = B1518(result__1522, B1480(stream__1520))})(i__1523);
+var number__1529 = i__1523, B1530 = (number__1529 + 1);
+i__1523 = B1530}
 else break};
-return result__1548}, false, B1512, B1504);
-exports["stream-read"] = B1504}
-{var trueQ = B1495["true?"];
-B1507 = B1516("stream_read_through", function B1568 (stream__1561, element__1562)
-{var foundQ__1563;
+return result__1522}, false, B1487, B1479);
+exports["stream-read"] = B1479}
+{var trueQ = B1470["true?"];
+B1482 = B1491("stream_read_through", function B1542 (stream__1535, element__1536)
+{var foundQ__1537;
 while ($T(true))
-{var B1564 = B1502(stream__1561), value__1566;
-if ($T(B1564))
-value__1566 = B1564
-else value__1566 = foundQ__1563;
-var B1567 = !(trueQ(value__1566));
-if ($T(B1567))
-foundQ__1563 = B1529(B1505(stream__1561), element__1562)
+{var B1538 = B1477(stream__1535), value__1540;
+if ($T(B1538))
+value__1540 = B1538
+else value__1540 = foundQ__1537;
+var B1541 = !(trueQ(value__1540));
+if ($T(B1541))
+foundQ__1537 = B1503(B1480(stream__1535), element__1536)
 else break};
-return false}, false, B1512, B1507);
-exports["stream-read-through"] = B1507}
-{var B1569 = B1495.max, B1570 = B1495.dec;
-B1508 = B1516("stream_unread_element", function B1576 (stream__1571)
-{var number__1573 = B1521(stream__1571, "index"), B1574 = (number__1573 - 1), B1575 = B1569(0, B1574);
-return B1519(stream__1571, "index", B1575)}, false, B1512, B1508);
-exports["stream-unread-element"] = B1508}
-{var B1587 = $K("start"), B1588 = $K("end"), B1578 = B1495["replace-subsequence"];
-B1509 = B1516("stream_write", function B1589 (stream__1579, string__1580)
-{var B1581 = stream__1579, index__1582 = B1581.index, object__1586 = string__1580, length__1583 = ((object__1586 || false).length || 0), end__1584 = (index__1582 + length__1583);
-B1519(stream__1579, "string", B1578(B1521(stream__1579, "string"), string__1580, B1587, index__1582, B1588, end__1584));
-B1519(stream__1579, "index", end__1584);
-B1519(stream__1579, "length", B1569(end__1584, B1521(stream__1579, "length")));
-return string__1580}, false, B1512, B1509);
-exports["stream-write"] = B1509}
-{B1510 = B1516("stream_contents", function B1591 (stream__1590)
-{return B1521(stream__1590, "string")}, false, B1512, B1510);
-exports["stream-contents"] = B1510}
-{var B1592 = B1495.slice;
-B1511 = B1516("stream_remaining_contents", function B1600 (stream__1593)
-{var array__1597 = B1521(stream__1593, "string"), start__1598 = B1521(stream__1593, "index"), end__1599 = undefined;
-return array__1597.slice(start__1598, end__1599)}, false, B1512, B1511);
-exports["stream-remaining-contents"] = B1511}
-{var B1601 = B1496(B1498, {file:false});
-exports["<file-stream>"] = B1601}
-{B1509 = B1516("stream_write", function B1604 (stream__1602, string__1603)
-{return stream__1602.file.write(string__1603)}, false, B1601, B1509);
-exports["stream-write"] = B1509}
-{var B1607 = $K("file"), B1605 = B1495.make, B1606 = B1605(B1601, B1607, process.stdout);
-exports["*standard-out*"] = B1606}
+return false}, false, B1487, B1482);
+exports["stream-read-through"] = B1482}
+{var B1543 = B1470.max, B1544 = B1470.dec;
+B1483 = B1491("stream_unread_element", function B1550 (stream__1545)
+{var number__1547 = B1495(stream__1545, "index"), B1548 = (number__1547 - 1), B1549 = B1543(0, B1548);
+return stream__1545.index = B1549}, false, B1487, B1483);
+exports["stream-unread-element"] = B1483}
+{var B1561 = $K("start"), B1562 = $K("end"), B1552 = B1470["replace-subsequence"];
+B1484 = B1491("stream_write", function B1563 (stream__1553, string__1554)
+{var B1555 = stream__1553, index__1556 = B1555.index, object__1560 = string__1554, length__1557 = ((object__1560 || false).length || 0), end__1558 = (index__1556 + length__1557);
+stream__1553["string"] = B1552(B1495(stream__1553, "string"), string__1554, B1561, index__1556, B1562, end__1558);
+stream__1553.index = end__1558;
+stream__1553.length = B1543(end__1558, B1495(stream__1553, "length"));
+return string__1554}, false, B1487, B1484);
+exports["stream-write"] = B1484}
+{B1485 = B1491("stream_contents", function B1565 (stream__1564)
+{return B1495(stream__1564, "string")}, false, B1487, B1485);
+exports["stream-contents"] = B1485}
+{var B1566 = B1470.slice;
+B1486 = B1491("stream_remaining_contents", function B1574 (stream__1567)
+{var array__1571 = B1495(stream__1567, "string"), start__1572 = B1495(stream__1567, "index"), end__1573 = undefined;
+return array__1571.slice(start__1572, end__1573)}, false, B1487, B1486);
+exports["stream-remaining-contents"] = B1486}
+{var B1575 = B1471(B1473, {file:false});
+exports["<file-stream>"] = B1575}
+{B1484 = B1491("stream_write", function B1578 (stream__1576, string__1577)
+{return stream__1576.file.write(string__1577)}, false, B1575, B1484);
+exports["stream-write"] = B1484}
+{var B1581 = $K("file"), B1579 = B1470.make, B1580 = B1579(B1575, B1581, process.stdout);
+exports["*standard-out*"] = B1580}

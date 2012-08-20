@@ -1,94 +1,94 @@
-var B3026 = require("ralph/core")
-var B3028 = require("ralph/compiler/utilities")
-var reduce = B3026.reduce, trueQ = B3026["true?"], B3029 = B3026["%make-function"], B3030 = B3026.reduce1, B3031 = B3026.concatenate, B3032 = B3026.map, B3033 = B3026["instance?"], B3034 = B3026["<array>"], B3035 = B3026.not, B3036 = B3026["empty?"], B3037 = B3026["=="], B3038 = B3026.first, B3039 = B3026.symbol, B3040 = B3026.rest, B3041, B3042 = B3029("flatten_begins", function B3084 (exps__3043)
-{var function__3074 = B3031, values__3075 = B3032(function B3085 (exp__3044)
-{var flattened__3045 = B3041(exp__3044), B3081;
-if ($T(B3033(flattened__3045, B3034)))
-{var sequence__3065 = flattened__3045, B3066 = sequence__3065, B3067 = ((B3066 || false).length || 0), B3068 = 0, value__3069 = (B3067 === B3068), B3078 = !(trueQ(value__3069));
-if ($T(B3078))
-{var sequence__3071 = flattened__3045, B3079 = sequence__3071[0], B3080 = B3039("%begin");
-B3081 = B3037(B3079, B3080)}
-else B3081 = false}
-else B3081 = false;
-if ($T(B3081))
-{var sequence__3073 = flattened__3045;
-return sequence__3073.slice(1)}
-else return [flattened__3045]}, exps__3043), B3076 = values__3075, B3082 = B3076[0], B3077 = values__3075, B3083 = B3077.slice(1);
-return reduce(function__3074, B3082, B3083)}, false)
-var reduce = B3026.reduce, trueQ = B3026["true?"], B3086 = B3028["var?"], B3087 = B3026["do"], B3088 = B3026["push-last"], B3089 = B3026.last, B3090 = B3026["second-setter"], B3091 = B3026.third, B3092 = B3026.second, B3093 = B3028["set?"], B3094 = B3029("flatten_varsN", function B3186 (exps__3095)
-{return reduce(function B3187 (result__3096, exp__3097)
-{var sequence__3115 = result__3096, B3116 = sequence__3115, B3117 = ((B3116 || false).length || 0), B3118 = 0, value__3119 = (B3117 === B3118), B3176 = !(trueQ(value__3119)), previous__3098;
-if ($T(B3176))
-{var array__3127 = result__3096, B3128 = array__3127, B3129 = ((B3128 || false).length || 0), B3177 = (B3129 - 1);
-previous__3098 = array__3127[B3177]}
-else previous__3098 = false;
-var previous_varQ__3099;
-if ($T(previous__3098))
-previous_varQ__3099 = B3086(previous__3098)
-else previous_varQ__3099 = false;
-var B3178;
-if ($T(previous_varQ__3099))
-B3178 = B3086(exp__3097)
-else B3178 = false;
-if ($T(B3178))
-{var B3180 = function B3188 (binding__3100)
-{var array__3139 = result__3096, B3140 = array__3139, B3141 = ((B3140 || false).length || 0), B3179 = (B3141 - 1), array__3142 = array__3139[B3179], value__3143 = binding__3100;
-array__3142.push(value__3143);
-return array__3142}, sequence__3145 = exp__3097, B3181 = sequence__3145.slice(1);
-B3087(B3180, B3181);
-return result__3096}
-else {var mergeQ__3101;
-if ($T(previous_varQ__3099))
-mergeQ__3101 = B3093(exp__3097)
-else mergeQ__3101 = false;
-var binding__3102;
-if ($T(mergeQ__3101))
-{var array__3160 = result__3096, B3161 = array__3160, B3162 = ((B3161 || false).length || 0), B3182 = (B3162 - 1), array__3163 = array__3160[B3182], B3164 = array__3163, B3165 = ((B3164 || false).length || 0), B3183 = (B3165 - 1);
-binding__3102 = array__3163[B3183]}
-else binding__3102 = false;
-var identifier__3103;
-if ($T(mergeQ__3101))
-{var sequence__3167 = exp__3097;
-identifier__3103 = sequence__3167[1]}
-else identifier__3103 = false;
-var sequence__3169 = binding__3102, B3184 = sequence__3169[0], B3185 = B3037(B3184, identifier__3103);
-if ($T(B3185))
-{var array__3174 = binding__3102, sequence__3173 = exp__3097, value__3175 = sequence__3173[2];
-array__3174[1] = value__3175;
-return result__3096}
-else return B3031(result__3096, [exp__3097])}}, [], exps__3095)}, false)
-{var B3271 = $S("%begin"), B3272 = $S("%var"), dec = B3026.dec, size = B3026.size, B3192 = B3026["last-setter"], B3193 = B3028["maybe-begin"], B3194 = B3026["third-setter"], B3195 = B3026["symbol-name"];
-B3041 = B3029("flatten_statementsN", function B3273 (exp__3196)
-{if ($T(B3033(exp__3196, B3034)))
-{var sequence__3206 = exp__3196, B3261 = sequence__3206[0], B3197 = B3195(B3261), B3198 = B3037(B3197, "%method"), B3262;
-if ($T(B3198))
-B3262 = B3198
-else {var B3199 = B3037(B3197, "%while");
-if ($T(B3199))
-B3262 = B3199
-else B3262 = B3037(B3197, "%set")};
-if ($T(B3262))
-{var array__3219 = exp__3196, array__3216 = exp__3196, B3217 = array__3216, B3218 = ((B3217 || false).length || 0), B3263 = (B3218 - 1), B3264 = array__3216[B3263], value__3220 = B3041(B3264);
-array__3219[dec(size(array__3219), 1)] = value__3220;
-return exp__3196}
-else if ($T(B3037(B3197, "%begin")))
-{var ____3200 = exp__3196[0], exps__3201 = $SL.call(exp__3196, 1);
-return B3193(B3094(B3042(exps__3201)))}
-else if ($T(B3037(B3197, "%bind")))
-{var ____3202 = exp__3196[0], binding__3203 = exp__3196[1], body__3204 = exp__3196[2];
-return B3041([B3271, [B3272, binding__3203], body__3204])}
-else if ($T(B3037(B3197, "%if")))
-{var array__3225 = exp__3196, sequence__3224 = exp__3196, B3265 = sequence__3224[2], value__3226 = B3041(B3265);
-array__3225[2] = value__3226;
-var array__3239 = exp__3196, array__3236 = exp__3196, B3237 = array__3236, B3238 = ((B3237 || false).length || 0), B3266 = (B3238 - 1), B3267 = array__3236[B3266], value__3240 = B3041(B3267);
-array__3239[dec(size(array__3239), 1)] = value__3240;
-return exp__3196}
-else if ($T(B3037(B3197, "%try")))
-{var array__3245 = exp__3196, sequence__3244 = exp__3196, B3268 = sequence__3244[1], value__3246 = B3041(B3268);
-array__3245[1] = value__3246;
-var array__3259 = exp__3196, array__3256 = exp__3196, B3257 = array__3256, B3258 = ((B3257 || false).length || 0), B3269 = (B3258 - 1), B3270 = array__3256[B3269], value__3260 = B3041(B3270);
-array__3259[dec(size(array__3259), 1)] = value__3260;
-return exp__3196}
-else return B3032(B3041, exp__3196)}
-else return exp__3196}, false);
-exports["flatten-statements!"] = B3041}
+var B3151 = require("ralph/core")
+var B3153 = require("ralph/compiler/utilities")
+var B3208 = $S("%begin"), reduce = B3151.reduce, trueQ = B3151["true?"], B3154 = B3151["%make-function"], B3155 = B3151.reduce1, B3156 = B3151.concatenate, B3157 = B3151.map, B3158 = B3151["instance?"], B3159 = B3151["<array>"], B3160 = B3151.not, B3161 = B3151["empty?"], B3162 = B3151["=="], B3163 = B3151.first, B3164 = B3151.rest, B3165, B3166 = B3154("flatten_begins", function B3209 (exps__3167)
+{var function__3198 = B3156, values__3199 = B3157(function B3210 (exp__3168)
+{var flattened__3169 = B3165(exp__3168), B3205;
+if ($T(B3158(flattened__3169, B3159)))
+{var sequence__3189 = flattened__3169, B3190 = sequence__3189, B3191 = ((B3190 || false).length || 0), B3192 = 0, value__3193 = (B3191 === B3192), B3202 = !(trueQ(value__3193));
+if ($T(B3202))
+{var sequence__3195 = flattened__3169, B3203 = sequence__3195[0], B3204 = B3208;
+B3205 = B3162(B3203, B3204)}
+else B3205 = false}
+else B3205 = false;
+if ($T(B3205))
+{var sequence__3197 = flattened__3169;
+return sequence__3197.slice(1)}
+else return [flattened__3169]}, exps__3167), B3200 = values__3199, B3206 = B3200[0], B3201 = values__3199, B3207 = B3201.slice(1);
+return reduce(function__3198, B3206, B3207)}, false)
+var reduce = B3151.reduce, trueQ = B3151["true?"], B3211 = B3153["var?"], B3212 = B3151["do"], B3213 = B3151["push-last"], B3214 = B3151.last, B3215 = B3151["second-setter"], B3216 = B3151.third, B3217 = B3151.second, B3218 = B3153["set?"], B3219 = B3154("flatten_varsN", function B3311 (exps__3220)
+{return reduce(function B3312 (result__3221, exp__3222)
+{var sequence__3240 = result__3221, B3241 = sequence__3240, B3242 = ((B3241 || false).length || 0), B3243 = 0, value__3244 = (B3242 === B3243), B3301 = !(trueQ(value__3244)), previous__3223;
+if ($T(B3301))
+{var array__3252 = result__3221, B3253 = array__3252, B3254 = ((B3253 || false).length || 0), B3302 = (B3254 - 1);
+previous__3223 = array__3252[B3302]}
+else previous__3223 = false;
+var previous_varQ__3224;
+if ($T(previous__3223))
+previous_varQ__3224 = B3211(previous__3223)
+else previous_varQ__3224 = false;
+var B3303;
+if ($T(previous_varQ__3224))
+B3303 = B3211(exp__3222)
+else B3303 = false;
+if ($T(B3303))
+{var B3305 = function B3313 (binding__3225)
+{var array__3264 = result__3221, B3265 = array__3264, B3266 = ((B3265 || false).length || 0), B3304 = (B3266 - 1), array__3267 = array__3264[B3304], value__3268 = binding__3225;
+array__3267.push(value__3268);
+return array__3267}, sequence__3270 = exp__3222, B3306 = sequence__3270.slice(1);
+B3212(B3305, B3306);
+return result__3221}
+else {var mergeQ__3226;
+if ($T(previous_varQ__3224))
+mergeQ__3226 = B3218(exp__3222)
+else mergeQ__3226 = false;
+var binding__3227;
+if ($T(mergeQ__3226))
+{var array__3285 = result__3221, B3286 = array__3285, B3287 = ((B3286 || false).length || 0), B3307 = (B3287 - 1), array__3288 = array__3285[B3307], B3289 = array__3288, B3290 = ((B3289 || false).length || 0), B3308 = (B3290 - 1);
+binding__3227 = array__3288[B3308]}
+else binding__3227 = false;
+var identifier__3228;
+if ($T(mergeQ__3226))
+{var sequence__3292 = exp__3222;
+identifier__3228 = sequence__3292[1]}
+else identifier__3228 = false;
+var sequence__3294 = binding__3227, B3309 = sequence__3294[0], B3310 = B3162(B3309, identifier__3228);
+if ($T(B3310))
+{var array__3299 = binding__3227, sequence__3298 = exp__3222, value__3300 = sequence__3298[2];
+array__3299[1] = value__3300;
+return result__3221}
+else return B3156(result__3221, [exp__3222])}}, [], exps__3220)}, false)
+{var B3396 = $S("%var"), dec = B3151.dec, size = B3151.size, B3317 = B3151["last-setter"], B3318 = B3153["maybe-begin"], B3319 = B3151["third-setter"], B3320 = B3151["symbol-name"];
+B3165 = B3154("flatten_statementsN", function B3397 (exp__3321)
+{if ($T(B3158(exp__3321, B3159)))
+{var sequence__3331 = exp__3321, B3386 = sequence__3331[0], B3322 = B3320(B3386), B3323 = B3162(B3322, "%method"), B3387;
+if ($T(B3323))
+B3387 = B3323
+else {var B3324 = B3162(B3322, "%while");
+if ($T(B3324))
+B3387 = B3324
+else B3387 = B3162(B3322, "%set")};
+if ($T(B3387))
+{var array__3344 = exp__3321, array__3341 = exp__3321, B3342 = array__3341, B3343 = ((B3342 || false).length || 0), B3388 = (B3343 - 1), B3389 = array__3341[B3388], value__3345 = B3165(B3389);
+array__3344[dec(size(array__3344), 1)] = value__3345;
+return exp__3321}
+else if ($T(B3162(B3322, "%begin")))
+{var ____3325 = exp__3321[0], exps__3326 = $SL.call(exp__3321, 1);
+return B3318(B3219(B3166(exps__3326)))}
+else if ($T(B3162(B3322, "%bind")))
+{var ____3327 = exp__3321[0], binding__3328 = exp__3321[1], body__3329 = exp__3321[2];
+return B3165([B3208, [B3396, binding__3328], body__3329])}
+else if ($T(B3162(B3322, "%if")))
+{var array__3350 = exp__3321, sequence__3349 = exp__3321, B3390 = sequence__3349[2], value__3351 = B3165(B3390);
+array__3350[2] = value__3351;
+var array__3364 = exp__3321, array__3361 = exp__3321, B3362 = array__3361, B3363 = ((B3362 || false).length || 0), B3391 = (B3363 - 1), B3392 = array__3361[B3391], value__3365 = B3165(B3392);
+array__3364[dec(size(array__3364), 1)] = value__3365;
+return exp__3321}
+else if ($T(B3162(B3322, "%try")))
+{var array__3370 = exp__3321, sequence__3369 = exp__3321, B3393 = sequence__3369[1], value__3371 = B3165(B3393);
+array__3370[1] = value__3371;
+var array__3384 = exp__3321, array__3381 = exp__3321, B3382 = array__3381, B3383 = ((B3382 || false).length || 0), B3394 = (B3383 - 1), B3395 = array__3381[B3394], value__3385 = B3165(B3395);
+array__3384[dec(size(array__3384), 1)] = value__3385;
+return exp__3321}
+else return B3157(B3165, exp__3321)}
+else return exp__3321}, false);
+exports["flatten-statements!"] = B3165}
