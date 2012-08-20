@@ -724,6 +724,11 @@
       `(%symbol ,name)
       `(%call symbol ,name)))
 
+(define-core-macro == (_ object1 object2 #rest objects)
+  (if (empty? opbjects)
+      `(binary== ,object1 ,object2)
+      (concatenate `(%call == ,object1 ,object2)
+                   objects)))
 
 
 ;;;; symbol macros

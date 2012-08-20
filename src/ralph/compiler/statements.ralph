@@ -49,7 +49,9 @@
                 `(%if %while %begin %bind %try))))
 
 (define-function add-explicit-true (exp)
-  `((%native "$T") ,exp))
+  (if (instance? exp <boolean>)
+      (true? exp)
+      `((%native "$T") ,exp)))
 
 (define-function transform-statements! (exp env)
   (if (instance? exp <array>)
