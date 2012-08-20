@@ -759,7 +759,8 @@
   (select form instance?
     ((<array>)
      (if (find-macro-definition form env)
-         (macroexpand-all (macroexpand form env) env)
+         (maybe-call
+          (macroexpand-all (macroexpand form env) env))
          (if-bind (expander (find-special-form form env))
            (apply expander env (rest form))
            (map (rcurry macroexpand-all env)
@@ -770,6 +771,12 @@
          form))
     (else: form)))
 
+(define-function maybe-call (exp)
+  (if (and (expression? exp <array>)
+           (== (first exp)
+               (symbol "%call")))
+      (rest exp)
+      exp))
 
 
 ;;;; define free variables
