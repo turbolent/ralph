@@ -353,11 +353,11 @@
 (reset-symbol-counter!)
 (check-equal "macroexpand-all: backqoute"
              `(%array
-               (%array (symbol "foo")
-                       (symbol "bar")
+               (%array (%symbol "foo")
+                       (%symbol "bar")
                        3)
                (concatenate
-                (%array (symbol "%array") 1 2)
+                (%array (%symbol "%array") 1 2)
                 (%array 3 4))
                (%plus 5 6))
              (bind ((stream (make <string-stream> string:
@@ -919,7 +919,7 @@
 (reset-symbol-counter!)
 (bind ((module (make-core-environment)))
   (check-equal "lift-symbols: simple"
-               `(%bind ($1 (symbol "a"))
+               `(%bind ($1 (%symbol "a"))
                   $1)
                (lift-symbols
                 (macroexpand-all
@@ -931,9 +931,9 @@
 (reset-symbol-counter!)
 (bind ((module (make-core-environment)))
   (check-equal "lift-symbols: multiple uses"
-               `(%bind ($1 (symbol "a"))
-                  (%bind ($2 (symbol "b"))
-                    (%bind ($3 (symbol "c"))
+               `(%bind ($1 (%symbol "a"))
+                  (%bind ($2 (%symbol "b"))
+                    (%bind ($3 (%symbol "c"))
                       (%bind (a $1)
                         (%bind (b $2)
                           (foo a $1 b $2 $3))))))
@@ -951,12 +951,12 @@
 (reset-symbol-counter!)
 (bind ((module (make-core-environment)))
   (check-equal "lift-symbols: bind"
-               `(%bind ($1 (symbol "a"))
+               `(%bind ($1 (%symbol "a"))
                   (%begin
                    $1
                    (%bind (symbol "a")
-                     (%bind (a $1)
-                       (foo a $1)))))
+                     (%bind (a (symbol "a"))
+                       (foo a (symbol "a"))))))
                (lift-symbols
                 (macroexpand-all
                  `(begin
@@ -970,7 +970,7 @@
 (reset-symbol-counter!)
 (bind ((module (make-core-environment)))
   (check-equal "lift-symbols: method"
-               `(%bind ($1 (symbol "a"))
+               `(%bind ($1 (%symbol "a"))
                   (%begin
                    23
                    (%method (x)
@@ -999,7 +999,7 @@
 (reset-symbol-counter!)
 (bind ((module (make-core-environment)))
   (check-equal "lift-symbols: set!"
-               `(%bind ($1 (symbol "b"))
+               `(%bind ($1 (%symbol "b"))
                   (symbol-setter "a" $1))
                (lift-symbols
                 (macroexpand-all
@@ -1011,9 +1011,9 @@
 (reset-symbol-counter!)
 (bind ((module (make-core-environment)))
   (check-equal "lift-symbols: begin, if, while"
-               `(%bind ($1 (symbol "a"))
-                  (%bind ($2 (symbol "b"))
-                    (%bind ($3 (symbol "c"))
+               `(%bind ($1 (%symbol "a"))
+                  (%bind ($2 (%symbol "b"))
+                    (%bind ($3 (%symbol "c"))
                       (%begin
                         (%if $1
                              (%while (bar $2)
@@ -1037,9 +1037,9 @@
 (bind ((module (make-core-environment)))
   (check-equal "flatten-statements!"
                `(%begin
-                 (%var ($1 (symbol "a"))
-                       ($2 (symbol "b"))
-                       ($3 (symbol "c")))
+                 (%var ($1 (%symbol "a"))
+                       ($2 (%symbol "b"))
+                       ($3 (%symbol "c")))
                  (%if $1
                       (%while (bar $2)
                         (%begin $1 23 $3))
