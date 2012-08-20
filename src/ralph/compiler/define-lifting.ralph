@@ -38,13 +38,19 @@
             (method (le2 env)
               (k `(,m ,e1 ,le2)
                  env)))))
-        (("%begin" "%if" "%while")
+        (("%begin" "%if" "%while"  "%array"
+          "%object" "%get-property" "%infix"
+          "%native" "%native-name" "%native-call"
+          "%plus" "%minus" "%times" "%divide")
          (destructuring-bind (m #rest e*) exp
            (lift-define*
             e* env
             (method (le* env)
               (k (concatenate [m] le*)
                  env)))))
+        ;; leave as-is
+        (("%define" "%symbol")
+         (k exp))
         (("define")
          (destructuring-bind (_ var value export?) exp
            (bind ((name (symbol-name var)))

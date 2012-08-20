@@ -942,7 +942,7 @@
 
 
 
-;;; inlining
+;;;; inlining
 
 (define-function inline (form env)
   (if (and (instance? form <array>)
@@ -1070,7 +1070,10 @@
             (method (le2 env)
               (k `(,m ,e1 ,le2)
                  env)))))
-        (("%begin" "%if" "%while")
+        (("%begin" "%if" "%while" "%array"
+          "%object" "%get-property" "%infix"
+          "%native" "%native-name" "%native-call"
+          "%plus" "%minus" "%times" "%divide")
          (destructuring-bind (m #rest e*) exp
            (lift-symbol*
             e* env

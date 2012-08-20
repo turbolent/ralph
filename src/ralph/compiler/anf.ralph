@@ -80,10 +80,23 @@
            (normalize-value
             value (method (avalue)
                    (k `(%set ,var ,avalue))))))
+        ;; leave as-is
+        (("%define" "%symbol")
+         (k exp))
         (else:
-         (if (contains-statements? exp)
-             (normalize-all exp k)
-             (k (map normalize-term exp)))))
+         (cond
+          ((contains-statements? exp)
+           (normalize-all exp k))
+          ((and (expression? exp)
+                (member? (first exp)
+                         `(%array %object %get-property %infix
+                           %native %native-call %native-name
+                           %plus %minus %times %divide)))
+           (k (concatenate [(first exp)]
+                           (map normalize-term
+                                (rest exp)))))
+          (else:
+           (k (map normalize-term exp))))))
       (k exp)))
 
 (define-function normalize-value (exp k)
