@@ -556,7 +556,7 @@
            [])))))
 
 (define-function make-function-definer
-    (macro-name definer-name #key type/existing? record?)
+    (macro-name definer-name #key name? type/existing? record?)
   (method (env identifier arguments #rest body)
     (destructuring-bind (setter? identifier)
         (if (setter-identifier? identifier)
@@ -575,7 +575,10 @@
       (bind ((simplified-arguments (simplify-arguments arguments))
              (method-definition
               (macroexpand-all
-               (named-method identifier simplified-arguments
+               (named-method (if name?
+                                 identifier
+                                 (generate-symbol))
+                             simplified-arguments
                              (maybe-begin body))
                env)))
         (when record?
@@ -599,8 +602,8 @@
                  [])))))))
 
 (for-each ((arguments [["define-function" "%make-function"
-                        type/existing?: #f
-                        record?: #t]
+                        record?: #t
+                        name?: #t]
                        ["define-method" "%make-method"
                         type/existing?: #t]]))
           ()
