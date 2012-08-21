@@ -1,0 +1,69 @@
+(define-module ralph/compiler/free-variables
+  import: (ralph/compiler/utilities)
+  export: (find-free-variables))
+
+(define-function find-free-variables (exp)
+  (cond
+   ((and (instance? exp <array>)
+         (not (empty? exp)))
+    (bind ((head (first exp))
+           (name (and (instance? head <symbol>)
+                      (symbol-name head))))
+      (select name ==
+        (("%method")
+         (destructuring-bind (_ name arguments body) exp
+           (set-subtract!
+            (find-free-variables body)
+            (as-set arguments))))
+        (("%bind")
+         (destructuring-bind (_ (var value) body) exp
+           ;; TODO: make binding available inside value?
+           ;; (if so, also change alpha-convert,
+           ;;  %bind special form)
+           (set-union!
+            (set-subtract!
+             (find-free-variables body)
+             (as-set [var]))
+            (find-free-variables value))))
+        (("%begin")
+         ;; %define will only appear in %begin,
+         ;; see previous pass lift-defines
+         (bind ((definitions []))
+           (set-subtract!
+            (as-set
+             (reduce (method (result e)
+                       (concatenate
+                        result
+                        (if (and (expression? e)
+                                 (== (first e)
+                                     (symbol "%define")))
+                            (begin
+                             (push-last definitions (second e))
+                             [])
+                            (find-free-variables e))))
+                     [] (rest exp)))
+            (as-set definitions))))
+        (("%try")
+         (destructuring-bind (_ e1 v e2) exp
+           (set-subtract!
+            (set-union!
+             (as-set (find-free-variables e1))
+             (as-set (find-free-variables e2)))
+            (as-set [v]))))
+        (("%set" "%if" "%while"
+          "%array" "%object" "%infix"
+          "%get-property" "%native-call" "%return"
+          "%plus" "%minus" "%times" "%divide")
+         (as-set (reduce concatenate []
+                         (map find-free-variables
+                              (rest exp)))))
+        (("%native" "%native-name" "%define" "%symbol")
+         (as-set []))
+        (else:
+         (reduce1 set-union!
+                  (map find-free-variables
+                       exp))))))
+   ((instance? exp <symbol>)
+    (as-set [exp]))
+   (else:
+    (as-set []))))

@@ -3,7 +3,8 @@
            setter-identifier? identifier-name
            reset-symbol-counter! generate-symbol
            maybe-begin get-module-name/name
-           var? set? method?))
+           var? set? method? *defined*
+           environment-definitions))
 
 ;;;; utilities
 
@@ -72,3 +73,11 @@
 (define-function get-module-name/name (identifier)
   [(or (get identifier "module") "")
    (symbol-name identifier)])
+
+(define *defined*
+  `(%all-arguments %this-method))
+
+(define-function environment-definitions (env)
+  (as-set (map symbol
+               (object-properties
+                (get env "defined?")))))
