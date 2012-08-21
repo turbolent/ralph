@@ -1,0 +1,97 @@
+(define-module ralph/compiler/tco
+  import: (ralph/compiler/utilities
+           ralph/compiler/free-variables)
+  export: (optimize-tail-calls!))
+
+(define-function optimize-tail-calls! (exp env)
+  (if (instance? exp <array>)
+      (select (symbol-name (first exp)) ==
+        (("%method")
+         (bind ((last-method (get env "current-method")))
+           (set! (get env "current-method") exp)
+           (bind ((result (optimize-tail-calls! (last exp) env))
+                  (name (symbol-name (second exp)))
+                  (wrapper (or (get env "tco-wrappers" name)
+                               identity)))
+             (set! (last exp)
+                   (wrapper result)))
+           (set! (get env "current-method")
+                 last-method)
+           exp))
+        (("%begin" "%bind" "%while" "%set")
+         (set! (last exp)
+               (optimize-tail-calls! (last exp) env))
+         exp)
+        (("%if")
+         (destructuring-bind (_ test then else) exp
+           `(%if ,test
+                 ,(optimize-tail-calls! then env)
+                 ,(optimize-tail-calls! else env))))
+        (("%try")
+         (set! (second exp)
+               (optimize-tail-calls! (second exp) exp))
+         (set! (last exp)
+               (optimize-tail-calls! (last exp) env))
+         exp)
+        (("%return")
+         (bind-properties (current-method) env
+           (destructuring-bind (_ method-name arguments body) current-method
+             (bind ((value (second exp))
+                    (name (symbol-name method-name)))
+               (if (and (expression? value)
+                        (== (first value)
+                            method-name))
+                   ;; tail-recursive call
+                   (bind ((label (or (get env "tco-labels" name)
+                                     (set! (get env "tco-labels" name)
+                                           (generate-symbol))))
+                          (new-values (rest value)))
+                     (unless (get env "tco-wrappers" name)
+                       (set! (get env "tco-wrappers" name)
+                             (method (exp)
+                               `(%native ,label ":while(true)"
+                                         (%begin
+                                          ,exp
+                                          (%native "break"))))))
+                     (bind ((assignments []))
+                       (dotimes (i (size arguments))
+                         (push-last assignments
+                                    `(%set ,(element arguments i)
+                                           (%get-property %all-arguments ,i))))
+                       (concatenate
+                        `(%begin
+                          (%set %all-arguments
+                                ;; build closures for methods
+                                ,(close-free-variables
+                                  (concatenate `(%array)
+                                               new-values)
+                                  env)))
+                        assignments
+                        [`(%native "continue " ,label)])))
+                   ;; other call
+                   (begin
+                    (set! (last exp)
+                          (optimize-tail-calls! (last exp) env))
+                    exp))))))
+        (else:
+         (map (rcurry optimize-tail-calls! env) exp)))
+      exp))
+
+(define-function close-free-variables (exp env)
+  (if (instance? exp <array>)
+      (if (and (expression? exp)
+               (== (first exp)
+                   (symbol "%method")))
+          ;; build closure for free variables
+          ;; TODO: env.definition-names (?!)
+          (bind ((variables (reduce set-subtract!
+                                    (find-free-variables exp)
+                                    [(environment-definitions env)
+                                     *defined*])))
+            (concatenate
+             `((%method ,(generate-symbol) ,variables
+                 (%return ,exp)))
+             variables))
+          ;; close all items
+          (map (rcurry close-free-variables env) exp))
+      exp))

@@ -8,6 +8,7 @@
            ralph/compiler/free-variables
            ralph/compiler/anf
            ralph/compiler/statements
+           ralph/compiler/tco
            ralph/compiler/flattening
            ralph/compiler/javascript)
   compile-time-import: (ralph/compiler-macros)
@@ -1080,6 +1081,7 @@
   (read (make <string-stream>
               string: (concatenate "(" source "\n)"))))
 
+
 (define-function compile-expression (exp env)
   (reduce (method (result name/fn)
             (destructuring-bind (name fn) name/fn
@@ -1107,6 +1109,9 @@
             (rcurry lift-symbols env)]
            ["statements"
             (rcurry transform-statements! env)]
+           ["TCO"
+            (method (exp)
+              (optimize-tail-calls! exp env))]
            ["flattened"
             flatten-statements!]
            ["compiled"
