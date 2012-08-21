@@ -532,7 +532,7 @@
 
 
 (reset-symbol-counter!)
-(check-equal "ANF: begin"
+(check-equal "ANF: begin 1"
              `(%begin
                1
                (%begin
@@ -590,7 +590,7 @@
                *environment*)))
 
 (reset-symbol-counter!)
-(check-equal "ANF: begin"
+(check-equal "ANF: begin 2"
              `(%begin
                1
                (%begin
