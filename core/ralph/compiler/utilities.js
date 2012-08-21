@@ -1,166 +1,120 @@
-var B2375 = require("ralph/core")
+var B433 = require("ralph/core")
 false
 {
-var trueQ = B2375["true?"],
-B2376 = B2375["%make-function"],
-B2377 = B2375["instance?"],
-B2378 = B2375["<array>"],
-B2379 = B2375.not,
-B2380 = B2375["empty?"],
-B2381 = B2375.first,
-B2382 = B2375["<symbol>"],
-B2383 = B2376("expressionQ", function expressionQ__2384 (form__2385)
-{if ($T(B2377(form__2385, B2378)))
+var B434 = B433["%make-function"],
+B435 = B433["instance?"],
+B436 = B433["<array>"],
+B437 = B433.not,
+B438 = B433["empty?"],
+B439 = B433.first,
+B440 = B433["<symbol>"],
+B441 = B434("expressionQ", function expressionQ__442 (form__443)
+{if ($T(B435(form__443, B436)))
+if ($T(B437(B438(form__443))))
+return B435(B439(form__443), B440)}, false);
+exports["expression?"] = B441}
 {
-var sequence__2397 = form__2385,
-B2398 = sequence__2397,
-B2399 = ((B2398 || false).length || 0),
-B2400 = 0,
-value__2401 = (B2399 === B2400),
-B2404 = !(trueQ(value__2401));
-if ($T(B2404))
+var B448 = $S("%var"),
+B444 = B433["binary=="],
+B445 = B434("varQ", function varQ__446 (exp__447)
+{if ($T(B441(exp__447)))
+return B444(B439(exp__447), B448)}, false);
+exports["var?"] = B445}
 {
-var sequence__2403 = form__2385,
-B2405 = sequence__2403[0];
-return B2377(B2405, B2382)}}}, false);
-exports["expression?"] = B2383}
+var B452 = $S("%set"),
+B449 = B434("setQ", function setQ__450 (exp__451)
+{if ($T(B441(exp__451)))
+return B444(B439(exp__451), B452)}, false);
+exports["set?"] = B449}
 {
-var B2416 = $S("%var"),
-B2406 = B2375["binary=="],
-B2407 = B2376("varQ", function varQ__2408 (exp__2409)
-{if ($T(B2383(exp__2409)))
+var B456 = $S("%method"),
+B453 = B434("methodQ", function methodQ__454 (exp__455)
+{if ($T(B441(exp__455)))
+return B444(B439(exp__455), B456)}, false);
+exports["method?"] = B453}
 {
-var sequence__2413 = exp__2409,
-object1__2414 = sequence__2413[0],
-object2__2415 = B2416;
-return (object1__2414 === object2__2415)}}, false);
-exports["var?"] = B2407}
+var B457 = B433.symbol,
+B458 = B433.concatenate,
+B459 = B433["symbol-name"],
+B460 = B434("transform_setter_identifier", function transform_setter_identifier__461 (identifier__462)
+{return B457(B458(B459(identifier__462), "-setter"))}, false);
+exports["transform-setter-identifier"] = B460}
 {
-var B2426 = $S("%set"),
-B2417 = B2376("setQ", function setQ__2418 (exp__2419)
-{if ($T(B2383(exp__2419)))
+var B463 = B433.size,
+B464 = B433["every?"],
+B465 = B433.rcurry,
+B466 = B434("setter_identifierQ", function setter_identifierQ__467 (form__468)
+{if ($T(B435(form__468, B436)))
+if ($T(B444(B463(form__468), 2)))
+if ($T(B464(B465(B435, B440), form__468)))
+return B444(B459(B439(form__468)), "setter")}, false);
+exports["setter-identifier?"] = B466}
 {
-var sequence__2423 = exp__2419,
-object1__2424 = sequence__2423[0],
-object2__2425 = B2426;
-return (object1__2424 === object2__2425)}}, false);
-exports["set?"] = B2417}
+var B469 = B433.second,
+B470 = B434("identifier_name", function identifier_name__471 (identifier__472)
 {
-var B2436 = $S("%method"),
-B2427 = B2376("methodQ", function methodQ__2428 (exp__2429)
-{if ($T(B2383(exp__2429)))
-{
-var sequence__2433 = exp__2429,
-object1__2434 = sequence__2433[0],
-object2__2435 = B2436;
-return (object1__2434 === object2__2435)}}, false);
-exports["method?"] = B2427}
-{
-var B2437 = B2375.symbol,
-B2438 = B2375.concatenate,
-B2439 = B2375["symbol-name"],
-B2440 = B2376("transform_setter_identifier", function transform_setter_identifier__2441 (identifier__2442)
-{return B2437(B2438(B2439(identifier__2442), "-setter"))}, false);
-exports["transform-setter-identifier"] = B2440}
-{
-var B2443 = B2375.size,
-B2444 = B2375["every?"],
-B2445 = B2375.rcurry,
-B2446 = B2376("setter_identifierQ", function setter_identifierQ__2447 (form__2448)
-{if ($T(B2377(form__2448, B2378)))
-{
-var object__2452 = form__2448,
-object1__2453 = ((object__2452 || false).length || 0),
-object2__2454 = 2,
-B2461 = (object1__2453 === object2__2454);
-if ($T(B2461))
-if ($T(B2444(B2445(B2377, B2382), form__2448)))
-{
-var sequence__2458 = form__2448,
-B2462 = sequence__2458[0],
-object1__2459 = B2439(B2462),
-object2__2460 = "setter";
-return (object1__2459 === object2__2460)}}}, false);
-exports["setter-identifier?"] = B2446}
-{
-var B2463 = B2375.second,
-B2464 = B2376("identifier_name", function identifier_name__2465 (identifier__2466)
-{
-var B2470;
-if ($T(B2446(identifier__2466)))
-{
-var sequence__2468 = identifier__2466,
-B2469 = sequence__2468[1];
-B2470 = B2440(B2469)}
+var B473;
+if ($T(B466(identifier__472)))
+B473 = B460(B469(identifier__472))
 else
-B2470 = identifier__2466;
-return B2439(B2470)}, false);
-exports["identifier-name"] = B2464}
-var B2471 = 0
+B473 = identifier__472;
+return B459(B473)}, false);
+exports["identifier-name"] = B470}
+var B474 = 0
 {
-var B2472 = B2376("reset_symbol_counterN", function reset_symbol_counterN__2473 ()
-{return B2471 = 0}, false);
-exports["reset-symbol-counter!"] = B2472}
+var B475 = B434("reset_symbol_counterN", function reset_symbol_counterN__476 ()
+{return B474 = 0}, false);
+exports["reset-symbol-counter!"] = B475}
 {
-var B2474 = B2375["as-string"],
-B2475 = B2376("generate_symbol", function generate_symbol__2476 (prefix__2477)
+var B477 = B433["as-string"],
+B478 = B434("generate_symbol", function generate_symbol__479 (prefix__480)
 {
-var B2480;
-if ($T(prefix__2477))
-B2480 = B2438(prefix__2477, "_")
+var B483;
+if ($T(prefix__480))
+B483 = B458(prefix__480, "_")
 else
-B2480 = "$";
-var B2481 = B2474(B2471 = (B2471 + 1)),
-name__2478 = B2438(B2480, B2481),
-result__2479 = B2437(name__2478);
-result__2479["generated?"] = true;
-return result__2479}, false);
-exports["generate-symbol"] = B2475}
+B483 = "$";
+var B484 = B477(B474 = (B474 + 1)),
+name__481 = B458(B483, B484),
+result__482 = B457(name__481);
+result__482["generated?"] = true;
+return result__482}, false);
+exports["generate-symbol"] = B478}
 {
-var B2501 = $S("%begin"),
-B2483 = B2376("maybe_begin", function maybe_begin__2484 (expressions__2485)
+var B490 = $S("%begin"),
+B486 = B434("maybe_begin", function maybe_begin__487 (expressions__488)
 {
-var object__2488 = expressions__2485,
-B2486 = ((object__2488 || false).length || 0),
-object1__2491 = B2486,
-object2__2492 = 0,
-B2499 = (object1__2491 === object2__2492);
-if ($T(B2499))
+var B489 = B463(expressions__488);
+if ($T(B444(B489, 0)))
 return false
 else
-{
-var object1__2495 = B2486,
-object2__2496 = 1,
-B2500 = (object1__2495 === object2__2496);
-if ($T(B2500))
-{
-var sequence__2498 = expressions__2485;
-return sequence__2498[0]}
+if ($T(B444(B489, 1)))
+return B439(expressions__488)
 else
-return B2438([B2501], expressions__2485)}}, false);
-exports["maybe-begin"] = B2483}
+return B458([B490], expressions__488)}, false);
+exports["maybe-begin"] = B486}
 {
-var B2503 = B2375.get,
-B2504 = B2376("get_module_nameSname", function get_module_nameSname__2505 (identifier__2506)
+var B492 = B433.get,
+B493 = B434("get_module_nameSname", function get_module_nameSname__494 (identifier__495)
 {
-var B2507 = B2503(identifier__2506, "module"),
-B2508;
-if ($T(B2507))
-B2508 = B2507
+var B496 = B492(identifier__495, "module"),
+B497;
+if ($T(B496))
+B497 = B496
 else
-B2508 = "";
-var B2509 = B2439(identifier__2506);
-return [B2508, B2509]}, false);
-exports["get-module-name/name"] = B2504}
+B497 = "";
+var B498 = B459(identifier__495);
+return [B497, B498]}, false);
+exports["get-module-name/name"] = B493}
 {
-var B2511 = $S("%all-arguments"),
-B2512 = $S("%this-method"),
-B2510 = [B2511, B2512];
-exports["*defined*"] = B2510}
+var B500 = $S("%all-arguments"),
+B501 = $S("%this-method"),
+B499 = [B500, B501];
+exports["*defined*"] = B499}
 {
-var B2513 = B2375["as-set"],
-B2514 = B2375.map,
-B2515 = B2375["object-properties"],
-B2516 = B2376("environment_definitions", function environment_definitions__2517 (env__2518)
-{return B2513(B2514(B2437, B2515(B2503(env__2518, "defined?"))))}, false);
-exports["environment-definitions"] = B2516}
+var B502 = B433["as-set"],
+B503 = B433.map,
+B504 = B433["object-properties"],
+B505 = B434("environment_definitions", function environment_definitions__506 (env__507)
+{return B502(B503(B457, B504(B492(env__507, "defined?"))))}, false);
+exports["environment-definitions"] = B505}

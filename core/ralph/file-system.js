@@ -1,170 +1,139 @@
-var B2244 = require("ralph/core")
+var B351 = require("ralph/core")
 {
-var B2247,
-B2248;
-B2247 = require("path");
-B2248 = require("fs")}
+var B354,
+B355;
+B354 = require("path");
+B355 = require("fs")}
 {
-var B2249 = B2247.resolve,
-B2250 = B2249;
-exports["resolve-path"] = B2250}
+var B356 = B354.resolve,
+B357 = B356;
+exports["resolve-path"] = B357}
 {
-var B2251 = B2248.existsSync,
-B2252 = B2251;
-exports["file-exists?"] = B2252}
+var B358 = B355.existsSync,
+B359 = B358;
+exports["file-exists?"] = B359}
 {
-var B2253 = B2244["%make-function"],
-B2254 = B2244.concatenate,
-B2255 = B2247.dirname,
-B2256 = B2244["binary=="],
-B2257 = B2244.last,
-B2258 = B2253("path_directory", function path_directory__2259 (path__2260)
+var B360 = B351["%make-function"],
+B361 = B351.concatenate,
+B362 = B354.dirname,
+B363 = B351["binary=="],
+B364 = B351.last,
+B365 = B360("path_directory", function path_directory__366 (path__367)
 {
-var array__2270 = path__2260,
-B2271 = array__2270,
-B2272 = ((B2271 || false).length || 0),
-B2275 = (B2272 - 1),
-object1__2273 = array__2270[B2275],
-object2__2274 = "/",
-B2276 = (object1__2273 === object2__2274),
-B2277;
-if ($T(B2276))
-B2277 = B2254(path__2260, "/")
+var B368;
+if ($T(B363(B364(path__367), "/")))
+B368 = B361(path__367, "/")
 else
-B2277 = path__2260;
-var B2278 = B2255(B2277);
-return B2254(B2278, "/")}, false);
-exports["path-directory"] = B2258}
-var B2279 = B2244["but-last"],
-B2280 = B2253("strip_trailing_slashes", function strip_trailing_slashes__2281 (path__2282)
+B368 = path__367;
+var B369 = B362(B368);
+return B361(B369, "/")}, false);
+exports["path-directory"] = B365}
+var B370 = B351["but-last"],
+B371 = B360("strip_trailing_slashes", function strip_trailing_slashes__372 (path__373)
 {
+while ($T(B363(B364(path__373), "/")))
+path__373 = B370(path__373);
+return path__373}, false)
+{
+var B374 = B360("path_parent_directory", function path_parent_directory__375 (path__376)
+{
+var pathT__377 = B371(B365(path__376));
+return B361(B362(pathT__377), "/")}, false);
+exports["path-parent-directory"] = B374}
+{
+var ensure_directories_exist__381,
+B378 = B351.not,
+B379 = B355.mkdirSync,
+B380 = B360("ensure_directories_exist", function ensure_directories_exist__381 (path__382)
+{
+var directory__383 = B365(path__382),
+parent__384 = B374(directory__383);
+if ($T(B378(B359(parent__384))))
+ensure_directories_exist__381(parent__384);
+if ($T(B378(B359(directory__383))))
+B379(directory__383);
+return path__382}, false);
+exports["ensure-directories-exist"] = B380}
+var B385 = [["modification-date", "mtime"], ["creation-date", "ctime"], ["access-date", "atime"]]
+{
+var B392 = B351["any?"],
+B393 = B351["empty?"],
+B394 = B351.get,
+B395 = B351.rest,
+B396 = B351.first,
+B397 = B351["make-object"],
+B398 = B355.statSync,
+B399 = B360("file_properties", function file_properties__400 (path__401)
+{if ($T(B359(path__401)))
+{
+var stats__402 = B398(path__401),
+result__403 = B397(),
+B404 = B385,
+B405,
+B406,
+B407 = [B404];
 while (true)
 {
-var array__2292 = path__2282,
-B2293 = array__2292,
-B2294 = ((B2293 || false).length || 0),
-B2302 = (B2294 - 1),
-object1__2295 = array__2292[B2302],
-object2__2296 = "/",
-B2303 = (object1__2295 === object2__2296);
-if ($T(B2303))
+var B408 = B405,
+B414;
+if ($T(B408))
+B414 = B408
+else
+B414 = B392(B393, B407);
+var B415 = B378(B414);
+if ($T(B415))
 {
-var array__2299 = path__2282,
-n__2300 = undefined,
-B2301 = array__2299.slice(0, ((n__2300 || 1) * -1));
-path__2282 = B2301}
+var mapping__409 = B396(B404);
+(function B410 (mapping__411)
+{
+var setter__412 = mapping__411[0],
+getter__413 = mapping__411[1];
+return result__403[setter__412] = B394(stats__402, getter__413)})(mapping__409);
+B404 = B395(B404);
+B407 = [B404]}
 else
 break};
-return path__2282}, false)
+B406;
+return result__403}}, false);
+exports["file-properties"] = B399}
 {
-var B2304 = B2253("path_parent_directory", function path_parent_directory__2305 (path__2306)
+var B416 = B355.lstatSync,
+B417 = B360("file_type", function file_type__418 (path__419)
+{if ($T(B359(path__419)))
 {
-var pathT__2307 = B2280(B2258(path__2306));
-return B2254(B2255(pathT__2307), "/")}, false);
-exports["path-parent-directory"] = B2304}
-{
-var trueQ = B2244["true?"],
-ensure_directories_exist__2311,
-B2308 = B2244.not,
-B2309 = B2248.mkdirSync,
-B2310 = B2253("ensure_directories_exist", function ensure_directories_exist__2311 (path__2312)
-{
-var directory__2313 = B2258(path__2312),
-parent__2314 = B2304(directory__2313),
-value__2316 = B2252(parent__2314),
-B2319 = !(trueQ(value__2316));
-if ($T(B2319))
-ensure_directories_exist__2311(parent__2314);
-var value__2318 = B2252(directory__2313),
-B2320 = !(trueQ(value__2318));
-if ($T(B2320))
-B2309(directory__2313);
-return path__2312}, false);
-exports["ensure-directories-exist"] = B2310}
-var B2321 = [["modification-date", "mtime"], ["creation-date", "ctime"], ["access-date", "atime"]]
-{
-var trueQ = B2244["true?"],
-B2328 = B2244["any?"],
-B2329 = B2244["empty?"],
-B2330 = B2244.get,
-B2331 = B2244.rest,
-B2332 = B2244.first,
-B2333 = B2244["make-object"],
-B2334 = B2248.statSync,
-B2335 = B2253("file_properties", function file_properties__2336 (path__2337)
-{if ($T(B2252(path__2337)))
-{
-var stats__2338 = B2334(path__2337),
-result__2339 = B2333(),
-B2340 = B2321,
-B2341,
-B2342,
-B2343 = [B2340];
-while (true)
-{
-var B2344 = B2341,
-value__2351;
-if ($T(B2344))
-value__2351 = B2344
-else
-value__2351 = B2328(B2329, B2343);
-var B2357 = !(trueQ(value__2351));
-if ($T(B2357))
-{
-var sequence__2353 = B2340,
-mapping__2345 = sequence__2353[0];
-(function B2346 (mapping__2347)
-{
-var setter__2348 = mapping__2347[0],
-getter__2349 = mapping__2347[1];
-return result__2339[setter__2348] = B2330(stats__2338, getter__2349)})(mapping__2345);
-var sequence__2355 = B2340,
-B2356 = sequence__2355.slice(1);
-B2340 = B2356;
-B2343 = [B2340]}
-else
-break};
-B2342;
-return result__2339}}, false);
-exports["file-properties"] = B2335}
-{
-var B2358 = B2248.lstatSync,
-B2359 = B2253("file_type", function file_type__2360 (path__2361)
-{if ($T(B2252(path__2361)))
-{
-var stat__2362 = B2358(path__2361);
-if ($T(stat__2362.isFile()))
+var stat__420 = B416(path__419);
+if ($T(stat__420.isFile()))
 return "file"
 else
-if ($T(stat__2362.isDirectory()))
+if ($T(stat__420.isDirectory()))
 return "directory"
 else
-if ($T(stat__2362.isSymbolicLink()))
+if ($T(stat__420.isSymbolicLink()))
 return "link"
 else
-if ($T(stat__2362.isBlockDevice()))
+if ($T(stat__420.isBlockDevice()))
 return "block-device"
 else
-if ($T(stat__2362.isCharacterDevice()))
+if ($T(stat__420.isCharacterDevice()))
 return "character-device"
 else
-if ($T(stat__2362.isFIFO()))
+if ($T(stat__420.isFIFO()))
 return "fifo"
 else
-if ($T(stat__2362.isSocket()))
+if ($T(stat__420.isSocket()))
 return "socket"}}, false);
-exports["file-type"] = B2359}
+exports["file-type"] = B417}
 {
-var B2363 = B2244["as-string"],
-B2364 = B2248.readFileSync,
-B2365 = B2253("read_file", function read_file__2366 (path__2367)
-{if ($T(B2252(path__2367)))
-return B2363(B2364(path__2367))}, false);
-exports["read-file"] = B2365}
+var B421 = B351["as-string"],
+B422 = B355.readFileSync,
+B423 = B360("read_file", function read_file__424 (path__425)
+{if ($T(B359(path__425)))
+return B421(B422(path__425))}, false);
+exports["read-file"] = B423}
 {
-var B2368 = B2248.writeFileSync,
-B2369 = B2253("write_file", function write_file__2370 (path__2371, content__2372)
+var B426 = B355.writeFileSync,
+B427 = B360("write_file", function write_file__428 (path__429, content__430)
 {
-B2310(path__2371);
-return B2368(path__2371, content__2372)}, false);
-exports["write-file"] = B2369}
+B380(path__429);
+return B426(path__429, content__430)}, false);
+exports["write-file"] = B427}

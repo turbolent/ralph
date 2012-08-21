@@ -1,298 +1,157 @@
-var B3616 = require("ralph/core")
-var B3618 = require("ralph/compiler/utilities")
-var B3729 = $S("%begin"),
-dec = B3616.dec,
-size = B3616.size,
-wrap_valueN__3635,
-B3621 = B3616["%make-function"],
-B3622 = B3616["instance?"],
-B3623 = B3616["<array>"],
-B3624 = B3616["binary=="],
-B3625 = B3616["last-setter"],
-B3626 = B3616.last,
-B3627 = B3616["third-setter"],
-B3628 = B3616.third,
-B3629 = B3616["second-setter"],
-B3630 = B3616.second,
-B3631 = B3616.concatenate,
-B3632 = B3616["symbol-name"],
-B3633 = B3616.first,
-B3634 = B3621("wrap_valueN", function wrap_valueN__3635 (exp__3636, wrapper__3637)
-{if ($T(B3622(exp__3636, B3623)))
+var B1040 = require("ralph/core")
+var B1042 = require("ralph/compiler/utilities")
+var B1065 = $S("%begin"),
+wrap_valueN__1059,
+B1045 = B1040["%make-function"],
+B1046 = B1040["instance?"],
+B1047 = B1040["<array>"],
+B1048 = B1040["binary=="],
+B1049 = B1040["last-setter"],
+B1050 = B1040.last,
+B1051 = B1040["third-setter"],
+B1052 = B1040.third,
+B1053 = B1040["second-setter"],
+B1054 = B1040.second,
+B1055 = B1040.concatenate,
+B1056 = B1040["symbol-name"],
+B1057 = B1040.first,
+B1058 = B1045("wrap_valueN", function wrap_valueN__1059 (exp__1060, wrapper__1061)
+{if ($T(B1046(exp__1060, B1047)))
 {
-var sequence__3641 = exp__3636,
-B3716 = sequence__3641[0],
-B3638 = B3632(B3716),
-object1__3644 = B3638,
-object2__3645 = "%begin",
-B3639 = (object1__3644 === object2__3645),
-B3717;
-if ($T(B3639))
-B3717 = B3639
+var B1062 = B1056(B1057(exp__1060)),
+B1063 = B1048(B1062, "%begin"),
+B1064;
+if ($T(B1063))
+B1064 = B1063
 else
+B1064 = B1048(B1062, "%bind");
+if ($T(B1064))
 {
-var object1__3648 = B3638,
-object2__3649 = "%bind";
-B3717 = (object1__3648 === object2__3649)};
-if ($T(B3717))
-{
-var array__3662 = exp__3636,
-array__3659 = exp__3636,
-B3660 = array__3659,
-B3661 = ((B3660 || false).length || 0),
-B3718 = (B3661 - 1),
-B3719 = array__3659[B3718],
-value__3663 = wrap_valueN__3635(B3719, wrapper__3637);
-array__3662[dec(size(array__3662), 1)] = value__3663;
-return exp__3636}
+B1049(exp__1060, wrap_valueN__1059(B1050(exp__1060), wrapper__1061));
+return exp__1060}
 else
+if ($T(B1048(B1062, "%if")))
 {
-var object1__3666 = B3638,
-object2__3667 = "%if",
-B3720 = (object1__3666 === object2__3667);
-if ($T(B3720))
-{
-var array__3672 = exp__3636,
-sequence__3671 = exp__3636,
-B3721 = sequence__3671[2],
-value__3673 = wrap_valueN__3635(B3721, wrapper__3637);
-array__3672[2] = value__3673;
-var array__3686 = exp__3636,
-array__3683 = exp__3636,
-B3684 = array__3683,
-B3685 = ((B3684 || false).length || 0),
-B3722 = (B3685 - 1),
-B3723 = array__3683[B3722],
-value__3687 = wrap_valueN__3635(B3723, wrapper__3637);
-array__3686[dec(size(array__3686), 1)] = value__3687;
-return exp__3636}
+B1051(exp__1060, wrap_valueN__1059(B1052(exp__1060), wrapper__1061));
+B1049(exp__1060, wrap_valueN__1059(B1050(exp__1060), wrapper__1061));
+return exp__1060}
 else
-{
-var object1__3690 = B3638,
-object2__3691 = "%while",
-B3724 = (object1__3690 === object2__3691);
-if ($T(B3724))
-return [B3729, exp__3636, wrap_valueN__3635(false, wrapper__3637)]
+if ($T(B1048(B1062, "%while")))
+return [B1065, exp__1060, wrap_valueN__1059(false, wrapper__1061)]
 else
+if ($T(B1048(B1062, "%try")))
 {
-var object1__3694 = B3638,
-object2__3695 = "%try",
-B3725 = (object1__3694 === object2__3695);
-if ($T(B3725))
-{
-var array__3700 = exp__3636,
-sequence__3699 = exp__3636,
-B3726 = sequence__3699[1],
-value__3701 = wrap_valueN__3635(B3726, wrapper__3637);
-array__3700[1] = value__3701;
-var array__3714 = exp__3636,
-array__3711 = exp__3636,
-B3712 = array__3711,
-B3713 = ((B3712 || false).length || 0),
-B3727 = (B3713 - 1),
-B3728 = array__3711[B3727],
-value__3715 = wrap_valueN__3635(B3728, wrapper__3637);
-array__3714[dec(size(array__3714), 1)] = value__3715;
-return exp__3636}
+B1053(exp__1060, wrap_valueN__1059(B1054(exp__1060), wrapper__1061));
+B1049(exp__1060, wrap_valueN__1059(B1050(exp__1060), wrapper__1061));
+return exp__1060}
 else
-return B3631(wrapper__3637, [exp__3636])}}}}
+return B1055(wrapper__1061, [exp__1060])}
 else
-return B3631(wrapper__3637, [exp__3636])}, false)
-var B3733 = $S("%return"),
-B3730 = B3621("add_explicit_return", function add_explicit_return__3731 (exp__3732)
-{return B3634(exp__3732, [B3733])}, false)
-var B3761 = $S("%if"),
-B3762 = $S("%while"),
-B3763 = $S("%bind"),
-B3764 = $S("%try"),
-trueQ = B3616["true?"],
-B3734 = B3616.not,
-B3735 = B3616["empty?"],
-B3736 = B3616["member?"],
-B3737 = B3621("statementQ", function statementQ__3738 (exp__3739)
-{if ($T(B3622(exp__3739, B3623)))
-{
-var sequence__3751 = exp__3739,
-B3752 = sequence__3751,
-B3753 = ((B3752 || false).length || 0),
-B3754 = 0,
-value__3755 = (B3753 === B3754),
-B3758 = !(trueQ(value__3755));
-if ($T(B3758))
-{
-var sequence__3757 = exp__3739,
-B3759 = sequence__3757[0],
-B3760 = [B3761, B3762, B3729, B3763, B3764];
-return B3736(B3759, B3760)}}}, false)
-var B3769 = $S("%native"),
-trueQ = B3616["true?"],
-B3765 = B3616["<boolean>"],
-B3766 = B3621("add_explicit_true", function add_explicit_true__3767 (exp__3768)
-{if ($T(B3622(exp__3768, B3765)))
-return trueQ(exp__3768)
+return B1055(wrapper__1061, [exp__1060])}, false)
+var B1069 = $S("%return"),
+B1066 = B1045("add_explicit_return", function add_explicit_return__1067 (exp__1068)
+{return B1058(exp__1068, [B1069])}, false)
+var B1076 = $S("%if"),
+B1077 = $S("%while"),
+B1078 = $S("%bind"),
+B1079 = $S("%try"),
+B1070 = B1040.not,
+B1071 = B1040["empty?"],
+B1072 = B1040["member?"],
+B1073 = B1045("statementQ", function statementQ__1074 (exp__1075)
+{if ($T(B1046(exp__1075, B1047)))
+if ($T(B1070(B1071(exp__1075))))
+return B1072(B1057(exp__1075), [B1076, B1077, B1065, B1078, B1079])}, false)
+var B1085 = $S("%native"),
+B1080 = B1040["<boolean>"],
+B1081 = B1040["true?"],
+B1082 = B1045("add_explicit_true", function add_explicit_true__1083 (exp__1084)
+{if ($T(B1046(exp__1084, B1080)))
+return B1081(exp__1084)
 else
-return [[B3769, "$T"], exp__3768]}, false)
+return [[B1085, "$T"], exp__1084]}, false)
 {
-var B3926 = $S("%set"),
-B3927 = $S("%get-property"),
-B3928 = $S("%var"),
-dec = B3616.dec,
-size = B3616.size,
-transform_statementsN__3778,
-B3772 = B3618["maybe-begin"],
-B3773 = B3616.map,
-B3774 = B3616.rcurry,
-B3775 = B3616.get,
-B3776 = B3616["first-setter"],
-B3777 = B3621("transform_statementsN", function transform_statementsN__3778 (exp__3779, env__3780)
-{if ($T(B3622(exp__3779, B3623)))
+var B1115 = $S("%set"),
+B1116 = $S("%get-property"),
+B1117 = $S("%var"),
+transform_statementsN__1094,
+B1088 = B1042["maybe-begin"],
+B1089 = B1040.map,
+B1090 = B1040.rcurry,
+B1091 = B1040.get,
+B1092 = B1040["first-setter"],
+B1093 = B1045("transform_statementsN", function transform_statementsN__1094 (exp__1095, env__1096)
+{if ($T(B1046(exp__1095, B1047)))
 {
-var sequence__3799 = exp__3779,
-B3904 = sequence__3799[0],
-B3781 = B3632(B3904),
-object1__3802 = B3781,
-object2__3803 = "%method",
-B3905 = (object1__3802 === object2__3803);
-if ($T(B3905))
+var B1097 = B1056(B1057(exp__1095));
+if ($T(B1048(B1097, "%method")))
 {
-var array__3816 = exp__3779,
-array__3813 = exp__3779,
-B3814 = array__3813,
-B3815 = ((B3814 || false).length || 0),
-B3906 = (B3815 - 1),
-B3907 = array__3813[B3906],
-B3908 = transform_statementsN__3778(B3907, env__3780),
-value__3817 = B3730(B3908);
-array__3816[dec(size(array__3816), 1)] = value__3817;
-return exp__3779}
+B1049(exp__1095, B1066(transform_statementsN__1094(B1050(exp__1095), env__1096)));
+return exp__1095}
 else
+if ($T(B1048(B1097, "%begin")))
 {
-var object1__3820 = B3781,
-object2__3821 = "%begin",
-B3909 = (object1__3820 === object2__3821);
-if ($T(B3909))
-{
-var ____3782 = exp__3779[0],
-exps__3783 = $SL.call(exp__3779, 1);
-return B3772(B3773(B3774(transform_statementsN__3778, env__3780), exps__3783))}
+var ____1098 = exp__1095[0],
+exps__1099 = $SL.call(exp__1095, 1);
+return B1088(B1089(B1090(transform_statementsN__1094, env__1096), exps__1099))}
 else
+if ($T(B1048(B1097, "%bind")))
 {
-var object1__3824 = B3781,
-object2__3825 = "%bind",
-B3910 = (object1__3824 === object2__3825);
-if ($T(B3910))
-{
-var ____3784 = exp__3779[0],
-B3785 = exp__3779[1],
-var__3786 = B3785[0],
-value__3787 = B3785[1],
-body__3788 = exp__3779[2];
-if ($T(B3737(value__3787)))
-return [B3763, [var__3786, false], [B3729, B3634(transform_statementsN__3778(value__3787, env__3780), [B3926, var__3786]), transform_statementsN__3778(body__3788, env__3780)]]
+var ____1100 = exp__1095[0],
+B1101 = exp__1095[1],
+var__1102 = B1101[0],
+value__1103 = B1101[1],
+body__1104 = exp__1095[2];
+if ($T(B1073(value__1103)))
+return [B1078, [var__1102, false], [B1065, B1058(transform_statementsN__1094(value__1103, env__1096), [B1115, var__1102]), transform_statementsN__1094(body__1104, env__1096)]]
 else
-return [B3763, [var__3786, transform_statementsN__3778(value__3787, env__3780)], transform_statementsN__3778(body__3788, env__3780)]}
+return [B1078, [var__1102, transform_statementsN__1094(value__1103, env__1096)], transform_statementsN__1094(body__1104, env__1096)]}
 else
+if ($T(B1048(B1097, "%if")))
 {
-var object1__3828 = B3781,
-object2__3829 = "%if",
-B3911 = (object1__3828 === object2__3829);
-if ($T(B3911))
-{
-var ____3789 = exp__3779[0],
-test__3790 = exp__3779[1],
-then__3791 = exp__3779[2],
-else__3792 = exp__3779[3];
-return [B3761, B3766(test__3790), transform_statementsN__3778(then__3791, env__3780), transform_statementsN__3778(else__3792, env__3780)]}
+var ____1105 = exp__1095[0],
+test__1106 = exp__1095[1],
+then__1107 = exp__1095[2],
+else__1108 = exp__1095[3];
+return [B1076, B1082(test__1106), transform_statementsN__1094(then__1107, env__1096), transform_statementsN__1094(else__1108, env__1096)]}
 else
+if ($T(B1048(B1097, "%while")))
 {
-var object1__3832 = B3781,
-object2__3833 = "%while",
-B3912 = (object1__3832 === object2__3833);
-if ($T(B3912))
-{
-var array__3838 = exp__3779,
-sequence__3837 = exp__3779,
-B3913 = sequence__3837[1],
-value__3839 = B3766(B3913);
-array__3838[1] = value__3839;
-var array__3844 = exp__3779,
-sequence__3843 = exp__3779,
-B3914 = sequence__3843[2],
-value__3845 = transform_statementsN__3778(B3914, env__3780);
-array__3844[2] = value__3845;
-return exp__3779}
+B1053(exp__1095, B1082(B1054(exp__1095)));
+B1051(exp__1095, transform_statementsN__1094(B1052(exp__1095), env__1096));
+return exp__1095}
 else
+if ($T(B1048(B1097, "%try")))
 {
-var object1__3848 = B3781,
-object2__3849 = "%try",
-B3915 = (object1__3848 === object2__3849);
-if ($T(B3915))
-{
-var array__3854 = exp__3779,
-sequence__3853 = exp__3779,
-B3916 = sequence__3853[1],
-value__3855 = transform_statementsN__3778(B3916, exp__3779);
-array__3854[1] = value__3855;
-var array__3868 = exp__3779,
-array__3865 = exp__3779,
-B3866 = array__3865,
-B3867 = ((B3866 || false).length || 0),
-B3917 = (B3867 - 1),
-B3918 = array__3865[B3917],
-value__3869 = transform_statementsN__3778(B3918, env__3780);
-array__3868[dec(size(array__3868), 1)] = value__3869;
-return exp__3779}
+B1053(exp__1095, transform_statementsN__1094(B1054(exp__1095), exp__1095));
+B1049(exp__1095, transform_statementsN__1094(B1050(exp__1095), env__1096));
+return exp__1095}
 else
+if ($T(B1048(B1097, "%set")))
 {
-var object1__3872 = B3781,
-object2__3873 = "%set",
-B3919 = (object1__3872 === object2__3873);
-if ($T(B3919))
-{
-var ____3793 = exp__3779[0],
-identifier__3794 = exp__3779[1],
-value__3795 = exp__3779[2],
-valueT__3796 = transform_statementsN__3778(value__3795, env__3780),
-definition_name__3797 = B3775(env__3780, "definition-names", B3632(identifier__3794)),
-B3920;
-if ($T(definition_name__3797))
-B3920 = B3736(definition_name__3797, B3775(env__3780, "module", "exports"))
+var ____1109 = exp__1095[0],
+identifier__1110 = exp__1095[1],
+value__1111 = exp__1095[2],
+valueT__1112 = transform_statementsN__1094(value__1111, env__1096),
+definition_name__1113 = B1091(env__1096, "definition-names", B1056(identifier__1110)),
+B1114;
+if ($T(definition_name__1113))
+B1114 = B1072(definition_name__1113, B1091(env__1096, "module", "exports"))
 else
-B3920 = false;
-if ($T(B3920))
+B1114 = false;
+if ($T(B1114))
 {
-var array__3876 = exp__3779,
-value__3877 = B3729;
-array__3876[0] = value__3877;
-var array__3880 = exp__3779,
-value__3881 = [B3926, identifier__3794, valueT__3796];
-array__3880[1] = value__3881;
-var array__3884 = exp__3779,
-value__3885 = [B3926, [B3927, [B3769, "exports"], definition_name__3797], identifier__3794];
-array__3884[2] = value__3885}
+B1092(exp__1095, B1065);
+B1053(exp__1095, [B1115, identifier__1110, valueT__1112]);
+B1051(exp__1095, [B1115, [B1116, [B1085, "exports"], definition_name__1113], identifier__1110])}
 else
-{
-var array__3888 = exp__3779,
-value__3889 = valueT__3796;
-array__3888[2] = value__3889};
-return exp__3779}
+B1051(exp__1095, valueT__1112);
+return exp__1095}
 else
-{
-var object1__3892 = B3781,
-object2__3893 = "%define",
-B3921 = (object1__3892 === object2__3893);
-if ($T(B3921))
-{
-var B3922 = B3928,
-array__3901 = exp__3779,
-B3902 = array__3901,
-B3903 = ((B3902 || false).length || 0),
-B3923 = (B3903 - 1),
-B3924 = array__3901[B3923],
-B3925 = [B3924, false];
-return [B3922, B3925]}
+if ($T(B1048(B1097, "%define")))
+return [B1117, [B1050(exp__1095), false]]
 else
-return B3773(B3774(transform_statementsN__3778, env__3780), exp__3779)}}}}}}}}
+return B1089(B1090(transform_statementsN__1094, env__1096), exp__1095)}
 else
-return exp__3779}, false);
-exports["transform-statements!"] = B3777}
+return exp__1095}, false);
+exports["transform-statements!"] = B1093}
