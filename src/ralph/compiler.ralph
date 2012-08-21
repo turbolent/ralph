@@ -453,8 +453,8 @@
           (destructuring-bind (identifier arguments #rest body)
               binding
             `(set! ,identifier
-                   ,(concatenate `(method ,arguments)
-                                 body))))
+                   ,(named-method identifier arguments
+                                  (maybe-begin body)))))
         bindings)
    body))
 
