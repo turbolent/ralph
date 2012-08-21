@@ -176,7 +176,7 @@
           (if (and else
                    (not (= else `(%return #f))))
               (concatenate
-               "\nelse " (compile-js else env))
+               "\nelse\n" (compile-js else env))
               ""))))
       (("%while")
        (destructuring-bind (_ test body) exp
@@ -192,9 +192,9 @@
         "return " (compile-js (second exp) env)))
       (("%begin")
        (concatenate
-        "{" (join (map (rcurry compile-js env)
-                       (rest exp))
-                  ";\n")
+        "{\n" (join (map (rcurry compile-js env)
+                         (rest exp))
+                    ";\n")
         "}"))
       (("%set")
        (destructuring-bind (_ var value) exp
@@ -234,13 +234,15 @@
                                 " = " (compile-js value env))
                               ""))))
                      bindings)
-                ", "))))
+                ",\n"))))
       (("%native")
        (reduce1 concatenate
                 (map (method (e)
-                       (if (instance? e <symbol>)
-                           (compile-js e)
-                           (as-string e)))
+                       (select e instance?
+                         ((<symbol> <array>)
+                          (compile-js e env))
+                         (else:
+                          (as-string e))))
                      (rest exp))))
       (("%native-name")
        (concatenate
