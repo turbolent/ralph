@@ -1,1 +1,1 @@
-("ralph/compiler/utilities" exports: ("expression?" "transform-setter-identifier" "setter-identifier?" "identifier-name" "reset-symbol-counter!" "generate-symbol" "maybe-begin" "get-module-name/name" "var?" "set?" "method?") inline: () dependencies: ("ralph/core"))
+("ralph/compiler/utilities" exports: ("expression?" "transform-setter-identifier" "setter-identifier?" "identifier-name" "reset-symbol-counter!" "generate-symbol" "maybe-begin" "get-module-name/name" "var?" "set?" "method?" "*defined*" "environment-definitions") inline: () dependencies: ("ralph/core"))
