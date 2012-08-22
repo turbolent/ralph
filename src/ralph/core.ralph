@@ -49,10 +49,6 @@
            inc dec mod as-radiant even? odd?
            has? signal binary==))
 
-;; TODO: fix key/property naming convention
-;; TODO: export
-;; TODO: reorganize
-
 (define <object> (%native "Object"))
 (define <string> (%native "String"))
 (define <number> (%native "Number"))
@@ -60,6 +56,9 @@
 (define <boolean> (%native "Boolean"))
 (define <function> (%native "Function"))
 (define <error> (%native "Error"))
+
+(set! (%get-property <error> "%properties")
+      (%object "message" #f))
 
 (define %make-function
   (method (name function setter?)
@@ -275,39 +274,16 @@
 (define-function binary+ (number1 number2)
   (%plus number1 number2))
 
-(define-function + (#rest numbers)
-  (if (empty? numbers)
-      0
-      (reduce1 binary+
-               numbers)))
-
-
 (define-function binary- (number1 number2)
   (%minus number1 number2))
-
-(define-function - ((minuend <number>) #rest subtrahends)
-  (if (empty? subtrahends)
-      (%native-call "-" minuend)
-      (reduce binary-
-              minuend subtrahends)))
 
 (define-function binary* (number1 number2)
   (%times number1 number2))
 
-(define-function * (#rest numbers)
-  (if (empty? numbers)
-      1
-      (reduce1 binary*
-               numbers)))
-
 (define-function binary/ (number1 number2)
   (%divide number1 number2))
 
-(define-function / ((numerator <number>) #rest denominators)
-  (if (empty? denominators)
-      (%divide 1 numerator)
-      (reduce binary/
-              numerator denominators)))
+
 
 (define-function type (object)
   (if object
@@ -889,3 +865,28 @@
 (define-function make-plain-object ()
   (%native "Object.create(null)"))
 
+;; at end so (optimization) macro are applied in preceding code
+
+(define-function - ((minuend <number>) #rest subtrahends)
+  (if (empty? subtrahends)
+      (%native-call "-" minuend)
+      (reduce binary-
+              minuend subtrahends)))
+
+(define-function + (#rest numbers)
+  (if (empty? numbers)
+      0
+      (reduce1 binary+
+               numbers)))
+
+(define-function * (#rest numbers)
+  (if (empty? numbers)
+      1
+      (reduce1 binary*
+               numbers)))
+
+(define-function / ((numerator <number>) #rest denominators)
+  (if (empty? denominators)
+      (%divide 1 numerator)
+      (reduce binary/
+              numerator denominators)))
