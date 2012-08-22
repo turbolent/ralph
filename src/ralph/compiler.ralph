@@ -497,20 +497,34 @@
 (define-function transform-quoted (form)
   (cond
    ((instance? form <array>)
+    (concatenate `(%array)
+                 (map transform-quoted
+                      form)))
+   ((instance? form <symbol>)
+    `(%symbol ,(symbol-name form)))
+   (else:
+    form)))
+
+(define-core-macro quote (_ exp)
+  (transform-quoted exp))
+
+(define-function transform-backquoted (form env)
+  (cond
+   ((instance? form <array>)
     (if (and (not (empty? form))
              (== (symbol-name (first form))
                  "%comma"))
         (second form)
         (concatenate `(%array)
-                     (map transform-quoted
+                     (map (rcurry transform-backquoted env)
                           form))))
    ((instance? form <symbol>)
     `(%symbol ,(symbol-name form)))
    (else:
     form)))
 
-(define-core-macro %backquote (_ exp)
-  (transform-quoted exp))
+(define-core-macro %backquote (env exp)
+  (transform-backquoted exp env))
 
 ;; comma is only used as a marker and
 ;; actually handled in backquote

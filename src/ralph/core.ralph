@@ -35,7 +35,8 @@
            extend! update-with group-by
            chain-object unchain-object
            as-set set-union! set-add!
-           set-subtract! set-remove!)
+           set-subtract! set-remove!
+           quote %backquote %comma)
   inline: (not
            size as-string as-number as-array
            parse-number char-code empty?
