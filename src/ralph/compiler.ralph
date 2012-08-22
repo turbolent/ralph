@@ -87,14 +87,15 @@
 
 ;; definitions
 (define-special-form %method (env name arguments body)
-  (do (curry bind! env)
-      arguments)
-  (bind ((expanded-body
-          (macroexpand-all body env)))
-    (do (curry unbind! env)
-        arguments)
-    `(%method ,name ,arguments
-       ,expanded-body)))
+  (bind ((identifiers (concatenate [name] arguments)))
+    (do (curry bind! env)
+        identifiers)
+    (bind ((expanded-body
+            (macroexpand-all body env)))
+      (do (curry unbind! env)
+          arguments)
+      `(%method ,name ,arguments
+         ,expanded-body))))
 
 (define-special-form
   %set (env identifier value)
