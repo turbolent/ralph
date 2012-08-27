@@ -20,6 +20,7 @@ exports["<function>"] = B6}
 {
 var B7 = Error;
 exports["<error>"] = B7}
+B7["%properties"] = {message:false}
 {
 var B9 = function B10 (name__11, function__12, setterQ__13)
 {
@@ -393,1121 +394,1154 @@ return B139(B330, B333, B334, B335, true)}}, false);
 exports.compose = B293}
 var B336 = B9("binaryP", function binaryP__337 (number1__338, number2__339)
 {return (number1__338 + number2__339)}, false)
+var B340 = B9("binary_", function binary___341 (number1__342, number2__343)
+{return (number1__342 - number2__343)}, false)
+var B344 = B9("binaryT", function binaryT__345 (number1__346, number2__347)
+{return (number1__346 * number2__347)}, false)
+var B348 = B9("binaryS", function binaryS__349 (number1__350, number2__351)
+{return (number1__350 / number2__351)}, false)
 {
-var B340 = B9("P", function P__341 ()
-{
-var numbers__342 = $SL.call(arguments, 0),
-sequence__353 = numbers__342,
-B354 = sequence__353,
-B355 = ((B354 || false).length || 0),
-B356 = 0,
-B369 = (B355 === B356);
-if ($T(B369))
-return 0
-else
-{
-var function__365 = B336,
-values__366 = numbers__342,
-B367 = values__366,
-B370 = B367[0],
-B368 = values__366,
-B371 = B368.slice(1);
-return B139(function__365, B370, B371)}}, false);
-exports["+"] = B340}
-var B372 = B9("binary_", function binary___373 (number1__374, number2__375)
-{return (number1__374 - number2__375)}, false)
-{
-var B376 = B9("_", function ___377 (minuend__378)
-{
-var subtrahends__379 = $SL.call(arguments, 1),
-sequence__390 = subtrahends__379,
-B391 = sequence__390,
-B392 = ((B391 || false).length || 0),
-B393 = 0,
-B394 = (B392 === B393);
-if ($T(B394))
-return -(minuend__378)
-else
-return B139(B372, minuend__378, subtrahends__379)}, false);
-exports["-"] = B376}
-var B395 = B9("binaryT", function binaryT__396 (number1__397, number2__398)
-{return (number1__397 * number2__398)}, false)
-var B399 = B9("binaryS", function binaryS__400 (number1__401, number2__402)
-{return (number1__401 / number2__402)}, false)
-{
-var B403 = B9("S", function S__404 (numerator__405)
-{
-var denominators__406 = $SL.call(arguments, 1),
-sequence__417 = denominators__406,
-B418 = sequence__417,
-B419 = ((B418 || false).length || 0),
-B420 = 0,
-B421 = (B419 === B420);
-if ($T(B421))
-return (1 / numerator__405)
-else
-return B139(B399, numerator__405, denominators__406)}, false);
-exports["/"] = B403}
-{
-var B422 = B9("type", function type__423 (object__424)
-{if ($T(object__424))
-return object__424.constructor
+var B352 = B9("type", function type__353 (object__354)
+{if ($T(object__354))
+return object__354.constructor
 else
 return B5}, false);
-exports.type = B422}
+exports.type = B352}
 {
-var B426 = B9("instanceQ", function instanceQ__427 (object__428, type__429)
-{if ($T(object__428))
+var B356 = B9("instanceQ", function instanceQ__357 (object__358, type__359)
+{if ($T(object__358))
 {
-var ctor__430 = object__428.constructor,
-object1__434 = ctor__430,
-object2__435 = type__429,
-B431 = (object1__434 === object2__435);
-if ($T(B431))
-return B431
+var ctor__360 = object__358.constructor,
+object1__364 = ctor__360,
+object2__365 = type__359,
+B361 = (object1__364 === object2__365);
+if ($T(B361))
+return B361
 else
-return (object__428 instanceof type__429)}
+return (object__358 instanceof type__359)}
 else
 {
-var object1__438 = type__429,
-object2__439 = B5;
-return (object1__438 === object2__439)}}, false);
-exports["instance?"] = B426}
+var object1__368 = type__359,
+object2__369 = B5;
+return (object1__368 === object2__369)}}, false);
+exports["instance?"] = B356}
 $HP = Object.hasOwnProperty
 {
-var B440 = B9("hasQ", function hasQ__441 (object__442, property__443)
-{return $HP.call(object__442,property__443)}, false);
-exports["has?"] = B440}
+var B370 = B9("hasQ", function hasQ__371 (object__372, property__373)
+{return $HP.call(object__372,property__373)}, false);
+exports["has?"] = B370}
 {
-var B444,
-B445 = B9("Mmake_method", function Mmake_method__446 (name__447, function__448, setterQ__449, type__450, existing__451)
+var B374,
+B375 = B9("Mmake_method", function Mmake_method__376 (name__377, function__378, setterQ__379, type__380, existing__381)
 {
-var prototype__452 = type__450.prototype,
-object__457 = prototype__452,
-property__458 = name__447,
-B463 = $HP.call(object__457,property__458),
-existing_method__453;
-if ($T(B463))
-existing_method__453 = prototype__452[name__447]
+var prototype__382 = type__380.prototype,
+object__387 = prototype__382,
+property__388 = name__377,
+B393 = $HP.call(object__387,property__388),
+existing_method__383;
+if ($T(B393))
+existing_method__383 = prototype__382[name__377]
 else
-existing_method__453 = false;
-var genericQ__454;
-if ($T(existing__451))
+existing_method__383 = false;
+var genericQ__384;
+if ($T(existing__381))
 {
-var object__461 = existing__451,
-property__462 = "%generic?",
-B464 = $HP.call(object__461,property__462);
-if ($T(B464))
-genericQ__454 = existing__451["%generic?"]
+var object__391 = existing__381,
+property__392 = "%generic?",
+B394 = $HP.call(object__391,property__392);
+if ($T(B394))
+genericQ__384 = existing__381["%generic?"]
 else
-genericQ__454 = false}
+genericQ__384 = false}
 else
-genericQ__454 = false;
-function__448["%name"] = name__447;
-function__448["%setter?"] = setterQ__449;
-function__448["%type"] = type__450;
-prototype__452[name__447] = function__448;
-if ($T(genericQ__454))
-return existing__451
+genericQ__384 = false;
+function__378["%name"] = name__377;
+function__378["%setter?"] = setterQ__379;
+function__378["%type"] = type__380;
+prototype__382[name__377] = function__378;
+if ($T(genericQ__384))
+return existing__381
 else
-return B444(name__447)}, false);
-exports["%make-method"] = B445}
+return B374(name__377)}, false);
+exports["%make-method"] = B375}
 {
-B444 = B9("Mmake_generic", function Mmake_generic__466 (name__467)
+B374 = B9("Mmake_generic", function Mmake_generic__396 (name__397)
 {
-var dispatcher__471 = function B468 (object__469)
+var dispatcher__401 = function B398 (object__399)
 {
-var function__470 = ((object__469 !== null) && (object__469 !== undefined) && object__469[name__467]);
-return (function__470 && function__470.apply(object__469, arguments))};
-dispatcher__471["%generic?"] = true;
-dispatcher__471["%name"] = name__467;
-return dispatcher__471}, false);
-exports["%make-generic"] = B444}
+var function__400 = ((object__399 !== null) && (object__399 !== undefined) && object__399[name__397]);
+return (function__400 && function__400.apply(object__399, arguments))};
+dispatcher__401["%generic?"] = true;
+dispatcher__401["%name"] = name__397;
+return dispatcher__401}, false);
+exports["%make-generic"] = B374}
 {
-var B472 = B9("Mnext_method", function Mnext_method__473 (function__474)
+var B402 = B9("Mnext_method", function Mnext_method__403 (function__404)
 {
-var name__475 = function__474["%name"],
-proto__476 = function__474["%type"].prototype.__proto__;
-return proto__476[name__475]}, false);
-exports["%next-method"] = B472}
+var name__405 = function__404["%name"],
+proto__406 = function__404["%type"].prototype.__proto__;
+return proto__406[name__405]}, false);
+exports["%next-method"] = B402}
 {
-var B477 = B9("concatenate", function concatenate__478 (object__479)
+var B407 = B9("concatenate", function concatenate__408 (object__409)
 {
-var rest__480 = $SL.call(arguments, 1),
-B481;
-if ($T(B426(object__479, B4)))
-B481 = B53
+var rest__410 = $SL.call(arguments, 1),
+B411;
+if ($T(B356(object__409, B4)))
+B411 = B53
 else
-B481 = B336;
-return B139(B481, object__479, rest__480)}, false);
-exports.concatenate = B477}
+B411 = B336;
+return B139(B411, object__409, rest__410)}, false);
+exports.concatenate = B407}
 {
-var B483 = B9("compare", function compare__484 (function__485, object__486, objects__487)
+var B413 = B9("compare", function compare__414 (function__415, object__416, objects__417)
 {
-var failedQ__488;
+var failedQ__418;
 while (true)
 {
-var B489 = failedQ__488,
-value__506;
-if ($T(B489))
-value__506 = B489
+var B419 = failedQ__418,
+value__436;
+if ($T(B419))
+value__436 = B419
 else
 {
-var sequence__502 = objects__487,
-B503 = sequence__502,
-B504 = ((B503 || false).length || 0),
-B505 = 0;
-value__506 = (B504 === B505)};
-var B517 = !(B14(value__506));
-if ($T(B517))
+var sequence__432 = objects__417,
+B433 = sequence__432,
+B434 = ((B433 || false).length || 0),
+B435 = 0;
+value__436 = (B434 === B435)};
+var B447 = !(B14(value__436));
+if ($T(B447))
 {
-var sequence__508 = objects__487,
-other__490 = sequence__508[0],
-value__510 = function__485(object__486, other__490),
-B515 = !(B14(value__510));
-failedQ__488 = B515;
-var sequence__512 = objects__487,
-B516 = sequence__512.slice(1);
-objects__487 = B516;
-object__486 = other__490}
+var sequence__438 = objects__417,
+other__420 = sequence__438[0],
+value__440 = function__415(object__416, other__420),
+B445 = !(B14(value__440));
+failedQ__418 = B445;
+var sequence__442 = objects__417,
+B446 = sequence__442.slice(1);
+objects__417 = B446;
+object__416 = other__420}
 else
 break};
-var value__514 = failedQ__488;
-return !(B14(value__514))}, false);
-exports.compare = B483}
+var value__444 = failedQ__418;
+return !(B14(value__444))}, false);
+exports.compare = B413}
 {
-var B518 = B9("EE", function EE__519 (object__520)
+var B448 = B9("EE", function EE__449 (object__450)
 {
-var objects__521 = $SL.call(arguments, 1);
-return B483(B29, object__520, objects__521)}, false);
-exports["=="] = B518}
+var objects__451 = $SL.call(arguments, 1);
+return B413(B29, object__450, objects__451)}, false);
+exports["=="] = B448}
 {
-var B522 = B444("binaryE");
-exports["binary="] = B522}
+var B452 = B374("binaryE");
+exports["binary="] = B452}
 {
-var B523 = B444("binaryL");
-exports["binary<"] = B523}
+var B453 = B374("binaryL");
+exports["binary<"] = B453}
 {
-B522 = B445("binaryE", function B525 (object1__526, object2__527)
+B452 = B375("binaryE", function B455 (object1__456, object2__457)
 {
-var object1__530 = B422(object1__526),
-object2__531 = B422(object2__527),
-B536 = (object1__530 === object2__531);
-if ($T(B536))
+var object1__460 = B352(object1__456),
+object2__461 = B352(object2__457),
+B466 = (object1__460 === object2__461);
+if ($T(B466))
 {
-var object1__534 = object1__526,
-object2__535 = object2__527;
-return (object1__534 === object2__535)}}, false, B1, B522);
-exports["binary="] = B522}
+var object1__464 = object1__456,
+object2__465 = object2__457;
+return (object1__464 === object2__465)}}, false, B1, B452);
+exports["binary="] = B452}
 {
-var B545;
-B522 = B445("binaryE", function B546 (array1__547, array2__548)
+var B475;
+B452 = B375("binaryE", function B476 (array1__477, array2__478)
 {
-var object__563 = array1__547,
-object1__566 = ((object__563 || false).length || 0),
-object__565 = array2__548,
-object2__567 = ((object__565 || false).length || 0),
-B582 = (object1__566 === object2__567);
-if ($T(B582))
+var object__493 = array1__477,
+object1__496 = ((object__493 || false).length || 0),
+object__495 = array2__478,
+object2__497 = ((object__495 || false).length || 0),
+B512 = (object1__496 === object2__497);
+if ($T(B512))
 {
-var B549 = array1__547,
-B550 = array2__548,
-B551,
-B552,
-B553 = [B549, B550];
+var B479 = array1__477,
+B480 = array2__478,
+B481,
+B482,
+B483 = [B479, B480];
 while (true)
 {
-var B554 = B551,
-value__570;
-if ($T(B554))
-value__570 = B554
+var B484 = B481,
+value__500;
+if ($T(B484))
+value__500 = B484
 else
-value__570 = B545(B68, B553);
-var B586 = !(B14(value__570));
-if ($T(B586))
+value__500 = B475(B68, B483);
+var B516 = !(B14(value__500));
+if ($T(B516))
 {
-var sequence__572 = B549,
-item1__555 = sequence__572[0],
-sequence__574 = B550,
-item2__556 = sequence__574[0],
-value__576 = B522(item1__555, item2__556),
-B583 = !(B14(value__576));
-if ($T(B583))
+var sequence__502 = B479,
+item1__485 = sequence__502[0],
+sequence__504 = B480,
+item2__486 = sequence__504[0],
+value__506 = B452(item1__485, item2__486),
+B513 = !(B14(value__506));
+if ($T(B513))
 {
-B552 = true;
-B551 = true}
+B482 = true;
+B481 = true}
 else
 {
-(function B557 (item1__558, item2__559)
-{return false})(item1__555, item2__556);
-var sequence__578 = B549,
-B584 = sequence__578.slice(1);
-B549 = B584;
-var sequence__580 = B550,
-B585 = sequence__580.slice(1);
-B550 = B585;
-B553 = [B549, B550]}}
+(function B487 (item1__488, item2__489)
+{return false})(item1__485, item2__486);
+var sequence__508 = B479,
+B514 = sequence__508.slice(1);
+B479 = B514;
+var sequence__510 = B480,
+B515 = sequence__510.slice(1);
+B480 = B515;
+B483 = [B479, B480]}}
 else
 break};
-var value__581 = B552;
-return !(B14(value__581))}}, false, B4, B522);
-exports["binary="] = B522}
-var B587 = B522
+var value__511 = B482;
+return !(B14(value__511))}}, false, B4, B452);
+exports["binary="] = B452}
+var B517 = B452
 {
-B522 = B9("binaryE", function binaryE__589 (object1__590, object2__591)
+B452 = B9("binaryE", function binaryE__519 (object1__520, object2__521)
 {
-var value__594 = object1__590,
-B597 = !(B14(value__594)),
-B592;
-if ($T(B597))
+var value__524 = object1__520,
+B527 = !(B14(value__524)),
+B522;
+if ($T(B527))
 {
-var value__596 = object2__591;
-B592 = !(B14(value__596))}
+var value__526 = object2__521;
+B522 = !(B14(value__526))}
 else
-B592 = false;
-if ($T(B592))
-return B592
+B522 = false;
+if ($T(B522))
+return B522
 else
-return B587(object1__590, object2__591)}, false);
-exports["binary="] = B522}
+return B517(object1__520, object2__521)}, false);
+exports["binary="] = B452}
 {
-var B598 = B9("E", function E__599 (object__600)
+var B528 = B9("E", function E__529 (object__530)
 {
-var objects__601 = $SL.call(arguments, 1);
-return B483(B522, object__600, objects__601)}, false);
-exports["="] = B598}
+var objects__531 = $SL.call(arguments, 1);
+return B413(B452, object__530, objects__531)}, false);
+exports["="] = B528}
 {
-B523 = B445("binaryL", function B603 (object1__604, object2__605)
+B453 = B375("binaryL", function B533 (object1__534, object2__535)
 {
-var object1__608 = B422(object1__604),
-object2__609 = B422(object2__605),
-B610 = (object1__608 === object2__609);
-if ($T(B610))
-return (object1__604 < object2__605)}, false, B1, B523);
-exports["binary<"] = B523}
+var object1__538 = B352(object1__534),
+object2__539 = B352(object2__535),
+B540 = (object1__538 === object2__539);
+if ($T(B540))
+return (object1__534 < object2__535)}, false, B1, B453);
+exports["binary<"] = B453}
 {
-B185 = B9("L", function L__611 (object__612)
+B185 = B9("L", function L__541 (object__542)
 {
-var objects__613 = $SL.call(arguments, 1);
-return B483(B523, object__612, objects__613)}, false);
+var objects__543 = $SL.call(arguments, 1);
+return B413(B453, object__542, objects__543)}, false);
 exports["<"] = B185}
 {
-var B615 = B9("binaryLE", function binaryLE__616 (object1__617, object2__618)
-{if ($T(object1__617))
-if ($T(object2__618))
+var B545 = B9("binaryLE", function binaryLE__546 (object1__547, object2__548)
+{if ($T(object1__547))
+if ($T(object2__548))
 {
-var B619 = B523(object1__617, object2__618);
-if ($T(B619))
-return B619
+var B549 = B453(object1__547, object2__548);
+if ($T(B549))
+return B549
 else
-return B522(object1__617, object2__618)}}, false);
-exports["binary<="] = B615}
+return B452(object1__547, object2__548)}}, false);
+exports["binary<="] = B545}
 {
-var B620 = B9("LE", function LE__621 (object__622)
+var B550 = B9("LE", function LE__551 (object__552)
 {
-var objects__623 = $SL.call(arguments, 1);
-return B483(B615, object__622, objects__623)}, false);
-exports["<="] = B620}
+var objects__553 = $SL.call(arguments, 1);
+return B413(B545, object__552, objects__553)}, false);
+exports["<="] = B550}
 {
-var B624 = B9("binaryG", function binaryG__625 (object1__626, object2__627)
-{if ($T(object1__626))
-if ($T(object2__627))
+var B554 = B9("binaryG", function binaryG__555 (object1__556, object2__557)
+{if ($T(object1__556))
+if ($T(object2__557))
 {
-var value__629 = B523(object1__626, object2__627),
-B632 = !(B14(value__629));
-if ($T(B632))
+var value__559 = B453(object1__556, object2__557),
+B562 = !(B14(value__559));
+if ($T(B562))
 {
-var value__631 = B522(object1__626, object2__627);
-return !(B14(value__631))}}}, false);
-exports["binary>"] = B624}
+var value__561 = B452(object1__556, object2__557);
+return !(B14(value__561))}}}, false);
+exports["binary>"] = B554}
 {
-var B633 = B9("G", function G__634 (object__635)
+var B563 = B9("G", function G__564 (object__565)
 {
-var objects__636 = $SL.call(arguments, 1);
-return B483(B624, object__635, objects__636)}, false);
-exports[">"] = B633}
+var objects__566 = $SL.call(arguments, 1);
+return B413(B554, object__565, objects__566)}, false);
+exports[">"] = B563}
 {
-var B638 = B9("binaryGE", function binaryGE__639 (object1__640, object2__641)
+var B568 = B9("binaryGE", function binaryGE__569 (object1__570, object2__571)
 {
-var value__644 = B523(object1__640, object2__641),
-B642 = !(B14(value__644));
-if ($T(B642))
-return B642
+var value__574 = B453(object1__570, object2__571),
+B572 = !(B14(value__574));
+if ($T(B572))
+return B572
 else
-return B522(object1__640, object2__641)}, false);
-exports["binary>="] = B638}
+return B452(object1__570, object2__571)}, false);
+exports["binary>="] = B568}
 {
-B152 = B9("GE", function GE__645 (object__646)
+B152 = B9("GE", function GE__575 (object__576)
 {
-var objects__647 = $SL.call(arguments, 1);
-return B483(B638, object__646, objects__647)}, false);
+var objects__577 = $SL.call(arguments, 1);
+return B413(B568, object__576, objects__577)}, false);
 exports[">="] = B152}
 {
-var B648 = B9("as_object", function as_object__649 (property_list__650)
+var B578 = B9("as_object", function as_object__579 (property_list__580)
 {
-var array__658 = property_list__650,
-start__659 = undefined,
-end__660 = undefined,
-list__651 = array__658.slice(start__659, end__660),
-result__652 = {};
+var array__588 = property_list__580,
+start__589 = undefined,
+end__590 = undefined,
+list__581 = array__588.slice(start__589, end__590),
+result__582 = {};
 while (true)
 {
-var object__662 = list__651,
-B668 = ((object__662 || false).length || 0),
-B669 = B633(B668, 0);
-if ($T(B669))
+var object__592 = list__581,
+B598 = ((object__592 || false).length || 0),
+B599 = B563(B598, 0);
+if ($T(B599))
 {
-var array__664 = list__651,
-key__653 = array__664.shift(),
-array__666 = list__651,
-value__654 = array__666.shift(),
-B667;
-if ($T(B426(key__653, B45)))
-B667 = key__653.name
+var array__594 = list__581,
+key__583 = array__594.shift(),
+array__596 = list__581,
+value__584 = array__596.shift(),
+B597;
+if ($T(B356(key__583, B45)))
+B597 = key__583.name
 else
-B667 = B57(key__653);
-key__653 = B667;
-result__652[key__653] = value__654}
+B597 = B57(key__583);
+key__583 = B597;
+result__582[key__583] = value__584}
 else
 break};
-return result__652}, false);
-exports["as-object"] = B648}
+return result__582}, false);
+exports["as-object"] = B578}
 {
-var B670 = B9("position", function position__671 (array__672, element__673)
+var B600 = B9("position", function position__601 (array__602, element__603)
 {
-var position__674 = array__672.indexOf(element__673);
-if ($T(B633(position__674, -1)))
-return position__674}, false);
-exports.position = B670}
+var position__604 = array__602.indexOf(element__603);
+if ($T(B563(position__604, -1)))
+return position__604}, false);
+exports.position = B600}
 {
-var B675 = B9("last_position", function last_position__676 (array__677, element__678)
+var B605 = B9("last_position", function last_position__606 (array__607, element__608)
 {
-var position__679 = array__677.lastIndexOf(element__678);
-if ($T(B633(position__679, -1)))
-return position__679}, false);
-exports["last-position"] = B675}
+var position__609 = array__607.lastIndexOf(element__608);
+if ($T(B563(position__609, -1)))
+return position__609}, false);
+exports["last-position"] = B605}
 {
-var B680 = B9("as_uppercase", function as_uppercase__681 (string__682)
-{return string__682.toUpperCase()}, false);
-exports["as-uppercase"] = B680}
+var B610 = B9("as_uppercase", function as_uppercase__611 (string__612)
+{return string__612.toUpperCase()}, false);
+exports["as-uppercase"] = B610}
 {
-var B683 = B9("as_lowercase", function as_lowercase__684 (string__685)
-{return string__685.toLowerCase()}, false);
-exports["as-lowercase"] = B683}
+var B613 = B9("as_lowercase", function as_lowercase__614 (string__615)
+{return string__615.toLowerCase()}, false);
+exports["as-lowercase"] = B613}
 {
-var B686 = B9("join", function join__687 (array__688, string__689)
-{return array__688.join(string__689)}, false);
-exports.join = B686}
+var B616 = B9("join", function join__617 (array__618, string__619)
+{return array__618.join(string__619)}, false);
+exports.join = B616}
 {
-var B690 = B9("trim", function trim__691 (string__692)
-{return string__692.trim()}, false);
-exports.trim = B690}
+var B620 = B9("trim", function trim__621 (string__622)
+{return string__622.trim()}, false);
+exports.trim = B620}
 {
-var B693 = B9("replace", function replace__694 (string__695, pattern__696, replacement__697)
-{return string__695.replace(pattern__696, replacement__697)}, false);
-exports.replace = B693}
+var B623 = B9("replace", function replace__624 (string__625, pattern__626, replacement__627)
+{return string__625.replace(pattern__626, replacement__627)}, false);
+exports.replace = B623}
 {
-var B698 = B9("make_object", function make_object__699 ()
+var B628 = B9("make_object", function make_object__629 ()
 {
-var key_values__700 = $SL.call(arguments, 0);
-return B648(key_values__700)}, false);
-exports["make-object"] = B698}
+var key_values__630 = $SL.call(arguments, 0);
+return B578(key_values__630)}, false);
+exports["make-object"] = B628}
 {
-var B701 = B38(B1, {name:false,
+var B631 = B38(B1, {name:false,
 module:false});
-exports["<symbol>"] = B701}
-var B702 = {}
+exports["<symbol>"] = B631}
+var B632 = {}
 {
-var B720 = $K("name"),
-B721 = $K("module"),
-B705,
-B706,
-B707,
-B708 = B9("symbol", function symbol__709 (name__710, module__711)
+var B650 = $K("name"),
+B651 = $K("module"),
+B635,
+B636,
+B637,
+B638 = B9("symbol", function symbol__639 (name__640, module__641)
 {
-var string__717 = name__710,
-name__712 = string__717.toLowerCase(),
-B713 = module__711,
-string__719;
-if ($T(B713))
-string__719 = B713
+var string__647 = name__640,
+name__642 = string__647.toLowerCase(),
+B643 = module__641,
+string__649;
+if ($T(B643))
+string__649 = B643
 else
-string__719 = "";
-var moduleT__714 = string__719.toLowerCase(),
-B715 = B707(B702, moduleT__714, name__712);
-if ($T(B715))
-return B715
+string__649 = "";
+var moduleT__644 = string__649.toLowerCase(),
+B645 = B637(B632, moduleT__644, name__642);
+if ($T(B645))
+return B645
 else
-return B705(B702, moduleT__714, name__712, B706(B701, B720, name__712, B721, module__711))}, false);
-exports.symbol = B708}
-$S = B708
+return B635(B632, moduleT__644, name__642, B636(B631, B650, name__642, B651, module__641))}, false);
+exports.symbol = B638}
+$S = B638
 {
-var B722 = B9("symbol_name", function symbol_name__723 (symbol__724)
-{return B707(symbol__724, "name")}, false);
-exports["symbol-name"] = B722}
+var B652 = B9("symbol_name", function symbol_name__653 (symbol__654)
+{return B637(symbol__654, "name")}, false);
+exports["symbol-name"] = B652}
 {
-B184 = B9("Mkeys", function Mkeys__726 (key_values__727, defaults__728)
+B184 = B9("Mkeys", function Mkeys__656 (key_values__657, defaults__658)
 {
-var i__729 = 0;
+var i__659 = 0;
 while (true)
 {
-var object__736 = key_values__727,
-B744 = ((object__736 || false).length || 0),
-value__737 = (i__729 >= B744),
-B745 = !(B14(value__737));
-if ($T(B745))
+var object__666 = key_values__657,
+B674 = ((object__666 || false).length || 0),
+value__667 = (i__659 >= B674),
+B675 = !(B14(value__667));
+if ($T(B675))
 {
-(function B730 (i__731)
+(function B660 (i__661)
 {
-var key__732 = key_values__727[i__731],
-number__739 = i__731,
-B742 = (number__739 + 1),
-value__733 = key_values__727[B742];
-if ($T(B426(key__732, B45)))
-return defaults__728[key__732.name] = value__733})(i__729);
-var number__741 = i__729,
-B743 = (number__741 + 1);
-i__729 = B743}
+var key__662 = key_values__657[i__661],
+number__669 = i__661,
+B672 = (number__669 + 1),
+value__663 = key_values__657[B672];
+if ($T(B356(key__662, B45)))
+return defaults__658[key__662.name] = value__663})(i__659);
+var number__671 = i__659,
+B673 = (number__671 + 1);
+i__659 = B673}
 else
 break};
 false;
-return defaults__728}, false);
+return defaults__658}, false);
 exports["%keys"] = B184}
 {
-var B750,
-B751,
-B752,
-B753 = B9("find_key", function find_key__754 (array__755, predicate__756)
+var B680,
+B681,
+B682,
+B683 = B9("find_key", function find_key__684 (array__685, predicate__686)
 {
-var B757 = $SL.call(arguments, 2),
-B758 = B184(B757, {skip:0,
+var B687 = $SL.call(arguments, 2),
+B688 = B184(B687, {skip:0,
 failure:false,
 "from-end?":false}),
-skip__759 = B758.skip,
-failure__760 = B758.failure,
-from_endQ__761 = B758["from-end?"],
-keys__762 = B752(array__755),
-B767 = function B763 (index__764)
-{return predicate__756(B750(array__755, index__764))},
-B768;
-if ($T(from_endQ__761))
-B768 = B170(keys__762)
+skip__689 = B688.skip,
+failure__690 = B688.failure,
+from_endQ__691 = B688["from-end?"],
+keys__692 = B682(array__685),
+B697 = function B693 (index__694)
+{return predicate__686(B680(array__685, index__694))},
+B698;
+if ($T(from_endQ__691))
+B698 = B170(keys__692)
 else
-B768 = keys__762;
-var satisfying_keys__765 = B751(B767, B768),
-B766 = B750(satisfying_keys__765, skip__759);
-if ($T(B766))
-return B766
+B698 = keys__692;
+var satisfying_keys__695 = B681(B697, B698),
+B696 = B680(satisfying_keys__695, skip__689);
+if ($T(B696))
+return B696
 else
-return failure__760}, false);
-exports["find-key"] = B753}
+return failure__690}, false);
+exports["find-key"] = B683}
 {
-var B771 = B9("parse_integer", function parse_integer__772 (value__773)
+var B701 = B9("parse_integer", function parse_integer__702 (value__703)
 {
-var B774 = $SL.call(arguments, 1),
-B775 = B184(B774, {radix:10}),
-radix__776 = B775.radix;
-return parseInt(value__773, radix__776)}, false);
-exports["parse-integer"] = B771}
+var B704 = $SL.call(arguments, 1),
+B705 = B184(B704, {radix:10}),
+radix__706 = B705.radix;
+return parseInt(value__703, radix__706)}, false);
+exports["parse-integer"] = B701}
 {
-B750 = B9("element", function element__780 (array__781, index__782)
+B680 = B9("element", function element__710 (array__711, index__712)
 {
-var B783 = $SL.call(arguments, 2),
-B784 = B184(B783, {"default":false}),
-default__785 = B784["default"],
-B786 = array__781[index__782];
-if ($T(B786))
-return B786
+var B713 = $SL.call(arguments, 2),
+B714 = B184(B713, {"default":false}),
+default__715 = B714["default"],
+B716 = array__711[index__712];
+if ($T(B716))
+return B716
 else
-return default__785}, false);
-exports.element = B750}
+return default__715}, false);
+exports.element = B680}
 {
-var B787 = B9("element_setter", function element_setter__788 (array__789, key__790, value__791)
-{return array__789[key__790] = value__791}, true);
-exports["element-setter"] = B787}
+var B717 = B9("element_setter", function element_setter__718 (array__719, key__720, value__721)
+{return array__719[key__720] = value__721}, true);
+exports["element-setter"] = B717}
 {
-var B794 = B9("replace_subsequence", function replace_subsequence__795 (target_array__796, insert_array__797)
+var B724 = B9("replace_subsequence", function replace_subsequence__725 (target_array__726, insert_array__727)
 {
-var B798 = $SL.call(arguments, 2),
-object__803 = target_array__796,
-B816 = ((object__803 || false).length || 0),
-B817 = {start:0,
-end:B816},
-B799 = B184(B798, B817),
-start__800 = B799.start,
-end__801 = B799.end,
-array__807 = target_array__796,
-start__808 = 0,
-end__809 = start__800,
-B818 = array__807.slice(start__808, end__809),
-array__813 = target_array__796,
-start__814 = end__801,
-end__815 = undefined,
-B819 = array__813.slice(start__814, end__815);
-return B477(B818, insert_array__797, B819)}, false);
-exports["replace-subsequence"] = B794}
+var B728 = $SL.call(arguments, 2),
+object__733 = target_array__726,
+B746 = ((object__733 || false).length || 0),
+B747 = {start:0,
+end:B746},
+B729 = B184(B728, B747),
+start__730 = B729.start,
+end__731 = B729.end,
+array__737 = target_array__726,
+start__738 = 0,
+end__739 = start__730,
+B748 = array__737.slice(start__738, end__739),
+array__743 = target_array__726,
+start__744 = end__731,
+end__745 = undefined,
+B749 = array__743.slice(start__744, end__745);
+return B407(B748, insert_array__727, B749)}, false);
+exports["replace-subsequence"] = B724}
 {
-var B822 = B9("replace_subsequenceN", function replace_subsequenceN__823 (target_array__824, insert_array__825)
+var B752 = B9("replace_subsequenceN", function replace_subsequenceN__753 (target_array__754, insert_array__755)
 {
-var B826 = $SL.call(arguments, 2),
-object__832 = target_array__824,
-B837 = ((object__832 || false).length || 0),
-B838 = {start:0,
-end:B837},
-B827 = B184(B826, B838),
-start__828 = B827.start,
-end__829 = B827.end,
-array1__835 = [start__828, B376(end__829, start__828)],
-array2__836 = insert_array__825,
-rest__830 = array1__835.concat(array2__836);
-[].splice.apply(target_array__824, rest__830);
-return target_array__824}, false);
-exports["replace-subsequence!"] = B822}
+var B756 = $SL.call(arguments, 2),
+object__762 = target_array__754,
+B767 = ((object__762 || false).length || 0),
+B768 = {start:0,
+end:B767},
+B757 = B184(B756, B768),
+start__758 = B757.start,
+end__759 = B757.end,
+array1__765 = [start__758, (end__759 - start__758)],
+array2__766 = insert_array__755,
+rest__760 = array1__765.concat(array2__766);
+[].splice.apply(target_array__754, rest__760);
+return target_array__754}, false);
+exports["replace-subsequence!"] = B752}
 {
-var B842 = B9("removeN", function removeN__843 (array__844, value__845)
+var B772 = B9("removeN", function removeN__773 (array__774, value__775)
 {
-var B846 = $SL.call(arguments, 2),
-B847 = B184(B846, {test:B518}),
-test__848 = B847.test,
-B849 = B753(array__844, B235(test__848, value__845));
-if ($T(B849))
+var B776 = $SL.call(arguments, 2),
+B777 = B184(B776, {test:B448}),
+test__778 = B777.test,
+B779 = B683(array__774, B235(test__778, value__775));
+if ($T(B779))
 {
-var key__850 = B849;
-array__844.splice(key__850, 1)};
-return array__844}, false);
-exports["remove!"] = B842}
+var key__780 = B779;
+array__774.splice(key__780, 1)};
+return array__774}, false);
+exports["remove!"] = B772}
 {
-var B853 = B9("remove", function remove__854 (array__855, value__856)
+var B783 = B9("remove", function remove__784 (array__785, value__786)
 {
-var B857 = $SL.call(arguments, 2),
-B858 = B184(B857, {test:B518}),
-test__859 = B858.test,
-array__863 = array__855,
-start__864 = undefined,
-end__865 = undefined,
-B866 = array__863.slice(start__864, end__865);
-return B842(B866, value__856, B213, test__859)}, false);
-exports.remove = B853}
+var B787 = $SL.call(arguments, 2),
+B788 = B184(B787, {test:B448}),
+test__789 = B788.test,
+array__793 = array__785,
+start__794 = undefined,
+end__795 = undefined,
+B796 = array__793.slice(start__794, end__795);
+return B772(B796, value__786, B213, test__789)}, false);
+exports.remove = B783}
 {
-var B868 = B9("interpose", function interpose__869 (separator__870, array__871)
+var B798 = B9("interpose", function interpose__799 (separator__800, array__801)
 {
-var function__883 = function B872 (a__873, b__874)
-{return B477([a__873, separator__870], b__874)},
-values__884 = array__871,
-B885 = values__884,
-B887 = B885[0],
-B886 = values__884,
-B888 = B886.slice(1);
-return B139(function__883, B887, B888)}, false);
-exports.interpose = B868}
+var function__813 = function B802 (a__803, b__804)
+{return B407([a__803, separator__800], b__804)},
+values__814 = array__801,
+B815 = values__814,
+B817 = B815[0],
+B816 = values__814,
+B818 = B816.slice(1);
+return B139(function__813, B817, B818)}, false);
+exports.interpose = B798}
 {
-B545 = B9("anyQ", function anyQ__891 (function__892, values__893)
+B475 = B9("anyQ", function anyQ__821 (function__822, values__823)
 {
-var value__894,
-object__901 = values__893,
-n__895 = ((object__901 || false).length || 0),
-i__896 = 0;
+var value__824,
+object__831 = values__823,
+n__825 = ((object__831 || false).length || 0),
+i__826 = 0;
 while (true)
 {
-var B897 = value__894,
-value__903;
-if ($T(B897))
-value__903 = B897
+var B827 = value__824,
+value__833;
+if ($T(B827))
+value__833 = B827
 else
-value__903 = B152(i__896, n__895);
-var B907 = !(B14(value__903));
-if ($T(B907))
+value__833 = B152(i__826, n__825);
+var B837 = !(B14(value__833));
+if ($T(B837))
 {
-(function B898 (i__899)
-{return value__894 = function__892(values__893[i__899])})(i__896);
-var number__905 = i__896,
-B906 = (number__905 + 1);
-i__896 = B906}
+(function B828 (i__829)
+{return value__824 = function__822(values__823[i__829])})(i__826);
+var number__835 = i__826,
+B836 = (number__835 + 1);
+i__826 = B836}
 else
 break};
-return value__894}, false);
-exports["any?"] = B545}
+return value__824}, false);
+exports["any?"] = B475}
 {
-var B911 = B9("memberQ", function memberQ__912 (value__913, array__914)
+var B841 = B9("memberQ", function memberQ__842 (value__843, array__844)
 {
-var B915 = $SL.call(arguments, 2),
-B916 = B184(B915, {test:B518}),
-test__917 = B916.test;
-return B545(function B918 (other_value__919)
-{return test__917(value__913, other_value__919)}, array__914)}, false);
-exports["member?"] = B911}
+var B845 = $SL.call(arguments, 2),
+B846 = B184(B845, {test:B448}),
+test__847 = B846.test;
+return B475(function B848 (other_value__849)
+{return test__847(value__843, other_value__849)}, array__844)}, false);
+exports["member?"] = B841}
 {
-var B921 = B9("everyQ", function everyQ__922 (function__923, array__924)
+var B851 = B9("everyQ", function everyQ__852 (function__853, array__854)
 {
-var value__930 = B545(function B925 (value__926)
+var value__860 = B475(function B855 (value__856)
 {
-var value__929 = function__923(value__926);
-return !(B14(value__929))}, array__924);
-return !(B14(value__930))}, false);
-exports["every?"] = B921}
+var value__859 = function__853(value__856);
+return !(B14(value__859))}, array__854);
+return !(B14(value__860))}, false);
+exports["every?"] = B851}
 {
-var map__938,
-B937 = B9("map", function map__938 (function__939)
+var map__868,
+B867 = B9("map", function map__868 (function__869)
 {
-var arrays__940 = $SL.call(arguments, 1),
-result__941 = [],
-sequence__961 = arrays__940,
-sequence__962 = sequence__961.slice(1),
-B963 = sequence__962,
-B964 = ((B963 || false).length || 0),
-B965 = 0,
-B984 = (B964 === B965);
-if ($T(B984))
+var arrays__870 = $SL.call(arguments, 1),
+result__871 = [],
+sequence__891 = arrays__870,
+sequence__892 = sequence__891.slice(1),
+B893 = sequence__892,
+B894 = ((B893 || false).length || 0),
+B895 = 0,
+B914 = (B894 === B895);
+if ($T(B914))
 {
-var sequence__967 = arrays__940,
-B942 = sequence__967[0],
-B943,
-B944,
-B945 = [B942];
+var sequence__897 = arrays__870,
+B872 = sequence__897[0],
+B873,
+B874,
+B875 = [B872];
 while (true)
 {
-var B946 = B943,
-value__969;
-if ($T(B946))
-value__969 = B946
+var B876 = B873,
+value__899;
+if ($T(B876))
+value__899 = B876
 else
-value__969 = B545(B68, B945);
-var B986 = !(B14(value__969));
-if ($T(B986))
+value__899 = B475(B68, B875);
+var B916 = !(B14(value__899));
+if ($T(B916))
 {
-var sequence__971 = B942,
-item__947 = sequence__971[0];
-(function B948 (item__949)
+var sequence__901 = B872,
+item__877 = sequence__901[0];
+(function B878 (item__879)
 {
-var array__974 = result__941,
-value__975 = function__939(item__949);
-array__974.push(value__975);
-return array__974})(item__947);
-var sequence__977 = B942,
-B985 = sequence__977.slice(1);
-B942 = B985;
-B945 = [B942]}
+var array__904 = result__871,
+value__905 = function__869(item__879);
+array__904.push(value__905);
+return array__904})(item__877);
+var sequence__907 = B872,
+B915 = sequence__907.slice(1);
+B872 = B915;
+B875 = [B872]}
 else
 break};
-B944}
+B874}
 else
 while (true)
 {
-var value__979 = B545(B68, arrays__940),
-B987 = !(B14(value__979));
-if ($T(B987))
+var value__909 = B475(B68, arrays__870),
+B917 = !(B14(value__909));
+if ($T(B917))
 {
-var array__982 = result__941,
-value__983 = B215(function__939, map__938(B92, arrays__940));
-array__982.push(value__983);
-array__982;
-arrays__940 = map__938(B77, arrays__940)}
+var array__912 = result__871,
+value__913 = B215(function__869, map__868(B92, arrays__870));
+array__912.push(value__913);
+array__912;
+arrays__870 = map__868(B77, arrays__870)}
 else
 break};
-return result__941}, false);
-exports.map = B937}
+return result__871}, false);
+exports.map = B867}
 {
-var B994 = B9("Rdo", function do__995 (function__996)
+var B924 = B9("Rdo", function do__925 (function__926)
 {
-var arrays__997 = $SL.call(arguments, 1),
-sequence__1017 = arrays__997,
-sequence__1018 = sequence__1017.slice(1),
-B1019 = sequence__1018,
-B1020 = ((B1019 || false).length || 0),
-B1021 = 0,
-B1032 = (B1020 === B1021);
-if ($T(B1032))
+var arrays__927 = $SL.call(arguments, 1),
+sequence__947 = arrays__927,
+sequence__948 = sequence__947.slice(1),
+B949 = sequence__948,
+B950 = ((B949 || false).length || 0),
+B951 = 0,
+B962 = (B950 === B951);
+if ($T(B962))
 {
-var sequence__1023 = arrays__997,
-B998 = sequence__1023[0],
-B999,
-B1000,
-B1001 = [B998];
+var sequence__953 = arrays__927,
+B928 = sequence__953[0],
+B929,
+B930,
+B931 = [B928];
 while (true)
 {
-var B1002 = B999,
-value__1025;
-if ($T(B1002))
-value__1025 = B1002
+var B932 = B929,
+value__955;
+if ($T(B932))
+value__955 = B932
 else
-value__1025 = B545(B68, B1001);
-var B1034 = !(B14(value__1025));
-if ($T(B1034))
+value__955 = B475(B68, B931);
+var B964 = !(B14(value__955));
+if ($T(B964))
 {
-var sequence__1027 = B998,
-item__1003 = sequence__1027[0];
-(function B1004 (item__1005)
-{return function__996(item__1005)})(item__1003);
-var sequence__1029 = B998,
-B1033 = sequence__1029.slice(1);
-B998 = B1033;
-B1001 = [B998]}
+var sequence__957 = B928,
+item__933 = sequence__957[0];
+(function B934 (item__935)
+{return function__926(item__935)})(item__933);
+var sequence__959 = B928,
+B963 = sequence__959.slice(1);
+B928 = B963;
+B931 = [B928]}
 else
 break};
-B1000}
+B930}
 else
 while (true)
 {
-var value__1031 = B545(B68, arrays__997),
-B1035 = !(B14(value__1031));
-if ($T(B1035))
+var value__961 = B475(B68, arrays__927),
+B965 = !(B14(value__961));
+if ($T(B965))
 {
-B215(function__996, B937(B92, arrays__997));
-arrays__997 = B937(B77, arrays__997)}
+B215(function__926, B867(B92, arrays__927));
+arrays__927 = B867(B77, arrays__927)}
 else
 break};
 return false}, false);
-exports["do"] = B994}
+exports["do"] = B924}
 {
-B751 = B9("choose", function choose__1042 (function__1043, array__1044)
+B681 = B9("choose", function choose__972 (function__973, array__974)
 {
-var result__1045 = [],
-B1046 = array__1044,
-B1047,
-B1048,
-B1049 = [B1046];
+var result__975 = [],
+B976 = array__974,
+B977,
+B978,
+B979 = [B976];
 while (true)
 {
-var B1050 = B1047,
-value__1055;
-if ($T(B1050))
-value__1055 = B1050
+var B980 = B977,
+value__985;
+if ($T(B980))
+value__985 = B980
 else
-value__1055 = B545(B68, B1049);
-var B1065 = !(B14(value__1055));
-if ($T(B1065))
+value__985 = B475(B68, B979);
+var B995 = !(B14(value__985));
+if ($T(B995))
 {
-var sequence__1057 = B1046,
-element__1051 = sequence__1057[0];
-(function B1052 (element__1053)
-{if ($T(function__1043(element__1053)))
+var sequence__987 = B976,
+element__981 = sequence__987[0];
+(function B982 (element__983)
+{if ($T(function__973(element__983)))
 {
-var array__1060 = result__1045,
-value__1061 = element__1053;
-array__1060.push(value__1061);
-return array__1060}})(element__1051);
-var sequence__1063 = B1046,
-B1064 = sequence__1063.slice(1);
-B1046 = B1064;
-B1049 = [B1046]}
+var array__990 = result__975,
+value__991 = element__983;
+array__990.push(value__991);
+return array__990}})(element__981);
+var sequence__993 = B976,
+B994 = sequence__993.slice(1);
+B976 = B994;
+B979 = [B976]}
 else
 break};
-B1048;
-return result__1045}, false);
-exports.choose = B751}
+B978;
+return result__975}, false);
+exports.choose = B681}
 {
-var B1069 = B9("copy_sequence", function copy_sequence__1070 (array__1071)
+var B999 = B9("copy_sequence", function copy_sequence__1000 (array__1001)
 {
-var B1072 = $SL.call(arguments, 1),
-B1073 = B184(B1072, {start:0,
+var B1002 = $SL.call(arguments, 1),
+B1003 = B184(B1002, {start:0,
 end:false}),
-start__1074 = B1073.start,
-end__1075 = B1073.end,
-B1076 = end__1075,
-end__1077;
-if ($T(B1076))
-end__1077 = B1076
+start__1004 = B1003.start,
+end__1005 = B1003.end,
+B1006 = end__1005,
+end__1007;
+if ($T(B1006))
+end__1007 = B1006
 else
-end__1077 = undefined;
-var array__1081 = array__1071,
-start__1082 = start__1074,
-end__1083 = end__1077;
-return array__1081.slice(start__1082, end__1083)}, false);
-exports["copy-sequence"] = B1069}
+end__1007 = undefined;
+var array__1011 = array__1001,
+start__1012 = start__1004,
+end__1013 = end__1007;
+return array__1011.slice(start__1012, end__1013)}, false);
+exports["copy-sequence"] = B999}
 {
-var B1084;
-B706 = B9("make", function make__1085 (type__1086)
+var B1014;
+B636 = B9("make", function make__1015 (type__1016)
 {
-var arguments__1087 = $SL.call(arguments, 1),
-object__1088 = new(type__1086);
-B215(B1084, object__1088, arguments__1087);
-return object__1088}, false);
-exports.make = B706}
+var arguments__1017 = $SL.call(arguments, 1),
+object__1018 = new(type__1016);
+B215(B1014, object__1018, arguments__1017);
+return object__1018}, false);
+exports.make = B636}
 {
-B752 = B9("object_properties", function object_properties__1093 (object__1094)
+B682 = B9("object_properties", function object_properties__1023 (object__1024)
 {
-var B1095 = $SL.call(arguments, 1),
-B1096 = B184(B1095, {"inherited?":false}),
-inheritedQ__1097 = B1096["inherited?"],
-result__1098 = [];
-if ($T(B426(object__1094, B4)))
+var B1025 = $SL.call(arguments, 1),
+B1026 = B184(B1025, {"inherited?":false}),
+inheritedQ__1027 = B1026["inherited?"],
+result__1028 = [];
+if ($T(B356(object__1024, B4)))
 {
-var object__1105 = object__1094,
-B1099 = ((object__1105 || false).length || 0),
-i__1100 = 0;
+var object__1035 = object__1024,
+B1029 = ((object__1035 || false).length || 0),
+i__1030 = 0;
 while (true)
 {
-var value__1107 = B152(i__1100, B1099),
-B1112 = !(B14(value__1107));
-if ($T(B1112))
+var value__1037 = B152(i__1030, B1029),
+B1042 = !(B14(value__1037));
+if ($T(B1042))
 {
-(function B1101 (i__1102)
+(function B1031 (i__1032)
 {
-var array__1110 = result__1098,
-value__1111 = i__1102;
-array__1110.push(value__1111);
-return array__1110})(i__1100);
-i__1100 = B340(i__1100, 1)}
+var array__1040 = result__1028,
+value__1041 = i__1032;
+array__1040.push(value__1041);
+return array__1040})(i__1030);
+i__1030 = (i__1030 + 1)}
 else
 break};
 false}
 else
 {
-var i__1103;
-for (i__1103 in object__1094) (inheritedQ__1097||$HP.call(object__1094, i__1103)) &&result__1098.push(i__1103)};
-return result__1098}, false);
-exports["object-properties"] = B752}
+var i__1033;
+for (i__1033 in object__1024) (inheritedQ__1027||$HP.call(object__1024, i__1033)) &&result__1028.push(i__1033)};
+return result__1028}, false);
+exports["object-properties"] = B682}
 {
-var B1113 = B9("object_values", function object_values__1114 (object__1115)
-{return B937(B235(B707, object__1115), B752(object__1115))}, false);
-exports["object-values"] = B1113}
+var B1043 = B9("object_values", function object_values__1044 (object__1045)
+{return B867(B235(B637, object__1045), B682(object__1045))}, false);
+exports["object-values"] = B1043}
 {
-B1084 = B444("initialize");
-exports.initialize = B1084}
+B1014 = B374("initialize");
+exports.initialize = B1014}
 {
-var B1144 = $K("inherited?");
-B1084 = B445("initialize", function B1121 (object__1122)
+var B1074 = $K("inherited?");
+B1014 = B375("initialize", function B1051 (object__1052)
 {
-var rest__1123 = $SL.call(arguments, 1),
-arguments__1124 = B648(rest__1123),
-B1125 = B422(object__1122)["%properties"];
-if ($T(B1125))
+var rest__1053 = $SL.call(arguments, 1),
+arguments__1054 = B578(rest__1053),
+B1055 = B352(object__1052)["%properties"];
+if ($T(B1055))
 {
-var properties__1126 = B1125;
-B994(function B1127 (key__1128)
+var properties__1056 = B1055;
+B924(function B1057 (key__1058)
 {
-var object__1136 = B1.prototype,
-property__1137 = key__1128,
-B1129 = $HP.call(object__1136,property__1137),
-value__1142;
-if ($T(B1129))
-value__1142 = B1129
+var object__1066 = B1.prototype,
+property__1067 = key__1058,
+B1059 = $HP.call(object__1066,property__1067),
+value__1072;
+if ($T(B1059))
+value__1072 = B1059
 else
 {
-var object__1140 = object__1122,
-property__1141 = key__1128;
-value__1142 = $HP.call(object__1140,property__1141)};
-var B1143 = !(B14(value__1142));
-if ($T(B1143))
+var object__1070 = object__1052,
+property__1071 = key__1058;
+value__1072 = $HP.call(object__1070,property__1071)};
+var B1073 = !(B14(value__1072));
+if ($T(B1073))
 {
-var B1130 = arguments__1124[key__1128],
-value__1132;
-if ($T(B1130))
-value__1132 = B1130
+var B1060 = arguments__1054[key__1058],
+value__1062;
+if ($T(B1060))
+value__1062 = B1060
 else
 {
-var value__1131 = properties__1126[key__1128];
-if ($T(value__1131))
-value__1132 = value__1131()
+var value__1061 = properties__1056[key__1058];
+if ($T(value__1061))
+value__1062 = value__1061()
 else
-value__1132 = false};
-return object__1122[key__1128] = value__1132}}, B752(properties__1126, B1144, true))};
-return object__1122}, false, B1, B1084);
-exports.initialize = B1084}
+value__1062 = false};
+return object__1052[key__1058] = value__1062}}, B682(properties__1056, B1074, true))};
+return object__1052}, false, B1, B1014);
+exports.initialize = B1014}
 {
-var B1145 = B38(B1, {name:false});
-exports["<hash-symbol>"] = B1145}
+var B1075 = B38(B1, {name:false});
+exports["<hash-symbol>"] = B1075}
 {
-var key__1146 = B706(B1145, B720, "key");
-$KEY = key__1146}
+var key__1076 = B636(B1075, B650, "key");
+$KEY = key__1076}
 {
-var rest__1147 = B706(B1145, B720, "rest");
-$REST = rest__1147}
+var rest__1077 = B636(B1075, B650, "rest");
+$REST = rest__1077}
 {
-B707 = B9("get", function get__1154 (object__1155)
+B637 = B9("get", function get__1084 (object__1085)
 {
-var properties__1156 = $SL.call(arguments, 1),
-result__1157,
-B1158 = properties__1156,
-B1159,
-B1160,
-B1161 = [B1158];
+var properties__1086 = $SL.call(arguments, 1),
+result__1087,
+B1088 = properties__1086,
+B1089,
+B1090,
+B1091 = [B1088];
 while (true)
 {
-var B1162 = B1159,
-value__1167;
-if ($T(B1162))
-value__1167 = B1162
+var B1092 = B1089,
+value__1097;
+if ($T(B1092))
+value__1097 = B1092
 else
-value__1167 = B545(B68, B1161);
-var B1180 = !(B14(value__1167));
-if ($T(B1180))
+value__1097 = B475(B68, B1091);
+var B1110 = !(B14(value__1097));
+if ($T(B1110))
 {
-var sequence__1169 = B1158,
-property__1163 = sequence__1169[0],
-object__1173 = object__1155,
-property__1174 = property__1163,
-value__1175 = $HP.call(object__1173,property__1174),
-B1178 = !(B14(value__1175));
-if ($T(B1178))
+var sequence__1099 = B1088,
+property__1093 = sequence__1099[0],
+object__1103 = object__1085,
+property__1104 = property__1093,
+value__1105 = $HP.call(object__1103,property__1104),
+B1108 = !(B14(value__1105));
+if ($T(B1108))
 {
-B1160 = result__1157 = false;
-B1159 = true}
+B1090 = result__1087 = false;
+B1089 = true}
 else
 {
-(function B1164 (property__1165)
+(function B1094 (property__1095)
 {
-result__1157 = object__1155[property__1165];
-return object__1155 = result__1157})(property__1163);
-var sequence__1177 = B1158,
-B1179 = sequence__1177.slice(1);
-B1158 = B1179;
-B1161 = [B1158]}}
+result__1087 = object__1085[property__1095];
+return object__1085 = result__1087})(property__1093);
+var sequence__1107 = B1088,
+B1109 = sequence__1107.slice(1);
+B1088 = B1109;
+B1091 = [B1088]}}
 else
 break};
-B1160;
-return result__1157}, false);
-exports.get = B707}
+B1090;
+return result__1087}, false);
+exports.get = B637}
 {
-B705 = B9("get_setter", function get_setter__1181 (object__1182)
+B635 = B9("get_setter", function get_setter__1111 (object__1112)
 {
-var propertiesSvalue__1183 = $SL.call(arguments, 1),
-object__1187 = propertiesSvalue__1183,
-B1198 = ((object__1187 || false).length || 0),
-B1199 = B620(B1198, 2);
-if ($T(B1199))
+var propertiesSvalue__1113 = $SL.call(arguments, 1),
+object__1117 = propertiesSvalue__1113,
+B1128 = ((object__1117 || false).length || 0),
+B1129 = B550(B1128, 2);
+if ($T(B1129))
 {
-var sequence__1189 = propertiesSvalue__1183,
-B1200 = sequence__1189[1];
-return object__1182[B92(propertiesSvalue__1183)] = B1200}
+var sequence__1119 = propertiesSvalue__1113,
+B1130 = sequence__1119[1];
+return object__1112[B92(propertiesSvalue__1113)] = B1130}
 else
 {
-var sequence__1191 = propertiesSvalue__1183,
-property__1184 = sequence__1191[0],
-object__1194 = object__1182,
-property__1195 = property__1184,
-B1201 = $HP.call(object__1194,property__1195),
-object2__1185;
-if ($T(B1201))
-object2__1185 = object__1182[property__1184]
+var sequence__1121 = propertiesSvalue__1113,
+property__1114 = sequence__1121[0],
+object__1124 = object__1112,
+property__1125 = property__1114,
+B1131 = $HP.call(object__1124,property__1125),
+object2__1115;
+if ($T(B1131))
+object2__1115 = object__1112[property__1114]
 else
-object2__1185 = object__1182[property__1184] = B698();
-var sequence__1197 = propertiesSvalue__1183,
-B1202 = sequence__1197.slice(1);
-return B215(get_setter__1181, object2__1185, B1202)}}, true);
-exports["get-setter"] = B705}
+object2__1115 = object__1112[property__1114] = B628();
+var sequence__1127 = propertiesSvalue__1113,
+B1132 = sequence__1127.slice(1);
+return B215(get_setter__1111, object2__1115, B1132)}}, true);
+exports["get-setter"] = B635}
 {
-var B1204 = B9("split_with", function split_with__1205 (function__1206, array__1207)
+var B1134 = B9("split_with", function split_with__1135 (function__1136, array__1137)
 {
-var a__1208 = [],
-b__1209 = [];
-B994(function B1210 (item__1211)
+var a__1138 = [],
+b__1139 = [];
+B924(function B1140 (item__1141)
 {
-var array__1214;
-if ($T(function__1206(item__1211)))
-array__1214 = a__1208
+var array__1144;
+if ($T(function__1136(item__1141)))
+array__1144 = a__1138
 else
-array__1214 = b__1209;
-var value__1215 = item__1211;
-array__1214.push(value__1215);
-return array__1214}, array__1207);
-return [a__1208, b__1209]}, false);
-exports["split-with"] = B1204}
+array__1144 = b__1139;
+var value__1145 = item__1141;
+array__1144.push(value__1145);
+return array__1144}, array__1137);
+return [a__1138, b__1139]}, false);
+exports["split-with"] = B1134}
 {
-var B1216 = B9("as_hex_string", function as_hex_string__1217 (number__1218)
-{return number__1218.toString(16)}, false);
-exports["as-hex-string"] = B1216}
+var B1146 = B9("as_hex_string", function as_hex_string__1147 (number__1148)
+{return number__1148.toString(16)}, false);
+exports["as-hex-string"] = B1146}
 {
-var B1219 = B444("description");
-exports.description = B1219}
+var B1149 = B374("description");
+exports.description = B1149}
 {
-B1219 = B445("description", function B1221 (number__1222)
-{return ("" + number__1222)}, false, B3, B1219);
-exports.description = B1219}
+B1149 = B375("description", function B1151 (number__1152)
+{return ("" + number__1152)}, false, B3, B1149);
+exports.description = B1149}
 {
-B1219 = B445("description", function B1224 (string__1225)
+B1149 = B375("description", function B1154 (string__1155)
 {
-var escaped__1226 = string__1225.replace("\"", "\\\"", "g");
-return ("\"" + escaped__1226 + "\"")}, false, B2, B1219);
-exports.description = B1219}
+var escaped__1156 = string__1155.replace("\"", "\\\"", "g");
+return ("\"" + escaped__1156 + "\"")}, false, B2, B1149);
+exports.description = B1149}
 {
-B1219 = B445("description", function B1228 (array__1229)
-{return ("(" + B686(B937(B1219, array__1229), " ") + ")")}, false, B4, B1219);
-exports.description = B1219}
+B1149 = B375("description", function B1158 (array__1159)
+{return ("(" + B616(B867(B1149, array__1159), " ") + ")")}, false, B4, B1149);
+exports.description = B1149}
 {
-B1219 = B445("description", function B1231 (value__1232)
-{if ($T(value__1232))
+B1149 = B375("description", function B1161 (value__1162)
+{if ($T(value__1162))
 return "#t"
 else
-return "#f"}, false, B5, B1219);
-exports.description = B1219}
+return "#f"}, false, B5, B1149);
+exports.description = B1149}
 {
-B1219 = B445("description", function B1235 (symbol__1236)
+B1149 = B375("description", function B1165 (symbol__1166)
 {
-var B1237 = B707(symbol__1236, "module"),
-B1239;
-if ($T(B1237))
+var B1167 = B637(symbol__1166, "module"),
+B1169;
+if ($T(B1167))
 {
-var module__1238 = B1237;
-B1239 = B477(module__1238, "::")}
+var module__1168 = B1167;
+B1169 = B407(module__1168, "::")}
 else
-B1239 = "";
-var B1240 = B722(symbol__1236);
-return (B1239 + B1240)}, false, B701, B1219);
-exports.description = B1219}
+B1169 = "";
+var B1170 = B652(symbol__1166);
+return (B1169 + B1170)}, false, B631, B1149);
+exports.description = B1149}
 {
-B1219 = B445("description", function B1242 (keyword__1243)
-{return (B722(keyword__1243) + ":")}, false, B45, B1219);
-exports.description = B1219}
+B1149 = B375("description", function B1172 (keyword__1173)
+{return (B652(keyword__1173) + ":")}, false, B45, B1149);
+exports.description = B1149}
 {
-B1219 = B445("description", function B1245 (symbol__1246)
-{return ("#" + B722(symbol__1246))}, false, B1145, B1219);
-exports.description = B1219}
+B1149 = B375("description", function B1175 (symbol__1176)
+{return ("#" + B652(symbol__1176))}, false, B1075, B1149);
+exports.description = B1149}
 {
-var B1247 = Math.min;
-exports.min = B1247}
+var B1177 = Math.min;
+exports.min = B1177}
 {
-var B1248 = Math.max;
-exports.max = B1248}
+var B1178 = Math.max;
+exports.max = B1178}
 {
-var B1249 = Math.abs;
-exports.abs = B1249}
+var B1179 = Math.abs;
+exports.abs = B1179}
 {
-var B1250 = Math.round;
-exports.round = B1250}
+var B1180 = Math.round;
+exports.round = B1180}
 {
-var B1251 = Math.floor;
-exports.floor = B1251}
+var B1181 = Math.floor;
+exports.floor = B1181}
 {
-var B1252 = Math.ceil;
-exports.ceil = B1252}
+var B1182 = Math.ceil;
+exports.ceil = B1182}
 {
-var B1253 = Math.sin;
-exports.sin = B1253}
+var B1183 = Math.sin;
+exports.sin = B1183}
 {
-var B1254 = Math.cos;
-exports.cos = B1254}
+var B1184 = Math.cos;
+exports.cos = B1184}
 {
-var B1255 = Math.atan2;
-exports.atan2 = B1255}
+var B1185 = Math.atan2;
+exports.atan2 = B1185}
 {
-var B1256 = Math.pow;
-exports.expt = B1256}
+var B1186 = Math.pow;
+exports.expt = B1186}
 {
-var B1257 = Math.sqrt;
-exports.sqrt = B1257}
+var B1187 = Math.sqrt;
+exports.sqrt = B1187}
 {
-var B1258 = B9("mod", function mod__1259 (number1__1260, number2__1261)
-{return (number1__1260 % number2__1261)}, false);
-exports.mod = B1258}
+var B1188 = B9("mod", function mod__1189 (number1__1190, number2__1191)
+{return (number1__1190 % number2__1191)}, false);
+exports.mod = B1188}
 {
-var B1262 = Math.PI;
-exports["*pi*"] = B1262}
-var B1263 = (B1262 / 180)
+var B1192 = Math.PI;
+exports["*pi*"] = B1192}
+var B1193 = (B1192 / 180)
 {
-var B1264 = B9("as_radiant", function as_radiant__1265 (number__1266)
-{return (number__1266 * B1263)}, false);
-exports["as-radiant"] = B1264}
+var B1194 = B9("as_radiant", function as_radiant__1195 (number__1196)
+{return (number__1196 * B1193)}, false);
+exports["as-radiant"] = B1194}
 {
-var B1267 = B9("signal", function signal__1268 (error__1269)
+var B1197 = B9("signal", function signal__1198 (error__1199)
 {
-throw(error__1269);
+throw(error__1199);
 return false}, false);
-exports.signal = B1267}
+exports.signal = B1197}
 {
-var B1276 = B9("extendN", function extendN__1277 (object1__1278, object2__1279)
+var B1206 = B9("extendN", function extendN__1207 (object1__1208, object2__1209)
 {
-var B1280 = B752(object2__1279),
+var B1210 = B682(object2__1209),
+B1211,
+B1212,
+B1213 = [B1210];
+while (true)
+{
+var B1214 = B1211,
+value__1219;
+if ($T(B1214))
+value__1219 = B1214
+else
+value__1219 = B475(B68, B1213);
+var B1225 = !(B14(value__1219));
+if ($T(B1225))
+{
+var sequence__1221 = B1210,
+key__1215 = sequence__1221[0];
+(function B1216 (key__1217)
+{return B635(object1__1208, key__1217, B637(object2__1209, key__1217))})(key__1215);
+var sequence__1223 = B1210,
+B1224 = sequence__1223.slice(1);
+B1210 = B1224;
+B1213 = [B1210]}
+else
+break};
+B1212;
+return object1__1208}, false);
+exports["extend!"] = B1206}
+{
+var B1234 = B9("as_property_list", function as_property_list__1235 (object__1236)
+{
+var B1237 = $SL.call(arguments, 1),
+B1238 = B184(B1237, {"keywords?":false}),
+keywordsQ__1239 = B1238["keywords?"],
+result__1240 = [],
+B1241 = B682(object__1236),
+B1242,
+B1243,
+B1244 = [B1241];
+while (true)
+{
+var B1245 = B1242,
+value__1250;
+if ($T(B1245))
+value__1250 = B1245
+else
+value__1250 = B475(B68, B1244);
+var B1264 = !(B14(value__1250));
+if ($T(B1264))
+{
+var sequence__1252 = B1241,
+key__1246 = sequence__1252[0];
+(function B1247 (key__1248)
+{
+var array__1255 = result__1240,
+value__1256;
+if ($T(keywordsQ__1239))
+value__1256 = B47(B57(key__1248))
+else
+value__1256 = key__1248;
+array__1255.push(value__1256);
+array__1255;
+var array__1259 = result__1240,
+value__1260 = B637(object__1236, key__1248);
+array__1259.push(value__1260);
+return array__1259})(key__1246);
+var sequence__1262 = B1241,
+B1263 = sequence__1262.slice(1);
+B1241 = B1263;
+B1244 = [B1241]}
+else
+break};
+B1243;
+return result__1240}, false);
+exports["as-property-list"] = B1234}
+{
+var B1273 = B9("as_association_list", function as_association_list__1274 (object__1275)
+{
+var B1276 = $SL.call(arguments, 1),
+B1277 = B184(B1276, {"keywords?":false}),
+keywordsQ__1278 = B1277["keywords?"],
+result__1279 = [],
+B1280 = B682(object__1275),
 B1281,
 B1282,
 B1283 = [B1280];
@@ -1518,273 +1552,225 @@ value__1289;
 if ($T(B1284))
 value__1289 = B1284
 else
-value__1289 = B545(B68, B1283);
-var B1295 = !(B14(value__1289));
-if ($T(B1295))
+value__1289 = B475(B68, B1283);
+var B1301 = !(B14(value__1289));
+if ($T(B1301))
 {
 var sequence__1291 = B1280,
 key__1285 = sequence__1291[0];
 (function B1286 (key__1287)
-{return B705(object1__1278, key__1287, B707(object2__1279, key__1287))})(key__1285);
-var sequence__1293 = B1280,
-B1294 = sequence__1293.slice(1);
-B1280 = B1294;
+{
+var array__1294 = result__1279,
+B1298;
+if ($T(keywordsQ__1278))
+B1298 = B47(B57(key__1287))
+else
+B1298 = key__1287;
+var B1299 = B637(object__1275, key__1287),
+value__1295 = [B1298, B1299];
+array__1294.push(value__1295);
+return array__1294})(key__1285);
+var sequence__1297 = B1280,
+B1300 = sequence__1297.slice(1);
+B1280 = B1300;
 B1283 = [B1280]}
 else
 break};
 B1282;
-return object1__1278}, false);
-exports["extend!"] = B1276}
+return result__1279}, false);
+exports["as-association-list"] = B1273}
 {
-var B1304 = B9("as_property_list", function as_property_list__1305 (object__1306)
+var B1302 = B9("starts_withQ", function starts_withQ__1303 (string__1304, prefix__1305)
 {
-var B1307 = $SL.call(arguments, 1),
-B1308 = B184(B1307, {"keywords?":false}),
-keywordsQ__1309 = B1308["keywords?"],
-result__1310 = [],
-B1311 = B752(object__1306),
-B1312,
-B1313,
-B1314 = [B1311];
-while (true)
+var object1__1308 = string__1304.indexOf(prefix__1305),
+object2__1309 = 0;
+return (object1__1308 === object2__1309)}, false);
+exports["starts-with?"] = B1302}
 {
-var B1315 = B1312,
-value__1320;
-if ($T(B1315))
-value__1320 = B1315
+var B1310 = B9("evenQ", function evenQ__1311 (number__1312)
+{
+var object1__1315 = (number__1312 % 2),
+object2__1316 = 0;
+return (object1__1315 === object2__1316)}, false);
+exports["even?"] = B1310}
+{
+var B1317 = B9("oddQ", function oddQ__1318 (number__1319)
+{
+var object1__1322 = (number__1319 % 2),
+object2__1323 = 1;
+return (object1__1322 === object2__1323)}, false);
+exports["odd?"] = B1317}
+{
+var B1325 = B9("group_by", function group_by__1326 (predicate__1327, items__1328)
+{return B139(function B1329 (result__1330, item__1331)
+{
+var key__1332 = predicate__1327(item__1331),
+object__1335 = result__1330,
+property__1336 = key__1332,
+B1341 = $HP.call(object__1335,property__1336);
+if ($T(B1341))
+{
+var array__1339 = B637(result__1330, key__1332),
+value__1340 = item__1331;
+array__1339.push(value__1340);
+array__1339}
 else
-value__1320 = B545(B68, B1314);
-var B1334 = !(B14(value__1320));
-if ($T(B1334))
+B635(result__1330, key__1332, [item__1331]);
+return result__1330}, B628(), items__1328)}, false);
+exports["group-by"] = B1325}
+var B1342 = B9("wrap_object", function wrap_object__1343 (object__1344)
 {
-var sequence__1322 = B1311,
-key__1316 = sequence__1322[0];
-(function B1317 (key__1318)
+var rest__1345 = $SL.call(arguments, 1),
+result__1346 = Object.create(object__1344);
+B1206(result__1346, B578(rest__1345));
+return result__1346}, false)
+var B1347 = B9("unwrap_object", function unwrap_object__1348 (object__1349)
+{return object__1349.__proto__}, false)
 {
-var array__1325 = result__1310,
-value__1326;
-if ($T(keywordsQ__1309))
-value__1326 = B47(B57(key__1318))
+var B1352 = B9("update_with", function update_with__1353 (fn__1354, obj__1355)
+{
+var objs__1356 = $SL.call(arguments, 2);
+return B924(function B1357 (obj2__1358)
+{return B924(function B1359 (property__1360)
+{
+var value__1361 = B637(obj2__1358, property__1360),
+object__1364 = obj__1355,
+property__1365 = property__1360,
+B1366 = $HP.call(object__1364,property__1365),
+B1367;
+if ($T(B1366))
+B1367 = fn__1354(B637(obj__1355, property__1360), value__1361)
 else
-value__1326 = key__1318;
-array__1325.push(value__1326);
-array__1325;
-var array__1329 = result__1310,
-value__1330 = B707(object__1306, key__1318);
-array__1329.push(value__1330);
-return array__1329})(key__1316);
-var sequence__1332 = B1311,
-B1333 = sequence__1332.slice(1);
-B1311 = B1333;
-B1314 = [B1311]}
+B1367 = value__1361;
+return B635(obj__1355, property__1360, B1367)}, B682(obj2__1358))}, objs__1356)}, false);
+exports["update-with"] = B1352}
+{
+var B1368,
+B1369 = B9("as_set", function as_set__1370 (values__1371)
+{
+var set__1372 = [];
+return B1368(set__1372, values__1371)}, false);
+exports["as-set"] = B1369}
+{
+var B1373 = B9("set_addN", function set_addN__1374 (set__1375, object__1376)
+{
+var value__1378 = B841(object__1376, set__1375),
+B1383 = !(B14(value__1378));
+if ($T(B1383))
+{
+var array__1381 = set__1375,
+value__1382 = object__1376;
+array__1381.push(value__1382);
+return array__1381}}, false);
+exports["set-add!"] = B1373}
+{
+var B1384 = B772;
+exports["set-remove!"] = B1384}
+{
+B1368 = B9("set_unionN", function set_unionN__1385 (set1__1386, set2__1387)
+{
+B924(B235(B1373, set1__1386), set2__1387);
+return set1__1386}, false);
+exports["set-union!"] = B1368}
+{
+var B1388 = B9("set_subtractN", function set_subtractN__1389 (set1__1390, set2__1391)
+{
+B924(B235(B1384, set1__1390), set2__1391);
+return set1__1390}, false);
+exports["set-subtract!"] = B1388}
+{
+var B1392 = B9("chain_object", function chain_object__1393 (object1__1394, object2__1395)
+{
+object2__1395.__proto__ = object1__1394.__proto__;
+object1__1394.__proto__ = object2__1395;
+return object1__1394}, false);
+exports["chain-object"] = B1392}
+{
+var B1396 = B9("unchain_object", function unchain_object__1397 (object__1398)
+{
+var B1399;
+if ($T(object__1398.__proto__))
+B1399 = object__1398.__proto__.__proto__
 else
-break};
-B1313;
-return result__1310}, false);
-exports["as-property-list"] = B1304}
+B1399 = false;
+object__1398.__proto__ = B1399;
+return object__1398}, false);
+exports["unchain-object"] = B1396}
 {
-var B1343 = B9("as_association_list", function as_association_list__1344 (object__1345)
+B1146 = B9("as_hex_string", function as_hex_string__1400 (number__1401)
+{return number__1401.toString(16)}, false);
+exports["as-hex-string"] = B1146}
 {
-var B1346 = $SL.call(arguments, 1),
-B1347 = B184(B1346, {"keywords?":false}),
-keywordsQ__1348 = B1347["keywords?"],
-result__1349 = [],
-B1350 = B752(object__1345),
-B1351,
-B1352,
-B1353 = [B1350];
-while (true)
-{
-var B1354 = B1351,
-value__1359;
-if ($T(B1354))
-value__1359 = B1354
-else
-value__1359 = B545(B68, B1353);
-var B1371 = !(B14(value__1359));
-if ($T(B1371))
-{
-var sequence__1361 = B1350,
-key__1355 = sequence__1361[0];
-(function B1356 (key__1357)
-{
-var array__1364 = result__1349,
-B1368;
-if ($T(keywordsQ__1348))
-B1368 = B47(B57(key__1357))
-else
-B1368 = key__1357;
-var B1369 = B707(object__1345, key__1357),
-value__1365 = [B1368, B1369];
-array__1364.push(value__1365);
-return array__1364})(key__1355);
-var sequence__1367 = B1350,
-B1370 = sequence__1367.slice(1);
-B1350 = B1370;
-B1353 = [B1350]}
-else
-break};
-B1352;
-return result__1349}, false);
-exports["as-association-list"] = B1343}
-{
-var B1372 = B9("starts_withQ", function starts_withQ__1373 (string__1374, prefix__1375)
-{
-var object1__1378 = string__1374.indexOf(prefix__1375),
-object2__1379 = 0;
-return (object1__1378 === object2__1379)}, false);
-exports["starts-with?"] = B1372}
-{
-var B1380 = B9("evenQ", function evenQ__1381 (number__1382)
-{
-var object1__1385 = (number__1382 % 2),
-object2__1386 = 0;
-return (object1__1385 === object2__1386)}, false);
-exports["even?"] = B1380}
-{
-var B1387 = B9("oddQ", function oddQ__1388 (number__1389)
-{
-var object1__1392 = (number__1389 % 2),
-object2__1393 = 1;
-return (object1__1392 === object2__1393)}, false);
-exports["odd?"] = B1387}
-{
-var B1395 = B9("group_by", function group_by__1396 (predicate__1397, items__1398)
-{return B139(function B1399 (result__1400, item__1401)
-{
-var key__1402 = predicate__1397(item__1401),
-object__1405 = result__1400,
-property__1406 = key__1402,
-B1411 = $HP.call(object__1405,property__1406);
-if ($T(B1411))
-{
-var array__1409 = B707(result__1400, key__1402),
-value__1410 = item__1401;
-array__1409.push(value__1410);
-array__1409}
-else
-B705(result__1400, key__1402, [item__1401]);
-return result__1400}, B698(), items__1398)}, false);
-exports["group-by"] = B1395}
-var B1412 = B9("wrap_object", function wrap_object__1413 (object__1414)
-{
-var rest__1415 = $SL.call(arguments, 1),
-result__1416 = Object.create(object__1414);
-B1276(result__1416, B648(rest__1415));
-return result__1416}, false)
-var B1417 = B9("unwrap_object", function unwrap_object__1418 (object__1419)
-{return object__1419.__proto__}, false)
-{
-var B1422 = B9("update_with", function update_with__1423 (fn__1424, obj__1425)
-{
-var objs__1426 = $SL.call(arguments, 2);
-return B994(function B1427 (obj2__1428)
-{return B994(function B1429 (property__1430)
-{
-var value__1431 = B707(obj2__1428, property__1430),
-object__1434 = obj__1425,
-property__1435 = property__1430,
-B1436 = $HP.call(object__1434,property__1435),
-B1437;
-if ($T(B1436))
-B1437 = fn__1424(B707(obj__1425, property__1430), value__1431)
-else
-B1437 = value__1431;
-return B705(obj__1425, property__1430, B1437)}, B752(obj2__1428))}, objs__1426)}, false);
-exports["update-with"] = B1422}
-{
-var B1438,
-B1439 = B9("as_set", function as_set__1440 (values__1441)
-{
-var set__1442 = [];
-return B1438(set__1442, values__1441)}, false);
-exports["as-set"] = B1439}
-{
-var B1443 = B9("set_addN", function set_addN__1444 (set__1445, object__1446)
-{
-var value__1448 = B911(object__1446, set__1445),
-B1453 = !(B14(value__1448));
-if ($T(B1453))
-{
-var array__1451 = set__1445,
-value__1452 = object__1446;
-array__1451.push(value__1452);
-return array__1451}}, false);
-exports["set-add!"] = B1443}
-{
-var B1454 = B842;
-exports["set-remove!"] = B1454}
-{
-B1438 = B9("set_unionN", function set_unionN__1455 (set1__1456, set2__1457)
-{
-B994(B235(B1443, set1__1456), set2__1457);
-return set1__1456}, false);
-exports["set-union!"] = B1438}
-{
-var B1458 = B9("set_subtractN", function set_subtractN__1459 (set1__1460, set2__1461)
-{
-B994(B235(B1454, set1__1460), set2__1461);
-return set1__1460}, false);
-exports["set-subtract!"] = B1458}
-{
-var B1462 = B9("chain_object", function chain_object__1463 (object1__1464, object2__1465)
-{
-object2__1465.__proto__ = object1__1464.__proto__;
-object1__1464.__proto__ = object2__1465;
-return object1__1464}, false);
-exports["chain-object"] = B1462}
-{
-var B1466 = B9("unchain_object", function unchain_object__1467 (object__1468)
-{
-var B1469;
-if ($T(object__1468.__proto__))
-B1469 = object__1468.__proto__.__proto__
-else
-B1469 = false;
-object__1468.__proto__ = B1469;
-return object__1468}, false);
-exports["unchain-object"] = B1466}
-{
-B1216 = B9("as_hex_string", function as_hex_string__1470 (number__1471)
-{return number__1471.toString(16)}, false);
-exports["as-hex-string"] = B1216}
-{
-var B1472 = B9("make_plain_object", function make_plain_object__1473 ()
+var B1402 = B9("make_plain_object", function make_plain_object__1403 ()
 {return Object.create(null)}, false);
-exports["make-plain-object"] = B1472}
-var fact__1478,
-B1474 = B9("factorial", function factorial__1475 (n__1476)
+exports["make-plain-object"] = B1402}
 {
-var fact__1477 = function fact__1478 (i__1479, acc__1480)
-{B1481:while(true){
-if ($T(B518(i__1479, 0)))
-return acc__1480
+var B1404 = B9("_", function ___1405 (minuend__1406)
+{
+var subtrahends__1407 = $SL.call(arguments, 1),
+sequence__1418 = subtrahends__1407,
+B1419 = sequence__1418,
+B1420 = ((B1419 || false).length || 0),
+B1421 = 0,
+B1422 = (B1420 === B1421);
+if ($T(B1422))
+return -(minuend__1406)
+else
+return B139(B340, minuend__1406, subtrahends__1407)}, false);
+exports["-"] = B1404}
+{
+var B1423 = B9("P", function P__1424 ()
+{
+var numbers__1425 = $SL.call(arguments, 0),
+sequence__1436 = numbers__1425,
+B1437 = sequence__1436,
+B1438 = ((B1437 || false).length || 0),
+B1439 = 0,
+B1452 = (B1438 === B1439);
+if ($T(B1452))
+return 0
 else
 {
-arguments = [B376(i__1479, 1), (acc__1480 * i__1479)];
-i__1479 = arguments[0];
-acc__1480 = arguments[1];
-continue B1481};
-break}};
-return fact__1477(n__1476, 1)}, false)
+var function__1448 = B336,
+values__1449 = numbers__1425,
+B1450 = values__1449,
+B1453 = B1450[0],
+B1451 = values__1449,
+B1454 = B1451.slice(1);
+return B139(function__1448, B1453, B1454)}}, false);
+exports["+"] = B1423}
 {
-var B1482 = B9("T", function T__1483 ()
+var B1455 = B9("T", function T__1456 ()
 {
-var numbers__1484 = $SL.call(arguments, 0),
-sequence__1495 = numbers__1484,
-B1496 = sequence__1495,
-B1497 = ((B1496 || false).length || 0),
-B1498 = 0,
-B1511 = (B1497 === B1498);
-if ($T(B1511))
+var numbers__1457 = $SL.call(arguments, 0),
+sequence__1468 = numbers__1457,
+B1469 = sequence__1468,
+B1470 = ((B1469 || false).length || 0),
+B1471 = 0,
+B1484 = (B1470 === B1471);
+if ($T(B1484))
 return 1
 else
 {
-var function__1507 = B395,
-values__1508 = numbers__1484,
-B1509 = values__1508,
-B1512 = B1509[0],
-B1510 = values__1508,
-B1513 = B1510.slice(1);
-return B139(function__1507, B1512, B1513)}}, false);
-exports["*"] = B1482}
+var function__1480 = B344,
+values__1481 = numbers__1457,
+B1482 = values__1481,
+B1485 = B1482[0],
+B1483 = values__1481,
+B1486 = B1483.slice(1);
+return B139(function__1480, B1485, B1486)}}, false);
+exports["*"] = B1455}
+{
+var B1487 = B9("S", function S__1488 (numerator__1489)
+{
+var denominators__1490 = $SL.call(arguments, 1),
+sequence__1501 = denominators__1490,
+B1502 = sequence__1501,
+B1503 = ((B1502 || false).length || 0),
+B1504 = 0,
+B1505 = (B1503 === B1504);
+if ($T(B1505))
+return (1 / numerator__1489)
+else
+return B139(B348, numerator__1489, denominators__1490)}, false);
+exports["/"] = B1487}

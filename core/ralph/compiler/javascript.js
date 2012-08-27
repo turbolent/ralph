@@ -1,395 +1,584 @@
-var B1288 = require("ralph/core")
+var B4464 = require("ralph/core")
 {
-var B1291,
-B1292;
-B1291 = require("ralph/regexp");
-B1292 = require("ralph/compiler/utilities")}
-var B1293 = B1288["make-object"],
-B1294 = B1293("\"", "\"", "\\", "\\", "\b", "b", "\f", "f", "\n", "n", "\r", "r", "\v", "v", "\t", "t")
-var B1295 = B1288["%make-function"],
-B1296 = B1288.concatenate,
-B1297 = B1288.slice,
-B1298 = B1288.size,
-B1299 = B1295("fill_zeros", function fill_zeros__1300 (string__1301)
-{return B1296(B1297("0000", 0, (4 - B1298(string__1301))), string__1301)}, false)
-var B1304 = B1288.join,
-B1305 = B1288.map,
-B1306 = B1288["<"],
-B1307 = B1288["as-hex-string"],
-B1308 = B1288["char-code"],
-B1309 = B1288.get,
-B1310 = B1288["as-array"],
-B1311 = B1295("escape_string", function escape_string__1312 (string__1313)
-{return B1304(B1305(function B1314 (char__1315)
+var B4467,
+B4468;
+B4467 = require("ralph/regexp");
+B4468 = require("ralph/compiler/utilities")}
+var B4469 = B4464["make-object"],
+B4470 = B4469("\"", "\"", "\\", "\\", "\b", "b", "\f", "f", "\n", "n", "\r", "r", "\v", "v", "\t", "t")
+var B4471 = B4464["%make-function"],
+B4472 = B4464.concatenate,
+B4473 = B4464.slice,
+B4474 = B4464.size,
+B4475 = B4471("fill_zeros", function fill_zeros__4476 (string__4477)
 {
-var B1316 = B1309(B1294, char__1315);
-if ($T(B1316))
+var array__4483 = "0000",
+start__4484 = 0,
+object__4482 = string__4477,
+B4486 = ((object__4482 || false).length || 0),
+end__4485 = (4 - B4486),
+B4487 = array__4483.slice(start__4484, end__4485);
+return B4472(B4487, string__4477)}, false)
+var B4490 = B4464.join,
+B4491 = B4464.map,
+B4492 = B4464["<"],
+B4493 = B4464["as-hex-string"],
+B4494 = B4464["char-code"],
+B4495 = B4464.get,
+B4496 = B4464["as-array"],
+B4497 = B4471("escape_string", function escape_string__4498 (string__4499)
 {
-var escaped__1317 = B1316;
-return B1296("\\", escaped__1317)}
+var B4515 = function B4500 (char__4501)
+{
+var B4502 = B4495(B4470, char__4501);
+if ($T(B4502))
+{
+var escaped__4503 = B4502;
+return B4472("\\", escaped__4503)}
 else
 {
-var code__1318 = B1308(char__1315);
-if ($T(B1306(31, code__1318, 127)))
-return char__1315
-else
-return B1296("\\u", B1299(B1307(code__1318)))}}, B1310(string__1313)), "")}, false)
-var B1319 = ["break", "case", "catch", "continue", "default", "delete", "do", "else", "finally", "for", "function", "if", "in", "instanceof", "new", "return", "switch", "this", "throw", "try", "typeof", "var", "void", "while", "with", "abstract", "boolean", "byte", "char", "class", "const", "debugger", "double", "enum", "export", "extends", "final", "float", "goto", "implements", "import", "int", "interface", "long", "native", "package", "private", "protected", "public", "short", "static", "super", "synchronized", "throws", "transient", "volatile", "null", "true", "false", "arguments", "object", "number", "string", "array", "let", "yield"]
-var B1320 = B1293("-", "_", "_", "__", "&", "A", "$", "B", ":", "C", ".", "D", "=", "E", "^", "F", ">", "G", "#", "H", "@", "I", "~", "J", "<", "L", "%", "M", "!", "N", "+", "P", "?", "Q", "/", "S", "*", "T")
-var B1322 = B1288["member?"],
-B1323 = B1288["has?"],
-B1324 = B1291.match,
-B1325 = B1288["as-string"],
-B1326 = B1295("escape_name", function escape_name__1327 (name__1328)
-{if ($T(B1322(name__1328, B1319)))
-return B1296("R", name__1328)
+var char__4506 = char__4501,
+code__4504 = char__4506.charCodeAt(0);
+if ($T(B4492(31, code__4504, 127)))
+return char__4501
 else
 {
-var chars__1331 = B1305(function B1329 (char__1330)
-{if ($T(B1323(B1320, char__1330)))
-return B1309(B1320, char__1330)
+var number__4508 = code__4504,
+B4513 = number__4508.toString(16),
+B4514 = B4475(B4513);
+return B4472("\\u", B4514)}}},
+arguments__4511 = string__4499,
+skip__4512 = undefined,
+B4516 = $SL.call(arguments__4511, (skip__4512 || 0)),
+B4517 = B4491(B4515, B4516);
+return B4490(B4517, "")}, false)
+var B4518 = ["break", "case", "catch", "continue", "default", "delete", "do", "else", "finally", "for", "function", "if", "in", "instanceof", "new", "return", "switch", "this", "throw", "try", "typeof", "var", "void", "while", "with", "abstract", "boolean", "byte", "char", "class", "const", "debugger", "double", "enum", "export", "extends", "final", "float", "goto", "implements", "import", "int", "interface", "long", "native", "package", "private", "protected", "public", "short", "static", "super", "synchronized", "throws", "transient", "volatile", "null", "true", "false", "arguments", "object", "number", "string", "array", "let", "yield"]
+var B4519 = B4469("-", "_", "_", "__", "&", "A", "$", "B", ":", "C", ".", "D", "=", "E", "^", "F", ">", "G", "#", "H", "@", "I", "~", "J", "<", "L", "%", "M", "!", "N", "+", "P", "?", "Q", "/", "S", "*", "T")
+var B4521 = B4464["member?"],
+B4522 = B4464["has?"],
+B4523 = B4467.match,
+B4524 = B4464["as-string"],
+B4525 = B4471("escape_name", function escape_name__4526 (name__4527)
+{if ($T(B4521(name__4527, B4518)))
+return B4472("R", name__4527)
 else
 {
-var regexp__1334 = "\\w",
-string__1335 = char__1330,
-B1336 = string__1335.match(regexp__1334);
-if ($T(B1336))
-return char__1330
-else
-return B1296("Z", B1325(B1308(char__1330)))}}, B1310(name__1328));
-return B1304(chars__1331, "")}}, false)
-var B1337 = B1288.not,
-B1338 = B1295("valid_js_nameQ", function valid_js_nameQ__1339 (identifier__1340)
-{if ($T(B1337(B1322(identifier__1340, B1319))))
+var B4549 = function B4528 (char__4529)
 {
-var regexp__1343 = "^\\w+$",
-string__1344 = identifier__1340;
-return string__1344.match(regexp__1343)}}, false)
+var object__4533 = B4519,
+property__4534 = char__4529,
+B4545 = $HP.call(object__4533,property__4534);
+if ($T(B4545))
+return B4495(B4519, char__4529)
+else
 {
-var B1370 = $K("message"),
-B1371 = $S("%this-method"),
-B1372 = $S("%all-arguments"),
-compile_js__1365,
-B1347 = B1288["instance?"],
-B1348 = B1288["<array>"],
-B1349 = B1288["empty?"],
-B1350 = B1288.signal,
-B1351 = B1288.make,
-B1352 = B1288["<error>"],
-B1353,
-B1354 = B1288["<number>"],
-B1355 = B1288["<boolean>"],
-B1356 = B1288["<string>"],
-B1357 = B1288["<hash-symbol>"],
-B1358 = B1288["as-uppercase"],
-B1359 = B1288["symbol-name"],
-B1360 = B1288["<keyword>"],
-B1361 = B1288["<symbol>"],
-B1362 = B1288["binary=="],
-B1363 = B1288.description,
-B1364 = B1295("compile_js", function compile_js__1365 (exp__1366, env__1367)
-{B1373:while(true){
-var B1368 = exp__1366;
-if ($T(B1347(B1368, B1348)))
-if ($T(B1349(exp__1366)))
-return B1350(B1351(B1352, B1370, "empty expression"))
+var regexp__4537 = "\\w",
+string__4538 = char__4529,
+B4546 = string__4538.match(regexp__4537);
+if ($T(B4546))
+return char__4529
 else
-return B1353(exp__1366, env__1367)
+{
+var char__4540 = char__4529,
+B4547 = char__4540.charCodeAt(0),
+B4548 = B4524(B4547);
+return B4472("Z", B4548)}}},
+arguments__4543 = name__4527,
+skip__4544 = undefined,
+B4550 = $SL.call(arguments__4543, (skip__4544 || 0)),
+chars__4530 = B4491(B4549, B4550);
+return B4490(chars__4530, "")}}, false)
+var trueQ = B4464["true?"],
+B4551 = B4464.not,
+B4552 = B4471("valid_js_nameQ", function valid_js_nameQ__4553 (identifier__4554)
+{
+var value__4556 = B4521(identifier__4554, B4518),
+B4561 = !(trueQ(value__4556));
+if ($T(B4561))
+{
+var regexp__4559 = "^\\w+$",
+string__4560 = identifier__4554;
+return string__4560.match(regexp__4559)}}, false)
+{
+var B4617 = $K("message"),
+B4618 = $S("%this-method"),
+B4619 = $S("%all-arguments"),
+compile_js__4582,
+B4564 = B4464["instance?"],
+B4565 = B4464["<array>"],
+B4566 = B4464["empty?"],
+B4567 = B4464.signal,
+B4568 = B4464.make,
+B4569 = B4464["<error>"],
+B4570,
+B4571 = B4464["<number>"],
+B4572 = B4464["<boolean>"],
+B4573 = B4464["<string>"],
+B4574 = B4464["<hash-symbol>"],
+B4575 = B4464["as-uppercase"],
+B4576 = B4464["symbol-name"],
+B4577 = B4464["<keyword>"],
+B4578 = B4464["<symbol>"],
+B4579 = B4464["binary=="],
+B4580 = B4464.description,
+B4581 = B4471("compile_js", function compile_js__4582 (exp__4583, env__4584)
+{B4620:while(true){
+var B4585 = exp__4583;
+if ($T(B4564(B4585, B4565)))
+{
+var sequence__4597 = exp__4583,
+B4598 = sequence__4597,
+B4599 = ((B4598 || false).length || 0),
+B4600 = 0,
+B4613 = (B4599 === B4600);
+if ($T(B4613))
+{
+var error__4602 = B4568(B4569, B4617, "empty expression");
+throw(error__4602);
+return false}
 else
-if ($T(B1347(B1368, B1354)))
-return B1325(exp__1366)
+return B4570(exp__4583, env__4584)}
 else
-if ($T(B1347(B1368, B1355)))
-if ($T(exp__1366))
+if ($T(B4564(B4585, B4571)))
+return B4524(exp__4583)
+else
+if ($T(B4564(B4585, B4572)))
+if ($T(exp__4583))
 return "true"
 else
 return "false"
 else
-if ($T(B1347(B1368, B1356)))
-return B1296("\"", B1311(exp__1366), "\"")
+if ($T(B4564(B4585, B4573)))
+return B4472("\"", B4497(exp__4583), "\"")
 else
-if ($T(B1347(B1368, B1357)))
-return B1296("$", B1358(B1359(exp__1366)))
-else
-if ($T(B1347(B1368, B1360)))
-return B1296("$K(\"", B1359(exp__1366), "\")")
-else
-if ($T(B1347(B1368, B1361)))
+if ($T(B4564(B4585, B4574)))
 {
-var B1369 = exp__1366;
-if ($T(B1362(B1369, B1371)))
-{
-arguments = [B1309(env__1367, "current-method"), env__1367];
-exp__1366 = arguments[0];
-env__1367 = arguments[1];
-continue B1373}
+var string__4604 = B4576(exp__4583),
+B4614 = string__4604.toUpperCase();
+return B4472("$", B4614)}
 else
-if ($T(B1362(B1369, B1372)))
+if ($T(B4564(B4585, B4577)))
+return B4472("$K(\"", B4576(exp__4583), "\")")
+else
+if ($T(B4564(B4585, B4578)))
+{
+var B4586 = exp__4583,
+object1__4607 = B4586,
+object2__4608 = B4618,
+B4615 = (object1__4607 === object2__4608);
+if ($T(B4615))
+{
+arguments = [B4495(env__4584, "current-method"), env__4584];
+exp__4583 = arguments[0];
+env__4584 = arguments[1];
+continue B4620}
+else
+{
+var object1__4611 = B4586,
+object2__4612 = B4619,
+B4616 = (object1__4611 === object2__4612);
+if ($T(B4616))
 return "arguments"
 else
-return B1326(B1359(exp__1366))}
+return B4525(B4576(exp__4583))}}
 else
-return B1363(exp__1366);
+return B4580(exp__4583);
 break}}, false);
-exports["compile-js"] = B1364}
+exports["compile-js"] = B4581}
 {
-var B1490 = $S("%infix"),
-B1491 = $S("%return"),
-B1492 = $S("%begin"),
-compile_js_exp__1400,
-B1387,
-B1388 = B1288.rcurry,
-B1389 = B1288.rest,
-B1390 = B1288[">="],
-B1391 = B1288["push-last"],
-B1392 = B1288.element,
-B1393 = B1288["="],
-B1394 = B1288.second,
-B1395 = B1292["expression?"],
-B1396 = B1288.first,
-B1397 = B1288.reduce1,
-B1398 = B1288.reduce,
-B1399 = B1292["method?"];
-B1353 = B1295("compile_js_exp", function compile_js_exp__1400 (exp__1401, env__1402)
-{B1493:while(true){
-var name__1403 = B1359(B1396(exp__1401)),
-B1404 = name__1403;
-if ($T(B1362(B1404, "%native-call")))
+var B4913 = $S("%infix"),
+B4914 = $S("%return"),
+B4915 = $S("%begin"),
+compile_js_exp__4647,
+trueQ = B4464["true?"],
+B4634,
+B4635 = B4464.rcurry,
+B4636 = B4464.rest,
+B4637 = B4464[">="],
+B4638 = B4464["push-last"],
+B4639 = B4464.element,
+B4640 = B4464["="],
+B4641 = B4464.second,
+B4642 = B4468["expression?"],
+B4643 = B4464.first,
+B4644 = B4464.reduce1,
+B4645 = B4464.reduce,
+B4646 = B4468["method?"];
+B4570 = B4471("compile_js_exp", function compile_js_exp__4647 (exp__4648, env__4649)
+{B4916:while(true){
+var sequence__4712 = exp__4648,
+B4851 = sequence__4712[0],
+name__4650 = B4576(B4851),
+B4651 = name__4650,
+object1__4715 = B4651,
+object2__4716 = "%native-call",
+B4852 = (object1__4715 === object2__4716);
+if ($T(B4852))
 {
-var ____1405 = exp__1401[0],
-operator__1406 = exp__1401[1],
-values__1407 = $SL.call(exp__1401, 2);
-return B1296(operator__1406, B1387(values__1407, env__1402))}
-else
-if ($T(B1362(B1404, "%infix")))
-{
-var ____1408 = exp__1401[0],
-operator__1409 = exp__1401[1],
-values__1410 = $SL.call(exp__1401, 2);
-return B1296("(", B1304(B1305(B1388(B1364, env__1402), values__1410), B1296(" ", operator__1409, " ")), ")")}
-else
-{
-var B1411 = B1362(B1404, "%plus"),
-B1464;
-if ($T(B1411))
-B1464 = B1411
+var ____4652 = exp__4648[0],
+operator__4653 = exp__4648[1],
+values__4654 = $SL.call(exp__4648, 2);
+return B4472(operator__4653, B4634(values__4654, env__4649))}
 else
 {
-var B1412 = B1362(B1404, "%minus");
-if ($T(B1412))
-B1464 = B1412
+var object1__4719 = B4651,
+object2__4720 = "%infix",
+B4853 = (object1__4719 === object2__4720);
+if ($T(B4853))
+{
+var ____4655 = exp__4648[0],
+operator__4656 = exp__4648[1],
+values__4657 = $SL.call(exp__4648, 2);
+return B4472("(", B4490(B4491(B4635(B4581, env__4649), values__4657), B4472(" ", operator__4656, " ")), ")")}
 else
 {
-var B1413 = B1362(B1404, "%times");
-if ($T(B1413))
-B1464 = B1413
+var object1__4723 = B4651,
+object2__4724 = "%plus",
+B4658 = (object1__4723 === object2__4724),
+B4854;
+if ($T(B4658))
+B4854 = B4658
 else
-B1464 = B1362(B1404, "%divide")}};
-if ($T(B1464))
 {
-var B1465 = B1490,
-B1414 = name__1403,
-B1466;
-if ($T(B1362(B1414, "%plus")))
-B1466 = "+"
+var object1__4727 = B4651,
+object2__4728 = "%minus",
+B4659 = (object1__4727 === object2__4728);
+if ($T(B4659))
+B4854 = B4659
 else
-if ($T(B1362(B1414, "%minus")))
-B1466 = "-"
-else
-if ($T(B1362(B1414, "%times")))
-B1466 = "*"
-else
-if ($T(B1362(B1414, "%divide")))
-B1466 = "/"
-else
-B1466 = false;
-var B1467 = [B1465, B1466],
-B1468 = B1389(exp__1401),
-B1469 = B1296(B1467, B1468);
-arguments = [B1469, env__1402];
-exp__1401 = arguments[0];
-env__1402 = arguments[1];
-continue B1493}
-else
-if ($T(B1362(B1404, "%array")))
 {
-var ____1415 = exp__1401[0],
-elements__1416 = $SL.call(exp__1401, 1);
-return B1296("[", B1304(B1305(B1388(B1364, env__1402), elements__1416), ", "), "]")}
+var object1__4731 = B4651,
+object2__4732 = "%times",
+B4660 = (object1__4731 === object2__4732);
+if ($T(B4660))
+B4854 = B4660
 else
-if ($T(B1362(B1404, "%object")))
 {
-var key_values__1417 = B1389(exp__1401),
-entries__1418 = [],
-B1419 = (B1298(key_values__1417) / 2),
-i__1420 = 0;
-while ($T(B1337(B1390(i__1420, B1419))))
+var object1__4735 = B4651,
+object2__4736 = "%divide";
+B4854 = (object1__4735 === object2__4736)}}};
+if ($T(B4854))
 {
-(function B1421 (i__1422)
-{
-var name__1423 = B1392(key_values__1417, (i__1422 * 2)),
-B1470;
-if ($T(B1338(name__1423)))
-B1470 = name__1423
+var B4855 = B4913,
+B4661 = name__4650,
+object1__4739 = B4661,
+object2__4740 = "%plus",
+B4856 = (object1__4739 === object2__4740),
+B4860;
+if ($T(B4856))
+B4860 = "+"
 else
-B1470 = B1364(name__1423, env__1402);
-var B1471 = B1364(B1392(key_values__1417, ((i__1422 * 2) + 1)), env__1402),
-B1472 = B1296(B1470, ":", B1471);
-return B1391(entries__1418, B1472)})(i__1420);
-i__1420 = (i__1420 + 1)};
+{
+var object1__4743 = B4661,
+object2__4744 = "%minus",
+B4857 = (object1__4743 === object2__4744);
+if ($T(B4857))
+B4860 = "-"
+else
+{
+var object1__4747 = B4661,
+object2__4748 = "%times",
+B4858 = (object1__4747 === object2__4748);
+if ($T(B4858))
+B4860 = "*"
+else
+{
+var object1__4751 = B4661,
+object2__4752 = "%divide",
+B4859 = (object1__4751 === object2__4752);
+if ($T(B4859))
+B4860 = "/"
+else
+B4860 = false}}};
+var B4861 = [B4855, B4860],
+sequence__4754 = exp__4648,
+B4862 = sequence__4754.slice(1),
+B4863 = B4472(B4861, B4862);
+arguments = [B4863, env__4649];
+exp__4648 = arguments[0];
+env__4649 = arguments[1];
+continue B4916}
+else
+{
+var object1__4757 = B4651,
+object2__4758 = "%array",
+B4864 = (object1__4757 === object2__4758);
+if ($T(B4864))
+{
+var ____4662 = exp__4648[0],
+elements__4663 = $SL.call(exp__4648, 1);
+return B4472("[", B4490(B4491(B4635(B4581, env__4649), elements__4663), ", "), "]")}
+else
+{
+var object1__4761 = B4651,
+object2__4762 = "%object",
+B4865 = (object1__4761 === object2__4762);
+if ($T(B4865))
+{
+var sequence__4764 = exp__4648,
+key_values__4664 = sequence__4764.slice(1),
+entries__4665 = [],
+object__4766 = key_values__4664,
+B4866 = ((object__4766 || false).length || 0),
+B4666 = (B4866 / 2),
+i__4667 = 0;
+while (true)
+{
+var value__4768 = B4637(i__4667, B4666),
+B4869 = !(trueQ(value__4768));
+if ($T(B4869))
+{
+(function B4668 (i__4669)
+{
+var array__4771 = entries__4665,
+name__4670 = B4639(key_values__4664, (i__4669 * 2)),
+B4867;
+if ($T(B4552(name__4670)))
+B4867 = name__4670
+else
+B4867 = B4581(name__4670, env__4649);
+var B4868 = B4581(B4639(key_values__4664, ((i__4669 * 2) + 1)), env__4649),
+value__4772 = B4472(B4867, ":", B4868);
+array__4771.push(value__4772);
+return array__4771})(i__4667);
+i__4667 = (i__4667 + 1)}
+else
+break};
 false;
-return B1296("{", B1304(entries__1418, ",\n"), "}")}
-else
-if ($T(B1362(B1404, "%if")))
-{
-var ____1424 = exp__1401[0],
-test__1425 = exp__1401[1],
-then__1426 = exp__1401[2],
-else__1427 = exp__1401[3],
-B1473 = B1364(test__1425, env__1402),
-B1474 = B1364(then__1426, env__1402),
-B1475;
-if ($T(else__1427))
-B1475 = B1337(B1393(else__1427, [B1491, false]))
-else
-B1475 = false;
-var B1476;
-if ($T(B1475))
-B1476 = B1296("\nelse\n", B1364(else__1427, env__1402))
-else
-B1476 = "";
-return B1296("if (", B1473, ")\n", B1474, B1476)}
-else
-if ($T(B1362(B1404, "%while")))
-{
-var ____1428 = exp__1401[0],
-test__1429 = exp__1401[1],
-body__1430 = exp__1401[2];
-return B1296("while (", B1364(test__1429, env__1402), ")\n", B1364(body__1430, env__1402))}
-else
-if ($T(B1362(B1404, "%try")))
-{
-var ____1431 = exp__1401[0],
-body__1432 = exp__1401[1],
-var__1433 = exp__1401[2],
-catch__1434 = exp__1401[3];
-return B1296("try {", B1364(body__1432, env__1402), "}\n", "catch (", B1364(var__1433, env__1402), ")\n", "{", B1364(catch__1434, env__1402), "}")}
-else
-if ($T(B1362(B1404, "%return")))
-return B1296("return ", B1364(B1394(exp__1401), env__1402))
-else
-if ($T(B1362(B1404, "%begin")))
-return B1296("{\n", B1304(B1305(B1388(B1364, env__1402), B1389(exp__1401)), ";\n"), "}")
-else
-if ($T(B1362(B1404, "%set")))
-{
-var ____1435 = exp__1401[0],
-var__1436 = exp__1401[1],
-value__1437 = exp__1401[2];
-return B1296(B1364(var__1436, env__1402), " = ", B1364(value__1437, env__1402))}
-else
-if ($T(B1362(B1404, "%method")))
-{
-var ____1438 = exp__1401[0],
-name__1439 = exp__1401[1],
-arguments__1440 = exp__1401[2],
-body__1441 = exp__1401[3],
-previous_method__1442 = B1309(env__1402, "current-method"),
-B1477 = B1364(name__1439, env__1402),
-B1478 = B1304(B1305(B1388(B1364, env__1402), arguments__1440), ", ");
-env__1402["current-method"] = name__1439;
-var bodyT__1443 = B1364(body__1441, env__1402);
-env__1402["current-method"] = previous_method__1442;
-var B1479;
-if ($T(B1395(body__1441)))
-B1479 = B1362(B1396(body__1441), B1492)
-else
-B1479 = false;
-var B1480;
-if ($T(B1479))
-B1480 = bodyT__1443
-else
-B1480 = B1296("{", bodyT__1443, "}");
-return B1296("function ", B1477, " (", B1478, ")\n", B1480)}
-else
-if ($T(B1362(B1404, "%var")))
-{
-var ____1444 = exp__1401[0],
-bindings__1445 = $SL.call(exp__1401, 1);
-return B1296("var ", B1304(B1305(function B1446 (binding__1447)
-{
-var B1448;
-if ($T(B1347(binding__1447, B1348)))
-B1448 = binding__1447
-else
-B1448 = [binding__1447, false];
-var var__1449 = B1448[0],
-value__1450 = B1448[1],
-B1481 = B1364(var__1449, env__1402),
-B1482;
-if ($T(value__1450))
-B1482 = B1296(" = ", B1364(value__1450, env__1402))
-else
-B1482 = "";
-return B1296(B1481, B1482)}, bindings__1445), ",\n"))}
-else
-if ($T(B1362(B1404, "%native")))
-return B1397(B1296, B1305(function B1451 (e__1452)
-{
-var B1453 = e__1452,
-B1454 = B1347(B1453, B1361),
-B1483;
-if ($T(B1454))
-B1483 = B1454
-else
-B1483 = B1347(B1453, B1348);
-if ($T(B1483))
-return B1364(e__1452, env__1402)
-else
-return B1325(e__1452)}, B1389(exp__1401)))
-else
-if ($T(B1362(B1404, "%native-name")))
-return B1296("\"", B1326(B1394(exp__1401)), "\"")
-else
-if ($T(B1362(B1404, "%get-property")))
-{
-var ____1455 = exp__1401[0],
-object__1456 = exp__1401[1],
-properties__1457 = $SL.call(exp__1401, 2),
-B1484;
-if ($T(B1347(object__1456, B1354)))
-B1484 = B1296("(", B1364(object__1456, env__1402), ")")
-else
-B1484 = B1364(object__1456, env__1402);
-var B1487 = B1398(function B1458 (result__1459, property__1460)
-{
-var B1485;
-if ($T(B1347(property__1460, B1356)))
-B1485 = B1338(property__1460)
-else
-B1485 = false;
-var B1486;
-if ($T(B1485))
-B1486 = B1296(".", property__1460)
-else
-B1486 = B1296("[", B1364(property__1460, env__1402), "]");
-return B1296(result__1459, B1486)}, "", properties__1457);
-return B1296(B1484, B1487)}
-else
-if ($T(B1362(B1404, "%symbol")))
-return B1296("$S", B1387(B1389(exp__1401), env__1402))
+return B4472("{", B4490(entries__4665, ",\n"), "}")}
 else
 {
-var function__1461 = exp__1401[0],
-values__1462 = $SL.call(exp__1401, 1),
-functionT__1463 = B1364(function__1461, env__1402),
-B1488;
-if ($T(B1399(function__1461)))
-B1488 = B1296("(", functionT__1463, ")")
+var object1__4775 = B4651,
+object2__4776 = "%if",
+B4870 = (object1__4775 === object2__4776);
+if ($T(B4870))
+{
+var ____4671 = exp__4648[0],
+test__4672 = exp__4648[1],
+then__4673 = exp__4648[2],
+else__4674 = exp__4648[3],
+B4871 = B4581(test__4672, env__4649),
+B4872 = B4581(then__4673, env__4649),
+B4873;
+if ($T(else__4674))
+{
+var value__4778 = B4640(else__4674, [B4914, false]);
+B4873 = !(trueQ(value__4778))}
 else
-B1488 = functionT__1463;
-var B1489 = B1387(values__1462, env__1402);
-return B1296(B1488, B1489)}};
+B4873 = false;
+var B4874;
+if ($T(B4873))
+B4874 = B4472("\nelse\n", B4581(else__4674, env__4649))
+else
+B4874 = "";
+return B4472("if (", B4871, ")\n", B4872, B4874)}
+else
+{
+var object1__4781 = B4651,
+object2__4782 = "%while",
+B4875 = (object1__4781 === object2__4782);
+if ($T(B4875))
+{
+var ____4675 = exp__4648[0],
+test__4676 = exp__4648[1],
+body__4677 = exp__4648[2];
+return B4472("while (", B4581(test__4676, env__4649), ")\n", B4581(body__4677, env__4649))}
+else
+{
+var object1__4785 = B4651,
+object2__4786 = "%try",
+B4876 = (object1__4785 === object2__4786);
+if ($T(B4876))
+{
+var ____4678 = exp__4648[0],
+body__4679 = exp__4648[1],
+var__4680 = exp__4648[2],
+catch__4681 = exp__4648[3];
+return B4472("try {", B4581(body__4679, env__4649), "}\n", "catch (", B4581(var__4680, env__4649), ")\n", "{", B4581(catch__4681, env__4649), "}")}
+else
+{
+var object1__4789 = B4651,
+object2__4790 = "%return",
+B4877 = (object1__4789 === object2__4790);
+if ($T(B4877))
+{
+var sequence__4792 = exp__4648,
+B4878 = sequence__4792[1],
+B4879 = B4581(B4878, env__4649);
+return B4472("return ", B4879)}
+else
+{
+var object1__4795 = B4651,
+object2__4796 = "%begin",
+B4880 = (object1__4795 === object2__4796);
+if ($T(B4880))
+{
+var B4881 = B4635(B4581, env__4649),
+sequence__4798 = exp__4648,
+B4882 = sequence__4798.slice(1),
+B4883 = B4491(B4881, B4882),
+B4884 = B4490(B4883, ";\n");
+return B4472("{\n", B4884, "}")}
+else
+{
+var object1__4801 = B4651,
+object2__4802 = "%set",
+B4885 = (object1__4801 === object2__4802);
+if ($T(B4885))
+{
+var ____4682 = exp__4648[0],
+var__4683 = exp__4648[1],
+value__4684 = exp__4648[2];
+return B4472(B4581(var__4683, env__4649), " = ", B4581(value__4684, env__4649))}
+else
+{
+var object1__4805 = B4651,
+object2__4806 = "%method",
+B4886 = (object1__4805 === object2__4806);
+if ($T(B4886))
+{
+var ____4685 = exp__4648[0],
+name__4686 = exp__4648[1],
+arguments__4687 = exp__4648[2],
+body__4688 = exp__4648[3],
+previous_method__4689 = B4495(env__4649, "current-method"),
+B4887 = B4581(name__4686, env__4649),
+B4888 = B4490(B4491(B4635(B4581, env__4649), arguments__4687), ", ");
+env__4649["current-method"] = name__4686;
+var bodyT__4690 = B4581(body__4688, env__4649);
+env__4649["current-method"] = previous_method__4689;
+var B4889;
+if ($T(B4642(body__4688)))
+{
+var sequence__4810 = body__4688,
+object1__4811 = sequence__4810[0],
+object2__4812 = B4915;
+B4889 = (object1__4811 === object2__4812)}
+else
+B4889 = false;
+var B4890;
+if ($T(B4889))
+B4890 = bodyT__4690
+else
+B4890 = B4472("{", bodyT__4690, "}");
+return B4472("function ", B4887, " (", B4888, ")\n", B4890)}
+else
+{
+var object1__4815 = B4651,
+object2__4816 = "%var",
+B4891 = (object1__4815 === object2__4816);
+if ($T(B4891))
+{
+var ____4691 = exp__4648[0],
+bindings__4692 = $SL.call(exp__4648, 1);
+return B4472("var ", B4490(B4491(function B4693 (binding__4694)
+{
+var B4695;
+if ($T(B4564(binding__4694, B4565)))
+B4695 = binding__4694
+else
+B4695 = [binding__4694, false];
+var var__4696 = B4695[0],
+value__4697 = B4695[1],
+B4892 = B4581(var__4696, env__4649),
+B4893;
+if ($T(value__4697))
+B4893 = B4472(" = ", B4581(value__4697, env__4649))
+else
+B4893 = "";
+return B4472(B4892, B4893)}, bindings__4692), ",\n"))}
+else
+{
+var object1__4819 = B4651,
+object2__4820 = "%native",
+B4894 = (object1__4819 === object2__4820);
+if ($T(B4894))
+{
+var function__4831 = B4472,
+B4896 = function B4698 (e__4699)
+{
+var B4700 = e__4699,
+B4701 = B4564(B4700, B4578),
+B4895;
+if ($T(B4701))
+B4895 = B4701
+else
+B4895 = B4564(B4700, B4565);
+if ($T(B4895))
+return B4581(e__4699, env__4649)
+else
+return B4524(e__4699)},
+sequence__4830 = exp__4648,
+B4897 = sequence__4830.slice(1),
+values__4832 = B4491(B4896, B4897),
+B4833 = values__4832,
+B4898 = B4833[0],
+B4834 = values__4832,
+B4899 = B4834.slice(1);
+return B4645(function__4831, B4898, B4899)}
+else
+{
+var object1__4837 = B4651,
+object2__4838 = "%native-name",
+B4900 = (object1__4837 === object2__4838);
+if ($T(B4900))
+{
+var sequence__4840 = exp__4648,
+B4901 = sequence__4840[1],
+B4902 = B4525(B4901);
+return B4472("\"", B4902, "\"")}
+else
+{
+var object1__4843 = B4651,
+object2__4844 = "%get-property",
+B4903 = (object1__4843 === object2__4844);
+if ($T(B4903))
+{
+var ____4702 = exp__4648[0],
+object__4703 = exp__4648[1],
+properties__4704 = $SL.call(exp__4648, 2),
+B4904;
+if ($T(B4564(object__4703, B4571)))
+B4904 = B4472("(", B4581(object__4703, env__4649), ")")
+else
+B4904 = B4581(object__4703, env__4649);
+var B4907 = B4645(function B4705 (result__4706, property__4707)
+{
+var B4905;
+if ($T(B4564(property__4707, B4573)))
+B4905 = B4552(property__4707)
+else
+B4905 = false;
+var B4906;
+if ($T(B4905))
+B4906 = B4472(".", property__4707)
+else
+B4906 = B4472("[", B4581(property__4707, env__4649), "]");
+return B4472(result__4706, B4906)}, "", properties__4704);
+return B4472(B4904, B4907)}
+else
+{
+var object1__4847 = B4651,
+object2__4848 = "%symbol",
+B4908 = (object1__4847 === object2__4848);
+if ($T(B4908))
+{
+var sequence__4850 = exp__4648,
+B4909 = sequence__4850.slice(1),
+B4910 = B4634(B4909, env__4649);
+return B4472("$S", B4910)}
+else
+{
+var function__4708 = exp__4648[0],
+values__4709 = $SL.call(exp__4648, 1),
+functionT__4710 = B4581(function__4708, env__4649),
+B4911;
+if ($T(B4646(function__4708)))
+B4911 = B4472("(", functionT__4710, ")")
+else
+B4911 = functionT__4710;
+var B4912 = B4634(values__4709, env__4649);
+return B4472(B4911, B4912)}}}}}}}}}}}}}}}}};
 break}}, false)}
-B1387 = B1295("compile_js_call", function compile_js_call__1494 (values__1495, env__1496)
-{return B1296("(", B1304(B1305(B1388(B1364, env__1496), values__1495), ", "), ")")}, false)
+B4634 = B4471("compile_js_call", function compile_js_call__4917 (values__4918, env__4919)
+{return B4472("(", B4490(B4491(B4635(B4581, env__4919), values__4918), ", "), ")")}, false)

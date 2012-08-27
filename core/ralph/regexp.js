@@ -1,49 +1,49 @@
-var B204 = require("ralph/core")
+var B1830 = require("ralph/core")
 false
 {
-var B205 = RegExp;
-exports["<regexp>"] = B205}
-var B209 = B204["%make-method"],
-B210 = B204.concatenate,
-B211 = B204["%keys"],
-B212 = B209("initialize", function B213 (regexp__214)
+var B1831 = RegExp;
+exports["<regexp>"] = B1831}
+var B1835 = B1830["%make-method"],
+B1836 = B1830.concatenate,
+B1837 = B1830["%keys"],
+B1838 = B1835("initialize", function B1839 (regexp__1840)
 {
-var B215 = $SL.call(arguments, 1),
-B216 = B211(B215, {pattern:false,
+var B1841 = $SL.call(arguments, 1),
+B1842 = B1837(B1841, {pattern:false,
 "global?":false,
 "ignore-case?":false,
 "multiline?":false}),
-pattern__217 = B216.pattern,
-globalQ__218 = B216["global?"],
-ignore_caseQ__219 = B216["ignore-case?"],
-multilineQ__220 = B216["multiline?"];
-if ($T(pattern__217))
+pattern__1843 = B1842.pattern,
+globalQ__1844 = B1842["global?"],
+ignore_caseQ__1845 = B1842["ignore-case?"],
+multilineQ__1846 = B1842["multiline?"];
+if ($T(pattern__1843))
 {
-var B222;
-if ($T(globalQ__218))
-B222 = "g"
+var B1848;
+if ($T(globalQ__1844))
+B1848 = "g"
 else
-B222 = "";
-var B223;
-if ($T(ignore_caseQ__219))
-B223 = "i"
+B1848 = "";
+var B1849;
+if ($T(ignore_caseQ__1845))
+B1849 = "i"
 else
-B223 = "";
-var B224;
-if ($T(multilineQ__220))
-B224 = "m"
+B1849 = "";
+var B1850;
+if ($T(multilineQ__1846))
+B1850 = "m"
 else
-B224 = "";
-var flags__221 = B210(B222, B223, B224);
-return regexp__214.compile(pattern__217)}}, false, B205, B212)
-var B225 = B204["%make-function"],
-B226 = B204[">"],
-B227 = B225("find", function find__228 (regexp__229, string__230)
+B1850 = "";
+var flags__1847 = B1836(B1848, B1849, B1850);
+return regexp__1840.compile(pattern__1843)}}, false, B1831, B1838)
+var B1851 = B1830["%make-function"],
+B1852 = B1830[">"],
+B1853 = B1851("find", function find__1854 (regexp__1855, string__1856)
 {
-var position__231 = string__230.search(regexp__229);
-if ($T(B226(position__231, -1)))
-return position__231}, false)
+var position__1857 = string__1856.search(regexp__1855);
+if ($T(B1852(position__1857, -1)))
+return position__1857}, false)
 {
-var B232 = B225("match", function match__233 (regexp__234, string__235)
-{return string__235.match(regexp__234)}, false);
-exports.match = B232}
+var B1858 = B1851("match", function match__1859 (regexp__1860, string__1861)
+{return string__1861.match(regexp__1860)}, false);
+exports.match = B1858}
