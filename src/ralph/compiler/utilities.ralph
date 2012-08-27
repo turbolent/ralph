@@ -1,9 +1,8 @@
 (define-module ralph/compiler/utilities
-  export: (expression? transform-setter-identifier
-           setter-identifier? identifier-name
+  export: (expression? setter-identifier?
            reset-symbol-counter! generate-symbol
            maybe-begin get-module-name/name
-           var? set? method? *defined*
+           var? set? method? begin? *defined*
            environment-definitions))
 
 ;;;; utilities
@@ -15,22 +14,23 @@
 
 (define-function var? (exp)
   (and (expression? exp)
-       (== (first exp)
-           (symbol "%var"))))
+       (== (symbol-name (first exp))
+           "%var")))
 
 (define-function set? (exp)
   (and (expression? exp)
-       (== (first exp)
-           (symbol "%set"))))
+       (== (symbol-name (first exp))
+           "%set")))
 
 (define-function method? (exp)
   (and (expression? exp)
-       (== (first exp)
-           (symbol "%method"))))
+       (== (symbol-name (first exp))
+           "%method")))
 
-(define-function transform-setter-identifier (identifier)
-  (symbol (concatenate (symbol-name identifier)
-                       "-setter")))
+(define-function begin? (exp)
+  (and (expression? exp)
+       (== (symbol-name (first exp))
+           "%begin")))
 
 (define-function setter-identifier? (form)
   (and (instance? form <array>)
@@ -39,12 +39,6 @@
                form)
        (== (symbol-name (first form))
            "setter")))
-
-(define-function identifier-name (identifier)
-  (symbol-name
-   (if (setter-identifier? identifier)
-       (transform-setter-identifier (second identifier))
-       identifier)))
 
 (define *symbol-count* 0)
 

@@ -36,6 +36,20 @@
 ;;       has side-effects and needs to be normalized
 ;;       (influences evaluation order)
 
+
+;;;; utilities
+
+(define-function transform-setter-identifier (identifier)
+  (symbol (concatenate (symbol-name identifier)
+                       "-setter")))
+
+(define-function identifier-name (identifier)
+  (symbol-name
+   (if (setter-identifier? identifier)
+       (transform-setter-identifier (second identifier))
+       identifier)))
+
+
 ;;;; modules
 
 ;; module-name => <module>
@@ -739,10 +753,12 @@
       (concatenate `(%call get-setter ,object ,property)
                    properties/value)))
 
-(define-core-macro symbol (_ name)
+(define-core-macro symbol (_ name module)
   (if (instance? name <string>)
-      `(%symbol ,name)
-      `(%call symbol ,name)))
+      (if (instance? module <string>)
+          `(%symbol ,name ,module)
+          `(%symbol ,name))
+      `(%call symbol ,name ,module)))
 
 (define-core-macro == (_ object1 object2 #rest objects)
   (if (empty? opbjects)
@@ -1050,10 +1066,10 @@
               (destructuring-bind (le1 le2) le*
                 (k `(%try ,le1 ,v ,le2)
                    env))))))
-        ;; TODO: fix, already renamed
         (("%symbol")
-         (destructuring-bind (_ name) exp
-           (lift-value name exp "symbol" env k)))
+         (destructuring-bind (_ name module) exp
+           (lift-value name exp "symbol" env k
+                       module: module)))
         (else:
          (lift-symbol** exp env k)))
       (select exp instance?
@@ -1064,10 +1080,10 @@
         (else:
          (k exp env)))))
 
-(define-function lift-value (name value type env k)
-  (if-bind (t (get env "lifted" type name))
+(define-function lift-value (name value type env k #key (module ""))
+  (if-bind (t (get env "lifted" type module name))
     (k t env)
-    (bind ((t (set! (get env "lifted" type name)
+    (bind ((t (set! (get env "lifted" type module name)
                     (generate-symbol))))
       `(%bind (,t ,value)
          ,(k t env)))))
