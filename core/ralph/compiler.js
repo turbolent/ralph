@@ -1,2357 +1,1678 @@
-var B1507 = require("ralph/core")
 {
-var B4921,
-B4922,
-B4923,
-B4924,
-B4925,
-B4926,
-B4927,
-B4928,
-B4929,
-B4930,
-B4931,
-B4932,
-B4933;
-B4921 = require("ralph/stream");
-B4922 = require("ralph/format");
-B4923 = require("ralph/reader");
-B4924 = require("ralph/file-system");
-B4925 = require("ralph/compiler/utilities");
-B4926 = require("ralph/compiler/alpha");
-B4927 = require("ralph/compiler/define-lifting");
-B4928 = require("ralph/compiler/free-variables");
-B4929 = require("ralph/compiler/anf");
-B4930 = require("ralph/compiler/statements");
-B4931 = require("ralph/compiler/tco");
-B4932 = require("ralph/compiler/flattening");
-B4933 = require("ralph/compiler/javascript")}
-var B4934 = B1507["%make-function"],
-B4935 = B1507.symbol,
-B4936 = B1507.concatenate,
-B4937 = B1507["symbol-name"],
-B4938 = B4934("transform_setter_identifier", function transform_setter_identifier__4939 (identifier__4940)
-{return B4935(B4936(B4937(identifier__4940), "-setter"), false)}, false)
-var B4941 = B4925["setter-identifier?"],
-B4942 = B1507.second,
-B4943 = B4934("identifier_name", function identifier_name__4944 (identifier__4945)
+var B938;
+false;
+B938 = require("ralph/core")}
 {
-var B4949;
-if ($T(B4941(identifier__4945)))
+var B2343,
+B2344,
+B2345,
+B2346,
+B2347,
+B2348,
+B2349,
+B2350,
+B2351,
+B2352,
+B2353,
+B2354,
+B2355;
+false;
+B2343 = require("ralph/stream");
+false;
+B2344 = require("ralph/format");
+false;
+B2345 = require("ralph/reader");
+false;
+B2346 = require("ralph/file-system");
+false;
+B2347 = require("ralph/compiler/utilities");
+false;
+B2348 = require("ralph/compiler/alpha");
+false;
+B2349 = require("ralph/compiler/define-lifting");
+false;
+B2350 = require("ralph/compiler/free-variables");
+false;
+B2351 = require("ralph/compiler/anf");
+false;
+B2352 = require("ralph/compiler/statements");
+false;
+B2353 = require("ralph/compiler/tco");
+false;
+B2354 = require("ralph/compiler/flattening");
+false;
+B2355 = require("ralph/compiler/javascript")}
 {
-var sequence__4947 = identifier__4945,
-B4948 = sequence__4947[1];
-B4949 = B4938(B4948)}
+var Mmake_function__2356 = B938["%make-function"],
+symbol__2357 = B938.symbol,
+concatenate__2358 = B938.concatenate,
+symbol_name__2359 = B938["symbol-name"],
+transform_setter_identifier__2360;
+false;
+transform_setter_identifier__2360 = Mmake_function__2356("transform_setter_identifier", function transform_setter_identifier__2361 (identifier__2362)
+{return symbol__2357(concatenate__2358(symbol_name__2359(identifier__2362), "-setter"), false)}, false)}
+{
+var setter_identifierQ__2363 = B2347["setter-identifier?"],
+second__2364 = B938.second,
+identifier_name__2365;
+false;
+identifier_name__2365 = Mmake_function__2356("identifier_name", function identifier_name__2366 (identifier__2367)
+{
+var B2368;
+if ($T(setter_identifierQ__2363(identifier__2367)))
+{B2368 = transform_setter_identifier__2360(second__2364(identifier__2367))}
 else
-B4949 = identifier__4945;
-return B4937(B4949)}, false)
-var B4950 = B1507["make-object"],
-B4951 = B4950()
+B2368 = identifier__2367;
+return symbol_name__2359(B2368)}, false)}
 {
-var B4956 = B1507["%make-class"],
-B4957 = B1507["<object>"],
-B4958 = B4956(B4957, {name:false,
+var make_object__2369 = B938["make-object"],
+TmodulesT__2370;
+false;
+TmodulesT__2370 = make_object__2369()}
+{
+var Mmake_class__2375 = B938["%make-class"],
+LobjectG__2376 = B938["<object>"],
+LmoduleG__2377;
+false;
+LmoduleG__2377 = Mmake_class__2375(LobjectG__2376, {name:false,
 "native?":false,
-exports:function B4959 ()
+exports:function B2378 ()
 {return []},
-imports:function B4960 ()
+imports:function B2379 ()
 {return []},
-dependencies:function B4961 ()
+dependencies:function B2380 ()
 {return []},
-inline:function B4962 ()
+inline:function B2381 ()
 {return []}});
-exports["<module>"] = B4958}
+exports["<module>"] = LmoduleG__2377}
 {
-var B4969 = B1507["make-plain-object"],
-B4970 = B4956(B4957, {module:false,
-macros:function B4971 ()
-{return B4969()},
-"symbol-macros":function B4972 ()
-{return B4969()},
-identifiers:function B4973 ()
-{return B4950()},
-"defined?":function B4974 ()
-{return B4950()},
-lifted:function B4975 ()
-{return B4950()},
-"import-identifiers":function B4976 ()
-{return B4969()}});
-exports["<environment>"] = B4970}
-var B4977 = B1507["get-setter"],
-B4978 = B4934("bindN", function bindN__4979 (env__4980, identifier__4981)
-{return B4977(env__4980, "bound?", B4937(identifier__4981), true)}, false)
-var B4982 = B4934("unbindN", function unbindN__4983 (env__4984, identifier__4985)
-{return B4977(env__4984, "bound?", B4937(identifier__4985), false)}, false)
-var B4986 = B4950()
-var B4987 = B4925["expression?"],
-B4988 = B1507.get,
-B4989 = B1507.first,
-B4990 = B4934("find_special_form", function find_special_form__4991 (form__4992, env__4993)
-{if ($T(B4987(form__4992)))
+var make_plain_object__2388 = B938["make-plain-object"],
+LenvironmentG__2389;
+false;
+LenvironmentG__2389 = Mmake_class__2375(LobjectG__2376, {module:false,
+macros:function B2390 ()
+{return make_plain_object__2388()},
+"symbol-macros":function B2391 ()
+{return make_plain_object__2388()},
+identifiers:function B2392 ()
+{return make_object__2369()},
+"defined?":function B2393 ()
+{return make_object__2369()},
+lifted:function B2394 ()
+{return make_object__2369()},
+"import-identifiers":function B2395 ()
+{return make_plain_object__2388()}});
+exports["<environment>"] = LenvironmentG__2389}
 {
-var sequence__4995 = form__4992,
-B4996 = sequence__4995[0],
-B4997 = B4937(B4996);
-return B4988(B4986, B4997)}}, false)
+var Tspecial_formsT__2396;
+false;
+Tspecial_formsT__2396 = make_object__2369()}
 {
-var B5009 = $S("%method"),
-B4999 = B1507["do"],
-B5000 = B1507.curry,
-B5001;
-B4986["%method"] = function B5002 (env__5003, name__5004, arguments__5005, body__5006)
+var expressionQ__2397 = B2347["expression?"],
+get__2398 = B938.get,
+first__2399 = B938.first,
+find_special_form__2400;
+false;
+find_special_form__2400 = Mmake_function__2356("find_special_form", function find_special_form__2401 (form__2402, env__2403)
+{if ($T(expressionQ__2397(form__2402)))
+{return get__2398(Tspecial_formsT__2396, symbol_name__2359(first__2399(form__2402)))}}, false)}
 {
-var identifiers__5007 = B4936([name__5004], arguments__5005);
-B4999(B5000(B4978, env__5003), identifiers__5007);
-var expanded_body__5008 = B5001(body__5006, env__5003);
-B4999(B5000(B4982, env__5003), arguments__5005);
-return [B5009, name__5004, arguments__5005, expanded_body__5008]}}
+var do__2406 = B938["do"],
+signal__2407 = B938.signal,
+make__2408 = B938.make,
+LerrorG__2409 = B938["<error>"],
+curry__2410 = B938.curry,
+bindN__2411 = B2347["bind!"],
+unbindN__2412 = B2347["unbind!"],
+macroexpand_all__2413,
+map__2414 = B938.map,
+rcurry__2415 = B938.rcurry,
+localize__2416 = B2347.localize;
+Tspecial_formsT__2396["%method"] = function B2417 (env__2418, name__2419, arguments__2420, body__2421)
 {
-var B5015 = $S("%set");
-B4986["%set"] = function B5011 (env__5012, identifier__5013, value__5014)
-{return [B5015, identifier__5013, B5001(value__5014, env__5012)]}}
+var identifiersT__2422 = map__2414(rcurry__2415(localize__2416, env__2418), concatenate__2358([name__2419], arguments__2420));
+do__2406(function B2423 (identifierT__2424)
+{if ($T(get__2398(identifierT__2424, "module")))
+{return signal__2407(make__2408(LerrorG__2409, $K("message"), "Can't create method using identifier with external qualifier"))}}, identifiersT__2422);
+do__2406(curry__2410(bindN__2411, env__2418), identifiersT__2422);
+var bodyT__2425 = macroexpand_all__2413(body__2421, env__2418);
+do__2406(curry__2410(unbindN__2412, env__2418), identifiersT__2422);
+var nameT__2426 = identifiersT__2422[0],
+argumentsT__2427 = $SL.call(identifiersT__2422, 1);
+return [$S("%method", "ralph/core"), nameT__2426, argumentsT__2427, bodyT__2425]}}
+Tspecial_formsT__2396["%set"] = function B2429 (env__2430, identifier__2431, value__2432)
+{return [$S("%set", "ralph/core"), identifier__2431, macroexpand_all__2413(value__2432, env__2430)]}
+Tspecial_formsT__2396["%bind"] = function B2434 (env__2435, binding__2436, body__2437)
 {
-var B5021 = $S("define");
-B4986.define = function B5017 (env__5018, identifier__5019, value__5020)
+var var__2438 = binding__2436[0],
+value__2439 = binding__2436[1];
+bindN__2411(env__2435, var__2438);
+var varT__2440 = localize__2416(var__2438, env__2435),
+valueT__2441 = macroexpand_all__2413(value__2439, env__2435);
+if ($T(get__2398(varT__2440, "module")))
+{signal__2407(make__2408(LerrorG__2409, $K("message"), "Can't bind using identifier with external qualifier"))};
+var result__2442 = [$S("%bind", "ralph/core"), [varT__2440, valueT__2441], macroexpand_all__2413(body__2437, env__2435)];
+unbindN__2412(env__2435, var__2438);
+return result__2442}
 {
-B4978(env__5018, identifier__5019);
-return [B5021, identifier__5019, B5001(value__5020, env__5018)]}}
+var Tcore_macrosT__2443;
+false;
+Tcore_macrosT__2443 = make_object__2369();
+exports["*core-macros*"] = Tcore_macrosT__2443}
 {
-var B5031 = $S("%bind");
-B4986["%bind"] = function B5023 (env__5024, binding__5025, body__5026)
+var find_key__2446 = B938["find-key"],
+E__2447 = B938["="],
+copy_sequence__2448 = B938["copy-sequence"],
+size__2449 = B938.size,
+element__2450 = B938.element,
+inc__2451 = B938.inc,
+analyze_lambda_list__2452;
+false;
+analyze_lambda_list__2452 = Mmake_function__2356("analyze_lambda_list", function analyze_lambda_list__2453 (list__2454)
 {
-var var__5027 = binding__5025[0],
-value__5028 = binding__5025[1],
-expanded_value__5029 = B5001(value__5028, env__5024);
-B4978(env__5024, var__5027);
-var result__5030 = [B5031, [var__5027, expanded_value__5029], B5001(body__5026, env__5024)];
-B4982(env__5024, var__5027);
-return result__5030}}
-{
-var B5032 = B4950();
-exports["*core-macros*"] = B5032}
-{
-var B5063 = $REST,
-B5064 = $KEY,
-B5065 = $K("end"),
-B5066 = $K("start"),
-B5035 = B1507["find-key"],
-B5036 = B1507["="],
-B5037 = B1507["copy-sequence"],
-B5038 = B1507.size,
-B5039 = B1507.element,
-B5040 = B1507.inc,
-B5041 = B4934("analyze_lambda_list", function analyze_lambda_list__5042 (list__5043)
-{
-var position__5044 = function position__5045 (symbol__5046)
-{return B5035(list__5043, B5000(B5036, symbol__5046))},
-rest__5047 = position__5044(B5063),
-key__5048 = position__5044(B5064),
-B5049 = rest__5047,
-B5057;
-if ($T(B5049))
-B5057 = B5049
+var position__2455 = function position__2456 (symbol__2457)
+{return find_key__2446(list__2454, curry__2410(E__2447, symbol__2457))},
+rest__2458 = position__2455($REST),
+key__2459 = position__2455($KEY),
+B2460 = rest__2458,
+B2462;
+if ($T(B2460))
+{B2462 = B2460}
 else
 {
-var B5050 = key__5048;
-if ($T(B5050))
-B5057 = B5050
+var B2461 = key__2459;
+if ($T(B2461))
+{B2462 = B2461}
+else
+B2462 = size__2449(list__2454)};
+var B2463 = copy_sequence__2448(list__2454, $K("end"), B2462),
+B2464;
+if ($T(rest__2458))
+{B2464 = element__2450(list__2454, inc__2451(rest__2458))}
+else
+B2464 = false;
+var B2465;
+if ($T(key__2459))
+{B2465 = copy_sequence__2448(list__2454, $K("start"), inc__2451(key__2459))}
+else
+B2465 = false;
+return [B2463, B2464, B2465]}, false);
+exports["analyze-lambda-list"] = analyze_lambda_list__2452}
+{
+var reduce__2467 = B938.reduce,
+wrap__2468;
+false;
+wrap__2468 = Mmake_function__2356("wrap", function wrap__2469 (form__2470)
+{
+var wrappers__2471 = $SL.call(arguments, 1);
+return reduce__2467(function B2472 (result__2473, wrapper__2474)
+{return wrapper__2474(result__2473)}, form__2470, wrappers__2471)}, false)}
+{
+var emptyQ__2481 = B938["empty?"],
+reduce1__2482 = B938.reduce1,
+instanceQ__2483 = B938["instance?"],
+LarrayG__2484 = B938["<array>"],
+not__2485 = B938.not,
+not__2486 = not__2485,
+generate_symbol__2487 = B2347["generate-symbol"],
+wrap_restSkeys__2488;
+false;
+wrap_restSkeys__2488 = Mmake_function__2356("wrap_restSkeys", function wrap_restSkeys__2489 (body__2490, all__2491, required__2492, rest__2493, key__2494)
+{
+var restQ__2495 = rest__2493,
+B2496 = rest__2493,
+rest__2497;
+if ($T(B2496))
+{rest__2497 = B2496}
+else
+if ($T(not__2486(emptyQ__2481(key__2494))))
+{rest__2497 = generate_symbol__2487()}
+else
+rest__2497 = false;
+return wrap__2468(body__2490, function B2498 (body__2499)
+{if ($T(emptyQ__2481(key__2494)))
+{return body__2499}
 else
 {
-var object__5052 = list__5043;
-B5057 = ((object__5052 || false).length || 0)}};
-var B5058 = B5037(list__5043, B5065, B5057),
-B5060;
-if ($T(rest__5047))
-{
-var number__5054 = rest__5047,
-B5059 = (number__5054 + 1);
-B5060 = B5039(list__5043, B5059)}
+var key_values__2502 = map__2414(function B2500 (binding__2501)
+{if ($T(instanceQ__2483(binding__2501, LarrayG__2484)))
+{return binding__2501}
 else
-B5060 = false;
-var B5062;
-if ($T(key__5048))
+return [binding__2501, false]}, key__2494);
+return [$S("bind-properties", "ralph/core"), map__2414(first__2399, key_values__2502), [$S("%keys", "ralph/core"), rest__2497, concatenate__2358([$S("%object", "ralph/core")], reduce1__2482(concatenate__2358, map__2414(function B2503 (key_value__2504)
 {
-var number__5056 = key__5048,
-B5061 = (number__5056 + 1);
-B5062 = B5037(list__5043, B5066, B5061)}
+var key__2505 = key_value__2504[0],
+value__2506 = key_value__2504[1];
+return [symbol_name__2359(key__2505), value__2506]}, key_values__2502)))], body__2499]}}, function B2507 (body__2508)
+{
+var B2509 = restQ__2495,
+B2510;
+if ($T(B2509))
+{B2510 = B2509}
 else
-B5062 = false;
-return [B5058, B5060, B5062]}, false);
-exports["analyze-lambda-list"] = B5041}
-var B5068 = B1507.reduce,
-B5069 = B4934("wrap", function wrap__5070 (form__5071)
-{
-var wrappers__5072 = $SL.call(arguments, 1);
-return B5068(function B5073 (result__5074, wrapper__5075)
-{return wrapper__5075(result__5074)}, form__5071, wrappers__5072)}, false)
-var B5189 = $S("bind-properties"),
-B5190 = $S("%keys"),
-B5191 = $S("%object"),
-B5192 = $S("bind"),
-B5193 = $S("%native-call"),
-trueQ = B1507["true?"],
-B5082 = B1507["empty?"],
-B5083 = B1507.map,
-B5084 = B1507.reduce1,
-B5085 = B1507["instance?"],
-B5086 = B1507["<array>"],
-B5087 = B1507.not,
-B5088 = B4925["generate-symbol"],
-B5089 = B4934("wrap_restSkeys", function wrap_restSkeys__5090 (body__5091, all__5092, required__5093, rest__5094, key__5095)
-{
-var restQ__5096 = rest__5094,
-B5097 = rest__5094,
-rest__5098;
-if ($T(B5097))
-rest__5098 = B5097
+B2510 = not__2485(emptyQ__2481(key__2494));
+if ($T(B2510))
+{return [$S("bind", "ralph/core"), [[rest__2497, [$S("%native-call", "ralph/core"), "$SL.call", all__2491, size__2449(required__2492)]]], body__2508]}
 else
+return body__2508})}, false)}
 {
-var sequence__5122 = key__5095,
-B5123 = sequence__5122,
-B5124 = ((B5123 || false).length || 0),
-B5125 = 0,
-value__5126 = (B5124 === B5125),
-B5171 = !(trueQ(value__5126));
-if ($T(B5171))
-rest__5098 = B5088()
+var maybe_begin__2512 = B2347["maybe-begin"];
+Tcore_macrosT__2443.begin = function B2513 (____2514)
+{
+var expressions__2515 = $SL.call(arguments, 1);
+return maybe_begin__2512(expressions__2515)}}
+{
+var named_method__2517;
+false;
+named_method__2517 = Mmake_function__2356("named_method", function named_method__2518 (name__2519, arguments__2520, body__2521)
+{
+var B2522 = analyze_lambda_list__2452(arguments__2520),
+required__2523 = B2522[0],
+rest__2524 = B2522[1],
+key__2525 = B2522[2];
+return [$S("%method", "ralph/core"), name__2519, required__2523, wrap_restSkeys__2488(body__2521, $S("%all-arguments"), required__2523, rest__2524, key__2525)]}, false)}
+Tcore_macrosT__2443.method = function B2527 (____2528, arguments__2529)
+{
+var body__2530 = $SL.call(arguments, 2);
+return named_method__2517(generate_symbol__2487(), arguments__2529, maybe_begin__2512(body__2530))}
+{
+var LsymbolG__2533 = B938["<symbol>"],
+reverse__2534 = B938.reverse;
+Tcore_macrosT__2443.bind = function B2535 (____2536, bindings__2537)
+{
+var body__2538 = $SL.call(arguments, 2);
+if ($T(emptyQ__2481(bindings__2537)))
+{return maybe_begin__2512(body__2538)}
 else
-rest__5098 = false};
-return B5069(body__5091, function B5099 (body__5100)
+return reduce__2467(function B2539 (body__2540, binding__2541)
 {
-var sequence__5137 = key__5095,
-B5138 = sequence__5137,
-B5139 = ((B5138 || false).length || 0),
-B5140 = 0,
-B5172 = (B5139 === B5140);
-if ($T(B5172))
-return body__5100
+var B2542 = $S("%bind", "ralph/core"),
+B2543;
+if ($T(instanceQ__2483(binding__2541, LsymbolG__2533)))
+{B2543 = [binding__2541, false]}
 else
+B2543 = binding__2541;
+return [B2542, B2543, body__2540]}, maybe_begin__2512(body__2538), reverse__2534(bindings__2537))}}
+Tcore_macrosT__2443["if"] = function B2545 (____2546, test__2547, then__2548, else__2549)
+{return [$S("%if", "ralph/core"), test__2547, then__2548, else__2549]}
 {
-var key_values__5103 = B5083(function B5101 (binding__5102)
-{if ($T(B5085(binding__5102, B5086)))
-return binding__5102
+var binaryEE__2551 = B938["binary=="],
+rest__2552 = B938.rest;
+Tcore_macrosT__2443["set!"] = function B2553 (____2554, place__2555)
+{
+var values__2556 = $SL.call(arguments, 2),
+B2557;
+if ($T(instanceQ__2483(place__2555, LarrayG__2484)))
+{B2557 = not__2485(binaryEE__2551(symbol_name__2359(first__2399(place__2555)), "%get-property"))}
 else
-return [binding__5102, false]}, key__5095),
-B5173 = B5189,
-B5174 = B5083(B4989, key_values__5103),
-B5175 = B5190,
-B5176 = [B5191],
-function__5149 = B4936,
-values__5150 = B5083(function B5104 (key_value__5105)
+B2557 = false;
+if ($T(B2557))
+{return concatenate__2358([transform_setter_identifier__2360(first__2399(place__2555))], rest__2552(place__2555), values__2556)}
+else
+return [$S("%set", "ralph/core"), place__2555, first__2399(values__2556)]}}
+Tcore_macrosT__2443["parallel-set!"] = function B2559 (____2560, var__2561, value__2562)
 {
-var key__5106 = key_value__5105[0],
-value__5107 = key_value__5105[1];
-return [B4937(key__5106), value__5107]}, key_values__5103),
-B5151 = values__5150,
-B5177 = B5151[0],
-B5152 = values__5150,
-B5178 = B5152.slice(1),
-B5179 = B5068(function__5149, B5177, B5178),
-B5180 = B4936(B5176, B5179),
-B5181 = [B5175, rest__5098, B5180];
-return [B5173, B5174, B5181, body__5100]}}, function B5108 (body__5109)
-{
-var B5110 = restQ__5096,
-B5182;
-if ($T(B5110))
-B5182 = B5110
+var clauses__2563 = $SL.call(arguments, 3);
+if ($T(emptyQ__2481(clauses__2563)))
+{return [$S("set!", "ralph/core"), var__2561, value__2562]}
 else
 {
-var sequence__5164 = key__5095,
-B5165 = sequence__5164,
-B5166 = ((B5165 || false).length || 0),
-B5167 = 0,
-value__5168 = (B5166 === B5167);
-B5182 = !(trueQ(value__5168))};
-if ($T(B5182))
+var temp__2564 = generate_symbol__2487();
+return [$S("bind", "ralph/core"), [[temp__2564, value__2562]], concatenate__2358([$S("parallel-set!", "ralph/core")], clauses__2563), [$S("set!", "ralph/core"), var__2561, temp__2564]]}}
 {
-var B5183 = B5192,
-B5184 = B5193,
-object__5170 = required__5093,
-B5185 = ((object__5170 || false).length || 0),
-B5186 = [B5184, "$SL.call", all__5092, B5185],
-B5187 = [rest__5098, B5186],
-B5188 = [B5187];
-return [B5183, B5188, body__5109]}
+var not__2567 = not__2485;
+Tcore_macrosT__2443.cond = function B2568 (____2569)
+{
+var cases__2570 = $SL.call(arguments, 1);
+if ($T(not__2567(emptyQ__2481(cases__2570))))
+{
+var B2571 = first__2399(cases__2570),
+test__2572 = B2571[0],
+then__2573 = $SL.call(B2571, 1),
+then__2574 = maybe_begin__2512(then__2573);
+if ($T(binaryEE__2551(test__2572, $K("else"))))
+{return then__2574}
 else
-return body__5109})}, false)
+return [$S("if", "ralph/core"), test__2572, then__2574, concatenate__2358([$S("cond", "ralph/core")], rest__2552(cases__2570))]}}}
+Tcore_macrosT__2443.when = function B2576 (____2577, test__2578)
 {
-var B5195 = B4925["maybe-begin"];
-B5032.begin = function B5196 (____5197)
+var body__2579 = $SL.call(arguments, 2);
+return [$S("if", "ralph/core"), test__2578, maybe_begin__2512(body__2579), false]}
+Tcore_macrosT__2443.unless = function B2581 (____2582, test__2583)
 {
-var expressions__5198 = $SL.call(arguments, 1);
-return B5195(expressions__5198)}}
-var B5209 = $S("%all-arguments"),
-B5200 = B4934("named_method", function named_method__5201 (name__5202, arguments__5203, body__5204)
+var body__2584 = $SL.call(arguments, 2);
+return [$S("if", "ralph/core"), [$S("not", "ralph/core"), test__2583], maybe_begin__2512(body__2584), false]}
+Tcore_macrosT__2443.and = function B2587 (____2588)
 {
-var B5205 = B5041(arguments__5203),
-required__5206 = B5205[0],
-rest__5207 = B5205[1],
-key__5208 = B5205[2];
-return [B5009, name__5202, required__5206, B5089(body__5204, B5209, required__5206, rest__5207, key__5208)]}, false)
-B5032.method = function B5211 (____5212, arguments__5213)
-{
-var body__5214 = $SL.call(arguments, 2);
-return B5200(B5088(), arguments__5213, B5195(body__5214))}
-{
-var B5217 = B1507["<symbol>"],
-B5218 = B1507.reverse;
-B5032.bind = function B5219 (____5220, bindings__5221)
-{
-var body__5222 = $SL.call(arguments, 2),
-sequence__5236 = bindings__5221,
-B5237 = sequence__5236,
-B5238 = ((B5237 || false).length || 0),
-B5239 = 0,
-B5240 = (B5238 === B5239);
-if ($T(B5240))
-return B5195(body__5222)
+var values__2589 = $SL.call(arguments, 1),
+B2590 = size__2449(values__2589);
+if ($T(binaryEE__2551(B2590, 0)))
+{return true}
 else
-return B5068(function B5223 (body__5224, binding__5225)
-{
-var B5241 = B5031,
-B5242;
-if ($T(B5085(binding__5225, B5217)))
-B5242 = [binding__5225, false]
+if ($T(binaryEE__2551(B2590, 1)))
+{return first__2399(values__2589)}
 else
-B5242 = binding__5225;
-return [B5241, B5242, body__5224]}, B5195(body__5222), B5218(bindings__5221))}}
+return [$S("when", "ralph/core"), first__2399(values__2589), concatenate__2358([$S("and", "ralph/core")], rest__2552(values__2589))]}
+Tcore_macrosT__2443.or = function B2593 (____2594)
 {
-var B5249 = $S("%if");
-B5032["if"] = function B5244 (____5245, test__5246, then__5247, else__5248)
-{return [B5249, test__5246, then__5247, else__5248]}}
-{
-var B5278 = $S("%get-property"),
-trueQ = B1507["true?"],
-B5251 = B1507["binary=="],
-B5252 = B1507.rest;
-B5032["set!"] = function B5253 (____5254, place__5255)
-{
-var values__5256 = $SL.call(arguments, 2),
-B5271;
-if ($T(B5085(place__5255, B5086)))
-{
-var sequence__5261 = place__5255,
-object1__5262 = sequence__5261[0],
-object2__5263 = B5278,
-value__5264 = (object1__5262 === object2__5263);
-B5271 = !(trueQ(value__5264))}
+var values__2595 = $SL.call(arguments, 1),
+B2596 = size__2449(values__2595);
+if ($T(binaryEE__2551(B2596, 0)))
+{return false}
 else
-B5271 = false;
-if ($T(B5271))
-{
-var sequence__5266 = place__5255,
-B5272 = sequence__5266[0],
-B5273 = B4938(B5272),
-B5274 = [B5273],
-sequence__5268 = place__5255,
-B5275 = sequence__5268.slice(1);
-return B4936(B5274, B5275, values__5256)}
+if ($T(binaryEE__2551(B2596, 1)))
+{return first__2399(values__2595)}
 else
 {
-var B5276 = B5015,
-sequence__5270 = values__5256,
-B5277 = sequence__5270[0];
-return [B5276, place__5255, B5277]}}}
+var value__2597 = generate_symbol__2487();
+return [$S("bind", "ralph/core"), [[value__2597, first__2399(values__2595)]], [$S("if", "ralph/core"), value__2597, value__2597, concatenate__2358([$S("or", "ralph/core")], rest__2552(values__2595))]]}}
+Tcore_macrosT__2443["if-bind"] = function B2599 (____2600, binding__2601, then__2602, else__2603)
 {
-var B5301 = $S("set!"),
-B5302 = $S("parallel-set!");
-B5032["parallel-set!"] = function B5280 (____5281, var__5282, value__5283)
+var var__2604 = binding__2601[0],
+value__2605 = binding__2601[1],
+temp__2606 = generate_symbol__2487();
+return [$S("bind", "ralph/core"), [[temp__2606, value__2605]], [$S("if", "ralph/core"), temp__2606, [$S("bind", "ralph/core"), [[var__2604, temp__2606]], then__2602], else__2603]]}
+Tcore_macrosT__2443["while"] = function B2608 (____2609, test__2610)
 {
-var clauses__5284 = $SL.call(arguments, 3),
-sequence__5296 = clauses__5284,
-B5297 = sequence__5296,
-B5298 = ((B5297 || false).length || 0),
-B5299 = 0,
-B5300 = (B5298 === B5299);
-if ($T(B5300))
-return [B5301, var__5282, value__5283]
+var body__2611 = $SL.call(arguments, 2);
+return [$S("%while", "ralph/core"), test__2610, maybe_begin__2512(body__2611)]}
+Tcore_macrosT__2443.until = function B2613 (____2614, test__2615)
+{
+var body__2616 = $SL.call(arguments, 2);
+return concatenate__2358([$S("while", "ralph/core"), [$S("not", "ralph/core"), test__2615]], body__2616)}
+Tcore_macrosT__2443.dotimes = function B2619 (____2620, binding__2621)
+{
+var body__2622 = $SL.call(arguments, 2),
+temp__2623 = generate_symbol__2487(),
+var__2624 = binding__2621[0],
+count__2625 = binding__2621[1],
+result__2626 = binding__2621[2],
+B2628 = $S("bind", "ralph/core"),
+B2629 = [[temp__2623, count__2625]],
+B2630 = $S("for", "ralph/core"),
+B2631 = [[var__2624, 0, [$S("+", "ralph/core"), var__2624, 1]]],
+B2632 = [$S(">=", "ralph/core"), var__2624, temp__2623],
+B2627 = result__2626,
+B2633;
+if ($T(B2627))
+{B2633 = B2627}
 else
+B2633 = false;
+var B2634 = [B2632, B2633],
+B2635 = [B2630, B2631, B2634],
+B2636 = concatenate__2358(B2635, body__2622);
+return [B2628, B2629, B2636]}
 {
-var temp__5285 = B5088();
-return [B5192, [[temp__5285, value__5283]], B4936([B5302], clauses__5284), [B5301, var__5282, temp__5285]]}}}
+var not__2645 = not__2485,
+anyQ__2646 = B938["any?"],
+emptyQ__2647 = emptyQ__2481,
+push_last__2648 = B938["push-last"],
+slice__2649 = B938.slice,
+third__2650 = B938.third,
+rest__2651 = rest__2552,
+first__2652 = first__2399;
+Tcore_macrosT__2443["for"] = function B2653 (____2654, clauses__2655, end__2656)
 {
-var B5342 = $K("else"),
-B5343 = $S("if"),
-B5344 = $S("cond"),
-trueQ = B1507["true?"];
-B5032.cond = function B5305 (____5306)
-{
-var cases__5307 = $SL.call(arguments, 1),
-sequence__5323 = cases__5307,
-B5324 = sequence__5323,
-B5325 = ((B5324 || false).length || 0),
-B5326 = 0,
-value__5327 = (B5325 === B5326),
-B5336 = !(trueQ(value__5327));
-if ($T(B5336))
-{
-var sequence__5329 = cases__5307,
-B5308 = sequence__5329[0],
-test__5309 = B5308[0],
-then__5310 = $SL.call(B5308, 1),
-then__5311 = B5195(then__5310),
-object1__5332 = test__5309,
-object2__5333 = B5342,
-B5337 = (object1__5332 === object2__5333);
-if ($T(B5337))
-return then__5311
-else
-{
-var B5338 = B5343,
-B5339 = [B5344],
-sequence__5335 = cases__5307,
-B5340 = sequence__5335.slice(1),
-B5341 = B4936(B5339, B5340);
-return [B5338, test__5309, then__5311, B5341]}}}}
-B5032.when = function B5346 (____5347, test__5348)
-{
-var body__5349 = $SL.call(arguments, 2);
-return [B5343, test__5348, B5195(body__5349), false]}
-{
-var B5355 = $S("not");
-B5032.unless = function B5351 (____5352, test__5353)
-{
-var body__5354 = $SL.call(arguments, 2);
-return [B5343, [B5355, test__5353], B5195(body__5354), false]}}
-{
-var B5385 = $S("when"),
-B5386 = $S("and");
-B5032.and = function B5358 (____5359)
-{
-var values__5360 = $SL.call(arguments, 1),
-object__5363 = values__5360,
-B5361 = ((object__5363 || false).length || 0),
-object1__5366 = B5361,
-object2__5367 = 0,
-B5378 = (object1__5366 === object2__5367);
-if ($T(B5378))
-return true
-else
-{
-var object1__5370 = B5361,
-object2__5371 = 1,
-B5379 = (object1__5370 === object2__5371);
-if ($T(B5379))
-{
-var sequence__5373 = values__5360;
-return sequence__5373[0]}
-else
-{
-var B5380 = B5385,
-sequence__5375 = values__5360,
-B5381 = sequence__5375[0],
-B5382 = [B5386],
-sequence__5377 = values__5360,
-B5383 = sequence__5377.slice(1),
-B5384 = B4936(B5382, B5383);
-return [B5380, B5381, B5384]}}}}
-{
-var B5421 = $S("or");
-B5032.or = function B5389 (____5390)
-{
-var values__5391 = $SL.call(arguments, 1),
-object__5395 = values__5391,
-B5392 = ((object__5395 || false).length || 0),
-object1__5398 = B5392,
-object2__5399 = 0,
-B5410 = (object1__5398 === object2__5399);
-if ($T(B5410))
-return false
-else
-{
-var object1__5402 = B5392,
-object2__5403 = 1,
-B5411 = (object1__5402 === object2__5403);
-if ($T(B5411))
-{
-var sequence__5405 = values__5391;
-return sequence__5405[0]}
-else
-{
-var value__5393 = B5088(),
-B5412 = B5192,
-sequence__5407 = values__5391,
-B5413 = sequence__5407[0],
-B5414 = [value__5393, B5413],
-B5415 = [B5414],
-B5416 = B5343,
-B5417 = [B5421],
-sequence__5409 = values__5391,
-B5418 = sequence__5409.slice(1),
-B5419 = B4936(B5417, B5418),
-B5420 = [B5416, value__5393, value__5393, B5419];
-return [B5412, B5415, B5420]}}}}
-B5032["if-bind"] = function B5423 (____5424, binding__5425, then__5426, else__5427)
-{
-var var__5428 = binding__5425[0],
-value__5429 = binding__5425[1],
-temp__5430 = B5088();
-return [B5192, [[temp__5430, value__5429]], [B5343, temp__5430, [B5192, [[var__5428, temp__5430]], then__5426], else__5427]]}
-{
-var B5436 = $S("%while");
-B5032["while"] = function B5432 (____5433, test__5434)
-{
-var body__5435 = $SL.call(arguments, 2);
-return [B5436, test__5434, B5195(body__5435)]}}
-{
-var B5442 = $S("while");
-B5032.until = function B5438 (____5439, test__5440)
-{
-var body__5441 = $SL.call(arguments, 2);
-return B4936([B5442, [B5355, test__5440]], body__5441)}}
-{
-var B5463 = $S("for"),
-B5464 = $S("+"),
-B5465 = $S(">=");
-B5032.dotimes = function B5445 (____5446, binding__5447)
-{
-var body__5448 = $SL.call(arguments, 2),
-temp__5449 = B5088(),
-var__5450 = binding__5447[0],
-count__5451 = binding__5447[1],
-result__5452 = binding__5447[2],
-B5454 = B5192,
-B5455 = [[temp__5449, count__5451]],
-B5456 = B5463,
-B5457 = [[var__5450, 0, [B5464, var__5450, 1]]],
-B5458 = [B5465, var__5450, temp__5449],
-B5453 = result__5452,
-B5459;
-if ($T(B5453))
-B5459 = B5453
-else
-B5459 = false;
-var B5460 = [B5458, B5459],
-B5461 = [B5456, B5457, B5460],
-B5462 = B4936(B5461, body__5448);
-return [B5454, B5455, B5462]}}
-{
-var B5574 = $S("method"),
-B5575 = $S("begin"),
-trueQ = B1507["true?"],
-B5474 = B1507["any?"],
-B5475 = B1507["push-last"],
-B5476 = B1507.slice,
-B5477 = B1507.third;
-B5032["for"] = function B5478 (____5479, clauses__5480, end__5481)
-{
-var body__5482 = $SL.call(arguments, 3),
-init_clauses__5483 = [],
-next_clauses__5484 = [],
-vars__5485 = B5083(B4989, clauses__5480),
-B5486 = clauses__5480,
-B5487,
-B5488,
-B5489 = [B5486];
+var body__2657 = $SL.call(arguments, 3),
+init_clauses__2658 = [],
+next_clauses__2659 = [],
+vars__2660 = map__2414(first__2399, clauses__2655),
+B2661 = clauses__2655,
+B2662,
+B2663,
+B2664 = [B2661];
 while (true)
 {
-var B5490 = B5487,
-value__5496;
-if ($T(B5490))
-value__5496 = B5490
+var B2665 = B2662,
+B2670;
+if ($T(B2665))
+{B2670 = B2665}
 else
-value__5496 = B5474(B5082, B5489);
-var B5560 = !(trueQ(value__5496));
-if ($T(B5560))
+B2670 = anyQ__2646(emptyQ__2647, B2664);
+var B2671 = not__2645(B2670);
+if ($T(B2671))
 {
-var sequence__5498 = B5486,
-clause__5491 = sequence__5498[0];
-(function B5492 (clause__5493)
+var clause__2666 = first__2652(B2661);
+(function B2667 (clause__2668)
 {
-var array__5507 = init_clauses__5483,
-array__5504 = clause__5493,
-start__5505 = 0,
-end__5506 = 2,
-value__5508 = array__5504.slice(start__5505, end__5506);
-array__5507.push(value__5508);
-array__5507;
-var array__5513 = next_clauses__5484,
-sequence__5512 = clause__5493,
-value__5514 = sequence__5512[0];
-array__5513.push(value__5514);
-array__5513;
-var array__5519 = next_clauses__5484,
-sequence__5518 = clause__5493,
-value__5520 = sequence__5518[2];
-array__5519.push(value__5520);
-return array__5519})(clause__5491);
-var sequence__5522 = B5486,
-B5559 = sequence__5522.slice(1);
-B5486 = B5559;
-B5489 = [B5486]}
+push_last__2648(init_clauses__2658, slice__2649(clause__2668, 0, 2));
+push_last__2648(next_clauses__2659, first__2399(clause__2668));
+return push_last__2648(next_clauses__2659, third__2650(clause__2668))})(clause__2666);
+B2661 = rest__2651(B2661);
+B2664 = [B2661]}
 else
 break};
-B5488;
-var B5561 = B5192,
-B5562 = B5442,
-sequence__5533 = end__5481,
-B5534 = sequence__5533,
-B5535 = ((B5534 || false).length || 0),
-B5536 = 0,
-B5494 = (B5535 === B5536),
-B5565;
-if ($T(B5494))
-B5565 = B5494
+B2663;
+var B2672 = $S("bind", "ralph/core"),
+B2673 = $S("while", "ralph/core"),
+B2669 = emptyQ__2481(end__2656),
+B2674;
+if ($T(B2669))
+{B2674 = B2669}
+else
+B2674 = [$S("not", "ralph/core"), first__2399(end__2656)];
+var B2675 = concatenate__2358([concatenate__2358([$S("method", "ralph/core"), vars__2660], body__2657)], vars__2660),
+B2676 = concatenate__2358([$S("parallel-set!", "ralph/core")], next_clauses__2659),
+B2677 = [B2673, B2674, B2675, B2676],
+B2678 = concatenate__2358(B2677),
+B2679;
+if ($T(not__2645(emptyQ__2481(rest__2552(end__2656)))))
+{B2679 = concatenate__2358([$S("begin", "ralph/core")], rest__2552(end__2656))}
+else
+B2679 = false;
+return [B2672, init_clauses__2658, B2678, B2679]}}
+Tcore_macrosT__2443["for-each"] = function B2686 (____2687, clauses__2688, end__2689)
+{
+var body__2690 = $SL.call(arguments, 3),
+clauses__2693 = map__2414(function B2691 (clause__2692)
+{return concatenate__2358([generate_symbol__2487()], clause__2692)}, clauses__2688),
+endQ__2694 = generate_symbol__2487(),
+values__2695 = generate_symbol__2487(),
+result__2696 = generate_symbol__2487(),
+B2714 = $S("begin", "ralph/core"),
+vars__2697 = map__2414(second__2364, clauses__2693),
+B2715 = concatenate__2358([concatenate__2358([$S("method", "ralph/core"), vars__2697], body__2690)], vars__2697),
+B2716 = [B2714, B2715],
+B2717 = map__2414(function B2698 (clause__2699)
+{return [$S("set!", "ralph/core"), first__2399(clause__2699), [$S("rest", "ralph/core"), first__2399(clause__2699)]]}, clauses__2693),
+B2718 = [[$S("set!", "ralph/core"), values__2695, concatenate__2358([$S("%array", "ralph/core")], map__2414(first__2399, clauses__2693))]],
+body__2700 = concatenate__2358(B2716, B2717, B2718),
+B2719 = $S("bind", "ralph/core"),
+B2720 = concatenate__2358(map__2414(function B2701 (clause__2702)
+{
+var temp__2703 = clause__2702[0],
+var__2704 = clause__2702[1],
+values__2705 = clause__2702[2];
+return [temp__2703, values__2705]}, clauses__2693), [[endQ__2694, false], [result__2696, false], [values__2695, concatenate__2358([$S("%array", "ralph/core")], map__2414(first__2399, clauses__2693))]]),
+B2721 = $S("until", "ralph/compiler"),
+B2722 = [$S("or", "ralph/core"), endQ__2694, [$S("any?", "ralph/core"), $S("empty?", "ralph/core"), values__2695]],
+B2723 = $S("bind", "ralph/core"),
+B2724 = map__2414(function B2706 (clause__2707)
+{
+var temp__2708 = clause__2707[0],
+var__2709 = clause__2707[1],
+values__2710 = clause__2707[2];
+return [var__2709, [$S("first", "ralph/core"), temp__2708]]}, clauses__2693),
+B2711 = first__2399(end__2689),
+B2733;
+if ($T(B2711))
+{
+var end_test__2712 = B2711,
+B2725 = $S("if", "ralph/core"),
+B2726 = $S("begin", "ralph/core"),
+B2727 = $S("set!", "ralph/core"),
+results__2713 = rest__2552(end__2689),
+B2728;
+if ($T(emptyQ__2481(results__2713)))
+{B2728 = [false]}
+else
+B2728 = results__2713;
+var B2729 = maybe_begin__2512(B2728),
+B2730 = [B2727, result__2696, B2729],
+B2731 = [$S("set!", "ralph/core"), endQ__2694, true],
+B2732 = [B2726, B2730, B2731];
+B2733 = [B2725, end_test__2712, B2732, body__2700]}
+else
+B2733 = body__2700;
+var B2734 = [B2723, B2724, B2733],
+B2735 = [B2721, B2722, B2734];
+return [B2719, B2720, B2735, result__2696]}
+Tcore_macrosT__2443["bind-properties"] = function B2738 (____2739, properties__2740, object__2741)
+{
+var body__2742 = $SL.call(arguments, 3),
+objectT__2743 = generate_symbol__2487();
+return concatenate__2358([$S("bind", "ralph/core"), concatenate__2358([[objectT__2743, object__2741]], map__2414(function B2744 (property__2745)
+{return [property__2745, [$S("%get-property", "ralph/core"), objectT__2743, symbol_name__2359(property__2745)]]}, properties__2740))], body__2742)}
+Tcore_macrosT__2443.select = function B2748 (____2749, value__2750, test__2751)
+{
+var cases__2752 = $SL.call(arguments, 3),
+valueT__2753 = generate_symbol__2487(),
+testT__2754;
+if ($T(instanceQ__2483(test__2751, LsymbolG__2533)))
+{testT__2754 = test__2751}
+else
+testT__2754 = generate_symbol__2487();
+var test_expression__2755 = function test_expression__2756 (test_value__2757)
+{return [testT__2754, valueT__2753, test_value__2757]},
+B2762 = $S("bind", "ralph/core"),
+B2763 = [[valueT__2753, value__2750]],
+B2764;
+if ($T(instanceQ__2483(test__2751, LsymbolG__2533)))
+{B2764 = []}
+else
+B2764 = [[testT__2754, test__2751]];
+var B2765 = concatenate__2358(B2763, B2764),
+B2766 = concatenate__2358([$S("cond", "ralph/core")], map__2414(function B2758 (case__2759)
+{
+var tests__2760 = case__2759[0],
+then__2761 = $SL.call(case__2759, 1);
+if ($T(binaryEE__2551(tests__2760, $K("else"))))
+{return case__2759}
+else
+return concatenate__2358([concatenate__2358([$S("or", "ralph/core")], map__2414(test_expression__2755, tests__2760))], then__2761)}, cases__2752));
+return [B2762, B2765, B2766]}
+{
+var destructure__2769;
+false;
+destructure__2769 = Mmake_function__2356("destructure", function destructure__2770 (bindings__2771, values__2772, body__2773)
+{if ($T(instanceQ__2483(values__2772, LsymbolG__2533)))
+{
+var B2774 = analyze_lambda_list__2452(bindings__2771),
+required__2775 = B2774[0],
+rest__2776 = B2774[1],
+key__2777 = B2774[2],
+i__2778 = size__2449(required__2775);
+return reduce__2467(function B2779 (body__2780, binding__2781)
+{
+i__2778 = (i__2778 - 1);
+if ($T(instanceQ__2483(binding__2781, LsymbolG__2533)))
+{return [$S("bind", "ralph/core"), [[binding__2781, [$S("%get-property", "ralph/core"), values__2772, i__2778]]], body__2780]}
+else
+return destructure__2770(binding__2781, [$S("%get-property", "ralph/core"), values__2772, i__2778], body__2780)}, wrap_restSkeys__2488(body__2773, values__2772, required__2775, rest__2776, key__2777), reverse__2534(required__2775))}
 else
 {
-var B5563 = B5355,
-sequence__5538 = end__5481,
-B5564 = sequence__5538[0];
-B5565 = [B5563, B5564]};
-var B5566 = B4936([B4936([B5574, vars__5485], body__5482)], vars__5485),
-B5567 = B4936([B5302], next_clauses__5484),
-B5568 = [B5562, B5565, B5566, B5567],
-B5569 = B4936(B5568),
-sequence__5551 = end__5481,
-sequence__5552 = sequence__5551.slice(1),
-B5553 = sequence__5552,
-B5554 = ((B5553 || false).length || 0),
-B5555 = 0,
-value__5556 = (B5554 === B5555),
-B5570 = !(trueQ(value__5556)),
-B5573;
-if ($T(B5570))
+var var__2782 = generate_symbol__2487();
+return [$S("bind", "ralph/core"), [[var__2782, values__2772]], destructure__2770(bindings__2771, var__2782, body__2773)]}}, false)}
+Tcore_macrosT__2443["destructuring-bind"] = function B2784 (____2785, bindings__2786, values__2787)
 {
-var B5571 = [B5575],
-sequence__5558 = end__5481,
-B5572 = sequence__5558.slice(1);
-B5573 = B4936(B5571, B5572)}
+var body__2788 = $SL.call(arguments, 3);
+return destructure__2769(bindings__2786, values__2787, concatenate__2358([$S("begin", "ralph/core")], body__2788))}
+Tcore_macrosT__2443["bind-methods"] = function B2791 (____2792, bindings__2793)
+{
+var body__2794 = $SL.call(arguments, 2);
+return concatenate__2358([$S("bind", "ralph/core"), map__2414(first__2399, bindings__2793)], map__2414(function B2795 (binding__2796)
+{
+var identifier__2797 = binding__2796[0],
+arguments__2798 = binding__2796[1],
+body__2799 = $SL.call(binding__2796, 2);
+return [$S("set!", "ralph/core"), identifier__2797, named_method__2517(identifier__2797, arguments__2798, maybe_begin__2512(body__2799))]}, bindings__2793), body__2794)}
+Tcore_macrosT__2443["inc!"] = function B2802 (____2803, object__2804, value__2805)
+{
+var B2807 = $S("set!", "ralph/core"),
+B2808 = $S("+", "ralph/core"),
+B2806 = value__2805,
+B2809;
+if ($T(B2806))
+{B2809 = B2806}
 else
-B5573 = false;
-return [B5561, init_clauses__5483, B5569, B5573]}}
+B2809 = 1;
+var B2810 = [B2808, object__2804, B2809];
+return [B2807, object__2804, B2810]}
+Tcore_macrosT__2443["dec!"] = function B2813 (____2814, object__2815, value__2816)
 {
-var B5660 = $S("rest"),
-B5661 = $S("%array"),
-B5662 = $S("until"),
-B5663 = $S("any?"),
-B5664 = $S("empty?"),
-B5665 = $S("first");
-B5032["for-each"] = function B5582 (____5583, clauses__5584, end__5585)
-{
-var body__5586 = $SL.call(arguments, 3),
-clauses__5589 = B5083(function B5587 (clause__5588)
-{return B4936([B5088()], clause__5588)}, clauses__5584),
-endQ__5590 = B5088(),
-values__5591 = B5088(),
-result__5592 = B5088(),
-B5632 = B5575,
-vars__5593 = B5083(B4942, clauses__5589),
-B5633 = B4936([B4936([B5574, vars__5593], body__5586)], vars__5593),
-B5634 = [B5632, B5633],
-B5640 = B5083(function B5594 (clause__5595)
-{
-var B5635 = B5301,
-sequence__5611 = clause__5595,
-B5636 = sequence__5611[0],
-B5637 = B5660,
-sequence__5613 = clause__5595,
-B5638 = sequence__5613[0],
-B5639 = [B5637, B5638];
-return [B5635, B5636, B5639]}, clauses__5589),
-B5641 = [[B5301, values__5591, B4936([B5661], B5083(B4989, clauses__5589))]],
-body__5596 = B4936(B5634, B5640, B5641),
-B5642 = B5192,
-B5643 = B4936(B5083(function B5597 (clause__5598)
-{
-var temp__5599 = clause__5598[0],
-var__5600 = clause__5598[1],
-values__5601 = clause__5598[2];
-return [temp__5599, values__5601]}, clauses__5589), [[endQ__5590, false], [result__5592, false], [values__5591, B4936([B5661], B5083(B4989, clauses__5589))]]),
-B5644 = B5662,
-B5645 = [B5421, endQ__5590, [B5663, B5664, values__5591]],
-B5646 = B5192,
-B5647 = B5083(function B5602 (clause__5603)
-{
-var temp__5604 = clause__5603[0],
-var__5605 = clause__5603[1],
-values__5606 = clause__5603[2];
-return [var__5605, [B5665, temp__5604]]}, clauses__5589),
-sequence__5615 = end__5585,
-B5607 = sequence__5615[0],
-B5657;
-if ($T(B5607))
-{
-var end_test__5608 = B5607,
-B5648 = B5343,
-B5649 = B5575,
-B5650 = B5301,
-sequence__5617 = end__5585,
-results__5609 = sequence__5617.slice(1),
-sequence__5628 = results__5609,
-B5629 = sequence__5628,
-B5630 = ((B5629 || false).length || 0),
-B5631 = 0,
-B5651 = (B5630 === B5631),
-B5652;
-if ($T(B5651))
-B5652 = [false]
+var B2818 = $S("set!", "ralph/core"),
+B2819 = $S("-", "ralph/core"),
+B2817 = value__2816,
+B2820;
+if ($T(B2817))
+{B2820 = B2817}
 else
-B5652 = results__5609;
-var B5653 = B5195(B5652),
-B5654 = [B5650, result__5592, B5653],
-B5655 = [B5301, endQ__5590, true],
-B5656 = [B5649, B5654, B5655];
-B5657 = [B5648, end_test__5608, B5656, body__5596]}
+B2820 = 1;
+var B2821 = [B2819, object__2815, B2820];
+return [B2818, object__2815, B2821]}
+Tcore_macrosT__2443["+"] = function B2823 (____2824)
+{
+var values__2825 = $SL.call(arguments, 1);
+if ($T(emptyQ__2481(values__2825)))
+{return 0}
 else
-B5657 = body__5596;
-var B5658 = [B5646, B5647, B5657],
-B5659 = [B5644, B5645, B5658];
-return [B5642, B5643, B5659, result__5592]}}
-B5032["bind-properties"] = function B5668 (____5669, properties__5670, object__5671)
+return concatenate__2358([$S("%plus", "ralph/core")], values__2825)}
+Tcore_macrosT__2443["-"] = function B2827 (____2828, minuend__2829)
 {
-var body__5672 = $SL.call(arguments, 3),
-objectT__5673 = B5088();
-return B4936([B5192, B4936([[objectT__5673, object__5671]], B5083(function B5674 (property__5675)
-{return [property__5675, [B5278, objectT__5673, B4937(property__5675)]]}, properties__5670))], body__5672)}
-B5032.select = function B5678 (____5679, value__5680, test__5681)
-{
-var cases__5682 = $SL.call(arguments, 3),
-valueT__5683 = B5088(),
-testT__5684;
-if ($T(B5085(test__5681, B5217)))
-testT__5684 = test__5681
+var subtrahends__2830 = $SL.call(arguments, 2);
+if ($T(emptyQ__2481(subtrahends__2830)))
+{return [$S("%native-call", "ralph/core"), "-", minuend__2829]}
 else
-testT__5684 = B5088();
-var test_expression__5685 = function test_expression__5686 (test_value__5687)
-{return [testT__5684, valueT__5683, test_value__5687]},
-B5696 = B5192,
-B5697 = [[valueT__5683, value__5680]],
-B5698;
-if ($T(B5085(test__5681, B5217)))
-B5698 = []
+return concatenate__2358([$S("%minus", "ralph/core"), minuend__2829], subtrahends__2830)}
+Tcore_macrosT__2443["*"] = function B2832 (____2833)
+{
+var values__2834 = $SL.call(arguments, 1);
+if ($T(emptyQ__2481(values__2834)))
+{return 1}
 else
-B5698 = [[testT__5684, test__5681]];
-var B5699 = B4936(B5697, B5698),
-B5701 = B4936([B5344], B5083(function B5688 (case__5689)
+return concatenate__2358([$S("%times", "ralph/core")], values__2834)}
+Tcore_macrosT__2443["/"] = function B2836 (____2837, numerator__2838)
 {
-var tests__5690 = case__5689[0],
-then__5691 = $SL.call(case__5689, 1),
-object1__5694 = tests__5690,
-object2__5695 = B5342,
-B5700 = (object1__5694 === object2__5695);
-if ($T(B5700))
-return case__5689
+var denominators__2839 = $SL.call(arguments, 2);
+if ($T(emptyQ__2481(denominators__2839)))
+{return [$S("%divide", "ralph/core"), 1, numerator__2838]}
 else
-return B4936([B4936([B5421], B5083(test_expression__5685, tests__5690))], then__5691)}, cases__5682));
-return [B5696, B5699, B5701]}
-var destructure__5705,
-B5704 = B4934("destructure", function destructure__5705 (bindings__5706, values__5707, body__5708)
-{if ($T(B5085(values__5707, B5217)))
+return concatenate__2358([$S("%divide", "ralph/core"), numerator__2838], denominators__2839)}
+Tcore_macrosT__2443["call-next-method"] = function B2841 (____2842)
+{return [[$S("%get-property", "ralph/core"), $S("next-method", "ralph/compiler"), "apply"], [$S("%native", "ralph/core"), "null"], $S("%all-arguments")]}
 {
-var B5709 = B5041(bindings__5706),
-required__5710 = B5709[0],
-rest__5711 = B5709[1],
-key__5712 = B5709[2],
-object__5719 = required__5710,
-i__5713 = ((object__5719 || false).length || 0);
-return B5068(function B5714 (body__5715, binding__5716)
-{
-i__5713 = (i__5713 - 1);
-if ($T(B5085(binding__5716, B5217)))
-return [B5192, [[binding__5716, [B5278, values__5707, i__5713]]], body__5715]
+var transform_quoted__2843;
+false;
+transform_quoted__2843 = Mmake_function__2356("transform_quoted", function transform_quoted__2844 (form__2845)
+{if ($T(instanceQ__2483(form__2845, LarrayG__2484)))
+{return concatenate__2358([$S("%array", "ralph/core")], map__2414(transform_quoted__2844, form__2845))}
 else
-return destructure__5705(binding__5716, [B5278, values__5707, i__5713], body__5715)}, B5089(body__5708, values__5707, required__5710, rest__5711, key__5712), B5218(required__5710))}
+if ($T(instanceQ__2483(form__2845, LsymbolG__2533)))
+{return [$S("%symbol", "ralph/core"), symbol_name__2359(form__2845)]}
 else
+return form__2845}, false)}
+Tcore_macrosT__2443.quote = function B2847 (____2848, exp__2849)
+{return transform_quoted__2843(exp__2849)}
 {
-var var__5717 = B5088();
-return [B5192, [[var__5717, values__5707]], destructure__5705(bindings__5706, var__5717, body__5708)]}}, false)
-B5032["destructuring-bind"] = function B5721 (____5722, bindings__5723, values__5724)
+var not__2851 = not__2485,
+boundQ__2852 = B2347["bound?"],
+find_moduleSimport_name__2853,
+transform_backquoted__2854;
+false;
+transform_backquoted__2854 = Mmake_function__2356("transform_backquoted", function transform_backquoted__2855 (form__2856, env__2857)
+{if ($T(instanceQ__2483(form__2856, LarrayG__2484)))
 {
-var body__5725 = $SL.call(arguments, 3);
-return B5704(bindings__5723, values__5724, B4936([B5575], body__5725))}
-B5032["bind-methods"] = function B5728 (____5729, bindings__5730)
-{
-var body__5731 = $SL.call(arguments, 2);
-return B4936([B5192, B5083(B4989, bindings__5730)], B5083(function B5732 (binding__5733)
-{
-var identifier__5734 = binding__5733[0],
-arguments__5735 = binding__5733[1],
-body__5736 = $SL.call(binding__5733, 2);
-return [B5301, identifier__5734, B5200(identifier__5734, arguments__5735, B5195(body__5736))]}, bindings__5730), body__5731)}
-B5032["inc!"] = function B5739 (____5740, object__5741, value__5742)
-{
-var B5744 = B5301,
-B5745 = B5464,
-B5743 = value__5742,
-B5746;
-if ($T(B5743))
-B5746 = B5743
+var B2862;
+if ($T(not__2485(emptyQ__2481(form__2856))))
+{B2862 = binaryEE__2551(symbol_name__2359(first__2399(form__2856)), "%comma")}
 else
-B5746 = 1;
-var B5747 = [B5745, object__5741, B5746];
-return [B5744, object__5741, B5747]}
-{
-var B5759 = $S("-");
-B5032["dec!"] = function B5750 (____5751, object__5752, value__5753)
-{
-var B5755 = B5301,
-B5756 = B5759,
-B5754 = value__5753,
-B5757;
-if ($T(B5754))
-B5757 = B5754
+B2862 = false;
+if ($T(B2862))
+{return second__2364(form__2856)}
 else
-B5757 = 1;
-var B5758 = [B5756, object__5752, B5757];
-return [B5755, object__5752, B5758]}}
-{
-var B5779 = $S("%plus");
-B5032["+"] = function B5761 (____5762)
-{
-var values__5763 = $SL.call(arguments, 1),
-sequence__5774 = values__5763,
-B5775 = sequence__5774,
-B5776 = ((B5775 || false).length || 0),
-B5777 = 0,
-B5778 = (B5776 === B5777);
-if ($T(B5778))
-return 0
+return concatenate__2358([$S("%array", "ralph/core")], map__2414(rcurry__2415(transform_backquoted__2855, env__2857), form__2856))}
 else
-return B4936([B5779], values__5763)}}
+if ($T(instanceQ__2483(form__2856, LsymbolG__2533)))
 {
-var B5800 = $S("%minus");
-B5032["-"] = function B5781 (____5782, minuend__5783)
-{
-var subtrahends__5784 = $SL.call(arguments, 2),
-sequence__5795 = subtrahends__5784,
-B5796 = sequence__5795,
-B5797 = ((B5796 || false).length || 0),
-B5798 = 0,
-B5799 = (B5797 === B5798);
-if ($T(B5799))
-return [B5193, "-", minuend__5783]
+var name__2858 = symbol_name__2359(form__2856),
+B2859;
+if ($T(not__2851(boundQ__2852(env__2857, form__2856))))
+{B2859 = find_moduleSimport_name__2853(name__2858, env__2857)}
 else
-return B4936([B5800, minuend__5783], subtrahends__5784)}}
+B2859 = false;
+var module__2861;
+if ($T(B2859))
 {
-var B5820 = $S("%times");
-B5032["*"] = function B5802 (____5803)
-{
-var values__5804 = $SL.call(arguments, 1),
-sequence__5815 = values__5804,
-B5816 = sequence__5815,
-B5817 = ((B5816 || false).length || 0),
-B5818 = 0,
-B5819 = (B5817 === B5818);
-if ($T(B5819))
-return 1
+var moduleSimport_name__2860 = B2859;
+module__2861 = first__2399(moduleSimport_name__2860)}
 else
-return B4936([B5820], values__5804)}}
-{
-var B5841 = $S("%divide");
-B5032["/"] = function B5822 (____5823, numerator__5824)
-{
-var denominators__5825 = $SL.call(arguments, 2),
-sequence__5836 = denominators__5825,
-B5837 = sequence__5836,
-B5838 = ((B5837 || false).length || 0),
-B5839 = 0,
-B5840 = (B5838 === B5839);
-if ($T(B5840))
-return [B5841, 1, numerator__5824]
+module__2861 = get__2398(env__2857, "module");
+return [$S("%symbol", "ralph/core"), name__2858, get__2398(module__2861, "name")]}
 else
-return B4936([B5841, numerator__5824], denominators__5825)}}
+return form__2856}, false)}
+Tcore_macrosT__2443["%backquote"] = function B2864 (env__2865, exp__2866)
+{return transform_backquoted__2854(exp__2866, env__2865)}
+Tcore_macrosT__2443["%comma"] = function B2868 (____2869, value__2870)
+{return signal__2407(make__2408(LerrorG__2409, $K("message"), "comma not inside backquote"))}
 {
-var B5845 = $S("next-method"),
-B5846 = $S("%native");
-B5032["call-next-method"] = function B5843 (____5844)
-{return [[B5278, B5845, "apply"], [B5846, "null"], B5209]}}
-var B5850 = $S("%symbol"),
-transform_quoted__5848,
-B5847 = B4934("transform_quoted", function transform_quoted__5848 (form__5849)
-{if ($T(B5085(form__5849, B5086)))
-return B4936([B5661], B5083(transform_quoted__5848, form__5849))
+var Tdot_name_errorT__2871;
+false;
+Tdot_name_errorT__2871 = make__2408(LerrorG__2409, $K("message"), "unsupported name for call in dot")}
+{
+var LstringG__2875 = B938["<string>"];
+Tcore_macrosT__2443["."] = function B2876 (____2877, value__2878)
+{
+var calls__2879 = $SL.call(arguments, 2);
+return reduce__2467(function B2880 (value__2881, call__2882)
+{
+var property__2883 = call__2882[0],
+arguments__2884 = $SL.call(call__2882, 1),
+B2886 = $S("%get-property", "ralph/core"),
+B2885 = property__2883,
+B2887;
+if ($T(instanceQ__2483(B2885, LstringG__2875)))
+{B2887 = property__2883}
 else
-if ($T(B5085(form__5849, B5217)))
-return [B5850, B4937(form__5849)]
+if ($T(instanceQ__2483(B2885, LsymbolG__2533)))
+{B2887 = symbol_name__2359(property__2883)}
 else
-return form__5849}, false)
-B5032.quote = function B5852 (____5853, exp__5854)
-{return B5847(exp__5854)}
-var trueQ = B1507["true?"],
-transform_backquoted__5857,
-B5855 = B1507.rcurry,
-B5856 = B4934("transform_backquoted", function transform_backquoted__5857 (form__5858, env__5859)
-{if ($T(B5085(form__5858, B5086)))
+B2887 = signal__2407(Tdot_name_errorT__2871);
+var B2888 = [B2886, value__2881, B2887],
+B2889 = [B2888];
+return concatenate__2358(B2889, arguments__2884)}, value__2878, calls__2879)}}
 {
-var sequence__5871 = form__5858,
-B5872 = sequence__5871,
-B5873 = ((B5872 || false).length || 0),
-B5874 = 0,
-value__5875 = (B5873 === B5874),
-B5884 = !(trueQ(value__5875)),
-B5886;
-if ($T(B5884))
+var simplify_arguments__2892;
+false;
+simplify_arguments__2892 = Mmake_function__2356("simplify_arguments", function simplify_arguments__2893 (arguments__2894)
 {
-var sequence__5879 = form__5858,
-B5885 = sequence__5879[0],
-object1__5880 = B4937(B5885),
-object2__5881 = "%comma";
-B5886 = (object1__5880 === object2__5881)}
+var B2895 = analyze_lambda_list__2452(arguments__2894),
+required__2896 = B2895[0],
+rest__2897 = B2895[1],
+key__2898 = B2895[2],
+B2901 = map__2414(function B2899 (argument__2900)
+{if ($T(instanceQ__2483(argument__2900, LarrayG__2484)))
+{return first__2399(argument__2900)}
 else
-B5886 = false;
-if ($T(B5886))
-{
-var sequence__5883 = form__5858;
-return sequence__5883[1]}
+return argument__2900}, required__2896),
+B2902;
+if ($T(rest__2897))
+{B2902 = concatenate__2358([$REST], rest__2897)}
 else
-return B4936([B5661], B5083(B5855(transform_backquoted__5857, env__5859), form__5858))}
+B2902 = [];
+var B2903;
+if ($T(key__2898))
+{B2903 = concatenate__2358([$KEY], key__2898)}
 else
-if ($T(B5085(form__5858, B5217)))
-return [B5850, B4937(form__5858)]
-else
-return form__5858}, false)
-B5032["%backquote"] = function B5888 (env__5889, exp__5890)
-{return B5856(exp__5890, env__5889)}
+B2903 = [];
+return concatenate__2358(B2901, B2902, B2903)}, false)}
 {
-var B5900 = $K("message"),
-B5892 = B1507.signal,
-B5893 = B1507.make,
-B5894 = B1507["<error>"];
-B5032["%comma"] = function B5895 (____5896, value__5897)
+var not__2909 = not__2485,
+get_setter__2910 = B938["get-setter"],
+G__2911 = B938[">"],
+Mkeys__2912 = B938["%keys"],
+make_function_definer__2913;
+false;
+make_function_definer__2913 = Mmake_function__2356("make_function_definer", function make_function_definer__2914 (macro_name__2915, definer__2916)
 {
-var error__5899 = B5893(B5894, B5900, "comma not inside backquote");
-throw(error__5899);
-return false}}
-var B5901 = B5893(B5894, B5900, "unsupported name for call in dot")
-{
-var B5905 = B1507["<string>"];
-B5032["."] = function B5906 (____5907, value__5908)
-{
-var calls__5909 = $SL.call(arguments, 2);
-return B5068(function B5910 (value__5911, call__5912)
-{
-var property__5913 = call__5912[0],
-arguments__5914 = $SL.call(call__5912, 1),
-B5918 = B5278,
-B5915 = property__5913,
-B5919;
-if ($T(B5085(B5915, B5905)))
-B5919 = property__5913
-else
-if ($T(B5085(B5915, B5217)))
-B5919 = B4937(property__5913)
-else
-{
-var error__5917 = B5901;
-throw(error__5917);
-B5919 = false};
-var B5920 = [B5918, value__5911, B5919],
-B5921 = [B5920];
-return B4936(B5921, arguments__5914)}, value__5908, calls__5909)}}
-var B5924 = B4934("simplify_arguments", function simplify_arguments__5925 (arguments__5926)
-{
-var B5927 = B5041(arguments__5926),
-required__5928 = B5927[0],
-rest__5929 = B5927[1],
-key__5930 = B5927[2],
-required__5933 = B5083(function B5931 (argument__5932)
-{if ($T(B5085(argument__5932, B5086)))
-{
-var sequence__5935 = argument__5932;
-return sequence__5935[0]}
-else
-return argument__5932}, required__5928),
-B5936;
-if ($T(rest__5929))
-B5936 = B4936([B5063], rest__5929)
-else
-B5936 = [];
-var B5937;
-if ($T(key__5930))
-B5937 = B4936([B5064], key__5930)
-else
-B5937 = [];
-return B4936(required__5933, B5936, B5937)}, false)
-var B6008 = $S("%native-name"),
-B6009 = $S("<object>"),
-trueQ = B1507["true?"],
-B5943 = B1507[">"],
-B5944 = B1507["%keys"],
-B5945 = B4934("make_function_definer", function make_function_definer__5946 (macro_name__5947, definer_name__5948)
-{
-var B5949 = $SL.call(arguments, 2),
-B5950 = B5944(B5949, {"name?":false,
+var B2917 = $SL.call(arguments, 2),
+B2918 = Mkeys__2912(B2917, {"name?":false,
 "type/existing?":false,
 "record?":false}),
-nameQ__5951 = B5950["name?"],
-typeSexistingQ__5952 = B5950["type/existing?"],
-recordQ__5953 = B5950["record?"];
-return function B5954 (env__5955, identifier__5956, arguments__5957)
+nameQ__2919 = B2918["name?"],
+typeSexistingQ__2920 = B2918["type/existing?"],
+recordQ__2921 = B2918["record?"];
+return function B2922 (env__2923, identifier__2924, arguments__2925)
 {
-var body__5958 = $SL.call(arguments, 3),
-B5959;
-if ($T(B4941(identifier__5956)))
-{
-var sequence__5967 = identifier__5956,
-B5994 = sequence__5967[1],
-B5995 = B4938(B5994);
-B5959 = [true, B5995]}
+var body__2926 = $SL.call(arguments, 3),
+B2927;
+if ($T(setter_identifierQ__2363(identifier__2924)))
+{B2927 = [true, transform_setter_identifier__2360(second__2364(identifier__2924))]}
 else
-B5959 = [false, identifier__5956];
-var setterQ__5960 = B5959[0],
-identifier__5961 = B5959[1],
-B5962 = B5085(identifier__5961, B5217),
-value__5969;
-if ($T(B5962))
-value__5969 = B5962
+B2927 = [false, identifier__2924];
+var setterQ__2928 = B2927[0],
+identifier__2929 = B2927[1],
+B2930 = instanceQ__2483(identifier__2929, LsymbolG__2533),
+B2934;
+if ($T(B2930))
+{B2934 = B2930}
 else
-value__5969 = setterQ__5960;
-var B5996 = !(trueQ(value__5969));
-if ($T(B5996))
-{
-var error__5971 = B5893(B5894, B5900, B4936(macro_name__5947, ": ", "name not <var> or (setter <var>)"));
-throw(error__5971);
-false};
-var B5997;
-if ($T(typeSexistingQ__5952))
-{
-var sequence__5982 = arguments__5957,
-B5983 = sequence__5982,
-B5984 = ((B5983 || false).length || 0),
-B5985 = 0;
-B5997 = (B5984 === B5985)}
+B2934 = setterQ__2928;
+var B2935 = not__2909(B2934);
+if ($T(B2935))
+{signal__2407(make__2408(LerrorG__2409, $K("message"), concatenate__2358(macro_name__2915, ": ", "name not <var> or (setter <var>)")))};
+var B2936;
+if ($T(typeSexistingQ__2920))
+{B2936 = emptyQ__2481(arguments__2925)}
 else
-B5997 = false;
-if ($T(B5997))
-{
-var error__5987 = B5893(B5894, B5900, B4936(macro_name__5947, ": ", "method has no arguments"));
-throw(error__5987);
-false};
-var simplified_arguments__5963 = B5924(arguments__5957),
-B5998;
-if ($T(nameQ__5951))
-B5998 = identifier__5961
+B2936 = false;
+if ($T(B2936))
+{signal__2407(make__2408(LerrorG__2409, $K("message"), concatenate__2358(macro_name__2915, ": ", "method has no arguments")))};
+var simplified_arguments__2931 = simplify_arguments__2892(arguments__2925),
+B2937;
+if ($T(nameQ__2919))
+{B2937 = identifier__2929}
 else
-B5998 = B5088();
-var B5999 = B5195(body__5958),
-B6000 = B5200(B5998, simplified_arguments__5963, B5999),
-method_definition__5964 = B5001(B6000, env__5955);
-if ($T(recordQ__5953))
-B4977(env__5955, "module", "functions", B4937(identifier__5961), method_definition__5964);
-var B6001 = B5021,
-B6002 = [B4935(definer_name__5948, false), [B6008, B4937(identifier__5961)], method_definition__5964, setterQ__5960],
-B6006;
-if ($T(typeSexistingQ__5952))
+B2937 = generate_symbol__2487();
+var B2938 = maybe_begin__2512(body__2926),
+B2939 = named_method__2517(B2937, simplified_arguments__2931, B2938),
+method_definition__2932 = macroexpand_all__2413(B2939, env__2923);
+if ($T(recordQ__2921))
+{get_setter__2910(env__2923, "module", "functions", symbol_name__2359(identifier__2929), method_definition__2932)};
+var B2940 = $S("define", "ralph/core"),
+B2941 = [definer__2916, [$S("%native-name", "ralph/compiler"), symbol_name__2359(identifier__2929)], method_definition__2932, setterQ__2928],
+B2944;
+if ($T(typeSexistingQ__2920))
 {
-var sequence__5989 = arguments__5957,
-head__5965 = sequence__5989[0],
-B6004;
-if ($T(B5085(head__5965, B5086)))
-{
-var object__5991 = head__5965,
-B6003 = ((object__5991 || false).length || 0);
-B6004 = B5943(B6003, 1)}
+var head__2933 = first__2399(arguments__2925),
+B2942;
+if ($T(instanceQ__2483(head__2933, LarrayG__2484)))
+{B2942 = G__2911(size__2449(head__2933), 1)}
 else
-B6004 = false;
-var B6005;
-if ($T(B6004))
-{
-var sequence__5993 = head__5965;
-B6005 = sequence__5993[1]}
+B2942 = false;
+var B2943;
+if ($T(B2942))
+{B2943 = second__2364(head__2933)}
 else
-B6005 = B6009;
-B6006 = [B6005, identifier__5961]}
+B2943 = $S("<object>", "ralph/core");
+B2944 = [B2943, identifier__2929]}
 else
-B6006 = [];
-var B6007 = B4936(B6002, B6006);
-return [B6001, identifier__5961, B6007]}}, false)
+B2944 = [];
+var B2945 = concatenate__2358(B2941, B2944);
+return [B2940, identifier__2929, B2945]}}, false)}
 {
-var B6033 = $K("record?"),
-B6034 = $K("name?"),
-B6035 = $K("type/existing?"),
-trueQ = B1507["true?"],
-B6016 = B1507.apply,
-B6017 = [["define-function", "%make-function", B6033, true, B6034, true], ["define-method", "%make-method", B6035, true]],
-B6018,
-B6019,
-B6020 = [B6017];
+var not__2952 = not__2485,
+emptyQ__2953 = emptyQ__2481,
+apply__2954 = B938.apply,
+rest__2955 = rest__2552,
+first__2956 = first__2399,
+B2957 = [["define-function", $S("%make-function", "ralph/core"), $K("record?"), true, $K("name?"), true], ["define-method", $S("%make-method", "ralph/core"), $K("type/existing?"), true]],
+B2958,
+B2959,
+B2960 = [B2957];
 while (true)
 {
-var B6021 = B6018,
-value__6026;
-if ($T(B6021))
-value__6026 = B6021
+var B2961 = B2958,
+B2965;
+if ($T(B2961))
+{B2965 = B2961}
 else
-value__6026 = B5474(B5082, B6020);
-var B6032 = !(trueQ(value__6026));
-if ($T(B6032))
+B2965 = anyQ__2646(emptyQ__2953, B2960);
+var B2966 = not__2952(B2965);
+if ($T(B2966))
 {
-var sequence__6028 = B6017,
-arguments__6022 = sequence__6028[0];
-(function B6023 (arguments__6024)
-{return B5032[B4989(arguments__6024)] = B6016(B5945, arguments__6024)})(arguments__6022);
-var sequence__6030 = B6017,
-B6031 = sequence__6030.slice(1);
-B6017 = B6031;
-B6020 = [B6017]}
+var arguments__2962 = first__2956(B2957);
+(function B2963 (arguments__2964)
+{return Tcore_macrosT__2443[first__2399(arguments__2964)] = apply__2954(make_function_definer__2913, arguments__2964)})(arguments__2962);
+B2957 = rest__2955(B2957);
+B2960 = [B2957]}
 else
 break};
-B6019}
+B2959}
+Tcore_macrosT__2443.define = function B2968 (env__2969, identifier__2970, value__2971)
 {
-var B6041 = $S("%make-generic");
-B5032["define-generic"] = function B6037 (____6038, identifier__6039, arguments__6040)
-{return [B5021, identifier__6039, [B6041, [B6008, B4937(identifier__6039)]]]}}
+var identifierT__2972 = localize__2416(identifier__2970, env__2969);
+if ($T(get__2398(identifierT__2972, "module")))
+{signal__2407(make__2408(LerrorG__2409, $K("message"), "Can't define using identifier with external qualifier"))};
+bindN__2411(env__2969, identifier__2970);
+return [$S("begin", "ralph/core"), [$S("%define", "ralph/core"), identifierT__2972], [$S("%set", "ralph/core"), identifierT__2972, value__2971]]}
+Tcore_macrosT__2443["define-generic"] = function B2974 (____2975, identifier__2976, arguments__2977)
+{return [$S("define", "ralph/core"), identifier__2976, [$S("%make-generic", "ralph/core"), [$S("%native-name", "ralph/compiler"), symbol_name__2359(identifier__2976)]]]}
 {
-var B6118 = $S("%make-class"),
-trueQ = B1507["true?"];
-B5032["define-class"] = function B6049 (____6050, identifier__6051, superclass__6052)
+var not__2985 = not__2485,
+emptyQ__2986 = emptyQ__2481,
+rest__2987 = rest__2552,
+first__2988 = first__2399;
+Tcore_macrosT__2443["define-class"] = function B2989 (____2990, identifier__2991, superclass__2992)
 {
-var properties__6053 = $SL.call(arguments, 3),
-object__6054 = [B5191],
-B6055 = properties__6053,
-B6056,
-B6057,
-B6058 = [B6055];
+var properties__2993 = $SL.call(arguments, 3),
+object__2994 = [$S("%object", "ralph/core")],
+B2995 = properties__2993,
+B2996,
+B2997,
+B2998 = [B2995];
 while (true)
 {
-var B6059 = B6056,
-value__6064;
-if ($T(B6059))
-value__6064 = B6059
+var B2999 = B2996,
+B3003;
+if ($T(B2999))
+{B3003 = B2999}
 else
-value__6064 = B5474(B5082, B6058);
-var B6112 = !(trueQ(value__6064));
-if ($T(B6112))
+B3003 = anyQ__2646(emptyQ__2986, B2998);
+var B3004 = not__2985(B3003);
+if ($T(B3004))
 {
-var sequence__6066 = B6055,
-property__6060 = sequence__6066[0];
-(function B6061 (property__6062)
-{if ($T(B5085(property__6062, B5086)))
+var property__3000 = first__2988(B2995);
+(function B3001 (property__3002)
+{if ($T(instanceQ__2483(property__3002, LarrayG__2484)))
 {
-var array__6071 = object__6054,
-sequence__6070 = property__6062,
-B6107 = sequence__6070[0],
-value__6072 = B4937(B6107);
-array__6071.push(value__6072);
-array__6071;
-var array__6077 = object__6054,
-B6108 = B5574,
-B6109 = [],
-sequence__6076 = property__6062,
-B6110 = sequence__6076[1],
-value__6078 = [B6108, B6109, B6110];
-array__6077.push(value__6078);
-return array__6077}
+push_last__2648(object__2994, symbol_name__2359(first__2399(property__3002)));
+return push_last__2648(object__2994, [$S("method", "ralph/core"), [], second__2364(property__3002)])}
 else
 {
-var array__6081 = object__6054,
-value__6082 = B4937(property__6062);
-array__6081.push(value__6082);
-array__6081;
-var array__6085 = object__6054,
-value__6086 = undefined;
-array__6085.push(value__6086);
-return array__6085}})(property__6060);
-var sequence__6088 = B6055,
-B6111 = sequence__6088.slice(1);
-B6055 = B6111;
-B6058 = [B6055]}
+push_last__2648(object__2994, symbol_name__2359(property__3002));
+return push_last__2648(object__2994, false)}})(property__3000);
+B2995 = rest__2987(B2995);
+B2998 = [B2995]}
 else
 break};
-B6057;
-var B6113 = B5021,
-B6114 = B6118,
-sequence__6100 = superclass__6052,
-B6101 = sequence__6100,
-B6102 = ((B6101 || false).length || 0),
-B6103 = 0,
-value__6104 = (B6102 === B6103),
-B6115 = !(trueQ(value__6104)),
-B6116;
-if ($T(B6115))
-{
-var sequence__6106 = superclass__6052;
-B6116 = sequence__6106[0]}
+B2997;
+var B3005 = $S("define", "ralph/core"),
+B3006 = $S("%make-class", "ralph/core"),
+B3007;
+if ($T(not__2985(emptyQ__2481(superclass__2992))))
+{B3007 = first__2399(superclass__2992)}
 else
-B6116 = false;
-var B6117 = [B6114, B6116, object__6054];
-return [B6113, identifier__6051, B6117]}}
-var B6119 = B4934("get_import_module_nameSoptions", function get_import_module_nameSoptions__6120 (import__6121)
+B3007 = false;
+var B3008 = [B3006, B3007, object__2994];
+return [B3005, identifier__2991, B3008]}}
 {
-var B6126;
-if ($T(B5085(import__6121, B5086)))
+var get_import_module_nameSoptions__3009;
+false;
+get_import_module_nameSoptions__3009 = Mmake_function__2356("get_import_module_nameSoptions", function get_import_module_nameSoptions__3010 (import__3011)
 {
-var sequence__6123 = import__6121;
-B6126 = sequence__6123[0]}
+var B3012;
+if ($T(instanceQ__2483(import__3011, LarrayG__2484)))
+{B3012 = first__2399(import__3011)}
 else
-B6126 = import__6121;
-var B6127 = B4937(B6126),
-B6128;
-if ($T(B5085(import__6121, B5086)))
-{
-var sequence__6125 = import__6121;
-B6128 = sequence__6125.slice(1)}
+B3012 = import__3011;
+var B3013 = symbol_name__2359(B3012),
+B3014;
+if ($T(instanceQ__2483(import__3011, LarrayG__2484)))
+{B3014 = rest__2552(import__3011)}
 else
-B6128 = [];
-return [B6127, B6128]}, false)
+B3014 = [];
+return [B3013, B3014]}, false)}
 {
-var B6136,
-B6137,
-B6138;
-B5032["define-module"] = function B6139 (env__6140, ____6141)
+var compile_time_import_module__3022,
+import_module__3023,
+make_import_definition__3024;
+Tcore_macrosT__2443["define-module"] = function B3025 (env__3026, ____3027)
 {
-var B6142 = $SL.call(arguments, 2),
-B6143 = B5944(B6142, {"import":[],
+var B3028 = $SL.call(arguments, 2),
+B3029 = Mkeys__2912(B3028, {"import":[],
 "export":[],
 "compile-time-import":[],
 inline:[]}),
-import__6144 = B6143["import"],
-export__6145 = B6143["export"],
-compile_time_import__6146 = B6143["compile-time-import"],
-inline__6147 = B6143.inline;
-B4977(env__6140, "module", "exports", B5083(B4943, export__6145));
-B4999(function B6148 (import__6149)
+import__3030 = B3029["import"],
+export__3031 = B3029["export"],
+compile_time_import__3032 = B3029["compile-time-import"],
+inline__3033 = B3029.inline;
+get_setter__2910(env__3026, "module", "exports", map__2414(identifier_name__2365, export__3031));
+do__2406(function B3034 (import__3035)
+{
+var B3036 = get_import_module_nameSoptions__3009(import__3035),
+module_name__3037 = B3036[0],
+options__3038 = B3036[1];
+return apply__2954(compile_time_import_module__3022, env__3026, module_name__3037, options__3038)}, compile_time_import__3032);
+get_setter__2910(env__3026, "module", "inline", map__2414(identifier_name__2365, inline__3033));
+return maybe_begin__2512(map__2414(function B3039 (import__3040)
+{
+var B3041 = get_import_module_nameSoptions__3009(import__3040),
+module_name__3042 = B3041[0],
+options__3043 = B3041[1];
+apply__2954(import_module__3023, get__2398(env__3026, "module"), module_name__3042, options__3043);
+return make_import_definition__3024(module_name__3042, env__3026)}, import__3030))}}
 {
-var B6150 = B6119(import__6149),
-module_name__6151 = B6150[0],
-options__6152 = B6150[1];
-return B6016(B6136, env__6140, module_name__6151, options__6152)}, compile_time_import__6146);
-B4977(env__6140, "module", "inline", B5083(B4943, inline__6147));
-return B5195(B5083(function B6153 (import__6154)
-{
-var B6155 = B6119(import__6154),
-module_name__6156 = B6155[0],
-options__6157 = B6155[1];
-B6016(B6137, B4988(env__6140, "module"), module_name__6156, options__6157);
-return B6138(module_name__6156, env__6140)}, import__6144))}}
-B6138 = B4934("make_import_definition", function make_import_definition__6158 (module_name__6159, env__6160)
-{
-var identifier__6161 = B5088();
-B4977(env__6160, "import-identifiers", module_name__6159, identifier__6161);
-return [B5021, identifier__6161, [[B5846, "require"], module_name__6159]]}, false)
-{
-var B6168 = $S("define-function");
-B5032["define-macro"] = function B6163 (env__6164, identifier__6165, arguments__6166)
-{
-var body__6167 = $SL.call(arguments, 3);
-return [B5575, B4936([B6168, identifier__6165, B4936([B5088()], arguments__6166)], body__6167), [B5301, [B5278, identifier__6165, "%macro?"], true]]}}
-B5032["define-symbol-macro"] = function B6170 (env__6171, identifier__6172, arguments__6173)
-{
-var body__6174 = $SL.call(arguments, 3);
-return [B5575, B4936([B6168, identifier__6172, []], body__6174), [B5301, [B5278, identifier__6172, "%symbol-macro?"], true]]}
-{
-var B6195 = $S("%try"),
-B6196 = $S("instance?");
-B5032["handler-case"] = function B6180 (____6181, body__6182)
-{
-var cases__6183 = $SL.call(arguments, 2),
-condition_var__6184 = B5088();
-return [B6195, body__6182, condition_var__6184, B4936([B5344], B5083(function B6185 (case__6186)
-{
-var B6187 = case__6186[0],
-type__6188 = B6187[0],
-B6189 = $SL.call(B6187, 1),
-B6190 = B5944(B6189, {condition:false}),
-condition__6191 = B6190.condition,
-body__6192 = $SL.call(case__6186, 1),
-B6193 = [[B6196, condition_var__6184, type__6188]],
-B6194;
-if ($T(condition__6191))
-B6194 = [B4936([B5192, [[condition__6191, condition_var__6184]]], body__6192)]
-else
-B6194 = body__6192;
-return B4936(B6193, B6194)}, cases__6183))]}}
-{
-var B6215 = $S("%call"),
-B6216 = $S("get-setter");
-B5032["get-setter"] = function B6198 (____6199, object__6200, property__6201)
-{
-var propertiesSvalue__6202 = $SL.call(arguments, 3),
-object__6206 = propertiesSvalue__6202,
-object1__6207 = ((object__6206 || false).length || 0),
-object2__6208 = 1,
-B6211 = (object1__6207 === object2__6208);
-if ($T(B6211))
-{
-var B6212 = B5015,
-B6213 = [B5278, object__6200, property__6201],
-sequence__6210 = propertiesSvalue__6202,
-B6214 = sequence__6210[0];
-return [B6212, B6213, B6214]}
-else
-return B4936([B6215, B6216, object__6200, property__6201], propertiesSvalue__6202)}}
-{
-var B6222 = $S("symbol");
-B5032.symbol = function B6218 (____6219, name__6220, module__6221)
-{if ($T(B5085(name__6220, B5905)))
-if ($T(B5085(module__6221, B5905)))
-return [B5850, name__6220, module__6221]
-else
-return [B5850, name__6220]
-else
-return [B6215, B6222, name__6220, module__6221]}}
-{
-var B6245 = $S("binary=="),
-B6246 = $S("=="),
-B6224;
-B5032["=="] = function B6225 (____6226, object1__6227, object2__6228)
-{
-var objects__6229 = $SL.call(arguments, 3),
-sequence__6240 = B6224,
-B6241 = sequence__6240,
-B6242 = ((B6241 || false).length || 0),
-B6243 = 0,
-B6244 = (B6242 === B6243);
-if ($T(B6244))
-return [B6245, object1__6227, object2__6228]
-else
-return B4936([B6215, B6246, object1__6227, object2__6228], objects__6229)}}
-{
-var B6247 = B4950();
-exports["*core-symbol-macros*"] = B6247}
-{
-var B6251 = $S("%next-method"),
-B6252 = $S("%this-method");
-B6247["next-method"] = function B6249 (____6250)
-{return [B6251, B6252]}}
-var trueQ = B1507["true?"],
-B6254 = B4934("find_macro_definition", function find_macro_definition__6255 (form__6256, env__6257)
-{
-var B6258 = form__6256;
-if ($T(B5085(B6258, B5086)))
-{
-var sequence__6271 = form__6256,
-B6272 = sequence__6271,
-B6273 = ((B6272 || false).length || 0),
-B6274 = 0,
-B6283 = (B6273 === B6274);
-if ($T(B6283))
-{
-var error__6276 = "Empty form";
-throw(error__6276);
-false};
-var sequence__6278 = form__6256,
-B6284 = sequence__6278[0],
-name__6259 = B4937(B6284),
-value__6280 = B4988(env__6257, "bound?", name__6259),
-B6285 = !(trueQ(value__6280));
-if ($T(B6285))
-return env__6257.macros[name__6259]}
-else
-if ($T(B5085(B6258, B5217)))
-{
-var name__6260 = B4937(form__6256),
-value__6282 = B4988(env__6257, "bound?", name__6260),
-B6286 = !(trueQ(value__6282));
-if ($T(B6286))
-return env__6257["symbol-macros"][name__6260]}}, false)
-{
-var B6288 = B4934("macroexpand_1", function macroexpand_1__6289 (form__6290, env__6291)
-{
-var B6292 = B6254(form__6290, env__6291);
-if ($T(B6292))
-{
-var macro__6293 = B6292,
-B6296;
-if ($T(B5085(form__6290, B5086)))
-{
-var sequence__6295 = form__6290;
-B6296 = sequence__6295.slice(1)}
-else
-B6296 = form__6290;
-return B6016(macro__6293, env__6291, B6296)}
-else
-return form__6290}, false);
-exports["macroexpand-1"] = B6288}
-{
-var trueQ = B1507["true?"],
-B6297 = B4934("macroexpand", function macroexpand__6298 (form__6299, env__6300)
-{
-var doneQ__6301;
-while (true)
-{
-var value__6304 = doneQ__6301,
-B6310 = !(trueQ(value__6304));
-if ($T(B6310))
-{
-var expanded__6302 = B6288(form__6299, env__6300),
-object1__6307 = expanded__6302,
-object2__6308 = form__6299,
-B6309 = (object1__6307 === object2__6308);
-doneQ__6301 = B6309;
-form__6299 = expanded__6302}
-else
-break};
-return form__6299}, false);
-exports.macroexpand = B6297}
-{
-var macroexpand_all__6314,
-B6313;
-B5001 = B4934("macroexpand_all", function macroexpand_all__6314 (form__6315, env__6316)
-{B6323:while(true){
-var B6317 = form__6315;
-if ($T(B5085(B6317, B5086)))
-if ($T(B6254(form__6315, env__6316)))
-return B6313(macroexpand_all__6314(B6297(form__6315, env__6316), env__6316))
-else
-{
-var B6318 = B4990(form__6315, env__6316);
-if ($T(B6318))
-{
-var expander__6319 = B6318,
-sequence__6321 = form__6315,
-B6322 = sequence__6321.slice(1);
-return B6016(expander__6319, env__6316, B6322)}
-else
-return B5083(B5855(macroexpand_all__6314, env__6316), form__6315)}
-else
-if ($T(B5085(B6317, B5217)))
-if ($T(B6254(form__6315, env__6316)))
-{
-arguments = [B6297(form__6315, env__6316), env__6316];
-form__6315 = arguments[0];
-env__6316 = arguments[1];
-continue B6323}
-else
-return form__6315
-else
-return form__6315;
-break}}, false);
-exports["macroexpand-all"] = B5001}
-B6313 = B4934("maybe_call", function maybe_call__6324 (exp__6325)
-{
-var B6334;
-if ($T(B4987(exp__6325, B5086)))
-{
-var sequence__6329 = exp__6325,
-object1__6330 = sequence__6329[0],
-object2__6331 = B6215;
-B6334 = (object1__6330 === object2__6331)}
-else
-B6334 = false;
-if ($T(B6334))
-{
-var sequence__6333 = exp__6325;
-return sequence__6333.slice(1)}
-else
-return exp__6325}, false)
-var B6338 = B4934("find_moduleSimport_name", function find_moduleSimport_name__6339 (definition_name__6340, env__6341)
-{return B5474(function B6342 (import__6343)
-{
-var module__6344 = import__6343[0],
-names__6345 = import__6343[1];
-return B5474(function B6346 (name__6347)
-{
-var B6348;
-if ($T(B5085(name__6347, B5086)))
-B6348 = name__6347
-else
-B6348 = [name__6347, name__6347];
-var import_name__6349 = B6348[0],
-new_name__6350 = B6348[1],
-object1__6353 = definition_name__6340,
-object2__6354 = new_name__6350,
-B6355 = (object1__6353 === object2__6354);
-if ($T(B6355))
-return [module__6344, import_name__6349]}, names__6345)}, B4988(env__6341, "module", "imports"))}, false)
-var B6356 = B4934("find_import_identifier", function find_import_identifier__6357 (module__6358, env__6359)
-{return B4988(env__6359, "import-identifiers", B4988(module__6358, "name"))}, false)
-{
-var B6395 = $S("%begin"),
-B6396 = $S("%define"),
-B6361 = B1507["set-subtract!"],
-B6362 = B4928["find-free-variables"],
-B6363 = B4925["environment-definitions"],
-B6364 = B4925["*defined*"],
-B6365 = B4934("define_free_variables", function define_free_variables__6366 (exp__6367, env__6368)
-{
-var variables__6369 = B5068(B6361, B6362(exp__6367), [B6363(env__6368), B6364]),
-sequence__6387 = variables__6369,
-B6388 = sequence__6387,
-B6389 = ((B6388 || false).length || 0),
-B6390 = 0,
-B6391 = (B6389 === B6390);
-if ($T(B6391))
-return exp__6367
-else
-return B4936([B6395], B5083(function B6370 (variable__6371)
-{
-var name__6372 = B4937(variable__6371);
-B4977(env__6368, "defined?", name__6372, true);
-var B6392 = [[B6396, variable__6371]],
-moduleSimport_name__6373 = B6338(name__6372, env__6368),
-B6393;
-if ($T(moduleSimport_name__6373))
-{
-var module__6374 = moduleSimport_name__6373[0],
-import_name__6375 = moduleSimport_name__6373[1],
-import_identifier__6376 = B6356(module__6374, env__6368);
-B6393 = [[B5015, variable__6371, [B5278, import_identifier__6376, import_name__6375]]]}
-else
-B6393 = [];
-var B6394 = B4936(B6392, B6393);
-return B5195(B6394)}, variables__6369), [exp__6367])}, false);
-exports["define-free-variables"] = B6365}
-var trueQ = B1507["true?"],
-B6399 = B1507.choose,
-B6400 = B1507["has?"],
-B6401 = B4934("define_free_variables2", function define_free_variables2__6402 (exp__6403, env__6404)
-{
-var free__6405 = B6361(B6362(exp__6403), B6364),
-variables__6408 = B6399(function B6406 (variable__6407)
-{
-var object__6420 = B4988(env__6404, "definition-names"),
-property__6421 = B4937(variable__6407),
-value__6422 = $HP.call(object__6420,property__6421);
-return !(trueQ(value__6422))}, free__6405),
-sequence__6433 = variables__6408,
-B6434 = sequence__6433,
-B6435 = ((B6434 || false).length || 0),
-B6436 = 0,
-B6437 = (B6435 === B6436);
-if ($T(B6437))
-return exp__6403
-else
-return B4936([B6395], B5083(function B6409 (variable__6410)
-{
-var name__6411 = B4937(variable__6410);
-B4977(env__6404, "defined?", name__6411, true);
-var B6438 = [[B6396, variable__6410]],
-moduleSimport_name__6412 = B6338(name__6411, env__6404),
-B6439;
-if ($T(moduleSimport_name__6412))
-{
-var module__6413 = moduleSimport_name__6412[0],
-import_name__6414 = moduleSimport_name__6412[1],
-old_import_identifier__6415 = B6356(module__6413, env__6404),
-import_identifier__6416 = B4988(env__6404, "new-identifiers", B4937(old_import_identifier__6415));
-B6439 = [[B5015, variable__6410, [B5278, import_identifier__6416, import_name__6414]]]}
-else
-B6439 = [];
-var B6440 = B4936(B6438, B6439);
-return B5195(B6440)}, variables__6408), [exp__6403])}, false)
-var trueQ = B1507["true?"],
-dec = B1507.dec,
-inline__6465,
-B6459 = B1507["last-setter"],
-B6460 = B1507.last,
-B6461 = B1507["second-setter"],
-B6462,
-B6463,
-B6464 = B4934("inline", function inline__6465 (form__6466, env__6467)
-{
-var B6635;
-if ($T(B5085(form__6466, B5086)))
-{
-var sequence__6510 = form__6466,
-B6511 = sequence__6510,
-B6512 = ((B6511 || false).length || 0),
-B6513 = 0,
-value__6514 = (B6512 === B6513);
-B6635 = !(trueQ(value__6514))}
-else
-B6635 = false;
-if ($T(B6635))
-{
-var sequence__6516 = form__6466,
-B6636 = sequence__6516[0],
-B6637 = B5085(B6636, B5217);
-if ($T(B6637))
-{
-var sequence__6518 = form__6466,
-B6638 = sequence__6518[0],
-B6468 = B4937(B6638),
-object1__6521 = B6468,
-object2__6522 = "%method",
-B6469 = (object1__6521 === object2__6522),
-B6639;
-if ($T(B6469))
-B6639 = B6469
-else
-{
-var object1__6525 = B6468,
-object2__6526 = "%set";
-B6639 = (object1__6525 === object2__6526)};
-if ($T(B6639))
-{
-var array__6539 = form__6466,
-array__6536 = form__6466,
-B6537 = array__6536,
-B6538 = ((B6537 || false).length || 0),
-B6640 = (B6538 - 1),
-B6641 = array__6536[B6640],
-value__6540 = inline__6465(B6641, env__6467);
-array__6539[dec(B5038(array__6539), 1)] = value__6540;
-return form__6466}
-else
-{
-var object1__6543 = B6468,
-object2__6544 = "%bind",
-B6642 = (object1__6543 === object2__6544);
-if ($T(B6642))
-{
-var ____6470 = form__6466[0],
-binding__6471 = form__6466[1],
-body__6472 = form__6466[2],
-array__6549 = binding__6471,
-sequence__6548 = binding__6471,
-B6643 = sequence__6548[1],
-value__6550 = inline__6465(B6643, env__6467);
-array__6549[1] = value__6550;
-var array__6553 = form__6466,
-value__6554 = inline__6465(body__6472, env__6467);
-array__6553[dec(B5038(array__6553), 1)] = value__6554;
-return form__6466}
-else
-{
-var object1__6557 = B6468,
-object2__6558 = "%try",
-B6644 = (object1__6557 === object2__6558);
-if ($T(B6644))
-{
-var ____6473 = form__6466[0],
-body__6474 = form__6466[1],
-var__6475 = form__6466[2],
-catch__6476 = form__6466[3],
-array__6561 = form__6466,
-value__6562 = inline__6465(body__6474, env__6467);
-array__6561[1] = value__6562;
-var array__6565 = form__6466,
-value__6566 = inline__6465(catch__6476, env__6467);
-array__6565[dec(B5038(array__6565), 1)] = value__6566;
-return form__6466}
-else
-{
-var object1__6569 = B6468,
-object2__6570 = "%begin",
-B6477 = (object1__6569 === object2__6570),
-B6645;
-if ($T(B6477))
-B6645 = B6477
-else
-{
-var object1__6573 = B6468,
-object2__6574 = "%if",
-B6478 = (object1__6573 === object2__6574);
-if ($T(B6478))
-B6645 = B6478
-else
-{
-var object1__6577 = B6468,
-object2__6578 = "%while",
-B6479 = (object1__6577 === object2__6578);
-if ($T(B6479))
-B6645 = B6479
-else
-{
-var object1__6581 = B6468,
-object2__6582 = "%array",
-B6480 = (object1__6581 === object2__6582);
-if ($T(B6480))
-B6645 = B6480
-else
-{
-var object1__6585 = B6468,
-object2__6586 = "%object",
-B6481 = (object1__6585 === object2__6586);
-if ($T(B6481))
-B6645 = B6481
-else
-{
-var object1__6589 = B6468,
-object2__6590 = "%get-property",
-B6482 = (object1__6589 === object2__6590);
-if ($T(B6482))
-B6645 = B6482
-else
-{
-var object1__6593 = B6468,
-object2__6594 = "%native-call",
-B6483 = (object1__6593 === object2__6594);
-if ($T(B6483))
-B6645 = B6483
-else
-{
-var object1__6597 = B6468,
-object2__6598 = "%infix",
-B6484 = (object1__6597 === object2__6598);
-if ($T(B6484))
-B6645 = B6484
-else
-{
-var object1__6601 = B6468,
-object2__6602 = "%plus",
-B6485 = (object1__6601 === object2__6602);
-if ($T(B6485))
-B6645 = B6485
-else
-{
-var object1__6605 = B6468,
-object2__6606 = "%minus",
-B6486 = (object1__6605 === object2__6606);
-if ($T(B6486))
-B6645 = B6486
-else
-{
-var object1__6609 = B6468,
-object2__6610 = "%times",
-B6487 = (object1__6609 === object2__6610);
-if ($T(B6487))
-B6645 = B6487
-else
-{
-var object1__6613 = B6468,
-object2__6614 = "%divide";
-B6645 = (object1__6613 === object2__6614)}}}}}}}}}}};
-if ($T(B6645))
-{
-var sequence__6616 = form__6466,
-B6646 = sequence__6616[0],
-B6647 = [B6646],
-B6648 = B5855(inline__6465, env__6467),
-sequence__6618 = form__6466,
-B6649 = sequence__6618.slice(1),
-B6650 = B5083(B6648, B6649);
-return B4936(B6647, B6650)}
-else
-{
-var object1__6621 = B6468,
-object2__6622 = "%native",
-B6488 = (object1__6621 === object2__6622),
-B6651;
-if ($T(B6488))
-B6651 = B6488
-else
-{
-var object1__6625 = B6468,
-object2__6626 = "%native-name",
-B6489 = (object1__6625 === object2__6626);
-if ($T(B6489))
-B6651 = B6489
-else
-{
-var object1__6629 = B6468,
-object2__6630 = "%define";
-B6651 = (object1__6629 === object2__6630)}};
-if ($T(B6651))
-return form__6466
-else
-{
-var sequence__6632 = form__6466,
-B6652 = sequence__6632[0],
-name__6490 = B4937(B6652),
-B6491 = B4988(env__6467, "definition-names", name__6490),
-definition_name__6492;
-if ($T(B6491))
-definition_name__6492 = B6491
-else
-definition_name__6492 = name__6490;
-var B6493;
-if ($T(B6463(B4988(env__6467, "module"), definition_name__6492)))
-B6493 = B4988(env__6467, "module", "functions", definition_name__6492)
-else
-B6493 = false;
-var definition__6498;
-if ($T(B6493))
-definition__6498 = B6493
-else
-{
-var B6494 = B6338(definition_name__6492, env__6467);
-if ($T(B6494))
-{
-var moduleSimport_name__6495 = B6494,
-module__6496 = moduleSimport_name__6495[0],
-import_name__6497 = moduleSimport_name__6495[1];
-if ($T(B6463(module__6496, import_name__6497)))
-definition__6498 = B4988(module__6496, "functions", import_name__6497)
-else
-definition__6498 = false}
-else
-definition__6498 = false};
-if ($T(definition__6498))
-{
-var sequence__6634 = form__6466,
-B6653 = sequence__6634.slice(1);
-return B6462(definition__6498, B6653, env__6467)}
-else
-return B5083(B5855(inline__6465, env__6467), form__6466)}}}}}}
-else
-return B5083(B5855(inline__6465, env__6467), form__6466)}
-else
-return form__6466}, false)
-{
-var B6654 = B1507["=="];
-B6463 = B4934("inlineQ", function inlineQ__6655 (module__6656, name__6657)
-{return B5474(B5000(B6654, name__6657), B4988(module__6656, "inline"))}, false)}
-{
-var trueQ = B1507["true?"],
-B6662 = B1507[">="],
-B6663 = B4926["ensure-naming-structure"],
-B6664 = B1507.push,
-B6665 = B4925["get-module-name/name"],
-B6666 = B4926["restore-identifiers"],
-B6667 = B4926["alpha-convert"];
-B6462 = B4934("inline_definition", function inline_definition__6668 (definition__6669, values__6670, env__6671)
-{
-var ____6672 = definition__6669[0],
-name__6673 = definition__6669[1],
-arguments__6674 = definition__6669[2],
-body__6675 = definition__6669[3],
-body__6679 = B5068(function B6676 (body__6677, argument__6678)
-{return [B5031, [argument__6678, argument__6678], body__6677]}, body__6675, B5218(arguments__6674)),
-inlined__6680 = B6464(body__6679, env__6671),
-prepared__6681 = B6667(inlined__6680, env__6671),
-object__6693 = arguments__6674,
-B6682 = ((object__6693 || false).length || 0),
-i__6683 = 0;
-while (true)
-{
-var value__6695 = B6662(i__6683, B6682),
-B6700 = !(trueQ(value__6695));
-if ($T(B6700))
-{
-(function B6684 (i__6685)
-{
-var argument__6686 = B5039(arguments__6674, i__6685),
-value__6687 = B5039(values__6670, i__6685),
-B6688 = B6665(argument__6686),
-module_name__6689 = B6688[0],
-name__6690 = B6688[1];
-B6663(env__6671, module_name__6689, name__6690);
-var array__6698 = B4988(env__6671, "identifiers", module_name__6689, name__6690),
-value__6699;
-if ($T(value__6687))
-value__6699 = B6464(value__6687, env__6671)
-else
-value__6699 = [B5846, "undefined"];
-array__6698.unshift(value__6699);
-return array__6698})(i__6683);
-i__6683 = (i__6683 + 1)}
-else
-break};
 false;
-var result__6691 = B6667(body__6679, env__6671);
-B6666(arguments__6674, env__6671);
-return result__6691}, false)}
+make_import_definition__3024 = Mmake_function__2356("make_import_definition", function make_import_definition__3044 (module_name__3045, env__3046)
 {
-var B6701,
-B6702 = B1507.identity,
-B6703 = B4934("lift_symbols", function lift_symbols__6704 (exp__6705, env__6706)
-{return B6701(exp__6705, env__6706, B6702)}, false);
-exports["lift-symbols"] = B6703}
+var identifier__3047 = generate_symbol__2487();
+get_setter__2910(env__3046, "import-identifiers", module_name__3045, identifier__3047);
+return [$S("%begin", "ralph/core"), [$S("%define", "ralph/core"), identifier__3047], [$S("%set", "ralph/core"), identifier__3047, [[$S("%native", "ralph/core"), "require"], module_name__3045]]]}, false)}
+Tcore_macrosT__2443["define-macro"] = function B3049 (env__3050, identifier__3051, arguments__3052)
 {
-var B6896 = $K("module"),
-trueQ = B1507["true?"],
-lift_symbol__6734,
-B6729,
-B6730,
-B6731,
-B6732 = B1507["<keyword>"],
-B6733 = B1507["<hash-symbol>"];
-B6701 = B4934("lift_symbol", function lift_symbol__6734 (exp__6735, env__6736, k__6737)
-{B6897:while(true){
-var B6888;
-if ($T(B5085(exp__6735, B5086)))
+var body__3053 = $SL.call(arguments, 3);
+return [$S("begin", "ralph/core"), concatenate__2358([$S("define-function", "ralph/core"), identifier__3051, concatenate__2358([generate_symbol__2487()], arguments__3052)], body__3053), [$S("set!", "ralph/core"), [$S("%get-property", "ralph/core"), identifier__3051, "%macro?"], true]]}
+Tcore_macrosT__2443["define-symbol-macro"] = function B3055 (env__3056, identifier__3057, arguments__3058)
 {
-var sequence__6805 = exp__6735,
-B6806 = sequence__6805,
-B6807 = ((B6806 || false).length || 0),
-B6808 = 0,
-value__6809 = (B6807 === B6808);
-B6888 = !(trueQ(value__6809))}
+var body__3059 = $SL.call(arguments, 3);
+return [$S("begin", "ralph/core"), concatenate__2358([$S("define-function", "ralph/core"), identifier__3057, []], body__3059), [$S("set!", "ralph/core"), [$S("%get-property", "ralph/core"), identifier__3057, "%symbol-macro?"], true]]}
+Tcore_macrosT__2443["handler-case"] = function B3065 (____3066, body__3067)
+{
+var cases__3068 = $SL.call(arguments, 2),
+condition_var__3069 = generate_symbol__2487();
+return [$S("%try", "ralph/core"), body__3067, condition_var__3069, concatenate__2358([$S("cond", "ralph/core")], map__2414(function B3070 (case__3071)
+{
+var B3072 = case__3071[0],
+type__3073 = B3072[0],
+B3074 = $SL.call(B3072, 1),
+B3075 = Mkeys__2912(B3074, {condition:false}),
+condition__3076 = B3075.condition,
+body__3077 = $SL.call(case__3071, 1),
+B3078 = [[$S("instance?", "ralph/core"), condition_var__3069, type__3073]],
+B3079;
+if ($T(condition__3076))
+{B3079 = [concatenate__2358([$S("bind", "ralph/core"), [[condition__3076, condition_var__3069]]], body__3077)]}
 else
-B6888 = false;
-if ($T(B6888))
+B3079 = body__3077;
+return concatenate__2358(B3078, B3079)}, cases__3068))]}
+Tcore_macrosT__2443["get-setter"] = function B3081 (____3082, object__3083, property__3084)
 {
-var sequence__6811 = exp__6735,
-B6889 = sequence__6811[0],
-B6738 = B4937(B6889),
-object1__6814 = B6738,
-object2__6815 = "%bind",
-B6890 = (object1__6814 === object2__6815);
-if ($T(B6890))
-{
-var ____6739 = exp__6735[0],
-B6740 = exp__6735[1],
-var__6741 = B6740[0],
-value__6742 = B6740[1],
-body__6743 = exp__6735[2];
-arguments = [value__6742, env__6736, (function B6898 (body__6743, k__6737, B5031, var__6741)
-{return function B6744 (lvalue__6745, env__6746)
-{return lift_symbol__6734(body__6743, env__6746, function B6747 (lbody__6748, env__6749)
-{return k__6737([B5031, [var__6741, lvalue__6745], lbody__6748], env__6749)})}})(body__6743, k__6737, B5031, var__6741)];
-exp__6735 = arguments[0];
-env__6736 = arguments[1];
-k__6737 = arguments[2];
-continue B6897}
+var propertiesSvalue__3085 = $SL.call(arguments, 3);
+if ($T(binaryEE__2551(size__2449(propertiesSvalue__3085), 1)))
+{return [$S("%set", "ralph/core"), [$S("%get-property", "ralph/core"), object__3083, property__3084], first__2399(propertiesSvalue__3085)]}
 else
-{
-var object1__6818 = B6738,
-object2__6819 = "%set",
-B6891 = (object1__6818 === object2__6819);
-if ($T(B6891))
-{
-var ____6750 = exp__6735[0],
-e1__6751 = exp__6735[1],
-e2__6752 = exp__6735[2];
-arguments = [e2__6752, env__6736, (function B6899 (k__6737, B5015, e1__6751)
-{return function B6753 (le2__6754, env__6755)
-{return k__6737([B5015, e1__6751, le2__6754], env__6755)}})(k__6737, B5015, e1__6751)];
-exp__6735 = arguments[0];
-env__6736 = arguments[1];
-k__6737 = arguments[2];
-continue B6897}
+return concatenate__2358([$S("%call", "ralph/core"), $S("get-setter", "ralph/core"), object__3083, property__3084], propertiesSvalue__3085)}
+Tcore_macrosT__2443.symbol = function B3087 (____3088, name__3089, module__3090)
+{if ($T(instanceQ__2483(name__3089, LstringG__2875)))
+{if ($T(instanceQ__2483(module__3090, LstringG__2875)))
+{return [$S("%symbol", "ralph/core"), name__3089, module__3090]}
 else
-{
-var object1__6822 = B6738,
-object2__6823 = "%method",
-B6892 = (object1__6822 === object2__6823);
-if ($T(B6892))
-{
-var ____6756 = exp__6735[0],
-name__6757 = exp__6735[1],
-arguments__6758 = exp__6735[2],
-body__6759 = exp__6735[3];
-arguments = [body__6759, env__6736, (function B6900 (k__6737, B5009, name__6757, arguments__6758)
-{return function B6760 (lbody__6761, env__6762)
-{return k__6737([B5009, name__6757, arguments__6758, lbody__6761], env__6762)}})(k__6737, B5009, name__6757, arguments__6758)];
-exp__6735 = arguments[0];
-env__6736 = arguments[1];
-k__6737 = arguments[2];
-continue B6897}
+return [$S("%symbol", "ralph/core"), name__3089]}
 else
+return [$S("%call", "ralph/core"), $S("symbol", "ralph/core"), name__3089, module__3090]}
 {
-var object1__6826 = B6738,
-object2__6827 = "%begin",
-B6763 = (object1__6826 === object2__6827),
-B6893;
-if ($T(B6763))
-B6893 = B6763
+var opbjects__3092;
+Tcore_macrosT__2443["=="] = function B3093 (____3094, object1__3095, object2__3096)
+{
+var objects__3097 = $SL.call(arguments, 3);
+if ($T(emptyQ__2481(opbjects__3092)))
+{return [$S("binary==", "ralph/core"), object1__3095, object2__3096]}
 else
+return concatenate__2358([$S("%call", "ralph/core"), $S("==", "ralph/core"), object1__3095, object2__3096], objects__3097)}}
 {
-var object1__6830 = B6738,
-object2__6831 = "%if",
-B6764 = (object1__6830 === object2__6831);
-if ($T(B6764))
-B6893 = B6764
+var Tcore_symbol_macrosT__3098;
+false;
+Tcore_symbol_macrosT__3098 = make_object__2369();
+exports["*core-symbol-macros*"] = Tcore_symbol_macrosT__3098}
+Tcore_symbol_macrosT__3098["next-method"] = function B3100 (____3101)
+{return [$S("%next-method", "ralph/core"), $S("%this-method")]}
+{
+var not__3103 = not__2485,
+find_macro_definition__3104;
+false;
+find_macro_definition__3104 = Mmake_function__2356("find_macro_definition", function find_macro_definition__3105 (form__3106, env__3107)
+{
+var B3108 = form__3106;
+if ($T(instanceQ__2483(B3108, LarrayG__2484)))
+{
+if ($T(emptyQ__2481(form__3106)))
+{signal__2407("Empty form")};
+var identifier__3109 = first__2399(form__3106),
+name__3110 = symbol_name__2359(identifier__3109);
+if ($T(not__3103(boundQ__2852(env__3107, identifier__3109))))
+{return env__3107.macros[name__3110]}}
 else
+if ($T(instanceQ__2483(B3108, LsymbolG__2533)))
 {
-var object1__6834 = B6738,
-object2__6835 = "%while",
-B6765 = (object1__6834 === object2__6835);
-if ($T(B6765))
-B6893 = B6765
+var name__3111 = symbol_name__2359(form__3106);
+if ($T(not__3103(boundQ__2852(env__3107, form__3106))))
+{return env__3107["symbol-macros"][name__3111]}}}, false)}
+{
+var macroexpand_1__3113;
+false;
+macroexpand_1__3113 = Mmake_function__2356("macroexpand_1", function macroexpand_1__3114 (form__3115, env__3116)
+{
+var B3117 = find_macro_definition__3104(form__3115, env__3116);
+if ($T(B3117))
+{
+var macro__3118 = B3117,
+B3119;
+if ($T(instanceQ__2483(form__3115, LarrayG__2484)))
+{B3119 = rest__2552(form__3115)}
 else
-{
-var object1__6838 = B6738,
-object2__6839 = "%array",
-B6766 = (object1__6838 === object2__6839);
-if ($T(B6766))
-B6893 = B6766
+B3119 = form__3115;
+return apply__2954(macro__3118, env__3116, B3119)}
 else
+return form__3115}, false);
+exports["macroexpand-1"] = macroexpand_1__3113}
 {
-var object1__6842 = B6738,
-object2__6843 = "%object",
-B6767 = (object1__6842 === object2__6843);
-if ($T(B6767))
-B6893 = B6767
-else
+var not__3120 = not__2485,
+macroexpand__3121;
+false;
+macroexpand__3121 = Mmake_function__2356("macroexpand", function macroexpand__3122 (form__3123, env__3124)
 {
-var object1__6846 = B6738,
-object2__6847 = "%get-property",
-B6768 = (object1__6846 === object2__6847);
-if ($T(B6768))
-B6893 = B6768
+var doneQ__3125;
+while ($T(not__3120(doneQ__3125)))
+{
+var expanded__3126 = macroexpand_1__3113(form__3123, env__3124);
+doneQ__3125 = binaryEE__2551(expanded__3126, form__3123);
+form__3123 = expanded__3126};
+return form__3123}, false);
+exports.macroexpand = macroexpand__3121}
+{
+var maybe_call__3129;
+false;
+macroexpand_all__2413 = Mmake_function__2356("macroexpand_all", function macroexpand_all__3130 (form__3131, env__3132)
+{
+var B3133 = form__3131;
+if ($T(instanceQ__2483(B3133, LarrayG__2484)))
+{if ($T(find_macro_definition__3104(form__3131, env__3132)))
+{return maybe_call__3129(macroexpand_all__3130(macroexpand__3121(form__3131, env__3132), env__3132))}
 else
 {
-var object1__6850 = B6738,
-object2__6851 = "%infix",
-B6769 = (object1__6850 === object2__6851);
-if ($T(B6769))
-B6893 = B6769
+var B3134 = find_special_form__2400(form__3131, env__3132);
+if ($T(B3134))
+{
+var expander__3135 = B3134;
+return apply__2954(expander__3135, env__3132, rest__2552(form__3131))}
+else
+return map__2414(rcurry__2415(macroexpand_all__3130, env__3132), form__3131)}}
+else
+if ($T(instanceQ__2483(B3133, LsymbolG__2533)))
+{if ($T(find_macro_definition__3104(form__3131, env__3132)))
+{return macroexpand_all__3130(macroexpand__3121(form__3131, env__3132), env__3132)}
+else
+return form__3131}
+else
+return form__3131}, false);
+exports["macroexpand-all"] = macroexpand_all__2413}
+{
+false;
+maybe_call__3129 = Mmake_function__2356("maybe_call", function maybe_call__3136 (exp__3137)
+{
+var B3138;
+if ($T(expressionQ__2397(exp__3137, LarrayG__2484)))
+{B3138 = binaryEE__2551(symbol_name__2359(first__2399(exp__3137)), "%call")}
+else
+B3138 = false;
+if ($T(B3138))
+{return rest__2552(exp__3137)}
+else
+return exp__3137}, false)}
+{
+var anyQ__3142 = anyQ__2646;
+false;
+find_moduleSimport_name__2853 = Mmake_function__2356("find_moduleSimport_name", function find_moduleSimport_name__3143 (definition_name__3144, env__3145)
+{return anyQ__3142(function B3146 (import__3147)
+{
+var module__3148 = import__3147[0],
+names__3149 = import__3147[1];
+return anyQ__3142(function B3150 (name__3151)
+{
+var B3152;
+if ($T(instanceQ__2483(name__3151, LarrayG__2484)))
+{B3152 = name__3151}
+else
+B3152 = [name__3151, name__3151];
+var import_name__3153 = B3152[0],
+new_name__3154 = B3152[1];
+if ($T(binaryEE__2551(definition_name__3144, new_name__3154)))
+{return [module__3148, import_name__3153]}}, names__3149)}, get__2398(env__3145, "module", "imports"))}, false)}
+{
+var find_import_identifier__3155;
+false;
+find_import_identifier__3155 = Mmake_function__2356("find_import_identifier", function find_import_identifier__3156 (module__3157, env__3158)
+{return get__2398(env__3158, "import-identifiers", get__2398(module__3157, "name"))}, false)}
+{
+var not__3170 = not__2485,
+emptyQ__3171 = emptyQ__2481,
+find_module__3172,
+module_nameSname__3173 = B2347["module-name/name"],
+rest__3174 = rest__2552,
+first__3175 = first__2399,
+set_subtractN__3176 = B938["set-subtract!"],
+find_free_variables__3177 = B2350["find-free-variables"],
+TdefinedT__3178 = B2347["*defined*"],
+define_free_variables__3179;
+false;
+define_free_variables__3179 = Mmake_function__2356("define_free_variables", function define_free_variables__3180 (exp__3181, env__3182)
+{
+var variables__3183 = set_subtractN__3176(find_free_variables__3177(exp__3181, env__3182), TdefinedT__3178),
+result__3184 = [],
+B3185 = variables__3183,
+B3186,
+B3187,
+B3188 = [B3185];
+while (true)
+{
+var B3189 = B3186,
+B3214;
+if ($T(B3189))
+{B3214 = B3189}
+else
+B3214 = anyQ__2646(emptyQ__3171, B3188);
+var B3215 = not__3170(B3214);
+if ($T(B3215))
+{
+var variable__3190 = first__3175(B3185);
+(function B3191 (variable__3192)
+{
+var B3193 = module_nameSname__3173(variable__3192, env__3182),
+module_name__3194 = B3193[0],
+name__3195 = B3193[1],
+import_name__3196,
+B3197 = module_name__3194,
+B3207;
+if ($T(B3197))
+{B3207 = B3197}
+else
+B3207 = get__2398(env__3182, "defined?", name__3195);
+var B3208 = not__3170(B3207);
+if ($T(B3208))
+{
+var B3198 = find_moduleSimport_name__2853(name__3195, env__3182);
+if ($T(B3198))
+{
+var moduleSimport_name__3199 = B3198,
+module__3200 = moduleSimport_name__3199[0],
+import_nameT__3201 = moduleSimport_name__3199[1];
+module_name__3194 = get__2398(module__3200, "name");
+import_name__3196 = import_nameT__3201}
 else
 {
-var object1__6854 = B6738,
-object2__6855 = "%native",
-B6770 = (object1__6854 === object2__6855);
-if ($T(B6770))
-B6893 = B6770
+get_setter__2910(env__3182, "defined?", name__3195, true);
+push_last__2648(result__3184, [$S("%define", "ralph/core"), variable__3192])}};
+if ($T(module_name__3194))
+{
+var B3202 = get__2398(env__3182, "external-identifier", module_name__3194, name__3195);
+if ($T(B3202))
+{
+var reference__3203 = B3202;
+true;
+if ($T(not__3170(binaryEE__2551(get__2398(variable__3192, "module"), get__2398(reference__3203, "module")))))
+{
+push_last__2648(result__3184, [$S("%define", "ralph/core"), variable__3192]);
+return push_last__2648(result__3184, [$S("%set", "ralph/core"), variable__3192, reference__3203])}}
 else
 {
-var object1__6858 = B6738,
-object2__6859 = "%native-name",
-B6771 = (object1__6858 === object2__6859);
-if ($T(B6771))
-B6893 = B6771
+get_setter__2910(env__3182, "external-identifier", module_name__3194, name__3195, variable__3192);
+var module__3204 = find_module__3172(module_name__3194),
+import_identifier__3205 = find_import_identifier__3155(module__3204, env__3182);
+if ($T(not__3170(import_identifier__3205)))
+{
+push_last__2648(result__3184, make_import_definition__3024(module_name__3194, env__3182));
+import_identifier__3205 = find_import_identifier__3155(module__3204, env__3182)};
+push_last__2648(result__3184, [$S("%define", "ralph/core"), variable__3192]);
+var B3209 = $S("%set", "ralph/core"),
+B3210 = $S("%get-property", "ralph/core"),
+B3206 = import_name__3196,
+B3211;
+if ($T(B3206))
+{B3211 = B3206}
+else
+B3211 = name__3195;
+var B3212 = [B3210, import_identifier__3205, B3211],
+B3213 = [B3209, variable__3192, B3212];
+return push_last__2648(result__3184, B3213)}}})(variable__3190);
+B3185 = rest__3174(B3185);
+B3188 = [B3185]}
+else
+break};
+B3187;
+return concatenate__2358([$S("%begin", "ralph/core")], result__3184, [exp__3181])}, false);
+exports["define-free-variables"] = define_free_variables__3179}
+{
+var define_free_variables2__3216;
+false;
+define_free_variables2__3216 = Mmake_function__2356("define_free_variables2", function define_free_variables2__3217 (exp__3218, env__3219)
+{return exp__3218}, false)}
+{
+var inline__3220;
+false;
+inline__3220 = Mmake_function__2356("inline", function inline__3221 (form__3222, env__3223)
+{return form__3222}, false)}
+{
+var lift_symbol__3224,
+identity__3225 = B938.identity,
+lift_symbols__3226;
+false;
+lift_symbols__3226 = Mmake_function__2356("lift_symbols", function lift_symbols__3227 (exp__3228, env__3229)
+{return lift_symbol__3224(exp__3228, env__3229, identity__3225)}, false);
+exports["lift-symbols"] = lift_symbols__3226}
+{
+var lift_symbolT__3252,
+lift_value__3253,
+lift_symbolTT__3254,
+LkeywordG__3255 = B938["<keyword>"],
+Lhash_symbolG__3256 = B938["<hash-symbol>"];
+false;
+lift_symbol__3224 = Mmake_function__2356("lift_symbol", function lift_symbol__3257 (exp__3258, env__3259, k__3260)
+{
+var B3317;
+if ($T(instanceQ__2483(exp__3258, LarrayG__2484)))
+{B3317 = not__2485(emptyQ__2481(exp__3258))}
+else
+B3317 = false;
+if ($T(B3317))
+{
+var B3261 = symbol_name__2359(first__2399(exp__3258));
+if ($T(binaryEE__2551(B3261, "%bind")))
+{
+var ____3262 = exp__3258[0],
+B3263 = exp__3258[1],
+var__3264 = B3263[0],
+value__3265 = B3263[1],
+body__3266 = exp__3258[2];
+return lift_symbol__3257(value__3265, env__3259, function B3267 (lvalue__3268, env__3269)
+{return lift_symbol__3257(body__3266, env__3269, function B3270 (lbody__3271, env__3272)
+{return k__3260([$S("%bind", "ralph/core"), [var__3264, lvalue__3268], lbody__3271], env__3272)})})}
+else
+if ($T(binaryEE__2551(B3261, "%set")))
+{
+var ____3273 = exp__3258[0],
+e1__3274 = exp__3258[1],
+e2__3275 = exp__3258[2];
+return lift_symbol__3257(e2__3275, env__3259, function B3276 (le2__3277, env__3278)
+{return k__3260([$S("%set", "ralph/core"), e1__3274, le2__3277], env__3278)})}
+else
+if ($T(binaryEE__2551(B3261, "%method")))
+{
+var ____3279 = exp__3258[0],
+name__3280 = exp__3258[1],
+arguments__3281 = exp__3258[2],
+body__3282 = exp__3258[3];
+return lift_symbol__3257(body__3282, env__3259, function B3283 (lbody__3284, env__3285)
+{return k__3260([$S("%method", "ralph/core"), name__3280, arguments__3281, lbody__3284], env__3285)})}
 else
 {
-var object1__6862 = B6738,
-object2__6863 = "%native-call",
-B6772 = (object1__6862 === object2__6863);
-if ($T(B6772))
-B6893 = B6772
+var B3286 = binaryEE__2551(B3261, "%begin"),
+B3318;
+if ($T(B3286))
+{B3318 = B3286}
 else
 {
-var object1__6866 = B6738,
-object2__6867 = "%plus",
-B6773 = (object1__6866 === object2__6867);
-if ($T(B6773))
-B6893 = B6773
+var B3287 = binaryEE__2551(B3261, "%if");
+if ($T(B3287))
+{B3318 = B3287}
 else
 {
-var object1__6870 = B6738,
-object2__6871 = "%minus",
-B6774 = (object1__6870 === object2__6871);
-if ($T(B6774))
-B6893 = B6774
+var B3288 = binaryEE__2551(B3261, "%while");
+if ($T(B3288))
+{B3318 = B3288}
 else
 {
-var object1__6874 = B6738,
-object2__6875 = "%times",
-B6775 = (object1__6874 === object2__6875);
-if ($T(B6775))
-B6893 = B6775
+var B3289 = binaryEE__2551(B3261, "%array");
+if ($T(B3289))
+{B3318 = B3289}
 else
 {
-var object1__6878 = B6738,
-object2__6879 = "%divide";
-B6893 = (object1__6878 === object2__6879)}}}}}}}}}}}}};
-if ($T(B6893))
-{
-var m__6776 = exp__6735[0],
-eT__6777 = $SL.call(exp__6735, 1);
-return B6729(eT__6777, env__6736, function B6778 (leT__6779, env__6780)
-{return k__6737(B4936([m__6776], leT__6779), env__6780)})}
+var B3290 = binaryEE__2551(B3261, "%object");
+if ($T(B3290))
+{B3318 = B3290}
 else
 {
-var object1__6882 = B6738,
-object2__6883 = "%try",
-B6894 = (object1__6882 === object2__6883);
-if ($T(B6894))
-{
-var ____6781 = exp__6735[0],
-e1__6782 = exp__6735[1],
-v__6783 = exp__6735[2],
-e2__6784 = exp__6735[3];
-return B6729([e1__6782, e2__6784], env__6736, function B6785 (leT__6786, env__6787)
-{
-var le1__6788 = leT__6786[0],
-le2__6789 = leT__6786[1];
-return k__6737([B6195, le1__6788, v__6783, le2__6789], env__6787)})}
+var B3291 = binaryEE__2551(B3261, "%get-property");
+if ($T(B3291))
+{B3318 = B3291}
 else
 {
-var object1__6886 = B6738,
-object2__6887 = "%symbol",
-B6895 = (object1__6886 === object2__6887);
-if ($T(B6895))
-{
-var ____6790 = exp__6735[0],
-name__6791 = exp__6735[1],
-module__6792 = exp__6735[2];
-return B6730(name__6791, exp__6735, "symbol", env__6736, k__6737, B6896, module__6792)}
-else
-return B6731(exp__6735, env__6736, k__6737)}}}}}}
+var B3292 = binaryEE__2551(B3261, "%infix");
+if ($T(B3292))
+{B3318 = B3292}
 else
 {
-var B6793 = exp__6735;
-if ($T(B5085(B6793, B6732)))
-return B6730(B4937(exp__6735), exp__6735, "keyword", env__6736, k__6737)
-else
-if ($T(B5085(B6793, B6733)))
-return B6730(B4937(exp__6735), exp__6735, "hash", env__6736, k__6737)
-else
-return k__6737(exp__6735, env__6736)};
-break}}, false)}
-B6730 = B4934("lift_value", function lift_value__6904 (name__6905, value__6906, type__6907, env__6908, k__6909)
-{
-var B6910 = $SL.call(arguments, 5),
-B6911 = B5944(B6910, {module:""}),
-module__6912 = B6911.module,
-B6913 = B4988(env__6908, "lifted", type__6907, module__6912, name__6905);
-if ($T(B6913))
-{
-var t__6914 = B6913;
-return k__6909(t__6914, env__6908)}
+var B3293 = binaryEE__2551(B3261, "%native");
+if ($T(B3293))
+{B3318 = B3293}
 else
 {
-var t__6915 = B4977(env__6908, "lifted", type__6907, module__6912, name__6905, B5088());
-return [B5031, [t__6915, value__6906], k__6909(t__6915, env__6908)]}}, false)
-B6729 = B4934("lift_symbolT", function lift_symbolT__6916 (expT__6917, env__6918, k__6919)
-{
-var sequence__6930 = expT__6917,
-B6931 = sequence__6930,
-B6932 = ((B6931 || false).length || 0),
-B6933 = 0,
-B6934 = (B6932 === B6933);
-if ($T(B6934))
-return k__6919([], env__6918)
-else
-return B6731(expT__6917, env__6918, k__6919)}, false)
-B6731 = B4934("lift_symbolTT", function lift_symbolTT__6937 (exp__6938, env__6939, k__6940)
-{
-var sequence__6948 = exp__6938,
-B6951 = sequence__6948[0],
-B6954 = function B6941 (t__6942, env__6943)
-{
-var sequence__6950 = exp__6938,
-B6952 = sequence__6950.slice(1),
-B6953 = function B6944 (tT__6945, env__6946)
-{return k__6940(B4936([t__6942], tT__6945), env__6946)};
-return B6729(B6952, env__6943, B6953)};
-return B6701(B6951, env__6939, B6954)}, false)
-var B6960 = $K("string"),
-B6955 = B4923.read,
-B6956 = B4921["<string-stream>"],
-B6957 = B4934("read_program", function read_program__6958 (source__6959)
-{return B6955(B5893(B6956, B6960, B4936("(", source__6959, "\n)")))}, false)
-{
-var B6963 = B4927["lift-defines"],
-B6964 = B4929["normalize-term"],
-B6965 = B4930["transform-statements!"],
-B6966 = B4931["optimize-tail-calls!"],
-B6967 = B4932["flatten-statements!"],
-B6968 = B4933["compile-js"],
-B6969 = B4934("compile_expression", function compile_expression__6970 (exp__6971, env__6972)
-{return B5068(function B6973 (result__6974, nameSfn__6975)
-{
-var name__6976 = nameSfn__6975[0],
-fn__6977 = nameSfn__6975[1],
-result__6978 = fn__6977(result__6974);
-return result__6978}, exp__6971, [["source", B6702], ["macroexpanded", B5855(B5001, env__6972)], ["lifted defines", B5855(B6963, env__6972)], ["defined free variables", B5855(B6365, env__6972)], ["alpha-converted", B5855(B6667, env__6972)], ["inline", B5855(B6464, env__6972)], ["defined free variables after inline", B5855(B6401, env__6972)], ["ANF", B6964], ["lifted symbols", B5855(B6703, env__6972)], ["statements", B5855(B6965, env__6972)], ["TCO", function B6979 (exp__6980)
-{return B6966(exp__6980, env__6972)}], ["flattened", B6967], ["compiled", B5855(B6968, env__6972)]])}, false);
-exports["compile-expression"] = B6969}
-var B6981 = B4924["resolve-path"],
-B6982 = B4934("executable_path", function executable_path__6983 (module_name__6984)
-{return B6981("build", B4936(module_name__6984, ".js"))}, false)
-var B6985 = B4934("module_path", function module_path__6986 (base_path__6987, module_name__6988)
-{return B6981(base_path__6987, B4936(module_name__6988, ".rm"))}, false)
-var B6989 = B4934("source_path", function source_path__6990 (module_name__6991)
-{return B6981("src", B4936(module_name__6991, ".ralph"))}, false)
-var trueQ = B1507["true?"],
-B6993 = B1507["<"],
-B6994 = B4924["file-properties"],
-B6995 = B4924["file-exists?"],
-B6996 = B4934("recompileQ", function recompileQ__6997 (module_name__6998)
-{
-var value__7003 = B4988(B4951, module_name__6998, "native?"),
-B7006 = !(trueQ(value__7003));
-if ($T(B7006))
-{
-var path__6999 = B6982(module_name__6998),
-value__7005 = B6995(path__6999),
-B7000 = !(trueQ(value__7005));
-if ($T(B7000))
-return B7000
+var B3294 = binaryEE__2551(B3261, "%native-name");
+if ($T(B3294))
+{B3318 = B3294}
 else
 {
-var path2__7001 = B6989(module_name__6998);
-return B6993(B4988(B6994(path__6999), "modification-date"), B4988(B6994(path2__7001), "modification-date"))}}}, false)
-{
-var B7011 = B1507["chain-object"],
-B7012,
-B7013,
-B7014 = B1507["object-properties"];
-B6136 = B4934("compile_time_import_module", function compile_time_import_module__7015 (env__7016, module_name__7017)
-{
-var B7018 = $SL.call(arguments, 2),
-B7019 = B5944(B7018, {options:false}),
-options__7020 = B7019.options,
-object1__7032 = module_name__7017,
-object2__7033 = "ralph/core",
-B7034 = (object1__7032 === object2__7033),
-B7027;
-if ($T(B7034))
-B7027 = [B5032, B6247]
+var B3295 = binaryEE__2551(B3261, "%native-call");
+if ($T(B3295))
+{B3318 = B3295}
 else
 {
-B7012(module_name__7017);
-var definitions__7021 = require(module_name__7017),
-macros__7022 = B4969(),
-symbol_macros__7023 = B4969();
-B4999(function B7024 (name__7025)
-{
-var definition__7026 = B4988(definitions__7021, name__7025);
-if ($T(B4988(definition__7026, "%macro?")))
-return macros__7022[name__7025] = definition__7026
+var B3296 = binaryEE__2551(B3261, "%plus");
+if ($T(B3296))
+{B3318 = B3296}
 else
-if ($T(B4988(definition__7026, "%symbol-macro?")))
-return symbol_macros__7023[name__7025] = definition__7026}, B6016(B7013, B7014(definitions__7021), options__7020));
-B7027 = [macros__7022, symbol_macros__7023]};
-var macros__7028 = B7027[0],
-symbol_macros__7029 = B7027[1];
-B7011(B4988(env__7016, "macros"), macros__7028);
-return B7011(B4988(env__7016, "symbol-macros"), symbol_macros__7029)}, false)}
 {
-var B7040 = B1507["remove!"],
-B7041 = B1507["set-union!"],
-B7042 = B1507["as-object"],
-B7043 = B1507["as-set"];
-B7013 = B4934("process_names", function process_names__7044 (all__7045)
+var B3297 = binaryEE__2551(B3261, "%minus");
+if ($T(B3297))
+{B3318 = B3297}
+else
 {
-var B7046 = $SL.call(arguments, 1),
-B7047 = B5944(B7046, {only:false,
+var B3298 = binaryEE__2551(B3261, "%times");
+if ($T(B3298))
+{B3318 = B3298}
+else
+B3318 = binaryEE__2551(B3261, "%divide")}}}}}}}}}}}};
+if ($T(B3318))
+{
+var m__3299 = exp__3258[0],
+eT__3300 = $SL.call(exp__3258, 1);
+return lift_symbolT__3252(eT__3300, env__3259, function B3301 (leT__3302, env__3303)
+{return k__3260(concatenate__2358([m__3299], leT__3302), env__3303)})}
+else
+if ($T(binaryEE__2551(B3261, "%try")))
+{
+var ____3304 = exp__3258[0],
+e1__3305 = exp__3258[1],
+v__3306 = exp__3258[2],
+e2__3307 = exp__3258[3];
+return lift_symbolT__3252([e1__3305, e2__3307], env__3259, function B3308 (leT__3309, env__3310)
+{
+var le1__3311 = leT__3309[0],
+le2__3312 = leT__3309[1];
+return k__3260([$S("%try", "ralph/core"), le1__3311, v__3306, le2__3312], env__3310)})}
+else
+if ($T(binaryEE__2551(B3261, "%symbol")))
+{
+var ____3313 = exp__3258[0],
+name__3314 = exp__3258[1],
+module__3315 = exp__3258[2];
+return lift_value__3253(name__3314, exp__3258, "symbol", env__3259, k__3260, $K("module"), module__3315)}
+else
+return lift_symbolTT__3254(exp__3258, env__3259, k__3260)}}
+else
+{
+var B3316 = exp__3258;
+if ($T(instanceQ__2483(B3316, LkeywordG__3255)))
+{return lift_value__3253(symbol_name__2359(exp__3258), exp__3258, "keyword", env__3259, k__3260)}
+else
+if ($T(instanceQ__2483(B3316, Lhash_symbolG__3256)))
+{return lift_value__3253(symbol_name__2359(exp__3258), exp__3258, "hash", env__3259, k__3260)}
+else
+return k__3260(exp__3258, env__3259)}}, false)}
+{
+false;
+lift_value__3253 = Mmake_function__2356("lift_value", function lift_value__3322 (name__3323, value__3324, type__3325, env__3326, k__3327)
+{
+var B3328 = $SL.call(arguments, 5),
+B3329 = Mkeys__2912(B3328, {module:""}),
+module__3330 = B3329.module,
+B3331 = get__2398(env__3326, "lifted", type__3325, module__3330, name__3323);
+if ($T(B3331))
+{
+var t__3332 = B3331;
+return k__3327(t__3332, env__3326)}
+else
+{
+var t__3333 = get_setter__2910(env__3326, "lifted", type__3325, module__3330, name__3323, generate_symbol__2487());
+return [$S("%bind", "ralph/core"), [t__3333, value__3324], k__3327(t__3333, env__3326)]}}, false)}
+{
+false;
+lift_symbolT__3252 = Mmake_function__2356("lift_symbolT", function lift_symbolT__3334 (expT__3335, env__3336, k__3337)
+{if ($T(emptyQ__2481(expT__3335)))
+{return k__3337([], env__3336)}
+else
+return lift_symbolTT__3254(expT__3335, env__3336, k__3337)}, false)}
+{
+false;
+lift_symbolTT__3254 = Mmake_function__2356("lift_symbolTT", function lift_symbolTT__3340 (exp__3341, env__3342, k__3343)
+{return lift_symbol__3224(first__2399(exp__3341), env__3342, function B3344 (t__3345, env__3346)
+{return lift_symbolT__3252(rest__2552(exp__3341), env__3346, function B3347 (tT__3348, env__3349)
+{return k__3343(concatenate__2358([t__3345], tT__3348), env__3349)})})}, false)}
+{
+var read__3350 = B2345.read,
+Lstring_streamG__3351 = B2343["<string-stream>"],
+read_program__3352;
+false;
+read_program__3352 = Mmake_function__2356("read_program", function read_program__3353 (source__3354)
+{return read__3350(make__2408(Lstring_streamG__3351, $K("string"), concatenate__2358("(", source__3354, "\n)")))}, false)}
+{
+var format_out__3356 = B2344["format-out"],
+lift_defines__3357 = B2349["lift-defines"],
+alpha_convert__3358 = B2348["alpha-convert"],
+normalize_term__3359 = B2351["normalize-term"],
+transform_statementsN__3360 = B2352["transform-statements!"],
+flatten_statementsN__3361 = B2354["flatten-statements!"],
+compile_js__3362 = B2355["compile-js"],
+compile_expression__3363;
+false;
+compile_expression__3363 = Mmake_function__2356("compile_expression", function compile_expression__3364 (exp__3365, env__3366)
+{return reduce__2467(function B3367 (result__3368, nameSfn__3369)
+{
+var name__3370 = nameSfn__3369[0],
+fn__3371 = nameSfn__3369[1];
+format_out__3356("### %s:\n", name__3370);
+var result__3372 = fn__3371(result__3368);
+format_out__3356("%=\n", result__3372);
+return result__3372}, exp__3365, [["source", identity__3225], ["macroexpanded", rcurry__2415(macroexpand_all__2413, env__3366)], ["lifted defines", rcurry__2415(lift_defines__3357, env__3366)], ["defined free variables", rcurry__2415(define_free_variables__3179, env__3366)], ["alpha-converted", rcurry__2415(alpha_convert__3358, env__3366)], ["ANF", normalize_term__3359], ["statements", rcurry__2415(transform_statementsN__3360, env__3366)], ["flattened", flatten_statementsN__3361], ["compiled", rcurry__2415(compile_js__3362, env__3366)]])}, false);
+exports["compile-expression"] = compile_expression__3363}
+{
+var resolve_path__3373 = B2346["resolve-path"],
+executable_path__3374;
+false;
+executable_path__3374 = Mmake_function__2356("executable_path", function executable_path__3375 (module_name__3376)
+{return resolve_path__3373("build", concatenate__2358(module_name__3376, ".js"))}, false)}
+{
+var module_path__3377;
+false;
+module_path__3377 = Mmake_function__2356("module_path", function module_path__3378 (base_path__3379, module_name__3380)
+{return resolve_path__3373(base_path__3379, concatenate__2358(module_name__3380, ".rm"))}, false)}
+{
+var source_path__3381;
+false;
+source_path__3381 = Mmake_function__2356("source_path", function source_path__3382 (module_name__3383)
+{return resolve_path__3373("src", concatenate__2358(module_name__3383, ".ralph"))}, false)}
+{
+var L__3385 = B938["<"],
+file_properties__3386 = B2346["file-properties"],
+file_existsQ__3387 = B2346["file-exists?"],
+recompileQ__3388;
+false;
+recompileQ__3388 = Mmake_function__2356("recompileQ", function recompileQ__3389 (module_name__3390)
+{if ($T(not__2485(get__2398(TmodulesT__2370, module_name__3390, "native?"))))
+{
+var path__3391 = executable_path__3374(module_name__3390),
+B3392 = not__2485(file_existsQ__3387(path__3391));
+if ($T(B3392))
+{return B3392}
+else
+{
+var path2__3393 = source_path__3381(module_name__3390);
+return L__3385(get__2398(file_properties__3386(path__3391), "modification-date"), get__2398(file_properties__3386(path2__3393), "modification-date"))}}}, false)}
+{
+var chain_object__3398 = B938["chain-object"],
+compile_module__3399,
+process_names__3400,
+object_properties__3401 = B938["object-properties"];
+false;
+compile_time_import_module__3022 = Mmake_function__2356("compile_time_import_module", function compile_time_import_module__3402 (env__3403, module_name__3404)
+{
+var B3405 = $SL.call(arguments, 2),
+B3406 = Mkeys__2912(B3405, {options:false}),
+options__3407 = B3406.options,
+B3414;
+if ($T(binaryEE__2551(module_name__3404, "ralph/core")))
+{B3414 = [Tcore_macrosT__2443, Tcore_symbol_macrosT__3098]}
+else
+{
+compile_module__3399(module_name__3404);
+var definitions__3408 = require(module_name__3404),
+macros__3409 = make_plain_object__2388(),
+symbol_macros__3410 = make_plain_object__2388();
+do__2406(function B3411 (name__3412)
+{
+var definition__3413 = get__2398(definitions__3408, name__3412);
+if ($T(get__2398(definition__3413, "%macro?")))
+{return macros__3409[name__3412] = definition__3413}
+else
+if ($T(get__2398(definition__3413, "%symbol-macro?")))
+{return symbol_macros__3410[name__3412] = definition__3413}}, apply__2954(process_names__3400, object_properties__3401(definitions__3408), options__3407));
+B3414 = [macros__3409, symbol_macros__3410]};
+var macros__3415 = B3414[0],
+symbol_macros__3416 = B3414[1];
+chain_object__3398(get__2398(env__3403, "macros"), macros__3415);
+return chain_object__3398(get__2398(env__3403, "symbol-macros"), symbol_macros__3416)}, false)}
+{
+var removeN__3422 = B938["remove!"],
+set_unionN__3423 = B938["set-union!"],
+as_object__3424 = B938["as-object"],
+as_set__3425 = B938["as-set"];
+false;
+process_names__3400 = Mmake_function__2356("process_names", function process_names__3426 (all__3427)
+{
+var B3428 = $SL.call(arguments, 1),
+B3429 = Mkeys__2912(B3428, {only:false,
 exclude:false,
 prefix:false,
 rename:false}),
-only__7048 = B7047.only,
-exclude__7049 = B7047.exclude,
-prefix__7050 = B7047.prefix,
-rename__7051 = B7047.rename,
-resolve__7052 = function resolve__7053 (exp__7054)
-{if ($T(B5085(exp__7054, B5905)))
-return exp__7054
+only__3430 = B3429.only,
+exclude__3431 = B3429.exclude,
+prefix__3432 = B3429.prefix,
+rename__3433 = B3429.rename,
+resolve__3434 = function resolve__3435 (exp__3436)
+{if ($T(instanceQ__2483(exp__3436, LstringG__2875)))
+{return exp__3436}
 else
-return B4943(exp__7054)},
-B7062;
-if ($T(B5085(only__7048, B5086)))
-B7062 = B5083(resolve__7052, only__7048)
+return identifier_name__2365(exp__3436)},
+B3444;
+if ($T(instanceQ__2483(only__3430, LarrayG__2484)))
+{B3444 = map__2414(resolve__3434, only__3430)}
 else
-B7062 = all__7045;
-var names__7055 = B7043(B7062),
-B7056 = rename__7051,
-B7063;
-if ($T(B7056))
-B7063 = B7056
+B3444 = all__3427;
+var names__3437 = as_set__3425(B3444),
+B3438 = rename__3433,
+B3445;
+if ($T(B3438))
+{B3445 = B3438}
 else
-B7063 = [];
-var B7064 = B5083(resolve__7052, B7063),
-renamings__7057 = B7042(B7064);
-B4999(B5000(B7040, names__7055), B5083(resolve__7052, exclude__7049));
-B7041(names__7055, B7014(renamings__7057));
-return B5083(function B7058 (name__7059)
+B3445 = [];
+var B3446 = map__2414(resolve__3434, B3445),
+renamings__3439 = as_object__3424(B3446);
+do__2406(curry__2410(removeN__3422, names__3437), map__2414(resolve__3434, exclude__3431));
+set_unionN__3423(names__3437, object_properties__3401(renamings__3439));
+return map__2414(function B3440 (name__3441)
 {
-var B7060 = B4988(renamings__7057, name__7059);
-if ($T(B7060))
+var B3442 = get__2398(renamings__3439, name__3441);
+if ($T(B3442))
 {
-var renaming__7061 = B7060;
-return [name__7059, renaming__7061]}
+var renaming__3443 = B3442;
+return [name__3441, renaming__3443]}
 else
-if ($T(B5085(prefix__7050, B5905)))
-return [name__7059, B4936(prefix__7050, name__7059)]
+if ($T(instanceQ__2483(prefix__3432, LstringG__2875)))
+{return [name__3441, concatenate__2358(prefix__3432, name__3441)]}
 else
-return name__7059}, names__7055)}, false)}
+return name__3441}, names__3437)}, false)}
 {
-var B7066;
-B6137 = B4934("import_module", function import_module__7067 (module__7068, module_name__7069)
+var push__3448 = B938.push;
+false;
+import_module__3023 = Mmake_function__2356("import_module", function import_module__3449 (module__3450, module_name__3451)
 {
-var options__7070 = $SL.call(arguments, 2),
-B7071 = B7066(module_name__7069);
-if ($T(B7071))
+var options__3452 = $SL.call(arguments, 2),
+B3453 = find_module__3172(module_name__3451);
+if ($T(B3453))
 {
-var other_module__7072 = B7071,
-array__7075 = B4988(module__7068, "imports"),
-value__7076 = [other_module__7072, B6016(B7013, B4988(other_module__7072, "exports"), options__7070)];
-array__7075.unshift(value__7076);
-array__7075;
-var array__7079 = B4988(module__7068, "dependencies"),
-value__7080 = module_name__7069;
-array__7079.unshift(value__7080);
-array__7079;
-return other_module__7072}
+var other_module__3454 = B3453;
+push__3448(get__2398(module__3450, "imports"), [other_module__3454, apply__2954(process_names__3400, get__2398(other_module__3454, "exports"), options__3452)]);
+push__3448(get__2398(module__3450, "dependencies"), module_name__3451);
+return other_module__3454}
 else
+return signal__2407(concatenate__2358("unable to import module '", module_name__3451, "'"))}, false)}
 {
-var error__7082 = B4936("unable to import module '", module_name__7069, "'");
-throw(error__7082);
-return false}}, false)}
+var read_module__3458;
+false;
+find_module__3172 = Mmake_function__2356("find_module", function find_module__3459 (module_name__3460)
 {
-var B7086;
-B7066 = B4934("find_module", function find_module__7087 (module_name__7088)
-{
-var B7089 = B7012(module_name__7088);
-if ($T(B7089))
-return B7089
+var B3461 = compile_module__3399(module_name__3460);
+if ($T(B3461))
+{return B3461}
 else
 {
-var B7090 = B4988(B4951, module_name__7088);
-if ($T(B7090))
-return B7090
+var B3462 = get__2398(TmodulesT__2370, module_name__3460);
+if ($T(B3462))
+{return B3462}
 else
 {
-var B7091 = B7086("build", module_name__7088);
-if ($T(B7091))
-return B7091
+var B3463 = read_module__3458("build", module_name__3460);
+if ($T(B3463))
+{return B3463}
 else
-return B7086("src", module_name__7088)}}}, false)}
+return read_module__3458("src", module_name__3460)}}}, false)}
 {
-var B7097 = $K("name"),
-B7092 = B4924["read-file"];
-B7086 = B4934("read_module", function read_module__7093 (base_path__7094, module_name__7095)
+var read_file__3464 = B2346["read-file"];
+false;
+read_module__3458 = Mmake_function__2356("read_module", function read_module__3465 (base_path__3466, module_name__3467)
 {
-var path__7096 = B6985(base_path__7094, module_name__7095);
-if ($T(B6995(path__7096)))
-return B6016(B5000(B5893, B4958, B7097), B6955(B5893(B6956, B6960, B7092(path__7096))))}, false)}
+var path__3468 = module_path__3377(base_path__3466, module_name__3467);
+if ($T(file_existsQ__3387(path__3468)))
+{return apply__2954(curry__2410(make__2408, LmoduleG__2377, $K("name")), read__3350(make__2408(Lstring_streamG__3351, $K("string"), read_file__3464(path__3468))))}}, false)}
 {
-var B7137 = $K("exports"),
-B7138 = $K("inline"),
-B7139 = $K("dependencies"),
-trueQ = B1507["true?"],
-B7100 = B4924["write-file"],
-B7101 = B1507.description;
-B7012 = B4934("compile_module", function compile_module__7102 (module_name__7103)
+var not__3471 = not__2485,
+hasQ__3472 = B938["has?"],
+write_file__3473 = B2346["write-file"],
+description__3474 = B938.description;
+false;
+compile_module__3399 = Mmake_function__2356("compile_module", function compile_module__3475 (module_name__3476)
 {
-var object__7117 = B4951,
-property__7118 = module_name__7103,
-value__7119 = $HP.call(object__7117,property__7118),
-B7134 = !(trueQ(value__7119));
-if ($T(B7134))
+if ($T(not__3471(hasQ__3472(TmodulesT__2370, module_name__3476))))
 {
-var B7104 = B7086("src", module_name__7103);
-if ($T(B7104))
+var B3477 = read_module__3458("src", module_name__3476);
+if ($T(B3477))
 {
-var module__7105 = B7104;
-B4951[module_name__7103] = module__7105}};
-if ($T(B6996(module_name__7103)))
+var module__3478 = B3477;
+TmodulesT__2370[module_name__3476] = module__3478}};
+if ($T(recompileQ__3388(module_name__3476)))
 {
-var value__7121 = B6995(B6989(module_name__7103)),
-B7135 = !(trueQ(value__7121));
-if ($T(B7135))
+if ($T(not__3471(file_existsQ__3387(source_path__3381(module_name__3476)))))
+{signal__2407(concatenate__2358("unable to compile module '", module_name__3476, "'"))};
+var module__3479 = make__2408(LmoduleG__2377, $K("name"), module_name__3476),
+env__3480 = make__2408(LenvironmentG__2389, $K("module"), module__3479),
+source__3481 = read_file__3464(source_path__3381(module_name__3476)),
+program__3482 = read_program__3352(source__3481),
+result__3483 = "";
+TmodulesT__2370[module_name__3476] = module__3479;
+compile_time_import_module__3022(env__3480, "ralph/core");
+if ($T(not__3471(binaryEE__2551(module_name__3476, "ralph/core"))))
 {
-var error__7123 = B4936("unable to compile module '", module_name__7103, "'");
-throw(error__7123);
-false};
-var module__7106 = B5893(B4958, B7097, module_name__7103),
-env__7107 = B5893(B4970, B6896, module__7106),
-source__7108 = B7092(B6989(module_name__7103)),
-program__7109 = B6957(source__7108),
-result__7110 = "";
-B4951[module_name__7103] = module__7106;
-B6136(env__7107, "ralph/core");
-var object1__7127 = module_name__7103,
-object2__7128 = "ralph/core",
-value__7129 = (object1__7127 === object2__7128),
-B7136 = !(trueQ(value__7129));
-if ($T(B7136))
+import_module__3023(module__3479, "ralph/core");
+push__3448(program__3482, make_import_definition__3024("ralph/core", env__3480))};
+do__2406(function B3484 (expression__3485)
 {
-B6137(module__7106, "ralph/core");
-var array__7132 = program__7109,
-value__7133 = B6138("ralph/core", env__7107);
-array__7132.unshift(value__7133);
-array__7132};
-B4999(function B7111 (expression__7112)
+var code__3486 = compile_expression__3363(expression__3485, env__3480);
+return result__3483 = concatenate__2358(result__3483, code__3486, "\n")}, program__3482);
+write_file__3473(executable_path__3374(module_name__3476), result__3483);
+write_file__3473(module_path__3377("build", module_name__3476), description__3474([module_name__3476, $K("exports"), get__2398(module__3479, "exports"), $K("inline"), get__2398(module__3479, "inline"), $K("dependencies"), get__2398(module__3479, "dependencies")]));
+return module__3479}}, false);
+exports["compile-module"] = compile_module__3399}
 {
-var code__7113 = B6969(expression__7112, env__7107);
-return result__7110 = B4936(result__7110, code__7113, "\n")}, program__7109);
-B7100(B6982(module_name__7103), result__7110);
-B7100(B6985("build", module_name__7103), B7101([module_name__7103, B7137, B4988(module__7106, "exports"), B7138, B4988(module__7106, "inline"), B7139, B4988(module__7106, "dependencies")]));
-return module__7106}}, false);
-exports["compile-module"] = B7012}
+var memberQ__3491 = B938["member?"],
+analyze_dependencies__3492;
+false;
+analyze_dependencies__3492 = Mmake_function__2356("analyze_dependencies", function analyze_dependencies__3493 (module_name__3494)
 {
-var analyze_dependencies__7146,
-B7144 = B1507["member?"],
-B7145 = B4934("analyze_dependencies", function analyze_dependencies__7146 (module_name__7147)
+var B3495 = find_module__3172(module_name__3494);
+if ($T(B3495))
 {
-var B7148 = B7066(module_name__7147);
-if ($T(B7148))
+var module__3496 = B3495;
+TmodulesT__2370[module_name__3494] = module__3496;
+var B3497 = module__3496,
+dependencies__3498 = B3497.dependencies,
+result__3499 = copy_sequence__2448(dependencies__3498);
+do__2406(function B3500 (dependency__3501)
+{return do__2406(function B3502 (sub_dependency__3503)
 {
-var module__7149 = B7148;
-B4951[module_name__7147] = module__7149;
-var B7150 = module__7149,
-dependencies__7151 = B7150.dependencies,
-result__7152 = B5037(dependencies__7151);
-B4999(function B7153 (dependency__7154)
-{return B4999(function B7155 (sub_dependency__7156)
-{
-if ($T(B7144(sub_dependency__7156, result__7152)))
-B7040(result__7152, sub_dependency__7156);
-var array__7159 = result__7152,
-value__7160 = sub_dependency__7156;
-array__7159.unshift(value__7160);
-return array__7159}, analyze_dependencies__7146(dependency__7154))}, dependencies__7151);
-return result__7152}
+if ($T(memberQ__3491(sub_dependency__3503, result__3499)))
+{removeN__3422(result__3499, sub_dependency__3503)};
+return push__3448(result__3499, sub_dependency__3503)}, analyze_dependencies__3493(dependency__3501))}, dependencies__3498);
+return result__3499}
 else
-{
-var error__7162 = B4936("unable to find-module '", module_name__7147, "'");
-throw(error__7162);
-return false}}, false);
-exports["analyze-dependencies"] = B7145}
+return signal__2407(concatenate__2358("unable to find-module '", module_name__3494, "'"))}, false);
+exports["analyze-dependencies"] = analyze_dependencies__3492}

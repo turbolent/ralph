@@ -1,194 +1,214 @@
-var B1538 = require("ralph/core")
+{
+var B963;
+false;
+B963 = require("ralph/core")}
 false
 {
-var B1539 = B1538["%make-class"],
-B1540 = B1538["<object>"],
-B1541 = B1539(B1540, {});
-exports["<stream>"] = B1541}
+var Mmake_class__964 = B963["%make-class"],
+LobjectG__965 = B963["<object>"],
+LstreamG__966;
+false;
+LstreamG__966 = Mmake_class__964(LobjectG__965, {});
+exports["<stream>"] = LstreamG__966}
 {
-var B1542 = B1538["%make-generic"],
-B1543 = B1542("stream_close");
-exports["stream-close"] = B1543}
+var Mmake_generic__967 = B963["%make-generic"],
+stream_close__968;
+false;
+stream_close__968 = Mmake_generic__967("stream_close");
+exports["stream-close"] = stream_close__968}
 {
-var B1544 = B1542("stream_openQ");
-exports["stream-open?"] = B1544}
+var stream_openQ__969;
+false;
+stream_openQ__969 = Mmake_generic__967("stream_openQ");
+exports["stream-open?"] = stream_openQ__969}
 {
-var B1545 = B1542("stream_at_endQ");
-exports["stream-at-end?"] = B1545}
+var stream_at_endQ__970;
+false;
+stream_at_endQ__970 = Mmake_generic__967("stream_at_endQ");
+exports["stream-at-end?"] = stream_at_endQ__970}
 {
-var B1546 = B1542("stream_peek");
-exports["stream-peek"] = B1546}
+var stream_peek__971;
+false;
+stream_peek__971 = Mmake_generic__967("stream_peek");
+exports["stream-peek"] = stream_peek__971}
 {
-var B1547 = B1542("stream_read");
-exports["stream-read"] = B1547}
+var stream_read__972;
+false;
+stream_read__972 = Mmake_generic__967("stream_read");
+exports["stream-read"] = stream_read__972}
 {
-var B1548 = B1542("stream_read_element");
-exports["stream-read-element"] = B1548}
+var stream_read_element__973;
+false;
+stream_read_element__973 = Mmake_generic__967("stream_read_element");
+exports["stream-read-element"] = stream_read_element__973}
 {
-var B1549 = B1542("stream_read_to_end");
-exports["stream-read-to-end"] = B1549}
+var stream_read_to_end__974;
+false;
+stream_read_to_end__974 = Mmake_generic__967("stream_read_to_end");
+exports["stream-read-to-end"] = stream_read_to_end__974}
 {
-var B1550 = B1542("stream_read_through");
-exports["stream-read-through"] = B1550}
+var stream_read_through__975;
+false;
+stream_read_through__975 = Mmake_generic__967("stream_read_through");
+exports["stream-read-through"] = stream_read_through__975}
 {
-var B1551 = B1542("stream_unread_element");
-exports["stream-unread-element"] = B1551}
+var stream_unread_element__976;
+false;
+stream_unread_element__976 = Mmake_generic__967("stream_unread_element");
+exports["stream-unread-element"] = stream_unread_element__976}
 {
-var B1552 = B1542("stream_write");
-exports["stream-write"] = B1552}
+var stream_write__977;
+false;
+stream_write__977 = Mmake_generic__967("stream_write");
+exports["stream-write"] = stream_write__977}
 {
-var B1553 = B1542("stream_contents");
-exports["stream-contents"] = B1553}
+var stream_contents__978;
+false;
+stream_contents__978 = Mmake_generic__967("stream_contents");
+exports["stream-contents"] = stream_contents__978}
 {
-var B1554 = B1542("stream_remaining_contents");
-exports["stream-remaining-contents"] = B1554}
+var stream_remaining_contents__979;
+false;
+stream_remaining_contents__979 = Mmake_generic__967("stream_remaining_contents");
+exports["stream-remaining-contents"] = stream_remaining_contents__979}
 {
-var B1558 = B1539(B1541, {"string":function B1559 ()
+var Lstring_streamG__983;
+false;
+Lstring_streamG__983 = Mmake_class__964(LstreamG__966, {"string":function B984 ()
 {return ""},
-index:function B1560 ()
+index:function B985 ()
 {return 0},
-length:function B1561 ()
+length:function B986 ()
 {return 0}});
-exports["<string-stream>"] = B1558}
-var B1563 = B1538["%make-method"],
-B1564 = B1538.apply,
-B1565 = B1538["%next-method"],
-B1566 = B1538.size,
-B1567 = B1538.get,
-B1568 = B1563("initialize", function B1569 (stream__1570)
+exports["<string-stream>"] = Lstring_streamG__983}
 {
-var rest__1571 = $SL.call(arguments, 1);
-B1564(B1565(B1569), stream__1570, rest__1571);
-var object__1573 = B1567(stream__1570, "string"),
-B1574 = ((object__1573 || false).length || 0);
-return stream__1570.length = B1574}, false, B1558, B1568)
+var Mmake_method__988 = B963["%make-method"],
+apply__989 = B963.apply,
+Mnext_method__990 = B963["%next-method"],
+size__991 = B963.size,
+get__992 = B963.get,
+initialize__993;
+false;
+initialize__993 = Mmake_method__988("initialize", function B994 (stream__995)
 {
-var B1576 = B1538["binary=="];
-B1545 = B1563("stream_at_endQ", function B1577 (stream__1578)
+var rest__996 = $SL.call(arguments, 1);
+apply__989(Mnext_method__990(B994), stream__995, rest__996);
+return stream__995.length = size__991(get__992(stream__995, "string"))}, false, Lstring_streamG__983, initialize__993)}
 {
-var object1__1581 = B1567(stream__1578, "index"),
-object2__1582 = B1567(stream__1578, "length");
-return (object1__1581 === object2__1582)}, false, B1558, B1545);
-exports["stream-at-end?"] = B1545}
+var binaryEE__998 = B963["binary=="];
+false;
+stream_at_endQ__970 = Mmake_method__988("stream_at_endQ", function B999 (stream__1000)
+{return binaryEE__998(get__992(stream__1000, "index"), get__992(stream__1000, "length"))}, false, Lstring_streamG__983, stream_at_endQ__970);
+exports["stream-at-end?"] = stream_at_endQ__970}
 {
-var B1584 = B1538.element;
-B1546 = B1563("stream_peek", function B1585 (stream__1586)
-{return B1584(B1567(stream__1586, "string"), B1567(stream__1586, "index"))}, false, B1558, B1546);
-exports["stream-peek"] = B1546}
+var element__1002 = B963.element;
+false;
+stream_peek__971 = Mmake_method__988("stream_peek", function B1003 (stream__1004)
+{return element__1002(get__992(stream__1004, "string"), get__992(stream__1004, "index"))}, false, Lstring_streamG__983, stream_peek__971);
+exports["stream-peek"] = stream_peek__971}
 {
-var trueQ = B1538["true?"],
-B1588 = B1538.not;
-B1548 = B1563("stream_read_element", function B1589 (stream__1590)
+var not__1006 = B963.not;
+false;
+stream_read_element__973 = Mmake_method__988("stream_read_element", function B1007 (stream__1008)
+{if ($T(not__1006(stream_at_endQ__970(stream__1008))))
 {
-var value__1593 = B1545(stream__1590),
-B1594 = !(trueQ(value__1593));
-if ($T(B1594))
+var element__1009 = stream_peek__971(stream__1008);
+stream__1008.index = (get__992(stream__1008, "index") + 1);
+return element__1009}}, false, Lstring_streamG__983, stream_read_element__973);
+exports["stream-read-element"] = stream_read_element__973}
 {
-var element__1591 = B1546(stream__1590);
-stream__1590.index = (B1567(stream__1590, "index") + 1);
-return element__1591}}, false, B1558, B1548);
-exports["stream-read-element"] = B1548}
+var GE__1013 = B963[">="],
+concatenate__1014 = B963.concatenate,
+inc__1015 = B963.inc;
+false;
+stream_read__972 = Mmake_method__988("stream_read", function B1016 (stream__1017, n__1018)
 {
-var trueQ = B1538["true?"],
-B1598 = B1538[">="],
-B1599 = B1538.concatenate,
-B1600 = B1538.inc;
-B1547 = B1563("stream_read", function B1601 (stream__1602, n__1603)
-{
-var result__1604 = "",
-i__1605 = 0;
+var result__1019 = "",
+i__1020 = 0;
 while (true)
 {
-var B1606 = B1545(stream__1602),
-value__1610;
-if ($T(B1606))
-value__1610 = B1606
+var B1021 = stream_at_endQ__970(stream__1017),
+B1024;
+if ($T(B1021))
+{B1024 = B1021}
 else
-value__1610 = B1598(i__1605, n__1603);
-var B1614 = !(trueQ(value__1610));
-if ($T(B1614))
+B1024 = GE__1013(i__1020, n__1018);
+var B1025 = not__1006(B1024);
+if ($T(B1025))
 {
-(function B1607 (i__1608)
-{return result__1604 = B1599(result__1604, B1548(stream__1602))})(i__1605);
-var number__1612 = i__1605,
-B1613 = (number__1612 + 1);
-i__1605 = B1613}
+(function B1022 (i__1023)
+{return result__1019 = concatenate__1014(result__1019, stream_read_element__973(stream__1017))})(i__1020);
+i__1020 = inc__1015(i__1020)}
 else
 break};
-return result__1604}, false, B1558, B1547);
-exports["stream-read"] = B1547}
+return result__1019}, false, Lstring_streamG__983, stream_read__972);
+exports["stream-read"] = stream_read__972}
 {
-var trueQ = B1538["true?"];
-B1550 = B1563("stream_read_through", function B1617 (stream__1618, element__1619)
+var not__1028 = not__1006;
+false;
+stream_read_through__975 = Mmake_method__988("stream_read_through", function B1029 (stream__1030, element__1031)
 {
-var foundQ__1620;
+var foundQ__1032;
 while (true)
 {
-var B1621 = B1545(stream__1618),
-value__1623;
-if ($T(B1621))
-value__1623 = B1621
+var B1033 = stream_at_endQ__970(stream__1030),
+B1034;
+if ($T(B1033))
+{B1034 = B1033}
 else
-value__1623 = foundQ__1620;
-var B1629 = !(trueQ(value__1623));
-if ($T(B1629))
-{
-var object1__1626 = B1548(stream__1618),
-object2__1627 = element__1619,
-B1628 = (object1__1626 === object2__1627);
-foundQ__1620 = B1628}
+B1034 = foundQ__1032;
+var B1035 = not__1028(B1034);
+if ($T(B1035))
+{foundQ__1032 = binaryEE__998(stream_read_element__973(stream__1030), element__1031)}
 else
 break};
-return false}, false, B1558, B1550);
-exports["stream-read-through"] = B1550}
+return false}, false, Lstring_streamG__983, stream_read_through__975);
+exports["stream-read-through"] = stream_read_through__975}
 {
-var B1631 = B1538.max,
-B1632 = B1538.dec;
-B1551 = B1563("stream_unread_element", function B1633 (stream__1634)
+var max__1037 = B963.max,
+dec__1038 = B963.dec;
+false;
+stream_unread_element__976 = Mmake_method__988("stream_unread_element", function B1039 (stream__1040)
+{return stream__1040.index = max__1037(0, dec__1038(get__992(stream__1040, "index")))}, false, Lstring_streamG__983, stream_unread_element__976);
+exports["stream-unread-element"] = stream_unread_element__976}
 {
-var number__1636 = B1567(stream__1634, "index"),
-B1637 = (number__1636 - 1),
-B1638 = B1631(0, B1637);
-return stream__1634.index = B1638}, false, B1558, B1551);
-exports["stream-unread-element"] = B1551}
+var replace_subsequence__1043 = B963["replace-subsequence"];
+false;
+stream_write__977 = Mmake_method__988("stream_write", function B1044 (stream__1045, string__1046)
 {
-var B1651 = $K("start"),
-B1652 = $K("end"),
-B1641 = B1538["replace-subsequence"];
-B1552 = B1563("stream_write", function B1642 (stream__1643, string__1644)
+var B1047 = stream__1045,
+index__1048 = B1047.index,
+length__1049 = size__991(string__1046),
+end__1050 = (index__1048 + length__1049);
+stream__1045["string"] = replace_subsequence__1043(get__992(stream__1045, "string"), string__1046, $K("start"), index__1048, $K("end"), end__1050);
+stream__1045.index = end__1050;
+stream__1045.length = max__1037(end__1050, get__992(stream__1045, "length"));
+return string__1046}, false, Lstring_streamG__983, stream_write__977);
+exports["stream-write"] = stream_write__977}
 {
-var B1645 = stream__1643,
-index__1646 = B1645.index,
-object__1650 = string__1644,
-length__1647 = ((object__1650 || false).length || 0),
-end__1648 = (index__1646 + length__1647);
-stream__1643["string"] = B1641(B1567(stream__1643, "string"), string__1644, B1651, index__1646, B1652, end__1648);
-stream__1643.index = end__1648;
-stream__1643.length = B1631(end__1648, B1567(stream__1643, "length"));
-return string__1644}, false, B1558, B1552);
-exports["stream-write"] = B1552}
+false;
+stream_contents__978 = Mmake_method__988("stream_contents", function B1052 (stream__1053)
+{return get__992(stream__1053, "string")}, false, Lstring_streamG__983, stream_contents__978);
+exports["stream-contents"] = stream_contents__978}
 {
-B1553 = B1563("stream_contents", function B1654 (stream__1655)
-{return B1567(stream__1655, "string")}, false, B1558, B1553);
-exports["stream-contents"] = B1553}
+var slice__1055 = B963.slice;
+false;
+stream_remaining_contents__979 = Mmake_method__988("stream_remaining_contents", function B1056 (stream__1057)
+{return slice__1055(get__992(stream__1057, "string"), get__992(stream__1057, "index"))}, false, Lstring_streamG__983, stream_remaining_contents__979);
+exports["stream-remaining-contents"] = stream_remaining_contents__979}
 {
-var B1657 = B1538.slice;
-B1554 = B1563("stream_remaining_contents", function B1658 (stream__1659)
+var Lfile_streamG__1058;
+false;
+Lfile_streamG__1058 = Mmake_class__964(LstreamG__966, {file:false});
+exports["<file-stream>"] = Lfile_streamG__1058}
 {
-var array__1663 = B1567(stream__1659, "string"),
-start__1664 = B1567(stream__1659, "index"),
-end__1665 = undefined;
-return array__1663.slice(start__1664, end__1665)}, false, B1558, B1554);
-exports["stream-remaining-contents"] = B1554}
+false;
+stream_write__977 = Mmake_method__988("stream_write", function B1060 (stream__1061, string__1062)
+{return stream__1061.file.write(string__1062)}, false, Lfile_streamG__1058, stream_write__977);
+exports["stream-write"] = stream_write__977}
 {
-var B1666 = B1539(B1541, {file:false});
-exports["<file-stream>"] = B1666}
-{
-B1552 = B1563("stream_write", function B1668 (stream__1669, string__1670)
-{return stream__1669.file.write(string__1670)}, false, B1666, B1552);
-exports["stream-write"] = B1552}
-{
-var B1673 = $K("file"),
-B1671 = B1538.make,
-B1672 = B1671(B1666, B1673, process.stdout);
-exports["*standard-out*"] = B1672}
+var make__1063 = B963.make,
+Tstandard_outT__1064;
+false;
+Tstandard_outT__1064 = make__1063(Lfile_streamG__1058, $K("file"), process.stdout);
+exports["*standard-out*"] = Tstandard_outT__1064}

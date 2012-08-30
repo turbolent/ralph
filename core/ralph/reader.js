@@ -1,423 +1,258 @@
-var B1826 = require("ralph/core")
 {
-var B1863,
-B1864,
-B1865;
-B1863 = require("ralph/stream");
-B1864 = require("ralph/format");
-B1865 = require("ralph/regexp")}
-var B1871 = $K("ignore-case?"),
-B1872 = $K("pattern"),
-B1866 = B1826.map,
-B1867 = B1826.curry,
-B1868 = B1826.make,
-B1869 = B1865["<regexp>"],
-B1870 = B1866(B1867(B1868, B1869, B1871, true, B1872), ["^[+-]?0x[0-9a-f]+", "^[+-]?0[0-7]+", "^[+-]?\\d+\\.?\\d*(?:e-?\\d*(?:\\d\\.?|\\.?\\d)\\d*)?"])
-var B1873 = B1868(B1869, B1872, "(.*)[\n\r]?")
-var B1874 = "\t\n\r\v\f\u00a0\ufeff "
-var B1875 = B1826.concatenate,
-B1876 = B1868(B1869, B1872, B1875("[", B1874, "]*"))
-var B1877 = B1868(B1869, B1872, B1875("[^\\[\\]();`,", B1874, "]+"))
-var B1879 = B1826["%make-function"],
-B1880 = B1863["stream-read"],
-B1881 = B1826.size,
-B1882 = B1826.first,
-B1883 = B1865.match,
-B1884 = B1863["stream-remaining-contents"],
-B1885 = B1879("match_stream", function match_stream__1886 (regexp__1887, stream__1888)
+var B1128;
+false;
+B1128 = require("ralph/core")}
 {
-var regexp__1893 = regexp__1887,
-string__1894 = B1884(stream__1888),
-B1889 = string__1894.match(regexp__1893);
-if ($T(B1889))
+var B1165,
+B1166,
+B1167;
+false;
+B1165 = require("ralph/stream");
+false;
+B1166 = require("ralph/format");
+false;
+B1167 = require("ralph/regexp")}
 {
-var result__1890 = B1889,
-sequence__1897 = result__1890,
-object__1898 = sequence__1897[0],
-B1899 = ((object__1898 || false).length || 0);
-B1880(stream__1888, B1899);
-return result__1890}}, false)
-var B1900 = B1879("read_line", function read_line__1901 (stream__1902)
-{return B1885(B1873, stream__1902)}, false)
-var B1903 = B1879("read_whitespace", function read_whitespace__1904 (stream__1905)
-{return B1885(B1876, stream__1905)}, false)
-var B1966 = $KEY,
-B1967 = $REST,
-B1908 = B1826["binary=="],
-B1909 = B1826["as-number"],
-B1910 = B1826.last,
-B1911 = B1826.keyword,
-B1912 = B1826["but-last"],
-B1913 = B1826.symbol,
-B1914 = B1826["any?"],
-B1915 = B1826.rcurry,
-B1916 = B1879("make_atom", function make_atom__1917 (value__1918)
+var map__1168 = B1128.map,
+curry__1169 = B1128.curry,
+make__1170 = B1128.make,
+LregexpG__1171 = B1167["<regexp>"],
+Tnumber_patternsT__1172;
+false;
+Tnumber_patternsT__1172 = map__1168(curry__1169(make__1170, LregexpG__1171, $K("ignore-case?"), true, $K("pattern")), ["^[+-]?0x[0-9a-f]+", "^[+-]?0[0-7]+", "^[+-]?\\d+\\.?\\d*(?:e-?\\d*(?:\\d\\.?|\\.?\\d)\\d*)?"])}
 {
-var B1919 = value__1918,
-object1__1924 = B1919,
-object2__1925 = "#t",
-B1958 = (object1__1924 === object2__1925);
-if ($T(B1958))
-return true
+var Tline_patternT__1173;
+false;
+Tline_patternT__1173 = make__1170(LregexpG__1171, $K("pattern"), "(.*)[\n\r]?")}
+{
+var Twhitespace_subpatternT__1174;
+false;
+Twhitespace_subpatternT__1174 = "\t\n\r\v\f\u00a0\ufeff "}
+{
+var concatenate__1175 = B1128.concatenate,
+Twhitespace_patternT__1176;
+false;
+Twhitespace_patternT__1176 = make__1170(LregexpG__1171, $K("pattern"), concatenate__1175("[", Twhitespace_subpatternT__1174, "]*"))}
+{
+var Tatom_patternT__1177;
+false;
+Tatom_patternT__1177 = make__1170(LregexpG__1171, $K("pattern"), concatenate__1175("[^\\[\\]();`,", Twhitespace_subpatternT__1174, "]+"))}
+{
+var Mmake_function__1179 = B1128["%make-function"],
+stream_read__1180 = B1165["stream-read"],
+size__1181 = B1128.size,
+first__1182 = B1128.first,
+match__1183 = B1167.match,
+stream_remaining_contents__1184 = B1165["stream-remaining-contents"],
+match_stream__1185;
+false;
+match_stream__1185 = Mmake_function__1179("match_stream", function match_stream__1186 (regexp__1187, stream__1188)
+{
+var B1189 = match__1183(regexp__1187, stream_remaining_contents__1184(stream__1188));
+if ($T(B1189))
+{
+var result__1190 = B1189;
+stream_read__1180(stream__1188, size__1181(first__1182(result__1190)));
+return result__1190}}, false)}
+{
+var read_line__1191;
+false;
+read_line__1191 = Mmake_function__1179("read_line", function read_line__1192 (stream__1193)
+{return match_stream__1185(Tline_patternT__1173, stream__1193)}, false)}
+{
+var read_whitespace__1194;
+false;
+read_whitespace__1194 = Mmake_function__1179("read_whitespace", function read_whitespace__1195 (stream__1196)
+{return match_stream__1185(Twhitespace_patternT__1176, stream__1196)}, false)}
+{
+var binaryEE__1199 = B1128["binary=="],
+as_number__1200 = B1128["as-number"],
+last__1201 = B1128.last,
+keyword__1202 = B1128.keyword,
+but_last__1203 = B1128["but-last"],
+symbol__1204 = B1128.symbol,
+anyQ__1205 = B1128["any?"],
+rcurry__1206 = B1128.rcurry,
+make_atom__1207;
+false;
+make_atom__1207 = Mmake_function__1179("make_atom", function make_atom__1208 (value__1209)
+{
+var B1210 = value__1209;
+if ($T(binaryEE__1199(B1210, "#t")))
+{return true}
+else
+if ($T(binaryEE__1199(B1210, "#f")))
+{return false}
+else
+if ($T(binaryEE__1199(B1210, "#key")))
+{return $KEY}
+else
+if ($T(binaryEE__1199(B1210, "#rest")))
+{return $REST}
 else
 {
-var object1__1928 = B1919,
-object2__1929 = "#f",
-B1959 = (object1__1928 === object2__1929);
-if ($T(B1959))
-return false
+var B1211 = anyQ__1205(rcurry__1206(match__1183, value__1209), Tnumber_patternsT__1172);
+if ($T(B1211))
+{
+var number__1212 = B1211;
+return as_number__1200(first__1182(number__1212))}
 else
-{
-var object1__1932 = B1919,
-object2__1933 = "#key",
-B1960 = (object1__1932 === object2__1933);
-if ($T(B1960))
-return B1966
+if ($T(binaryEE__1199(last__1201(value__1209), ":")))
+{return keyword__1202(but_last__1203(value__1209))}
 else
+return symbol__1204(value__1209, false)}}, false)}
 {
-var object1__1936 = B1919,
-object2__1937 = "#rest",
-B1961 = (object1__1936 === object2__1937);
-if ($T(B1961))
-return B1967
+var not__1214 = B1128.not,
+stream_at_endQ__1215 = B1165["stream-at-end?"],
+signal__1216 = B1128.signal,
+stream_write__1217 = B1165["stream-write"],
+code_char__1218 = B1128["code-char"],
+parse_integer__1219 = B1128["parse-integer"],
+stream_read_element__1220 = B1165["stream-read-element"],
+stream_contents__1221 = B1165["stream-contents"],
+Lstring_streamG__1222 = B1165["<string-stream>"],
+read_string__1223;
+false;
+read_string__1223 = Mmake_function__1179("read_string", function read_string__1224 (stream__1225)
+{
+var result__1226 = make__1170(Lstring_streamG__1222),
+char__1227 = stream_read_element__1220(stream__1225);
+while ($T(not__1214(binaryEE__1199(char__1227, "\""))))
+{
+if ($T(stream_at_endQ__1215(stream__1225)))
+{signal__1216("missing end of string")};
+var B1229;
+if ($T(binaryEE__1199(char__1227, "\\")))
+{
+var B1228 = stream_read_element__1220(stream__1225);
+if ($T(binaryEE__1199(B1228, "\"")))
+{B1229 = "\""}
 else
-{
-var B1920 = B1914(B1915(B1883, value__1918), B1870);
-if ($T(B1920))
-{
-var number__1921 = B1920,
-sequence__1939 = number__1921,
-B1962 = sequence__1939[0];
-return B1909(B1962)}
+if ($T(binaryEE__1199(B1228, "\\")))
+{B1229 = "\\"}
 else
-{
-var array__1949 = value__1918,
-B1950 = array__1949,
-B1951 = ((B1950 || false).length || 0),
-B1963 = (B1951 - 1),
-object1__1952 = array__1949[B1963],
-object2__1953 = ":",
-B1964 = (object1__1952 === object2__1953);
-if ($T(B1964))
-{
-var array__1956 = value__1918,
-n__1957 = undefined,
-B1965 = array__1956.slice(0, ((n__1957 || 1) * -1));
-return B1911(B1965)}
+if ($T(binaryEE__1199(B1228, "b")))
+{B1229 = "\b"}
 else
-return B1913(value__1918, false)}}}}}}, false)
-var B2046 = $K("radix"),
-trueQ = B1826["true?"],
-B1969 = B1826.not,
-B1970 = B1863["stream-at-end?"],
-B1971 = B1826.signal,
-B1972 = B1863["stream-write"],
-B1973 = B1826["code-char"],
-B1974 = B1826["parse-integer"],
-B1975 = B1863["stream-read-element"],
-B1976 = B1863["stream-contents"],
-B1977 = B1863["<string-stream>"],
-B1978 = B1879("read_string", function read_string__1979 (stream__1980)
-{
-var result__1981 = B1868(B1977),
-char__1982 = B1975(stream__1980);
-while (true)
-{
-var object1__1987 = char__1982,
-object2__1988 = "\"",
-value__1989 = (object1__1987 === object2__1988),
-B2045 = !(trueQ(value__1989));
-if ($T(B2045))
-{
-if ($T(B1970(stream__1980)))
-{
-var error__1991 = "missing end of string";
-throw(error__1991);
-false};
-var object1__1994 = char__1982,
-object2__1995 = "\\",
-B2034 = (object1__1994 === object2__1995),
-B2044;
-if ($T(B2034))
-{
-var B1983 = B1975(stream__1980),
-object1__1998 = B1983,
-object2__1999 = "\"",
-B2035 = (object1__1998 === object2__1999);
-if ($T(B2035))
-B2044 = "\""
+if ($T(binaryEE__1199(B1228, "f")))
+{B1229 = "\f"}
 else
-{
-var object1__2002 = B1983,
-object2__2003 = "\\",
-B2036 = (object1__2002 === object2__2003);
-if ($T(B2036))
-B2044 = "\\"
+if ($T(binaryEE__1199(B1228, "n")))
+{B1229 = "\n"}
 else
-{
-var object1__2006 = B1983,
-object2__2007 = "b",
-B2037 = (object1__2006 === object2__2007);
-if ($T(B2037))
-B2044 = "\b"
+if ($T(binaryEE__1199(B1228, "r")))
+{B1229 = "\r"}
 else
-{
-var object1__2010 = B1983,
-object2__2011 = "f",
-B2038 = (object1__2010 === object2__2011);
-if ($T(B2038))
-B2044 = "\f"
+if ($T(binaryEE__1199(B1228, "t")))
+{B1229 = "\t"}
 else
-{
-var object1__2014 = B1983,
-object2__2015 = "n",
-B2039 = (object1__2014 === object2__2015);
-if ($T(B2039))
-B2044 = "\n"
+if ($T(binaryEE__1199(B1228, "v")))
+{B1229 = "\v"}
 else
-{
-var object1__2018 = B1983,
-object2__2019 = "r",
-B2040 = (object1__2018 === object2__2019);
-if ($T(B2040))
-B2044 = "\r"
+if ($T(binaryEE__1199(B1228, "u")))
+{B1229 = code_char__1218(parse_integer__1219(stream_read__1180(stream__1225, 4), $K("radix"), 16))}
 else
-{
-var object1__2022 = B1983,
-object2__2023 = "t",
-B2041 = (object1__2022 === object2__2023);
-if ($T(B2041))
-B2044 = "\t"
+B1229 = signal__1216("bad escape sequence")}
 else
+B1229 = char__1227;
+stream_write__1217(result__1226, B1229);
+char__1227 = stream_read_element__1220(stream__1225)};
+return stream_contents__1221(result__1226)}, false)}
 {
-var object1__2026 = B1983,
-object2__2027 = "v",
-B2042 = (object1__2026 === object2__2027);
-if ($T(B2042))
-B2044 = "\v"
-else
+var Twrapper_symbolsT__1230;
+false;
+Twrapper_symbolsT__1230 = ["quote", "%backquote", "%comma"]}
 {
-var object1__2030 = B1983,
-object2__2031 = "u",
-B2043 = (object1__2030 === object2__2031);
-if ($T(B2043))
-B2044 = B1973(B1974(B1880(stream__1980, 4), B2046, 16))
-else
+var push_last__1236 = B1128["push-last"],
+memberQ__1237 = B1128["member?"],
+symbol_name__1238 = B1128["symbol-name"],
+pop_last__1239 = B1128["pop-last"],
+format_to_string__1240 = B1166["format-to-string"],
+stream_unread_element__1241 = B1165["stream-unread-element"],
+emptyQ__1242 = B1128["empty?"],
+Mkeys__1243 = B1128["%keys"],
+read__1244;
+false;
+read__1244 = Mmake_function__1179("read", function read__1245 (stream__1246)
 {
-var error__2033 = "bad escape sequence";
-throw(error__2033);
-B2044 = false}}}}}}}}}}
-else
-B2044 = char__1982;
-B1972(result__1981, B2044);
-char__1982 = B1975(stream__1980)}
-else
-break};
-return B1976(result__1981)}, false)
-var B2047 = ["quote", "%backquote", "%comma"]
-{
-var B2245 = $S("quote", "ralph/core"),
-B2246 = $S("%backquote", "ralph/core"),
-B2247 = $S("%comma", "ralph/core"),
-B2248 = $S("%array"),
-trueQ = B1826["true?"],
-B2053 = B1826["push-last"],
-B2054 = B1826["member?"],
-B2055 = B1826["symbol-name"],
-B2056 = B1826["pop-last"],
-B2057 = B1864["format-to-string"],
-B2058 = B1863["stream-unread-element"],
-B2059 = B1826["empty?"],
-B2060 = B1826["%keys"],
-B2061 = B1879("read", function read__2062 (stream__2063)
-{
-var B2064 = $SL.call(arguments, 1),
-B2065 = B2060(B2064, {"eof-error?":true,
+var B1247 = $SL.call(arguments, 1),
+B1248 = Mkeys__1243(B1247, {"eof-error?":true,
 "eof-value":false}),
-eof_errorQ__2066 = B2065["eof-error?"],
-eof_value__2067 = B2065["eof-value"],
-stack__2068 = [[]],
-ends__2069 = [],
-add_to_stackN__2070,
-add_lastN__2071;
-add_to_stackN__2070 = function add_to_stackN__2072 (value__2073)
+eof_errorQ__1249 = B1248["eof-error?"],
+eof_value__1250 = B1248["eof-value"],
+stack__1251 = [[]],
+ends__1252 = [],
+add_to_stackN__1253,
+add_lastN__1254;
+add_to_stackN__1253 = function add_to_stackN__1255 (value__1256)
 {
-var array__2090 = stack__2068,
-B2091 = array__2090,
-B2092 = ((B2091 || false).length || 0),
-B2225 = (B2092 - 1),
-array__2093 = array__2090[B2225],
-value__2094 = value__2073;
-array__2093.push(value__2094);
-array__2093;
-var array__2103 = stack__2068,
-B2104 = array__2103,
-B2105 = ((B2104 || false).length || 0),
-B2226 = (B2105 - 1),
-sequence__2106 = array__2103[B2226],
-B2227 = sequence__2106[0],
-B2228 = B2055(B2227),
-B2229 = B2054(B2228, B2047);
-if ($T(B2229))
-return add_lastN__2071()};
-add_lastN__2071 = function add_lastN__2074 ()
+push_last__1236(last__1201(stack__1251), value__1256);
+if ($T(memberQ__1237(symbol_name__1238(first__1182(last__1201(stack__1251))), Twrapper_symbolsT__1230)))
+{return add_lastN__1254()}};
+add_lastN__1254 = function add_lastN__1257 ()
 {
-var array__2108 = stack__2068,
-value__2075 = array__2108.pop();
-return add_to_stackN__2070(value__2075)};
-while (true)
+var value__1258 = pop_last__1239(stack__1251);
+return add_to_stackN__1253(value__1258)};
+while ($T(not__1214(stream_at_endQ__1215(stream__1246))))
 {
-var value__2110 = B1970(stream__2063),
-B2242 = !(trueQ(value__2110));
-if ($T(B2242))
+read_whitespace__1194(stream__1246);
+var char__1259 = stream_read_element__1220(stream__1246),
+B1260 = char__1259;
+if ($T(binaryEE__1199(B1260, ";")))
+{read_line__1191(stream__1246)}
+else
+if ($T(binaryEE__1199(B1260, "'")))
+{push_last__1236(stack__1251, [$S("quote", "ralph/core")])}
+else
+if ($T(binaryEE__1199(B1260, "`")))
+{push_last__1236(stack__1251, [$S("%backquote", "ralph/core")])}
+else
+if ($T(binaryEE__1199(B1260, ",")))
+{push_last__1236(stack__1251, [$S("%comma", "ralph/core")])}
+else
+if ($T(binaryEE__1199(B1260, "(")))
 {
-B1903(stream__2063);
-var char__2076 = B1975(stream__2063),
-B2077 = char__2076,
-object1__2113 = B2077,
-object2__2114 = ";",
-B2230 = (object1__2113 === object2__2114);
-if ($T(B2230))
-B1900(stream__2063)
+push_last__1236(ends__1252, ")");
+push_last__1236(stack__1251, [])}
+else
+if ($T(binaryEE__1199(B1260, "[")))
+{
+push_last__1236(ends__1252, "]");
+push_last__1236(stack__1251, [$S("%array", "ralph/core")])}
+else
+if ($T(binaryEE__1199(B1260, last__1201(ends__1252))))
+{
+pop_last__1239(ends__1252);
+add_lastN__1254()}
 else
 {
-var object1__2117 = B2077,
-object2__2118 = "'",
-B2231 = (object1__2117 === object2__2118);
-if ($T(B2231))
-{
-var array__2121 = stack__2068,
-value__2122 = [B2245];
-array__2121.push(value__2122);
-array__2121}
+var B1261 = binaryEE__1199(B1260, ")"),
+B1264;
+if ($T(B1261))
+{B1264 = B1261}
+else
+B1264 = binaryEE__1199(B1260, "]");
+if ($T(B1264))
+{signal__1216(format_to_string__1240("too many closings: %=", char__1259))}
+else
+if ($T(binaryEE__1199(B1260, "\"")))
+{add_to_stackN__1253(read_string__1223(stream__1246))}
 else
 {
-var object1__2125 = B2077,
-object2__2126 = "`",
-B2232 = (object1__2125 === object2__2126);
-if ($T(B2232))
+stream_unread_element__1241(stream__1246);
+add_to_stackN__1253(make_atom__1207(first__1182(match_stream__1185(Tatom_patternT__1177, stream__1246))))}};
+read_whitespace__1194(stream__1246)};
+if ($T(emptyQ__1242(ends__1252)))
 {
-var array__2129 = stack__2068,
-value__2130 = [B2246];
-array__2129.push(value__2130);
-array__2129}
+var value__1262 = first__1182(last__1201(stack__1251)),
+B1263 = value__1262;
+if ($T(B1263))
+{return B1263}
 else
-{
-var object1__2133 = B2077,
-object2__2134 = ",",
-B2233 = (object1__2133 === object2__2134);
-if ($T(B2233))
-{
-var array__2137 = stack__2068,
-value__2138 = [B2247];
-array__2137.push(value__2138);
-array__2137}
+if ($T(eof_errorQ__1249))
+{return signal__1216("no object")}
 else
-{
-var object1__2141 = B2077,
-object2__2142 = "(",
-B2234 = (object1__2141 === object2__2142);
-if ($T(B2234))
-{
-var array__2145 = ends__2069,
-value__2146 = ")";
-array__2145.push(value__2146);
-array__2145;
-var array__2149 = stack__2068,
-value__2150 = [];
-array__2149.push(value__2150);
-array__2149}
+return eof_value__1250}
 else
-{
-var object1__2153 = B2077,
-object2__2154 = "[",
-B2235 = (object1__2153 === object2__2154);
-if ($T(B2235))
-{
-var array__2157 = ends__2069,
-value__2158 = "]";
-array__2157.push(value__2158);
-array__2157;
-var array__2161 = stack__2068,
-value__2162 = [B2248];
-array__2161.push(value__2162);
-array__2161}
-else
-{
-var object1__2175 = B2077,
-array__2172 = ends__2069,
-B2173 = array__2172,
-B2174 = ((B2173 || false).length || 0),
-B2236 = (B2174 - 1),
-object2__2176 = array__2172[B2236],
-B2237 = (object1__2175 === object2__2176);
-if ($T(B2237))
-{
-var array__2178 = ends__2069;
-array__2178.pop();
-add_lastN__2071()}
-else
-{
-var object1__2181 = B2077,
-object2__2182 = ")",
-B2078 = (object1__2181 === object2__2182),
-B2238;
-if ($T(B2078))
-B2238 = B2078
-else
-{
-var object1__2185 = B2077,
-object2__2186 = "]";
-B2238 = (object1__2185 === object2__2186)};
-if ($T(B2238))
-{
-var error__2188 = B2057("too many closings: %=", char__2076);
-throw(error__2188);
-false}
-else
-{
-var object1__2191 = B2077,
-object2__2192 = "\"",
-B2239 = (object1__2191 === object2__2192);
-if ($T(B2239))
-add_to_stackN__2070(B1978(stream__2063))
-else
-{
-B2058(stream__2063);
-var sequence__2194 = B1885(B1877, stream__2063),
-B2240 = sequence__2194[0],
-B2241 = B1916(B2240);
-add_to_stackN__2070(B2241)}}}}}}}}};
-B1903(stream__2063)}
-else
-break};
-var sequence__2205 = ends__2069,
-B2206 = sequence__2205,
-B2207 = ((B2206 || false).length || 0),
-B2208 = 0,
-B2243 = (B2207 === B2208);
-if ($T(B2243))
-{
-var array__2217 = stack__2068,
-B2218 = array__2217,
-B2219 = ((B2218 || false).length || 0),
-B2244 = (B2219 - 1),
-sequence__2220 = array__2217[B2244],
-value__2079 = sequence__2220[0],
-B2080 = value__2079;
-if ($T(B2080))
-return B2080
-else
-if ($T(eof_errorQ__2066))
-{
-var error__2222 = "no object";
-throw(error__2222);
-return false}
-else
-return eof_value__2067}
-else
-{
-var error__2224 = B2057("missing closings: %=", ends__2069);
-throw(error__2224);
-return false}}, false);
-exports.read = B2061}
+return signal__1216(format_to_string__1240("missing closings: %=", ends__1252))}, false);
+exports.read = read__1244}

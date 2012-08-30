@@ -1,273 +1,179 @@
-var B2811 = require("ralph/core")
-var B2813 = require("ralph/compiler/utilities")
 {
-var B2814 = B2811["%make-function"],
-B2815,
-B2816 = B2811.identity,
-B2817 = B2814("lift_defines", function lift_defines__2818 (exp__2819, env__2820)
-{return B2815(exp__2819, env__2820, B2816)}, false);
-exports["lift-defines"] = B2817}
+var B1597;
+false;
+B1597 = require("ralph/core")}
 {
-var B3014 = $S("%bind"),
-B3015 = $S("%set"),
-B3016 = $S("%method"),
-B3017 = $S("%begin"),
-B3018 = $S("%define"),
-lift_define__2853,
-B2843 = B2813["expression?"],
-B2844 = B2811["binary=="],
-B2845,
-B2846 = B2811.concatenate,
-B2847 = B2811["has?"],
-B2848 = B2811.get,
-B2849 = B2811["get-setter"],
-B2850 = B2811["symbol-name"],
-B2851,
-B2852 = B2811.first;
-B2815 = B2814("lift_define", function lift_define__2853 (exp__2854, env__2855, k__2856)
-{B3019:while(true){
-if ($T(B2843(exp__2854)))
+var B1599;
+false;
+B1599 = require("ralph/compiler/utilities")}
 {
-var sequence__2916 = exp__2854,
-B3005 = sequence__2916[0],
-B2857 = B2850(B3005),
-object1__2919 = B2857,
-object2__2920 = "%bind",
-B3006 = (object1__2919 === object2__2920);
-if ($T(B3006))
+var Mmake_function__1600 = B1597["%make-function"],
+lift_define__1601,
+identity__1602 = B1597.identity,
+lift_defines__1603;
+false;
+lift_defines__1603 = Mmake_function__1600("lift_defines", function lift_defines__1604 (exp__1605, env__1606)
+{return lift_define__1601(exp__1605, env__1606, identity__1602)}, false);
+exports["lift-defines"] = lift_defines__1603}
 {
-var ____2858 = exp__2854[0],
-B2859 = exp__2854[1],
-var__2860 = B2859[0],
-value__2861 = B2859[1],
-body__2862 = exp__2854[2];
-arguments = [value__2861, env__2855, (function B3020 (body__2862, k__2856, B3014, var__2860)
-{return function B2863 (lvalue__2864, env__2865)
-{return lift_define__2853(body__2862, env__2865, function B2866 (lbody__2867, env__2868)
-{return k__2856([B3014, [var__2860, lvalue__2864], lbody__2867], env__2868)})}})(body__2862, k__2856, B3014, var__2860)];
-exp__2854 = arguments[0];
-env__2855 = arguments[1];
-k__2856 = arguments[2];
-continue B3019}
+var expressionQ__1628 = B1599["expression?"],
+binaryEE__1629 = B1597["binary=="],
+lift_defineT__1630,
+concatenate__1631 = B1597.concatenate,
+get__1632 = B1597.get,
+get_setter__1633 = B1597["get-setter"],
+symbol_name__1634 = B1597["symbol-name"],
+second__1635 = B1597.second,
+lift_defineTT__1636,
+first__1637 = B1597.first;
+false;
+lift_define__1601 = Mmake_function__1600("lift_define", function lift_define__1638 (exp__1639, env__1640, k__1641)
+{if ($T(expressionQ__1628(exp__1639)))
+{
+var B1642 = symbol_name__1634(first__1637(exp__1639));
+if ($T(binaryEE__1629(B1642, "%bind")))
+{
+var ____1643 = exp__1639[0],
+B1644 = exp__1639[1],
+var__1645 = B1644[0],
+value__1646 = B1644[1],
+body__1647 = exp__1639[2];
+return lift_define__1638(value__1646, env__1640, function B1648 (lvalue__1649, env__1650)
+{return lift_define__1638(body__1647, env__1650, function B1651 (lbody__1652, env__1653)
+{return k__1641([$S("%bind", "ralph/core"), [var__1645, lvalue__1649], lbody__1652], env__1653)})})}
+else
+if ($T(binaryEE__1629(B1642, "%try")))
+{
+var m__1654 = exp__1639[0],
+e1__1655 = exp__1639[1],
+v__1656 = exp__1639[2],
+e2__1657 = exp__1639[3];
+return lift_defineT__1630([e1__1655, e2__1657], env__1640, function B1658 (leT__1659, env__1660)
+{
+var le1__1661 = leT__1659[0],
+le2__1662 = leT__1659[1];
+return k__1641([m__1654, le1__1661, v__1656, le2__1662], env__1660)})}
+else
+if ($T(binaryEE__1629(B1642, "%set")))
+{
+var ____1663 = exp__1639[0],
+e1__1664 = exp__1639[1],
+e2__1665 = exp__1639[2];
+return lift_define__1638(e2__1665, env__1640, function B1666 (le2__1667, env__1668)
+{return k__1641([$S("%set", "ralph/core"), e1__1664, le2__1667], env__1668)})}
+else
+if ($T(binaryEE__1629(B1642, "%method")))
+{
+var ____1669 = exp__1639[0],
+name__1670 = exp__1639[1],
+arguments__1671 = exp__1639[2],
+body__1672 = exp__1639[3];
+return lift_define__1638(body__1672, env__1640, function B1673 (lbody__1674, env__1675)
+{return k__1641([$S("%method", "ralph/core"), name__1670, arguments__1671, lbody__1674], env__1675)})}
 else
 {
-var object1__2923 = B2857,
-object2__2924 = "%try",
-B3007 = (object1__2923 === object2__2924);
-if ($T(B3007))
-{
-var m__2869 = exp__2854[0],
-e1__2870 = exp__2854[1],
-v__2871 = exp__2854[2],
-e2__2872 = exp__2854[3];
-return B2845([e1__2870, e2__2872], env__2855, function B2873 (leT__2874, env__2875)
-{
-var le1__2876 = leT__2874[0],
-le2__2877 = leT__2874[1];
-return k__2856([m__2869, le1__2876, v__2871, le2__2877], env__2875)})}
+var B1676 = binaryEE__1629(B1642, "%begin"),
+B1696;
+if ($T(B1676))
+{B1696 = B1676}
 else
 {
-var object1__2927 = B2857,
-object2__2928 = "%set",
-B3008 = (object1__2927 === object2__2928);
-if ($T(B3008))
-{
-var ____2878 = exp__2854[0],
-e1__2879 = exp__2854[1],
-e2__2880 = exp__2854[2];
-arguments = [e2__2880, env__2855, (function B3021 (k__2856, B3015, e1__2879)
-{return function B2881 (le2__2882, env__2883)
-{return k__2856([B3015, e1__2879, le2__2882], env__2883)}})(k__2856, B3015, e1__2879)];
-exp__2854 = arguments[0];
-env__2855 = arguments[1];
-k__2856 = arguments[2];
-continue B3019}
+var B1677 = binaryEE__1629(B1642, "%if");
+if ($T(B1677))
+{B1696 = B1677}
 else
 {
-var object1__2931 = B2857,
-object2__2932 = "%method",
-B3009 = (object1__2931 === object2__2932);
-if ($T(B3009))
-{
-var ____2884 = exp__2854[0],
-name__2885 = exp__2854[1],
-arguments__2886 = exp__2854[2],
-body__2887 = exp__2854[3];
-arguments = [body__2887, env__2855, (function B3022 (k__2856, B3016, name__2885, arguments__2886)
-{return function B2888 (lbody__2889, env__2890)
-{return k__2856([B3016, name__2885, arguments__2886, lbody__2889], env__2890)}})(k__2856, B3016, name__2885, arguments__2886)];
-exp__2854 = arguments[0];
-env__2855 = arguments[1];
-k__2856 = arguments[2];
-continue B3019}
+var B1678 = binaryEE__1629(B1642, "%while");
+if ($T(B1678))
+{B1696 = B1678}
 else
 {
-var object1__2935 = B2857,
-object2__2936 = "%begin",
-B2891 = (object1__2935 === object2__2936),
-B3010;
-if ($T(B2891))
-B3010 = B2891
+var B1679 = binaryEE__1629(B1642, "%array");
+if ($T(B1679))
+{B1696 = B1679}
 else
 {
-var object1__2939 = B2857,
-object2__2940 = "%if",
-B2892 = (object1__2939 === object2__2940);
-if ($T(B2892))
-B3010 = B2892
+var B1680 = binaryEE__1629(B1642, "%object");
+if ($T(B1680))
+{B1696 = B1680}
 else
 {
-var object1__2943 = B2857,
-object2__2944 = "%while",
-B2893 = (object1__2943 === object2__2944);
-if ($T(B2893))
-B3010 = B2893
+var B1681 = binaryEE__1629(B1642, "%get-property");
+if ($T(B1681))
+{B1696 = B1681}
 else
 {
-var object1__2947 = B2857,
-object2__2948 = "%array",
-B2894 = (object1__2947 === object2__2948);
-if ($T(B2894))
-B3010 = B2894
+var B1682 = binaryEE__1629(B1642, "%infix");
+if ($T(B1682))
+{B1696 = B1682}
 else
 {
-var object1__2951 = B2857,
-object2__2952 = "%object",
-B2895 = (object1__2951 === object2__2952);
-if ($T(B2895))
-B3010 = B2895
+var B1683 = binaryEE__1629(B1642, "%native");
+if ($T(B1683))
+{B1696 = B1683}
 else
 {
-var object1__2955 = B2857,
-object2__2956 = "%get-property",
-B2896 = (object1__2955 === object2__2956);
-if ($T(B2896))
-B3010 = B2896
+var B1684 = binaryEE__1629(B1642, "%native-name");
+if ($T(B1684))
+{B1696 = B1684}
 else
 {
-var object1__2959 = B2857,
-object2__2960 = "%infix",
-B2897 = (object1__2959 === object2__2960);
-if ($T(B2897))
-B3010 = B2897
+var B1685 = binaryEE__1629(B1642, "%native-call");
+if ($T(B1685))
+{B1696 = B1685}
 else
 {
-var object1__2963 = B2857,
-object2__2964 = "%native",
-B2898 = (object1__2963 === object2__2964);
-if ($T(B2898))
-B3010 = B2898
+var B1686 = binaryEE__1629(B1642, "%plus");
+if ($T(B1686))
+{B1696 = B1686}
 else
 {
-var object1__2967 = B2857,
-object2__2968 = "%native-name",
-B2899 = (object1__2967 === object2__2968);
-if ($T(B2899))
-B3010 = B2899
+var B1687 = binaryEE__1629(B1642, "%minus");
+if ($T(B1687))
+{B1696 = B1687}
 else
 {
-var object1__2971 = B2857,
-object2__2972 = "%native-call",
-B2900 = (object1__2971 === object2__2972);
-if ($T(B2900))
-B3010 = B2900
+var B1688 = binaryEE__1629(B1642, "%times");
+if ($T(B1688))
+{B1696 = B1688}
+else
+B1696 = binaryEE__1629(B1642, "%divide")}}}}}}}}}}}};
+if ($T(B1696))
+{
+var m__1689 = exp__1639[0],
+eT__1690 = $SL.call(exp__1639, 1);
+return lift_defineT__1630(eT__1690, env__1640, function B1691 (leT__1692, env__1693)
+{return k__1641(concatenate__1631([m__1689], leT__1692), env__1693)})}
+else
+if ($T(binaryEE__1629(B1642, "%symbol")))
+{return k__1641(exp__1639)}
+else
+if ($T(binaryEE__1629(B1642, "%define")))
+{
+var identifier__1694 = second__1635(exp__1639),
+name__1695 = symbol_name__1634(identifier__1694);
+if ($T(get__1632(env__1640, "defined?", name__1695)))
+{return k__1641(false, env__1640)}
 else
 {
-var object1__2975 = B2857,
-object2__2976 = "%plus",
-B2901 = (object1__2975 === object2__2976);
-if ($T(B2901))
-B3010 = B2901
+get_setter__1633(env__1640, "defined?", name__1695, true);
+return [$S("%begin", "ralph/core"), [$S("%define", "ralph/core"), identifier__1694], k__1641(false, env__1640)]}}
 else
-{
-var object1__2979 = B2857,
-object2__2980 = "%minus",
-B2902 = (object1__2979 === object2__2980);
-if ($T(B2902))
-B3010 = B2902
+return lift_defineTT__1636(exp__1639, env__1640, k__1641)}}
 else
+return k__1641(exp__1639, env__1640)}, false)}
 {
-var object1__2983 = B2857,
-object2__2984 = "%times",
-B2903 = (object1__2983 === object2__2984);
-if ($T(B2903))
-B3010 = B2903
+var emptyQ__1697 = B1597["empty?"];
+false;
+lift_defineT__1630 = Mmake_function__1600("lift_defineT", function lift_defineT__1698 (expT__1699, env__1700, k__1701)
+{if ($T(emptyQ__1697(expT__1699)))
+{return k__1701([], env__1700)}
 else
+return lift_defineTT__1636(expT__1699, env__1700, k__1701)}, false)}
 {
-var object1__2987 = B2857,
-object2__2988 = "%divide";
-B3010 = (object1__2987 === object2__2988)}}}}}}}}}}}}};
-if ($T(B3010))
-{
-var m__2904 = exp__2854[0],
-eT__2905 = $SL.call(exp__2854, 1);
-return B2845(eT__2905, env__2855, function B2906 (leT__2907, env__2908)
-{return k__2856(B2846([m__2904], leT__2907), env__2908)})}
-else
-{
-var object1__2991 = B2857,
-object2__2992 = "%define",
-B2909 = (object1__2991 === object2__2992),
-B3011;
-if ($T(B2909))
-B3011 = B2909
-else
-{
-var object1__2995 = B2857,
-object2__2996 = "%symbol";
-B3011 = (object1__2995 === object2__2996)};
-if ($T(B3011))
-return k__2856(exp__2854)
-else
-{
-var object1__2999 = B2857,
-object2__3000 = "define",
-B3012 = (object1__2999 === object2__3000);
-if ($T(B3012))
-{
-var ____2910 = exp__2854[0],
-var__2911 = exp__2854[1],
-value__2912 = exp__2854[2],
-exportQ__2913 = exp__2854[3],
-name__2914 = B2850(var__2911),
-object__3003 = B2848(env__2855, "defined?"),
-property__3004 = name__2914,
-B3013 = $HP.call(object__3003,property__3004);
-if ($T(B3013))
-return k__2856([B3015, var__2911, value__2912], env__2855)
-else
-{
-B2849(env__2855, "defined?", name__2914, true);
-return [B3017, [B3018, var__2911], k__2856([B3015, var__2911, value__2912], env__2855)]}}
-else
-return B2851(exp__2854, env__2855, k__2856)}}}}}}}
-else
-return k__2856(exp__2854, env__2855);
-break}}, false)}
-{
-var B3023 = B2811["empty?"];
-B2845 = B2814("lift_defineT", function lift_defineT__3024 (expT__3025, env__3026, k__3027)
-{
-var sequence__3038 = expT__3025,
-B3039 = sequence__3038,
-B3040 = ((B3039 || false).length || 0),
-B3041 = 0,
-B3042 = (B3040 === B3041);
-if ($T(B3042))
-return k__3027([], env__3026)
-else
-return B2851(expT__3025, env__3026, k__3027)}, false)}
-{
-var B3045 = B2811.rest;
-B2851 = B2814("lift_defineTT", function lift_defineTT__3046 (exp__3047, env__3048, k__3049)
-{
-var sequence__3057 = exp__3047,
-B3060 = sequence__3057[0],
-B3063 = function B3050 (t__3051, env__3052)
-{
-var sequence__3059 = exp__3047,
-B3061 = sequence__3059.slice(1),
-B3062 = function B3053 (tT__3054, env__3055)
-{return k__3049(B2846([t__3051], tT__3054), env__3055)};
-return B2845(B3061, env__3052, B3062)};
-return B2815(B3060, env__3048, B3063)}, false)}
+var rest__1704 = B1597.rest;
+false;
+lift_defineTT__1636 = Mmake_function__1600("lift_defineTT", function lift_defineTT__1705 (exp__1706, env__1707, k__1708)
+{return lift_define__1601(first__1637(exp__1706), env__1707, function B1709 (t__1710, env__1711)
+{return lift_defineT__1630(rest__1704(exp__1706), env__1711, function B1712 (tT__1713, env__1714)
+{return k__1708(concatenate__1631([t__1710], tT__1713), env__1714)})})}, false)}

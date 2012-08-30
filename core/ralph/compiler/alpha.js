@@ -1,331 +1,288 @@
-var B2527 = require("ralph/core")
-var B2529 = require("ralph/compiler/utilities")
 {
-var trueQ = B2527["true?"],
-B2530 = B2527["%make-function"],
-B2531 = B2527.not,
-B2532 = B2527.get,
-B2533 = B2527["get-setter"],
-B2534 = B2527["make-object"],
-B2535 = B2530("ensure_naming_structure", function ensure_naming_structure__2536 (env__2537, module_name__2538, name__2539)
+var B1430;
+false;
+B1430 = require("ralph/core")}
 {
-var value__2542 = B2532(env__2537, "identifiers", module_name__2538),
-B2545 = !(trueQ(value__2542));
-if ($T(B2545))
-B2533(env__2537, "identifiers", module_name__2538, B2534());
-var module_renamings__2540 = B2532(env__2537, "identifiers", module_name__2538),
-value__2544 = B2532(module_renamings__2540, name__2539),
-B2546 = !(trueQ(value__2544));
-if ($T(B2546))
-module_renamings__2540[name__2539] = [];
-return env__2537}, false);
-exports["ensure-naming-structure"] = B2535}
+var B1433,
+B1434;
+false;
+B1433 = require("ralph/compiler/utilities");
+false;
+B1434 = require("ralph/format")}
 {
-var trueQ = B2527["true?"],
-B2549 = B2527.map,
-B2550 = B2527.push,
-B2551 = B2529["generate-symbol"],
-B2552 = B2529["get-module-name/name"],
-B2553 = B2530("rename_identifiers", function rename_identifiers__2554 (identifiers__2555, env__2556)
-{return B2549(function B2557 (identifier__2558)
+var Mmake_function__1435 = B1430["%make-function"],
+not__1436 = B1430.not,
+get__1437 = B1430.get,
+get_setter__1438 = B1430["get-setter"],
+make_object__1439 = B1430["make-object"],
+ensure_naming_structure__1440;
+false;
+ensure_naming_structure__1440 = Mmake_function__1435("ensure_naming_structure", function ensure_naming_structure__1441 (env__1442, module_name__1443, name__1444)
 {
-var B2559 = B2552(identifier__2558),
-module_name__2560 = B2559[0],
-name__2561 = B2559[1],
-value__2564 = B2532(identifier__2558, "generated?"),
-B2569 = !(trueQ(value__2564)),
-B2570;
-if ($T(B2569))
-B2570 = name__2561
+if ($T(not__1436(get__1437(env__1442, "identifiers", module_name__1443))))
+{get_setter__1438(env__1442, "identifiers", module_name__1443, make_object__1439())};
+var module_renamings__1445 = get__1437(env__1442, "identifiers", module_name__1443);
+if ($T(not__1436(get__1437(module_renamings__1445, name__1444))))
+{module_renamings__1445[name__1444] = []};
+return env__1442}, false);
+exports["ensure-naming-structure"] = ensure_naming_structure__1440}
+{
+var map__1448 = B1430.map,
+push__1449 = B1430.push,
+generate_symbol__1450 = B1433["generate-symbol"],
+module_nameSname__1451 = B1433["module-name/name"],
+rename_identifiers__1452;
+false;
+rename_identifiers__1452 = Mmake_function__1435("rename_identifiers", function rename_identifiers__1453 (identifiers__1454, env__1455)
+{return map__1448(function B1456 (identifier__1457)
+{
+var B1458 = module_nameSname__1451(identifier__1457, env__1455),
+module_name__1459 = B1458[0],
+name__1460 = B1458[1];
+if ($T(not__1436(module_name__1459)))
+{module_name__1459 = get__1437(env__1455, "module", "name")};
+var B1462;
+if ($T(not__1436(get__1437(identifier__1457, "generated?"))))
+{B1462 = name__1460}
 else
-B2570 = false;
-var new_identifier__2562 = B2551(B2570);
-B2535(env__2556, module_name__2560, name__2561);
-var array__2567 = B2532(env__2556, "identifiers", module_name__2560, name__2561),
-value__2568 = new_identifier__2562;
-array__2567.unshift(value__2568);
-array__2567;
-return new_identifier__2562}, identifiers__2555)}, false);
-exports["rename-identifiers"] = B2553}
+B1462 = false;
+var new_identifier__1461 = generate_symbol__1450(B1462);
+ensure_naming_structure__1440(env__1455, module_name__1459, name__1460);
+push__1449(get__1437(env__1455, "identifiers", module_name__1459, name__1460), new_identifier__1461);
+return new_identifier__1461}, identifiers__1454)}, false);
+exports["rename-identifiers"] = rename_identifiers__1452}
 {
-var trueQ = B2527["true?"],
-B2578 = B2527["any?"],
-B2579 = B2527["empty?"],
-B2580 = B2527.pop,
-B2581 = B2527.rest,
-B2582 = B2527.first,
-B2583 = B2530("restore_identifiers", function restore_identifiers__2584 (identifiers__2585, env__2586)
+var anyQ__1470 = B1430["any?"],
+emptyQ__1471 = B1430["empty?"],
+pop__1472 = B1430.pop,
+rest__1473 = B1430.rest,
+first__1474 = B1430.first,
+restore_identifiers__1475;
+false;
+restore_identifiers__1475 = Mmake_function__1435("restore_identifiers", function restore_identifiers__1476 (identifiers__1477, env__1478)
 {
-var B2587 = identifiers__2585,
-B2588,
-B2589,
-B2590 = [B2587];
+var B1479 = identifiers__1477,
+B1480,
+B1481,
+B1482 = [B1479];
 while (true)
 {
-var B2591 = B2588,
-value__2599;
-if ($T(B2591))
-value__2599 = B2591
+var B1483 = B1480,
+B1490;
+if ($T(B1483))
+{B1490 = B1483}
 else
-value__2599 = B2578(B2579, B2590);
-var B2607 = !(trueQ(value__2599));
-if ($T(B2607))
+B1490 = anyQ__1470(emptyQ__1471, B1482);
+var B1491 = not__1436(B1490);
+if ($T(B1491))
 {
-var sequence__2601 = B2587,
-identifier__2592 = sequence__2601[0];
-(function B2593 (identifier__2594)
+var identifier__1484 = first__1474(B1479);
+(function B1485 (identifier__1486)
 {
-var B2595 = B2552(identifier__2594),
-module_name__2596 = B2595[0],
-name__2597 = B2595[1],
-array__2603 = B2532(env__2586, "identifiers", module_name__2596, name__2597);
-return array__2603.shift()})(identifier__2592);
-var sequence__2605 = B2587,
-B2606 = sequence__2605.slice(1);
-B2587 = B2606;
-B2590 = [B2587]}
+var B1487 = module_nameSname__1451(identifier__1486, env__1478),
+module_name__1488 = B1487[0],
+name__1489 = B1487[1];
+if ($T(not__1436(module_name__1488)))
+{module_name__1488 = get__1437(env__1478, "module", "name")};
+return pop__1472(get__1437(env__1478, "identifiers", module_name__1488, name__1489))})(identifier__1484);
+B1479 = rest__1473(B1479);
+B1482 = [B1479]}
 else
 break};
-return B2589}, false);
-exports["restore-identifiers"] = B2583}
-var B2608 = B2534()
+return B1481}, false);
+exports["restore-identifiers"] = restore_identifiers__1475}
 {
-var B2611 = B2530("find_identifier", function find_identifier__2612 (identifier__2613, env__2614)
+var Tnot_foundT__1492;
+false;
+Tnot_foundT__1492 = make_object__1439()}
 {
-var B2615 = B2552(identifier__2613),
-module_name__2616 = B2615[0],
-name__2617 = B2615[1],
-B2618 = B2532(env__2614, "identifiers", module_name__2616, name__2617);
-if ($T(B2618))
+var first__1495 = first__1474,
+find_identifier__1496;
+false;
+find_identifier__1496 = Mmake_function__1435("find_identifier", function find_identifier__1497 (identifier__1498, env__1499)
 {
-var renamings__2619 = B2618,
-sequence__2621 = renamings__2619;
-return sequence__2621[0]}
+var B1500 = module_nameSname__1451(identifier__1498, env__1499),
+module_name__1501 = B1500[0],
+name__1502 = B1500[1];
+if ($T(not__1436(module_name__1501)))
+{module_name__1501 = get__1437(env__1499, "module", "name")};
+var B1503 = get__1437(env__1499, "identifiers", module_name__1501, name__1502);
+if ($T(B1503))
+{
+var renamings__1504 = B1503;
+return first__1495(renamings__1504)}
 else
-return B2608}, false);
-exports["find-identifier"] = B2611}
+return Tnot_foundT__1492}, false);
+exports["find-identifier"] = find_identifier__1496}
 {
-var B2805 = $S("%method"),
-B2806 = $S("%bind"),
-B2807 = $S("%try"),
-B2808 = $S("%define"),
-alpha_convert__2650,
-B2641 = B2527["instance?"],
-B2642 = B2527["<array>"],
-B2643 = B2527["binary=="],
-B2644 = B2527.concatenate,
-B2645 = B2527["push-last"],
-B2646 = B2527["symbol-name"],
-B2647 = B2527.rcurry,
-B2648 = B2527["<symbol>"],
-B2649 = B2530("alpha_convert", function alpha_convert__2650 (form__2651, env__2652)
+var instanceQ__1525 = B1430["instance?"],
+LarrayG__1526 = B1430["<array>"],
+binaryEE__1527 = B1430["binary=="],
+concatenate__1528 = B1430.concatenate,
+symbol_name__1529 = B1430["symbol-name"],
+first__1530 = first__1474,
+rcurry__1531 = B1430.rcurry,
+rest__1532 = rest__1473,
+LsymbolG__1533 = B1430["<symbol>"],
+memberQ__1534 = B1430["member?"],
+TdefinedT__1535 = B1433["*defined*"],
+signal__1536 = B1430.signal,
+make__1537 = B1430.make,
+LerrorG__1538 = B1430["<error>"],
+format_to_string__1539 = B1434["format-to-string"],
+alpha_convert__1540;
+false;
+alpha_convert__1540 = Mmake_function__1435("alpha_convert", function alpha_convert__1541 (form__1542, env__1543)
 {
-var B2653 = form__2651;
-if ($T(B2641(B2653, B2642)))
+var B1544 = form__1542;
+if ($T(instanceQ__1525(B1544, LarrayG__1526)))
 {
-var sequence__2703 = form__2651,
-B2792 = sequence__2703[0],
-B2654 = B2646(B2792),
-object1__2706 = B2654,
-object2__2707 = "%method",
-B2793 = (object1__2706 === object2__2707);
-if ($T(B2793))
+var B1545 = symbol_name__1529(first__1530(form__1542));
+if ($T(binaryEE__1527(B1545, "%method")))
 {
-var ____2655 = form__2651[0],
-name__2656 = form__2651[1],
-arguments__2657 = form__2651[2],
-body__2658 = form__2651[3],
-identifiers__2659 = B2644([name__2656], arguments__2657),
-new_identifiers__2660 = B2553(identifiers__2659, env__2652),
-new_body__2661 = alpha_convert__2650(body__2658, env__2652),
-new_name__2662 = new_identifiers__2660[0],
-new_arguments__2663 = $SL.call(new_identifiers__2660, 1),
-result__2664 = [B2805, new_name__2662, new_arguments__2663, new_body__2661];
-B2583(identifiers__2659, env__2652);
-return result__2664}
+var ____1546 = form__1542[0],
+name__1547 = form__1542[1],
+arguments__1548 = form__1542[2],
+body__1549 = form__1542[3],
+identifiers__1550 = concatenate__1528([name__1547], arguments__1548),
+new_identifiers__1551 = rename_identifiers__1452(identifiers__1550, env__1543),
+new_body__1552 = alpha_convert__1541(body__1549, env__1543),
+new_name__1553 = new_identifiers__1551[0],
+new_arguments__1554 = $SL.call(new_identifiers__1551, 1),
+result__1555 = [$S("%method", "ralph/core"), new_name__1553, new_arguments__1554, new_body__1552];
+restore_identifiers__1475(identifiers__1550, env__1543);
+return result__1555}
 else
+if ($T(binaryEE__1527(B1545, "%bind")))
 {
-var object1__2710 = B2654,
-object2__2711 = "%bind",
-B2794 = (object1__2710 === object2__2711);
-if ($T(B2794))
-{
-var ____2665 = form__2651[0],
-B2666 = form__2651[1],
-var__2667 = B2666[0],
-value__2668 = B2666[1],
-body__2669 = form__2651[2],
-new_value__2670 = alpha_convert__2650(value__2668, env__2652),
-B2671 = B2553([var__2667], env__2652),
-new_var__2672 = B2671[0],
-result__2673 = [B2806, [new_var__2672, new_value__2670], alpha_convert__2650(body__2669, env__2652)];
-B2583([var__2667], env__2652);
-return result__2673}
+var ____1556 = form__1542[0],
+B1557 = form__1542[1],
+var__1558 = B1557[0],
+value__1559 = B1557[1],
+body__1560 = form__1542[2],
+new_value__1561 = alpha_convert__1541(value__1559, env__1543),
+B1562 = rename_identifiers__1452([var__1558], env__1543),
+new_var__1563 = B1562[0],
+result__1564 = [$S("%bind", "ralph/core"), [new_var__1563, new_value__1561], alpha_convert__1541(body__1560, env__1543)];
+restore_identifiers__1475([var__1558], env__1543);
+return result__1564}
 else
+if ($T(binaryEE__1527(B1545, "%try")))
 {
-var object1__2714 = B2654,
-object2__2715 = "%try",
-B2795 = (object1__2714 === object2__2715);
-if ($T(B2795))
-{
-var ____2674 = form__2651[0],
-body__2675 = form__2651[1],
-var__2676 = form__2651[2],
-catch__2677 = form__2651[3],
-new_body__2678 = alpha_convert__2650(body__2675, env__2652),
-B2679 = B2553([var__2676], env__2652),
-new_var__2680 = B2679[0],
-result__2681 = [B2807, new_body__2678, new_var__2680, alpha_convert__2650(catch__2677, env__2652)];
-B2583([var__2676], env__2652);
-return result__2681}
+var ____1565 = form__1542[0],
+body__1566 = form__1542[1],
+var__1567 = form__1542[2],
+catch__1568 = form__1542[3],
+new_body__1569 = alpha_convert__1541(body__1566, env__1543),
+B1570 = rename_identifiers__1452([var__1567], env__1543),
+new_var__1571 = B1570[0],
+result__1572 = [$S("%try", "ralph/core"), new_body__1569, new_var__1571, alpha_convert__1541(catch__1568, env__1543)];
+restore_identifiers__1475([var__1567], env__1543);
+return result__1572}
 else
+if ($T(binaryEE__1527(B1545, "%define")))
 {
-var object1__2718 = B2654,
-object2__2719 = "%define",
-B2796 = (object1__2718 === object2__2719);
-if ($T(B2796))
-{
-var ____2682 = form__2651[0],
-identifier__2683 = form__2651[1],
-B2684 = B2552(identifier__2683),
-module_name__2685 = B2684[0],
-name__2686 = B2684[1],
-new_identifier__2687 = B2551();
-B2535(env__2652, module_name__2685, name__2686);
-var array__2722 = B2532(env__2652, "identifiers", module_name__2685, name__2686),
-value__2723 = new_identifier__2687;
-array__2722.push(value__2723);
-array__2722;
-B2533(env__2652, "definition-names", B2646(new_identifier__2687), name__2686);
-B2533(env__2652, "new-identifiers", name__2686, new_identifier__2687);
-return [B2808, new_identifier__2687]}
+var ____1573 = form__1542[0],
+identifier__1574 = form__1542[1],
+name__1575 = symbol_name__1529(identifier__1574),
+B1576 = rename_identifiers__1452([identifier__1574], env__1543),
+new_identifier__1577 = B1576[0];
+get_setter__1438(env__1543, "definition-names", symbol_name__1529(new_identifier__1577), name__1575);
+get_setter__1438(env__1543, "new-identifiers", name__1575, new_identifier__1577);
+return [$S("%define", "ralph/core"), new_identifier__1577]}
 else
 {
-var object1__2726 = B2654,
-object2__2727 = "%if",
-B2688 = (object1__2726 === object2__2727),
-B2797;
-if ($T(B2688))
-B2797 = B2688
+var B1578 = binaryEE__1527(B1545, "%if"),
+B1593;
+if ($T(B1578))
+{B1593 = B1578}
 else
 {
-var object1__2730 = B2654,
-object2__2731 = "%while",
-B2689 = (object1__2730 === object2__2731);
-if ($T(B2689))
-B2797 = B2689
+var B1579 = binaryEE__1527(B1545, "%while");
+if ($T(B1579))
+{B1593 = B1579}
 else
 {
-var object1__2734 = B2654,
-object2__2735 = "%set",
-B2690 = (object1__2734 === object2__2735);
-if ($T(B2690))
-B2797 = B2690
+var B1580 = binaryEE__1527(B1545, "%set");
+if ($T(B1580))
+{B1593 = B1580}
 else
 {
-var object1__2738 = B2654,
-object2__2739 = "%begin",
-B2691 = (object1__2738 === object2__2739);
-if ($T(B2691))
-B2797 = B2691
+var B1581 = binaryEE__1527(B1545, "%begin");
+if ($T(B1581))
+{B1593 = B1581}
 else
 {
-var object1__2742 = B2654,
-object2__2743 = "%get-property",
-B2692 = (object1__2742 === object2__2743);
-if ($T(B2692))
-B2797 = B2692
+var B1582 = binaryEE__1527(B1545, "%get-property");
+if ($T(B1582))
+{B1593 = B1582}
 else
 {
-var object1__2746 = B2654,
-object2__2747 = "%object",
-B2693 = (object1__2746 === object2__2747);
-if ($T(B2693))
-B2797 = B2693
+var B1583 = binaryEE__1527(B1545, "%object");
+if ($T(B1583))
+{B1593 = B1583}
 else
 {
-var object1__2750 = B2654,
-object2__2751 = "%array",
-B2694 = (object1__2750 === object2__2751);
-if ($T(B2694))
-B2797 = B2694
+var B1584 = binaryEE__1527(B1545, "%array");
+if ($T(B1584))
+{B1593 = B1584}
 else
 {
-var object1__2754 = B2654,
-object2__2755 = "%native",
-B2695 = (object1__2754 === object2__2755);
-if ($T(B2695))
-B2797 = B2695
+var B1585 = binaryEE__1527(B1545, "%native");
+if ($T(B1585))
+{B1593 = B1585}
 else
 {
-var object1__2758 = B2654,
-object2__2759 = "%native-call",
-B2696 = (object1__2758 === object2__2759);
-if ($T(B2696))
-B2797 = B2696
+var B1586 = binaryEE__1527(B1545, "%native-call");
+if ($T(B1586))
+{B1593 = B1586}
 else
 {
-var object1__2762 = B2654,
-object2__2763 = "%infix",
-B2697 = (object1__2762 === object2__2763);
-if ($T(B2697))
-B2797 = B2697
+var B1587 = binaryEE__1527(B1545, "%infix");
+if ($T(B1587))
+{B1593 = B1587}
 else
 {
-var object1__2766 = B2654,
-object2__2767 = "%minus",
-B2698 = (object1__2766 === object2__2767);
-if ($T(B2698))
-B2797 = B2698
+var B1588 = binaryEE__1527(B1545, "%minus");
+if ($T(B1588))
+{B1593 = B1588}
 else
 {
-var object1__2770 = B2654,
-object2__2771 = "%plus",
-B2699 = (object1__2770 === object2__2771);
-if ($T(B2699))
-B2797 = B2699
+var B1589 = binaryEE__1527(B1545, "%plus");
+if ($T(B1589))
+{B1593 = B1589}
 else
 {
-var object1__2774 = B2654,
-object2__2775 = "%times",
-B2700 = (object1__2774 === object2__2775);
-if ($T(B2700))
-B2797 = B2700
+var B1590 = binaryEE__1527(B1545, "%times");
+if ($T(B1590))
+{B1593 = B1590}
+else
+B1593 = binaryEE__1527(B1545, "%divide")}}}}}}}}}}}};
+if ($T(B1593))
+{return concatenate__1528([first__1530(form__1542)], map__1448(rcurry__1531(alpha_convert__1541, env__1543), rest__1532(form__1542)))}
 else
 {
-var object1__2778 = B2654,
-object2__2779 = "%divide";
-B2797 = (object1__2778 === object2__2779)}}}}}}}}}}}}};
-if ($T(B2797))
-{
-var sequence__2781 = form__2651,
-B2798 = sequence__2781[0],
-B2799 = [B2798],
-B2800 = B2647(alpha_convert__2650, env__2652),
-sequence__2783 = form__2651,
-B2801 = sequence__2783.slice(1),
-B2802 = B2549(B2800, B2801);
-return B2644(B2799, B2802)}
+var B1591 = binaryEE__1527(B1545, "%native-name"),
+B1594;
+if ($T(B1591))
+{B1594 = B1591}
+else
+B1594 = binaryEE__1527(B1545, "%symbol");
+if ($T(B1594))
+{return form__1542}
+else
+return map__1448(rcurry__1531(alpha_convert__1541, env__1543), form__1542)}}}
+else
+if ($T(instanceQ__1525(B1544, LsymbolG__1533)))
+{if ($T(memberQ__1534(form__1542, TdefinedT__1535)))
+{return form__1542}
 else
 {
-var object1__2786 = B2654,
-object2__2787 = "%native-name",
-B2803 = (object1__2786 === object2__2787);
-if ($T(B2803))
-return form__2651
+var value__1592 = find_identifier__1496(form__1542, env__1543);
+if ($T(binaryEE__1527(value__1592, Tnot_foundT__1492)))
+{return signal__1536(make__1537(LerrorG__1538, $K("message"), format_to_string__1539("ALPHA: NOT FOUND: %=", form__1542)))}
 else
-return B2549(B2647(alpha_convert__2650, env__2652), form__2651)}}}}}}
+return value__1592}}
 else
-if ($T(B2641(B2653, B2648)))
-{
-var value__2701 = B2611(form__2651, env__2652),
-object1__2790 = value__2701,
-object2__2791 = B2608,
-B2804 = (object1__2790 === object2__2791);
-if ($T(B2804))
-return form__2651
-else
-return value__2701}
-else
-return form__2651}, false);
-exports["alpha-convert"] = B2649}
+return form__1542}, false);
+exports["alpha-convert"] = alpha_convert__1540}

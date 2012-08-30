@@ -1,246 +1,145 @@
-var B4197 = require("ralph/core")
-var B4199 = require("ralph/compiler/utilities")
-var reduce = B4197.reduce,
-B4201 = B4197["%make-function"],
-B4202 = B4197.reduce1,
-B4203 = B4197.concatenate,
-B4204 = B4197.map,
-B4205 = B4199["begin?"],
-B4206 = B4197.rest,
-B4207,
-B4208 = B4201("flatten_begins", function flatten_begins__4209 (exps__4210)
 {
-var function__4224 = B4203,
-values__4225 = B4204(function B4211 (exp__4212)
+var B2081;
+false;
+B2081 = require("ralph/core")}
 {
-var flattened__4213 = B4207(exp__4212);
-if ($T(B4205(flattened__4213)))
+var B2083;
+false;
+B2083 = require("ralph/compiler/utilities")}
 {
-var sequence__4223 = flattened__4213;
-return sequence__4223.slice(1)}
+var Mmake_function__2085 = B2081["%make-function"],
+reduce1__2086 = B2081.reduce1,
+concatenate__2087 = B2081.concatenate,
+map__2088 = B2081.map,
+beginQ__2089 = B2083["begin?"],
+rest__2090 = B2081.rest,
+flatten_statementsN__2091,
+flatten_begins__2092;
+false;
+flatten_begins__2092 = Mmake_function__2085("flatten_begins", function flatten_begins__2093 (exps__2094)
+{return reduce1__2086(concatenate__2087, map__2088(function B2095 (exp__2096)
+{
+var flattened__2097 = flatten_statementsN__2091(exp__2096);
+if ($T(beginQ__2089(flattened__2097)))
+{return rest__2090(flattened__2097)}
 else
-return [flattened__4213]}, exps__4210),
-B4226 = values__4225,
-B4228 = B4226[0],
-B4227 = values__4225,
-B4229 = B4227.slice(1);
-return reduce(function__4224, B4228, B4229)}, false)
-var reduce = B4197.reduce,
-trueQ = B4197["true?"],
-B4232 = B4199["var?"],
-B4233 = B4197["do"],
-B4234 = B4197["push-last"],
-B4235 = B4197.last,
-B4236 = B4197["binary=="],
-B4237 = B4197.first,
-B4238 = B4197["second-setter"],
-B4239 = B4197.third,
-B4240 = B4197.second,
-B4241 = B4199["set?"],
-B4242 = B4197.not,
-B4243 = B4197["empty?"],
-B4244 = B4201("flatten_varsN", function flatten_varsN__4245 (exps__4246)
-{return reduce(function B4247 (result__4248, exp__4249)
+return [flattened__2097]}, exps__2094))}, false)}
 {
-var sequence__4268 = result__4248,
-B4269 = sequence__4268,
-B4270 = ((B4269 || false).length || 0),
-B4271 = 0,
-value__4272 = (B4270 === B4271),
-B4333 = !(trueQ(value__4272)),
-previous__4250;
-if ($T(B4333))
+var reduce__2100 = B2081.reduce,
+varQ__2101 = B2083["var?"],
+do__2102 = B2081["do"],
+push_last__2103 = B2081["push-last"],
+last__2104 = B2081.last,
+binaryEE__2105 = B2081["binary=="],
+first__2106 = B2081.first,
+second_setter__2107 = B2081["second-setter"],
+third__2108 = B2081.third,
+second__2109 = B2081.second,
+setQ__2110 = B2083["set?"],
+not__2111 = B2081.not,
+emptyQ__2112 = B2081["empty?"],
+flatten_varsN__2113;
+false;
+flatten_varsN__2113 = Mmake_function__2085("flatten_varsN", function flatten_varsN__2114 (exps__2115)
+{return reduce__2100(function B2116 (result__2117, exp__2118)
 {
-var array__4280 = result__4248,
-B4281 = array__4280,
-B4282 = ((B4281 || false).length || 0),
-B4334 = (B4282 - 1);
-previous__4250 = array__4280[B4334]}
+var previous__2119;
+if ($T(not__2111(emptyQ__2112(result__2117))))
+{previous__2119 = last__2104(result__2117)}
 else
-previous__4250 = false;
-var previous_varQ__4251;
-if ($T(previous__4250))
-previous_varQ__4251 = B4232(previous__4250)
+previous__2119 = false;
+var previous_varQ__2120;
+if ($T(previous__2119))
+{previous_varQ__2120 = varQ__2101(previous__2119)}
 else
-previous_varQ__4251 = false;
-var B4335;
-if ($T(previous_varQ__4251))
-B4335 = B4232(exp__4249)
+previous_varQ__2120 = false;
+var B2126;
+if ($T(previous_varQ__2120))
+{B2126 = varQ__2101(exp__2118)}
 else
-B4335 = false;
-if ($T(B4335))
+B2126 = false;
+if ($T(B2126))
 {
-var B4337 = function B4252 (binding__4253)
-{
-var array__4292 = result__4248,
-B4293 = array__4292,
-B4294 = ((B4293 || false).length || 0),
-B4336 = (B4294 - 1),
-array__4295 = array__4292[B4336],
-value__4296 = binding__4253;
-array__4295.push(value__4296);
-return array__4295},
-sequence__4298 = exp__4249,
-B4338 = sequence__4298.slice(1);
-B4233(B4337, B4338);
-return result__4248}
+do__2102(function B2121 (binding__2122)
+{return push_last__2103(last__2104(result__2117), binding__2122)}, rest__2090(exp__2118));
+return result__2117}
 else
 {
-var mergeQ__4254;
-if ($T(previous_varQ__4251))
-mergeQ__4254 = B4241(exp__4249)
+var mergeQ__2123;
+if ($T(previous_varQ__2120))
+{mergeQ__2123 = setQ__2110(exp__2118)}
 else
-mergeQ__4254 = false;
-var binding__4255;
-if ($T(mergeQ__4254))
-{
-var array__4313 = result__4248,
-B4314 = array__4313,
-B4315 = ((B4314 || false).length || 0),
-B4339 = (B4315 - 1),
-array__4316 = array__4313[B4339],
-B4317 = array__4316,
-B4318 = ((B4317 || false).length || 0),
-B4340 = (B4318 - 1);
-binding__4255 = array__4316[B4340]}
+mergeQ__2123 = false;
+var binding__2124;
+if ($T(mergeQ__2123))
+{binding__2124 = last__2104(last__2104(result__2117))}
 else
-binding__4255 = false;
-var identifier__4256;
-if ($T(mergeQ__4254))
-{
-var sequence__4320 = exp__4249;
-identifier__4256 = sequence__4320[1]}
+binding__2124 = false;
+var identifier__2125;
+if ($T(mergeQ__2123))
+{identifier__2125 = second__2109(exp__2118)}
 else
-identifier__4256 = false;
-var sequence__4324 = binding__4255,
-object1__4325 = sequence__4324[0],
-object2__4326 = identifier__4256,
-B4341 = (object1__4325 === object2__4326);
-if ($T(B4341))
+identifier__2125 = false;
+if ($T(binaryEE__2105(first__2106(binding__2124), identifier__2125)))
 {
-var array__4331 = binding__4255,
-sequence__4330 = exp__4249,
-value__4332 = sequence__4330[2];
-array__4331[1] = value__4332;
-return result__4248}
+second_setter__2107(binding__2124, third__2108(exp__2118));
+return result__2117}
 else
-return B4203(result__4248, [exp__4249])}}, [], exps__4246)}, false)
+return concatenate__2087(result__2117, [exp__2118])}}, [], exps__2115)}, false)}
 {
-var B4459 = $S("%begin"),
-B4460 = $S("%var"),
-dec = B4197.dec,
-size = B4197.size,
-flatten_statementsN__4351,
-B4345 = B4197["instance?"],
-B4346 = B4197["<array>"],
-B4347 = B4197["last-setter"],
-B4348 = B4199["maybe-begin"],
-B4349 = B4197["third-setter"],
-B4350 = B4197["symbol-name"];
-B4207 = B4201("flatten_statementsN", function flatten_statementsN__4351 (exp__4352)
-{B4461:while(true){
-if ($T(B4345(exp__4352, B4346)))
+var instanceQ__2130 = B2081["instance?"],
+LarrayG__2131 = B2081["<array>"],
+last_setter__2132 = B2081["last-setter"],
+maybe_begin__2133 = B2083["maybe-begin"],
+third_setter__2134 = B2081["third-setter"],
+symbol_name__2135 = B2081["symbol-name"];
+false;
+flatten_statementsN__2091 = Mmake_function__2085("flatten_statementsN", function flatten_statementsN__2136 (exp__2137)
+{if ($T(instanceQ__2130(exp__2137, LarrayG__2131)))
 {
-var sequence__4362 = exp__4352,
-B4445 = sequence__4362[0],
-B4353 = B4350(B4445),
-object1__4365 = B4353,
-object2__4366 = "%method",
-B4354 = (object1__4365 === object2__4366),
-B4446;
-if ($T(B4354))
-B4446 = B4354
+var B2138 = symbol_name__2135(first__2106(exp__2137)),
+B2139 = binaryEE__2105(B2138, "%method"),
+B2146;
+if ($T(B2139))
+{B2146 = B2139}
 else
 {
-var object1__4369 = B4353,
-object2__4370 = "%while",
-B4355 = (object1__4369 === object2__4370);
-if ($T(B4355))
-B4446 = B4355
+var B2140 = binaryEE__2105(B2138, "%while");
+if ($T(B2140))
+{B2146 = B2140}
 else
+B2146 = binaryEE__2105(B2138, "%set")};
+if ($T(B2146))
 {
-var object1__4373 = B4353,
-object2__4374 = "%set";
-B4446 = (object1__4373 === object2__4374)}};
-if ($T(B4446))
-{
-var array__4387 = exp__4352,
-array__4384 = exp__4352,
-B4385 = array__4384,
-B4386 = ((B4385 || false).length || 0),
-B4447 = (B4386 - 1),
-B4448 = array__4384[B4447],
-value__4388 = flatten_statementsN__4351(B4448);
-array__4387[dec(size(array__4387), 1)] = value__4388;
-return exp__4352}
+last_setter__2132(exp__2137, flatten_statementsN__2136(last__2104(exp__2137)));
+return exp__2137}
 else
+if ($T(binaryEE__2105(B2138, "%begin")))
 {
-var object1__4391 = B4353,
-object2__4392 = "%begin",
-B4449 = (object1__4391 === object2__4392);
-if ($T(B4449))
-{
-var ____4356 = exp__4352[0],
-exps__4357 = $SL.call(exp__4352, 1);
-return B4348(B4244(B4208(exps__4357)))}
+var ____2141 = exp__2137[0],
+exps__2142 = $SL.call(exp__2137, 1);
+return maybe_begin__2133(flatten_varsN__2113(flatten_begins__2092(exps__2142)))}
 else
+if ($T(binaryEE__2105(B2138, "%bind")))
 {
-var object1__4395 = B4353,
-object2__4396 = "%bind",
-B4450 = (object1__4395 === object2__4396);
-if ($T(B4450))
-{
-var ____4358 = exp__4352[0],
-binding__4359 = exp__4352[1],
-body__4360 = exp__4352[2];
-arguments = [[B4459, [B4460, binding__4359], body__4360]];
-exp__4352 = arguments[0];
-continue B4461}
+var ____2143 = exp__2137[0],
+binding__2144 = exp__2137[1],
+body__2145 = exp__2137[2];
+return flatten_statementsN__2136([$S("%begin", "ralph/core"), [$S("%var", "ralph/core"), binding__2144], body__2145])}
 else
+if ($T(binaryEE__2105(B2138, "%if")))
 {
-var object1__4399 = B4353,
-object2__4400 = "%if",
-B4451 = (object1__4399 === object2__4400);
-if ($T(B4451))
-{
-var array__4405 = exp__4352,
-sequence__4404 = exp__4352,
-B4452 = sequence__4404[2],
-value__4406 = flatten_statementsN__4351(B4452);
-array__4405[2] = value__4406;
-var array__4419 = exp__4352,
-array__4416 = exp__4352,
-B4417 = array__4416,
-B4418 = ((B4417 || false).length || 0),
-B4453 = (B4418 - 1),
-B4454 = array__4416[B4453],
-value__4420 = flatten_statementsN__4351(B4454);
-array__4419[dec(size(array__4419), 1)] = value__4420;
-return exp__4352}
+third_setter__2134(exp__2137, flatten_statementsN__2136(third__2108(exp__2137)));
+last_setter__2132(exp__2137, flatten_statementsN__2136(last__2104(exp__2137)));
+return exp__2137}
 else
+if ($T(binaryEE__2105(B2138, "%try")))
 {
-var object1__4423 = B4353,
-object2__4424 = "%try",
-B4455 = (object1__4423 === object2__4424);
-if ($T(B4455))
-{
-var array__4429 = exp__4352,
-sequence__4428 = exp__4352,
-B4456 = sequence__4428[1],
-value__4430 = flatten_statementsN__4351(B4456);
-array__4429[1] = value__4430;
-var array__4443 = exp__4352,
-array__4440 = exp__4352,
-B4441 = array__4440,
-B4442 = ((B4441 || false).length || 0),
-B4457 = (B4442 - 1),
-B4458 = array__4440[B4457],
-value__4444 = flatten_statementsN__4351(B4458);
-array__4443[dec(size(array__4443), 1)] = value__4444;
-return exp__4352}
+second_setter__2107(exp__2137, flatten_statementsN__2136(second__2109(exp__2137)));
+last_setter__2132(exp__2137, flatten_statementsN__2136(last__2104(exp__2137)));
+return exp__2137}
 else
-return B4204(flatten_statementsN__4351, exp__4352)}}}}}
+return map__2088(flatten_statementsN__2136, exp__2137)}
 else
-return exp__4352;
-break}}, false);
-exports["flatten-statements!"] = B4207}
+return exp__2137}, false);
+exports["flatten-statements!"] = flatten_statementsN__2091}

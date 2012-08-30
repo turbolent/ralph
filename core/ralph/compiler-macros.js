@@ -1,32 +1,35 @@
-var B1509 = require("ralph/core")
+{
+var B940;
+false;
+B940 = require("ralph/core")}
 false
 {
-var B1519 = $S("set!"),
-B1520 = $S("get"),
-B1521 = $S("*special-forms*"),
-B1522 = $S("method"),
-B1511 = B1509["%make-function"],
-B1512 = B1509["symbol-name"],
-B1513 = B1509.concatenate,
-B1514 = B1511("define_special_form", function define_special_form__1515 (B1516, identifier__1517)
+var Mmake_function__942 = B940["%make-function"],
+symbol_name__943 = B940["symbol-name"],
+concatenate__944 = B940.concatenate,
+define_special_form__945;
+false;
+define_special_form__945 = Mmake_function__942("define_special_form", function define_special_form__946 (B947, identifier__948)
 {
-var definition__1518 = $SL.call(arguments, 2);
-return [B1519, [B1520, B1521, B1512(identifier__1517)], B1513([B1522], definition__1518)]}, false);
-exports["define-special-form"] = B1514;
-B1514["%macro?"] = true}
+var definition__949 = $SL.call(arguments, 2);
+return [$S("set!", "ralph/core"), [$S("get", "ralph/core"), $S("*special-forms*"), symbol_name__943(identifier__948)], concatenate__944([$S("method", "ralph/core")], definition__949)]}, false);
+exports["define-special-form"] = define_special_form__945;
+define_special_form__945["%macro?"] = true}
 {
-var B1529 = $S("*core-macros*"),
-B1524 = B1511("define_core_macro", function define_core_macro__1525 (B1526, identifier__1527)
+var define_core_macro__951;
+false;
+define_core_macro__951 = Mmake_function__942("define_core_macro", function define_core_macro__952 (B953, identifier__954)
 {
-var definition__1528 = $SL.call(arguments, 2);
-return [B1519, [B1520, B1529, B1512(identifier__1527)], B1513([B1522], definition__1528)]}, false);
-exports["define-core-macro"] = B1524;
-B1524["%macro?"] = true}
+var definition__955 = $SL.call(arguments, 2);
+return [$S("set!", "ralph/core"), [$S("get", "ralph/core"), $S("*core-macros*"), symbol_name__943(identifier__954)], concatenate__944([$S("method", "ralph/core")], definition__955)]}, false);
+exports["define-core-macro"] = define_core_macro__951;
+define_core_macro__951["%macro?"] = true}
 {
-var B1536 = $S("*core-symbol-macros*"),
-B1531 = B1511("define_core_symbol_macro", function define_core_symbol_macro__1532 (B1533, identifier__1534)
+var define_core_symbol_macro__957;
+false;
+define_core_symbol_macro__957 = Mmake_function__942("define_core_symbol_macro", function define_core_symbol_macro__958 (B959, identifier__960)
 {
-var definition__1535 = $SL.call(arguments, 2);
-return [B1519, [B1520, B1536, B1512(identifier__1534)], B1513([B1522], definition__1535)]}, false);
-exports["define-core-symbol-macro"] = B1531;
-B1531["%macro?"] = true}
+var definition__961 = $SL.call(arguments, 2);
+return [$S("set!", "ralph/core"), [$S("get", "ralph/core"), $S("*core-symbol-macros*"), symbol_name__943(identifier__960)], concatenate__944([$S("method", "ralph/core")], definition__961)]}, false);
+exports["define-core-symbol-macro"] = define_core_symbol_macro__957;
+define_core_symbol_macro__957["%macro?"] = true}
