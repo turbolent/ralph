@@ -109,7 +109,7 @@
              (push-last stack []))
             (("[")
              (push-last ends "]")
-             (push-last stack `(%array)))
+             (push-last stack [(symbol "%array" "ralph/core")]))
             (((last ends))
              (pop-last ends)
              (add-last!))
