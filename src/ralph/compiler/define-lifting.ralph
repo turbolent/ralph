@@ -2,7 +2,6 @@
   import: (ralph/compiler/utilities)
   export: (lift-defines))
 
-
 ;; replace defines with top-level %defines
 ;; and local assignments
 
@@ -56,20 +55,18 @@
               (k (concatenate [m] le*)
                  env)))))
         ;; leave as-is
-        (("%define" "%symbol")
+        (("%symbol")
          (k exp))
-        (("define")
-         (destructuring-bind (_ var value export?) exp
-           (bind ((name (symbol-name var)))
-             (if (has? (get env "defined?") name)
-                 (k `(%set ,var ,value)
-                    env)
-                 (begin
-                  (set! (get env "defined?" name) #t)
-                  `(%begin
-                    (%define ,var)
-                    ,(k `(%set ,var ,value)
-                        env)))))))
+        (("%define")
+         (bind ((identifier (second exp))
+                (name (symbol-name identifier)))
+           (if (get env "defined?" name)
+               (k #f env)
+               (begin
+                (set! (get env "defined?" name) #t)
+                `(%begin
+                  (%define ,identifier)
+                  ,(k #f env))))))
         (else:
          (lift-define** exp env k)))
       (k exp env)))

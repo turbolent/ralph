@@ -91,9 +91,7 @@
 
 (define-function close-free-variables (exp env)
   (if (instance? exp <array>)
-      (if (and (expression? exp)
-               (== (first exp)
-                   (symbol "%method")))
+      (if (method? exp)
           ;; build closure for free variables
           ;; TODO: env.definition-names (?!)
           (bind ((variables (reduce set-subtract!

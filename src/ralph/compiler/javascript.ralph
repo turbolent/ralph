@@ -108,11 +108,11 @@
      (concatenate
       "$K(\"" (symbol-name exp) "\")"))
     ((<symbol>)
-     (select exp ==
-       (((symbol "%this-method"))
+     (select (symbol-name exp) ==
+       (("%this-method")
         (compile-js (get env "current-method")
                     env))
-       (((symbol "%all-arguments"))
+       (("%all-arguments")
         "arguments")
        (else:
         (escape-name (symbol-name exp)))))
@@ -169,15 +169,18 @@
           "{" (join entries ",\n") "}")))
       (("%if")
        (destructuring-bind (_ test then else) exp
-         (concatenate
-          "if (" (compile-js test env) ")\n"
-          (compile-js then env)
-          ;; optimization: default is false
-          (if (and else
-                   (not (= else `(%return #f))))
-              (concatenate
-               "\nelse\n" (compile-js else env))
-              ""))))
+         (bind ((then* (compile-js then env)))
+           (concatenate
+            "if (" (compile-js test env) ")\n"
+            (if (begin? then)
+                then*
+                (concatenate "{" then* "}"))
+            ;; optimization: default is false
+            (if (and else
+                     (not (= else `(%return #f))))
+                (concatenate
+                 "\nelse\n" (compile-js else env))
+                "")))))
       (("%while")
        (destructuring-bind (_ test body) exp
          (concatenate "while (" (compile-js test env) ")\n"
@@ -214,8 +217,7 @@
              (set! (get env "current-method") name)
              (bind ((body* (compile-js body env)))
                (set! (get env "current-method") previous-method)
-               (if (and (expression? body)
-                        (== (first body) (symbol "%begin")))
+               (if (begin? body)
                    body*
                    (concatenate "{" body* "}"))))))))
       (("%var")

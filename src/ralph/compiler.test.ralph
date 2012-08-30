@@ -26,6 +26,7 @@
       (method (_ x y)
         `(gamma ,x ,y)))
 
+;; TODO: test binding of qualified identifiers
 
 (check-equal "macroexpand-1: alpha"
              `(beta 1 2)
@@ -69,16 +70,16 @@
                           *environment*))
 
 (check-equal "macroexpand-all: bind b"
-             (symbol "b")
+             `b
              (macroexpand-all `(bind ()
                                  b)
                               *environment*))
 
 
 (check-equal "macroexpand-all: bind b"
-             `(%bind (b (%plus a 1))
-                b)
-             (macroexpand-all `(bind ((b (+ a 1)))
+             `(%bind (,'b (%plus ,'a 1))
+                ,'b)
+             (macroexpand-all '(bind ((b (+ a 1)))
                                  b)
                               *environment*))
 

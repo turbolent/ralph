@@ -76,7 +76,7 @@
    (symbol-name identifier)])
 
 (define *defined*
-  `(%all-arguments %this-method))
+  '(%all-arguments %this-method))
 
 (define-function localize (identifier env)
   (if (== (get identifier "module")

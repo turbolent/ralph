@@ -110,7 +110,7 @@
                                (get env "module" "exports")))
                  (begin
                   (set! (first exp)
-                        (symbol "%begin"))
+                        `%begin)
                   (set! (second exp)
                         `(%set ,identifier ,value*))
                   (set! (third exp)

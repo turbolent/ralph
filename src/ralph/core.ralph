@@ -51,8 +51,7 @@
            define-method define-generic
            define-module define-macro
            define-symbol-macro
-           %symbol %all-arguments %infix
-           %this-method %next-method
+           %symbol %infix %next-method
            %get-property %native %native-call
            %call %var %array %object %return)
   inline: (not
