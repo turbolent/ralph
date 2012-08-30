@@ -1,9 +1,10 @@
 (define-module ralph/compiler/utilities
   export: (expression? setter-identifier?
            reset-symbol-counter! generate-symbol
-           maybe-begin get-module-name/name
-           var? set? method? begin? *defined*
-           environment-definitions))
+           maybe-begin module-name/name
+           var? set? method? begin? define?
+           *defined* localize
+           bind! bound? unbind!))
 
 ;;;; utilities
 
@@ -21,6 +22,11 @@
   (and (expression? exp)
        (== (symbol-name (first exp))
            "%set")))
+
+(define-function define? (exp)
+  (and (expression? exp)
+       (== (symbol-name (first exp))
+           "%define")))
 
 (define-function method? (exp)
   (and (expression? exp)
@@ -64,14 +70,31 @@
      (concatenate `(%begin)
                   expressions))))
 
-(define-function get-module-name/name (identifier)
-  [(or (get identifier "module") "")
+;; TODO: rename destructure-symbol?
+(define-function module-name/name (identifier env)
+  [(get identifier "module")
    (symbol-name identifier)])
 
 (define *defined*
   `(%all-arguments %this-method))
 
-(define-function environment-definitions (env)
-  (as-set (map symbol
-               (object-properties
-                (get env "defined?")))))
+(define-function localize (identifier env)
+  (if (== (get identifier "module")
+          (get env "module" "name"))
+      ;; local, strip module
+      (symbol (symbol-name identifier))
+      ;; already local or external
+      identifier))
+
+(define-function bind! (env identifier)
+  (inc! (get env "binding-count"
+             (symbol-name identifier))))
+
+(define-function bound? (env identifier)
+  (if-bind (count (get env "binding-count"
+                       (symbol-name identifier)))
+    (> count 0)))
+
+(define-function unbind! (env identifier)
+  (dec! (get env "binding-count"
+             (symbol-name identifier))))

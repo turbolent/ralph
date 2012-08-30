@@ -77,16 +77,6 @@
   (import-identifiers (make-plain-object)))
 
 
-
-(define-function bind! (env identifier)
-  (set! (get env "bound?" (symbol-name identifier))
-        #t))
-
-(define-function unbind! (env identifier)
-  (set! (get env "bound?" (symbol-name identifier))
-        #f))
-
-
 ;;;; special forms
 
 ;; utilities
