@@ -1165,9 +1165,9 @@
              (rcurry lift-symbols env)]
            ["statements"
             (rcurry transform-statements! env)]
-           ; ["TCO"
-           ;  (method (exp)
-           ;    (optimize-tail-calls! exp env))]
+           ["TCO"
+            (method (exp)
+              (optimize-tail-calls! exp env))]
            ["flattened"
             flatten-statements!]
            ["compiled"
