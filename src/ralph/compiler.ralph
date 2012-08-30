@@ -558,20 +558,18 @@
 (define-function simplify-arguments (arguments)
   (destructuring-bind (required rest key)
       (analyze-lambda-list arguments)
-    (bind ((required
-            (map (method (argument)
-                   (if (instance? argument <array>)
-                       (first argument)
-                       argument))
-                 required)))
-      (concatenate
-       required
-       (if rest
-           (concatenate `(#rest) rest)
-           [])
-       (if key
-           (concatenate `(#key) key)
-           [])))))
+    (concatenate
+     (map (method (argument)
+            (if (instance? argument <array>)
+                (first argument)
+                argument))
+          required)
+     (if rest
+         (concatenate `(#rest) rest)
+         [])
+     (if key
+         (concatenate `(#key) key)
+         []))))
 
 (define-function make-function-definer
     (macro-name definer-name #key name? type/existing? record?)
@@ -777,12 +775,13 @@
     ((<array>)
      (when (empty? form)
        (signal "Empty form"))
-     (bind ((name (symbol-name (first form))))
-       (unless (get env "bound?" name)
+     (bind ((identifier (first form))
+            (name (symbol-name identifier)))
+       (unless (bound? env identifier)
          (%get-property env "macros" name))))
     ((<symbol>)
      (bind ((name (symbol-name form)))
-       (unless (get env "bound?" name)
+       (unless (bound? env form)
          (%get-property env "symbol-macros" name))))))
 
 (define-function macroexpand-1 (form env)
