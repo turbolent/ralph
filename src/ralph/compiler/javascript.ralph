@@ -115,7 +115,11 @@
        (("%all-arguments")
         "arguments")
        (else:
-        (escape-name (description exp)))))
+        (escape-name
+        (if (== (get exp "module")
+                (get env "module" "name"))
+            (symbol-name exp)
+            (description exp))))))
     (else:
      (description exp))))
 
