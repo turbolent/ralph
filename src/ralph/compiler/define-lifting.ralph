@@ -58,15 +58,16 @@
         (("%symbol")
          (k exp))
         (("%define")
-         (bind ((identifier (second exp))
-                (name (symbol-name identifier)))
-           (if (get env "defined?" name)
-               (k #f env)
-               (begin
-                (set! (get env "defined?" name) #t)
-                `(%begin
-                  (%define ,identifier)
-                  ,(k #f env))))))
+         (bind ((identifier (second exp)))
+           (destructuring-bind (module-name name)
+               (module-name/name identifier)
+             (if (get env "defined?" module-name name)
+                 (k #f env)
+                 (begin
+                  (set! (get env "defined?" module-name name) #t)
+                  `(%begin
+                    (%define ,identifier)
+                    ,(k #f env)))))))
         (else:
          (lift-define** exp env k)))
       (k exp env)))

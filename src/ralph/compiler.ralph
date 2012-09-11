@@ -76,6 +76,14 @@
   (lifted (make-object))
   (import-identifiers (make-plain-object)))
 
+(define-method initialize ((env <environment>) #rest rest #key module)
+  (apply next-method env rest)
+  (do (method (name)
+        (set! (get env "defined?"
+                   (get module "name") name)
+              #t))
+      ["%all-arguments" "%this-method"]))
+
 
 ;;;; special forms
 
@@ -95,7 +103,8 @@
   (bind ((identifiers* (map (rcurry localize env)
                             (concatenate [name] arguments))))
     (do (method (identifier*)
-          (when (get identifier* "module")
+          (unless (== (get identifier* "module")
+                      (get env "module" "name"))
             (signal (make <error> message:
                           "Can't create method using identifier with external qualifier"))))
         identifiers*)
@@ -111,7 +120,8 @@
 
 (define-special-form
   %set (env identifier value)
-  `(%set ,identifier ,(macroexpand-all value env)))
+  `(%set ,(qualify identifier env)
+         ,(macroexpand-all value env)))
 
 ;; TODO: make binding available inside value?
 ;; (if so, also change alpha-convert,
@@ -121,7 +131,8 @@
     (bind! env var)
     (bind ((var* (localize var env))
            (value* (macroexpand-all value env)))
-      (when (get var* "module")
+      (unless (== (get var* "module")
+                  (get env "module" "name"))
         (signal (make <error> message:
                       "Can't bind using identifier with external qualifier")))
       (bind ((result
@@ -644,7 +655,8 @@
 
 (define-core-macro define (env identifier value)
   (bind ((identifier* (localize identifier env)))
-    (when (get identifier* "module")
+    (unless (== (get identifier* "module")
+                (get env "module" "name"))
       (signal (make <error> message:
                     "Can't define using identifier with external qualifier")))
     (bind! env identifier)
@@ -716,7 +728,7 @@
 
 ;; NOTE: requires module has been imported
 (define-function make-import-definition (module-name env)
-  (bind ((identifier (generate-symbol)))
+  (bind ((identifier (generate-symbol env)))
     (set! (get env "import-identifiers" module-name)
           identifier)
     ;; used after macroexpansion
@@ -796,6 +808,36 @@
 
 ;;;; macro expansion
 
+(define *external-symbols* (%object))
+
+(define-function external-symbol (name module)
+  (or (get *external-symbols* module name)
+      (set! (get *external-symbols* module name)
+            (make <symbol>
+                  name: name
+                  module: module))))
+
+(define-function qualify (form env)
+  (select form instance?
+    ((<array>)
+     (map (rcurry qualify env)
+          form))
+    ((<symbol>)
+     (destructuring-bind (module-name name)
+         (module-name/name form)
+       (if module-name
+           form
+           (if-bind (module/import-name
+                     (unless (bound? env form)
+                       (find-module/import-name name env)))
+             (destructuring-bind (module import-name)
+                 module/import-name
+               (external-symbol import-name (get module "name")))
+             (symbol name (get env "module" "name"))))))
+    (else:
+     form)))
+
+
 (define-function find-macro-definition (form env)
   ;; TODO: deep-get
   (select form instance?
@@ -830,7 +872,7 @@
   (select form instance?
     ((<array>)
      (if (find-macro-definition form env)
-         (maybe-call
+         (simplify-call
           (macroexpand-all (macroexpand form env) env))
          (if-bind (expander (find-special-form form env))
            (apply expander env (rest form))
@@ -839,10 +881,11 @@
     ((<symbol>)
      (if (find-macro-definition form env)
          (macroexpand-all (macroexpand form env) env)
-         form))
-    (else: form)))
+         (qualify form env)))
+    (else:
+     form)))
 
-(define-function maybe-call (exp)
+(define-function simplify-call (exp)
   (if (and (expression? exp <array>)
            (== (symbol-name (first exp))
                "%call"))
@@ -870,10 +913,24 @@
   (get env "import-identifiers"
        (get module "name")))
 
-(define-function define-free-variables (exp env #key (filter identity)
-                                                     (lookup identity))
-  (bind ((variables (filter (set-subtract! (find-free-variables exp env)
-                                           *defined*)))
+(define-function external-definition (variable import-identifier import-name env)
+  (destructuring-bind (module-name name)
+      (module-name/name variable)
+    (unless (get env "defined?" module-name name)
+      (set! (get env "defined?" module-name name) #t)
+      `(%begin
+        (%define ,variable)
+        (%set ,variable
+              (%get-property ,import-identifier
+                             ,import-name))))))
+
+
+(define-function define-free-variables (exp env)
+  (bind ((variables (choose (method (variable)
+                              (destructuring-bind (module-name name)
+                                  (module-name/name variable)
+                                (not (get env "defined?" module-name name))))
+                            (find-free-variables exp env)))
          (result []))
     (for-each ((variable variables))
               ()
@@ -881,59 +938,49 @@
       (destructuring-bind (module-name name)
           (module-name/name variable)
         (bind ((import-name #f))
-          ;; NOTE: localized
-          (unless (or module-name
-                      (get env "defined?" name))
-            ;; imported?
-            (if-bind (module/import-name
-                      (find-module/import-name name env))
-              (destructuring-bind (module import-name*)
-                  module/import-name
-                (set! module-name
-                      (get module "name"))
-                (set! import-name
-                      import-name*))
-              ;; not imported, but could be future definition:
-              ;; only warn, define anyways
+          (unless module-name
+            (signal (concatenate "NOT QUALIFIED: " (description variable))))
+          ;; define
+          (if (== module-name
+                  (get env "module" "name"))
+              ;; local
               (begin
-               (set! (get env "defined?" name) #t)
+               (set! (get env "defined?" module-name name) #t)
                (push-last result
-                          `(%define ,variable)))))
-          (when module-name
-            (if-bind (reference (get env "external-identifier" module-name name))
-              (begin
-               #t
-               ;; was unqualified, but reference is qualified?
-               (unless (== (get variable "module")
-                           (get reference "module"))
-                 ;; bind to already defined reference to external definition
-                 (push-last result
-                            `(%define ,variable))
-                 (push-last result
-                            `(%set ,variable ,(lookup reference))))
-               #t)
+                          `(%define ,variable))
+               ;; imported?
+               (if-bind (module/import-name
+                         (find-module/import-name name env))
+                 (destructuring-bind (module import-name)
+                     module/import-name
+                   (bind ((external-variable (symbol import-name (get module "name"))))
+                     ;; external definition required?
+                     (if-bind (definition
+                                (external-definition external-variable
+                                                     (find-import-identifier module env)
+                                                     import-name env))
+                       (push-last result definition))
+                     ;; bind local to external
+                     (push-last `(%set ,variable ,external-variable))))))
+              ;; external
               (begin
                ;; TODO: check if module exports name
                ;;       if not exported?, signal: name not exported
-               (set! (get env "external-identifier" module-name name)
-                     variable)
                ;; module maybe already imported
                (bind ((module (find-module module-name))
                       (import-identifier
-                       (lookup (find-import-identifier module env))))
+                       (find-import-identifier module env)))
                  ;; module not imported yet?
                  (unless import-identifier
                    (push-last result
                               (make-import-definition module-name env))
                    (set! import-identifier
                          (find-import-identifier module env)))
-                 ;; define and bind
-                 (push-last result `(%define ,variable))
-                 (push-last result
-                            `(%set ,variable
-                                   (%get-property ,import-identifier
-                                                  ,(or import-name
-                                                         name)))))))))))
+                 ;; define external
+                 (push-last result (external-definition variable
+                                                        import-identifier
+                                                        name env))))))))
+    ;; result
     (concatenate
      `(%begin) result [exp])))
 
@@ -1143,7 +1190,7 @@
   (if-bind (t (get env "lifted" type module name))
     (k t env)
     (bind ((t (set! (get env "lifted" type module name)
-                    (generate-symbol))))
+                    (generate-symbol env))))
       `(%bind (,t ,value)
          ,(k t env)))))
 
@@ -1200,14 +1247,14 @@
            ;                    (get env "new-identifier"
            ;                         (symbol-name identifier))))]
            ["ANF"
-            normalize-term]
-           ["lifted symbols"
-             (rcurry lift-symbols env)]
+            (rcurry normalize-term env)]
+           ; ["lifted symbols"
+           ;   (rcurry lift-symbols env)]
            ["statements"
             (rcurry transform-statements! env)]
-           ["TCO"
-            (method (exp)
-              (optimize-tail-calls! exp env))]
+           ; ["TCO"
+           ;  (method (exp)
+           ;    (optimize-tail-calls! exp env))]
            ["flattened"
             flatten-statements!]
            ["compiled"

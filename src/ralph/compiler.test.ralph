@@ -397,8 +397,11 @@
 (reset-symbol-counter!)
 (check-equal "alpha-convert: single method"
              `(%method ,'x_1 (,'a_2) 1)
-             (alpha-convert '(%method x (a) 1)
-                            *environment*))
+             (alpha-convert
+              (macroexpand-all
+               '(%method x (a) 1)
+               *environment*)
+              *environment*))
 
 (reset-symbol-counter!)
 (check-equal "alpha-convert: nested methods"
@@ -407,12 +410,15 @@
                     ,'a_4)
                   ,'a_2))
                1)
-             (alpha-convert '((%method x (a)
-                                ((%method y (a)
-                                   a)
-                                 a))
-                              1)
-                            *environment*))
+             (alpha-convert
+              (macroexpand-all
+               '((%method x (a)
+                   ((%method y (a)
+                      a)
+                    a))
+                 1)
+               *environment*)
+              *environment*))
 
 (reset-symbol-counter!)
 (check-equal "alpha-convert: define"
@@ -420,11 +426,14 @@
                (%define ,'a_1)
                (%method ,'x_2 (,'a_3)
                  ,'a_3))
-             (alpha-convert '(%begin
-                              (%define a)
-                              (%method x (a)
-                               a))
-                            *environment*))
+             (alpha-convert
+              (macroexpand-all
+               '(%begin
+                 (%define a)
+                 (%method x (a)
+                   a))
+               *environment*)
+              *environment*))
 
 ;; TODO: test alpha-convert for bind
 
@@ -480,12 +489,14 @@
 (check-equal "ANF: simple expression"
              `(+ 1 2)
              (normalize-term
-              `(+ 1 2)))
+              `(+ 1 2)
+              *environment*))
 
 (reset-symbol-counter!)
 (check-equal "ANF: nested expression"
              `(+ (- 2 1) 2)
-             (normalize-term `(+ (- 2 1) 2)))
+             (normalize-term `(+ (- 2 1) 2)
+                             *environment*))
 
 (reset-symbol-counter!)
 (check-equal "ANF: bind"
@@ -498,7 +509,8 @@
                '(+ (+ 2 2)
                    (bind ((x 1))
                      (f x)))
-               *environment*)))
+               *environment*)
+              *environment*))
 
 
 (reset-symbol-counter!)
@@ -518,7 +530,8 @@
                  (+ (begin (+ 2 2) (- 3 3))
                     (bind ((x 1))
                       (f x))))
-               *environment*)))
+               *environment*)
+              *environment*))
 
 (reset-symbol-counter!)
 (check-equal "ANF: if: trivial expressions"
@@ -530,7 +543,8 @@
                '(if (= n 0)
                     1
                     (* n (f (- n 1))))
-               *environment*)))
+               *environment*)
+              *environment*))
 
 (reset-symbol-counter!)
 (check-equal "ANF: application"
@@ -542,7 +556,8 @@
                '(bind ((id (method (x) x))
                        (apply (method (f x) (f x))))
                   ((id apply) (id 3)))
-               *environment*)))
+               *environment*)
+              *environment*))
 
 (reset-symbol-counter!)
 (check-equal "ANF: method"
@@ -557,7 +572,8 @@
                   (method (b)
                     (- a b)
                     (+ (- a b) b)))
-               *environment*)))
+               *environment*)
+              *environment*))
 
 (reset-symbol-counter!)
 (check-equal "ANF: begin 2"
@@ -579,7 +595,8 @@
                   (b (+ 1 (a))))
                  5
                  (- (d) 23))
-               *environment*)))
+               *environment*)
+              *environment*))
 
 (reset-symbol-counter!)
 (check-equal "ANF: nested set!"
@@ -591,7 +608,8 @@
                '(begin
                  (set! a (+ (- b 3) c))
                  (set! x (* (set! z a) 5)))
-               *environment*)))
+               *environment*)
+              *environment*))
 
 (reset-symbol-counter!)
 (check-equal "ANF: set! with expression"
@@ -599,7 +617,8 @@
              (normalize-term
               (macroexpand-all
                '(set! (foo x) (+ 2 3))
-               *environment*)))
+               *environment*)
+              *environment*))
 
 
 (reset-symbol-counter!)
@@ -615,7 +634,8 @@
                '(begin
                  (set! a (+ (- b 3) c))
                  (set! x (* (set! z (if a b c)) 5)))
-               *environment*)))
+               *environment*)
+              *environment*))
 
 (reset-symbol-counter!)
 (check-equal "ANF: set! with expression and keywords"
@@ -625,7 +645,8 @@
               (macroexpand-all
                '(set! (foo x) (+ 2 3)
                       animated?: (> (bar x) 1))
-               *environment*)))
+               *environment*)
+              *environment*))
 
 (reset-symbol-counter!)
 (check-equal "ANF: or"
@@ -640,7 +661,8 @@
              (normalize-term
               (macroexpand-all
                '(foo (or #f 2 3) bar)
-               *environment*)))
+               *environment*)
+              *environment*))
 
 (reset-symbol-counter!)
 (check-equal "ANF: while"
@@ -660,7 +682,8 @@
                     (set! factorial (* factorial counter))
                     (set! counter (- counter 1)))
                   counter)
-               *environment*)))
+               *environment*)
+              *environment*))
 
 (reset-symbol-counter!)
 (check-equal "ANF: while as expression"
@@ -681,7 +704,8 @@
                           (set! run? #f)
                           23)))
                   (== value #f))
-               *environment*)))
+               *environment*)
+              *environment*))
 
 (reset-symbol-counter!)
 (check-equal "ANF: while in if"
@@ -696,7 +720,8 @@
                               42
                               23)))
                   (bar x))
-               *environment*)))
+               *environment*)
+              *environment*))
 
 (reset-symbol-counter!)
 (check-equal "ANF: if in while"
@@ -711,7 +736,8 @@
               (macroexpand-all
                '(while (or (foo) (bar))
                   (baz))
-               *environment*)))
+               *environment*)
+              *environment*))
 
 (reset-symbol-counter!)
 (check-equal "ANF: begin as expression"
@@ -723,7 +749,8 @@
              (normalize-term
               (macroexpand-all
                '((curry + 1) (begin 1 (+ 2 3)) 4)
-               *environment*)))
+               *environment*)
+              *environment*))
 
 
 (reset-symbol-counter!)
@@ -751,7 +778,8 @@
                   (else:
                    (do-sth)
                    else))
-               *environment*)))
+               *environment*)
+              *environment*))
 
 (reset-symbol-counter!)
 (check-equal "ANF: if in expression"
@@ -765,7 +793,8 @@
                   (bar (method (item)
                          (baz (if a b c)
                               item))))
-               *environment*)))
+               *environment*)
+              *environment*))
 
 (reset-symbol-counter!)
 (check-equal "ANF: if in expression 2"
@@ -781,7 +810,8 @@
                          ((if c b a)
                           (if a b c)
                           item))))
-               *environment*)))
+               *environment*)
+              *environment*))
 
 
 (reset-symbol-counter!)
@@ -795,7 +825,8 @@
                            (foo))
                          42
                          23))
-               *environment*)))
+               *environment*)
+              *environment*))
 
 (reset-symbol-counter!)
 (check-equal "statements: or"
@@ -813,7 +844,8 @@
                (normalize-term
                 (macroexpand-all
                  `(foo (or #f 2 3) bar)
-                 *environment*))
+                 *environment*)
+                *environment*)
                *environment*))
 
 (reset-symbol-counter!)
@@ -830,7 +862,8 @@
                (normalize-term
                 (macroexpand-all
                  `(if (if a 1 2) 3 4)
-                 *environment*))
+                 *environment*)
+                *environment*)
                *environment*))
 
 (reset-symbol-counter!)
@@ -860,7 +893,8 @@
                                       c)
                                     #f))))
                       4))
-                 *environment*))
+                 *environment*)
+                *environment*)
                *environment*))
 
 
@@ -885,7 +919,8 @@
                     ((method (x) (if x 1 2))
                      (while (> y 2)
                        (dec! y))))
-                 *environment*))
+                 *environment*)
+                *environment*)
                *environment*))
 
 

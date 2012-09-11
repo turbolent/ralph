@@ -51,13 +51,14 @@
 (define-function reset-symbol-counter! ()
   (set! *symbol-count* 0))
 
-(define-function generate-symbol (prefix)
+(define-function generate-symbol (env prefix)
   (bind ((name (concatenate
                 (if prefix
                     (concatenate prefix "_")
                     "$")
                 (as-string (inc! *symbol-count*))))
-         (result (symbol name)))
+         (result (symbol name (when env
+                                (get env "module" "name")))))
     (set! (get result "generated?") #t)
     result))
 
@@ -75,16 +76,11 @@
   [(get identifier "module")
    (symbol-name identifier)])
 
-(define *defined*
-  '(%all-arguments %this-method))
-
 (define-function localize (identifier env)
-  (if (== (get identifier "module")
-          (get env "module" "name"))
-      ;; local, strip module
-      (symbol (symbol-name identifier))
-      ;; already local or external
-      identifier))
+  (if (get identifier "module")
+      identifier
+      (symbol (symbol-name identifier)
+              (get env "module" "name"))))
 
 (define-function bind! (env identifier)
   (inc! (get env "binding-count"

@@ -50,6 +50,8 @@
                   (map (rcurry find-free-variables env)
                        exp))))))
    ((instance? exp <symbol>)
-    (as-set [(localize exp env)]))
+    (unless (get exp "module")
+      (signal (concatenate  "NOT QUALIFIED: " (description exp))))
+    (as-set [exp]))
    (else:
     (as-set []))))

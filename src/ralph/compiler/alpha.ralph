@@ -25,9 +25,9 @@
          (destructuring-bind (module-name name)
              (module-name/name identifier)
            (unless module-name
-             (set! module-name
-                   (get env "module" "name")))
+             (signal (concatenate "NOT QUALIFIED: " (description identifier))))
            (bind ((new-identifier (generate-symbol
+                                   env
                                    (unless (get identifier "generated?")
                                      name))))
              (ensure-naming-structure env module-name name)
@@ -42,8 +42,7 @@
     (destructuring-bind (module-name name)
         (module-name/name identifier)
       (unless module-name
-        (set! module-name
-              (get env "module" "name")))
+        (signal (concatenate "NOT QUALIFIED: " (description identifier))))
       (pop (get env "identifiers" module-name name)))))
 
 (define *not-found* (make-object))
@@ -52,8 +51,7 @@
   (destructuring-bind (module-name name)
       (module-name/name identifier)
     (unless module-name
-      (set! module-name
-            (get env "module" "name")))
+      (signal (concatenate "NOT QUALIFIED: " (description identifier))))
     (bind ((renamings (get env "identifiers"
                            module-name name)))
       (if (and renamings

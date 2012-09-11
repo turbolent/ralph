@@ -56,7 +56,7 @@
                    ;; tail-recursive call
                    (bind ((label (or (get env "tco-labels" name)
                                      (set! (get env "tco-labels" name)
-                                           (generate-symbol))))
+                                           (generate-symbol env))))
                           (new-values (rest value)))
                      (unless (get env "tco-wrappers" name)
                        (set! (get env "tco-wrappers" name)

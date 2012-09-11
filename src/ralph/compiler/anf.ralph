@@ -20,109 +20,112 @@
       #f))
 
 
-(define-function normalize-term (expression)
-  (normalize expression identity))
+(define-function normalize-term (expression env)
+  (normalize expression env identity))
 
-(define-function normalize (exp k)
+(define-function normalize (exp env k)
   (if (and (instance? exp <array>)
            (not (empty? exp)))
       (select (symbol-name (first exp)) ==
         (("%method")
          (destructuring-bind (_ name arguments body) exp
            (k `(%method ,name ,arguments
-                 ,(normalize-term body)))))
+                 ,(normalize-term body env)))))
         (("%begin")
          (destructuring-bind (_ exp1 #rest e*) exp
            (if (empty? e*)
-               (normalize exp1 k)
-               (normalize
-                exp1 (method (aexp1)
-                       `(%begin
-                         ,aexp1
-                         ,(normalize (concatenate
-                                      `(%begin) e*)
-                                     k)))))))
+               (normalize exp1 env k)
+               (normalize exp1 env
+                          (method (aexp1)
+                            `(%begin
+                              ,aexp1
+                              ,(normalize (concatenate
+                                           `(%begin) e*)
+                                          env k)))))))
         (("%bind")
          (destructuring-bind (_ (var value) body) exp
-           (normalize
-            value (method (avalue)
-                   `(%bind (,var ,avalue)
-                      ,(normalize body k))))))
+           (normalize value env
+                      (method (avalue)
+                        `(%bind (,var ,avalue)
+                           ,(normalize body env k))))))
         (("%if")
          (destructuring-bind (_ test then else) exp
-           (normalize-value
-            test (method (atest)
-                   (k `(%if ,atest
-                            ,(normalize-term then)
-                            ,(normalize-term else)))))))
+           (normalize-value test env
+                            (method (atest)
+                              (k `(%if ,atest
+                                       ,(normalize-term then env)
+                                       ,(normalize-term else env)))))))
         (("%while")
          (destructuring-bind (_ test body) exp
            (k (if (contains-statements? test)
                   `(%while #t
                      (%begin
-                      ,(normalize-term
-                        `(%if ,test
-                              ,(normalize-term body)
-                              (%native "break")
-                              #f))))
+                      ,(normalize-term `(%if ,test
+                                             ,(normalize-term body)
+                                             (%native "break")
+                                             #f)
+                                       env)))
                   `(%while
-                    ,(normalize-term test)
-                    ,(normalize-term body))))))
+                    ,(normalize-term test env)
+                    ,(normalize-term body env))))))
         (("%try")
          (destructuring-bind (_ body var catch) exp
            (k `(%try
-                ,(normalize-term body)
+                ,(normalize-term body env)
                 ,var
-                ,(normalize-term catch)))))
+                ,(normalize-term catch env)))))
         (("%set")
          ;; TODO: always normalize value?
          (destructuring-bind (_ var value) exp
-           (normalize-value
-            value (method (avalue)
-                   (k `(%set ,var ,avalue))))))
+           (normalize-value value env
+                            (method (avalue)
+                              (k `(%set ,var ,avalue))))))
         ;; leave as-is
         (("%define" "%symbol")
          (k exp))
         (else:
          (cond
           ((contains-statements? exp)
-           (normalize-all exp k))
+           (normalize-all exp env k))
           ((and (expression? exp)
                 (member? (first exp)
                          `(%array %object %get-property %infix
                            %native %native-call %native-name
                            %plus %minus %times %divide)))
            (k (concatenate [(first exp)]
-                           (map normalize-term
+                           (map (rcurry normalize-term env)
                                 (rest exp)))))
           (else:
-           (k (map normalize-term exp))))))
+           (k (map (rcurry normalize-term env)
+                   exp))))))
       (k exp)))
 
-(define-function normalize-value (exp k)
+
+(define-function normalize-value (exp env k)
   (if (contains-statements? exp)
-      (normalize* exp k)
+      (normalize* exp env k)
       (k (if (instance? exp <array>)
-             (map normalize-term exp)
+             (map (rcurry normalize-term env)
+                  exp)
              exp))))
 
-(define-function normalize* (exp k)
-  (normalize
-   exp (method (aexp)
-         (if (atomic? aexp)
-             (k aexp)
-             (bind ((t (generate-symbol)))
-               `(%bind (,t ,aexp)
-                  ,(k t)))))))
+(define-function normalize* (exp env k)
+  (normalize exp env
+             (method (aexp)
+               (if (atomic? aexp)
+                   (k aexp)
+                   (bind ((t (generate-symbol env)))
+                     `(%bind (,t ,aexp)
+                        ,(k t)))))))
 
-(define-function normalize** (exp* k)
+(define-function normalize** (exp* env k)
   (if (empty? exp*)
       (k [])
-      (normalize-all exp* k)))
+      (normalize-all exp* env k)))
 
-(define-function normalize-all (exp k)
-  (normalize*
-   (first exp) (method (t)
-                 (normalize**
-                  (rest exp) (method (t*)
+(define-function normalize-all (exp env k)
+  (normalize* (first exp) env
+              (method (t)
+                (normalize** (rest exp) env
+                             (method (t*)
                                (k (concatenate [t] t*)))))))
