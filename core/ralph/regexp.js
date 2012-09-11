@@ -1,49 +1,62 @@
-var B204 = require("ralph/core")
+{
+var B1420;
+false;
+B1420 = require("ralph/core")}
 false
 {
-var B205 = RegExp;
-exports["<regexp>"] = B205}
-var B209 = B204["%make-method"],
-B210 = B204.concatenate,
-B211 = B204["%keys"],
-B212 = B209("initialize", function B213 (regexp__214)
+var LregexpG__1421;
+false;
+LregexpG__1421 = RegExp;
+exports["<regexp>"] = LregexpG__1421}
 {
-var B215 = $SL.call(arguments, 1),
-B216 = B211(B215, {pattern:false,
+var Mmake_method__1425 = B1420["%make-method"],
+concatenate__1426 = B1420.concatenate,
+Mkeys__1427 = B1420["%keys"],
+initialize__1428;
+false;
+initialize__1428 = Mmake_method__1425("initialize", function B1422__1429 (regexp__1430)
+{
+var B1423__1431 = $SL.call(arguments, 1),
+B1424__1432 = Mkeys__1427(B1423__1431, {pattern:false,
 "global?":false,
 "ignore-case?":false,
 "multiline?":false}),
-pattern__217 = B216.pattern,
-globalQ__218 = B216["global?"],
-ignore_caseQ__219 = B216["ignore-case?"],
-multilineQ__220 = B216["multiline?"];
-if ($T(pattern__217))
+pattern__1433 = B1424__1432.pattern,
+globalQ__1434 = B1424__1432["global?"],
+ignore_caseQ__1435 = B1424__1432["ignore-case?"],
+multilineQ__1436 = B1424__1432["multiline?"];
+if ($T(pattern__1433))
 {
-var B222;
-if ($T(globalQ__218))
-B222 = "g"
+var B1438;
+if ($T(globalQ__1434))
+{B1438 = "g"}
 else
-B222 = "";
-var B223;
-if ($T(ignore_caseQ__219))
-B223 = "i"
+B1438 = "";
+var B1439;
+if ($T(ignore_caseQ__1435))
+{B1439 = "i"}
 else
-B223 = "";
-var B224;
-if ($T(multilineQ__220))
-B224 = "m"
+B1439 = "";
+var B1440;
+if ($T(multilineQ__1436))
+{B1440 = "m"}
 else
-B224 = "";
-var flags__221 = B210(B222, B223, B224);
-return regexp__214.compile(pattern__217)}}, false, B205, B212)
-var B225 = B204["%make-function"],
-B226 = B204[">"],
-B227 = B225("find", function find__228 (regexp__229, string__230)
+B1440 = "";
+var flags__1437 = concatenate__1426(B1438, B1439, B1440);
+return regexp__1430.compile(pattern__1433)}}, false, LregexpG__1421, initialize__1428)}
 {
-var position__231 = string__230.search(regexp__229);
-if ($T(B226(position__231, -1)))
-return position__231}, false)
+var Mmake_function__1441 = B1420["%make-function"],
+G__1442 = B1420[">"],
+find__1443;
+false;
+find__1443 = Mmake_function__1441("find", function find__1444 (regexp__1445, string__1446)
 {
-var B232 = B225("match", function match__233 (regexp__234, string__235)
-{return string__235.match(regexp__234)}, false);
-exports.match = B232}
+var position__1447 = string__1446.search(regexp__1445);
+if ($T(G__1442(position__1447, -1)))
+{return position__1447}}, false)}
+{
+var match__1448;
+false;
+match__1448 = Mmake_function__1441("match", function match__1449 (regexp__1450, string__1451)
+{return string__1451.match(regexp__1450)}, false);
+exports.match = match__1448}

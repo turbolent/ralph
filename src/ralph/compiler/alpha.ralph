@@ -1,5 +1,5 @@
 (define-module ralph/compiler/alpha
-  import: (ralph/compiler/utilities)
+  import: (ralph/compiler/utilities ralph/format)
   export: (alpha-convert
            ensure-naming-structure
            rename-identifiers
@@ -23,8 +23,11 @@
 (define-function rename-identifiers (identifiers env)
   (map (method (identifier)
          (destructuring-bind (module-name name)
-             (get-module-name/name identifier)
+             (module-name/name identifier)
+           (unless module-name
+             (signal (concatenate "NOT QUALIFIED: " (description identifier))))
            (bind ((new-identifier (generate-symbol
+                                   env
                                    (unless (get identifier "generated?")
                                      name))))
              (ensure-naming-structure env module-name name)
@@ -37,18 +40,24 @@
   (for-each ((identifier identifiers))
             ()
     (destructuring-bind (module-name name)
-        (get-module-name/name identifier)
+        (module-name/name identifier)
+      (unless module-name
+        (signal (concatenate "NOT QUALIFIED: " (description identifier))))
       (pop (get env "identifiers" module-name name)))))
 
 (define *not-found* (make-object))
 
 (define-function find-identifier (identifier env)
   (destructuring-bind (module-name name)
-      (get-module-name/name identifier)
-    (if-bind (renamings (get env "identifiers"
-                             module-name name))
-      (first renamings)
-      *not-found*)))
+      (module-name/name identifier)
+    (unless module-name
+      (signal (concatenate "NOT QUALIFIED: " (description identifier))))
+    (bind ((renamings (get env "identifiers"
+                           module-name name)))
+      (if (and renamings
+               (not (empty? renamings)))
+          (first renamings)
+          *not-found*))))
 
 (define-function alpha-convert (form env)
   (select form instance?
@@ -92,21 +101,13 @@
         ;; rename in future expression
         ;; NOTE: modifies env!
         (destructuring-bind (_ identifier) form
-          (destructuring-bind (module-name name)
-              (get-module-name/name identifier)
-            (bind ((new-identifier (generate-symbol)))
-              ;; TODO: refactor
-              ;; >>>
-              (ensure-naming-structure env module-name name)
-              (push-last (get env "identifiers" module-name name)
-                         new-identifier)
-              ;; register renaming of definition
-              (set! (get env "definition-names"
+          (bind ((name (symbol-name identifier)))
+            (destructuring-bind (new-identifier)
+                (rename-identifiers [identifier] env)
+              ;; track new identifier -> old identifier
+              (set! (get env "original-identifier"
                          (symbol-name new-identifier))
-                    name)
-              (set! (get env "new-identifiers" name)
-                    new-identifier)
-              ;; <<<
+                    identifier)
               `(%define ,new-identifier)))))
        ;; skip
        (("%if" "%while" "%set" "%begin" "%get-property" "%object"
@@ -116,7 +117,7 @@
                      (map (rcurry alpha-convert env)
                           (rest form))))
        ;; none
-       (("%native-name") form)
+       (("%native-name" "%symbol") form)
        (else:
         (map (rcurry alpha-convert env)
              form))))

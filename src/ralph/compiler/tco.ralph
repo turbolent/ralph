@@ -56,7 +56,7 @@
                    ;; tail-recursive call
                    (bind ((label (or (get env "tco-labels" name)
                                      (set! (get env "tco-labels" name)
-                                           (generate-symbol))))
+                                           (generate-symbol env))))
                           (new-values (rest value)))
                      (unless (get env "tco-wrappers" name)
                        (set! (get env "tco-wrappers" name)
@@ -69,10 +69,10 @@
                        (dotimes (i (size arguments))
                          (push-last assignments
                                     `(%set ,(element arguments i)
-                                           (%get-property %all-arguments ,i))))
+                                           (%get-property ,'%all-arguments ,i))))
                        (concatenate
                         `(%begin
-                          (%set %all-arguments
+                          (%set ,'%all-arguments
                                 ;; build closures for methods
                                 ,(close-free-variables
                                   (concatenate `(%array)
@@ -91,15 +91,12 @@
 
 (define-function close-free-variables (exp env)
   (if (instance? exp <array>)
-      (if (and (expression? exp)
-               (== (first exp)
-                   (symbol "%method")))
+      (if (method? exp)
           ;; build closure for free variables
           ;; TODO: env.definition-names (?!)
-          (bind ((variables (reduce set-subtract!
-                                    (find-free-variables exp)
-                                    [(environment-definitions env)
-                                     *defined*])))
+          (bind ((variables (remove-defined-identifiers
+                             (find-free-variables exp env)
+                             env)))
             (concatenate
              `((%method ,(generate-symbol) ,variables
                  (%return ,exp)))

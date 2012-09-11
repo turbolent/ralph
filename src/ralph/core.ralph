@@ -35,7 +35,25 @@
            extend! update-with group-by
            chain-object unchain-object
            as-set set-union! set-add!
-           set-subtract! set-remove!)
+           set-subtract! set-remove!
+           ;; macros / special forms
+           quote %backquote %comma
+           begin %begin set! %set if %if
+           method %method %bind bind define %define
+           %while while dotimes for for-each
+           %plus %minus %times %divide
+           and or when unless cond select
+           handler-case %try bind-properties
+           parallel-set! if-bind
+           destructuring-bind bind-methods
+           inc! dec! call-next-method .
+           define-class define-function
+           define-method define-generic
+           define-module define-macro
+           define-symbol-macro
+           %symbol %infix %next-method
+           %get-property %native %native-call
+           %call %var %array %object %return)
   inline: (not
            size as-string as-number as-array
            parse-number char-code empty?

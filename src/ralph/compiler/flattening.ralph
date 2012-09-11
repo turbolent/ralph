@@ -7,10 +7,7 @@
   (reduce1 concatenate
            (map (method (exp)
                   (bind ((flattened (flatten-statements! exp)))
-                    (if (and (instance? flattened <array>)
-                             (not (empty? flattened))
-                             (== (first flattened)
-                                 (symbol "%begin")))
+                    (if (begin? flattened)
                         (rest flattened)
                         [flattened])))
                 exps)))

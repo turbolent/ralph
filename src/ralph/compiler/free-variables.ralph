@@ -2,7 +2,7 @@
   import: (ralph/compiler/utilities)
   export: (find-free-variables))
 
-(define-function find-free-variables (exp)
+(define-function find-free-variables (exp env)
   (cond
    ((and (instance? exp <array>)
          (not (empty? exp)))
@@ -13,8 +13,8 @@
         (("%method")
          (destructuring-bind (_ name arguments body) exp
            (set-subtract!
-            (find-free-variables body)
-            (as-set arguments))))
+            (find-free-variables body env)
+            (as-set (concatenate [name] arguments)))))
         (("%bind")
          (destructuring-bind (_ (var value) body) exp
            ;; TODO: make binding available inside value?
@@ -22,48 +22,36 @@
            ;;  %bind special form)
            (set-union!
             (set-subtract!
-             (find-free-variables body)
+             (find-free-variables body env)
              (as-set [var]))
-            (find-free-variables value))))
+            (find-free-variables value env))))
         (("%begin")
-         ;; %define will only appear in %begin,
-         ;; see previous pass lift-defines
-         (bind ((definitions []))
-           (set-subtract!
-            (as-set
-             (reduce (method (result e)
-                       (concatenate
-                        result
-                        (if (and (expression? e)
-                                 (== (first e)
-                                     (symbol "%define")))
-                            (begin
-                             (push-last definitions (second e))
-                             [])
-                            (find-free-variables e))))
-                     [] (rest exp)))
-            (as-set definitions))))
+         (reduce1 set-union!
+                  (map (rcurry find-free-variables env)
+                       (rest exp))))
         (("%try")
          (destructuring-bind (_ e1 v e2) exp
            (set-subtract!
             (set-union!
-             (as-set (find-free-variables e1))
-             (as-set (find-free-variables e2)))
+             (as-set (find-free-variables e1 env))
+             (as-set (find-free-variables e2 env)))
             (as-set [v]))))
         (("%set" "%if" "%while"
           "%array" "%object" "%infix"
           "%get-property" "%native-call" "%return"
           "%plus" "%minus" "%times" "%divide")
          (as-set (reduce concatenate []
-                         (map find-free-variables
+                         (map (rcurry find-free-variables env)
                               (rest exp)))))
         (("%native" "%native-name" "%define" "%symbol")
          (as-set []))
         (else:
          (reduce1 set-union!
-                  (map find-free-variables
+                  (map (rcurry find-free-variables env)
                        exp))))))
    ((instance? exp <symbol>)
+    (unless (get exp "module")
+      (signal (concatenate  "NOT QUALIFIED: " (description exp))))
     (as-set [exp]))
    (else:
     (as-set []))))

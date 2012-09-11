@@ -795,6 +795,22 @@
              3
              ((compose size rest) [1 2 3 4]))
 
+(check-no-error "import renaming"
+                (curry make <foobar>))
+
+
+;; hygiene
+(define-function test-hygiene (#rest rest)
+  (bind ((result []))
+    (for-each ((x [1 2 3]))
+              ()
+      (push-last result x))
+    (check-equal "hygiene: result" result [1 2 3])
+    (check-equal "hygiene: rest" rest ["a" "b" "c"])))
+
+(test-hygiene "a" "b" "c")
+
+
 
 ;; NOTE: add tests ABOVE!
 
@@ -813,7 +829,5 @@
                   (unless))
                 (method () 3)))
 
-;; NOTE: DO NOT add new tests below! when is redefined
+;; NOTE: DO NOT add new tests below! when is redefined!
 
-(check-no-error "import renaming"
-                (curry make <foobar>))

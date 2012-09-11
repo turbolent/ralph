@@ -101,16 +101,16 @@
         (("%set")
          (destructuring-bind (_ identifier value) exp
            (bind ((value* (transform-statements! value env))
-                  (definition-name
-                    (get env "definition-names"
-                         (symbol-name identifier))))
+                  (definition-name (symbol-name
+                                    (get env "original-identifier"
+                                         (symbol-name identifier)))))
              ;; check if exported definition
              (if (and definition-name
                       (member? definition-name
                                (get env "module" "exports")))
                  (begin
                   (set! (first exp)
-                        (symbol "%begin"))
+                        `%begin)
                   (set! (second exp)
                         `(%set ,identifier ,value*))
                   (set! (third exp)
