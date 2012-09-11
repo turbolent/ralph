@@ -38,7 +38,7 @@ LerrorG__7["%properties"] = {message:false}
 {
 var Mmake_function__9;
 false;
-Mmake_function__9 = function B10 (name__11, function__12, setterQ__13)
+Mmake_function__9 = function B8__10 (name__11, function__12, setterQ__13)
 {
 function__12["%name"] = name__11;
 function__12["%setter?"] = setterQ__13;
@@ -96,7 +96,7 @@ var Mmake_class__38;
 false;
 Mmake_class__38 = Mmake_function__9("Mmake_class", function Mmake_class__39 (superclass__40, properties__41)
 {
-var class__43 = function B42 ()
+var class__43 = function B37__42 ()
 {return false};
 class__43["%properties"] = properties__41;
 if ($T(superclass__40))
@@ -121,9 +121,9 @@ false;
 keyword__47 = Mmake_function__9("keyword", function keyword__48 (name__49)
 {
 var nameT__50 = name__49.toLowerCase(),
-B51 = Mkeywords__44[nameT__50];
-if ($T(B51))
-{return B51}
+B46__51 = Mkeywords__44[nameT__50];
+if ($T(B46__51))
+{return B46__51}
 else
 {
 var keyword__52 = new(LkeywordG__45);
@@ -174,1571 +174,1858 @@ exports["code-char"] = code_char__67}
 var emptyQ__68;
 false;
 emptyQ__68 = Mmake_function__9("emptyQ", function emptyQ__69 (sequence__70)
-{return binaryEE__29(size__20(sequence__70), 0)}, false);
+{
+var object2__72 = 0,
+object1__71 = size__20(sequence__70);
+return (object1__71 === object2__72)}, false);
 exports["empty?"] = emptyQ__68}
 {
-var rest__71;
+var rest__73;
 false;
-rest__71 = Mmake_function__9("rest", function rest__72 (sequence__73)
-{return sequence__73.slice(1)}, false);
-exports.rest = rest__71}
+rest__73 = Mmake_function__9("rest", function rest__74 (sequence__75)
+{return sequence__75.slice(1)}, false);
+exports.rest = rest__73}
 {
-var last__74;
+var last__76;
 false;
-last__74 = Mmake_function__9("last", function last__75 (array__76)
-{return array__76[dec__26(size__20(array__76), 1)]}, false);
-exports.last = last__74}
+last__76 = Mmake_function__9("last", function last__77 (array__78)
 {
-var last_setter__77;
+var number__79 = size__20(array__78),
+B80 = (number__79 - 1);
+return array__78[B80]}, false);
+exports.last = last__76}
+{
+var last_setter__81;
 false;
-last_setter__77 = Mmake_function__9("last_setter", function last_setter__78 (array__79, value__80)
-{return array__79[dec__26(size__20(array__79), 1)] = value__80}, true);
-exports["last-setter"] = last_setter__77}
+last_setter__81 = Mmake_function__9("last_setter", function last_setter__82 (array__83, value__84)
+{return array__83[dec__26(size__20(array__83), 1)] = value__84}, true);
+exports["last-setter"] = last_setter__81}
 {
-var first__81;
+var first__85;
 false;
-first__81 = Mmake_function__9("first", function first__82 (sequence__83)
-{return sequence__83[0]}, false);
-exports.first = first__81}
+first__85 = Mmake_function__9("first", function first__86 (sequence__87)
+{return sequence__87[0]}, false);
+exports.first = first__85}
 {
-var first_setter__84;
+var first_setter__88;
 false;
-first_setter__84 = Mmake_function__9("first_setter", function first_setter__85 (array__86, value__87)
-{return array__86[0] = value__87}, true);
-exports["first-setter"] = first_setter__84}
+first_setter__88 = Mmake_function__9("first_setter", function first_setter__89 (array__90, value__91)
+{return array__90[0] = value__91}, true);
+exports["first-setter"] = first_setter__88}
 {
-var second__88;
+var second__92;
 false;
-second__88 = Mmake_function__9("second", function second__89 (sequence__90)
-{return sequence__90[1]}, false);
-exports.second = second__88}
+second__92 = Mmake_function__9("second", function second__93 (sequence__94)
+{return sequence__94[1]}, false);
+exports.second = second__92}
 {
-var second_setter__91;
+var second_setter__95;
 false;
-second_setter__91 = Mmake_function__9("second_setter", function second_setter__92 (array__93, value__94)
-{return array__93[1] = value__94}, true);
-exports["second-setter"] = second_setter__91}
+second_setter__95 = Mmake_function__9("second_setter", function second_setter__96 (array__97, value__98)
+{return array__97[1] = value__98}, true);
+exports["second-setter"] = second_setter__95}
 {
-var third__95;
+var third__99;
 false;
-third__95 = Mmake_function__9("third", function third__96 (sequence__97)
-{return sequence__97[2]}, false);
-exports.third = third__95}
+third__99 = Mmake_function__9("third", function third__100 (sequence__101)
+{return sequence__101[2]}, false);
+exports.third = third__99}
 {
-var third_setter__98;
+var third_setter__102;
 false;
-third_setter__98 = Mmake_function__9("third_setter", function third_setter__99 (array__100, value__101)
-{return array__100[2] = value__101}, true);
-exports["third-setter"] = third_setter__98}
+third_setter__102 = Mmake_function__9("third_setter", function third_setter__103 (array__104, value__105)
+{return array__104[2] = value__105}, true);
+exports["third-setter"] = third_setter__102}
 {
-var make_array__102;
+var make_array__106;
 false;
-make_array__102 = Mmake_function__9("make_array", function make_array__103 ()
+make_array__106 = Mmake_function__9("make_array", function make_array__107 ()
 {
-var elements__104 = $SL.call(arguments, 0);
-return elements__104}, false);
-exports["make-array"] = make_array__102}
+var elements__108 = $SL.call(arguments, 0);
+return elements__108}, false);
+exports["make-array"] = make_array__106}
 {
-var push__105;
+var push__109;
 false;
-push__105 = Mmake_function__9("push", function push__106 (array__107, value__108)
+push__109 = Mmake_function__9("push", function push__110 (array__111, value__112)
 {
-array__107.unshift(value__108);
-return array__107}, false);
-exports.push = push__105}
-{
-var push_last__109;
-false;
-push_last__109 = Mmake_function__9("push_last", function push_last__110 (array__111, value__112)
-{
-array__111.push(value__112);
+array__111.unshift(value__112);
 return array__111}, false);
-exports["push-last"] = push_last__109}
+exports.push = push__109}
 {
-var pop__113;
+var push_last__113;
 false;
-pop__113 = Mmake_function__9("pop", function pop__114 (array__115)
-{return array__115.shift()}, false);
-exports.pop = pop__113}
+push_last__113 = Mmake_function__9("push_last", function push_last__114 (array__115, value__116)
 {
-var pop_last__116;
+array__115.push(value__116);
+return array__115}, false);
+exports["push-last"] = push_last__113}
+{
+var pop__117;
 false;
-pop_last__116 = Mmake_function__9("pop_last", function pop_last__117 (array__118)
-{return array__118.pop()}, false);
-exports["pop-last"] = pop_last__116}
+pop__117 = Mmake_function__9("pop", function pop__118 (array__119)
+{return array__119.shift()}, false);
+exports.pop = pop__117}
 {
-var but_last__119;
+var pop_last__120;
 false;
-but_last__119 = Mmake_function__9("but_last", function but_last__120 (array__121, n__122)
-{return array__121.slice(0, ((n__122 || 1) * -1))}, false);
-exports["but-last"] = but_last__119}
+pop_last__120 = Mmake_function__9("pop_last", function pop_last__121 (array__122)
+{return array__122.pop()}, false);
+exports["pop-last"] = pop_last__120}
 {
-var slice__123;
+var but_last__123;
 false;
-slice__123 = Mmake_function__9("slice", function slice__124 (array__125, start__126, end__127)
-{return array__125.slice(start__126, end__127)}, false);
-exports.slice = slice__123}
+but_last__123 = Mmake_function__9("but_last", function but_last__124 (array__125, n__126)
+{return array__125.slice(0, ((n__126 || 1) * -1))}, false);
+exports["but-last"] = but_last__123}
 {
-var reduce__128,
-reduce1__129;
+var slice__127;
 false;
-reduce1__129 = Mmake_function__9("reduce1", function reduce1__130 (function__131, values__132)
-{return reduce__128(function__131, first__81(values__132), rest__71(values__132))}, false);
-exports.reduce1 = reduce1__129}
+slice__127 = Mmake_function__9("slice", function slice__128 (array__129, start__130, end__131)
+{return array__129.slice(start__130, end__131)}, false);
+exports.slice = slice__127}
 {
-var GE__135;
+var reduce__132,
+reduce1__133;
 false;
-reduce__128 = Mmake_function__9("reduce", function reduce__136 (function__137, initial_value__138, values__139)
+reduce1__133 = Mmake_function__9("reduce1", function reduce1__134 (function__135, values__136)
 {
-var value__140 = initial_value__138,
-B141 = size__20(values__139),
-i__142 = 0;
-while ($T(not__17(GE__135(i__142, B141))))
+var sequence__137 = values__136,
+B139 = sequence__137[0],
+sequence__138 = values__136,
+B140 = sequence__138.slice(1);
+return reduce__132(function__135, B139, B140)}, false);
+exports.reduce1 = reduce1__133}
 {
-(function B143 (i__144)
-{return value__140 = function__137(value__140, values__139[i__144])})(i__142);
-i__142 = (i__142 + 1)};
+var GE__143;
 false;
-return value__140}, false);
-exports.reduce = reduce__128}
+reduce__132 = Mmake_function__9("reduce", function reduce__144 (function__145, initial_value__146, values__147)
 {
-var reverseN__145;
+var value__148 = initial_value__146,
+object__153 = values__147,
+B141__149 = ((object__153 || false).length || 0),
+i__150 = 0;
+while (true)
+{
+var value__154 = GE__143(i__150, B141__149),
+B155 = !(trueQ__14(value__154));
+if ($T(B155))
+{
+(function B142__151 (i__152)
+{return value__148 = function__145(value__148, values__147[i__152])})(i__150);
+i__150 = (i__150 + 1)}
+else
+break};
 false;
-reverseN__145 = Mmake_function__9("reverseN", function reverseN__146 (array__147)
-{return array__147.reverse()}, false);
-exports["reverse!"] = reverseN__145}
+return value__148}, false);
+exports.reduce = reduce__132}
 {
-var reverse__148;
+var reverseN__156;
 false;
-reverse__148 = Mmake_function__9("reverse", function reverse__149 (array__150)
-{return reverseN__145(slice__123(array__150))}, false);
-exports.reverse = reverse__148}
+reverseN__156 = Mmake_function__9("reverseN", function reverseN__157 (array__158)
+{return array__158.reverse()}, false);
+exports["reverse!"] = reverseN__156}
 {
-var Mkeys__154,
-L__155,
-identity__156,
-sortN__157;
+var reverse__159;
 false;
-sortN__157 = Mmake_function__9("sortN", function sortN__158 (array__159)
+reverse__159 = Mmake_function__9("reverse", function reverse__160 (array__161)
 {
-var B160 = $SL.call(arguments, 1),
-B161 = Mkeys__154(B160, {test:L__155,
-key:identity__156}),
-test__162 = B161.test,
-key__163 = B161.key;
-return array__159.sort(function B164 (a__165, b__166)
-{if ($T(test__162(key__163(a__165), key__163(b__166))))
+var array__162 = slice__127(array__161);
+return array__162.reverse()}, false);
+exports.reverse = reverse__159}
+{
+var Mkeys__166,
+L__167,
+identity__168,
+sortN__169;
+false;
+sortN__169 = Mmake_function__9("sortN", function sortN__170 (array__171)
+{
+var B163__172 = $SL.call(arguments, 1),
+B164__173 = Mkeys__166(B163__172, {test:L__167,
+key:identity__168}),
+test__174 = B164__173.test,
+key__175 = B164__173.key;
+return array__171.sort(function B165__176 (a__177, b__178)
+{if ($T(test__174(key__175(a__177), key__175(b__178))))
 {return -1}
 else
 return 1})}, false);
-exports["sort!"] = sortN__157}
+exports["sort!"] = sortN__169}
 {
-var sort__169;
+var B192 = $K("test"),
+B193 = $K("key"),
+sort__181;
 false;
-sort__169 = Mmake_function__9("sort", function sort__170 (array__171)
+sort__181 = Mmake_function__9("sort", function sort__182 (array__183)
 {
-var B172 = $SL.call(arguments, 1),
-B173 = Mkeys__154(B172, {test:L__155,
-key:identity__156}),
-test__174 = B173.test,
-key__175 = B173.key;
-return sortN__157(slice__123(array__171), $K("test"), test__174, $K("key"), key__175)}, false);
-exports.sort = sort__169}
+var B179__184 = $SL.call(arguments, 1),
+B180__185 = Mkeys__166(B179__184, {test:L__167,
+key:identity__168}),
+test__186 = B180__185.test,
+key__187 = B180__185.key,
+end__190,
+start__189,
+array__188 = array__183,
+B191 = array__188.slice(start__189, end__190);
+return sortN__169(B191, B192, test__186, B193, key__187)}, false);
+exports.sort = sort__181}
 {
-var apply__176;
+var apply__194;
 false;
-apply__176 = Mmake_function__9("apply", function apply__177 (function__178)
+apply__194 = Mmake_function__9("apply", function apply__195 (function__196)
 {
-var actual__179 = $SL.call(arguments, 1, -1),
-last__180 = arguments[(size__20(arguments) - 1)],
-arguments__181;
-if ($T(binaryEE__29(last__180, function__178)))
-{arguments__181 = actual__179}
+var actual__197 = $SL.call(arguments, 1, -1),
+object__200 = arguments,
+B205 = ((object__200 || false).length || 0),
+B206 = (B205 - 1),
+last__198 = arguments[B206],
+object2__202 = function__196,
+object1__201 = last__198,
+B207 = (object1__201 === object2__202),
+arguments__199;
+if ($T(B207))
+{arguments__199 = actual__197}
 else
-arguments__181 = Mconcat__53(actual__179, last__180);
-return function__178.apply(null, arguments__181)}, false);
-exports.apply = apply__176}
 {
-var curry__183;
+var array2__204 = last__198,
+array1__203 = actual__197;
+arguments__199 = array1__203.concat(array2__204)};
+return function__196.apply(null, arguments__199)}, false);
+exports.apply = apply__194}
+{
+var curry__209;
 false;
-curry__183 = Mmake_function__9("curry", function curry__184 (function__185)
+curry__209 = Mmake_function__9("curry", function curry__210 (function__211)
 {
-var curried_args__186 = $SL.call(arguments, 1);
-return function B187 ()
+var curried_args__212 = $SL.call(arguments, 1);
+return function B208__213 ()
 {
-var args__188 = $SL.call(arguments, 0);
-return apply__176(function__185, Mconcat__53(curried_args__186, args__188))}}, false);
-exports.curry = curry__183}
+var args__214 = $SL.call(arguments, 0),
+array2__216 = args__214,
+array1__215 = curried_args__212,
+B217 = array1__215.concat(array2__216);
+return apply__194(function__211, B217)}}, false);
+exports.curry = curry__209}
 {
-var rcurry__190;
+var rcurry__219;
 false;
-rcurry__190 = Mmake_function__9("rcurry", function rcurry__191 (function__192)
+rcurry__219 = Mmake_function__9("rcurry", function rcurry__220 (function__221)
 {
-var curried_args__193 = $SL.call(arguments, 1);
-return function B194 ()
+var curried_args__222 = $SL.call(arguments, 1);
+return function B218__223 ()
 {
-var args__195 = $SL.call(arguments, 0);
-return apply__176(function__192, Mconcat__53(args__195, curried_args__193))}}, false);
-exports.rcurry = rcurry__190}
+var args__224 = $SL.call(arguments, 0),
+array2__226 = curried_args__222,
+array1__225 = args__224,
+B227 = array1__225.concat(array2__226);
+return apply__194(function__221, B227)}}, false);
+exports.rcurry = rcurry__219}
 {
-var always__197;
+var always__229;
 false;
-always__197 = Mmake_function__9("always", function always__198 (value__199)
-{return function B200 ()
-{return value__199}}, false);
-exports.always = always__197}
+always__229 = Mmake_function__9("always", function always__230 (value__231)
+{return function B228__232 ()
+{return value__231}}, false);
+exports.always = always__229}
 {
-var repeatedly__203;
+var repeatedly__235;
 false;
-repeatedly__203 = Mmake_function__9("repeatedly", function repeatedly__204 (function__205, count__206)
+repeatedly__235 = Mmake_function__9("repeatedly", function repeatedly__236 (function__237, count__238)
 {
-var result__207 = [],
-B208 = count__206,
-i__209 = 0;
-while ($T(not__17(GE__135(i__209, B208))))
+var result__239 = [],
+B233__240 = count__238,
+i__241 = 0;
+while (true)
 {
-(function B210 (i__211)
-{return push_last__109(result__207, function__205())})(i__209);
-i__209 = (i__209 + 1)};
-return result__207}, false);
-exports.repeatedly = repeatedly__203}
+var value__244 = GE__143(i__241, B233__240),
+B247 = !(trueQ__14(value__244));
+if ($T(B247))
 {
-false;
-identity__156 = Mmake_function__9("identity", function identity__212 (value__213)
-{return value__213}, false);
-exports.identity = identity__156}
+(function B234__242 (i__243)
 {
-var complement__215;
-false;
-complement__215 = Mmake_function__9("complement", function complement__216 (function__217)
-{return function B218 ()
-{
-var arguments__219 = $SL.call(arguments, 0);
-return not__17(apply__176(function__217, arguments__219))}}, false);
-exports.complement = complement__215}
-{
-var compose__222;
-false;
-compose__222 = Mmake_function__9("compose", function compose__223 ()
-{
-var functions__224 = $SL.call(arguments, 0);
-if ($T(emptyQ__68(functions__224)))
-{return identity__156}
+var value__246 = function__237(),
+array__245 = result__239;
+array__245.push(value__246);
+return array__245})(i__241);
+i__241 = (i__241 + 1)}
 else
-return function B225 ()
+break};
+return result__239}, false);
+exports.repeatedly = repeatedly__235}
 {
-var arguments__226 = $SL.call(arguments, 0);
-return reduce__128(function B227 (value__228, function__229)
-{return function__229(value__228)}, apply__176(last__74(functions__224), arguments__226), but_last__119(functions__224), $K("from-end?"), true)}}, false);
-exports.compose = compose__222}
-{
-var binaryP__230;
 false;
-binaryP__230 = Mmake_function__9("binaryP", function binaryP__231 (number1__232, number2__233)
-{return (number1__232 + number2__233)}, false)}
+identity__168 = Mmake_function__9("identity", function identity__248 (value__249)
+{return value__249}, false);
+exports.identity = identity__168}
 {
-var binary___234;
+var complement__251;
 false;
-binary___234 = Mmake_function__9("binary_", function binary___235 (number1__236, number2__237)
-{return (number1__236 - number2__237)}, false)}
+complement__251 = Mmake_function__9("complement", function complement__252 (function__253)
+{return function B250__254 ()
 {
-var binaryT__238;
-false;
-binaryT__238 = Mmake_function__9("binaryT", function binaryT__239 (number1__240, number2__241)
-{return (number1__240 * number2__241)}, false)}
+var arguments__255 = $SL.call(arguments, 0),
+value__256 = apply__194(function__253, arguments__255);
+return !(trueQ__14(value__256))}}, false);
+exports.complement = complement__251}
 {
-var binaryS__242;
+var B276 = $K("from-end?"),
+compose__259;
 false;
-binaryS__242 = Mmake_function__9("binaryS", function binaryS__243 (number1__244, number2__245)
-{return (number1__244 / number2__245)}, false)}
+compose__259 = Mmake_function__9("compose", function compose__260 ()
 {
-var type__246;
+var functions__261 = $SL.call(arguments, 0),
+sequence__267 = functions__261,
+B271 = binaryEE__29(size__20(sequence__267), 0);
+if ($T(B271))
+{return identity__168}
+else
+return function B257__262 ()
+{
+var arguments__263 = $SL.call(arguments, 0),
+B272 = function B258__264 (value__265, function__266)
+{return function__266(value__265)},
+array__268 = functions__261,
+B273 = array__268[dec__26(size__20(array__268), 1)],
+B274 = apply__194(B273, arguments__263),
+n__270,
+array__269 = functions__261,
+B275 = array__269.slice(0, ((n__270 || 1) * -1));
+return reduce__132(B272, B274, B275, B276, true)}}, false);
+exports.compose = compose__259}
+{
+var binaryP__277;
 false;
-type__246 = Mmake_function__9("type", function type__247 (object__248)
-{if ($T(object__248))
-{return object__248.constructor}
+binaryP__277 = Mmake_function__9("binaryP", function binaryP__278 (number1__279, number2__280)
+{return (number1__279 + number2__280)}, false)}
+{
+var binary___281;
+false;
+binary___281 = Mmake_function__9("binary_", function binary___282 (number1__283, number2__284)
+{return (number1__283 - number2__284)}, false)}
+{
+var binaryT__285;
+false;
+binaryT__285 = Mmake_function__9("binaryT", function binaryT__286 (number1__287, number2__288)
+{return (number1__287 * number2__288)}, false)}
+{
+var binaryS__289;
+false;
+binaryS__289 = Mmake_function__9("binaryS", function binaryS__290 (number1__291, number2__292)
+{return (number1__291 / number2__292)}, false)}
+{
+var type__293;
+false;
+type__293 = Mmake_function__9("type", function type__294 (object__295)
+{if ($T(object__295))
+{return object__295.constructor}
 else
 return LbooleanG__5}, false);
-exports.type = type__246}
+exports.type = type__293}
 {
-var instanceQ__250;
+var instanceQ__297;
 false;
-instanceQ__250 = Mmake_function__9("instanceQ", function instanceQ__251 (object__252, type__253)
-{if ($T(object__252))
+instanceQ__297 = Mmake_function__9("instanceQ", function instanceQ__298 (object__299, type__300)
+{if ($T(object__299))
 {
-var ctor__254 = object__252.constructor,
-B255 = binaryEE__29(ctor__254, type__253);
-if ($T(B255))
-{return B255}
+var ctor__301 = object__299.constructor,
+object2__304 = type__300,
+object1__303 = ctor__301,
+B296__302 = (object1__303 === object2__304);
+if ($T(B296__302))
+{return B296__302}
 else
-return (object__252 instanceof type__253)}
+return (object__299 instanceof type__300)}
 else
-return binaryEE__29(type__253, LbooleanG__5)}, false);
-exports["instance?"] = instanceQ__250}
+{
+var object2__306 = LbooleanG__5,
+object1__305 = type__300;
+return (object1__305 === object2__306)}}, false);
+exports["instance?"] = instanceQ__297}
 $HP = Object.hasOwnProperty
 {
-var hasQ__256;
+var hasQ__307;
 false;
-hasQ__256 = Mmake_function__9("hasQ", function hasQ__257 (object__258, property__259)
-{return $HP.call(object__258,property__259)}, false);
-exports["has?"] = hasQ__256}
+hasQ__307 = Mmake_function__9("hasQ", function hasQ__308 (object__309, property__310)
+{return $HP.call(object__309,property__310)}, false);
+exports["has?"] = hasQ__307}
 {
-var Mmake_generic__260,
-Mmake_method__261;
+var Mmake_generic__311,
+Mmake_method__312;
 false;
-Mmake_method__261 = Mmake_function__9("Mmake_method", function Mmake_method__262 (name__263, function__264, setterQ__265, type__266, existing__267)
+Mmake_method__312 = Mmake_function__9("Mmake_method", function Mmake_method__313 (name__314, function__315, setterQ__316, type__317, existing__318)
 {
-var prototype__268 = type__266.prototype,
-existing_method__269;
-if ($T(hasQ__256(prototype__268, name__263)))
-{existing_method__269 = prototype__268[name__263]}
-else
-existing_method__269 = false;
-var genericQ__270;
-if ($T(existing__267))
-{if ($T(hasQ__256(existing__267, "%generic?")))
-{genericQ__270 = existing__267["%generic?"]}
-else
-genericQ__270 = false}
-else
-genericQ__270 = false;
-function__264["%name"] = name__263;
-function__264["%setter?"] = setterQ__265;
-function__264["%type"] = type__266;
-prototype__268[name__263] = function__264;
-if ($T(genericQ__270))
-{return existing__267}
-else
-return Mmake_generic__260(name__263)}, false);
-exports["%make-method"] = Mmake_method__261}
-{
-false;
-Mmake_generic__260 = Mmake_function__9("Mmake_generic", function Mmake_generic__272 (name__273)
-{
-var dispatcher__277 = function B274 (object__275)
-{
-var function__276 = ((object__275 !== null) && (object__275 !== undefined) && object__275[name__273]);
-return (function__276 && function__276.apply(object__275, arguments))};
-dispatcher__277["%generic?"] = true;
-dispatcher__277["%name"] = name__273;
-return dispatcher__277}, false);
-exports["%make-generic"] = Mmake_generic__260}
-{
-var Mnext_method__278;
-false;
-Mnext_method__278 = Mmake_function__9("Mnext_method", function Mnext_method__279 (function__280)
-{
-var name__281 = function__280["%name"],
-proto__282 = function__280["%type"].prototype.__proto__;
-return proto__282[name__281]}, false);
-exports["%next-method"] = Mnext_method__278}
-{
-var concatenate__283;
-false;
-concatenate__283 = Mmake_function__9("concatenate", function concatenate__284 (object__285)
-{
-var rest__286 = $SL.call(arguments, 1),
-B287;
-if ($T(instanceQ__250(object__285, LarrayG__4)))
-{B287 = Mconcat__53}
-else
-B287 = binaryP__230;
-return reduce__128(B287, object__285, rest__286)}, false);
-exports.concatenate = concatenate__283}
-{
-var compare__289;
-false;
-compare__289 = Mmake_function__9("compare", function compare__290 (function__291, object__292, objects__293)
-{
-var failedQ__294;
-while (true)
-{
-var B295 = failedQ__294,
-B297;
-if ($T(B295))
-{B297 = B295}
-else
-B297 = emptyQ__68(objects__293);
-var B298 = not__17(B297);
-if ($T(B298))
-{
-var other__296 = first__81(objects__293);
-failedQ__294 = not__17(function__291(object__292, other__296));
-objects__293 = rest__71(objects__293);
-object__292 = other__296}
-else
-break};
-return not__17(failedQ__294)}, false);
-exports.compare = compare__289}
-{
-var EE__299;
-false;
-EE__299 = Mmake_function__9("EE", function EE__300 (object__301)
-{
-var objects__302 = $SL.call(arguments, 1);
-return compare__289(binaryEE__29, object__301, objects__302)}, false);
-exports["=="] = EE__299}
-{
-var binaryE__303;
-false;
-binaryE__303 = Mmake_generic__260("binaryE");
-exports["binary="] = binaryE__303}
-{
-var binaryL__304;
-false;
-binaryL__304 = Mmake_generic__260("binaryL");
-exports["binary<"] = binaryL__304}
-{
-false;
-binaryE__303 = Mmake_method__261("binaryE", function B306 (object1__307, object2__308)
-{if ($T(binaryEE__29(type__246(object1__307), type__246(object2__308))))
-{return binaryEE__29(object1__307, object2__308)}}, false, LobjectG__1, binaryE__303);
-exports["binary="] = binaryE__303}
-{
-var anyQ__317;
-false;
-binaryE__303 = Mmake_method__261("binaryE", function B318 (array1__319, array2__320)
-{if ($T(binaryEE__29(size__20(array1__319), size__20(array2__320))))
-{
-var B321 = array1__319,
-B322 = array2__320,
-B323,
-B324,
-B325 = [B321, B322];
-while (true)
-{
-var B326 = B323,
-B332;
+var prototype__319 = type__317.prototype,
+property__323 = name__314,
+object__322 = prototype__319,
+B326 = $HP.call(object__322,property__323),
+existing_method__320;
 if ($T(B326))
-{B332 = B326}
+{existing_method__320 = prototype__319[name__314]}
 else
-B332 = anyQ__317(emptyQ__68, B325);
-var B333 = not__17(B332);
-if ($T(B333))
+existing_method__320 = false;
+var genericQ__321;
+if ($T(existing__318))
 {
-var item1__327 = first__81(B321),
-item2__328 = first__81(B322);
-if ($T(not__17(binaryE__303(item1__327, item2__328))))
-{
-B324 = true;
-B323 = true}
+var property__325 = "%generic?",
+object__324 = existing__318,
+B327 = $HP.call(object__324,property__325);
+if ($T(B327))
+{genericQ__321 = existing__318["%generic?"]}
 else
+genericQ__321 = false}
+else
+genericQ__321 = false;
+function__315["%name"] = name__314;
+function__315["%setter?"] = setterQ__316;
+function__315["%type"] = type__317;
+prototype__319[name__314] = function__315;
+if ($T(genericQ__321))
+{return existing__318}
+else
+return Mmake_generic__311(name__314)}, false);
+exports["%make-method"] = Mmake_method__312}
 {
-(function B329 (item1__330, item2__331)
-{return false})(item1__327, item2__328);
-B321 = rest__71(B321);
-B322 = rest__71(B322);
-B325 = [B321, B322]}}
+false;
+Mmake_generic__311 = Mmake_function__9("Mmake_generic", function Mmake_generic__329 (name__330)
+{
+var dispatcher__334 = function B328__331 (object__332)
+{
+var function__333 = ((object__332 !== null) && (object__332 !== undefined) && object__332[name__330]);
+return (function__333 && function__333.apply(object__332, arguments))};
+dispatcher__334["%generic?"] = true;
+dispatcher__334["%name"] = name__330;
+return dispatcher__334}, false);
+exports["%make-generic"] = Mmake_generic__311}
+{
+var Mnext_method__335;
+false;
+Mnext_method__335 = Mmake_function__9("Mnext_method", function Mnext_method__336 (function__337)
+{
+var name__338 = function__337["%name"],
+proto__339 = function__337["%type"].prototype.__proto__;
+return proto__339[name__338]}, false);
+exports["%next-method"] = Mnext_method__335}
+{
+var concatenate__340;
+false;
+concatenate__340 = Mmake_function__9("concatenate", function concatenate__341 (object__342)
+{
+var rest__343 = $SL.call(arguments, 1),
+B344;
+if ($T(instanceQ__297(object__342, LarrayG__4)))
+{B344 = Mconcat__53}
+else
+B344 = binaryP__277;
+return reduce__132(B344, object__342, rest__343)}, false);
+exports.concatenate = concatenate__340}
+{
+var compare__346;
+false;
+compare__346 = Mmake_function__9("compare", function compare__347 (function__348, object__349, objects__350)
+{
+var failedQ__351;
+while (true)
+{
+var B345__352 = failedQ__351,
+value__354;
+if ($T(B345__352))
+{value__354 = B345__352}
+else
+value__354 = emptyQ__68(objects__350);
+var B361 = !(trueQ__14(value__354));
+if ($T(B361))
+{
+var sequence__355 = objects__350,
+other__353 = sequence__355[0],
+value__356 = function__348(object__349, other__353),
+B359 = !(trueQ__14(value__356));
+failedQ__351 = B359;
+var sequence__357 = objects__350,
+B360 = sequence__357.slice(1);
+objects__350 = B360;
+object__349 = other__353}
 else
 break};
-return not__17(B324)}}, false, LarrayG__4, binaryE__303);
-exports["binary="] = binaryE__303}
+var value__358 = failedQ__351;
+return !(trueQ__14(value__358))}, false);
+exports.compare = compare__346}
 {
-var binaryE_dispatcher__334;
+var EE__362;
 false;
-binaryE_dispatcher__334 = binaryE__303}
+EE__362 = Mmake_function__9("EE", function EE__363 (object__364)
+{
+var objects__365 = $SL.call(arguments, 1);
+return compare__346(binaryEE__29, object__364, objects__365)}, false);
+exports["=="] = EE__362}
+{
+var binaryE__366;
+false;
+binaryE__366 = Mmake_generic__311("binaryE");
+exports["binary="] = binaryE__366}
+{
+var binaryL__367;
+false;
+binaryL__367 = Mmake_generic__311("binaryL");
+exports["binary<"] = binaryL__367}
 {
 false;
-binaryE__303 = Mmake_function__9("binaryE", function binaryE__336 (object1__337, object2__338)
+binaryE__366 = Mmake_method__312("binaryE", function B368__369 (object1__370, object2__371)
 {
-var B339;
-if ($T(not__17(object1__337)))
-{B339 = not__17(object2__338)}
+var object2__373 = type__293(object2__371),
+object1__372 = type__293(object1__370),
+B376 = (object1__372 === object2__373);
+if ($T(B376))
+{
+var object2__375 = object2__371,
+object1__374 = object1__370;
+return (object1__374 === object2__375)}}, false, LobjectG__1, binaryE__366);
+exports["binary="] = binaryE__366}
+{
+var anyQ__385;
+false;
+binaryE__366 = Mmake_method__312("binaryE", function B377__386 (array1__387, array2__388)
+{
+var object2__401 = size__20(array2__388),
+object1__400 = size__20(array1__387),
+B403 = (object1__400 === object2__401);
+if ($T(B403))
+{
+var B378__389 = array1__387,
+B379__390 = array2__388,
+B380__391,
+B382__392,
+B381__393 = [B378__389, B379__390];
+while (true)
+{
+var B383__394 = B380__391,
+B404;
+if ($T(B383__394))
+{B404 = B383__394}
 else
-B339 = false;
-if ($T(B339))
-{return B339}
+B404 = anyQ__385(emptyQ__68, B381__393);
+var B405 = not__17(B404);
+if ($T(B405))
+{
+var item1__395 = first__85(B378__389),
+item2__396 = first__85(B379__390);
+if ($T(not__17(binaryE__366(item1__395, item2__396))))
+{
+B382__392 = true;
+B380__391 = true}
 else
-return binaryE_dispatcher__334(object1__337, object2__338)}, false);
-exports["binary="] = binaryE__303}
 {
-var E__340;
-false;
-E__340 = Mmake_function__9("E", function E__341 (object__342)
-{
-var objects__343 = $SL.call(arguments, 1);
-return compare__289(binaryE__303, object__342, objects__343)}, false);
-exports["="] = E__340}
-{
-false;
-binaryL__304 = Mmake_method__261("binaryL", function B345 (object1__346, object2__347)
-{if ($T(binaryEE__29(type__246(object1__346), type__246(object2__347))))
-{return (object1__346 < object2__347)}}, false, LobjectG__1, binaryL__304);
-exports["binary<"] = binaryL__304}
-{
-false;
-L__155 = Mmake_function__9("L", function L__348 (object__349)
-{
-var objects__350 = $SL.call(arguments, 1);
-return compare__289(binaryL__304, object__349, objects__350)}, false);
-exports["<"] = L__155}
-{
-var binaryLE__352;
-false;
-binaryLE__352 = Mmake_function__9("binaryLE", function binaryLE__353 (object1__354, object2__355)
-{if ($T(object1__354))
-{if ($T(object2__355))
-{
-var B356 = binaryL__304(object1__354, object2__355);
-if ($T(B356))
-{return B356}
+(function B384__397 (item1__398, item2__399)
+{return false})(item1__395, item2__396);
+B378__389 = rest__73(B378__389);
+B379__390 = rest__73(B379__390);
+B381__393 = [B378__389, B379__390]}}
 else
-return binaryE__303(object1__354, object2__355)}}}, false);
-exports["binary<="] = binaryLE__352}
+break};
+var value__402 = B382__392;
+return !(trueQ__14(value__402))}}, false, LarrayG__4, binaryE__366);
+exports["binary="] = binaryE__366}
 {
-var LE__357;
+var binaryE_dispatcher__406;
 false;
-LE__357 = Mmake_function__9("LE", function LE__358 (object__359)
+binaryE_dispatcher__406 = binaryE__366}
 {
-var objects__360 = $SL.call(arguments, 1);
-return compare__289(binaryLE__352, object__359, objects__360)}, false);
-exports["<="] = LE__357}
-{
-var binaryG__361;
 false;
-binaryG__361 = Mmake_function__9("binaryG", function binaryG__362 (object1__363, object2__364)
-{if ($T(object1__363))
-{if ($T(object2__364))
-{if ($T(not__17(binaryL__304(object1__363, object2__364))))
-{return not__17(binaryE__303(object1__363, object2__364))}}}}, false);
-exports["binary>"] = binaryG__361}
+binaryE__366 = Mmake_function__9("binaryE", function binaryE__408 (object1__409, object2__410)
 {
-var G__365;
-false;
-G__365 = Mmake_function__9("G", function G__366 (object__367)
+var value__412 = object1__409,
+B414 = !(trueQ__14(value__412)),
+B407__411;
+if ($T(B414))
 {
-var objects__368 = $SL.call(arguments, 1);
-return compare__289(binaryG__361, object__367, objects__368)}, false);
-exports[">"] = G__365}
-{
-var binaryGE__370;
-false;
-binaryGE__370 = Mmake_function__9("binaryGE", function binaryGE__371 (object1__372, object2__373)
-{
-var B374 = not__17(binaryL__304(object1__372, object2__373));
-if ($T(B374))
-{return B374}
+var value__413 = object2__410;
+B407__411 = !(trueQ__14(value__413))}
 else
-return binaryE__303(object1__372, object2__373)}, false);
-exports["binary>="] = binaryGE__370}
-{
-false;
-GE__135 = Mmake_function__9("GE", function GE__375 (object__376)
-{
-var objects__377 = $SL.call(arguments, 1);
-return compare__289(binaryGE__370, object__376, objects__377)}, false);
-exports[">="] = GE__135}
-{
-var as_object__378;
-false;
-as_object__378 = Mmake_function__9("as_object", function as_object__379 (property_list__380)
-{
-var list__381 = slice__123(property_list__380),
-result__382 = {};
-while ($T(G__365(size__20(list__381), 0)))
-{
-var key__383 = pop__113(list__381),
-value__384 = pop__113(list__381),
-B385;
-if ($T(instanceQ__250(key__383, LkeywordG__45)))
-{B385 = key__383.name}
+B407__411 = false;
+if ($T(B407__411))
+{return B407__411}
 else
-B385 = as_string__57(key__383);
-key__383 = B385;
-result__382[key__383] = value__384};
-return result__382}, false);
-exports["as-object"] = as_object__378}
+return binaryE_dispatcher__406(object1__409, object2__410)}, false);
+exports["binary="] = binaryE__366}
 {
-var position__386;
+var E__415;
 false;
-position__386 = Mmake_function__9("position", function position__387 (array__388, element__389)
+E__415 = Mmake_function__9("E", function E__416 (object__417)
 {
-var position__390 = array__388.indexOf(element__389);
-if ($T(G__365(position__390, -1)))
-{return position__390}}, false);
-exports.position = position__386}
+var objects__418 = $SL.call(arguments, 1);
+return compare__346(binaryE__366, object__417, objects__418)}, false);
+exports["="] = E__415}
 {
-var last_position__391;
 false;
-last_position__391 = Mmake_function__9("last_position", function last_position__392 (array__393, element__394)
+binaryL__367 = Mmake_method__312("binaryL", function B419__420 (object1__421, object2__422)
 {
-var position__395 = array__393.lastIndexOf(element__394);
-if ($T(G__365(position__395, -1)))
-{return position__395}}, false);
-exports["last-position"] = last_position__391}
+var object2__424 = type__293(object2__422),
+object1__423 = type__293(object1__421),
+B425 = (object1__423 === object2__424);
+if ($T(B425))
+{return (object1__421 < object2__422)}}, false, LobjectG__1, binaryL__367);
+exports["binary<"] = binaryL__367}
 {
-var as_uppercase__396;
 false;
-as_uppercase__396 = Mmake_function__9("as_uppercase", function as_uppercase__397 (string__398)
-{return string__398.toUpperCase()}, false);
-exports["as-uppercase"] = as_uppercase__396}
+L__167 = Mmake_function__9("L", function L__426 (object__427)
 {
-var as_lowercase__399;
+var objects__428 = $SL.call(arguments, 1);
+return compare__346(binaryL__367, object__427, objects__428)}, false);
+exports["<"] = L__167}
+{
+var binaryLE__430;
 false;
-as_lowercase__399 = Mmake_function__9("as_lowercase", function as_lowercase__400 (string__401)
-{return string__401.toLowerCase()}, false);
-exports["as-lowercase"] = as_lowercase__399}
+binaryLE__430 = Mmake_function__9("binaryLE", function binaryLE__431 (object1__432, object2__433)
+{if ($T(object1__432))
+{if ($T(object2__433))
 {
-var join__402;
+var B429__434 = binaryL__367(object1__432, object2__433);
+if ($T(B429__434))
+{return B429__434}
+else
+return binaryE__366(object1__432, object2__433)}}}, false);
+exports["binary<="] = binaryLE__430}
+{
+var LE__435;
 false;
-join__402 = Mmake_function__9("join", function join__403 (array__404, string__405)
-{return array__404.join(string__405)}, false);
-exports.join = join__402}
+LE__435 = Mmake_function__9("LE", function LE__436 (object__437)
 {
-var trim__406;
+var objects__438 = $SL.call(arguments, 1);
+return compare__346(binaryLE__430, object__437, objects__438)}, false);
+exports["<="] = LE__435}
+{
+var binaryG__439;
 false;
-trim__406 = Mmake_function__9("trim", function trim__407 (string__408)
-{return string__408.trim()}, false);
-exports.trim = trim__406}
+binaryG__439 = Mmake_function__9("binaryG", function binaryG__440 (object1__441, object2__442)
+{if ($T(object1__441))
+{if ($T(object2__442))
 {
-var replace__409;
+var value__443 = binaryL__367(object1__441, object2__442),
+B445 = !(trueQ__14(value__443));
+if ($T(B445))
+{
+var value__444 = binaryE__366(object1__441, object2__442);
+return !(trueQ__14(value__444))}}}}, false);
+exports["binary>"] = binaryG__439}
+{
+var G__446;
 false;
-replace__409 = Mmake_function__9("replace", function replace__410 (string__411, pattern__412, replacement__413)
-{return string__411.replace(pattern__412, replacement__413)}, false);
-exports.replace = replace__409}
+G__446 = Mmake_function__9("G", function G__447 (object__448)
 {
-var make_object__414;
+var objects__449 = $SL.call(arguments, 1);
+return compare__346(binaryG__439, object__448, objects__449)}, false);
+exports[">"] = G__446}
+{
+var binaryGE__451;
 false;
-make_object__414 = Mmake_function__9("make_object", function make_object__415 ()
+binaryGE__451 = Mmake_function__9("binaryGE", function binaryGE__452 (object1__453, object2__454)
 {
-var key_values__416 = $SL.call(arguments, 0);
-return as_object__378(key_values__416)}, false);
-exports["make-object"] = make_object__414}
+var value__456 = binaryL__367(object1__453, object2__454),
+B450__455 = !(trueQ__14(value__456));
+if ($T(B450__455))
+{return B450__455}
+else
+return binaryE__366(object1__453, object2__454)}, false);
+exports["binary>="] = binaryGE__451}
 {
-var LsymbolG__417;
 false;
-LsymbolG__417 = Mmake_class__38(LobjectG__1, {name:false,
+GE__143 = Mmake_function__9("GE", function GE__457 (object__458)
+{
+var objects__459 = $SL.call(arguments, 1);
+return compare__346(binaryGE__451, object__458, objects__459)}, false);
+exports[">="] = GE__143}
+{
+var as_object__460;
+false;
+as_object__460 = Mmake_function__9("as_object", function as_object__461 (property_list__462)
+{
+var end__469,
+start__468,
+array__467 = property_list__462,
+list__463 = array__467.slice(start__468, end__469),
+result__464 = {};
+while (true)
+{
+var object__470 = list__463,
+B474 = ((object__470 || false).length || 0),
+B475 = G__446(B474, 0);
+if ($T(B475))
+{
+var array__471 = list__463,
+key__465 = array__471.shift(),
+array__472 = list__463,
+value__466 = array__472.shift(),
+B473;
+if ($T(instanceQ__297(key__465, LkeywordG__45)))
+{B473 = key__465.name}
+else
+B473 = as_string__57(key__465);
+key__465 = B473;
+result__464[key__465] = value__466}
+else
+break};
+return result__464}, false);
+exports["as-object"] = as_object__460}
+{
+var position__476;
+false;
+position__476 = Mmake_function__9("position", function position__477 (array__478, element__479)
+{
+var position__480 = array__478.indexOf(element__479);
+if ($T(G__446(position__480, -1)))
+{return position__480}}, false);
+exports.position = position__476}
+{
+var last_position__481;
+false;
+last_position__481 = Mmake_function__9("last_position", function last_position__482 (array__483, element__484)
+{
+var position__485 = array__483.lastIndexOf(element__484);
+if ($T(G__446(position__485, -1)))
+{return position__485}}, false);
+exports["last-position"] = last_position__481}
+{
+var as_uppercase__486;
+false;
+as_uppercase__486 = Mmake_function__9("as_uppercase", function as_uppercase__487 (string__488)
+{return string__488.toUpperCase()}, false);
+exports["as-uppercase"] = as_uppercase__486}
+{
+var as_lowercase__489;
+false;
+as_lowercase__489 = Mmake_function__9("as_lowercase", function as_lowercase__490 (string__491)
+{return string__491.toLowerCase()}, false);
+exports["as-lowercase"] = as_lowercase__489}
+{
+var join__492;
+false;
+join__492 = Mmake_function__9("join", function join__493 (array__494, string__495)
+{return array__494.join(string__495)}, false);
+exports.join = join__492}
+{
+var trim__496;
+false;
+trim__496 = Mmake_function__9("trim", function trim__497 (string__498)
+{return string__498.trim()}, false);
+exports.trim = trim__496}
+{
+var replace__499;
+false;
+replace__499 = Mmake_function__9("replace", function replace__500 (string__501, pattern__502, replacement__503)
+{return string__501.replace(pattern__502, replacement__503)}, false);
+exports.replace = replace__499}
+{
+var make_object__504;
+false;
+make_object__504 = Mmake_function__9("make_object", function make_object__505 ()
+{
+var key_values__506 = $SL.call(arguments, 0);
+return as_object__460(key_values__506)}, false);
+exports["make-object"] = make_object__504}
+{
+var LsymbolG__507;
+false;
+LsymbolG__507 = Mmake_class__38(LobjectG__1, {name:false,
 module:false});
-exports["<symbol>"] = LsymbolG__417}
+exports["<symbol>"] = LsymbolG__507}
 {
-var Msymbols__418;
+var Msymbols__508;
 false;
-Msymbols__418 = {}}
+Msymbols__508 = {}}
 {
-var get_setter__421,
-make__422,
-get__423,
-symbol__424;
+var B524 = $K("name"),
+B525 = $K("module"),
+get_setter__511,
+make__512,
+get__513,
+symbol__514;
 false;
-symbol__424 = Mmake_function__9("symbol", function symbol__425 (name__426, module__427)
+symbol__514 = Mmake_function__9("symbol", function symbol__515 (name__516, module__517)
 {
-var name__428 = as_lowercase__399(name__426),
-B429 = module__427,
-B432;
-if ($T(B429))
-{B432 = B429}
+var string__522 = name__516,
+name__518 = string__522.toLowerCase(),
+B509__519 = module__517,
+string__523;
+if ($T(B509__519))
+{string__523 = B509__519}
 else
-B432 = "";
-var moduleT__430 = as_lowercase__399(B432),
-B431 = get__423(Msymbols__418, moduleT__430, name__428);
-if ($T(B431))
-{return B431}
+string__523 = "";
+var moduleT__520 = string__523.toLowerCase(),
+B510__521 = get__513(Msymbols__508, moduleT__520, name__518);
+if ($T(B510__521))
+{return B510__521}
 else
-return get_setter__421(Msymbols__418, moduleT__430, name__428, make__422(LsymbolG__417, $K("name"), name__428, $K("module"), module__427))}, false);
-exports.symbol = symbol__424}
-$S = symbol__424
+return get_setter__511(Msymbols__508, moduleT__520, name__518, make__512(LsymbolG__507, B524, name__518, B525, module__517))}, false);
+exports.symbol = symbol__514}
+$S = symbol__514
 {
-var symbol_name__433;
+var symbol_name__526;
 false;
-symbol_name__433 = Mmake_function__9("symbol_name", function symbol_name__434 (symbol__435)
-{return get__423(symbol__435, "name")}, false);
-exports["symbol-name"] = symbol_name__433}
+symbol_name__526 = Mmake_function__9("symbol_name", function symbol_name__527 (symbol__528)
+{return get__513(symbol__528, "name")}, false);
+exports["symbol-name"] = symbol_name__526}
 {
 false;
-Mkeys__154 = Mmake_function__9("Mkeys", function Mkeys__437 (key_values__438, defaults__439)
+Mkeys__166 = Mmake_function__9("Mkeys", function Mkeys__530 (key_values__531, defaults__532)
 {
-var i__440 = 0;
-while ($T(not__17((i__440 >= size__20(key_values__438)))))
+var i__533 = 0;
+while (true)
 {
-(function B441 (i__442)
+var value__538 = (i__533 >= size__20(key_values__531)),
+B543 = !(trueQ__14(value__538));
+if ($T(B543))
 {
-var key__443 = key_values__438[i__442],
-value__444 = key_values__438[inc__23(i__442, 1)];
-if ($T(instanceQ__250(key__443, LkeywordG__45)))
-{return defaults__439[key__443.name] = value__444}})(i__440);
-i__440 = inc__23(i__440, 2)};
+(function B529__534 (i__535)
+{
+var key__536 = key_values__531[i__535],
+number__539 = i__535,
+B541 = (number__539 + 1),
+value__537 = key_values__531[B541];
+if ($T(instanceQ__297(key__536, LkeywordG__45)))
+{return defaults__532[key__536.name] = value__537}})(i__533);
+var number__540 = i__533,
+B542 = (number__540 + 1);
+i__533 = B542}
+else
+break};
 false;
-return defaults__439}, false);
-exports["%keys"] = Mkeys__154}
+return defaults__532}, false);
+exports["%keys"] = Mkeys__166}
 {
-var element__449,
-choose__450,
-object_properties__451,
-find_key__452;
+var element__548,
+choose__549,
+object_properties__550,
+find_key__551;
 false;
-find_key__452 = Mmake_function__9("find_key", function find_key__453 (array__454, predicate__455)
+find_key__551 = Mmake_function__9("find_key", function find_key__552 (array__553, predicate__554)
 {
-var B456 = $SL.call(arguments, 2),
-B457 = Mkeys__154(B456, {skip:0,
+var B544__555 = $SL.call(arguments, 2),
+B545__556 = Mkeys__166(B544__555, {skip:0,
 failure:false,
 "from-end?":false}),
-skip__458 = B457.skip,
-failure__459 = B457.failure,
-from_endQ__460 = B457["from-end?"],
-keys__461 = object_properties__451(array__454),
-B466 = function B462 (index__463)
-{return predicate__455(element__449(array__454, index__463))},
-B467;
-if ($T(from_endQ__460))
-{B467 = reverse__148(keys__461)}
+skip__557 = B545__556.skip,
+failure__558 = B545__556.failure,
+from_endQ__559 = B545__556["from-end?"],
+keys__560 = object_properties__550(array__553),
+B565 = function B546__561 (index__562)
+{return predicate__554(element__548(array__553, index__562))},
+B566;
+if ($T(from_endQ__559))
+{B566 = reverse__159(keys__560)}
 else
-B467 = keys__461;
-var satisfying_keys__464 = choose__450(B466, B467),
-B465 = element__449(satisfying_keys__464, skip__458);
-if ($T(B465))
-{return B465}
+B566 = keys__560;
+var satisfying_keys__563 = choose__549(B565, B566),
+B547__564 = element__548(satisfying_keys__563, skip__557);
+if ($T(B547__564))
+{return B547__564}
 else
-return failure__459}, false);
-exports["find-key"] = find_key__452}
+return failure__558}, false);
+exports["find-key"] = find_key__551}
 {
-var parse_integer__470;
+var parse_integer__569;
 false;
-parse_integer__470 = Mmake_function__9("parse_integer", function parse_integer__471 (value__472)
+parse_integer__569 = Mmake_function__9("parse_integer", function parse_integer__570 (value__571)
 {
-var B473 = $SL.call(arguments, 1),
-B474 = Mkeys__154(B473, {radix:10}),
-radix__475 = B474.radix;
-return parseInt(value__472, radix__475)}, false);
-exports["parse-integer"] = parse_integer__470}
+var B567__572 = $SL.call(arguments, 1),
+B568__573 = Mkeys__166(B567__572, {radix:10}),
+radix__574 = B568__573.radix;
+return parseInt(value__571, radix__574)}, false);
+exports["parse-integer"] = parse_integer__569}
 {
 false;
-element__449 = Mmake_function__9("element", function element__479 (array__480, index__481)
+element__548 = Mmake_function__9("element", function element__578 (array__579, index__580)
 {
-var B482 = $SL.call(arguments, 2),
-B483 = Mkeys__154(B482, {"default":false}),
-default__484 = B483["default"],
-B485 = array__480[index__481];
-if ($T(B485))
-{return B485}
+var B575__581 = $SL.call(arguments, 2),
+B576__582 = Mkeys__166(B575__581, {"default":false}),
+default__583 = B576__582["default"],
+B577__584 = array__579[index__580];
+if ($T(B577__584))
+{return B577__584}
 else
-return default__484}, false);
-exports.element = element__449}
+return default__583}, false);
+exports.element = element__548}
 {
-var element_setter__486;
+var element_setter__585;
 false;
-element_setter__486 = Mmake_function__9("element_setter", function element_setter__487 (array__488, key__489, value__490)
-{return array__488[key__489] = value__490}, true);
-exports["element-setter"] = element_setter__486}
+element_setter__585 = Mmake_function__9("element_setter", function element_setter__586 (array__587, key__588, value__589)
+{return array__587[key__588] = value__589}, true);
+exports["element-setter"] = element_setter__585}
 {
-var replace_subsequence__493;
+var replace_subsequence__592;
 false;
-replace_subsequence__493 = Mmake_function__9("replace_subsequence", function replace_subsequence__494 (target_array__495, insert_array__496)
+replace_subsequence__592 = Mmake_function__9("replace_subsequence", function replace_subsequence__593 (target_array__594, insert_array__595)
 {
-var B497 = $SL.call(arguments, 2),
-B498 = Mkeys__154(B497, {start:0,
-end:size__20(target_array__495)}),
-start__499 = B498.start,
-end__500 = B498.end;
-return concatenate__283(slice__123(target_array__495, 0, start__499), insert_array__496, slice__123(target_array__495, end__500))}, false);
-exports["replace-subsequence"] = replace_subsequence__493}
+var B590__596 = $SL.call(arguments, 2),
+object__600 = target_array__594,
+B607 = ((object__600 || false).length || 0),
+B608 = {start:0,
+end:B607},
+B591__597 = Mkeys__166(B590__596, B608),
+start__598 = B591__597.start,
+end__599 = B591__597.end,
+end__603 = start__598,
+start__602 = 0,
+array__601 = target_array__594,
+B609 = array__601.slice(start__602, end__603),
+end__606,
+start__605 = end__599,
+array__604 = target_array__594,
+B610 = array__604.slice(start__605, end__606);
+return concatenate__340(B609, insert_array__595, B610)}, false);
+exports["replace-subsequence"] = replace_subsequence__592}
 {
-var replace_subsequenceN__503;
+var replace_subsequenceN__613;
 false;
-replace_subsequenceN__503 = Mmake_function__9("replace_subsequenceN", function replace_subsequenceN__504 (target_array__505, insert_array__506)
+replace_subsequenceN__613 = Mmake_function__9("replace_subsequenceN", function replace_subsequenceN__614 (target_array__615, insert_array__616)
 {
-var B507 = $SL.call(arguments, 2),
-B508 = Mkeys__154(B507, {start:0,
-end:size__20(target_array__505)}),
-start__509 = B508.start,
-end__510 = B508.end,
-rest__511 = Mconcat__53([start__509, (end__510 - start__509)], insert_array__506);
-[].splice.apply(target_array__505, rest__511);
-return target_array__505}, false);
-exports["replace-subsequence!"] = replace_subsequenceN__503}
+var B611__617 = $SL.call(arguments, 2),
+object__622 = target_array__615,
+B625 = ((object__622 || false).length || 0),
+B626 = {start:0,
+end:B625},
+B612__618 = Mkeys__166(B611__617, B626),
+start__619 = B612__618.start,
+end__620 = B612__618.end,
+array2__624 = insert_array__616,
+array1__623 = [start__619, (end__620 - start__619)],
+rest__621 = array1__623.concat(array2__624);
+[].splice.apply(target_array__615, rest__621);
+return target_array__615}, false);
+exports["replace-subsequence!"] = replace_subsequenceN__613}
 {
-var removeN__515;
+var removeN__630;
 false;
-removeN__515 = Mmake_function__9("removeN", function removeN__516 (array__517, value__518)
+removeN__630 = Mmake_function__9("removeN", function removeN__631 (array__632, value__633)
 {
-var B519 = $SL.call(arguments, 2),
-B520 = Mkeys__154(B519, {test:EE__299}),
-test__521 = B520.test,
-B522 = find_key__452(array__517, curry__183(test__521, value__518));
-if ($T(B522))
+var B627__634 = $SL.call(arguments, 2),
+B628__635 = Mkeys__166(B627__634, {test:EE__362}),
+test__636 = B628__635.test,
+B629__637 = find_key__551(array__632, curry__209(test__636, value__633));
+if ($T(B629__637))
 {
-var key__523 = B522;
-array__517.splice(key__523, 1)};
-return array__517}, false);
-exports["remove!"] = removeN__515}
+var key__638 = B629__637;
+array__632.splice(key__638, 1)};
+return array__632}, false);
+exports["remove!"] = removeN__630}
 {
-var remove__526;
+var remove__641;
 false;
-remove__526 = Mmake_function__9("remove", function remove__527 (array__528, value__529)
+remove__641 = Mmake_function__9("remove", function remove__642 (array__643, value__644)
 {
-var B530 = $SL.call(arguments, 2),
-B531 = Mkeys__154(B530, {test:EE__299}),
-test__532 = B531.test;
-return removeN__515(slice__123(array__528), value__529, $K("test"), test__532)}, false);
-exports.remove = remove__526}
+var B639__645 = $SL.call(arguments, 2),
+B640__646 = Mkeys__166(B639__645, {test:EE__362}),
+test__647 = B640__646.test,
+end__650,
+start__649,
+array__648 = array__643,
+B651 = array__648.slice(start__649, end__650);
+return removeN__630(B651, value__644, B192, test__647)}, false);
+exports.remove = remove__641}
 {
-var interpose__534;
+var interpose__653;
 false;
-interpose__534 = Mmake_function__9("interpose", function interpose__535 (separator__536, array__537)
-{return reduce1__129(function B538 (a__539, b__540)
-{return concatenate__283([a__539, separator__536], b__540)}, array__537)}, false);
-exports.interpose = interpose__534}
+interpose__653 = Mmake_function__9("interpose", function interpose__654 (separator__655, array__656)
+{
+var values__661 = array__656,
+function__660 = function B652__657 (a__658, b__659)
+{return concatenate__340([a__658, separator__655], b__659)};
+return reduce__132(function__660, first__85(values__661), rest__73(values__661))}, false);
+exports.interpose = interpose__653}
 {
 false;
-anyQ__317 = Mmake_function__9("anyQ", function anyQ__543 (function__544, values__545)
+anyQ__385 = Mmake_function__9("anyQ", function anyQ__664 (function__665, values__666)
 {
-var value__546,
-n__547 = size__20(values__545),
-i__548 = 0;
+var value__667,
+object__673 = values__666,
+n__668 = ((object__673 || false).length || 0),
+i__669 = 0;
 while (true)
 {
-var B549 = value__546,
-B552;
-if ($T(B549))
-{B552 = B549}
+var B662__670 = value__667,
+value__674;
+if ($T(B662__670))
+{value__674 = B662__670}
 else
-B552 = GE__135(i__548, n__547);
-var B553 = not__17(B552);
-if ($T(B553))
+value__674 = GE__143(i__669, n__668);
+var B677 = !(trueQ__14(value__674));
+if ($T(B677))
 {
-(function B550 (i__551)
-{return value__546 = function__544(values__545[i__551])})(i__548);
-i__548 = inc__23(i__548)}
+(function B663__671 (i__672)
+{return value__667 = function__665(values__666[i__672])})(i__669);
+var number__675 = i__669,
+B676 = (number__675 + 1);
+i__669 = B676}
 else
 break};
-return value__546}, false);
-exports["any?"] = anyQ__317}
+return value__667}, false);
+exports["any?"] = anyQ__385}
 {
-var memberQ__557;
+var memberQ__681;
 false;
-memberQ__557 = Mmake_function__9("memberQ", function memberQ__558 (value__559, array__560)
+memberQ__681 = Mmake_function__9("memberQ", function memberQ__682 (value__683, array__684)
 {
-var B561 = $SL.call(arguments, 2),
-B562 = Mkeys__154(B561, {test:EE__299}),
-test__563 = B562.test;
-return anyQ__317(function B564 (other_value__565)
-{return test__563(value__559, other_value__565)}, array__560)}, false);
-exports["member?"] = memberQ__557}
+var B678__685 = $SL.call(arguments, 2),
+B679__686 = Mkeys__166(B678__685, {test:EE__362}),
+test__687 = B679__686.test;
+return anyQ__385(function B680__688 (other_value__689)
+{return test__687(value__683, other_value__689)}, array__684)}, false);
+exports["member?"] = memberQ__681}
 {
-var everyQ__567;
+var everyQ__691;
 false;
-everyQ__567 = Mmake_function__9("everyQ", function everyQ__568 (function__569, array__570)
-{return not__17(anyQ__317(function B571 (value__572)
-{return not__17(function__569(value__572))}, array__570))}, false);
-exports["every?"] = everyQ__567}
+everyQ__691 = Mmake_function__9("everyQ", function everyQ__692 (function__693, array__694)
 {
-var map__579;
+var value__697 = anyQ__385(function B690__695 (value__696)
+{return not__17(function__693(value__696))}, array__694);
+return !(trueQ__14(value__697))}, false);
+exports["every?"] = everyQ__691}
+{
+var map__704;
 false;
-map__579 = Mmake_function__9("map", function map__580 (function__581)
+map__704 = Mmake_function__9("map", function map__705 (function__706)
 {
-var arrays__582 = $SL.call(arguments, 1),
-result__583 = [];
-if ($T(emptyQ__68(rest__71(arrays__582))))
+var arrays__707 = $SL.call(arguments, 1),
+result__708 = [],
+sequence__717 = rest__73(arrays__707),
+B727 = binaryEE__29(size__20(sequence__717), 0);
+if ($T(B727))
 {
-var B584 = first__81(arrays__582),
-B585,
-B586,
-B587 = [B584];
+var sequence__718 = arrays__707,
+B698__709 = sequence__718[0],
+B699__710,
+B701__711,
+B700__712 = [B698__709];
 while (true)
 {
-var B588 = B585,
-B592;
-if ($T(B588))
-{B592 = B588}
+var B702__713 = B699__710,
+value__719;
+if ($T(B702__713))
+{value__719 = B702__713}
 else
-B592 = anyQ__317(emptyQ__68, B587);
-var B593 = not__17(B592);
-if ($T(B593))
+value__719 = anyQ__385(emptyQ__68, B700__712);
+var B729 = !(trueQ__14(value__719));
+if ($T(B729))
 {
-var item__589 = first__81(B584);
-(function B590 (item__591)
-{return push_last__109(result__583, function__581(item__591))})(item__589);
-B584 = rest__71(B584);
-B587 = [B584]}
+var sequence__720 = B698__709,
+item__714 = sequence__720[0];
+(function B703__715 (item__716)
+{
+var value__722 = function__706(item__716),
+array__721 = result__708;
+array__721.push(value__722);
+return array__721})(item__714);
+var sequence__723 = B698__709,
+B728 = sequence__723.slice(1);
+B698__709 = B728;
+B700__712 = [B698__709]}
 else
 break};
-B586}
+B701__711}
 else
-while ($T(not__17(anyQ__317(emptyQ__68, arrays__582))))
-{
-push_last__109(result__583, apply__176(function__581, map__580(first__81, arrays__582)));
-arrays__582 = map__580(rest__71, arrays__582)};
-return result__583}, false);
-exports.map = map__579}
-{
-var do__600;
-false;
-do__600 = Mmake_function__9("Rdo", function do__601 (function__602)
-{
-var arrays__603 = $SL.call(arguments, 1);
-if ($T(emptyQ__68(rest__71(arrays__603))))
-{
-var B604 = first__81(arrays__603),
-B605,
-B606,
-B607 = [B604];
 while (true)
 {
-var B608 = B605,
-B612;
-if ($T(B608))
-{B612 = B608}
-else
-B612 = anyQ__317(emptyQ__68, B607);
-var B613 = not__17(B612);
-if ($T(B613))
+var value__724 = anyQ__385(emptyQ__68, arrays__707),
+B730 = !(trueQ__14(value__724));
+if ($T(B730))
 {
-var item__609 = first__81(B604);
-(function B610 (item__611)
-{return function__602(item__611)})(item__609);
-B604 = rest__71(B604);
-B607 = [B604]}
+var value__726 = apply__194(function__706, map__705(first__85, arrays__707)),
+array__725 = result__708;
+array__725.push(value__726);
+array__725;
+arrays__707 = map__705(rest__73, arrays__707)}
 else
 break};
-B606}
-else
-while ($T(not__17(anyQ__317(emptyQ__68, arrays__603))))
+return result__708}, false);
+exports.map = map__704}
 {
-apply__176(function__602, map__579(first__81, arrays__603));
-arrays__603 = map__579(rest__71, arrays__603)};
+var do__737;
+false;
+do__737 = Mmake_function__9("Rdo", function do__738 (function__739)
+{
+var arrays__740 = $SL.call(arguments, 1),
+sequence__749 = rest__73(arrays__740),
+B755 = binaryEE__29(size__20(sequence__749), 0);
+if ($T(B755))
+{
+var sequence__750 = arrays__740,
+B731__741 = sequence__750[0],
+B732__742,
+B734__743,
+B733__744 = [B731__741];
+while (true)
+{
+var B735__745 = B732__742,
+value__751;
+if ($T(B735__745))
+{value__751 = B735__745}
+else
+value__751 = anyQ__385(emptyQ__68, B733__744);
+var B757 = !(trueQ__14(value__751));
+if ($T(B757))
+{
+var sequence__752 = B731__741,
+item__746 = sequence__752[0];
+(function B736__747 (item__748)
+{return function__739(item__748)})(item__746);
+var sequence__753 = B731__741,
+B756 = sequence__753.slice(1);
+B731__741 = B756;
+B733__744 = [B731__741]}
+else
+break};
+B734__743}
+else
+while (true)
+{
+var value__754 = anyQ__385(emptyQ__68, arrays__740),
+B758 = !(trueQ__14(value__754));
+if ($T(B758))
+{
+apply__194(function__739, map__704(first__85, arrays__740));
+arrays__740 = map__704(rest__73, arrays__740)}
+else
+break};
 return false}, false);
-exports["do"] = do__600}
+exports["do"] = do__737}
 {
 false;
-choose__450 = Mmake_function__9("choose", function choose__620 (function__621, array__622)
+choose__549 = Mmake_function__9("choose", function choose__765 (function__766, array__767)
 {
-var result__623 = [],
-B624 = array__622,
-B625,
-B626,
-B627 = [B624];
+var result__768 = [],
+B759__769 = array__767,
+B760__770,
+B762__771,
+B761__772 = [B759__769];
 while (true)
 {
-var B628 = B625,
-B632;
-if ($T(B628))
-{B632 = B628}
+var B763__773 = B760__770,
+value__777;
+if ($T(B763__773))
+{value__777 = B763__773}
 else
-B632 = anyQ__317(emptyQ__68, B627);
-var B633 = not__17(B632);
-if ($T(B633))
+value__777 = anyQ__385(emptyQ__68, B761__772);
+var B783 = !(trueQ__14(value__777));
+if ($T(B783))
 {
-var element__629 = first__81(B624);
-(function B630 (element__631)
-{if ($T(function__621(element__631)))
-{return push_last__109(result__623, element__631)}})(element__629);
-B624 = rest__71(B624);
-B627 = [B624]}
+var sequence__778 = B759__769,
+element__774 = sequence__778[0];
+(function B764__775 (element__776)
+{if ($T(function__766(element__776)))
+{
+var value__780 = element__776,
+array__779 = result__768;
+array__779.push(value__780);
+return array__779}})(element__774);
+var sequence__781 = B759__769,
+B782 = sequence__781.slice(1);
+B759__769 = B782;
+B761__772 = [B759__769]}
 else
 break};
-B626;
-return result__623}, false);
-exports.choose = choose__450}
+B762__771;
+return result__768}, false);
+exports.choose = choose__549}
 {
-var copy_sequence__637;
+var copy_sequence__787;
 false;
-copy_sequence__637 = Mmake_function__9("copy_sequence", function copy_sequence__638 (array__639)
+copy_sequence__787 = Mmake_function__9("copy_sequence", function copy_sequence__788 (array__789)
 {
-var B640 = $SL.call(arguments, 1),
-B641 = Mkeys__154(B640, {start:0,
+var B784__790 = $SL.call(arguments, 1),
+B785__791 = Mkeys__166(B784__790, {start:0,
 end:false}),
-start__642 = B641.start,
-end__643 = B641.end,
-B644 = end__643,
-end__645;
-if ($T(B644))
-{end__645 = B644}
+start__792 = B785__791.start,
+end__793 = B785__791.end,
+B786__794 = end__793,
+end__795;
+if ($T(B786__794))
+{end__795 = B786__794}
 else
-end__645 = undefined;
-return slice__123(array__639, start__642, end__645)}, false);
-exports["copy-sequence"] = copy_sequence__637}
+end__795 = undefined;
+var end__798 = end__795,
+start__797 = start__792,
+array__796 = array__789;
+return array__796.slice(start__797, end__798)}, false);
+exports["copy-sequence"] = copy_sequence__787}
 {
-var initialize__646;
+var initialize__799;
 false;
-make__422 = Mmake_function__9("make", function make__647 (type__648)
+make__512 = Mmake_function__9("make", function make__800 (type__801)
 {
-var arguments__649 = $SL.call(arguments, 1),
-object__650 = new(type__648);
-apply__176(initialize__646, object__650, arguments__649);
-return object__650}, false);
-exports.make = make__422}
+var arguments__802 = $SL.call(arguments, 1),
+object__803 = new(type__801);
+apply__194(initialize__799, object__803, arguments__802);
+return object__803}, false);
+exports.make = make__512}
 {
 false;
-object_properties__451 = Mmake_function__9("object_properties", function object_properties__655 (object__656)
+object_properties__550 = Mmake_function__9("object_properties", function object_properties__808 (object__809)
 {
-var B657 = $SL.call(arguments, 1),
-B658 = Mkeys__154(B657, {"inherited?":false}),
-inheritedQ__659 = B658["inherited?"],
-result__660 = [];
-if ($T(instanceQ__250(object__656, LarrayG__4)))
+var B804__810 = $SL.call(arguments, 1),
+B805__811 = Mkeys__166(B804__810, {"inherited?":false}),
+inheritedQ__812 = B805__811["inherited?"],
+result__813 = [];
+if ($T(instanceQ__297(object__809, LarrayG__4)))
 {
-var B661 = size__20(object__656),
-i__662 = 0;
-while ($T(not__17(GE__135(i__662, B661))))
+var object__819 = object__809,
+B806__814 = ((object__819 || false).length || 0),
+i__815 = 0;
+while (true)
 {
-(function B663 (i__664)
-{return push_last__109(result__660, i__664)})(i__662);
-i__662 = (i__662 + 1)};
+var value__820 = GE__143(i__815, B806__814),
+B823 = !(trueQ__14(value__820));
+if ($T(B823))
+{
+(function B807__816 (i__817)
+{
+var value__822 = i__817,
+array__821 = result__813;
+array__821.push(value__822);
+return array__821})(i__815);
+i__815 = (i__815 + 1)}
+else
+break};
 false}
 else
 {
-var i__665;
-for (i__665 in object__656) (inheritedQ__659||$HP.call(object__656, i__665)) &&result__660.push(i__665)};
-return result__660}, false);
-exports["object-properties"] = object_properties__451}
+var i__818;
+for (i__818 in object__809) (inheritedQ__812||$HP.call(object__809, i__818)) &&result__813.push(i__818)};
+return result__813}, false);
+exports["object-properties"] = object_properties__550}
 {
-var object_values__666;
+var object_values__824;
 false;
-object_values__666 = Mmake_function__9("object_values", function object_values__667 (object__668)
-{return map__579(curry__183(get__423, object__668), object_properties__451(object__668))}, false);
-exports["object-values"] = object_values__666}
-{
-false;
-initialize__646 = Mmake_generic__260("initialize");
-exports.initialize = initialize__646}
+object_values__824 = Mmake_function__9("object_values", function object_values__825 (object__826)
+{return map__704(curry__209(get__513, object__826), object_properties__550(object__826))}, false);
+exports["object-values"] = object_values__824}
 {
 false;
-initialize__646 = Mmake_method__261("initialize", function B674 (object__675)
+initialize__799 = Mmake_generic__311("initialize");
+exports.initialize = initialize__799}
 {
-var rest__676 = $SL.call(arguments, 1),
-arguments__677 = as_object__378(rest__676),
-B678 = type__246(object__675)["%properties"];
-if ($T(B678))
+var B846 = $K("inherited?");
+false;
+initialize__799 = Mmake_method__312("initialize", function B827__832 (object__833)
 {
-var properties__679 = B678;
-do__600(function B680 (key__681)
+var rest__834 = $SL.call(arguments, 1),
+arguments__835 = as_object__460(rest__834),
+B828__836 = type__293(object__833)["%properties"];
+if ($T(B828__836))
 {
-var B682 = hasQ__256(LobjectG__1.prototype, key__681),
-B686;
-if ($T(B682))
-{B686 = B682}
+var properties__837 = B828__836;
+do__737(function B829__838 (key__839)
+{
+var B830__840 = hasQ__307(LobjectG__1.prototype, key__839),
+value__844;
+if ($T(B830__840))
+{value__844 = B830__840}
 else
-B686 = hasQ__256(object__675, key__681);
-var B687 = not__17(B686);
-if ($T(B687))
+value__844 = hasQ__307(object__833, key__839);
+var B845 = !(trueQ__14(value__844));
+if ($T(B845))
 {
-var B683 = arguments__677[key__681],
-value__685;
-if ($T(B683))
-{value__685 = B683}
+var B831__841 = arguments__835[key__839],
+value__843;
+if ($T(B831__841))
+{value__843 = B831__841}
 else
 {
-var value__684 = properties__679[key__681];
-if ($T(value__684))
-{value__685 = value__684()}
+var value__842 = properties__837[key__839];
+if ($T(value__842))
+{value__843 = value__842()}
 else
-value__685 = false};
-return object__675[key__681] = value__685}}, object_properties__451(properties__679, $K("inherited?"), true))};
-return object__675}, false, LobjectG__1, initialize__646);
-exports.initialize = initialize__646}
+value__843 = false};
+return object__833[key__839] = value__843}}, object_properties__550(properties__837, B846, true))};
+return object__833}, false, LobjectG__1, initialize__799);
+exports.initialize = initialize__799}
 {
-var Lhash_symbolG__688;
+var Lhash_symbolG__847;
 false;
-Lhash_symbolG__688 = Mmake_class__38(LobjectG__1, {name:false});
-exports["<hash-symbol>"] = Lhash_symbolG__688}
+Lhash_symbolG__847 = Mmake_class__38(LobjectG__1, {name:false});
+exports["<hash-symbol>"] = Lhash_symbolG__847}
 {
-var key__689 = make__422(Lhash_symbolG__688, $K("name"), "key");
-$KEY = key__689}
+var key__848 = make__512(Lhash_symbolG__847, B524, "key");
+$KEY = key__848}
 {
-var rest__690 = make__422(Lhash_symbolG__688, $K("name"), "rest");
-$REST = rest__690}
+var rest__849 = make__512(Lhash_symbolG__847, B524, "rest");
+$REST = rest__849}
 {
 false;
-get__423 = Mmake_function__9("get", function get__697 (object__698)
+get__513 = Mmake_function__9("get", function get__856 (object__857)
 {
-var properties__699 = $SL.call(arguments, 1),
-result__700,
-B701 = properties__699,
-B702,
-B703,
-B704 = [B701];
+var properties__858 = $SL.call(arguments, 1),
+result__859,
+B850__860 = properties__858,
+B851__861,
+B853__862,
+B852__863 = [B850__860];
 while (true)
 {
-var B705 = B702,
-B709;
-if ($T(B705))
-{B709 = B705}
+var B854__864 = B851__861,
+value__868;
+if ($T(B854__864))
+{value__868 = B854__864}
 else
-B709 = anyQ__317(emptyQ__68, B704);
-var B710 = not__17(B709);
-if ($T(B710))
+value__868 = anyQ__385(emptyQ__68, B852__863);
+var B874 = !(trueQ__14(value__868));
+if ($T(B874))
 {
-var property__706 = first__81(B701);
-if ($T(not__17(hasQ__256(object__698, property__706))))
+var sequence__869 = B850__860,
+property__865 = sequence__869[0],
+value__870 = hasQ__307(object__857, property__865),
+B872 = !(trueQ__14(value__870));
+if ($T(B872))
 {
-B703 = result__700 = false;
-B702 = true}
+B853__862 = result__859 = false;
+B851__861 = true}
 else
 {
-(function B707 (property__708)
+(function B855__866 (property__867)
 {
-result__700 = object__698[property__708];
-return object__698 = result__700})(property__706);
-B701 = rest__71(B701);
-B704 = [B701]}}
+result__859 = object__857[property__867];
+return object__857 = result__859})(property__865);
+var sequence__871 = B850__860,
+B873 = sequence__871.slice(1);
+B850__860 = B873;
+B852__863 = [B850__860]}}
 else
 break};
-B703;
-return result__700}, false);
-exports.get = get__423}
+B853__862;
+return result__859}, false);
+exports.get = get__513}
 {
 false;
-get_setter__421 = Mmake_function__9("get_setter", function get_setter__711 (object__712)
+get_setter__511 = Mmake_function__9("get_setter", function get_setter__875 (object__876)
 {
-var propertiesSvalue__713 = $SL.call(arguments, 1);
-if ($T(LE__357(size__20(propertiesSvalue__713), 2)))
-{return object__712[first__81(propertiesSvalue__713)] = second__88(propertiesSvalue__713)}
+var propertiesSvalue__877 = $SL.call(arguments, 1),
+object__880 = propertiesSvalue__877,
+B886 = ((object__880 || false).length || 0),
+B887 = LE__435(B886, 2);
+if ($T(B887))
+{
+var sequence__881 = propertiesSvalue__877,
+B888 = sequence__881[1];
+return object__876[first__85(propertiesSvalue__877)] = B888}
 else
 {
-var property__714 = first__81(propertiesSvalue__713),
-object2__715;
-if ($T(hasQ__256(object__712, property__714)))
-{object2__715 = object__712[property__714]}
+var sequence__882 = propertiesSvalue__877,
+property__878 = sequence__882[0],
+property__884 = property__878,
+object__883 = object__876,
+B889 = $HP.call(object__883,property__884),
+object2__879;
+if ($T(B889))
+{object2__879 = object__876[property__878]}
 else
-object2__715 = object__712[property__714] = make_object__414();
-return apply__176(get_setter__711, object2__715, rest__71(propertiesSvalue__713))}}, true);
-exports["get-setter"] = get_setter__421}
+object2__879 = object__876[property__878] = make_object__504();
+var sequence__885 = propertiesSvalue__877,
+B890 = sequence__885.slice(1);
+return apply__194(get_setter__875, object2__879, B890)}}, true);
+exports["get-setter"] = get_setter__511}
 {
-var split_with__717;
+var split_with__892;
 false;
-split_with__717 = Mmake_function__9("split_with", function split_with__718 (function__719, array__720)
+split_with__892 = Mmake_function__9("split_with", function split_with__893 (function__894, array__895)
 {
-var a__721 = [],
-b__722 = [];
-do__600(function B723 (item__724)
+var a__896 = [],
+b__897 = [];
+do__737(function B891__898 (item__899)
 {
-var B725;
-if ($T(function__719(item__724)))
-{B725 = a__721}
+var value__901 = item__899,
+array__900;
+if ($T(function__894(item__899)))
+{array__900 = a__896}
 else
-B725 = b__722;
-return push_last__109(B725, item__724)}, array__720);
-return [a__721, b__722]}, false);
-exports["split-with"] = split_with__717}
+array__900 = b__897;
+array__900.push(value__901);
+return array__900}, array__895);
+return [a__896, b__897]}, false);
+exports["split-with"] = split_with__892}
 {
-var as_hex_string__726;
+var as_hex_string__902;
 false;
-as_hex_string__726 = Mmake_function__9("as_hex_string", function as_hex_string__727 (number__728)
-{return number__728.toString(16)}, false);
-exports["as-hex-string"] = as_hex_string__726}
+as_hex_string__902 = Mmake_function__9("as_hex_string", function as_hex_string__903 (number__904)
+{return number__904.toString(16)}, false);
+exports["as-hex-string"] = as_hex_string__902}
 {
-var description__729;
+var description__905;
 false;
-description__729 = Mmake_generic__260("description");
-exports.description = description__729}
-{
-false;
-description__729 = Mmake_method__261("description", function B731 (number__732)
-{return ("" + number__732)}, false, LnumberG__3, description__729);
-exports.description = description__729}
+description__905 = Mmake_generic__311("description");
+exports.description = description__905}
 {
 false;
-description__729 = Mmake_method__261("description", function B734 (string__735)
-{
-var escaped__736 = string__735.replace("\"", "\\\"", "g");
-return ("\"" + escaped__736 + "\"")}, false, LstringG__2, description__729);
-exports.description = description__729}
+description__905 = Mmake_method__312("description", function B906__907 (number__908)
+{return ("" + number__908)}, false, LnumberG__3, description__905);
+exports.description = description__905}
 {
 false;
-description__729 = Mmake_method__261("description", function B738 (array__739)
-{return ("(" + join__402(map__579(description__729, array__739), " ") + ")")}, false, LarrayG__4, description__729);
-exports.description = description__729}
+description__905 = Mmake_method__312("description", function B909__910 (string__911)
+{
+var escaped__912 = string__911.replace("\"", "\\\"", "g");
+return ("\"" + escaped__912 + "\"")}, false, LstringG__2, description__905);
+exports.description = description__905}
 {
 false;
-description__729 = Mmake_method__261("description", function B741 (value__742)
-{if ($T(value__742))
+description__905 = Mmake_method__312("description", function B913__914 (array__915)
+{return ("(" + join__492(map__704(description__905, array__915), " ") + ")")}, false, LarrayG__4, description__905);
+exports.description = description__905}
+{
+false;
+description__905 = Mmake_method__312("description", function B916__917 (value__918)
+{if ($T(value__918))
 {return "#t"}
 else
-return "#f"}, false, LbooleanG__5, description__729);
-exports.description = description__729}
+return "#f"}, false, LbooleanG__5, description__905);
+exports.description = description__905}
 {
 false;
-description__729 = Mmake_method__261("description", function B745 (symbol__746)
+description__905 = Mmake_method__312("description", function B919__921 (symbol__922)
 {
-var B747 = get__423(symbol__746, "module"),
-B749;
-if ($T(B747))
+var B920__923 = get__513(symbol__922, "module"),
+B925;
+if ($T(B920__923))
 {
-var module__748 = B747;
-B749 = concatenate__283(module__748, "::")}
+var module__924 = B920__923;
+B925 = concatenate__340(module__924, "::")}
 else
-B749 = "";
-var B750 = symbol_name__433(symbol__746);
-return (B749 + B750)}, false, LsymbolG__417, description__729);
-exports.description = description__729}
+B925 = "";
+var B926 = symbol_name__526(symbol__922);
+return (B925 + B926)}, false, LsymbolG__507, description__905);
+exports.description = description__905}
 {
 false;
-description__729 = Mmake_method__261("description", function B752 (keyword__753)
-{return (symbol_name__433(keyword__753) + ":")}, false, LkeywordG__45, description__729);
-exports.description = description__729}
+description__905 = Mmake_method__312("description", function B927__928 (keyword__929)
+{return (symbol_name__526(keyword__929) + ":")}, false, LkeywordG__45, description__905);
+exports.description = description__905}
 {
 false;
-description__729 = Mmake_method__261("description", function B755 (symbol__756)
-{return ("#" + symbol_name__433(symbol__756))}, false, Lhash_symbolG__688, description__729);
-exports.description = description__729}
+description__905 = Mmake_method__312("description", function B930__931 (symbol__932)
+{return ("#" + symbol_name__526(symbol__932))}, false, Lhash_symbolG__847, description__905);
+exports.description = description__905}
 {
-var min__757;
+var min__933;
 false;
-min__757 = Math.min;
-exports.min = min__757}
+min__933 = Math.min;
+exports.min = min__933}
 {
-var max__758;
+var max__934;
 false;
-max__758 = Math.max;
-exports.max = max__758}
+max__934 = Math.max;
+exports.max = max__934}
 {
-var abs__759;
+var abs__935;
 false;
-abs__759 = Math.abs;
-exports.abs = abs__759}
+abs__935 = Math.abs;
+exports.abs = abs__935}
 {
-var round__760;
+var round__936;
 false;
-round__760 = Math.round;
-exports.round = round__760}
+round__936 = Math.round;
+exports.round = round__936}
 {
-var floor__761;
+var floor__937;
 false;
-floor__761 = Math.floor;
-exports.floor = floor__761}
+floor__937 = Math.floor;
+exports.floor = floor__937}
 {
-var ceil__762;
+var ceil__938;
 false;
-ceil__762 = Math.ceil;
-exports.ceil = ceil__762}
+ceil__938 = Math.ceil;
+exports.ceil = ceil__938}
 {
-var sin__763;
+var sin__939;
 false;
-sin__763 = Math.sin;
-exports.sin = sin__763}
+sin__939 = Math.sin;
+exports.sin = sin__939}
 {
-var cos__764;
+var cos__940;
 false;
-cos__764 = Math.cos;
-exports.cos = cos__764}
+cos__940 = Math.cos;
+exports.cos = cos__940}
 {
-var atan2__765;
+var atan2__941;
 false;
-atan2__765 = Math.atan2;
-exports.atan2 = atan2__765}
+atan2__941 = Math.atan2;
+exports.atan2 = atan2__941}
 {
-var expt__766;
+var expt__942;
 false;
-expt__766 = Math.pow;
-exports.expt = expt__766}
+expt__942 = Math.pow;
+exports.expt = expt__942}
 {
-var sqrt__767;
+var sqrt__943;
 false;
-sqrt__767 = Math.sqrt;
-exports.sqrt = sqrt__767}
+sqrt__943 = Math.sqrt;
+exports.sqrt = sqrt__943}
 {
-var mod__768;
+var mod__944;
 false;
-mod__768 = Mmake_function__9("mod", function mod__769 (number1__770, number2__771)
-{return (number1__770 % number2__771)}, false);
-exports.mod = mod__768}
+mod__944 = Mmake_function__9("mod", function mod__945 (number1__946, number2__947)
+{return (number1__946 % number2__947)}, false);
+exports.mod = mod__944}
 {
-var TpiT__772;
+var TpiT__948;
 false;
-TpiT__772 = Math.PI;
-exports["*pi*"] = TpiT__772}
+TpiT__948 = Math.PI;
+exports["*pi*"] = TpiT__948}
 {
-var TradiantT__773;
+var TradiantT__949;
 false;
-TradiantT__773 = (TpiT__772 / 180)}
+TradiantT__949 = (TpiT__948 / 180)}
 {
-var as_radiant__774;
+var as_radiant__950;
 false;
-as_radiant__774 = Mmake_function__9("as_radiant", function as_radiant__775 (number__776)
-{return (number__776 * TradiantT__773)}, false);
-exports["as-radiant"] = as_radiant__774}
+as_radiant__950 = Mmake_function__9("as_radiant", function as_radiant__951 (number__952)
+{return (number__952 * TradiantT__949)}, false);
+exports["as-radiant"] = as_radiant__950}
 {
-var signal__777;
+var signal__953;
 false;
-signal__777 = Mmake_function__9("signal", function signal__778 (error__779)
+signal__953 = Mmake_function__9("signal", function signal__954 (error__955)
 {
-throw(error__779);
+throw(error__955);
 return false}, false);
-exports.signal = signal__777}
+exports.signal = signal__953}
 {
-var extendN__786;
+var extendN__962;
 false;
-extendN__786 = Mmake_function__9("extendN", function extendN__787 (object1__788, object2__789)
+extendN__962 = Mmake_function__9("extendN", function extendN__963 (object1__964, object2__965)
 {
-var B790 = object_properties__451(object2__789),
-B791,
-B792,
-B793 = [B790];
+var B956__966 = object_properties__550(object2__965),
+B957__967,
+B959__968,
+B958__969 = [B956__966];
 while (true)
 {
-var B794 = B791,
-B798;
-if ($T(B794))
-{B798 = B794}
+var B960__970 = B957__967,
+value__974;
+if ($T(B960__970))
+{value__974 = B960__970}
 else
-B798 = anyQ__317(emptyQ__68, B793);
-var B799 = not__17(B798);
-if ($T(B799))
+value__974 = anyQ__385(emptyQ__68, B958__969);
+var B978 = !(trueQ__14(value__974));
+if ($T(B978))
 {
-var key__795 = first__81(B790);
-(function B796 (key__797)
-{return get_setter__421(object1__788, key__797, get__423(object2__789, key__797))})(key__795);
-B790 = rest__71(B790);
-B793 = [B790]}
+var sequence__975 = B956__966,
+key__971 = sequence__975[0];
+(function B961__972 (key__973)
+{return get_setter__511(object1__964, key__973, get__513(object2__965, key__973))})(key__971);
+var sequence__976 = B956__966,
+B977 = sequence__976.slice(1);
+B956__966 = B977;
+B958__969 = [B956__966]}
 else
 break};
-B792;
-return object1__788}, false);
-exports["extend!"] = extendN__786}
+B959__968;
+return object1__964}, false);
+exports["extend!"] = extendN__962}
 {
-var as_property_list__808;
+var as_property_list__987;
 false;
-as_property_list__808 = Mmake_function__9("as_property_list", function as_property_list__809 (object__810)
+as_property_list__987 = Mmake_function__9("as_property_list", function as_property_list__988 (object__989)
 {
-var B811 = $SL.call(arguments, 1),
-B812 = Mkeys__154(B811, {"keywords?":false}),
-keywordsQ__813 = B812["keywords?"],
-result__814 = [],
-B815 = object_properties__451(object__810),
-B816,
-B817,
-B818 = [B815];
+var B979__990 = $SL.call(arguments, 1),
+B980__991 = Mkeys__166(B979__990, {"keywords?":false}),
+keywordsQ__992 = B980__991["keywords?"],
+result__993 = [],
+B981__994 = object_properties__550(object__989),
+B982__995,
+B984__996,
+B983__997 = [B981__994];
 while (true)
 {
-var B819 = B816,
-B824;
-if ($T(B819))
-{B824 = B819}
+var B985__998 = B982__995,
+value__1002;
+if ($T(B985__998))
+{value__1002 = B985__998}
 else
-B824 = anyQ__317(emptyQ__68, B818);
-var B825 = not__17(B824);
-if ($T(B825))
+value__1002 = anyQ__385(emptyQ__68, B983__997);
+var B1010 = !(trueQ__14(value__1002));
+if ($T(B1010))
 {
-var key__820 = first__81(B815);
-(function B821 (key__822)
+var sequence__1003 = B981__994,
+key__999 = sequence__1003[0];
+(function B986__1000 (key__1001)
 {
-var B823;
-if ($T(keywordsQ__813))
-{B823 = keyword__47(as_string__57(key__822))}
+var value__1005;
+if ($T(keywordsQ__992))
+{value__1005 = keyword__47(as_string__57(key__1001))}
 else
-B823 = key__822;
-push_last__109(result__814, B823);
-return push_last__109(result__814, get__423(object__810, key__822))})(key__820);
-B815 = rest__71(B815);
-B818 = [B815]}
+value__1005 = key__1001;
+var array__1004 = result__993;
+array__1004.push(value__1005);
+array__1004;
+var value__1007 = get__513(object__989, key__1001),
+array__1006 = result__993;
+array__1006.push(value__1007);
+return array__1006})(key__999);
+var sequence__1008 = B981__994,
+B1009 = sequence__1008.slice(1);
+B981__994 = B1009;
+B983__997 = [B981__994]}
 else
 break};
-B817;
-return result__814}, false);
-exports["as-property-list"] = as_property_list__808}
+B984__996;
+return result__993}, false);
+exports["as-property-list"] = as_property_list__987}
 {
-var as_association_list__834;
+var as_association_list__1019;
 false;
-as_association_list__834 = Mmake_function__9("as_association_list", function as_association_list__835 (object__836)
+as_association_list__1019 = Mmake_function__9("as_association_list", function as_association_list__1020 (object__1021)
 {
-var B837 = $SL.call(arguments, 1),
-B838 = Mkeys__154(B837, {"keywords?":false}),
-keywordsQ__839 = B838["keywords?"],
-result__840 = [],
-B841 = object_properties__451(object__836),
-B842,
-B843,
-B844 = [B841];
+var B1011__1022 = $SL.call(arguments, 1),
+B1012__1023 = Mkeys__166(B1011__1022, {"keywords?":false}),
+keywordsQ__1024 = B1012__1023["keywords?"],
+result__1025 = [],
+B1013__1026 = object_properties__550(object__1021),
+B1014__1027,
+B1016__1028,
+B1015__1029 = [B1013__1026];
 while (true)
 {
-var B845 = B842,
-B852;
-if ($T(B845))
-{B852 = B845}
+var B1017__1030 = B1014__1027,
+value__1034;
+if ($T(B1017__1030))
+{value__1034 = B1017__1030}
 else
-B852 = anyQ__317(emptyQ__68, B844);
-var B853 = not__17(B852);
-if ($T(B853))
+value__1034 = anyQ__385(emptyQ__68, B1015__1029);
+var B1042 = !(trueQ__14(value__1034));
+if ($T(B1042))
 {
-var key__846 = first__81(B841);
-(function B847 (key__848)
+var sequence__1035 = B1013__1026,
+key__1031 = sequence__1035[0];
+(function B1018__1032 (key__1033)
 {
-var B849;
-if ($T(keywordsQ__839))
-{B849 = keyword__47(as_string__57(key__848))}
+var B1039;
+if ($T(keywordsQ__1024))
+{B1039 = keyword__47(as_string__57(key__1033))}
 else
-B849 = key__848;
-var B850 = get__423(object__836, key__848),
-B851 = [B849, B850];
-return push_last__109(result__840, B851)})(key__846);
-B841 = rest__71(B841);
-B844 = [B841]}
+B1039 = key__1033;
+var B1040 = get__513(object__1021, key__1033),
+value__1037 = [B1039, B1040],
+array__1036 = result__1025;
+array__1036.push(value__1037);
+return array__1036})(key__1031);
+var sequence__1038 = B1013__1026,
+B1041 = sequence__1038.slice(1);
+B1013__1026 = B1041;
+B1015__1029 = [B1013__1026]}
 else
 break};
-B843;
-return result__840}, false);
-exports["as-association-list"] = as_association_list__834}
+B1016__1028;
+return result__1025}, false);
+exports["as-association-list"] = as_association_list__1019}
 {
-var starts_withQ__854;
+var starts_withQ__1043;
 false;
-starts_withQ__854 = Mmake_function__9("starts_withQ", function starts_withQ__855 (string__856, prefix__857)
-{return binaryEE__29(string__856.indexOf(prefix__857), 0)}, false);
-exports["starts-with?"] = starts_withQ__854}
+starts_withQ__1043 = Mmake_function__9("starts_withQ", function starts_withQ__1044 (string__1045, prefix__1046)
 {
-var evenQ__858;
+var object2__1048 = 0,
+object1__1047 = string__1045.indexOf(prefix__1046);
+return (object1__1047 === object2__1048)}, false);
+exports["starts-with?"] = starts_withQ__1043}
+{
+var evenQ__1049;
 false;
-evenQ__858 = Mmake_function__9("evenQ", function evenQ__859 (number__860)
-{return binaryEE__29((number__860 % 2), 0)}, false);
-exports["even?"] = evenQ__858}
+evenQ__1049 = Mmake_function__9("evenQ", function evenQ__1050 (number__1051)
 {
-var oddQ__861;
+var object2__1053 = 0,
+object1__1052 = (number__1051 % 2);
+return (object1__1052 === object2__1053)}, false);
+exports["even?"] = evenQ__1049}
+{
+var oddQ__1054;
 false;
-oddQ__861 = Mmake_function__9("oddQ", function oddQ__862 (number__863)
-{return binaryEE__29((number__863 % 2), 1)}, false);
-exports["odd?"] = oddQ__861}
+oddQ__1054 = Mmake_function__9("oddQ", function oddQ__1055 (number__1056)
 {
-var group_by__865;
+var object2__1058 = 1,
+object1__1057 = (number__1056 % 2);
+return (object1__1057 === object2__1058)}, false);
+exports["odd?"] = oddQ__1054}
+{
+var group_by__1060;
 false;
-group_by__865 = Mmake_function__9("group_by", function group_by__866 (predicate__867, items__868)
-{return reduce__128(function B869 (result__870, item__871)
+group_by__1060 = Mmake_function__9("group_by", function group_by__1061 (predicate__1062, items__1063)
+{return reduce__132(function B1059__1064 (result__1065, item__1066)
 {
-var key__872 = predicate__867(item__871);
-if ($T(hasQ__256(result__870, key__872)))
-{push_last__109(get__423(result__870, key__872), item__871)}
+var key__1067 = predicate__1062(item__1066),
+property__1069 = key__1067,
+object__1068 = result__1065,
+B1072 = $HP.call(object__1068,property__1069);
+if ($T(B1072))
+{
+var value__1071 = item__1066,
+array__1070 = get__513(result__1065, key__1067);
+array__1070.push(value__1071);
+array__1070}
 else
-get_setter__421(result__870, key__872, [item__871]);
-return result__870}, make_object__414(), items__868)}, false);
-exports["group-by"] = group_by__865}
+get_setter__511(result__1065, key__1067, [item__1066]);
+return result__1065}, make_object__504(), items__1063)}, false);
+exports["group-by"] = group_by__1060}
 {
-var wrap_object__873;
+var wrap_object__1073;
 false;
-wrap_object__873 = Mmake_function__9("wrap_object", function wrap_object__874 (object__875)
+wrap_object__1073 = Mmake_function__9("wrap_object", function wrap_object__1074 (object__1075)
 {
-var rest__876 = $SL.call(arguments, 1),
-result__877 = Object.create(object__875);
-extendN__786(result__877, as_object__378(rest__876));
-return result__877}, false)}
+var rest__1076 = $SL.call(arguments, 1),
+result__1077 = Object.create(object__1075);
+extendN__962(result__1077, as_object__460(rest__1076));
+return result__1077}, false)}
 {
-var unwrap_object__878;
+var unwrap_object__1078;
 false;
-unwrap_object__878 = Mmake_function__9("unwrap_object", function unwrap_object__879 (object__880)
-{return object__880.__proto__}, false)}
+unwrap_object__1078 = Mmake_function__9("unwrap_object", function unwrap_object__1079 (object__1080)
+{return object__1080.__proto__}, false)}
 {
-var update_with__883;
+var update_with__1083;
 false;
-update_with__883 = Mmake_function__9("update_with", function update_with__884 (fn__885, obj__886)
+update_with__1083 = Mmake_function__9("update_with", function update_with__1084 (fn__1085, obj__1086)
 {
-var objs__887 = $SL.call(arguments, 2);
-return do__600(function B888 (obj2__889)
-{return do__600(function B890 (property__891)
+var objs__1087 = $SL.call(arguments, 2);
+return do__737(function B1081__1088 (obj2__1089)
+{return do__737(function B1082__1090 (property__1091)
 {
-var value__892 = get__423(obj2__889, property__891),
-B893;
-if ($T(hasQ__256(obj__886, property__891)))
-{B893 = fn__885(get__423(obj__886, property__891), value__892)}
+var value__1092 = get__513(obj2__1089, property__1091),
+property__1094 = property__1091,
+object__1093 = obj__1086,
+B1095 = $HP.call(object__1093,property__1094),
+B1096;
+if ($T(B1095))
+{B1096 = fn__1085(get__513(obj__1086, property__1091), value__1092)}
 else
-B893 = value__892;
-return get_setter__421(obj__886, property__891, B893)}, object_properties__451(obj2__889))}, objs__887)}, false);
-exports["update-with"] = update_with__883}
+B1096 = value__1092;
+return get_setter__511(obj__1086, property__1091, B1096)}, object_properties__550(obj2__1089))}, objs__1087)}, false);
+exports["update-with"] = update_with__1083}
 {
-var set_unionN__894,
-as_set__895;
+var set_unionN__1097,
+as_set__1098;
 false;
-as_set__895 = Mmake_function__9("as_set", function as_set__896 (values__897)
+as_set__1098 = Mmake_function__9("as_set", function as_set__1099 (values__1100)
 {
-var set__898 = [];
-return set_unionN__894(set__898, values__897)}, false);
-exports["as-set"] = as_set__895}
+var set__1101 = [];
+return set_unionN__1097(set__1101, values__1100)}, false);
+exports["as-set"] = as_set__1098}
 {
-var set_addN__899;
+var set_addN__1102;
 false;
-set_addN__899 = Mmake_function__9("set_addN", function set_addN__900 (set__901, object__902)
-{if ($T(not__17(memberQ__557(object__902, set__901))))
-{return push_last__109(set__901, object__902)}}, false);
-exports["set-add!"] = set_addN__899}
+set_addN__1102 = Mmake_function__9("set_addN", function set_addN__1103 (set__1104, object__1105)
 {
-var set_removeN__903;
+var value__1106 = memberQ__681(object__1105, set__1104),
+B1109 = !(trueQ__14(value__1106));
+if ($T(B1109))
+{
+var value__1108 = object__1105,
+array__1107 = set__1104;
+array__1107.push(value__1108);
+return array__1107}}, false);
+exports["set-add!"] = set_addN__1102}
+{
+var set_removeN__1110;
 false;
-set_removeN__903 = removeN__515;
-exports["set-remove!"] = set_removeN__903}
+set_removeN__1110 = removeN__630;
+exports["set-remove!"] = set_removeN__1110}
 {
 false;
-set_unionN__894 = Mmake_function__9("set_unionN", function set_unionN__904 (set1__905, set2__906)
+set_unionN__1097 = Mmake_function__9("set_unionN", function set_unionN__1111 (set1__1112, set2__1113)
 {
-do__600(curry__183(set_addN__899, set1__905), set2__906);
-return set1__905}, false);
-exports["set-union!"] = set_unionN__894}
+do__737(curry__209(set_addN__1102, set1__1112), set2__1113);
+return set1__1112}, false);
+exports["set-union!"] = set_unionN__1097}
 {
-var set_subtractN__907;
+var set_subtractN__1114;
 false;
-set_subtractN__907 = Mmake_function__9("set_subtractN", function set_subtractN__908 (set1__909, set2__910)
+set_subtractN__1114 = Mmake_function__9("set_subtractN", function set_subtractN__1115 (set1__1116, set2__1117)
 {
-do__600(curry__183(set_removeN__903, set1__909), set2__910);
-return set1__909}, false);
-exports["set-subtract!"] = set_subtractN__907}
+do__737(curry__209(set_removeN__1110, set1__1116), set2__1117);
+return set1__1116}, false);
+exports["set-subtract!"] = set_subtractN__1114}
 {
-var chain_object__911;
+var chain_object__1118;
 false;
-chain_object__911 = Mmake_function__9("chain_object", function chain_object__912 (object1__913, object2__914)
+chain_object__1118 = Mmake_function__9("chain_object", function chain_object__1119 (object1__1120, object2__1121)
 {
-object2__914.__proto__ = object1__913.__proto__;
-object1__913.__proto__ = object2__914;
-return object1__913}, false);
-exports["chain-object"] = chain_object__911}
+object2__1121.__proto__ = object1__1120.__proto__;
+object1__1120.__proto__ = object2__1121;
+return object1__1120}, false);
+exports["chain-object"] = chain_object__1118}
 {
-var unchain_object__915;
+var unchain_object__1122;
 false;
-unchain_object__915 = Mmake_function__9("unchain_object", function unchain_object__916 (object__917)
+unchain_object__1122 = Mmake_function__9("unchain_object", function unchain_object__1123 (object__1124)
 {
-var B918;
-if ($T(object__917.__proto__))
-{B918 = object__917.__proto__.__proto__}
+var B1125;
+if ($T(object__1124.__proto__))
+{B1125 = object__1124.__proto__.__proto__}
 else
-B918 = false;
-object__917.__proto__ = B918;
-return object__917}, false);
-exports["unchain-object"] = unchain_object__915}
+B1125 = false;
+object__1124.__proto__ = B1125;
+return object__1124}, false);
+exports["unchain-object"] = unchain_object__1122}
 {
 false;
-as_hex_string__726 = Mmake_function__9("as_hex_string", function as_hex_string__919 (number__920)
-{return number__920.toString(16)}, false);
-exports["as-hex-string"] = as_hex_string__726}
+as_hex_string__902 = Mmake_function__9("as_hex_string", function as_hex_string__1126 (number__1127)
+{return number__1127.toString(16)}, false);
+exports["as-hex-string"] = as_hex_string__902}
 {
-var make_plain_object__921;
+var make_plain_object__1128;
 false;
-make_plain_object__921 = Mmake_function__9("make_plain_object", function make_plain_object__922 ()
+make_plain_object__1128 = Mmake_function__9("make_plain_object", function make_plain_object__1129 ()
 {return Object.create(null)}, false);
-exports["make-plain-object"] = make_plain_object__921}
+exports["make-plain-object"] = make_plain_object__1128}
 {
-var ___923;
+var ___1130;
 false;
-___923 = Mmake_function__9("_", function ___924 (minuend__925)
+___1130 = Mmake_function__9("_", function ___1131 (minuend__1132)
 {
-var subtrahends__926 = $SL.call(arguments, 1);
-if ($T(emptyQ__68(subtrahends__926)))
-{return -(minuend__925)}
+var subtrahends__1133 = $SL.call(arguments, 1),
+sequence__1134 = subtrahends__1133,
+B1135 = binaryEE__29(size__20(sequence__1134), 0);
+if ($T(B1135))
+{return -(minuend__1132)}
 else
-return reduce__128(binary___234, minuend__925, subtrahends__926)}, false);
-exports["-"] = ___923}
+return reduce__132(binary___281, minuend__1132, subtrahends__1133)}, false);
+exports["-"] = ___1130}
 {
-var P__927;
+var P__1136;
 false;
-P__927 = Mmake_function__9("P", function P__928 ()
+P__1136 = Mmake_function__9("P", function P__1137 ()
 {
-var numbers__929 = $SL.call(arguments, 0);
-if ($T(emptyQ__68(numbers__929)))
+var numbers__1138 = $SL.call(arguments, 0),
+sequence__1139 = numbers__1138,
+B1142 = binaryEE__29(size__20(sequence__1139), 0);
+if ($T(B1142))
 {return 0}
 else
-return reduce1__129(binaryP__230, numbers__929)}, false);
-exports["+"] = P__927}
 {
-var T__930;
+var values__1141 = numbers__1138,
+function__1140 = binaryP__277;
+return reduce__132(function__1140, first__85(values__1141), rest__73(values__1141))}}, false);
+exports["+"] = P__1136}
+{
+var T__1143;
 false;
-T__930 = Mmake_function__9("T", function T__931 ()
+T__1143 = Mmake_function__9("T", function T__1144 ()
 {
-var numbers__932 = $SL.call(arguments, 0);
-if ($T(emptyQ__68(numbers__932)))
+var numbers__1145 = $SL.call(arguments, 0),
+sequence__1146 = numbers__1145,
+B1149 = binaryEE__29(size__20(sequence__1146), 0);
+if ($T(B1149))
 {return 1}
 else
-return reduce1__129(binaryT__238, numbers__932)}, false);
-exports["*"] = T__930}
 {
-var S__933;
+var values__1148 = numbers__1145,
+function__1147 = binaryT__285;
+return reduce__132(function__1147, first__85(values__1148), rest__73(values__1148))}}, false);
+exports["*"] = T__1143}
+{
+var S__1150;
 false;
-S__933 = Mmake_function__9("S", function S__934 (numerator__935)
+S__1150 = Mmake_function__9("S", function S__1151 (numerator__1152)
 {
-var denominators__936 = $SL.call(arguments, 1);
-if ($T(emptyQ__68(denominators__936)))
-{return (1 / numerator__935)}
+var denominators__1153 = $SL.call(arguments, 1),
+sequence__1154 = denominators__1153,
+B1155 = binaryEE__29(size__20(sequence__1154), 0);
+if ($T(B1155))
+{return (1 / numerator__1152)}
 else
-return reduce__128(binaryS__242, numerator__935, denominators__936)}, false);
-exports["/"] = S__933}
+return reduce__132(binaryS__289, numerator__1152, denominators__1153)}, false);
+exports["/"] = S__1150}

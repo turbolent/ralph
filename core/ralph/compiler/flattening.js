@@ -1,145 +1,210 @@
 {
-var B2081;
+var B3014;
 false;
-B2081 = require("ralph/core")}
+B3014 = require("ralph/core")}
 {
-var B2083;
+var B3016;
 false;
-B2083 = require("ralph/compiler/utilities")}
+B3016 = require("ralph/compiler/utilities")}
 {
-var Mmake_function__2085 = B2081["%make-function"],
-reduce1__2086 = B2081.reduce1,
-concatenate__2087 = B2081.concatenate,
-map__2088 = B2081.map,
-beginQ__2089 = B2083["begin?"],
-rest__2090 = B2081.rest,
-flatten_statementsN__2091,
-flatten_begins__2092;
+var ralphScoreCCreduce = B3014.reduce,
+ralphScoreCCfirst = B3014.first,
+Mmake_function__3018 = B3014["%make-function"],
+reduce1__3019 = B3014.reduce1,
+concatenate__3020 = B3014.concatenate,
+map__3021 = B3014.map,
+beginQ__3022 = B3016["begin?"],
+rest__3023 = B3014.rest,
+flatten_statementsN__3024,
+flatten_begins__3025;
 false;
-flatten_begins__2092 = Mmake_function__2085("flatten_begins", function flatten_begins__2093 (exps__2094)
-{return reduce1__2086(concatenate__2087, map__2088(function B2095 (exp__2096)
+flatten_begins__3025 = Mmake_function__3018("flatten_begins", function flatten_begins__3026 (exps__3027)
 {
-var flattened__2097 = flatten_statementsN__2091(exp__2096);
-if ($T(beginQ__2089(flattened__2097)))
-{return rest__2090(flattened__2097)}
+var values__3032 = map__3021(function B3017__3028 (exp__3029)
+{
+var flattened__3030 = flatten_statementsN__3024(exp__3029);
+if ($T(beginQ__3022(flattened__3030)))
+{return rest__3023(flattened__3030)}
 else
-return [flattened__2097]}, exps__2094))}, false)}
+return [flattened__3030]}, exps__3027),
+function__3031 = concatenate__3020;
+return ralphScoreCCreduce(function__3031, ralphScoreCCfirst(values__3032), rest__3023(values__3032))}, false)}
 {
-var reduce__2100 = B2081.reduce,
-varQ__2101 = B2083["var?"],
-do__2102 = B2081["do"],
-push_last__2103 = B2081["push-last"],
-last__2104 = B2081.last,
-binaryEE__2105 = B2081["binary=="],
-first__2106 = B2081.first,
-second_setter__2107 = B2081["second-setter"],
-third__2108 = B2081.third,
-second__2109 = B2081.second,
-setQ__2110 = B2083["set?"],
-not__2111 = B2081.not,
-emptyQ__2112 = B2081["empty?"],
-flatten_varsN__2113;
+var ralphScoreCCdec = B3014.dec,
+ralphScoreCCsize = B3014.size,
+ralphScoreCCtrueQ = B3014["true?"],
+varQ__3035 = B3016["var?"],
+do__3036 = B3014["do"],
+push_last__3037 = B3014["push-last"],
+last__3038 = B3014.last,
+binaryEE__3039 = B3014["binary=="],
+second_setter__3040 = B3014["second-setter"],
+third__3041 = B3014.third,
+second__3042 = B3014.second,
+setQ__3043 = B3016["set?"],
+not__3044 = B3014.not,
+emptyQ__3045 = B3014["empty?"],
+flatten_varsN__3046;
 false;
-flatten_varsN__2113 = Mmake_function__2085("flatten_varsN", function flatten_varsN__2114 (exps__2115)
-{return reduce__2100(function B2116 (result__2117, exp__2118)
+flatten_varsN__3046 = Mmake_function__3018("flatten_varsN", function flatten_varsN__3047 (exps__3048)
+{return ralphScoreCCreduce(function B3033__3049 (result__3050, exp__3051)
 {
-var previous__2119;
-if ($T(not__2111(emptyQ__2112(result__2117))))
-{previous__2119 = last__2104(result__2117)}
-else
-previous__2119 = false;
-var previous_varQ__2120;
-if ($T(previous__2119))
-{previous_varQ__2120 = varQ__2101(previous__2119)}
-else
-previous_varQ__2120 = false;
-var B2126;
-if ($T(previous_varQ__2120))
-{B2126 = varQ__2101(exp__2118)}
-else
-B2126 = false;
-if ($T(B2126))
+var value__3059 = emptyQ__3045(result__3050),
+B3070 = !(ralphScoreCCtrueQ(value__3059)),
+previous__3052;
+if ($T(B3070))
 {
-do__2102(function B2121 (binding__2122)
-{return push_last__2103(last__2104(result__2117), binding__2122)}, rest__2090(exp__2118));
-return result__2117}
+var array__3060 = result__3050;
+previous__3052 = array__3060[ralphScoreCCdec(ralphScoreCCsize(array__3060), 1)]}
+else
+previous__3052 = false;
+var previous_varQ__3053;
+if ($T(previous__3052))
+{previous_varQ__3053 = varQ__3035(previous__3052)}
+else
+previous_varQ__3053 = false;
+var B3071;
+if ($T(previous_varQ__3053))
+{B3071 = varQ__3035(exp__3051)}
+else
+B3071 = false;
+if ($T(B3071))
+{
+var B3072 = function B3034__3054 (binding__3055)
+{
+var value__3062 = binding__3055,
+array__3061 = last__3038(result__3050);
+array__3061.push(value__3062);
+return array__3061},
+sequence__3063 = exp__3051,
+B3073 = sequence__3063.slice(1);
+do__3036(B3072, B3073);
+return result__3050}
 else
 {
-var mergeQ__2123;
-if ($T(previous_varQ__2120))
-{mergeQ__2123 = setQ__2110(exp__2118)}
+var mergeQ__3056;
+if ($T(previous_varQ__3053))
+{mergeQ__3056 = setQ__3043(exp__3051)}
 else
-mergeQ__2123 = false;
-var binding__2124;
-if ($T(mergeQ__2123))
-{binding__2124 = last__2104(last__2104(result__2117))}
-else
-binding__2124 = false;
-var identifier__2125;
-if ($T(mergeQ__2123))
-{identifier__2125 = second__2109(exp__2118)}
-else
-identifier__2125 = false;
-if ($T(binaryEE__2105(first__2106(binding__2124), identifier__2125)))
+mergeQ__3056 = false;
+var binding__3057;
+if ($T(mergeQ__3056))
 {
-second_setter__2107(binding__2124, third__2108(exp__2118));
-return result__2117}
+var array__3064 = last__3038(result__3050);
+binding__3057 = array__3064[ralphScoreCCdec(ralphScoreCCsize(array__3064), 1)]}
 else
-return concatenate__2087(result__2117, [exp__2118])}}, [], exps__2115)}, false)}
+binding__3057 = false;
+var identifier__3058;
+if ($T(mergeQ__3056))
 {
-var instanceQ__2130 = B2081["instance?"],
-LarrayG__2131 = B2081["<array>"],
-last_setter__2132 = B2081["last-setter"],
-maybe_begin__2133 = B2083["maybe-begin"],
-third_setter__2134 = B2081["third-setter"],
-symbol_name__2135 = B2081["symbol-name"];
+var sequence__3065 = exp__3051;
+identifier__3058 = sequence__3065[1]}
+else
+identifier__3058 = false;
+var object2__3067 = identifier__3058,
+object1__3066 = ralphScoreCCfirst(binding__3057),
+B3074 = (object1__3066 === object2__3067);
+if ($T(B3074))
+{
+var value__3069 = third__3041(exp__3051),
+array__3068 = binding__3057;
+array__3068[1] = value__3069;
+return result__3050}
+else
+return concatenate__3020(result__3050, [exp__3051])}}, [], exps__3048)}, false)}
+{
+var B3123 = $S("%begin", "ralph/core"),
+B3124 = $S("%var", "ralph/core"),
+instanceQ__3078 = B3014["instance?"],
+LarrayG__3079 = B3014["<array>"],
+last_setter__3080 = B3014["last-setter"],
+maybe_begin__3081 = B3016["maybe-begin"],
+third_setter__3082 = B3014["third-setter"],
+symbol_name__3083 = B3014["symbol-name"];
 false;
-flatten_statementsN__2091 = Mmake_function__2085("flatten_statementsN", function flatten_statementsN__2136 (exp__2137)
-{if ($T(instanceQ__2130(exp__2137, LarrayG__2131)))
+flatten_statementsN__3024 = Mmake_function__3018("flatten_statementsN", function flatten_statementsN__3084 (exp__3085)
+{B3125:while(true){
+if ($T(instanceQ__3078(exp__3085, LarrayG__3079)))
 {
-var B2138 = symbol_name__2135(first__2106(exp__2137)),
-B2139 = binaryEE__2105(B2138, "%method"),
-B2146;
-if ($T(B2139))
-{B2146 = B2139}
+var B3075__3086 = symbol_name__3083(ralphScoreCCfirst(exp__3085)),
+object2__3095 = "%method",
+object1__3094 = B3075__3086,
+B3076__3087 = (object1__3094 === object2__3095),
+B3118;
+if ($T(B3076__3087))
+{B3118 = B3076__3087}
 else
 {
-var B2140 = binaryEE__2105(B2138, "%while");
-if ($T(B2140))
-{B2146 = B2140}
+var object2__3097 = "%while",
+object1__3096 = B3075__3086,
+B3077__3088 = (object1__3096 === object2__3097);
+if ($T(B3077__3088))
+{B3118 = B3077__3088}
 else
-B2146 = binaryEE__2105(B2138, "%set")};
-if ($T(B2146))
 {
-last_setter__2132(exp__2137, flatten_statementsN__2136(last__2104(exp__2137)));
-return exp__2137}
-else
-if ($T(binaryEE__2105(B2138, "%begin")))
+var object2__3099 = "%set",
+object1__3098 = B3075__3086;
+B3118 = (object1__3098 === object2__3099)}};
+if ($T(B3118))
 {
-var ____2141 = exp__2137[0],
-exps__2142 = $SL.call(exp__2137, 1);
-return maybe_begin__2133(flatten_varsN__2113(flatten_begins__2092(exps__2142)))}
+var value__3101 = flatten_statementsN__3084(last__3038(exp__3085)),
+array__3100 = exp__3085;
+array__3100[ralphScoreCCdec(ralphScoreCCsize(array__3100), 1)] = value__3101;
+return exp__3085}
 else
-if ($T(binaryEE__2105(B2138, "%bind")))
 {
-var ____2143 = exp__2137[0],
-binding__2144 = exp__2137[1],
-body__2145 = exp__2137[2];
-return flatten_statementsN__2136([$S("%begin", "ralph/core"), [$S("%var", "ralph/core"), binding__2144], body__2145])}
-else
-if ($T(binaryEE__2105(B2138, "%if")))
+var object2__3103 = "%begin",
+object1__3102 = B3075__3086,
+B3119 = (object1__3102 === object2__3103);
+if ($T(B3119))
 {
-third_setter__2134(exp__2137, flatten_statementsN__2136(third__2108(exp__2137)));
-last_setter__2132(exp__2137, flatten_statementsN__2136(last__2104(exp__2137)));
-return exp__2137}
+var ____3089 = exp__3085[0],
+exps__3090 = $SL.call(exp__3085, 1);
+return maybe_begin__3081(flatten_varsN__3046(flatten_begins__3025(exps__3090)))}
 else
-if ($T(binaryEE__2105(B2138, "%try")))
 {
-second_setter__2107(exp__2137, flatten_statementsN__2136(second__2109(exp__2137)));
-last_setter__2132(exp__2137, flatten_statementsN__2136(last__2104(exp__2137)));
-return exp__2137}
+var object2__3105 = "%bind",
+object1__3104 = B3075__3086,
+B3120 = (object1__3104 === object2__3105);
+if ($T(B3120))
+{
+var ____3091 = exp__3085[0],
+binding__3092 = exp__3085[1],
+body__3093 = exp__3085[2];
+arguments = [[B3123, [B3124, binding__3092], body__3093]];
+exp__3085 = arguments[0];
+continue B3125}
 else
-return map__2088(flatten_statementsN__2136, exp__2137)}
+{
+var object2__3107 = "%if",
+object1__3106 = B3075__3086,
+B3121 = (object1__3106 === object2__3107);
+if ($T(B3121))
+{
+var value__3109 = flatten_statementsN__3084(third__3041(exp__3085)),
+array__3108 = exp__3085;
+array__3108[2] = value__3109;
+var value__3111 = flatten_statementsN__3084(last__3038(exp__3085)),
+array__3110 = exp__3085;
+array__3110[ralphScoreCCdec(ralphScoreCCsize(array__3110), 1)] = value__3111;
+return exp__3085}
 else
-return exp__2137}, false);
-exports["flatten-statements!"] = flatten_statementsN__2091}
+{
+var object2__3113 = "%try",
+object1__3112 = B3075__3086,
+B3122 = (object1__3112 === object2__3113);
+if ($T(B3122))
+{
+var value__3115 = flatten_statementsN__3084(second__3042(exp__3085)),
+array__3114 = exp__3085;
+array__3114[1] = value__3115;
+var value__3117 = flatten_statementsN__3084(last__3038(exp__3085)),
+array__3116 = exp__3085;
+array__3116[ralphScoreCCdec(ralphScoreCCsize(array__3116), 1)] = value__3117;
+return exp__3085}
+else
+return map__3021(flatten_statementsN__3084, exp__3085)}}}}}
+else
+return exp__3085;
+break}}, false);
+exports["flatten-statements!"] = flatten_statementsN__3024}

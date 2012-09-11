@@ -1,158 +1,211 @@
 {
-var B1349;
+var B1781;
 false;
-B1349 = require("ralph/core")}
+B1781 = require("ralph/core")}
 false
 {
-var Mmake_function__1350 = B1349["%make-function"],
-instanceQ__1351 = B1349["instance?"],
-LarrayG__1352 = B1349["<array>"],
-not__1353 = B1349.not,
-emptyQ__1354 = B1349["empty?"],
-first__1355 = B1349.first,
-LsymbolG__1356 = B1349["<symbol>"],
-expressionQ__1357;
+var ralphScoreCCtrueQ = B1781["true?"],
+Mmake_function__1782 = B1781["%make-function"],
+instanceQ__1783 = B1781["instance?"],
+LarrayG__1784 = B1781["<array>"],
+not__1785 = B1781.not,
+emptyQ__1786 = B1781["empty?"],
+first__1787 = B1781.first,
+LsymbolG__1788 = B1781["<symbol>"],
+expressionQ__1789;
 false;
-expressionQ__1357 = Mmake_function__1350("expressionQ", function expressionQ__1358 (form__1359)
-{if ($T(instanceQ__1351(form__1359, LarrayG__1352)))
-{if ($T(not__1353(emptyQ__1354(form__1359))))
-{return instanceQ__1351(first__1355(form__1359), LsymbolG__1356)}}}, false);
-exports["expression?"] = expressionQ__1357}
+expressionQ__1789 = Mmake_function__1782("expressionQ", function expressionQ__1790 (form__1791)
+{if ($T(instanceQ__1783(form__1791, LarrayG__1784)))
 {
-var binaryEE__1360 = B1349["binary=="],
-symbol_name__1361 = B1349["symbol-name"],
-varQ__1362;
+var value__1792 = emptyQ__1786(form__1791),
+B1794 = !(ralphScoreCCtrueQ(value__1792));
+if ($T(B1794))
+{
+var sequence__1793 = form__1791,
+B1795 = sequence__1793[0];
+return instanceQ__1783(B1795, LsymbolG__1788)}}}, false);
+exports["expression?"] = expressionQ__1789}
+{
+var binaryEE__1796 = B1781["binary=="],
+symbol_name__1797 = B1781["symbol-name"],
+varQ__1798;
 false;
-varQ__1362 = Mmake_function__1350("varQ", function varQ__1363 (exp__1364)
-{if ($T(expressionQ__1357(exp__1364)))
-{return binaryEE__1360(symbol_name__1361(first__1355(exp__1364)), "%var")}}, false);
-exports["var?"] = varQ__1362}
+varQ__1798 = Mmake_function__1782("varQ", function varQ__1799 (exp__1800)
+{if ($T(expressionQ__1789(exp__1800)))
 {
-var setQ__1365;
+var object2__1802 = "%var",
+object1__1801 = symbol_name__1797(first__1787(exp__1800));
+return (object1__1801 === object2__1802)}}, false);
+exports["var?"] = varQ__1798}
+{
+var setQ__1803;
 false;
-setQ__1365 = Mmake_function__1350("setQ", function setQ__1366 (exp__1367)
-{if ($T(expressionQ__1357(exp__1367)))
-{return binaryEE__1360(symbol_name__1361(first__1355(exp__1367)), "%set")}}, false);
-exports["set?"] = setQ__1365}
+setQ__1803 = Mmake_function__1782("setQ", function setQ__1804 (exp__1805)
+{if ($T(expressionQ__1789(exp__1805)))
 {
-var defineQ__1368;
+var object2__1807 = "%set",
+object1__1806 = symbol_name__1797(first__1787(exp__1805));
+return (object1__1806 === object2__1807)}}, false);
+exports["set?"] = setQ__1803}
+{
+var defineQ__1808;
 false;
-defineQ__1368 = Mmake_function__1350("defineQ", function defineQ__1369 (exp__1370)
-{if ($T(expressionQ__1357(exp__1370)))
-{return binaryEE__1360(symbol_name__1361(first__1355(exp__1370)), "%define")}}, false);
-exports["define?"] = defineQ__1368}
+defineQ__1808 = Mmake_function__1782("defineQ", function defineQ__1809 (exp__1810)
+{if ($T(expressionQ__1789(exp__1810)))
 {
-var methodQ__1371;
+var object2__1812 = "%define",
+object1__1811 = symbol_name__1797(first__1787(exp__1810));
+return (object1__1811 === object2__1812)}}, false);
+exports["define?"] = defineQ__1808}
+{
+var methodQ__1813;
 false;
-methodQ__1371 = Mmake_function__1350("methodQ", function methodQ__1372 (exp__1373)
-{if ($T(expressionQ__1357(exp__1373)))
-{return binaryEE__1360(symbol_name__1361(first__1355(exp__1373)), "%method")}}, false);
-exports["method?"] = methodQ__1371}
+methodQ__1813 = Mmake_function__1782("methodQ", function methodQ__1814 (exp__1815)
+{if ($T(expressionQ__1789(exp__1815)))
 {
-var beginQ__1374;
+var object2__1817 = "%method",
+object1__1816 = symbol_name__1797(first__1787(exp__1815));
+return (object1__1816 === object2__1817)}}, false);
+exports["method?"] = methodQ__1813}
+{
+var beginQ__1818;
 false;
-beginQ__1374 = Mmake_function__1350("beginQ", function beginQ__1375 (exp__1376)
-{if ($T(expressionQ__1357(exp__1376)))
-{return binaryEE__1360(symbol_name__1361(first__1355(exp__1376)), "%begin")}}, false);
-exports["begin?"] = beginQ__1374}
+beginQ__1818 = Mmake_function__1782("beginQ", function beginQ__1819 (exp__1820)
+{if ($T(expressionQ__1789(exp__1820)))
 {
-var size__1377 = B1349.size,
-everyQ__1378 = B1349["every?"],
-rcurry__1379 = B1349.rcurry,
-setter_identifierQ__1380;
+var object2__1822 = "%begin",
+object1__1821 = symbol_name__1797(first__1787(exp__1820));
+return (object1__1821 === object2__1822)}}, false);
+exports["begin?"] = beginQ__1818}
+{
+var size__1823 = B1781.size,
+everyQ__1824 = B1781["every?"],
+rcurry__1825 = B1781.rcurry,
+setter_identifierQ__1826;
 false;
-setter_identifierQ__1380 = Mmake_function__1350("setter_identifierQ", function setter_identifierQ__1381 (form__1382)
-{if ($T(instanceQ__1351(form__1382, LarrayG__1352)))
-{if ($T(binaryEE__1360(size__1377(form__1382), 2)))
-{if ($T(everyQ__1378(rcurry__1379(instanceQ__1351, LsymbolG__1356), form__1382)))
-{return binaryEE__1360(symbol_name__1361(first__1355(form__1382)), "setter")}}}}, false);
-exports["setter-identifier?"] = setter_identifierQ__1380}
+setter_identifierQ__1826 = Mmake_function__1782("setter_identifierQ", function setter_identifierQ__1827 (form__1828)
+{if ($T(instanceQ__1783(form__1828, LarrayG__1784)))
 {
-var Tsymbol_countT__1383;
+var object2__1830 = 2,
+object1__1829 = size__1823(form__1828),
+B1833 = (object1__1829 === object2__1830);
+if ($T(B1833))
+{if ($T(everyQ__1824(rcurry__1825(instanceQ__1783, LsymbolG__1788), form__1828)))
+{
+var object2__1832 = "setter",
+object1__1831 = symbol_name__1797(first__1787(form__1828));
+return (object1__1831 === object2__1832)}}}}, false);
+exports["setter-identifier?"] = setter_identifierQ__1826}
+{
+var Tsymbol_countT__1834;
 false;
-Tsymbol_countT__1383 = 0}
+Tsymbol_countT__1834 = 0}
 {
-var reset_symbol_counterN__1384;
+var reset_symbol_counterN__1835;
 false;
-reset_symbol_counterN__1384 = Mmake_function__1350("reset_symbol_counterN", function reset_symbol_counterN__1385 ()
-{return Tsymbol_countT__1383 = 0}, false);
-exports["reset-symbol-counter!"] = reset_symbol_counterN__1384}
+reset_symbol_counterN__1835 = Mmake_function__1782("reset_symbol_counterN", function reset_symbol_counterN__1836 ()
+{return Tsymbol_countT__1834 = 0}, false);
+exports["reset-symbol-counter!"] = reset_symbol_counterN__1835}
 {
-var symbol__1386 = B1349.symbol,
-concatenate__1387 = B1349.concatenate,
-as_string__1388 = B1349["as-string"],
-generate_symbol__1389;
+var symbol__1837 = B1781.symbol,
+get__1838 = B1781.get,
+concatenate__1839 = B1781.concatenate,
+as_string__1840 = B1781["as-string"],
+generate_symbol__1841;
 false;
-generate_symbol__1389 = Mmake_function__1350("generate_symbol", function generate_symbol__1390 (prefix__1391)
+generate_symbol__1841 = Mmake_function__1782("generate_symbol", function generate_symbol__1842 (env__1843, prefix__1844)
 {
-var B1394;
-if ($T(prefix__1391))
-{B1394 = concatenate__1387(prefix__1391, "_")}
+var B1847;
+if ($T(prefix__1844))
+{B1847 = concatenate__1839(prefix__1844, "_")}
 else
-B1394 = "$";
-var B1395 = as_string__1388(Tsymbol_countT__1383 = (Tsymbol_countT__1383 + 1)),
-name__1392 = concatenate__1387(B1394, B1395),
-result__1393 = symbol__1386(name__1392, false);
-result__1393["generated?"] = true;
-return result__1393}, false);
-exports["generate-symbol"] = generate_symbol__1389}
+B1847 = "$";
+var B1848 = as_string__1840(Tsymbol_countT__1834 = (Tsymbol_countT__1834 + 1)),
+name__1845 = concatenate__1839(B1847, B1848),
+B1849;
+if ($T(env__1843))
+{B1849 = get__1838(env__1843, "module", "name")}
+else
+B1849 = false;
+var result__1846 = symbol__1837(name__1845, B1849);
+result__1846["generated?"] = true;
+return result__1846}, false);
+exports["generate-symbol"] = generate_symbol__1841}
 {
-var maybe_begin__1397;
+var B1863 = $S("%begin", "ralph/core"),
+maybe_begin__1851;
 false;
-maybe_begin__1397 = Mmake_function__1350("maybe_begin", function maybe_begin__1398 (expressions__1399)
+maybe_begin__1851 = Mmake_function__1782("maybe_begin", function maybe_begin__1852 (expressions__1853)
 {
-var B1400 = size__1377(expressions__1399);
-if ($T(binaryEE__1360(B1400, 0)))
+var object__1855 = expressions__1853,
+B1850__1854 = ((object__1855 || false).length || 0),
+object2__1857 = 0,
+object1__1856 = B1850__1854,
+B1861 = (object1__1856 === object2__1857);
+if ($T(B1861))
 {return false}
 else
-if ($T(binaryEE__1360(B1400, 1)))
-{return first__1355(expressions__1399)}
+{
+var object2__1859 = 1,
+object1__1858 = B1850__1854,
+B1862 = (object1__1858 === object2__1859);
+if ($T(B1862))
+{
+var sequence__1860 = expressions__1853;
+return sequence__1860[0]}
 else
-return concatenate__1387([$S("%begin", "ralph/core")], expressions__1399)}, false);
-exports["maybe-begin"] = maybe_begin__1397}
+return concatenate__1839([B1863], expressions__1853)}}, false);
+exports["maybe-begin"] = maybe_begin__1851}
 {
-var get__1401 = B1349.get,
-module_nameSname__1402;
+var module_nameSname__1864;
 false;
-module_nameSname__1402 = Mmake_function__1350("module_nameSname", function module_nameSname__1403 (identifier__1404, env__1405)
-{return [get__1401(identifier__1404, "module"), symbol_name__1361(identifier__1404)]}, false);
-exports["module-name/name"] = module_nameSname__1402}
+module_nameSname__1864 = Mmake_function__1782("module_nameSname", function module_nameSname__1865 (identifier__1866)
+{return [get__1838(identifier__1866, "module"), symbol_name__1797(identifier__1866)]}, false);
+exports["module-name/name"] = module_nameSname__1864}
 {
-var TdefinedT__1406;
+var localize__1867;
 false;
-TdefinedT__1406 = [$S("%all-arguments"), $S("%this-method")];
-exports["*defined*"] = TdefinedT__1406}
-{
-var localize__1407;
-false;
-localize__1407 = Mmake_function__1350("localize", function localize__1408 (identifier__1409, env__1410)
-{if ($T(binaryEE__1360(get__1401(identifier__1409, "module"), get__1401(env__1410, "module", "name"))))
-{return symbol__1386(symbol_name__1361(identifier__1409), false)}
+localize__1867 = Mmake_function__1782("localize", function localize__1868 (identifier__1869, env__1870)
+{if ($T(get__1838(identifier__1869, "module")))
+{return identifier__1869}
 else
-return identifier__1409}, false);
-exports.localize = localize__1407}
+return symbol__1837(symbol_name__1797(identifier__1869), get__1838(env__1870, "module", "name"))}, false);
+exports.localize = localize__1867}
 {
-var get_setter__1411 = B1349["get-setter"],
-bindN__1412;
+var get_setter__1871 = B1781["get-setter"],
+bindN__1872;
 false;
-bindN__1412 = Mmake_function__1350("bindN", function bindN__1413 (env__1414, identifier__1415)
-{return get_setter__1411(env__1414, "binding-count", symbol_name__1361(identifier__1415), (get__1401(env__1414, "binding-count", symbol_name__1361(identifier__1415)) + 1))}, false);
-exports["bind!"] = bindN__1412}
+bindN__1872 = Mmake_function__1782("bindN", function bindN__1873 (env__1874, identifier__1875)
+{return get_setter__1871(env__1874, "binding-count", symbol_name__1797(identifier__1875), (get__1838(env__1874, "binding-count", symbol_name__1797(identifier__1875)) + 1))}, false);
+exports["bind!"] = bindN__1872}
 {
-var G__1417 = B1349[">"],
-boundQ__1418;
+var G__1877 = B1781[">"],
+boundQ__1878;
 false;
-boundQ__1418 = Mmake_function__1350("boundQ", function boundQ__1419 (env__1420, identifier__1421)
+boundQ__1878 = Mmake_function__1782("boundQ", function boundQ__1879 (env__1880, identifier__1881)
 {
-var B1422 = get__1401(env__1420, "binding-count", symbol_name__1361(identifier__1421));
-if ($T(B1422))
+var B1876__1882 = get__1838(env__1880, "binding-count", symbol_name__1797(identifier__1881));
+if ($T(B1876__1882))
 {
-var count__1423 = B1422;
-return G__1417(count__1423, 0)}}, false);
-exports["bound?"] = boundQ__1418}
+var count__1883 = B1876__1882;
+return G__1877(count__1883, 0)}}, false);
+exports["bound?"] = boundQ__1878}
 {
-var unbindN__1424;
+var unbindN__1884;
 false;
-unbindN__1424 = Mmake_function__1350("unbindN", function unbindN__1425 (env__1426, identifier__1427)
-{return get_setter__1411(env__1426, "binding-count", symbol_name__1361(identifier__1427), (get__1401(env__1426, "binding-count", symbol_name__1361(identifier__1427)) - 1))}, false);
-exports["unbind!"] = unbindN__1424}
+unbindN__1884 = Mmake_function__1782("unbindN", function unbindN__1885 (env__1886, identifier__1887)
+{return get_setter__1871(env__1886, "binding-count", symbol_name__1797(identifier__1887), (get__1838(env__1886, "binding-count", symbol_name__1797(identifier__1887)) - 1))}, false);
+exports["unbind!"] = unbindN__1884}
+{
+var choose__1890 = B1781.choose,
+remove_defined_identifiers__1891;
+false;
+remove_defined_identifiers__1891 = Mmake_function__1782("remove_defined_identifiers", function remove_defined_identifiers__1892 (identifiers__1893, env__1894)
+{return choose__1890(function B1888__1895 (identifier__1896)
+{
+var B1889__1897 = module_nameSname__1864(identifier__1896),
+module_name__1898 = B1889__1897[0],
+name__1899 = B1889__1897[1],
+value__1900 = get__1838(env__1894, "defined?", module_name__1898, name__1899);
+return !(ralphScoreCCtrueQ(value__1900))}, identifiers__1893)}, false);
+exports["remove-defined-identifiers"] = remove_defined_identifiers__1891}

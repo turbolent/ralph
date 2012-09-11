@@ -1,230 +1,360 @@
 {
-var B1796;
+var B2477;
 false;
-B1796 = require("ralph/core")}
+B2477 = require("ralph/core")}
 {
-var B1798;
+var B2479;
 false;
-B1798 = require("ralph/compiler/utilities")}
+B2479 = require("ralph/compiler/utilities")}
 {
-var Mmake_function__1799 = B1796["%make-function"],
-anyQ__1800 = B1796["any?"],
-curry__1801 = B1796.curry,
-instanceQ__1802 = B1796["instance?"],
-LnumberG__1803 = B1796["<number>"],
-LbooleanG__1804 = B1796["<boolean>"],
-LstringG__1805 = B1796["<string>"],
-LsymbolG__1806 = B1796["<symbol>"],
-LkeywordG__1807 = B1796["<keyword>"],
-atomicQ__1808;
+var Mmake_function__2480 = B2477["%make-function"],
+anyQ__2481 = B2477["any?"],
+curry__2482 = B2477.curry,
+instanceQ__2483 = B2477["instance?"],
+LnumberG__2484 = B2477["<number>"],
+LbooleanG__2485 = B2477["<boolean>"],
+LstringG__2486 = B2477["<string>"],
+LsymbolG__2487 = B2477["<symbol>"],
+LkeywordG__2488 = B2477["<keyword>"],
+atomicQ__2489;
 false;
-atomicQ__1808 = Mmake_function__1799("atomicQ", function atomicQ__1809 (expression__1810)
-{return anyQ__1800(curry__1801(instanceQ__1802, expression__1810), [LnumberG__1803, LbooleanG__1804, LstringG__1805, LsymbolG__1806, LkeywordG__1807])}, false)}
+atomicQ__2489 = Mmake_function__2480("atomicQ", function atomicQ__2490 (expression__2491)
+{return anyQ__2481(curry__2482(instanceQ__2483, expression__2491), [LnumberG__2484, LbooleanG__2485, LstringG__2486, LsymbolG__2487, LkeywordG__2488])}, false)}
 {
-var LarrayG__1816 = B1796["<array>"],
-not__1817 = B1796.not,
-emptyQ__1818 = B1796["empty?"],
-binaryEE__1819 = B1796["binary=="],
-last__1820 = B1796.last,
-symbol_name__1821 = B1796["symbol-name"],
-first__1822 = B1796.first,
-contains_statementsQ__1823;
+var ralphScoreCCtrueQ = B2477["true?"],
+ralphScoreCCdec = B2477.dec,
+ralphScoreCCsize = B2477.size,
+LarrayG__2497 = B2477["<array>"],
+not__2498 = B2477.not,
+emptyQ__2499 = B2477["empty?"],
+binaryEE__2500 = B2477["binary=="],
+last__2501 = B2477.last,
+symbol_name__2502 = B2477["symbol-name"],
+first__2503 = B2477.first,
+contains_statementsQ__2504;
 false;
-contains_statementsQ__1823 = Mmake_function__1799("contains_statementsQ", function contains_statementsQ__1824 (exp__1825)
+contains_statementsQ__2504 = Mmake_function__2480("contains_statementsQ", function contains_statementsQ__2505 (exp__2506)
+{B2535:while(true){
+var B2529;
+if ($T(instanceQ__2483(exp__2506, LarrayG__2497)))
 {
-var B1831;
-if ($T(instanceQ__1802(exp__1825, LarrayG__1816)))
-{B1831 = not__1817(emptyQ__1818(exp__1825))}
+var value__2512 = emptyQ__2499(exp__2506);
+B2529 = !(ralphScoreCCtrueQ(value__2512))}
 else
-B1831 = false;
-if ($T(B1831))
+B2529 = false;
+if ($T(B2529))
 {
-var B1826 = symbol_name__1821(first__1822(exp__1825)),
-B1827 = binaryEE__1819(B1826, "%begin"),
-B1832;
-if ($T(B1827))
-{B1832 = B1827}
-else
-{
-var B1828 = binaryEE__1819(B1826, "%if");
-if ($T(B1828))
-{B1832 = B1828}
-else
-{
-var B1829 = binaryEE__1819(B1826, "%while");
-if ($T(B1829))
-{B1832 = B1829}
+var sequence__2513 = exp__2506,
+B2530 = sequence__2513[0],
+B2492__2507 = symbol_name__2502(B2530),
+object2__2515 = "%begin",
+object1__2514 = B2492__2507,
+B2493__2508 = (object1__2514 === object2__2515),
+B2531;
+if ($T(B2493__2508))
+{B2531 = B2493__2508}
 else
 {
-var B1830 = binaryEE__1819(B1826, "%bind");
-if ($T(B1830))
-{B1832 = B1830}
+var object2__2517 = "%if",
+object1__2516 = B2492__2507,
+B2494__2509 = (object1__2516 === object2__2517);
+if ($T(B2494__2509))
+{B2531 = B2494__2509}
 else
-B1832 = binaryEE__1819(B1826, "%try")}}};
-if ($T(B1832))
+{
+var object2__2519 = "%while",
+object1__2518 = B2492__2507,
+B2495__2510 = (object1__2518 === object2__2519);
+if ($T(B2495__2510))
+{B2531 = B2495__2510}
+else
+{
+var object2__2521 = "%bind",
+object1__2520 = B2492__2507,
+B2496__2511 = (object1__2520 === object2__2521);
+if ($T(B2496__2511))
+{B2531 = B2496__2511}
+else
+{
+var object2__2523 = "%try",
+object1__2522 = B2492__2507;
+B2531 = (object1__2522 === object2__2523)}}}};
+if ($T(B2531))
 {return true}
 else
-if ($T(binaryEE__1819(B1826, "%set")))
-{return contains_statementsQ__1824(last__1820(exp__1825))}
+{
+var object2__2525 = "%set",
+object1__2524 = B2492__2507,
+B2532 = (object1__2524 === object2__2525);
+if ($T(B2532))
+{
+var array__2526 = exp__2506,
+B2533 = array__2526[ralphScoreCCdec(ralphScoreCCsize(array__2526), 1)];
+arguments = [B2533];
+exp__2506 = arguments[0];
+continue B2535}
 else
-if ($T(binaryEE__1819(B1826, "%method")))
+{
+var object2__2528 = "%method",
+object1__2527 = B2492__2507,
+B2534 = (object1__2527 === object2__2528);
+if ($T(B2534))
 {return false}
 else
-return anyQ__1800(contains_statementsQ__1824, exp__1825)}}, false)}
+return anyQ__2481(contains_statementsQ__2505, exp__2506)}}};
+break}}, false)}
 {
-var normalize__1833,
-identity__1834 = B1796.identity,
-normalize_term__1835;
+var normalize__2536,
+identity__2537 = B2477.identity,
+normalize_term__2538;
 false;
-normalize_term__1835 = Mmake_function__1799("normalize_term", function normalize_term__1836 (expression__1837)
-{return normalize__1833(expression__1837, identity__1834)}, false);
-exports["normalize-term"] = normalize_term__1835}
+normalize_term__2538 = Mmake_function__2480("normalize_term", function normalize_term__2539 (expression__2540, env__2541)
+{return normalize__2536(expression__2540, env__2541, identity__2537)}, false);
+exports["normalize-term"] = normalize_term__2538}
 {
-var concatenate__1845 = B1796.concatenate,
-normalize_value__1846,
-normalize_all__1847,
-expressionQ__1848 = B1798["expression?"],
-memberQ__1849 = B1796["member?"],
-map__1850 = B1796.map,
-rest__1851 = B1796.rest;
+var B2642 = $S("%method", "ralph/core"),
+B2643 = $S("%begin", "ralph/core"),
+B2644 = $S("%bind", "ralph/core"),
+B2645 = $S("%if", "ralph/core"),
+B2646 = $S("%while", "ralph/core"),
+B2647 = $S("%native", "ralph/core"),
+B2648 = $S("%try", "ralph/core"),
+B2649 = $S("%set", "ralph/core"),
+B2650 = $S("%array", "ralph/core"),
+B2651 = $S("%object", "ralph/core"),
+B2652 = $S("%get-property", "ralph/core"),
+B2653 = $S("%infix", "ralph/core"),
+B2654 = $S("%native-call", "ralph/core"),
+B2655 = $S("%native-name", "ralph/compiler/anf"),
+B2656 = $S("%plus", "ralph/core"),
+B2657 = $S("%minus", "ralph/core"),
+B2658 = $S("%times", "ralph/core"),
+B2659 = $S("%divide", "ralph/core"),
+concatenate__2549 = B2477.concatenate,
+normalize_value__2550,
+normalize_all__2551,
+expressionQ__2552 = B2479["expression?"],
+memberQ__2553 = B2477["member?"],
+map__2554 = B2477.map,
+rcurry__2555 = B2477.rcurry,
+rest__2556 = B2477.rest;
 false;
-normalize__1833 = Mmake_function__1799("normalize", function normalize__1852 (exp__1853, k__1854)
+normalize__2536 = Mmake_function__2480("normalize", function normalize__2557 (exp__2558, env__2559, k__2560)
+{B2660:while(true){
+var B2621;
+if ($T(instanceQ__2483(exp__2558, LarrayG__2497)))
 {
-var B1891;
-if ($T(instanceQ__1802(exp__1853, LarrayG__1816)))
-{B1891 = not__1817(emptyQ__1818(exp__1853))}
+var value__2597 = emptyQ__2499(exp__2558);
+B2621 = !(ralphScoreCCtrueQ(value__2597))}
 else
-B1891 = false;
-if ($T(B1891))
+B2621 = false;
+if ($T(B2621))
 {
-var B1855 = symbol_name__1821(first__1822(exp__1853));
-if ($T(binaryEE__1819(B1855, "%method")))
+var sequence__2598 = exp__2558,
+B2622 = sequence__2598[0],
+B2542__2561 = symbol_name__2502(B2622),
+object2__2600 = "%method",
+object1__2599 = B2542__2561,
+B2623 = (object1__2599 === object2__2600);
+if ($T(B2623))
 {
-var ____1856 = exp__1853[0],
-name__1857 = exp__1853[1],
-arguments__1858 = exp__1853[2],
-body__1859 = exp__1853[3];
-return k__1854([$S("%method", "ralph/core"), name__1857, arguments__1858, normalize_term__1835(body__1859)])}
-else
-if ($T(binaryEE__1819(B1855, "%begin")))
-{
-var ____1860 = exp__1853[0],
-exp1__1861 = exp__1853[1],
-eT__1862 = $SL.call(exp__1853, 2);
-if ($T(emptyQ__1818(eT__1862)))
-{return normalize__1852(exp1__1861, k__1854)}
-else
-return normalize__1852(exp1__1861, function B1863 (aexp1__1864)
-{return [$S("%begin", "ralph/core"), aexp1__1864, normalize__1852(concatenate__1845([$S("%begin", "ralph/core")], eT__1862), k__1854)]})}
-else
-if ($T(binaryEE__1819(B1855, "%bind")))
-{
-var ____1865 = exp__1853[0],
-B1866 = exp__1853[1],
-var__1867 = B1866[0],
-value__1868 = B1866[1],
-body__1869 = exp__1853[2];
-return normalize__1852(value__1868, function B1870 (avalue__1871)
-{return [$S("%bind", "ralph/core"), [var__1867, avalue__1871], normalize__1852(body__1869, k__1854)]})}
-else
-if ($T(binaryEE__1819(B1855, "%if")))
-{
-var ____1872 = exp__1853[0],
-test__1873 = exp__1853[1],
-then__1874 = exp__1853[2],
-else__1875 = exp__1853[3];
-return normalize_value__1846(test__1873, function B1876 (atest__1877)
-{return k__1854([$S("%if", "ralph/core"), atest__1877, normalize_term__1835(then__1874), normalize_term__1835(else__1875)])})}
-else
-if ($T(binaryEE__1819(B1855, "%while")))
-{
-var ____1878 = exp__1853[0],
-test__1879 = exp__1853[1],
-body__1880 = exp__1853[2],
-B1892;
-if ($T(contains_statementsQ__1823(test__1879)))
-{B1892 = [$S("%while", "ralph/core"), true, [$S("%begin", "ralph/core"), normalize_term__1835([$S("%if", "ralph/core"), test__1879, normalize_term__1835(body__1880), [$S("%native", "ralph/core"), "break"], false])]]}
-else
-B1892 = [$S("%while", "ralph/core"), normalize_term__1835(test__1879), normalize_term__1835(body__1880)];
-return k__1854(B1892)}
-else
-if ($T(binaryEE__1819(B1855, "%try")))
-{
-var ____1881 = exp__1853[0],
-body__1882 = exp__1853[1],
-var__1883 = exp__1853[2],
-catch__1884 = exp__1853[3];
-return k__1854([$S("%try", "ralph/core"), normalize_term__1835(body__1882), var__1883, normalize_term__1835(catch__1884)])}
-else
-if ($T(binaryEE__1819(B1855, "%set")))
-{
-var ____1885 = exp__1853[0],
-var__1886 = exp__1853[1],
-value__1887 = exp__1853[2];
-return normalize_value__1846(value__1887, function B1888 (avalue__1889)
-{return k__1854([$S("%set", "ralph/core"), var__1886, avalue__1889])})}
+var ____2562 = exp__2558[0],
+name__2563 = exp__2558[1],
+arguments__2564 = exp__2558[2],
+body__2565 = exp__2558[3];
+return k__2560([B2642, name__2563, arguments__2564, normalize_term__2538(body__2565, env__2559)])}
 else
 {
-var B1890 = binaryEE__1819(B1855, "%define"),
-B1893;
-if ($T(B1890))
-{B1893 = B1890}
-else
-B1893 = binaryEE__1819(B1855, "%symbol");
-if ($T(B1893))
-{return k__1854(exp__1853)}
-else
-if ($T(contains_statementsQ__1823(exp__1853)))
-{return normalize_all__1847(exp__1853, k__1854)}
+var object2__2602 = "%begin",
+object1__2601 = B2542__2561,
+B2624 = (object1__2601 === object2__2602);
+if ($T(B2624))
+{
+var ____2566 = exp__2558[0],
+exp1__2567 = exp__2558[1],
+eT__2568 = $SL.call(exp__2558, 2),
+sequence__2603 = eT__2568,
+B2625 = binaryEE__2500(ralphScoreCCsize(sequence__2603), 0);
+if ($T(B2625))
+{
+arguments = [exp1__2567, env__2559, k__2560];
+exp__2558 = arguments[0];
+env__2559 = arguments[1];
+k__2560 = arguments[2];
+continue B2660}
 else
 {
-var B1894;
-if ($T(expressionQ__1848(exp__1853)))
-{B1894 = memberQ__1849(first__1822(exp__1853), [$S("%array", "ralph/core"), $S("%object", "ralph/core"), $S("%get-property", "ralph/core"), $S("%infix", "ralph/core"), $S("%native", "ralph/core"), $S("%native-call", "ralph/core"), $S("%native-name", "ralph/compiler/anf"), $S("%plus", "ralph/core"), $S("%minus", "ralph/core"), $S("%times", "ralph/core"), $S("%divide", "ralph/core")])}
+arguments = [exp1__2567, env__2559, (function B2661 (B2643, normalize__2557, concatenate__2549, eT__2568, env__2559, k__2560)
+{return function B2543__2569 (aexp1__2570)
+{return [B2643, aexp1__2570, normalize__2557(concatenate__2549([B2643], eT__2568), env__2559, k__2560)]}})(B2643, normalize__2557, concatenate__2549, eT__2568, env__2559, k__2560)];
+exp__2558 = arguments[0];
+env__2559 = arguments[1];
+k__2560 = arguments[2];
+continue B2660}}
 else
-B1894 = false;
-if ($T(B1894))
-{return k__1854(concatenate__1845([first__1822(exp__1853)], map__1850(normalize_term__1835, rest__1851(exp__1853))))}
-else
-return k__1854(map__1850(normalize_term__1835, exp__1853))}}}
-else
-return k__1854(exp__1853)}, false)}
 {
-var normalizeT__1895;
+var object2__2605 = "%bind",
+object1__2604 = B2542__2561,
+B2626 = (object1__2604 === object2__2605);
+if ($T(B2626))
+{
+var ____2571 = exp__2558[0],
+B2544__2572 = exp__2558[1],
+var__2573 = B2544__2572[0],
+value__2574 = B2544__2572[1],
+body__2575 = exp__2558[2];
+arguments = [value__2574, env__2559, (function B2662 (B2644, var__2573, normalize__2557, body__2575, env__2559, k__2560)
+{return function B2545__2576 (avalue__2577)
+{return [B2644, [var__2573, avalue__2577], normalize__2557(body__2575, env__2559, k__2560)]}})(B2644, var__2573, normalize__2557, body__2575, env__2559, k__2560)];
+exp__2558 = arguments[0];
+env__2559 = arguments[1];
+k__2560 = arguments[2];
+continue B2660}
+else
+{
+var object2__2607 = "%if",
+object1__2606 = B2542__2561,
+B2627 = (object1__2606 === object2__2607);
+if ($T(B2627))
+{
+var ____2578 = exp__2558[0],
+test__2579 = exp__2558[1],
+then__2580 = exp__2558[2],
+else__2581 = exp__2558[3];
+return normalize_value__2550(test__2579, env__2559, function B2546__2582 (atest__2583)
+{return k__2560([B2645, atest__2583, normalize_term__2538(then__2580, env__2559), normalize_term__2538(else__2581, env__2559)])})}
+else
+{
+var object2__2609 = "%while",
+object1__2608 = B2542__2561,
+B2628 = (object1__2608 === object2__2609);
+if ($T(B2628))
+{
+var ____2584 = exp__2558[0],
+test__2585 = exp__2558[1],
+body__2586 = exp__2558[2],
+B2629;
+if ($T(contains_statementsQ__2504(test__2585)))
+{B2629 = [B2646, true, [B2643, normalize_term__2538([B2645, test__2585, normalize_term__2538(body__2586), [B2647, "break"], false], env__2559)]]}
+else
+B2629 = [B2646, normalize_term__2538(test__2585, env__2559), normalize_term__2538(body__2586, env__2559)];
+return k__2560(B2629)}
+else
+{
+var object2__2611 = "%try",
+object1__2610 = B2542__2561,
+B2630 = (object1__2610 === object2__2611);
+if ($T(B2630))
+{
+var ____2587 = exp__2558[0],
+body__2588 = exp__2558[1],
+var__2589 = exp__2558[2],
+catch__2590 = exp__2558[3];
+return k__2560([B2648, normalize_term__2538(body__2588, env__2559), var__2589, normalize_term__2538(catch__2590, env__2559)])}
+else
+{
+var object2__2613 = "%set",
+object1__2612 = B2542__2561,
+B2631 = (object1__2612 === object2__2613);
+if ($T(B2631))
+{
+var ____2591 = exp__2558[0],
+var__2592 = exp__2558[1],
+value__2593 = exp__2558[2];
+return normalize_value__2550(value__2593, env__2559, function B2547__2594 (avalue__2595)
+{return k__2560([B2649, var__2592, avalue__2595])})}
+else
+{
+var object2__2615 = "%define",
+object1__2614 = B2542__2561,
+B2548__2596 = (object1__2614 === object2__2615),
+B2632;
+if ($T(B2548__2596))
+{B2632 = B2548__2596}
+else
+{
+var object2__2617 = "%symbol",
+object1__2616 = B2542__2561;
+B2632 = (object1__2616 === object2__2617)};
+if ($T(B2632))
+{return k__2560(exp__2558)}
+else
+if ($T(contains_statementsQ__2504(exp__2558)))
+{return normalize_all__2551(exp__2558, env__2559, k__2560)}
+else
+{
+var B2635;
+if ($T(expressionQ__2552(exp__2558)))
+{
+var sequence__2618 = exp__2558,
+B2633 = sequence__2618[0],
+B2634 = [B2650, B2651, B2652, B2653, B2647, B2654, B2655, B2656, B2657, B2658, B2659];
+B2635 = memberQ__2553(B2633, B2634)}
+else
+B2635 = false;
+if ($T(B2635))
+{
+var sequence__2619 = exp__2558,
+B2636 = sequence__2619[0],
+B2637 = [B2636],
+B2638 = rcurry__2555(normalize_term__2538, env__2559),
+sequence__2620 = exp__2558,
+B2639 = sequence__2620.slice(1),
+B2640 = map__2554(B2638, B2639),
+B2641 = concatenate__2549(B2637, B2640);
+return k__2560(B2641)}
+else
+return k__2560(map__2554(rcurry__2555(normalize_term__2538, env__2559), exp__2558))}}}}}}}}}
+else
+return k__2560(exp__2558);
+break}}, false)}
+{
+var normalizeT__2663;
 false;
-normalize_value__1846 = Mmake_function__1799("normalize_value", function normalize_value__1896 (exp__1897, k__1898)
-{if ($T(contains_statementsQ__1823(exp__1897)))
-{return normalizeT__1895(exp__1897, k__1898)}
+normalize_value__2550 = Mmake_function__2480("normalize_value", function normalize_value__2664 (exp__2665, env__2666, k__2667)
+{if ($T(contains_statementsQ__2504(exp__2665)))
+{return normalizeT__2663(exp__2665, env__2666, k__2667)}
 else
 {
-var B1899;
-if ($T(instanceQ__1802(exp__1897, LarrayG__1816)))
-{B1899 = map__1850(normalize_term__1835, exp__1897)}
+var B2668;
+if ($T(instanceQ__2483(exp__2665, LarrayG__2497)))
+{B2668 = map__2554(rcurry__2555(normalize_term__2538, env__2666), exp__2665)}
 else
-B1899 = exp__1897;
-return k__1898(B1899)}}, false)}
+B2668 = exp__2665;
+return k__2667(B2668)}}, false)}
 {
-var generate_symbol__1901 = B1798["generate-symbol"];
+var generate_symbol__2670 = B2479["generate-symbol"];
 false;
-normalizeT__1895 = Mmake_function__1799("normalizeT", function normalizeT__1902 (exp__1903, k__1904)
-{return normalize__1833(exp__1903, function B1905 (aexp__1906)
-{if ($T(atomicQ__1808(aexp__1906)))
-{return k__1904(aexp__1906)}
+normalizeT__2663 = Mmake_function__2480("normalizeT", function normalizeT__2671 (exp__2672, env__2673, k__2674)
+{return normalize__2536(exp__2672, env__2673, function B2669__2675 (aexp__2676)
+{if ($T(atomicQ__2489(aexp__2676)))
+{return k__2674(aexp__2676)}
 else
 {
-var t__1907 = generate_symbol__1901();
-return [$S("%bind", "ralph/core"), [t__1907, aexp__1906], k__1904(t__1907)]}})}, false)}
+var t__2677 = generate_symbol__2670(env__2673);
+return [B2644, [t__2677, aexp__2676], k__2674(t__2677)]}})}, false)}
 {
-var normalizeTT__1908;
+var normalizeTT__2678;
 false;
-normalizeTT__1908 = Mmake_function__1799("normalizeTT", function normalizeTT__1909 (expT__1910, k__1911)
-{if ($T(emptyQ__1818(expT__1910)))
-{return k__1911([])}
+normalizeTT__2678 = Mmake_function__2480("normalizeTT", function normalizeTT__2679 (expT__2680, env__2681, k__2682)
+{
+var sequence__2683 = expT__2680,
+B2684 = binaryEE__2500(ralphScoreCCsize(sequence__2683), 0);
+if ($T(B2684))
+{return k__2682([])}
 else
-return normalize_all__1847(expT__1910, k__1911)}, false)}
+return normalize_all__2551(expT__2680, env__2681, k__2682)}, false)}
 {
 false;
-normalize_all__1847 = Mmake_function__1799("normalize_all", function normalize_all__1914 (exp__1915, k__1916)
-{return normalizeT__1895(first__1822(exp__1915), function B1917 (t__1918)
-{return normalizeTT__1908(rest__1851(exp__1915), function B1919 (tT__1920)
-{return k__1916(concatenate__1845([t__1918], tT__1920))})})}, false)}
+normalize_all__2551 = Mmake_function__2480("normalize_all", function normalize_all__2687 (exp__2688, env__2689, k__2690)
+{
+var sequence__2695 = exp__2688,
+B2697 = sequence__2695[0],
+B2700 = function B2685__2691 (t__2692)
+{
+var sequence__2696 = exp__2688,
+B2698 = sequence__2696.slice(1),
+B2699 = function B2686__2693 (tT__2694)
+{return k__2690(concatenate__2549([t__2692], tT__2694))};
+return normalizeTT__2678(B2698, env__2689, B2699)};
+return normalizeT__2663(B2697, env__2689, B2700)}, false)}
