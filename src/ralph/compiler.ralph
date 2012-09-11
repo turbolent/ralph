@@ -18,6 +18,7 @@
            macroexpand-1
            macroexpand
            macroexpand-all
+           import-module
            <module> <environment>
            ;; for testing purposes
            *core-symbol-macros*
@@ -924,14 +925,14 @@
               (%get-property ,import-identifier
                              ,import-name))))))
 
-(define-function define-free-variables (exp env)
-  (bind ((variables (remove-defined-identifiers
-                     (find-free-variables exp env)
-                     env))
+(define-function define-free-variables (exp env #key (filter identity))
+  (bind ((variables (filter
+                     (remove-defined-identifiers
+                      (find-free-variables exp env)
+                      env)))
          (result []))
     (for-each ((variable variables))
               ()
-      (. (%native "console") (error "FREE:" (description variable)))
       (destructuring-bind (module-name name)
           (module-name/name variable)
         (bind ((import-name #f))
@@ -954,7 +955,9 @@
                      ;; external definition required?
                      (if-bind (definition
                                 (external-definition external-variable
-                                                     (find-import-identifier module env)
+                                                     (alpha-convert
+                                                      (find-import-identifier module env)
+                                                      env)
                                                      import-name env))
                        (push-last result definition))
                      ;; bind local to external
@@ -975,7 +978,8 @@
                          (find-import-identifier module env)))
                  ;; define external
                  (push-last result (external-definition variable
-                                                        import-identifier
+                                                        (alpha-convert
+                                                         import-identifier env)
                                                         name env))))))))
     ;; result
     (concatenate
@@ -1021,49 +1025,19 @@
             ;; application of function with name
             (else:
              (destructuring-bind (identifier #rest values) form
-               (. (%native "console") (error "XXX" (description identifier)))
                (destructuring-bind (module-name name)
                    (module-name/name identifier)
                  (if-bind (original-identifier (get env "original-identifier" name))
                    ;; was defined and renamed
                    (destructuring-bind (module-name name)
                        (module-name/name original-identifier)
-                     (. (%native "console") (error ">>>>" name))
-                     (bind ((module
-                             (if module-name
-                                 (if (== module-name
-                                         (get env "module" "name"))
-                                     (get env "module")
-                                     (find-module module-name))
-                                 ;; no module name
-                                 (if-bind (module/import-name
-                                           (find-module/import-name name env))
-                                   (begin
-                                    (. (%native "console") (error "NO MODULE NAME, IMPORTED"))
-                                    ;; imported
-                                    (destructuring-bind (module import-name)
-                                        module/import-name
-                                      (. (%native "console") (error "HERE 2"))
-                                      (set! name import-name)
-                                      module))
-                                   ;; not imported, local
-                                   (begin
-                                    (. (%native "console") (error "NO MODULE NAME, LOCAL"))
-                                    ;; imported
-                                    (get env "module"))))))
-                       (. (%native "console") (error "MODULE" (get module "name")))
-                       (. (%native "console") (error "INLINE?" (inline? module name)))
-                       (. (%native "console") (error "FUNCTION?"
-                                                     (description
-                                                      (get module "functions" name))))
+                     (bind ((module (if (== module-name
+                                            (get env "module" "name"))
+                                        (get env "module")
+                                        (find-module module-name))))
                        (if-bind (definition (when (inline? module name)
                                               (get module "functions" name)))
-                         (begin
-                          (. (%native "console") (error "INLINABLE" (description form)))
-                          (. (%native "console") (error "VALUES" (description values)))
-                          (bind ((result (inline-definition definition values env)))
-                            (. (%native "console") (error "<<<" (description result)))
-                            result))
+                         (inline-definition definition values env)
                          ;; normal call
                          (map (rcurry inline env)
                               form))))
@@ -1104,12 +1078,11 @@
       (dotimes (i (size arguments))
         (bind ((argument* (element arguments* i))
                (value (element values i))
+               ;; TODO:
                (value* ; (if value
                        ;     (inline value env)
                        ;     `(%native "undefined"))
                        value))
-          (. (%native "console") (error "VALUE:" (description value)))
-          (. (%native "console") (error "VALUE*:" (description value*)))
           (set! body*
                 `(%bind (,argument* ,value*)
                    ,body*))))
@@ -1219,9 +1192,9 @@
 (define-function compile-expression (exp env)
   (reduce (method (result name/fn)
             (destructuring-bind (name fn) name/fn
-              (format-out "### %s:\n" name)
+;;              (format-out "### %s:\n" name)
               (bind ((result (fn result)))
-                (format-out "%=\n" result)
+;;                (format-out "%=\n" result)
                 result)))
           exp
           [["source" identity]
@@ -1233,16 +1206,13 @@
             (rcurry define-free-variables env)]
            ["alpha-converted"
             (rcurry alpha-convert env)]
-           ; ["inline"
-           ;  (rcurry inline env)]
-           ; ["defined free variables after inline"
-           ;  (rcurry define-free-variables env
-           ;          filter: (curry choose (method (variable)
-           ;                                  (not (has? (get env "original-identifier")
-           ;                                             (symbol-name variable)))))
-           ;          lookup: (method (identifier)
-           ;                    (get env "new-identifier"
-           ;                         (symbol-name identifier))))]
+           ["inline"
+            (rcurry inline env)]
+           ["defined free variables after inline"
+            (rcurry define-free-variables env
+                    filter: (curry choose (method (variable)
+                                            (not (has? (get env "original-identifier")
+                                                       (symbol-name variable))))))]
            ["ANF"
             (rcurry normalize-term env)]
            ["lifted symbols"
