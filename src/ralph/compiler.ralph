@@ -924,13 +924,10 @@
               (%get-property ,import-identifier
                              ,import-name))))))
 
-
 (define-function define-free-variables (exp env)
-  (bind ((variables (choose (method (variable)
-                              (destructuring-bind (module-name name)
-                                  (module-name/name variable)
-                                (not (get env "defined?" module-name name))))
-                            (find-free-variables exp env)))
+  (bind ((variables (remove-defined-identifiers
+                     (find-free-variables exp env)
+                     env))
          (result []))
     (for-each ((variable variables))
               ()
@@ -1252,9 +1249,9 @@
              (rcurry lift-symbols env)]
            ["statements"
             (rcurry transform-statements! env)]
-           ; ["TCO"
-           ;  (method (exp)
-           ;    (optimize-tail-calls! exp env))]
+           ["TCO"
+            (method (exp)
+              (optimize-tail-calls! exp env))]
            ["flattened"
             flatten-statements!]
            ["compiled"

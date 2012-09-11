@@ -94,9 +94,9 @@
       (if (method? exp)
           ;; build closure for free variables
           ;; TODO: env.definition-names (?!)
-          (bind ((variables (set-subtract!
+          (bind ((variables (remove-defined-identifiers
                              (find-free-variables exp env)
-                             *defined*)))
+                             env)))
             (concatenate
              `((%method ,(generate-symbol) ,variables
                  (%return ,exp)))

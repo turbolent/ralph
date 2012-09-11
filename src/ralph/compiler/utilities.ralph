@@ -4,7 +4,8 @@
            maybe-begin module-name/name
            var? set? method? begin? define?
            *defined* localize
-           bind! bound? unbind!))
+           bind! bound? unbind!
+           remove-defined-identifiers))
 
 ;;;; utilities
 
@@ -94,3 +95,11 @@
 (define-function unbind! (env identifier)
   (dec! (get env "binding-count"
              (symbol-name identifier))))
+
+(define-function remove-defined-identifiers (identifiers env)
+  (choose (method (identifier)
+            (destructuring-bind (module-name name)
+                (module-name/name identifier)
+              (not (get env "defined?"
+                        module-name name))))
+          identifiers))
