@@ -115,7 +115,7 @@
        (("%all-arguments")
         "arguments")
        (else:
-        (escape-name (symbol-name exp)))))
+        (escape-name (description exp)))))
     (else:
      (description exp))))
 

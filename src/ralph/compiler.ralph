@@ -522,26 +522,26 @@
   (transform-quoted exp))
 
 (define-function transform-backquoted (form env)
-  (cond
-   ((instance? form <array>)
-    (if (and (not (empty? form))
-             (== (symbol-name (first form))
-                 "%comma"))
-        (second form)
-        (concatenate `(%array)
-                     (map (rcurry transform-backquoted env)
-                          form))))
-   ((instance? form <symbol>)
-    (bind ((name (symbol-name form))
-           (module
-            (if-bind (module/import-name
-                      (unless (bound? env form)
-                        (find-module/import-name name env)))
-              (first module/import-name)
-              (get env "module"))))
-      `(%symbol ,name ,(get module "name"))))
-   (else:
-    form)))
+  (select form instance?
+    ((<array>)
+     (if (and (not (empty? form))
+              (== (symbol-name (first form))
+                  "%comma"))
+         (second form)
+         (concatenate `(%array)
+                      (map (rcurry transform-backquoted env)
+                           form))))
+    ((<symbol>)
+     (bind ((name (symbol-name form))
+            (module
+             (if-bind (module/import-name
+                       (unless (bound? env form)
+                         (find-module/import-name name env)))
+               (first module/import-name)
+               (get env "module"))))
+       `(%symbol ,name ,(get module "name"))))
+    (else:
+     form)))
 
 (define-core-macro %backquote (env exp)
   (transform-backquoted exp env))
@@ -870,15 +870,18 @@
   (get env "import-identifiers"
        (get module "name")))
 
-(define-function define-free-variables (exp env)
-  (bind ((variables (set-subtract! (find-free-variables exp env)
-                                   *defined*))
+(define-function define-free-variables (exp env #key (filter identity)
+                                                     (lookup identity))
+  (bind ((variables (filter (set-subtract! (find-free-variables exp env)
+                                           *defined*)))
          (result []))
     (for-each ((variable variables))
               ()
+      (. (%native "console") (error "FREE:" (description variable)))
       (destructuring-bind (module-name name)
-          (module-name/name variable env)
+          (module-name/name variable)
         (bind ((import-name #f))
+          ;; NOTE: localized
           (unless (or module-name
                       (get env "defined?" name))
             ;; imported?
@@ -907,7 +910,8 @@
                  (push-last result
                             `(%define ,variable))
                  (push-last result
-                            `(%set ,variable ,reference))))
+                            `(%set ,variable ,(lookup reference))))
+               #t)
               (begin
                ;; TODO: check if module exports name
                ;;       if not exported?, signal: name not exported
@@ -916,7 +920,7 @@
                ;; module maybe already imported
                (bind ((module (find-module module-name))
                       (import-identifier
-                       (find-import-identifier module env)))
+                       (lookup (find-import-identifier module env))))
                  ;; module not imported yet?
                  (unless import-identifier
                    (push-last result
@@ -934,109 +938,139 @@
      `(%begin) result [exp])))
 
 
-
-; (define-function define-free-variables2 (exp env)
-;   exp)
-
 ;;;; inlining
 
-; (define-function inline (form env)
-;   (if (and (instance? form <array>)
-;            (not (empty? form)))
-;       (if (instance? (first form) <symbol>)
-;           (select (symbol-name (first form)) ==
-;             ;; inline only last
-;             (("%method" "%set")
-;              (set! (last form)
-;                    (inline (last form) env))
-;              form)
-;             (("%bind")
-;              (destructuring-bind (_ binding body) form
-;                (set! (second binding)
-;                      (inline (second binding) env))
-;                (set! (last form)
-;                      (inline body env))
-;                form))
-;             (("%try")
-;              (destructuring-bind (_ body var catch) form
-;                (set! (second form)
-;                      (inline body env))
-;                (set! (last form)
-;                      (inline catch env))
-;                form))
-;             ;; inline all arguments
-;             (("%begin" "%if" "%while" "%array" "%object"
-;               "%get-property" "%native-call" "%infix"
-;               "%plus" "%minus" "%times" "%divide")
-;              (concatenate [(first form)]
-;                           (map (rcurry inline env)
-;                                (rest form))))
-;             ;; no inlining
-;             (("%native" "%native-name" "%define")
-;              form)
-;             ;; application of function with name
-;             (else:
-;              (bind ((name (symbol-name (first form)))
-;                     (definition-name (or (get env "definition-names" name)
-;                                          name))
-;                     (definition
-;                       ;; local definition?
-;                       (or (when (inline? (get env "module")
-;                                          definition-name)
-;                             (get env "module" "functions"
-;                                  definition-name))
-;                           ;; imported definition?
-;                           (if-bind (module/import-name
-;                                     (find-module/import-name
-;                                      definition-name env))
-;                             (destructuring-bind (module import-name)
-;                                 module/import-name
-;                               (when (inline? module import-name)
-;                                 (get module "functions"
-;                                      import-name)))))))
-;                (if definition
-;                    (inline-definition definition (rest form) env)
-;                    ;; normal call
-;                    (map (rcurry inline env)
-;                         form)))))
-;           ;; application of expression, can't be inlined
-;           (map (rcurry inline env)
-;                form))
-;       ;; not an array
-;       form))
+(define-function inline (form env)
+  (if (and (instance? form <array>)
+           (not (empty? form)))
+      (if (instance? (first form) <symbol>)
+          (select (symbol-name (first form)) ==
+            ;; inline only last
+            (("%method" "%set")
+             (set! (last form)
+                   (inline (last form) env))
+             form)
+            (("%bind")
+             (destructuring-bind (_ binding body) form
+               (set! (second binding)
+                     (inline (second binding) env))
+               (set! (last form)
+                     (inline body env))
+               form))
+            (("%try")
+             (destructuring-bind (_ body var catch) form
+               (set! (second form)
+                     (inline body env))
+               (set! (last form)
+                     (inline catch env))
+               form))
+            ;; inline all arguments
+            (("%begin" "%if" "%while" "%array" "%object"
+              "%get-property" "%native-call" "%infix"
+              "%plus" "%minus" "%times" "%divide")
+             (concatenate [(first form)]
+                          (map (rcurry inline env)
+                               (rest form))))
+            ;; no inlining
+            (("%native" "%native-name" "%define" "%symbol")
+             form)
+            ;; application of function with name
+            (else:
+             (destructuring-bind (identifier #rest values) form
+               (. (%native "console") (error "XXX" (description identifier)))
+               (destructuring-bind (module-name name)
+                   (module-name/name identifier)
+                 (if-bind (original-identifier (get env "original-identifier" name))
+                   ;; was defined and renamed
+                   (destructuring-bind (module-name name)
+                       (module-name/name original-identifier)
+                     (. (%native "console") (error ">>>>" name))
+                     (bind ((module
+                             (if module-name
+                                 (if (== module-name
+                                         (get env "module" "name"))
+                                     (get env "module")
+                                     (find-module module-name))
+                                 ;; no module name
+                                 (if-bind (module/import-name
+                                           (find-module/import-name name env))
+                                   (begin
+                                    (. (%native "console") (error "NO MODULE NAME, IMPORTED"))
+                                    ;; imported
+                                    (destructuring-bind (module import-name)
+                                        module/import-name
+                                      (. (%native "console") (error "HERE 2"))
+                                      (set! name import-name)
+                                      module))
+                                   ;; not imported, local
+                                   (begin
+                                    (. (%native "console") (error "NO MODULE NAME, LOCAL"))
+                                    ;; imported
+                                    (get env "module"))))))
+                       (. (%native "console") (error "MODULE" (get module "name")))
+                       (. (%native "console") (error "INLINE?" (inline? module name)))
+                       (. (%native "console") (error "FUNCTION?"
+                                                     (description
+                                                      (get module "functions" name))))
+                       (if-bind (definition (when (inline? module name)
+                                              (get module "functions" name)))
+                         (begin
+                          (. (%native "console") (error "INLINABLE" (description form)))
+                          (. (%native "console") (error "VALUES" (description values)))
+                          (bind ((result (inline-definition definition values env)))
+                            (. (%native "console") (error "<<<" (description result)))
+                            result))
+                         ;; normal call
+                         (map (rcurry inline env)
+                              form))))
+                   ;; normal call
+                   (map (rcurry inline env)
+                        form))))))
+          ;; application of expression, can't be inlined
+          (map (rcurry inline env)
+               form))
+      ;; not an array
+      form))
 
-; (define-function inline? (module name)
-;   (any? (curry == name)
-;         (get module "inline")))
+(define-function inline? (module name)
+  (any? (curry == name)
+        (get module "inline")))
 
 ; (define-function inline-definition (definition values env)
-;   ;; TODO: move preparation to method definition?
-;   ;; inlines definition itself and inlines values before., e.g. (not (not ...))
 ;   (destructuring-bind (_ name arguments body) definition
 ;     ;; TODO: rest and keyword parameters
-;     ;; rebind arguments, so values are only evaluated once
-;     (bind ((body (reduce (method (body argument)
-;                            `(%bind (,argument ,argument)
-;                               ,body))
-;                          body
-;                          (reverse arguments)))
-;            (inlined (inline body env))
-;            (prepared (alpha-convert inlined env)))
-;       ;; create initial bindings
-;       (dotimes (i (size arguments))
-;         (bind ((argument (element arguments i))
-;                (value (element values i)))
-;           (destructuring-bind (module-name name)
-;               (get-module-name/name argument env)
-;             (ensure-naming-structure env module-name name)
-;             (push (get env "identifiers" module-name name)
-;                   (if value
-;                       (inline value env)
-;                       `(%native "undefined"))))))
-;       ;; rename
-;       (bind ((result (alpha-convert body env)))
-;         (restore-identifiers arguments env)
-;         result))))
+;     (dotimes (i (size arguments))
+;       (bind ((argument (element arguments i))
+;              (value (element values i)))
+;         ;; TODO: inline value
+;         (set! body
+;               `(%bind (,argument ,value)
+;                  ,body))))
+;     body))
+
+;; TOOD: improve: alpha-converted two times
+(define-function inline-definition (definition values env)
+  ;; TODO: move preparation to method definition?
+  ;; inlines definition itself and inlines values before., e.g. (not (not ...))
+  (destructuring-bind (_ name arguments body) definition
+    ;; TODO: rest and keyword parameters
+    ;; rebind arguments, so values are only evaluated once
+    (bind ((arguments* (rename-identifiers arguments env))
+           (body* (alpha-convert body env)))
+      (dotimes (i (size arguments))
+        (bind ((argument* (element arguments* i))
+               (value (element values i))
+               (value* ; (if value
+                       ;     (inline value env)
+                       ;     `(%native "undefined"))
+                       value))
+          (. (%native "console") (error "VALUE:" (description value)))
+          (. (%native "console") (error "VALUE*:" (description value*)))
+          (set! body*
+                `(%bind (,argument* ,value*)
+                   ,body*))))
+      (restore-identifiers arguments env)
+      body*)))
 
 
 ;;;; symbol lifting
@@ -1158,7 +1192,13 @@
            ; ["inline"
            ;  (rcurry inline env)]
            ; ["defined free variables after inline"
-           ;  (rcurry define-free-variables2 env)]
+           ;  (rcurry define-free-variables env
+           ;          filter: (curry choose (method (variable)
+           ;                                  (not (has? (get env "original-identifier")
+           ;                                             (symbol-name variable)))))
+           ;          lookup: (method (identifier)
+           ;                    (get env "new-identifier"
+           ;                         (symbol-name identifier))))]
            ["ANF"
             normalize-term]
            ["lifted symbols"

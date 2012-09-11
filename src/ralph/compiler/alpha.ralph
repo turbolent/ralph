@@ -23,7 +23,7 @@
 (define-function rename-identifiers (identifiers env)
   (map (method (identifier)
          (destructuring-bind (module-name name)
-             (module-name/name identifier env)
+             (module-name/name identifier)
            (unless module-name
              (set! module-name
                    (get env "module" "name")))
@@ -40,7 +40,7 @@
   (for-each ((identifier identifiers))
             ()
     (destructuring-bind (module-name name)
-        (module-name/name identifier env)
+        (module-name/name identifier)
       (unless module-name
         (set! module-name
               (get env "module" "name")))
@@ -50,14 +50,16 @@
 
 (define-function find-identifier (identifier env)
   (destructuring-bind (module-name name)
-      (module-name/name identifier env)
+      (module-name/name identifier)
     (unless module-name
       (set! module-name
             (get env "module" "name")))
-    (if-bind (renamings (get env "identifiers"
-                             module-name name))
-      (first renamings)
-      *not-found*)))
+    (bind ((renamings (get env "identifiers"
+                           module-name name)))
+      (if (and renamings
+               (not (empty? renamings)))
+          (first renamings)
+          *not-found*))))
 
 (define-function alpha-convert (form env)
   (select form instance?
@@ -104,11 +106,13 @@
           (bind ((name (symbol-name identifier)))
             (destructuring-bind (new-identifier)
                 (rename-identifiers [identifier] env)
-              ;; register renaming of definition
-              (set! (get env "definition-names"
+              ;; track new identifier -> old identifier
+              (set! (get env "original-identifier"
                          (symbol-name new-identifier))
-                    name)
-              (set! (get env "new-identifiers" name)
+                    identifier)
+              ;; track old identifier -> new identifier
+              (set! (get env "new-identifier"
+                         (symbol-name identifier))
                     new-identifier)
               `(%define ,new-identifier)))))
        ;; skip
@@ -124,12 +128,8 @@
         (map (rcurry alpha-convert env)
              form))))
     ((<symbol>)
-     (if (member? form *defined*)
-         form
-         (bind ((value (find-identifier form env)))
-           (if (== value *not-found*)
-               (signal (make <error> message:
-                             (format-to-string
-                              "unable to rename undefined identifier: %s" form)))
-               value))))
+     (bind ((value (find-identifier form env)))
+       (if (== value *not-found*)
+           form
+           value)))
     (else: form)))

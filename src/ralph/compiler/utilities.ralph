@@ -71,7 +71,7 @@
                   expressions))))
 
 ;; TODO: rename destructure-symbol?
-(define-function module-name/name (identifier env)
+(define-function module-name/name (identifier)
   [(get identifier "module")
    (symbol-name identifier)])
 
