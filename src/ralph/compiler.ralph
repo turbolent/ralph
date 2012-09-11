@@ -1248,8 +1248,8 @@
            ;                         (symbol-name identifier))))]
            ["ANF"
             (rcurry normalize-term env)]
-           ; ["lifted symbols"
-           ;   (rcurry lift-symbols env)]
+           ["lifted symbols"
+             (rcurry lift-symbols env)]
            ["statements"
             (rcurry transform-statements! env)]
            ; ["TCO"
