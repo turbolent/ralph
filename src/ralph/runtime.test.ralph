@@ -805,8 +805,8 @@
     (for-each ((x [1 2 3]))
               ()
       (push-last result x))
-    (check-equal ""  result [1 2 3])
-    (check-equal "" rest ["a" "b" "c"])))
+    (check-equal "hygiene: result" result [1 2 3])
+    (check-equal "hygiene: rest" rest ["a" "b" "c"])))
 
 (test-hygiene "a" "b" "c")
 

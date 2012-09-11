@@ -10,10 +10,12 @@
            ralph/compiler/utilities))
 
 (define-function make-core-environment ()
-  (make <environment>
-        module: (make <module> name: "__test__")
-        macros: *core-macros*
-        symbol-macros: *core-symbol-macros*))
+  (bind ((module (make <module> name: "ralph/compiler.test")))
+    (import-module module "ralph/core")
+    (make <environment>
+          module: module
+          macros: *core-macros*
+          symbol-macros: *core-symbol-macros*)))
 
 (define *environment*
   (make-core-environment))
@@ -30,63 +32,63 @@
 
 (check-equal "macroexpand-1: alpha"
              `(beta 1 2)
-             (macroexpand-1 `(alpha 1 2) *environment*))
+             (macroexpand-1 '(alpha 1 2) *environment*))
 
 (check-equal "macroexpand: alpha"
              `(gamma 1 2)
-             (macroexpand `(alpha 1 2) *environment*))
+             (macroexpand '(alpha 1 2) *environment*))
 
 
 (check-equal "macroexpand: bind"
-             `(%bind (a 1)
-                (%bind (b (+ a 1))
-                  b))
-              (macroexpand `(bind ((a 1)
-                                   (b (+ a 1)))
-                              b)
-                           *environment*))
+             `(%bind (,'a 1)
+                (%bind (,'b (,'+ ,'a 1))
+                  ,'b))
+             (macroexpand '(bind ((a 1)
+                                  (b (+ a 1)))
+                             b)
+                          *environment*))
 
 (check-equal "macroexpand-1: cond"
-             `(if (a)
+             `(if (,'a)
                   (%begin 1 2)
                   (cond
-                   (b 3)
+                   (,'b 3)
                    (else: 4 5)))
-              (macroexpand-1 `(cond
+              (macroexpand-1 '(cond
                                ((a) 1 2)
                                (b 3)
                                (else: 4 5))
                              *environment*))
 
-(check-equal "macroexpand: prevent expansion of sepcial forms 2"
-             `(%bind (cond
+(check-equal "macroexpand: prevent expansion of sepcial forms"
+             '(%bind (cond
                       ((a) b)
                       (else: c))
                      d)
-             (macroexpand `(%bind (cond
+             (macroexpand '(%bind (cond
                                    ((a) b)
                                    (else: c))
                              d)
                           *environment*))
 
-(check-equal "macroexpand-all: bind b"
+(check-equal "macroexpand-all: bind, b"
              `b
-             (macroexpand-all `(bind ()
+             (macroexpand-all '(bind ()
                                  b)
                               *environment*))
 
 
 (check-equal "macroexpand-all: bind b"
-             `(%bind (,'b (%plus ,'a 1))
-                ,'b)
+             `(%bind (b (%plus a 1))
+                b)
              (macroexpand-all '(bind ((b (+ a 1)))
                                  b)
                               *environment*))
 
 (check-equal "macroexpand-all: bind a, b"
-             `(%bind (,'a 1)
-                (%bind (,'b (%plus ,'a 1))
-                    ,'b))
+             `(%bind (a 1)
+                (%bind (b (%plus a 1))
+                  b))
              (macroexpand-all '(bind ((a 1)
                                       (b (+ a 1)))
                                  b)
@@ -94,20 +96,20 @@
 
 (check-equal "macroexpand-all: and"
              `(%if 1 (%if #t (%if 2 (%if #f 3 #f) #f) #f) #f)
-             (macroexpand-all `(and 1 #t 2 #f 3)
+             (macroexpand-all '(and 1 #t 2 #f 3)
                               *environment*))
 
 
 (reset-symbol-counter!)
 (check-equal "macroexpand-all: or"
-             `(%bind (,'$1 #f)
-                (%if ,'$1
-                     ,'$1
-                     (%bind (,'$2 2)
-                       (%if ,'$2
-                            ,'$2
-                            ,'3))))
-             (macroexpand-all `(or #f 2 3)
+             `(%bind ($1 #f)
+                (%if $1
+                     $1
+                     (%bind ($2 2)
+                       (%if $2
+                            $2
+                            3))))
+             (macroexpand-all '(or #f 2 3)
                               *environment*))
 
 (check-equal "macroexpand-all: cond"
@@ -116,7 +118,7 @@
                    (%if b
                         3
                         (%begin 4 5)))
-             (macroexpand-all `(cond
+             (macroexpand-all '(cond
                                 ((a) 1 2)
                                 (b 3)
                                 (else: 4 5))
@@ -124,50 +126,50 @@
 
 (check-equal "macroexpand-all: set!"
              `(%set x 1)
-             (macroexpand-all `(set! x 1)
+             (macroexpand-all '(set! x 1)
                               *environment*))
 
 (check-equal "macroexpand-all: set!"
-             `(,'cond-setter x 1)
-             (macroexpand-all `(set! (cond x) 1)
+             `(cond-setter x 1)
+             (macroexpand-all '(set! (cond x) 1)
                               *environment*))
 
 
 (check-equal "macroexpand-all: parallel-set! 1"
              `(%set x 1)
-             (macroexpand-all `(parallel-set! x 1)
+             (macroexpand-all '(parallel-set! x 1)
                               *environment*))
 
 (reset-symbol-counter!)
 (check-equal "macroexpand-all: parallel-set! 2"
-             `(%bind (,'$1 1)
+             `(%bind ($1 1)
                 (%begin
-                 (%bind (,'$2 (%plus x 1))
+                 (%bind ($2 (%plus x 1))
                    (%begin
                     (%set z (%minus x y))
-                    (%set y ,'$2)))
-                 (%set x ,'$1)))
-             (macroexpand-all `(parallel-set! x 1
+                    (%set y $2)))
+                 (%set x $1)))
+             (macroexpand-all '(parallel-set! x 1
                                               y (+ x 1)
                                               z (- x y))
                               *environment*))
 
 (reset-symbol-counter!)
 (check-equal "macroexpand-all: select"
-             `(%bind (,'$1 x)
-                (%if (%bind (,'$2 (instance? ,'$1 <array>))
-                       (%if ,'$2
-                            ,'$2
-                            (instance? ,'$1 <string>)))
+             `(%bind ($1 x)
+                (%if (%bind ($2 (instance? $1 <array>))
+                       (%if $2
+                            $2
+                            (instance? $1 <string>)))
                      (%begin
                       (print x)
                       (slice x 2))
-                     (%if (instance? ,'$1 <number>)
+                     (%if (instance? $1 <number>)
                           (%times x 23)
                           (%begin
                            (do-sth)
                            else))))
-             (macroexpand-all `(select x instance?
+             (macroexpand-all '(select x instance?
                                  ((<array> <string>)
                                   (print x)
                                   (slice x 2))
@@ -178,10 +180,11 @@
                                   else))
                               *environment*))
 
-(check-equal "macroexpand-all: prevent expansion of sepcial forms"
-             `(%bind (,'cond ((a) b))
+
+(check-equal "macroexpand-all: prevent expansion of sepcial forms 2"
+             `(%bind (cond ((a) b))
                 d)
-             (macroexpand-all `(bind ((,'cond
+             (macroexpand-all '(bind ((cond
                                        ((a) b)
                                        (else: c)))
                                  d)
@@ -189,34 +192,34 @@
 
 (reset-symbol-counter!)
 (check-equal "macroexpand-all: bind-properties"
-             `(%bind (,'$1 obj)
-                (%bind (,'a (%get-property ,'$1 "a"))
-                  (%bind (,'b (%get-property ,'$1 "b"))
+             `(%bind ($1 obj)
+                (%bind (a (%get-property $1 "a"))
+                  (%bind (b (%get-property $1 "b"))
                     (%begin
-                     (first ,'a)
-                     (second ,'b)))))
-             (macroexpand-all `(bind-properties (,'a ,'b) obj
-                                 (first ,'a)
-                                 (second ,'b))
+                     (first a)
+                     (second b)))))
+             (macroexpand-all '(bind-properties (a b) obj
+                                 (first a)
+                                 (second b))
                               *environment*))
 
 (reset-symbol-counter!)
 (check-equal "macroexpand-all: destructuring-bind"
-             `(%bind (,'a (%get-property ,'values 0))
-                (%bind (,'$1 (%get-property ,'values 1))
-                  (%bind (,'b (%get-property ,'$1 0))
-                    (%bind (,'c (%get-property ,'$1 1))
-                      (%bind (,'$3 (%get-property ,'$1 2))
-                        (%bind (,'d (%get-property ,'$3 0))
-                          (%bind (,'e (%get-property ,'$3 1))
-                            (%bind (,'f (%native-call "$SL.call" ,'$3 2))
-                              (%bind (,'$4 (%keys ,'f (%object "g" 1)))
-                                (%bind (,'g (%get-property ,'$4 "g"))
-                                  (%bind (,'$2 (%native-call "$SL.call" ,'$1 3))
-                                    (%bind (,'$5 (%keys ,'$2 (%object "h" 2)))
-                                      (%bind (,'h (%get-property ,'$5 "h"))
-                                        (%bind (,'i (%get-property ,'values 2))
-                                          (,'foo ,'e)))))))))))))))
+             `(%bind (a (%get-property values 0))
+                (%bind ($1 (%get-property values 1))
+                  (%bind (b (%get-property $1 0))
+                    (%bind (c (%get-property $1 1))
+                      (%bind ($3 (%get-property $1 2))
+                        (%bind (d (%get-property $3 0))
+                          (%bind (e (%get-property $3 1))
+                            (%bind (f (%native-call "$SL.call" $3 2))
+                              (%bind ($4 (%keys f (%object "g" 1)))
+                                (%bind (g (%get-property $4 "g"))
+                                  (%bind ($2 (%native-call "$SL.call" $1 3))
+                                    (%bind ($5 (%keys $2 (%object "h" 2)))
+                                      (%bind (h (%get-property $5 "h"))
+                                        (%bind (i (%get-property values 2))
+                                          (foo e)))))))))))))))
              (macroexpand-all '(destructuring-bind
                                    (a (b c (d e #rest f #key (g 1)) #key (h 2)) i)
                                    values
@@ -250,36 +253,36 @@
 
 (reset-symbol-counter!)
 (check-equal "macroexpand-all: normal method"
-             `(%method ,'$1 (,'a)
-                ,'a)
+             `(%method $1 (a)
+                a)
              (macroexpand-all '(method (a)
                                  a)
                               *environment*))
 
 (reset-symbol-counter!)
 (check-equal "macroexpand-all: method with rest and keyword arguments"
-             `(%method ,'$1 (,'a ,'b)
-                (%bind (,'r (%native-call "$SL.call" ,'%all-arguments 2))
-                  (%bind (,'$2 (%keys ,'r (%object "c" 1 "d" 2)))
-                    (%bind (,'c (%get-property ,'$2 "c"))
-                      (%bind (,'d (%get-property ,'$2 "d"))
-                        (,'foo ,'c))))))
+             `(%method $1 (a b)
+                (%bind (r (%native-call "$SL.call" %all-arguments 2))
+                  (%bind ($2 (%keys r (%object "c" 1 "d" 2)))
+                    (%bind (c (%get-property $2 "c"))
+                      (%bind (d (%get-property $2 "d"))
+                        (foo c))))))
              (macroexpand-all '(method (a b #rest r #key (c 1) (d 2))
                                  (foo c))
                               *environment*))
 
 (reset-symbol-counter!)
 (check-equal "macroexpand-all: dotimes (for, while)"
-             `(%bind (,'$1 (%plus (%minus 3 2)))
-                (%bind (,'i 0)
+             `(%bind ($1 (%plus (%minus 3 2)))
+                (%bind (i 0)
                   (%begin
-                   (%while (not (>= ,'i ,'$1))
+                   (%while (not (>= i $1))
                      (%begin
-                      ((%method ,'$2 (,'i)
-                         (,'foo ,'i))
-                       ,'i)
-                      (%set ,'i (%plus ,'i 1))))
-                   (%minus ,'i 2))))
+                      ((%method $2 (i)
+                         (foo i))
+                       i)
+                      (%set i (%plus i 1))))
+                   (%minus i 2))))
              (macroexpand-all '(dotimes (i (+ (- 3 2)) (- i 2))
                                  (foo i))
                               *environment*))
@@ -288,31 +291,31 @@
 
 (reset-symbol-counter!)
 (check-equal "macroexpand-all: for-each with body"
-             `(%bind (,'$1 (,'%array 1 2 3 4))
-                (%bind (,'$2 (,'%array 5 6 7))
-                  (%bind (,'$3 #f)
-                    (%bind (,'$5 #f)
-                      (%bind (,'$4 (%array ,'$1 ,'$2))
+             `(%bind ($1 (%array 1 2 3 4))
+                (%bind ($2 (%array 5 6 7))
+                  (%bind ($3 #f)
+                    (%bind ($5 #f)
+                      (%bind ($4 (%array $1 $2))
                         (%begin
-                         (%while (not (%bind (,'$6 ,'$3)
-                                        (%if ,'$6 ,'$6 (any? empty? ,'$4))))
-                           (%bind (,'a (first ,'$1))
-                             (%bind (,'b (first ,'$2))
-                               (%if (%bind (,'$7 (,'> ,'a 2))
-                                      (%if ,'$7 ,'$7 (,'> ,'b 5)))
+                         (%while (not (%bind ($6 $3)
+                                        (%if $6 $6 (any? empty? $4))))
+                           (%bind (a (first $1))
+                             (%bind (b (first $2))
+                               (%if (%bind ($7 (> a 2))
+                                      (%if $7 $7 (> b 5)))
                                     (%begin
-                                     (%set ,'$5 (%begin
-                                               (,'foo ,'a)
-                                               (,'bar ,'b)))
-                                     (%set ,'$3 #t))
+                                     (%set $5 (%begin
+                                               (foo a)
+                                               (bar b)))
+                                     (%set $3 #t))
                                     (%begin
-                                     ((%method ,'$8 (,'a ,'b)
-                                        (,'baz ,'a ,'b))
-                                      ,'a ,'b)
-                                     (%set ,'$1 (rest ,'$1))
-                                     (%set ,'$2 (rest ,'$2))
-                                     (%set ,'$4 (%array ,'$1 ,'$2)))))))
-                         ,'$5))))))
+                                     ((%method $8 (a b)
+                                        (baz a b))
+                                      a b)
+                                     (%set $1 (rest $1))
+                                     (%set $2 (rest $2))
+                                     (%set $4 (%array $1 $2)))))))
+                         $5))))))
              (macroexpand-all
               '(for-each ((a [1 2 3 4])
                           (b [5 6 7]))
@@ -325,28 +328,28 @@
 
 (reset-symbol-counter!)
 (check-equal "macroexpand-all: for-each without body"
-             `(%bind (,'$1 (,'%array 1 2 3))
-                (%bind (,'$2 (,'%array 1 2 3))
-                  (%bind (,'$3 #f)
-                    (%bind (,'$5 #f)
-                      (%bind (,'$4 (%array ,'$1 ,'$2))
+             `(%bind ($1 (%array 1 2 3))
+                (%bind ($2 (%array 1 2 3))
+                  (%bind ($3 #f)
+                    (%bind ($5 #f)
+                      (%bind ($4 (%array $1 $2))
                         (%begin
-                         (%while (not (%bind (,'$6 ,'$3)
-                                        (%if ,'$6 ,'$6 (any? empty? ,'$4))))
-                           (%bind (,'a (first ,'$1))
-                             (%bind (,'b (first ,'$2))
-                               (%if (,'not (,'binary= ,'a ,'b))
+                         (%while (not (%bind ($6 $3)
+                                        (%if $6 $6 (any? empty? $4))))
+                           (%bind (a (first $1))
+                             (%bind (b (first $2))
+                               (%if (not (binary= a b))
                                  (%begin
-                                  (%set ,'$5 #t)
-                                  (%set ,'$3 #t))
+                                  (%set $5 #t)
+                                  (%set $3 #t))
                                  (%begin
-                                  ((%method ,'$7 (,'a ,'b)
+                                  ((%method $7 (a b)
                                      #f)
-                                   ,'a ,'b)
-                                  (%set ,'$1 (rest ,'$1))
-                                  (%set ,'$2 (rest ,'$2))
-                                  (%set ,'$4 (%array ,'$1 ,'$2)))))))
-                         ,'$5))))))
+                                   a b)
+                                  (%set $1 (rest $1))
+                                  (%set $2 (rest $2))
+                                  (%set $4 (%array $1 $2)))))))
+                         $5))))))
              (macroexpand-all
               '(for-each ((a [1 2 3])
                           (b [1 2 3]))
@@ -375,14 +378,14 @@
 
 
 (check-equal "macroexpand-all: symbol macros"
-             `(%begin 1 (%next-method ,'%this-method) 2)
+             `(%begin 1 (%next-method %this-method) 2)
              (macroexpand-all '(begin 1 next-method 2)
                               *environment*))
 
 (check-equal "macroexpand-all: dot"
              `((%get-property
                 ((%get-property
-                  ((%get-property ,'node "removeClass") "off")
+                  ((%get-property node "removeClass") "off")
                   "addClass")
                  "on")
                 "end"))
@@ -396,7 +399,7 @@
 
 (reset-symbol-counter!)
 (check-equal "alpha-convert: single method"
-             `(%method ,'x_1 (,'a_2) 1)
+             `(%method x_1 (a_2) 1)
              (alpha-convert
               (macroexpand-all
                '(%method x (a) 1)
@@ -405,10 +408,10 @@
 
 (reset-symbol-counter!)
 (check-equal "alpha-convert: nested methods"
-             `((%method ,'x_1 (,'a_2)
-                 ((%method ,'y_3 (,'a_4)
-                    ,'a_4)
-                  ,'a_2))
+             `((%method x_1 (a_2)
+                 ((%method y_3 (a_4)
+                    a_4)
+                  a_2))
                1)
              (alpha-convert
               (macroexpand-all
@@ -422,10 +425,10 @@
 
 (reset-symbol-counter!)
 (check-equal "alpha-convert: define"
-             `(,'%begin
-               (%define ,'a_1)
-               (%method ,'x_2 (,'a_3)
-                 ,'a_3))
+             `(%begin
+               (%define a_1)
+               (%method x_2 (a_3)
+                 a_3))
              (alpha-convert
               (macroexpand-all
                '(%begin
@@ -448,20 +451,20 @@
                          *environment*)))
 
   (check-equal ""
-               `(%bind (,'c 1)
-                  (%bind (,'a 2)
-                    (%bind (,'b 3)
+               `(%bind (c 1)
+                  (%bind (a 2)
+                    (%bind (b 3)
                       (%begin
-                       (%minus 1 ,'c)
-                       (%plus ,'a ,'b)))))
+                       (%minus 1 c)
+                       (%plus a b)))))
                expanded)
   (check-equal ""
-               `(%bind (,'c_1 1)
-                  (%bind (,'a_2 2)
-                    (%bind (,'b_3 3)
+               `(%bind (c_1 1)
+                  (%bind (a_2 2)
+                    (%bind (b_3 3)
                       (%begin
-                       (%minus 1 ,'c_1)
-                       (%plus ,'a_2 ,'b_3)))))
+                       (%minus 1 c_1)
+                       (%plus a_2 b_3)))))
                (alpha-convert expanded
                               *environment*)))
 
@@ -473,14 +476,14 @@
                          *environment*)))
 
   (check-equal ""
-               `((%method ,'$1 (,'a ,'b)
-                   (%plus ,'a ,'b))
+               `((%method $1 (a b)
+                   (%plus a b))
                  1 2)
                expanded)
   (reset-symbol-counter!)
   (check-equal ""
-               `((%method ,'$1 (,'a_2 ,'b_3)
-                   (%plus ,'a_2 ,'b_3))
+               `((%method $1 (a_2 b_3)
+                   (%plus a_2 b_3))
                  1 2)
                (alpha-convert expanded
                               *environment*)))
@@ -500,10 +503,10 @@
 
 (reset-symbol-counter!)
 (check-equal "ANF: bind"
-             `(%bind (,'$1 (%plus 2 2))
-                (%bind (,'x 1)
-                  (%bind (,'$2 (,'f ,'x))
-                    (%plus ,'$1 ,'$2))))
+             `(%bind ($1 (%plus 2 2))
+                (%bind (x 1)
+                  (%bind ($2 (f x))
+                    (%plus $1 $2))))
              (normalize-term
               (macroexpand-all
                '(+ (+ 2 2)
@@ -519,10 +522,10 @@
                1
                (%begin
                 (%plus 2 2)
-                (%bind (,'$1 (%minus 3 3))
-                  (%bind (,'x 1)
-                    (%bind (,'$2 (,'f ,'x))
-                      (%plus ,'$1 ,'$2))))))
+                (%bind ($1 (%minus 3 3))
+                  (%bind (x 1)
+                    (%bind ($2 (f x))
+                      (%plus $1 $2))))))
              (normalize-term
               (macroexpand-all
                '(begin
@@ -535,9 +538,9 @@
 
 (reset-symbol-counter!)
 (check-equal "ANF: if: trivial expressions"
-             `(%if (,'= ,'n 0)
+             `(%if (= n 0)
                    1
-                   (%times ,'n (,'f (%minus ,'n 1))))
+                   (%times n (f (%minus n 1))))
              (normalize-term
               (macroexpand-all
                '(if (= n 0)
@@ -548,9 +551,9 @@
 
 (reset-symbol-counter!)
 (check-equal "ANF: application"
-             `(%bind (,'id (%method ,'$1 (,'x) ,'x))
-                (%bind (,'apply (%method ,'$2 (,'f ,'x) (,'f ,'x)))
-                  ((,'id ,'apply) (,'id 3))))
+             `(%bind (id (%method $1 (x) x))
+                (%bind (apply (%method $2 (f x) (f x)))
+                  ((id apply) (id 3))))
              (normalize-term
               (macroexpand-all
                '(bind ((id (method (x) x))
@@ -561,11 +564,11 @@
 
 (reset-symbol-counter!)
 (check-equal "ANF: method"
-             `(%method ,'$1 (,'a)
-                (%method ,'$2 (,'b)
+             `(%method $1 (a)
+                (%method $2 (b)
                   (%begin
-                   (%minus ,'a ,'b)
-                   (%plus (%minus ,'a ,'b) ,'b))))
+                   (%minus a b)
+                   (%plus (%minus a b) b))))
              (normalize-term
               (macroexpand-all
                '(method (a)
@@ -580,12 +583,12 @@
              `(%begin
                1
                (%begin
-                (,'c)
+                (c)
                 (%begin
-                 (,'b (%plus 1 (,'a)))
+                 (b (%plus 1 (a)))
                  (%begin
                   5
-                  (%minus (,'d) 23)))))
+                  (%minus (d) 23)))))
              (normalize-term
               (macroexpand-all
                '(begin
@@ -601,8 +604,8 @@
 (reset-symbol-counter!)
 (check-equal "ANF: nested set!"
              `(%begin
-               (%set ,'a (%plus (%minus ,'b 3) ,'c))
-               (%set ,'x (%times (%set ,'z ,'a) 5)))
+               (%set a (%plus (%minus b 3) c))
+               (%set x (%times (%set z a) 5)))
              (normalize-term
               (macroexpand-all
                '(begin
@@ -613,7 +616,7 @@
 
 (reset-symbol-counter!)
 (check-equal "ANF: set! with expression"
-             `(,'foo-setter ,'x (%plus 2 3))
+             `(foo-setter x (%plus 2 3))
              (normalize-term
               (macroexpand-all
                '(set! (foo x) (+ 2 3))
@@ -624,11 +627,11 @@
 (reset-symbol-counter!)
 (check-equal "ANF: nested set! with if"
              `(%begin
-               (%set ,'a (%plus (%minus ,'b 3) ,'c))
-               (%bind (,'$1 (%if ,'a ,'b ,'c))
-                 (%bind (,'$2 (%set ,'z ,'$1))
-                   (%bind (,'$3 (%times ,'$2 5))
-                     (%set ,'x ,'$3)))))
+               (%set a (%plus (%minus b 3) c))
+               (%bind ($1 (%if a b c))
+                 (%bind ($2 (%set z $1))
+                   (%bind ($3 (%times $2 5))
+                     (%set x $3)))))
              (normalize-term
               (macroexpand-all
                '(begin
@@ -639,8 +642,8 @@
 
 (reset-symbol-counter!)
 (check-equal "ANF: set! with expression and keywords"
-             `(,'foo-setter ,'x (%plus 2 3)
-                         animated?: (,'> (,'bar ,'x) 1))
+             `(foo-setter x (%plus 2 3)
+                         animated?: (> (bar x) 1))
              (normalize-term
               (macroexpand-all
                '(set! (foo x) (+ 2 3)
@@ -652,12 +655,12 @@
 (check-equal "ANF: or"
              ;; usage of %if as expression OK,
              ;; not in statement form yet
-             `(%bind (,'$1 #f)
-                (%bind (,'$3 (%if ,'$1
-                                  ,'$1
-                                  (%bind (,'$2 2)
-                                    (%if ,'$2 ,'$2 3))))
-                  (,'foo ,'$3 ,'bar)))
+             `(%bind ($1 #f)
+                (%bind ($3 (%if $1
+                                  $1
+                                  (%bind ($2 2)
+                                    (%if $2 $2 3))))
+                  (foo $3 bar)))
              (normalize-term
               (macroexpand-all
                '(foo (or #f 2 3) bar)
@@ -666,14 +669,14 @@
 
 (reset-symbol-counter!)
 (check-equal "ANF: while"
-             `(%bind (,'counter 5)
-                (%bind (,'result 1)
+             `(%bind (counter 5)
+                (%bind (result 1)
                   (%begin
-                   (%while (,'> ,'counter 0)
+                   (%while (> counter 0)
                      (%begin
-                      (%set ,'factorial (%times ,'factorial ,'counter))
-                      (%set ,'counter (%minus ,'counter 1))))
-                   ,'counter)))
+                      (%set factorial (%times factorial counter))
+                      (%set counter (%minus counter 1))))
+                   counter)))
              (normalize-term
               (macroexpand-all
                '(bind ((counter 5)
@@ -687,14 +690,14 @@
 
 (reset-symbol-counter!)
 (check-equal "ANF: while as expression"
-             `(%bind (,'run? #t)
-                (%bind (,'value (%while ,'run?
+             `(%bind (run? #t)
+                (%bind (value (%while run?
                                    (%begin
-                                    (,'foo)
+                                    (foo)
                                     (%begin
-                                     (%set ,'run? #f)
+                                     (%set run? #f)
                                      23))))
-                  (binary== ,'value #f)))
+                  (binary== value #f)))
              (normalize-term
               (macroexpand-all
                '(bind ((run? #t)
@@ -709,10 +712,10 @@
 
 (reset-symbol-counter!)
 (check-equal "ANF: while in if"
-             `(%bind (,'$1 (%while ,'run?
-                             (,'foo)))
-                (%bind (,'x (%if ,'$1 42 23))
-                  (,'bar ,'x)))
+             `(%bind ($1 (%while run?
+                             (foo)))
+                (%bind (x (%if $1 42 23))
+                  (bar x)))
              (normalize-term
               (macroexpand-all
                '(bind ((x (if (while run?
@@ -727,10 +730,10 @@
 (check-equal "ANF: if in while"
              `(%while #t
                 (%begin
-                 (%bind (,'$1 (,'foo))
-                   (%bind (,'$2 (%if ,'$1 ,'$1 (,'bar)))
-                     (%if ,'$2
-                          (,'baz)
+                 (%bind ($1 (foo))
+                   (%bind ($2 (%if $1 $1 (bar)))
+                     (%if $2
+                          (baz)
                           (%native "break"))))))
              (normalize-term
               (macroexpand-all
@@ -741,11 +744,11 @@
 
 (reset-symbol-counter!)
 (check-equal "ANF: begin as expression"
-             `(%bind (,'$1 (,'curry ,'+ 1))
+             `(%bind ($1 (curry + 1))
                 (%begin
                  1
-                 (%bind (,'$2 (%plus 2 3))
-                   (,'$1 ,'$2 4))))
+                 (%bind ($2 (%plus 2 3))
+                   ($1 $2 4))))
              (normalize-term
               (macroexpand-all
                '((curry + 1) (begin 1 (+ 2 3)) 4)
@@ -755,18 +758,18 @@
 
 (reset-symbol-counter!)
 (check-equal "ANF: select"
-             `(%bind (,'$1 ,'x)
-                (%bind (,'$2 (,'instance? ,'$1 ,'<array>))
-                  (%bind (,'$3 (%if ,'$2 ,'$2 (,'instance? ,'$1 ,'<string>)))
-                    (%if ,'$3
+             `(%bind ($1 x)
+                (%bind ($2 (instance? $1 <array>))
+                  (%bind ($3 (%if $2 $2 (instance? $1 <string>)))
+                    (%if $3
                          (%begin
-                          (,'print ,'x)
-                          (,'slice ,'x 2))
-                         (%if (,'instance? ,'$1 ,'<number>)
-                              (%times ,'x 23)
+                          (print x)
+                          (slice x 2))
+                         (%if (instance? $1 <number>)
+                              (%times x 23)
                               (%begin
-                               (,'do-sth)
-                               ,'else))))))
+                               (do-sth)
+                               else))))))
              (normalize-term
               (macroexpand-all
                '(select x instance?
@@ -783,10 +786,10 @@
 
 (reset-symbol-counter!)
 (check-equal "ANF: if in expression"
-             `(%method ,'$1 ()
-                (,'bar (%method ,'$2 (,'item)
-                         (%bind (,'$3 (%if ,'a ,'b ,'c))
-                           (,'baz ,'$3 ,'item)))))
+             `(%method $1 ()
+                (bar (%method $2 (item)
+                         (%bind ($3 (%if a b c))
+                           (baz $3 item)))))
              (normalize-term
               (macroexpand-all
                '(method ()
@@ -798,11 +801,11 @@
 
 (reset-symbol-counter!)
 (check-equal "ANF: if in expression 2"
-             `(%method ,'$1 ()
-                (,'bar (%method ,'$2 (,'item)
-                         (%bind (,'$3 (%if ,'c ,'b ,'a))
-                           (%bind (,'$4 (%if ,'a ,'b ,'c))
-                             (,'$3 ,'$4 ,'item))))))
+             `(%method $1 ()
+                (bar (%method $2 (item)
+                         (%bind ($3 (%if c b a))
+                           (%bind ($4 (%if a b c))
+                             ($3 $4 item))))))
              (normalize-term
               (macroexpand-all
                '(method ()
@@ -816,9 +819,9 @@
 
 (reset-symbol-counter!)
 (check-equal "ANF: while in if in exp"
-             `(%bind (,'$1 (%while run? (foo)))
-                (%bind (,'$2 (%if ,'$1 42 23))
-                  (foo ,'$2)))
+             `(%bind ($1 (%while run? (foo)))
+                (%bind ($2 (%if $1 42 23))
+                  (foo $2)))
              (normalize-term
               (macroexpand-all
                `(foo (if (while run?
@@ -830,16 +833,16 @@
 
 (reset-symbol-counter!)
 (check-equal "statements: or"
-             `(%bind (,'$1 #f)
-                (%bind (,'$3 #f)
+             `(%bind ($1 #f)
+                (%bind ($3 #f)
                   (%begin
-                   (%if ((%native "$T") ,'$1)
-                        (%set ,'$3 ,'$1)
-                        (%bind (,'$2 2)
-                          (%if ((%native "$T") ,'$2)
-                               (%set ,'$3 ,'$2)
-                               (%set ,'$3 3))))
-                   (foo ,'$3 bar))))
+                   (%if ((%native "$T") $1)
+                        (%set $3 $1)
+                        (%bind ($2 2)
+                          (%if ((%native "$T") $2)
+                               (%set $3 $2)
+                               (%set $3 3))))
+                   (foo $3 bar))))
               (transform-statements!
                (normalize-term
                 (macroexpand-all
@@ -850,12 +853,12 @@
 
 (reset-symbol-counter!)
 (check-equal "statements: if exp. in if stmt."
-             `(%bind (,'$1 #f)
+             `(%bind ($1 #f)
                 (%begin
                  (%if ((%native "$T") a)
-                      (%set ,'$1 1)
-                      (%set ,'$1 2))
-                 (%if ((%native "$T") ,'$1)
+                      (%set $1 1)
+                      (%set $1 2))
+                 (%if ((%native "$T") $1)
                       3
                       4)))
              (transform-statements!
@@ -868,20 +871,20 @@
 
 (reset-symbol-counter!)
 (check-equal "statements: while exp. in while stmt."
-             `(%while ((%native "$T") (,'> ,'a 2))
-                (%bind (,'a #f)
+             `(%while ((%native "$T") (> a 2))
+                (%bind (a #f)
                   (%begin
                    (%begin
-                    (%while ((%native "$T") (,'< ,'b 3))
-                      (%if ((%native "$T") ,'a)
-                           (%bind (,'c #f)
+                    (%while ((%native "$T") (< b 3))
+                      (%if ((%native "$T") a)
+                           (%bind (c #f)
                              (%begin
-                              (%if ((%native "$T") ,'c)
-                                   (%set ,'c 5)
-                                   (%set ,'c 6))
-                              ,'c))
+                              (%if ((%native "$T") c)
+                                   (%set c 5)
+                                   (%set c 6))
+                              c))
                            #f))
-                    (%set ,'a #f))
+                    (%set a #f))
                    4)))
              (transform-statements!
                (normalize-term
@@ -900,18 +903,18 @@
 
 (reset-symbol-counter!)
 (check-equal "statements: value of while applied to method"
-             `(%bind (,'y 5)
-                (%bind (,'$2 (%method ,'$1 (,'x)
-                             (%if ((%native "$T") ,'x)
+             `(%bind (y 5)
+                (%bind ($2 (%method $1 (x)
+                             (%if ((%native "$T") x)
                                   (%return 1)
                                   (%return 2))))
-                  (%bind (,'$3 #f)
+                  (%bind ($3 #f)
                     (%begin
                      (%begin
-                      (%while ((%native "$T") (,'> ,'y 2))
-                        (%set ,'y (%minus ,'y 1)))
-                      (%set ,'$3 #f))
-                     (,'$2 ,'$3)))))
+                      (%while ((%native "$T") (> y 2))
+                        (%set y (%minus y 1)))
+                      (%set $3 #f))
+                     ($2 $3)))))
              (transform-statements!
                (normalize-term
                 (macroexpand-all
@@ -927,8 +930,8 @@
 (reset-symbol-counter!)
 (bind ((module (make-core-environment)))
   (check-equal "lift-symbols: simple"
-               `(%bind (,'$1 (%symbol "a"))
-                  ,'$1)
+               `(%bind ($1 (%symbol "a"))
+                  $1)
                (lift-symbols
                 (macroexpand-all
                  '(begin (symbol "a"))
@@ -939,12 +942,12 @@
 (reset-symbol-counter!)
 (bind ((module (make-core-environment)))
   (check-equal "lift-symbols: multiple uses"
-               `(%bind (,'$1 (%symbol "a"))
-                  (%bind (,'$2 (%symbol "b"))
-                    (%bind (,'$3 (%symbol "c"))
-                      (%bind (,'a ,'$1)
-                        (%bind (,'b ,'$2)
-                          (,'foo ,'a ,'$1 ,'b ,'$2 ,'$3))))))
+               `(%bind ($1 (%symbol "a"))
+                  (%bind ($2 (%symbol "b"))
+                    (%bind ($3 (%symbol "c"))
+                      (%bind (a $1)
+                        (%bind (b $2)
+                          (foo a $1 b $2 $3))))))
                (lift-symbols
                 (macroexpand-all
                  '(bind ((a (symbol "a"))
@@ -959,12 +962,12 @@
 (reset-symbol-counter!)
 (bind ((module (make-core-environment)))
   (check-equal "lift-symbols: bind"
-               `(%bind (,'$1 (%symbol "a"))
+               `(%bind ($1 (%symbol "a"))
                   (%begin
-                   ,'$1
-                   (%bind (,'symbol "a")
-                     (%bind (,'a (,'symbol "a"))
-                       (,'foo ,'a (,'symbol "a"))))))
+                   $1
+                   (%bind (symbol "a")
+                     (%bind (a (symbol "a"))
+                       (foo a (symbol "a"))))))
                (lift-symbols
                 (macroexpand-all
                  '(begin
@@ -978,11 +981,11 @@
 (reset-symbol-counter!)
 (bind ((module (make-core-environment)))
   (check-equal "lift-symbols: method"
-               `(%bind (,'$2 (%symbol "a"))
+               `(%bind ($2 (%symbol "a"))
                   (%begin
                    23
-                   (%method ,'$1 (,'x)
-                     ,'$2)))
+                   (%method $1 (x)
+                     $2)))
                (lift-symbols
                 (macroexpand-all
                  '(begin
@@ -995,8 +998,8 @@
 (reset-symbol-counter!)
 (bind ((module (make-core-environment)))
   (check-equal "lift-symbols: method 2"
-               `(%method ,'$1 (,'symbol)
-                  ,'symbol)
+               `(%method $1 (symbol)
+                  symbol)
                (lift-symbols
                 (macroexpand-all
                  '(method (symbol)
@@ -1007,8 +1010,8 @@
 (reset-symbol-counter!)
 (bind ((module (make-core-environment)))
   (check-equal "lift-symbols: set!"
-               `(%bind (,'$1 (%symbol "b"))
-                  (,'symbol-setter "a" ,'$1))
+               `(%bind ($1 (%symbol "b"))
+                  (symbol-setter "a" $1))
                (lift-symbols
                 (macroexpand-all
                  '(set! (symbol "a")
@@ -1019,15 +1022,15 @@
 (reset-symbol-counter!)
 (bind ((module (make-core-environment)))
   (check-equal "lift-symbols: begin, if, while"
-               `(%bind (,'$1 (%symbol "a"))
-                  (%bind (,'$2 (%symbol "b"))
-                    (%bind (,'$3 (%symbol "c"))
+               `(%bind ($1 (%symbol "a"))
+                  (%bind ($2 (%symbol "b"))
+                    (%bind ($3 (%symbol "c"))
                       (%begin
-                        (%if ,'$1
-                             (%while (,'bar ,'$2)
-                               (%begin ,'$1 23 ,'$3))
-                             ,'$3)
-                        ,'$2))))
+                        (%if $1
+                             (%while (bar $2)
+                               (%begin $1 23 $3))
+                             $3)
+                        $2))))
                (lift-symbols
                 (macroexpand-all
                  '(begin
@@ -1045,14 +1048,14 @@
 (bind ((module (make-core-environment)))
   (check-equal "flatten-statements!"
                `(%begin
-                 (%var (,'$1 (%symbol "a"))
-                       (,'$2 (%symbol "b"))
-                       (,'$3 (%symbol "c")))
-                 (%if ,'$1
-                      (%while (,'bar ,'$2)
-                        (%begin ,'$1 23 ,'$3))
-                      ,'$3)
-                 ,'$2)
+                 (%var ($1 (%symbol "a"))
+                       ($2 (%symbol "b"))
+                       ($3 (%symbol "c")))
+                 (%if $1
+                      (%while (bar $2)
+                        (%begin $1 23 $3))
+                      $3)
+                 $2)
                (flatten-statements!
                 (lift-symbols
                  (macroexpand-all
@@ -1072,10 +1075,10 @@
 (bind ((module (make-core-environment)))
   (check-equal "lift-defines: simple"
                `(%begin
-                 (%define ,'x)
+                 (%define x)
                  (%begin
                   #f
-                  (%set ,'x 1)))
+                  (%set x 1)))
                (lift-defines
                 (macroexpand-all
                  '(define x 1)
@@ -1085,11 +1088,11 @@
 (bind ((module (make-core-environment)))
   (check-equal "lift-defines: nested"
                `(%begin
-                 (%define ,'x)
-                 (%if (,'foo 1)
+                 (%define x)
+                 (%if (foo 1)
                       (%begin
                        #f
-                       (%set ,'x 1))
+                       (%set x 1))
                       #f))
                (lift-defines
                 (macroexpand-all
@@ -1102,14 +1105,14 @@
 (bind ((module (make-core-environment)))
   (check-equal "lift-defines: multiple"
                `(%begin
-                 (%define ,'x)
-                 (%if (,'foo 1)
+                 (%define x)
+                 (%if (foo 1)
                       (%begin
                        #f
-                       (%set ,'x 1))
+                       (%set x 1))
                       (%begin
                        #f
-                       (%set ,'x 2))))
+                       (%set x 2))))
                (lift-defines
                 (macroexpand-all
                  '(if (foo 1)
@@ -1123,19 +1126,19 @@
   (check-equal "define free variables: use of prior definition"
                `(%begin
                  (%begin
-                  (%define ,'foo)
+                  (%define foo)
                   (%begin
-                   (%define ,'bar)
+                   (%define bar)
                    (%begin
-                    (%bind (,'bar 42)
+                    (%bind (bar 42)
                       (%begin
                        #f
-                       (%set ,'foo (,'%infix "+" 23 ,'bar))))
+                       (%set foo (%infix "+" 23 bar))))
                     (%begin
                      #f
-                     (%set ,'bar ,'foo))
-                    ,'bar
-                    ,'foo))))
+                     (%set bar foo))
+                    bar
+                    foo))))
                (define-free-variables
                  (lift-defines
                   (macroexpand-all
@@ -1154,17 +1157,17 @@
   (check-equal "define free variables: use of future definition"
                `(%begin
                  (%begin
-                  (%define ,'foo)
+                  (%define foo)
                   (%begin
-                   (%define ,'bar)
+                   (%define bar)
                    (%begin
                     (%begin
                      #f
-                     (%set ,'foo (%method ,'$1 () (,'bar))))
+                     (%set foo (%method $1 () (bar))))
                     (%begin
                      #f
-                     (%set ,'bar (%method ,'$2 () 1)))
-                    (,'foo)))))
+                     (%set bar (%method $2 () 1)))
+                    (foo)))))
                (define-free-variables
                  (lift-defines
                   (macroexpand-all
@@ -1188,13 +1191,13 @@
 (bind ((module (make-core-environment)))
   (check-equal "define free variables: use of undefined identifier"
                `(%begin
-                 (%define ,'bar2)
+                 (%define bar2)
                  (%begin
-                  (%define ,'foo2)
+                  (%define foo2)
                   (%begin
                    #f
-                   (%set ,'foo2 (%method ,'$1 ()
-                                  (,'bar2))))))
+                   (%set foo2 (%method $1 ()
+                                  (bar2))))))
                (define-free-variables
                  (lift-defines
                   (macroexpand-all
