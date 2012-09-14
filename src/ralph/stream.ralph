@@ -3,6 +3,7 @@
            <string-stream>
            <file-stream>
            *standard-out*
+           *standard-error*
            stream-close
            stream-open?
            stream-at-end?
@@ -128,3 +129,7 @@
 (define *standard-out*
   (make <file-stream>
         file: (%get-property (%native "process") "stdout")))
+
+(define *standard-out*
+  (make <file-stream>
+        file: (%get-property (%native "process") "stderr")))
