@@ -1,245 +1,173 @@
 {
-var B2335;
+var B1814;
 false;
-B2335 = require("ralph/core")}
+B1814 = require("ralph/core")}
 {
-var B2337;
+var B1816;
 false;
-B2337 = require("ralph/compiler/utilities")}
+B1816 = require("ralph/compiler/utilities")}
 {
-var ralphScoreCCtrueQ = B2335["true?"],
-Mmake_function__2355 = B2335["%make-function"],
-instanceQ__2356 = B2335["instance?"],
-LarrayG__2357 = B2335["<array>"],
-not__2358 = B2335.not,
-emptyQ__2359 = B2335["empty?"],
-binaryEE__2360 = B2335["binary=="],
-set_subtractN__2361 = B2335["set-subtract!"],
-as_set__2362 = B2335["as-set"],
-concatenate__2363 = B2335.concatenate,
-set_unionN__2364 = B2335["set-union!"],
-reduce1__2365 = B2335.reduce1,
-map__2366 = B2335.map,
-rcurry__2367 = B2335.rcurry,
-rest__2368 = B2335.rest,
-reduce__2369 = B2335.reduce,
-LsymbolG__2370 = B2335["<symbol>"],
-symbol_name__2371 = B2335["symbol-name"],
-first__2372 = B2335.first;
+var Mmake_function__1834 = B1814["%make-function"],
+instanceQ__1835 = B1814["instance?"],
+LarrayG__1836 = B1814["<array>"],
+not__1837 = B1814.not,
+emptyQ__1838 = B1814["empty?"],
+binaryEE__1839 = B1814["binary=="],
+set_subtractN__1840 = B1814["set-subtract!"],
+as_set__1841 = B1814["as-set"],
+cons__1842 = B1814.cons,
+set_unionN__1843 = B1814["set-union!"],
+reduce1__1844 = B1814.reduce1,
+map__1845 = B1814.map,
+rcurry__1846 = B1814.rcurry,
+rest__1847 = B1814.rest,
+reduce__1848 = B1814.reduce,
+concatenate__1849 = B1814.concatenate,
+LsymbolG__1850 = B1814["<symbol>"],
+symbol_name__1851 = B1814["symbol-name"],
+first__1852 = B1814.first;
 false;
-var get__2373 = B2335.get,
-signal__2374 = B2335.signal,
-description__2375 = B2335.description,
-find_free_variables__2376;
+var get__1853 = B1814.get,
+signal__1854 = B1814.signal,
+description__1855 = B1814.description,
+find_free_variables__1856;
 false;
-find_free_variables__2376 = Mmake_function__2355("find_free_variables", function find_free_variables__2377 (exp__2378, env__2379)
+find_free_variables__1856 = Mmake_function__1834("find_free_variables", function find_free_variables__1857 (exp__1858, env__1859)
 {
-var B2462;
-if ($T(instanceQ__2356(exp__2378, LarrayG__2357)))
-{
-var value__2411 = emptyQ__2359(exp__2378);
-B2462 = !(ralphScoreCCtrueQ(value__2411))}
+var B1891;
+if ($T(instanceQ__1835(exp__1858, LarrayG__1836)))
+{B1891 = not__1837(emptyQ__1838(exp__1858))}
 else
-B2462 = false;
-if ($T(B2462))
+B1891 = false;
+if ($T(B1891))
 {
-var sequence__2412 = exp__2378,
-head__2380 = sequence__2412[0],
-name__2381;
-if ($T(instanceQ__2356(head__2380, LsymbolG__2370)))
-{name__2381 = symbol_name__2371(head__2380)}
+var head__1860 = first__1852(exp__1858),
+name__1861;
+if ($T(instanceQ__1835(head__1860, LsymbolG__1850)))
+{name__1861 = symbol_name__1851(head__1860)}
 else
-name__2381 = false;
-var B2338__2382 = name__2381,
-object2__2414 = "%method",
-object1__2413 = B2338__2382,
-B2463 = (object1__2413 === object2__2414);
-if ($T(B2463))
+name__1861 = false;
+var B1817__1862 = name__1861;
+if ($T(binaryEE__1839(B1817__1862, "%method")))
 {
-var ____2383 = exp__2378[0],
-name__2384 = exp__2378[1],
-arguments__2385 = exp__2378[2],
-body__2386 = exp__2378[3];
-return set_subtractN__2361(find_free_variables__2377(body__2386, env__2379), as_set__2362(concatenate__2363([name__2384], arguments__2385)))}
+var ____1863 = exp__1858[0],
+name__1864 = exp__1858[1],
+arguments__1865 = exp__1858[2],
+body__1866 = exp__1858[3];
+return set_subtractN__1840(find_free_variables__1857(body__1866, env__1859), as_set__1841(cons__1842(name__1864, arguments__1865)))}
 else
+if ($T(binaryEE__1839(B1817__1862, "%bind")))
 {
-var object2__2416 = "%bind",
-object1__2415 = B2338__2382,
-B2464 = (object1__2415 === object2__2416);
-if ($T(B2464))
-{
-var ____2387 = exp__2378[0],
-B2339__2388 = exp__2378[1],
-var__2389 = B2339__2388[0],
-value__2390 = B2339__2388[1],
-body__2391 = exp__2378[2];
-return set_unionN__2364(set_subtractN__2361(find_free_variables__2377(body__2391, env__2379), as_set__2362([var__2389])), find_free_variables__2377(value__2390, env__2379))}
+var ____1867 = exp__1858[0],
+B1818__1868 = exp__1858[1],
+var__1869 = B1818__1868[0],
+value__1870 = B1818__1868[1],
+body__1871 = exp__1858[2];
+return set_unionN__1843(set_subtractN__1840(find_free_variables__1857(body__1871, env__1859), as_set__1841([var__1869])), find_free_variables__1857(value__1870, env__1859))}
 else
+if ($T(binaryEE__1839(B1817__1862, "%begin")))
+{return reduce1__1844(set_unionN__1843, map__1845(rcurry__1846(find_free_variables__1857, env__1859), rest__1847(exp__1858)))}
+else
+if ($T(binaryEE__1839(B1817__1862, "%try")))
 {
-var object2__2418 = "%begin",
-object1__2417 = B2338__2382,
-B2465 = (object1__2417 === object2__2418);
-if ($T(B2465))
-{
-var values__2420 = map__2366(rcurry__2367(find_free_variables__2377, env__2379), rest__2368(exp__2378)),
-function__2419 = set_unionN__2364;
-return reduce__2369(function__2419, first__2372(values__2420), rest__2368(values__2420))}
+var ____1872 = exp__1858[0],
+e1__1873 = exp__1858[1],
+v__1874 = exp__1858[2],
+e2__1875 = exp__1858[3];
+return set_subtractN__1840(set_unionN__1843(as_set__1841(find_free_variables__1857(e1__1873, env__1859)), as_set__1841(find_free_variables__1857(e2__1875, env__1859))), as_set__1841([v__1874]))}
 else
 {
-var object2__2422 = "%try",
-object1__2421 = B2338__2382,
-B2466 = (object1__2421 === object2__2422);
-if ($T(B2466))
-{
-var ____2392 = exp__2378[0],
-e1__2393 = exp__2378[1],
-v__2394 = exp__2378[2],
-e2__2395 = exp__2378[3];
-return set_subtractN__2361(set_unionN__2364(as_set__2362(find_free_variables__2377(e1__2393, env__2379)), as_set__2362(find_free_variables__2377(e2__2395, env__2379))), as_set__2362([v__2394]))}
+var B1819__1876 = binaryEE__1839(B1817__1862, "%set"),
+B1892;
+if ($T(B1819__1876))
+{B1892 = B1819__1876}
 else
 {
-var object2__2424 = "%set",
-object1__2423 = B2338__2382,
-B2340__2396 = (object1__2423 === object2__2424),
-B2467;
-if ($T(B2340__2396))
-{B2467 = B2340__2396}
+var B1820__1877 = binaryEE__1839(B1817__1862, "%if");
+if ($T(B1820__1877))
+{B1892 = B1820__1877}
 else
 {
-var object2__2426 = "%if",
-object1__2425 = B2338__2382,
-B2341__2397 = (object1__2425 === object2__2426);
-if ($T(B2341__2397))
-{B2467 = B2341__2397}
+var B1821__1878 = binaryEE__1839(B1817__1862, "%while");
+if ($T(B1821__1878))
+{B1892 = B1821__1878}
 else
 {
-var object2__2428 = "%while",
-object1__2427 = B2338__2382,
-B2342__2398 = (object1__2427 === object2__2428);
-if ($T(B2342__2398))
-{B2467 = B2342__2398}
+var B1822__1879 = binaryEE__1839(B1817__1862, "%array");
+if ($T(B1822__1879))
+{B1892 = B1822__1879}
 else
 {
-var object2__2430 = "%array",
-object1__2429 = B2338__2382,
-B2343__2399 = (object1__2429 === object2__2430);
-if ($T(B2343__2399))
-{B2467 = B2343__2399}
+var B1823__1880 = binaryEE__1839(B1817__1862, "%object");
+if ($T(B1823__1880))
+{B1892 = B1823__1880}
 else
 {
-var object2__2432 = "%object",
-object1__2431 = B2338__2382,
-B2344__2400 = (object1__2431 === object2__2432);
-if ($T(B2344__2400))
-{B2467 = B2344__2400}
+var B1824__1881 = binaryEE__1839(B1817__1862, "%infix");
+if ($T(B1824__1881))
+{B1892 = B1824__1881}
 else
 {
-var object2__2434 = "%infix",
-object1__2433 = B2338__2382,
-B2345__2401 = (object1__2433 === object2__2434);
-if ($T(B2345__2401))
-{B2467 = B2345__2401}
+var B1825__1882 = binaryEE__1839(B1817__1862, "%get-property");
+if ($T(B1825__1882))
+{B1892 = B1825__1882}
 else
 {
-var object2__2436 = "%get-property",
-object1__2435 = B2338__2382,
-B2346__2402 = (object1__2435 === object2__2436);
-if ($T(B2346__2402))
-{B2467 = B2346__2402}
+var B1826__1883 = binaryEE__1839(B1817__1862, "%native-call");
+if ($T(B1826__1883))
+{B1892 = B1826__1883}
 else
 {
-var object2__2438 = "%native-call",
-object1__2437 = B2338__2382,
-B2347__2403 = (object1__2437 === object2__2438);
-if ($T(B2347__2403))
-{B2467 = B2347__2403}
+var B1827__1884 = binaryEE__1839(B1817__1862, "%return");
+if ($T(B1827__1884))
+{B1892 = B1827__1884}
 else
 {
-var object2__2440 = "%return",
-object1__2439 = B2338__2382,
-B2348__2404 = (object1__2439 === object2__2440);
-if ($T(B2348__2404))
-{B2467 = B2348__2404}
+var B1828__1885 = binaryEE__1839(B1817__1862, "%plus");
+if ($T(B1828__1885))
+{B1892 = B1828__1885}
 else
 {
-var object2__2442 = "%plus",
-object1__2441 = B2338__2382,
-B2349__2405 = (object1__2441 === object2__2442);
-if ($T(B2349__2405))
-{B2467 = B2349__2405}
+var B1829__1886 = binaryEE__1839(B1817__1862, "%minus");
+if ($T(B1829__1886))
+{B1892 = B1829__1886}
 else
 {
-var object2__2444 = "%minus",
-object1__2443 = B2338__2382,
-B2350__2406 = (object1__2443 === object2__2444);
-if ($T(B2350__2406))
-{B2467 = B2350__2406}
+var B1830__1887 = binaryEE__1839(B1817__1862, "%times");
+if ($T(B1830__1887))
+{B1892 = B1830__1887}
+else
+B1892 = binaryEE__1839(B1817__1862, "%divide")}}}}}}}}}}};
+if ($T(B1892))
+{return as_set__1841(reduce__1848(concatenate__1849, [], map__1845(rcurry__1846(find_free_variables__1857, env__1859), rest__1847(exp__1858))))}
 else
 {
-var object2__2446 = "%times",
-object1__2445 = B2338__2382,
-B2351__2407 = (object1__2445 === object2__2446);
-if ($T(B2351__2407))
-{B2467 = B2351__2407}
+var B1831__1888 = binaryEE__1839(B1817__1862, "%native"),
+B1893;
+if ($T(B1831__1888))
+{B1893 = B1831__1888}
 else
 {
-var object2__2448 = "%divide",
-object1__2447 = B2338__2382;
-B2467 = (object1__2447 === object2__2448)}}}}}}}}}}}};
-if ($T(B2467))
-{
-var B2468 = [],
-B2469 = rcurry__2367(find_free_variables__2377, env__2379),
-sequence__2449 = exp__2378,
-B2470 = sequence__2449.slice(1),
-B2471 = map__2366(B2469, B2470),
-B2472 = reduce__2369(concatenate__2363, B2468, B2471);
-return as_set__2362(B2472)}
+var B1832__1889 = binaryEE__1839(B1817__1862, "%native-name");
+if ($T(B1832__1889))
+{B1893 = B1832__1889}
 else
 {
-var object2__2451 = "%native",
-object1__2450 = B2338__2382,
-B2352__2408 = (object1__2450 === object2__2451),
-B2473;
-if ($T(B2352__2408))
-{B2473 = B2352__2408}
+var B1833__1890 = binaryEE__1839(B1817__1862, "%define");
+if ($T(B1833__1890))
+{B1893 = B1833__1890}
 else
-{
-var object2__2453 = "%native-name",
-object1__2452 = B2338__2382,
-B2353__2409 = (object1__2452 === object2__2453);
-if ($T(B2353__2409))
-{B2473 = B2353__2409}
+B1893 = binaryEE__1839(B1817__1862, "%symbol")}};
+if ($T(B1893))
+{return as_set__1841([])}
 else
-{
-var object2__2455 = "%define",
-object1__2454 = B2338__2382,
-B2354__2410 = (object1__2454 === object2__2455);
-if ($T(B2354__2410))
-{B2473 = B2354__2410}
+return reduce1__1844(set_unionN__1843, map__1845(rcurry__1846(find_free_variables__1857, env__1859), exp__1858))}}}
 else
+if ($T(instanceQ__1835(exp__1858, LsymbolG__1850)))
 {
-var object2__2457 = "%symbol",
-object1__2456 = B2338__2382;
-B2473 = (object1__2456 === object2__2457)}}};
-if ($T(B2473))
-{return as_set__2362([])}
+if ($T(not__1837(get__1853(exp__1858, "module"))))
+{signal__1854(concatenate__1849("NOT QUALIFIED: ", description__1855(exp__1858)))};
+return as_set__1841([exp__1858])}
 else
-{
-var values__2459 = map__2366(rcurry__2367(find_free_variables__2377, env__2379), exp__2378),
-function__2458 = set_unionN__2364;
-return reduce__2369(function__2458, first__2372(values__2459), rest__2368(values__2459))}}}}}}}
-else
-if ($T(instanceQ__2356(exp__2378, LsymbolG__2370)))
-{
-var value__2460 = get__2373(exp__2378, "module"),
-B2474 = !(ralphScoreCCtrueQ(value__2460));
-if ($T(B2474))
-{
-var error__2461 = concatenate__2363("NOT QUALIFIED: ", description__2375(exp__2378));
-throw(error__2461);
-false};
-return as_set__2362([exp__2378])}
-else
-return as_set__2362([])}, false);
-exports["find-free-variables"] = find_free_variables__2376}
+return as_set__1841([])}, false);
+exports["find-free-variables"] = find_free_variables__1856}

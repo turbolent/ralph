@@ -1,189 +1,167 @@
 {
-var B1683;
+var B1341;
 false;
-B1683 = require("ralph/core")}
+B1341 = require("ralph/core")}
 {
-var B1686,
-B1687;
+var B1344,
+B1345;
 false;
-B1686 = require("path");
+B1344 = require("path");
 false;
-B1687 = require("fs")}
+B1345 = require("fs")}
 {
-var resolve__1688 = B1686.resolve,
-resolve_path__1689;
+var resolve__1346 = B1344.resolve,
+resolve_path__1347;
 false;
-resolve_path__1689 = resolve__1688;
-exports["resolve-path"] = resolve_path__1689}
+resolve_path__1347 = resolve__1346;
+exports["resolve-path"] = resolve_path__1347}
 {
-var existssync__1690 = B1687.existsSync,
-file_existsQ__1691;
+var existssync__1348 = B1345.existsSync,
+file_existsQ__1349;
 false;
-file_existsQ__1691 = existssync__1690;
-exports["file-exists?"] = file_existsQ__1691}
+file_existsQ__1349 = existssync__1348;
+exports["file-exists?"] = file_existsQ__1349}
 {
-var Mmake_function__1692 = B1683["%make-function"],
-concatenate__1693 = B1683.concatenate,
-dirname__1694 = B1686.dirname,
-binaryEE__1695 = B1683["binary=="],
-last__1696 = B1683.last,
-path_directory__1697;
+var Mmake_function__1350 = B1341["%make-function"],
+concatenate__1351 = B1341.concatenate,
+dirname__1352 = B1344.dirname,
+binaryEE__1353 = B1341["binary=="],
+last__1354 = B1341.last,
+path_directory__1355;
 false;
-path_directory__1697 = Mmake_function__1692("path_directory", function path_directory__1698 (path__1699)
+path_directory__1355 = Mmake_function__1350("path_directory", function path_directory__1356 (path__1357)
 {
-var object2__1701 = "/",
-object1__1700 = last__1696(path__1699),
-B1702 = (object1__1700 === object2__1701),
-B1703;
-if ($T(B1702))
-{B1703 = concatenate__1693(path__1699, "/")}
+var B1358;
+if ($T(binaryEE__1353(last__1354(path__1357), "/")))
+{B1358 = concatenate__1351(path__1357, "/")}
 else
-B1703 = path__1699;
-var B1704 = dirname__1694(B1703);
-return concatenate__1693(B1704, "/")}, false);
-exports["path-directory"] = path_directory__1697}
+B1358 = path__1357;
+var B1359 = dirname__1352(B1358);
+return concatenate__1351(B1359, "/")}, false);
+exports["path-directory"] = path_directory__1355}
 {
-var but_last__1705 = B1683["but-last"],
-strip_trailing_slashes__1706;
+var but_last__1360 = B1341["but-last"],
+strip_trailing_slashes__1361;
 false;
-strip_trailing_slashes__1706 = Mmake_function__1692("strip_trailing_slashes", function strip_trailing_slashes__1707 (path__1708)
+strip_trailing_slashes__1361 = Mmake_function__1350("strip_trailing_slashes", function strip_trailing_slashes__1362 (path__1363)
 {
+while ($T(binaryEE__1353(last__1354(path__1363), "/")))
+path__1363 = but_last__1360(path__1363);
+return path__1363}, false)}
+{
+var path_parent_directory__1364;
+false;
+path_parent_directory__1364 = Mmake_function__1350("path_parent_directory", function path_parent_directory__1365 (path__1366)
+{
+var pathT__1367 = strip_trailing_slashes__1361(path_directory__1355(path__1366));
+return concatenate__1351(dirname__1352(pathT__1367), "/")}, false);
+exports["path-parent-directory"] = path_parent_directory__1364}
+{
+var not__1368 = B1341.not,
+mkdirsync__1369 = B1345.mkdirSync,
+ensure_directories_exist__1370;
+false;
+ensure_directories_exist__1370 = Mmake_function__1350("ensure_directories_exist", function ensure_directories_exist__1371 (path__1372)
+{
+var directory__1373 = path_directory__1355(path__1372),
+parent__1374 = path_parent_directory__1364(directory__1373);
+if ($T(not__1368(file_existsQ__1349(parent__1374))))
+{ensure_directories_exist__1371(parent__1374)};
+if ($T(not__1368(file_existsQ__1349(directory__1373))))
+{mkdirsync__1369(directory__1373)};
+return path__1372}, false);
+exports["ensure-directories-exist"] = ensure_directories_exist__1370}
+{
+var Tfile_properties_mappingT__1375;
+false;
+Tfile_properties_mappingT__1375 = [["modification-date", "mtime"], ["creation-date", "ctime"], ["access-date", "atime"]]}
+{
+var anyQ__1382 = B1341["any?"],
+emptyQ__1383 = B1341["empty?"],
+get__1384 = B1341.get,
+rest__1385 = B1341.rest,
+first__1386 = B1341.first,
+make_object__1387 = B1341["make-object"],
+statsync__1388 = B1345.statSync,
+file_properties__1389;
+false;
+file_properties__1389 = Mmake_function__1350("file_properties", function file_properties__1390 (path__1391)
+{if ($T(file_existsQ__1349(path__1391)))
+{
+var stats__1392 = statsync__1388(path__1391),
+result__1393 = make_object__1387(),
+B1376__1394 = Tfile_properties_mappingT__1375,
+B1377__1395,
+B1379__1396,
+B1378__1397 = [B1376__1394];
 while (true)
 {
-var object2__1710 = "/",
-object1__1709 = last__1696(path__1708),
-B1714 = (object1__1709 === object2__1710);
-if ($T(B1714))
+var B1380__1398 = B1377__1395,
+B1404;
+if ($T(B1380__1398))
+{B1404 = B1380__1398}
+else
+B1404 = anyQ__1382(emptyQ__1383, B1378__1397);
+var B1405 = not__1368(B1404);
+if ($T(B1405))
 {
-var n__1712,
-array__1711 = path__1708,
-B1713 = array__1711.slice(0, ((n__1712 || 1) * -1));
-path__1708 = B1713}
+var mapping__1399 = first__1386(B1376__1394);
+(function B1381__1400 (mapping__1401)
+{
+var setter__1402 = mapping__1401[0],
+getter__1403 = mapping__1401[1];
+return result__1393[setter__1402] = get__1384(stats__1392, getter__1403)})(mapping__1399);
+B1376__1394 = rest__1385(B1376__1394);
+B1378__1397 = [B1376__1394]}
 else
 break};
-return path__1708}, false)}
+B1379__1396;
+return result__1393}}, false);
+exports["file-properties"] = file_properties__1389}
 {
-var path_parent_directory__1715;
+var lstatsync__1406 = B1345.lstatSync,
+file_type__1407;
 false;
-path_parent_directory__1715 = Mmake_function__1692("path_parent_directory", function path_parent_directory__1716 (path__1717)
+file_type__1407 = Mmake_function__1350("file_type", function file_type__1408 (path__1409)
+{if ($T(file_existsQ__1349(path__1409)))
 {
-var pathT__1718 = strip_trailing_slashes__1706(path_directory__1697(path__1717));
-return concatenate__1693(dirname__1694(pathT__1718), "/")}, false);
-exports["path-parent-directory"] = path_parent_directory__1715}
-{
-var ralphScoreCCtrueQ = B1683["true?"],
-not__1719 = B1683.not,
-mkdirsync__1720 = B1687.mkdirSync,
-ensure_directories_exist__1721;
-false;
-ensure_directories_exist__1721 = Mmake_function__1692("ensure_directories_exist", function ensure_directories_exist__1722 (path__1723)
-{
-var directory__1724 = path_directory__1697(path__1723),
-parent__1725 = path_parent_directory__1715(directory__1724),
-value__1726 = file_existsQ__1691(parent__1725),
-B1728 = !(ralphScoreCCtrueQ(value__1726));
-if ($T(B1728))
-{ensure_directories_exist__1722(parent__1725)};
-var value__1727 = file_existsQ__1691(directory__1724),
-B1729 = !(ralphScoreCCtrueQ(value__1727));
-if ($T(B1729))
-{mkdirsync__1720(directory__1724)};
-return path__1723}, false);
-exports["ensure-directories-exist"] = ensure_directories_exist__1721}
-{
-var Tfile_properties_mappingT__1730;
-false;
-Tfile_properties_mappingT__1730 = [["modification-date", "mtime"], ["creation-date", "ctime"], ["access-date", "atime"]]}
-{
-var anyQ__1737 = B1683["any?"],
-emptyQ__1738 = B1683["empty?"],
-get__1739 = B1683.get,
-rest__1740 = B1683.rest,
-first__1741 = B1683.first,
-make_object__1742 = B1683["make-object"],
-statsync__1743 = B1687.statSync,
-file_properties__1744;
-false;
-file_properties__1744 = Mmake_function__1692("file_properties", function file_properties__1745 (path__1746)
-{if ($T(file_existsQ__1691(path__1746)))
-{
-var stats__1747 = statsync__1743(path__1746),
-result__1748 = make_object__1742(),
-B1731__1749 = Tfile_properties_mappingT__1730,
-B1732__1750,
-B1734__1751,
-B1733__1752 = [B1731__1749];
-while (true)
-{
-var B1735__1753 = B1732__1750,
-value__1759;
-if ($T(B1735__1753))
-{value__1759 = B1735__1753}
-else
-value__1759 = anyQ__1737(emptyQ__1738, B1733__1752);
-var B1763 = !(ralphScoreCCtrueQ(value__1759));
-if ($T(B1763))
-{
-var sequence__1760 = B1731__1749,
-mapping__1754 = sequence__1760[0];
-(function B1736__1755 (mapping__1756)
-{
-var setter__1757 = mapping__1756[0],
-getter__1758 = mapping__1756[1];
-return result__1748[setter__1757] = get__1739(stats__1747, getter__1758)})(mapping__1754);
-var sequence__1761 = B1731__1749,
-B1762 = sequence__1761.slice(1);
-B1731__1749 = B1762;
-B1733__1752 = [B1731__1749]}
-else
-break};
-B1734__1751;
-return result__1748}}, false);
-exports["file-properties"] = file_properties__1744}
-{
-var lstatsync__1764 = B1687.lstatSync,
-file_type__1765;
-false;
-file_type__1765 = Mmake_function__1692("file_type", function file_type__1766 (path__1767)
-{if ($T(file_existsQ__1691(path__1767)))
-{
-var stat__1768 = lstatsync__1764(path__1767);
-if ($T(stat__1768.isFile()))
+var stat__1410 = lstatsync__1406(path__1409);
+if ($T(stat__1410.isFile()))
 {return "file"}
 else
-if ($T(stat__1768.isDirectory()))
+if ($T(stat__1410.isDirectory()))
 {return "directory"}
 else
-if ($T(stat__1768.isSymbolicLink()))
+if ($T(stat__1410.isSymbolicLink()))
 {return "link"}
 else
-if ($T(stat__1768.isBlockDevice()))
+if ($T(stat__1410.isBlockDevice()))
 {return "block-device"}
 else
-if ($T(stat__1768.isCharacterDevice()))
+if ($T(stat__1410.isCharacterDevice()))
 {return "character-device"}
 else
-if ($T(stat__1768.isFIFO()))
+if ($T(stat__1410.isFIFO()))
 {return "fifo"}
 else
-if ($T(stat__1768.isSocket()))
+if ($T(stat__1410.isSocket()))
 {return "socket"}}}, false);
-exports["file-type"] = file_type__1765}
+exports["file-type"] = file_type__1407}
 {
-var as_string__1769 = B1683["as-string"],
-readfilesync__1770 = B1687.readFileSync,
-read_file__1771;
+var as_string__1411 = B1341["as-string"],
+readfilesync__1412 = B1345.readFileSync,
+read_file__1413;
 false;
-read_file__1771 = Mmake_function__1692("read_file", function read_file__1772 (path__1773)
-{if ($T(file_existsQ__1691(path__1773)))
-{return as_string__1769(readfilesync__1770(path__1773))}}, false);
-exports["read-file"] = read_file__1771}
+read_file__1413 = Mmake_function__1350("read_file", function read_file__1414 (path__1415)
+{if ($T(file_existsQ__1349(path__1415)))
+{return as_string__1411(readfilesync__1412(path__1415))}}, false);
+exports["read-file"] = read_file__1413}
 {
-var writefilesync__1774 = B1687.writeFileSync,
-write_file__1775;
+var writefilesync__1416 = B1345.writeFileSync,
+write_file__1417;
 false;
-write_file__1775 = Mmake_function__1692("write_file", function write_file__1776 (path__1777, content__1778)
+write_file__1417 = Mmake_function__1350("write_file", function write_file__1418 (path__1419, content__1420)
 {
-ensure_directories_exist__1721(path__1777);
-return writefilesync__1774(path__1777, content__1778)}, false);
-exports["write-file"] = write_file__1775}
+ensure_directories_exist__1370(path__1419);
+return writefilesync__1416(path__1419, content__1420)}, false);
+exports["write-file"] = write_file__1417}
