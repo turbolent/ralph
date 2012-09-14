@@ -536,13 +536,35 @@
 (define-function transform-backquoted (form env)
   (select form instance?
     ((<array>)
-     (if (and (not (empty? form))
-              (== (symbol-name (first form))
-                  "%comma"))
-         (second form)
-         (concatenate `(%array)
-                      (map (rcurry transform-backquoted env)
-                           form))))
+     (cond
+      ((and (not (empty? form))
+            (== (symbol-name (first form))
+                "%comma"))
+       (second form))
+      ((and (not (empty? form))
+            (== (symbol-name (first form))
+                "%at"))
+       `(%splice ,(second form)))
+      (else:
+       (bind ((explicit `(%array)))
+         (reduce (method (result value)
+                   (bind ((quoted (transform-backquoted value env)))
+                     (if (and (expression? quoted)
+                              (== (first quoted) `%splice))
+                         (begin
+                          (set! explicit #f)
+                          `(%concat ,result
+                                    ,(second quoted)))
+                         (begin
+                          (if explicit
+                              (begin
+                               (push-last explicit quoted)
+                               result)
+                              (begin
+                               (set! explicit `(%array ,quoted))
+                               `(%concat ,result
+                                         ,explicit)))))))
+                 explicit form)))))
     ((<symbol>)
      (bind ((name (symbol-name form))
             (module
@@ -558,11 +580,16 @@
 (define-core-macro %backquote (env exp)
   (transform-backquoted exp env))
 
-;; comma is only used as a marker and
-;; actually handled in backquote
+;; comma and at are only used as markers and should only
+;; appear in a backquote and handled by transform-backquoted
 (define-core-macro %comma (_ value)
   (signal (make <error> message:
                 (format-to-string "comma not inside backquote: %=\n"
+                                  value))))
+
+(define-core-macro %at (_ value)
+  (signal (make <error> message:
+                (format-to-string "at not inside backquote: %=\n"
                                   value))))
 
 (define *dot-name-error*
@@ -1057,19 +1084,6 @@
   (any? (curry == name)
         (get module "inline")))
 
-; (define-function inline-definition (definition values env)
-;   (destructuring-bind (_ name arguments body) definition
-;     ;; TODO: rest and keyword parameters
-;     (dotimes (i (size arguments))
-;       (bind ((argument (element arguments i))
-;              (value (element values i)))
-;         ;; TODO: inline value
-;         (set! body
-;               `(%bind (,argument ,value)
-;                  ,body))))
-;     body))
-
-;; TOOD: improve: alpha-converted two times
 (define-function inline-definition (definition values env)
   ;; TODO: move preparation to method definition?
   ;; inlines definition itself and inlines values before., e.g. (not (not ...))
@@ -1081,10 +1095,9 @@
       (dotimes (i (size arguments))
         (bind ((argument* (element arguments* i))
                (value (element values i))
-               ;; TODO:
-               (value* ; (if value
-                       ;     (inline value env)
-                       ;     `(%native "undefined"))
+               (value* (if value
+                           (inline value env)
+                           `(%native "undefined"))
                        value))
           (set! body*
                 `(%bind (,argument* ,value*)
