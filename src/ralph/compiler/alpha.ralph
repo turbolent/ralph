@@ -22,8 +22,8 @@
 
 (define-function rename-identifiers (identifiers env)
   (map (method (identifier)
-         (destructuring-bind (module-name name)
-             (module-name/name identifier)
+         (destructuring-bind (name module-name)
+             (destructure-symbol identifier)
            (unless module-name
              (signal (concatenate "NOT QUALIFIED: " (description identifier))))
            (bind ((new-identifier (generate-symbol
@@ -39,8 +39,8 @@
 (define-function restore-identifiers (identifiers env)
   (for-each ((identifier identifiers))
             ()
-    (destructuring-bind (module-name name)
-        (module-name/name identifier)
+    (destructuring-bind (name module-name)
+        (destructure-symbol identifier)
       (unless module-name
         (signal (concatenate "NOT QUALIFIED: " (description identifier))))
       (pop (get env "identifiers" module-name name)))))
@@ -48,8 +48,8 @@
 (define *not-found* (make-object))
 
 (define-function find-identifier (identifier env)
-  (destructuring-bind (module-name name)
-      (module-name/name identifier)
+  (destructuring-bind (name module-name)
+      (destructure-symbol identifier)
     (unless module-name
       (signal (concatenate "NOT QUALIFIED: " (description identifier))))
     (bind ((renamings (get env "identifiers"

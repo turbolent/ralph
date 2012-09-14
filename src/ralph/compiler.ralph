@@ -24,7 +24,7 @@
            *core-symbol-macros*
            *core-macros*
            define-free-variables
-           analyze-lambda-list
+           destructure-lambda-list
            lift-symbols
            atomic?))
 
@@ -152,9 +152,8 @@
 (define *core-macros*
   (make-object))
 
-;; TODO: rename to destructure-lambda-list?
 ;; => [required rest keys]
-(define-function analyze-lambda-list (list)
+(define-function destructure-lambda-list (list)
   (bind-methods ((position (symbol)
                    (find-key list (curry = symbol))))
     (bind ((rest (position #rest))
@@ -212,7 +211,7 @@
 
 (define-function named-method (name arguments body)
   (destructuring-bind (required rest key)
-      (analyze-lambda-list arguments)
+      (destructure-lambda-list arguments)
     `(%method ,name ,required
        ,(wrap-rest/keys
          body
@@ -450,7 +449,7 @@
 (define-function destructure (bindings values body)
   (if (instance? values <symbol>)
       (destructuring-bind (required rest key)
-          (analyze-lambda-list bindings)
+          (destructure-lambda-list bindings)
         (bind ((i (size required)))
           (reduce (method (body binding)
                     (dec! i)
@@ -588,7 +587,7 @@
 
 (define-function simplify-arguments (arguments)
   (destructuring-bind (required rest key)
-      (analyze-lambda-list arguments)
+      (destructure-lambda-list arguments)
     (concatenate
      (map (method (argument)
             (if (instance? argument <array>)
@@ -702,8 +701,6 @@
        (rest import)
        [])])
 
-
-;; TODO: identifiers: support setter identifiers
 (define-core-macro define-module (env _ #key (import []) (export [])
                                              (compile-time-import [])
                                              (inline []))
@@ -827,8 +824,8 @@
      (map (rcurry qualify env)
           form))
     ((<symbol>)
-     (destructuring-bind (module-name name)
-         (module-name/name form)
+     (destructuring-bind (name module-name)
+         (destructure-symbol form)
        (if module-name
            form
            (if-bind (module/import-name
@@ -918,8 +915,8 @@
        (get module "name")))
 
 (define-function external-definition (variable import-identifier import-name env)
-  (destructuring-bind (module-name name)
-      (module-name/name variable)
+  (destructuring-bind (name module-name)
+      (destructure-symbol variable)
     (unless (get env "defined?" module-name name)
       (set! (get env "defined?" module-name name) #t)
       `(%begin
@@ -936,8 +933,8 @@
          (result []))
     (for-each ((variable variables))
               ()
-      (destructuring-bind (module-name name)
-          (module-name/name variable)
+      (destructuring-bind (name module-name)
+          (destructure-symbol variable)
         (bind ((import-name #f))
           (unless module-name
             (signal (concatenate "NOT QUALIFIED: " (description variable))))
@@ -1031,12 +1028,12 @@
             ;; application of function with name
             (else:
              (destructuring-bind (identifier #rest values) form
-               (destructuring-bind (module-name name)
-                   (module-name/name identifier)
+               (destructuring-bind (name module-name)
+                   (destructure-symbol identifier)
                  (if-bind (original-identifier (get env "original-identifier" name))
                    ;; was defined and renamed
-                   (destructuring-bind (module-name name)
-                       (module-name/name original-identifier)
+                   (destructuring-bind (name module-name)
+                       (destructure-symbol original-identifier)
                      (bind ((module (if (== module-name
                                             (get env "module" "name"))
                                         (get env "module")

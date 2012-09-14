@@ -228,27 +228,27 @@
 
 (check-equal "required arguments: rest and key"
              ['(a b) 'r '((c 1) (d 2))]
-             (analyze-lambda-list
+             (destructure-lambda-list
               '(a b #rest r #key (c 1) (d 2))))
 
 (check-equal "required arguments: rest only"
              ['(a b) 'r []]
-             (analyze-lambda-list
+             (destructure-lambda-list
               '(a b #rest r)))
 
 (check-equal "required arguments: key only"
              ['(a b) #f '((c 1))]
-             (analyze-lambda-list
+             (destructure-lambda-list
               '(a b #key (c 1))))
 
 (check-equal "required arguments: none, but key"
              [[] #f '((c 1))]
-             (analyze-lambda-list
+             (destructure-lambda-list
               '(#key (c 1))))
 
 (check-equal "required arguments: none"
              [[] #f []]
-             (analyze-lambda-list []))
+             (destructure-lambda-list []))
 
 
 (reset-symbol-counter!)

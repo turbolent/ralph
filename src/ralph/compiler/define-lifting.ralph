@@ -59,8 +59,8 @@
          (k exp))
         (("%define")
          (bind ((identifier (second exp)))
-           (destructuring-bind (module-name name)
-               (module-name/name identifier)
+           (destructuring-bind (name module-name)
+               (destructure-symbol identifier)
              (if (get env "defined?" module-name name)
                  (k #f env)
                  (begin
