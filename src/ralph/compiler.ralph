@@ -1,6 +1,6 @@
 
 (define-module ralph/compiler
-  import: (ralph/stream ralph/format
+  import: (ralph/stream ralph/format ralph/date
            ralph/reader ralph/file-system
            ralph/compiler/utilities
            ralph/compiler/alpha
@@ -75,7 +75,8 @@
   (identifiers (make-object))
   (defined? (make-object))
   (lifted (make-object))
-  (import-identifiers (make-plain-object)))
+  (import-identifiers (make-plain-object))
+  (timing (make-object)))
 
 (define-method initialize ((env <environment>) #rest rest #key module)
   (apply next-method env rest)
@@ -1188,41 +1189,45 @@
 
 
 (define-function compile-expression (exp env)
-  (reduce (method (result name/fn)
-            (destructuring-bind (name fn) name/fn
-;;              (format-out "### %s:\n" name)
-              (bind ((result (fn result)))
-;;                (format-out "%=\n" result)
+  (reduce (method (result name/pass)
+            (destructuring-bind (name pass) name/pass
+              ;; (format-out "### %s:\n" name)
+              (bind ((start (make <date>))
+                     (result (pass result))
+                     (end (make <date>)))
+                (set! (get env "timing" name)
+                      (+ (or (get env "timing" name) 0)
+                         (- end start)))
+                ;; (format-out "%=\n" result)
                 result)))
           exp
-          [["source" identity]
-           ["macroexpanded"
+          [["macroexpansion"
             (rcurry macroexpand-all env)]
-           ["lifted defines"
+           ["define lifting"
             (rcurry lift-defines env)]
-           ["defined free variables"
+           ["free variable definition"
             (rcurry define-free-variables env)]
-           ["alpha-converted"
+           ["alpha conversion"
             (rcurry alpha-convert env)]
-           ["inline"
-            (rcurry inline env)]
-           ["defined free variables after inline"
+           ; ["inlining"
+           ;  (rcurry inline env)]
+           ["free variable definition #2"
             (rcurry define-free-variables env
                     filter: (curry choose (method (variable)
                                             (not (has? (get env "original-identifier")
                                                        (symbol-name variable))))))]
-           ["ANF"
+           ["ANF transformation"
             (rcurry normalize-term env)]
-           ["lifted symbols"
+           ["symbol lifting"
              (rcurry lift-symbols env)]
-           ["statements"
+           ["statement transfomation"
             (rcurry transform-statements! env)]
            ["TCO"
             (method (exp)
               (optimize-tail-calls! exp env))]
-           ["flattened"
+           ["statement flattening"
             flatten-statements!]
-           ["compiled"
+           ["code generation"
             (rcurry compile-js env)]]))
 
 ;;;;
@@ -1325,6 +1330,14 @@
              (read (make <string-stream>
                          string: (read-file path)))))))
 
+(define-function display-timing (env)
+  (for-each ((pass-name/time (as-association-list (get env "timing"))))
+            ()
+    (destructuring-bind (pass-name time) pass-name/time
+      (format-out "- %s: %ds\n"
+                  pass-name
+                  (/ time 1000)))))
+
 (define-function compile-module (module-name)
   ;; module in source directory? (native)
   (unless (has? *modules* module-name)
@@ -1332,6 +1345,7 @@
       (set! (get *modules* module-name)
             module)))
   (when (recompile? module-name)
+    (format-out "Compiling: %s\n" module-name)
     (unless (file-exists? (source-path module-name))
       (signal (concatenate "unable to compile module '"
                            module-name "'")))
@@ -1365,6 +1379,8 @@
                                 exports: (get module "exports")
                                 inline: (get module "inline")
                                 dependencies: (get module "dependencies")]))
+      (format-out "Finished: %s\n" module-name)
+      (display-timing env)
       module)))
 
 
