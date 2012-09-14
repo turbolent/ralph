@@ -37,7 +37,7 @@
            as-set set-union! set-add!
            set-subtract! set-remove!
            ;; macros / special forms
-           quote %backquote %comma
+           quote %backquote %comma %at
            begin %begin set! %set if %if
            method %method %bind bind define %define
            %while while dotimes for for-each
