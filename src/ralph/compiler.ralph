@@ -562,7 +562,9 @@
 ;; comma is only used as a marker and
 ;; actually handled in backquote
 (define-core-macro %comma (_ value)
-  (signal (make <error> message: "comma not inside backquote")))
+  (signal (make <error> message:
+                (format-to-string "comma not inside backquote: %=\n"
+                                  value))))
 
 (define *dot-name-error*
   (make <error>
@@ -790,7 +792,7 @@
       `(%call symbol ,name ,module)))
 
 (define-core-macro == (_ object1 object2 #rest objects)
-  (if (empty? opbjects)
+  (if (empty? objects)
       `(binary== ,object1 ,object2)
       (concatenate `(%call == ,object1 ,object2)
                    objects)))
@@ -962,7 +964,10 @@
                                                      import-name env))
                        (push-last result definition))
                      ;; bind local to external
-                     (push-last `(%set ,variable ,external-variable))))))
+                     (push-last `(%set ,variable ,external-variable))))
+                 ;; not imported, maybe future reference
+                 (format-out "Warning: Undefined variable: %=\n"
+                             variable)))
               ;; external
               (begin
                ;; TODO: check if module exports name
