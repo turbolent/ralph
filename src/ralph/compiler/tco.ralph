@@ -27,9 +27,9 @@
            exp))
         ;; skip 1
         (("%begin" "%while")
-         (concatenate [(first exp)]
-                      (map (rcurry optimize-tail-calls! env)
-                           (rest exp))))
+         (cons (first exp)
+               (map (rcurry optimize-tail-calls! env)
+                    (rest exp))))
         (("%set")
          (set! (last exp)
                (optimize-tail-calls! (last exp) env))

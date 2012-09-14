@@ -3,7 +3,7 @@
            <boolean> <function> <error>
            %make-function true? not size %inherit
            %make-class %keywords <keyword> keyword %keys
-           %concat as-string as-number as-array
+           %concat cons as-string as-number as-array
            parse-number parse-integer char-code code-char
            empty? rest last (setter last) first (setter first)
            second (setter second) third (setter third)
@@ -54,8 +54,8 @@
            %symbol %infix %next-method
            %get-property %native %native-call
            %call %var %array %object %return)
-  inline: (not
-           size as-string as-number as-array
+  inline: (not size cons
+           as-string as-number as-array
            parse-number char-code empty?
            rest last (setter last) but-last
            slice %concat reverse!
@@ -146,6 +146,9 @@
 
 (define-function %concat ((array1 <array>) (array2 <array>))
   (. array1 ("concat" array2)))
+
+(define-function cons (value rest)
+  (%concat [value] rest))
 
 (define as-string (%native "String"))
 
@@ -623,10 +626,6 @@
   (bind ((end (or end (%native "undefined"))))
     (slice array start end)))
 
-
-;; TODO: remove X from make and initialize
-;; (temporary to avoid clash with old runtime)
-
 (define-function make (type #rest arguments)
   (bind ((object (%native-call "new" type)))
     (apply initialize object arguments)
@@ -644,7 +643,6 @@
                    result ".push(" i ")")))
     result))
 
-;; former "values"
 (define-function object-values (object)
   (map (curry get object)
        (object-properties object)))

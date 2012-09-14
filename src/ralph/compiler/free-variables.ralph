@@ -14,7 +14,7 @@
          (destructuring-bind (_ name arguments body) exp
            (set-subtract!
             (find-free-variables body env)
-            (as-set (concatenate [name] arguments)))))
+            (as-set (cons name arguments)))))
         (("%bind")
          (destructuring-bind (_ (var value) body) exp
            ;; TODO: make binding available inside value?

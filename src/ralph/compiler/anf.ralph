@@ -92,9 +92,9 @@
                          `(%array %object %get-property %infix
                            %native %native-call %native-name
                            %plus %minus %times %divide)))
-           (k (concatenate [(first exp)]
-                           (map (rcurry normalize-term env)
-                                (rest exp)))))
+           (k (cons (first exp)
+                    (map (rcurry normalize-term env)
+                         (rest exp)))))
           (else:
            (k (map (rcurry normalize-term env)
                    exp))))))
@@ -128,4 +128,4 @@
               (method (t)
                 (normalize** (rest exp) env
                              (method (t*)
-                               (k (concatenate [t] t*)))))))
+                               (k (cons t t*)))))))

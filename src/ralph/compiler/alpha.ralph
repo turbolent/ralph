@@ -65,7 +65,7 @@
      (select (symbol-name (first form)) ==
        (("%method")
         (destructuring-bind (_ name arguments body) form
-          (bind ((identifiers (concatenate [name] arguments))
+          (bind ((identifiers (cons name arguments))
                  (new-identifiers (rename-identifiers identifiers env))
                  (new-body (alpha-convert body env)))
             (destructuring-bind (new-name #rest new-arguments)
@@ -113,9 +113,9 @@
        (("%if" "%while" "%set" "%begin" "%get-property" "%object"
          "%array" "%native" "%native-call" "%infix"
          "%minus" "%plus" "%times" "%divide")
-        (concatenate [(first form)]
-                     (map (rcurry alpha-convert env)
-                          (rest form))))
+        (cons (first form)
+              (map (rcurry alpha-convert env)
+                   (rest form))))
        ;; none
        (("%native-name" "%symbol") form)
        (else:

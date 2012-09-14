@@ -102,7 +102,7 @@
 
 (define-special-form %method (env name arguments body)
   (bind ((identifiers* (map (rcurry localize env)
-                            (concatenate [name] arguments))))
+                            (cons name arguments))))
     (do (method (identifier*)
           (unless (== (get identifier* "module")
                       (get env "module" "name"))
@@ -354,8 +354,8 @@
 (define-core-macro for-each (_ clauses end #rest body)
   (bind ((clauses
           (map (method (clause)
-                 (concatenate [(generate-symbol)]
-                              clause))
+                 (cons (generate-symbol)
+                       clause))
                clauses))
          (end? (generate-symbol))
          (values (generate-symbol))
@@ -1016,9 +1016,9 @@
             (("%begin" "%if" "%while" "%array" "%object"
               "%get-property" "%native-call" "%infix"
               "%plus" "%minus" "%times" "%divide")
-             (concatenate [(first form)]
-                          (map (rcurry inline env)
-                               (rest form))))
+             (cons (first form)
+                   (map (rcurry inline env)
+                        (rest form))))
             ;; no inlining
             (("%native" "%native-name" "%define" "%symbol")
              form)
@@ -1132,7 +1132,7 @@
            (lift-symbol*
             e* env
             (method (le* env)
-              (k (concatenate [m] le*)
+              (k (cons m le*)
                  env)))))
         (("%try")
          (destructuring-bind (_ e1 v e2) exp
@@ -1176,10 +1176,8 @@
      (lift-symbol*
       (rest exp) env
       (method (t* env)
-        (k (concatenate [t] t*)
+        (k (cons t t*)
            env))))))
-
-
 
 
 ;;;;

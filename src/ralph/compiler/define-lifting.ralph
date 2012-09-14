@@ -52,7 +52,7 @@
            (lift-define*
             e* env
             (method (le* env)
-              (k (concatenate [m] le*)
+              (k (cons m le*)
                  env)))))
         ;; leave as-is
         (("%symbol")
@@ -84,6 +84,6 @@
      (lift-define*
       (rest exp) env
       (method (t* env)
-        (k (concatenate [t] t*)
+        (k (cons t t*)
            env))))))
 
