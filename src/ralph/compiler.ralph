@@ -108,7 +108,9 @@
           (unless (== (get identifier* "module")
                       (get env "module" "name"))
             (signal (make <error> message:
-                          "Can't create method using identifier with external qualifier"))))
+                          (format-to-string
+                           "Can't create method using identifier with external qualifier: %="
+                           identifier*)))))
         identifiers*)
     (do (curry bind! env)
         identifiers*)
@@ -136,7 +138,8 @@
       (unless (== (get var* "module")
                   (get env "module" "name"))
         (signal (make <error> message:
-                      "Can't bind using identifier with external qualifier")))
+                      (format-to-string
+                       "Can't bind using identifier with external %=" var))))
       (bind ((result
               `(%bind (,var* ,value*)
                  ,(macroexpand-all body env))))
@@ -666,7 +669,9 @@
     (unless (== (get identifier* "module")
                 (get env "module" "name"))
       (signal (make <error> message:
-                    "Can't define using identifier with external qualifier")))
+                    (format-to-string
+                     "Can't define using identifier with external qualifier: %="
+                     identifier))))
     (bind! env identifier)
     `(begin
       (%define ,identifier*)
