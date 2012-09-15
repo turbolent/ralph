@@ -182,7 +182,7 @@
 
 
 (check-equal "macroexpand-all: prevent expansion of sepcial forms 2"
-             `(%bind (cond ((a) b))
+             `(%bind (,(symbol "cond" "ralph/compiler.test") ((a) b))
                 d)
              (macroexpand-all '(bind ((cond
                                        ((a) b)
@@ -482,7 +482,7 @@
                expanded)
   (reset-symbol-counter!)
   (check-equal ""
-               `((%method $1 (a_2 b_3)
+               `((%method $1_1 (a_2 b_3)
                    (%plus a_2 b_3))
                  1 2)
                (alpha-convert expanded
@@ -551,9 +551,10 @@
 
 (reset-symbol-counter!)
 (check-equal "ANF: application"
-             `(%bind (id (%method $1 (x) x))
-                (%bind (apply (%method $2 (f x) (f x)))
-                  ((id apply) (id 3))))
+             (bind ((apply (symbol "apply" "ralph/compiler.test")))
+               `(%bind (id (%method $1 (x) x))
+                  (%bind (,apply (%method $2 (f x) (f x)))
+                    ((id ,apply) (id 3)))))
              (normalize-term
               (macroexpand-all
                '(bind ((id (method (x) x))
@@ -962,12 +963,13 @@
 (reset-symbol-counter!)
 (bind ((module (make-core-environment)))
   (check-equal "lift-symbols: bind"
-               `(%bind ($1 (%symbol "a"))
-                  (%begin
-                   $1
-                   (%bind (symbol "a")
-                     (%bind (a (symbol "a"))
-                       (foo a (symbol "a"))))))
+               (bind ((sym (symbol "symbol" "ralph/compiler.test")))
+                 `(%bind ($1 (%symbol "a"))
+                    (%begin
+                     $1
+                     (%bind (,sym "a")
+                       (%bind (a (,sym "a"))
+                         (foo a (,sym "a")))))))
                (lift-symbols
                 (macroexpand-all
                  '(begin
@@ -998,8 +1000,9 @@
 (reset-symbol-counter!)
 (bind ((module (make-core-environment)))
   (check-equal "lift-symbols: method 2"
-               `(%method $1 (symbol)
-                  symbol)
+               (bind ((sym (symbol "symbol" "ralph/compiler.test")))
+                 `(%method $1 (,sym)
+                    ,sym))
                (lift-symbols
                 (macroexpand-all
                  '(method (symbol)
@@ -1247,5 +1250,3 @@
          (unless foo
            #t)))))
  *environment*)
-
-
