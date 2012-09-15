@@ -814,15 +814,6 @@
 
 ;;;; macro expansion
 
-(define *external-symbols* (%object))
-
-(define-function external-symbol (name module)
-  (or (get *external-symbols* module name)
-      (set! (get *external-symbols* module name)
-            (make <symbol>
-                  name: name
-                  module: module))))
-
 (define-function qualify (form env)
   (select form instance?
     ((<array>)
@@ -838,7 +829,8 @@
                        (find-module/import-name name env)))
              (destructuring-bind (module import-name)
                  module/import-name
-               (external-symbol import-name (get module "name")))
+               ;; prevent lower-casing
+               (%%symbol import-name (get module "name")))
              (symbol name (get env "module" "name"))))))
     (else:
      form)))

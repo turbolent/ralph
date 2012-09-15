@@ -268,7 +268,11 @@
                          (concatenate "[" (compile-js property env) "]"))))
                   "" properties))))
       (("%symbol")
-       (concatenate "$S" (compile-js-call (rest exp) env)))
+       (destructuring-bind (name module-name) (rest exp)
+         (concatenate "$S" (compile-js-call [(as-lowercase name)
+                                             (when module-name
+                                               (as-lowercase module-name))]
+                                            env))))
       (else:
        (destructuring-bind (function #rest values) exp
          (concatenate

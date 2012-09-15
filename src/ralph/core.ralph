@@ -20,7 +20,8 @@
            binary<= <= binary> > binary>= >=
            as-object as-uppercase as-lowercase
            join trim replace make-object make-plain-object
-           <symbol> symbol symbol-name element (setter element)
+           <symbol> symbol symbol-name external-symbol
+           element (setter element)
            replace-subsequence replace-subsequence!
            remove remove!
            interpose any? map do copy-sequence slice
@@ -51,7 +52,7 @@
            define-method define-generic
            define-module define-macro
            define-symbol-macro
-           %symbol %infix %next-method
+           %symbol %%symbol %infix %next-method
            %get-property %native %native-call
            %call %var %array %object %return)
   inline: (not size cons
@@ -499,18 +500,22 @@
 (define %symbols (%object))
 
 (define-function symbol (name module)
-  (bind ((name (as-lowercase name))
-         (module* (as-lowercase (or module ""))))
+  (%%symbol (as-lowercase name)
+            (when module
+              (as-lowercase module))))
+
+(define-function symbol-name (symbol)
+  (get symbol "name"))
+
+(define-function %%symbol (name module)
+  (bind ((module* (or module "")))
     (or (get %symbols module* name)
         (set! (get %symbols module* name)
               (make <symbol>
                     name: name
                     module: module)))))
 
-(%native "$S = " symbol)
-
-(define-function symbol-name (symbol)
-  (get symbol "name"))
+(%native "$S = " %%symbol)
 
 ;; handles keyword arguments
 (define-function %keys (key-values defaults)
