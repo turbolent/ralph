@@ -132,19 +132,19 @@
 ;;  find-free-variables)
 (define-special-form %bind (env binding body)
   (destructuring-bind (var value) binding
-    (bind! env var)
-    (bind ((var* (localize var env))
-           (value* (macroexpand-all value env)))
-      (unless (== (get var* "module")
-                  (get env "module" "name"))
-        (signal (make <error> message:
-                      (format-to-string
-                       "Can't bind using identifier with external %=" var))))
-      (bind ((result
-              `(%bind (,var* ,value*)
-                 ,(macroexpand-all body env))))
-        (unbind! env var)
-        result))))
+    (bind ((value* (macroexpand-all value env)))
+      (bind! env var)
+      (bind ((var* (localize var env)))
+        (unless (== (get var* "module")
+                    (get env "module" "name"))
+          (signal (make <error> message:
+                        (format-to-string
+                         "Can't bind using identifier with external %=" var))))
+        (bind ((result
+                `(%bind (,var* ,value*)
+                   ,(macroexpand-all body env))))
+          (unbind! env var)
+          result)))))
 
 ;; TODO: %try, %set?
 
