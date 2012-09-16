@@ -76,9 +76,6 @@
                 result)))))
        (("%bind")
         (destructuring-bind (_ (var value) body) form
-          ;; TODO: make binding available inside value?
-          ;; (if so, also change find-free-variables,
-          ;;  %bind special form)
           (bind ((new-value (alpha-convert value env)))
             (destructuring-bind (new-var)
                 (rename-identifiers [var] env)

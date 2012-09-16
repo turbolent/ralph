@@ -17,9 +17,6 @@
             (as-set (cons name arguments)))))
         (("%bind")
          (destructuring-bind (_ (var value) body) exp
-           ;; TODO: make binding available inside value?
-           ;; (if so, also change alpha-convert,
-           ;;  %bind special form)
            (set-union!
             (set-subtract!
              (find-free-variables body env)

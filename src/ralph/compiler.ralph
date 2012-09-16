@@ -127,9 +127,6 @@
   `(%set ,(qualify identifier env)
          ,(macroexpand-all value env)))
 
-;; TODO: make binding available inside value?
-;; (if so, also change alpha-convert,
-;;  find-free-variables)
 (define-special-form %bind (env binding body)
   (destructuring-bind (var value) binding
     (bind ((value* (macroexpand-all value env)))
