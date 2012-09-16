@@ -4,8 +4,15 @@
                         "mkdirSync" mkdir-sync
                         "statSync" stat-sync
                         "lstatSync" lstat-sync
+                        "openSync" open-sync
+                        "closeSync" close-sync
+                        "readSync" read-sync
+                        "writeSync" write-sync
                         "readFileSync" read-file-sync
-                        "writeFileSync" write-file-sync)))
+                        "writeFileSync" write-file-sync
+                        "appendFileSync" append-file-sync
+                        "createReadStream" create-read-stream
+                        "createWriteStream" create-write-stream)))
   export: (ensure-directories-exist
            path-directory
            path-parent-directory
@@ -14,7 +21,8 @@
            file-type
            read-file
            write-file
-           file-exists?))
+           file-exists?
+           copy-file))
 
 (define resolve-path resolve)
 
@@ -79,6 +87,32 @@
   (when (file-exists? path)
     (as-string (read-file-sync path))))
 
-(define-function write-file (path content)
+(define-function write-file (path content #key append?)
   (ensure-directories-exist path)
-  (write-file-sync path content))
+  ((if append?
+       append-file-sync
+       write-file-sync)
+   path content))
+
+(define *buffer-length* (* 64 1024))
+
+;; TODO: ensure-directories-exist?
+(define-function copy-file (old-path new-path #key (if-exists 'signal)
+                                                  append?)
+  (unless (file-exists? old-path)
+    (signal "old path doesn't exist"))
+  (when (and (not append?)
+             (== if-exists 'signal)
+             (file-exists? new-path))
+    (signal "new path exists"))
+  (bind ((buffer (%native-call "new Buffer" *buffer-length*))
+         (source (open-sync old-path "r"))
+         (target (open-sync new-path (if append? "a" "w")))
+         (count 1)
+         (position 0))
+    (while (> count 0)
+      (set! count (read-sync source buffer 0 *buffer-length* position))
+      (write-sync target buffer 0 count)
+      (inc! position count))
+    (close-sync source)
+    (close-sync target)))
