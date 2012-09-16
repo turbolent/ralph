@@ -1,62 +1,69 @@
 {
-var B1194;
+var B1294;
 false;
-B1194 = require("ralph/core")}
+B1294 = require("ralph/core")}
 false
 {
-var LregexpG__1195;
+var LregexpG__1295;
 false;
-LregexpG__1195 = RegExp;
-exports["<regexp>"] = LregexpG__1195}
+LregexpG__1295 = RegExp;
+exports["<regexp>"] = LregexpG__1295}
 {
-var Mmake_method__1199 = B1194["%make-method"],
-concatenate__1200 = B1194.concatenate,
-Mkeys__1201 = B1194["%keys"],
-initialize__1202;
+var Mmake_method__1301 = B1294["%make-method"],
+concatenate__1302 = B1294.concatenate,
+Mkeys__1303 = B1294["%keys"],
+initialize__1304;
 false;
-initialize__1202 = Mmake_method__1199("initialize", function B1196__1203 (regexp__1204)
+initialize__1304 = Mmake_method__1301("initialize", function B1296__1305 (regexp__1306)
 {
-var B1197__1205 = $SL.call(arguments, 1),
-B1198__1206 = Mkeys__1201(B1197__1205, {pattern:false,
+var B1297__1307 = $SL.call(arguments, 1),
+B1298__1308 = Mkeys__1303(B1297__1307, {pattern:false,
 "global?":false,
 "ignore-case?":false,
 "multiline?":false}),
-pattern__1207 = B1198__1206.pattern,
-globalQ__1208 = B1198__1206["global?"],
-ignore_caseQ__1209 = B1198__1206["ignore-case?"],
-multilineQ__1210 = B1198__1206["multiline?"];
-if ($T(pattern__1207))
+pattern__1309 = B1298__1308.pattern,
+globalQ__1310 = B1298__1308["global?"],
+ignore_caseQ__1311 = B1298__1308["ignore-case?"],
+multilineQ__1312 = B1298__1308["multiline?"];
+if ($T(pattern__1309))
 {
-var B1212;
-if ($T(globalQ__1208))
-{B1212 = "g"}
+var B1316;
+if ($T(globalQ__1310))
+{B1316 = "g"}
 else
-B1212 = "";
-var B1213;
-if ($T(ignore_caseQ__1209))
-{B1213 = "i"}
+B1316 = "";
+var B1317;
+if ($T(ignore_caseQ__1311))
+{B1317 = "i"}
 else
-B1213 = "";
-var B1214;
-if ($T(multilineQ__1210))
-{B1214 = "m"}
+B1317 = "";
+var B1318;
+if ($T(multilineQ__1312))
+{B1318 = "m"}
 else
-B1214 = "";
-var flags__1211 = concatenate__1200(B1212, B1213, B1214);
-return regexp__1204.compile(pattern__1207)}}, false, LregexpG__1195, initialize__1202)}
+B1318 = "";
+var flags__1313 = concatenate__1302(B1316, B1317, B1318),
+B1300__1314 = regexp__1306,
+B1299__1315 = pattern__1309;
+return B1300__1314.compile(B1299__1315)}}, false, LregexpG__1295, initialize__1304)}
 {
-var Mmake_function__1215 = B1194["%make-function"],
-G__1216 = B1194[">"],
-find__1217;
+var Mmake_function__1321 = B1294["%make-function"],
+G__1322 = B1294[">"],
+find__1323;
 false;
-find__1217 = Mmake_function__1215("find", function find__1218 (regexp__1219, string__1220)
+find__1323 = Mmake_function__1321("find", function find__1324 (regexp__1325, string__1326)
 {
-var position__1221 = string__1220.search(regexp__1219);
-if ($T(G__1216(position__1221, -1)))
-{return position__1221}}, false)}
+var B1320__1327 = string__1326,
+B1319__1328 = regexp__1325,
+position__1329 = B1320__1327.search(B1319__1328);
+if ($T(G__1322(position__1329, -1)))
+{return position__1329}}, false)}
 {
-var match__1222;
+var match__1332;
 false;
-match__1222 = Mmake_function__1215("match", function match__1223 (regexp__1224, string__1225)
-{return string__1225.match(regexp__1224)}, false);
-exports.match = match__1222}
+match__1332 = Mmake_function__1321("match", function match__1333 (regexp__1334, string__1335)
+{
+var B1331__1336 = string__1335,
+B1330__1337 = regexp__1334;
+return B1331__1336.match(B1330__1337)}, false);
+exports.match = match__1332}

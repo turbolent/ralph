@@ -1,168 +1,168 @@
 {
-var B2133;
+var B2299;
 false;
-B2133 = require("ralph/core")}
+B2299 = require("ralph/core")}
 {
-var B2136,
-B2137;
+var B2302,
+B2303;
 false;
-B2136 = require("ralph/compiler/utilities");
+B2302 = require("ralph/compiler/utilities");
 false;
-B2137 = require("ralph/compiler/free-variables")}
+B2303 = require("ralph/compiler/free-variables")}
 {
-var B2210 = $S("%if", "ralph/core"),
-B2211 = $S("%native", "ralph/core"),
-B2212 = $S("%begin", "ralph/core"),
-B2213 = $S("%set", "ralph/core"),
-B2214 = $S("%get-property", "ralph/core"),
-B2215 = $S("%all-arguments"),
-B2216 = $S("%array", "ralph/core"),
-Mmake_function__2146 = B2133["%make-function"],
-instanceQ__2147 = B2133["instance?"],
-LarrayG__2148 = B2133["<array>"],
-binaryEE__2149 = B2133["binary=="],
-last_setter__2150 = B2133["last-setter"],
-identity__2151 = B2133.identity,
-get__2152 = B2133.get,
-symbol_name__2153 = B2133["symbol-name"],
-second__2154 = B2133.second,
-last__2155 = B2133.last,
-second_setter__2156 = B2133["second-setter"],
-cons__2157 = B2133.cons,
-first__2158 = B2133.first,
-map__2159 = B2133.map,
-rcurry__2160 = B2133.rcurry,
-rest__2161 = B2133.rest,
-expressionQ__2162 = B2136["expression?"],
-not__2163 = B2133.not,
-get_setter__2164 = B2133["get-setter"],
-GE__2165 = B2133[">="],
-push_last__2166 = B2133["push-last"],
-element__2167 = B2133.element,
-size__2168 = B2133.size,
-concatenate__2169 = B2133.concatenate,
-close_free_variables__2170,
-generate_symbol__2171 = B2136["generate-symbol"],
-optimize_tail_callsN__2172;
+var B2376 = $S("%if", "ralph/core"),
+B2377 = $S("%native", "ralph/core"),
+B2378 = $S("%begin", "ralph/core"),
+B2379 = $S("%set", "ralph/core"),
+B2380 = $S("%get-property", "ralph/core"),
+B2381 = $S("%all-arguments", false),
+B2382 = $S("%array", "ralph/core"),
+Mmake_function__2312 = B2299["%make-function"],
+instanceQ__2313 = B2299["instance?"],
+LarrayG__2314 = B2299["<array>"],
+binaryEE__2315 = B2299["binary=="],
+last_setter__2316 = B2299["last-setter"],
+identity__2317 = B2299.identity,
+get__2318 = B2299.get,
+symbol_name__2319 = B2299["symbol-name"],
+second__2320 = B2299.second,
+last__2321 = B2299.last,
+second_setter__2322 = B2299["second-setter"],
+cons__2323 = B2299.cons,
+first__2324 = B2299.first,
+map__2325 = B2299.map,
+rcurry__2326 = B2299.rcurry,
+rest__2327 = B2299.rest,
+expressionQ__2328 = B2302["expression?"],
+not__2329 = B2299.not,
+get_setter__2330 = B2299["get-setter"],
+GE__2331 = B2299[">="],
+push_last__2332 = B2299["push-last"],
+element__2333 = B2299.element,
+size__2334 = B2299.size,
+concatenate__2335 = B2299.concatenate,
+close_free_variables__2336,
+generate_symbol__2337 = B2302["generate-symbol"],
+optimize_tail_callsN__2338;
 false;
-optimize_tail_callsN__2172 = Mmake_function__2146("optimize_tail_callsN", function optimize_tail_callsN__2173 (exp__2174, env__2175)
-{if ($T(instanceQ__2147(exp__2174, LarrayG__2148)))
+optimize_tail_callsN__2338 = Mmake_function__2312("optimize_tail_callsN", function optimize_tail_callsN__2339 (exp__2340, env__2341)
+{if ($T(instanceQ__2313(exp__2340, LarrayG__2314)))
 {
-var B2138__2176 = symbol_name__2153(first__2158(exp__2174));
-if ($T(binaryEE__2149(B2138__2176, "%method")))
+var B2304__2342 = symbol_name__2319(first__2324(exp__2340));
+if ($T(binaryEE__2315(B2304__2342, "%method")))
 {
-var last_method__2177 = get__2152(env__2175, "current-method");
-env__2175["current-method"] = exp__2174;
-var result__2178 = optimize_tail_callsN__2173(last__2155(exp__2174), env__2175),
-name__2179 = symbol_name__2153(second__2154(exp__2174)),
-B2139__2180 = get__2152(env__2175, "tco-wrappers", name__2179),
-wrapper__2181;
-if ($T(B2139__2180))
-{wrapper__2181 = B2139__2180}
+var last_method__2343 = get__2318(env__2341, "current-method");
+env__2341["current-method"] = exp__2340;
+var result__2344 = optimize_tail_callsN__2339(last__2321(exp__2340), env__2341),
+name__2345 = symbol_name__2319(second__2320(exp__2340)),
+B2305__2346 = get__2318(env__2341, "tco-wrappers", name__2345),
+wrapper__2347;
+if ($T(B2305__2346))
+{wrapper__2347 = B2305__2346}
 else
-wrapper__2181 = identity__2151;
-last_setter__2150(exp__2174, wrapper__2181(result__2178));
-env__2175["current-method"] = last_method__2177;
-return exp__2174}
+wrapper__2347 = identity__2317;
+last_setter__2316(exp__2340, wrapper__2347(result__2344));
+env__2341["current-method"] = last_method__2343;
+return exp__2340}
 else
-if ($T(binaryEE__2149(B2138__2176, "%bind")))
+if ($T(binaryEE__2315(B2304__2342, "%bind")))
 {
-var ____2182 = exp__2174[0],
-binding__2183 = exp__2174[1],
-body__2184 = exp__2174[2];
-second_setter__2156(binding__2183, optimize_tail_callsN__2173(second__2154(binding__2183), env__2175));
-last_setter__2150(exp__2174, optimize_tail_callsN__2173(body__2184, env__2175));
-return exp__2174}
+var ____2348 = exp__2340[0],
+binding__2349 = exp__2340[1],
+body__2350 = exp__2340[2];
+second_setter__2322(binding__2349, optimize_tail_callsN__2339(second__2320(binding__2349), env__2341));
+last_setter__2316(exp__2340, optimize_tail_callsN__2339(body__2350, env__2341));
+return exp__2340}
 else
 {
-var B2140__2185 = binaryEE__2149(B2138__2176, "%begin"),
-B2208;
-if ($T(B2140__2185))
-{B2208 = B2140__2185}
+var B2306__2351 = binaryEE__2315(B2304__2342, "%begin"),
+B2374;
+if ($T(B2306__2351))
+{B2374 = B2306__2351}
 else
-B2208 = binaryEE__2149(B2138__2176, "%while");
-if ($T(B2208))
-{return cons__2157(first__2158(exp__2174), map__2159(rcurry__2160(optimize_tail_callsN__2173, env__2175), rest__2161(exp__2174)))}
+B2374 = binaryEE__2315(B2304__2342, "%while");
+if ($T(B2374))
+{return cons__2323(first__2324(exp__2340), map__2325(rcurry__2326(optimize_tail_callsN__2339, env__2341), rest__2327(exp__2340)))}
 else
-if ($T(binaryEE__2149(B2138__2176, "%set")))
+if ($T(binaryEE__2315(B2304__2342, "%set")))
 {
-last_setter__2150(exp__2174, optimize_tail_callsN__2173(last__2155(exp__2174), env__2175));
-return exp__2174}
+last_setter__2316(exp__2340, optimize_tail_callsN__2339(last__2321(exp__2340), env__2341));
+return exp__2340}
 else
-if ($T(binaryEE__2149(B2138__2176, "%if")))
+if ($T(binaryEE__2315(B2304__2342, "%if")))
 {
-var ____2186 = exp__2174[0],
-test__2187 = exp__2174[1],
-then__2188 = exp__2174[2],
-else__2189 = exp__2174[3];
-return [B2210, test__2187, optimize_tail_callsN__2173(then__2188, env__2175), optimize_tail_callsN__2173(else__2189, env__2175)]}
+var ____2352 = exp__2340[0],
+test__2353 = exp__2340[1],
+then__2354 = exp__2340[2],
+else__2355 = exp__2340[3];
+return [B2376, test__2353, optimize_tail_callsN__2339(then__2354, env__2341), optimize_tail_callsN__2339(else__2355, env__2341)]}
 else
-if ($T(binaryEE__2149(B2138__2176, "%try")))
+if ($T(binaryEE__2315(B2304__2342, "%try")))
 {
-second_setter__2156(exp__2174, optimize_tail_callsN__2173(second__2154(exp__2174), env__2175));
-last_setter__2150(exp__2174, optimize_tail_callsN__2173(last__2155(exp__2174), env__2175));
-return exp__2174}
+second_setter__2322(exp__2340, optimize_tail_callsN__2339(second__2320(exp__2340), env__2341));
+last_setter__2316(exp__2340, optimize_tail_callsN__2339(last__2321(exp__2340), env__2341));
+return exp__2340}
 else
-if ($T(binaryEE__2149(B2138__2176, "%return")))
+if ($T(binaryEE__2315(B2304__2342, "%return")))
 {
-var B2141__2190 = env__2175,
-current_method__2191 = B2141__2190["current-method"],
-____2192 = current_method__2191[0],
-method_name__2193 = current_method__2191[1],
-arguments__2194 = current_method__2191[2],
-body__2195 = current_method__2191[3],
-value__2196 = second__2154(exp__2174),
-name__2197 = symbol_name__2153(method_name__2193),
-B2209;
-if ($T(expressionQ__2162(value__2196)))
-{B2209 = binaryEE__2149(first__2158(value__2196), method_name__2193)}
+var B2307__2356 = env__2341,
+current_method__2357 = B2307__2356["current-method"],
+____2358 = current_method__2357[0],
+method_name__2359 = current_method__2357[1],
+arguments__2360 = current_method__2357[2],
+body__2361 = current_method__2357[3],
+value__2362 = second__2320(exp__2340),
+name__2363 = symbol_name__2319(method_name__2359),
+B2375;
+if ($T(expressionQ__2328(value__2362)))
+{B2375 = binaryEE__2315(first__2324(value__2362), method_name__2359)}
 else
-B2209 = false;
-if ($T(B2209))
+B2375 = false;
+if ($T(B2375))
 {
-var B2142__2198 = get__2152(env__2175, "tco-labels", name__2197),
-label__2199;
-if ($T(B2142__2198))
-{label__2199 = B2142__2198}
+var B2308__2364 = get__2318(env__2341, "tco-labels", name__2363),
+label__2365;
+if ($T(B2308__2364))
+{label__2365 = B2308__2364}
 else
-label__2199 = get_setter__2164(env__2175, "tco-labels", name__2197, generate_symbol__2171(env__2175));
-var new_values__2200 = rest__2161(value__2196);
-if ($T(not__2163(get__2152(env__2175, "tco-wrappers", name__2197))))
-{get_setter__2164(env__2175, "tco-wrappers", name__2197, function B2143__2201 (exp__2202)
-{return [B2211, label__2199, ":while(true)", [B2212, exp__2202, [B2211, "break"]]]})};
-var assignments__2203 = [],
-B2144__2204 = size__2168(arguments__2194),
-i__2205 = 0;
-while ($T(not__2163(GE__2165(i__2205, B2144__2204))))
+label__2365 = get_setter__2330(env__2341, "tco-labels", name__2363, generate_symbol__2337(env__2341));
+var new_values__2366 = rest__2327(value__2362);
+if ($T(not__2329(get__2318(env__2341, "tco-wrappers", name__2363))))
+{get_setter__2330(env__2341, "tco-wrappers", name__2363, function B2309__2367 (exp__2368)
+{return [B2377, label__2365, ":while(true)", [B2378, exp__2368, [B2377, "break"]]]})};
+var assignments__2369 = [],
+B2310__2370 = size__2334(arguments__2360),
+i__2371 = 0;
+while ($T(not__2329(GE__2331(i__2371, B2310__2370))))
 {
-(function B2145__2206 (i__2207)
-{return push_last__2166(assignments__2203, [B2213, element__2167(arguments__2194, i__2207), [B2214, B2215, i__2207]])})(i__2205);
-i__2205 = (i__2205 + 1)};
+(function B2311__2372 (i__2373)
+{return push_last__2332(assignments__2369, [B2379, element__2333(arguments__2360, i__2373), [B2380, B2381, i__2373]])})(i__2371);
+i__2371 = (i__2371 + 1)};
 false;
-return concatenate__2169([B2212, [B2213, B2215, close_free_variables__2170(concatenate__2169([B2216], new_values__2200), env__2175)]], assignments__2203, [[B2211, "continue ", label__2199]])}
+return concatenate__2335([B2378, [B2379, B2381, close_free_variables__2336(concatenate__2335([B2382], new_values__2366), env__2341)]], assignments__2369, [[B2377, "continue ", label__2365]])}
 else
 {
-last_setter__2150(exp__2174, optimize_tail_callsN__2173(last__2155(exp__2174), env__2175));
-return exp__2174}}
+last_setter__2316(exp__2340, optimize_tail_callsN__2339(last__2321(exp__2340), env__2341));
+return exp__2340}}
 else
-return map__2159(rcurry__2160(optimize_tail_callsN__2173, env__2175), exp__2174)}}
+return map__2325(rcurry__2326(optimize_tail_callsN__2339, env__2341), exp__2340)}}
 else
-return exp__2174}, false);
-exports["optimize-tail-calls!"] = optimize_tail_callsN__2172}
+return exp__2340}, false);
+exports["optimize-tail-calls!"] = optimize_tail_callsN__2338}
 {
-var B2224 = $S("%method", "ralph/core"),
-B2225 = $S("%return", "ralph/core"),
-methodQ__2217 = B2136["method?"],
-remove_defined_identifiers__2218 = B2136["remove-defined-identifiers"],
-find_free_variables__2219 = B2137["find-free-variables"];
+var B2390 = $S("%method", "ralph/core"),
+B2391 = $S("%return", "ralph/core"),
+methodQ__2383 = B2302["method?"],
+remove_defined_identifiers__2384 = B2302["remove-defined-identifiers"],
+find_free_variables__2385 = B2303["find-free-variables"];
 false;
-close_free_variables__2170 = Mmake_function__2146("close_free_variables", function close_free_variables__2220 (exp__2221, env__2222)
-{if ($T(instanceQ__2147(exp__2221, LarrayG__2148)))
-{if ($T(methodQ__2217(exp__2221)))
+close_free_variables__2336 = Mmake_function__2312("close_free_variables", function close_free_variables__2386 (exp__2387, env__2388)
+{if ($T(instanceQ__2313(exp__2387, LarrayG__2314)))
+{if ($T(methodQ__2383(exp__2387)))
 {
-var variables__2223 = remove_defined_identifiers__2218(find_free_variables__2219(exp__2221, env__2222), env__2222);
-return concatenate__2169([[B2224, generate_symbol__2171(), variables__2223, [B2225, exp__2221]]], variables__2223)}
+var variables__2389 = remove_defined_identifiers__2384(find_free_variables__2385(exp__2387, env__2388), env__2388);
+return concatenate__2335([[B2390, generate_symbol__2337(), variables__2389, [B2391, exp__2387]]], variables__2389)}
 else
-return map__2159(rcurry__2160(close_free_variables__2220, env__2222), exp__2221)}
+return map__2325(rcurry__2326(close_free_variables__2386, env__2388), exp__2387)}
 else
-return exp__2221}, false)}
+return exp__2387}, false)}

@@ -1,285 +1,285 @@
 {
-var B1517;
+var B1683;
 false;
-B1517 = require("ralph/core")}
+B1683 = require("ralph/core")}
 {
-var B1520,
-B1521;
+var B1686,
+B1687;
 false;
-B1520 = require("ralph/compiler/utilities");
+B1686 = require("ralph/compiler/utilities");
 false;
-B1521 = require("ralph/format")}
+B1687 = require("ralph/format")}
 {
-var Mmake_function__1522 = B1517["%make-function"],
-not__1523 = B1517.not,
-get__1524 = B1517.get,
-get_setter__1525 = B1517["get-setter"],
-make_object__1526 = B1517["make-object"],
-ensure_naming_structure__1527;
+var Mmake_function__1688 = B1683["%make-function"],
+not__1689 = B1683.not,
+get__1690 = B1683.get,
+get_setter__1691 = B1683["get-setter"],
+make_object__1692 = B1683["make-object"],
+ensure_naming_structure__1693;
 false;
-ensure_naming_structure__1527 = Mmake_function__1522("ensure_naming_structure", function ensure_naming_structure__1528 (env__1529, module_name__1530, name__1531)
+ensure_naming_structure__1693 = Mmake_function__1688("ensure_naming_structure", function ensure_naming_structure__1694 (env__1695, module_name__1696, name__1697)
 {
-if ($T(not__1523(get__1524(env__1529, "identifiers", module_name__1530))))
-{get_setter__1525(env__1529, "identifiers", module_name__1530, make_object__1526())};
-var module_renamings__1532 = get__1524(env__1529, "identifiers", module_name__1530);
-if ($T(not__1523(get__1524(module_renamings__1532, name__1531))))
-{module_renamings__1532[name__1531] = []};
-return env__1529}, false);
-exports["ensure-naming-structure"] = ensure_naming_structure__1527}
+if ($T(not__1689(get__1690(env__1695, "identifiers", module_name__1696))))
+{get_setter__1691(env__1695, "identifiers", module_name__1696, make_object__1692())};
+var module_renamings__1698 = get__1690(env__1695, "identifiers", module_name__1696);
+if ($T(not__1689(get__1690(module_renamings__1698, name__1697))))
+{module_renamings__1698[name__1697] = []};
+return env__1695}, false);
+exports["ensure-naming-structure"] = ensure_naming_structure__1693}
 {
-var map__1535 = B1517.map,
-signal__1536 = B1517.signal,
-concatenate__1537 = B1517.concatenate,
-description__1538 = B1517.description,
-push__1539 = B1517.push,
-generate_symbol__1540 = B1520["generate-symbol"],
-destructure_symbol__1541 = B1520["destructure-symbol"],
-rename_identifiers__1542;
+var map__1701 = B1683.map,
+signal__1702 = B1683.signal,
+concatenate__1703 = B1683.concatenate,
+description__1704 = B1683.description,
+push__1705 = B1683.push,
+generate_symbol__1706 = B1686["generate-symbol"],
+destructure_symbol__1707 = B1686["destructure-symbol"],
+rename_identifiers__1708;
 false;
-rename_identifiers__1542 = Mmake_function__1522("rename_identifiers", function rename_identifiers__1543 (identifiers__1544, env__1545)
-{return map__1535(function B1533__1546 (identifier__1547)
+rename_identifiers__1708 = Mmake_function__1688("rename_identifiers", function rename_identifiers__1709 (identifiers__1710, env__1711)
+{return map__1701(function B1699__1712 (identifier__1713)
 {
-var B1534__1548 = destructure_symbol__1541(identifier__1547),
-name__1549 = B1534__1548[0],
-module_name__1550 = B1534__1548[1];
-if ($T(not__1523(module_name__1550)))
-{signal__1536(concatenate__1537("NOT QUALIFIED: ", description__1538(identifier__1547)))};
-var B1552;
-if ($T(not__1523(get__1524(identifier__1547, "generated?"))))
-{B1552 = name__1549}
+var B1700__1714 = destructure_symbol__1707(identifier__1713),
+name__1715 = B1700__1714[0],
+module_name__1716 = B1700__1714[1];
+if ($T(not__1689(module_name__1716)))
+{signal__1702(concatenate__1703("NOT QUALIFIED: ", description__1704(identifier__1713)))};
+var B1718;
+if ($T(not__1689(get__1690(identifier__1713, "generated?"))))
+{B1718 = name__1715}
 else
-B1552 = false;
-var new_identifier__1551 = generate_symbol__1540(env__1545, B1552);
-ensure_naming_structure__1527(env__1545, module_name__1550, name__1549);
-push__1539(get__1524(env__1545, "identifiers", module_name__1550, name__1549), new_identifier__1551);
-return new_identifier__1551}, identifiers__1544)}, false);
-exports["rename-identifiers"] = rename_identifiers__1542}
+B1718 = false;
+var new_identifier__1717 = generate_symbol__1706(env__1711, B1718);
+ensure_naming_structure__1693(env__1711, module_name__1716, name__1715);
+push__1705(get__1690(env__1711, "identifiers", module_name__1716, name__1715), new_identifier__1717);
+return new_identifier__1717}, identifiers__1710)}, false);
+exports["rename-identifiers"] = rename_identifiers__1708}
 {
-var anyQ__1560 = B1517["any?"],
-emptyQ__1561 = B1517["empty?"],
-pop__1562 = B1517.pop,
-rest__1563 = B1517.rest,
-first__1564 = B1517.first,
-restore_identifiers__1565;
+var anyQ__1726 = B1683["any?"],
+emptyQ__1727 = B1683["empty?"],
+pop__1728 = B1683.pop,
+rest__1729 = B1683.rest,
+first__1730 = B1683.first,
+restore_identifiers__1731;
 false;
-restore_identifiers__1565 = Mmake_function__1522("restore_identifiers", function restore_identifiers__1566 (identifiers__1567, env__1568)
+restore_identifiers__1731 = Mmake_function__1688("restore_identifiers", function restore_identifiers__1732 (identifiers__1733, env__1734)
 {
-var B1553__1569 = identifiers__1567,
-B1554__1570,
-B1556__1571,
-B1555__1572 = [B1553__1569];
+var B1719__1735 = identifiers__1733,
+B1720__1736,
+B1722__1737,
+B1721__1738 = [B1719__1735];
 while (true)
 {
-var B1557__1573 = B1554__1570,
-B1580;
-if ($T(B1557__1573))
-{B1580 = B1557__1573}
+var B1723__1739 = B1720__1736,
+B1746;
+if ($T(B1723__1739))
+{B1746 = B1723__1739}
 else
-B1580 = anyQ__1560(emptyQ__1561, B1555__1572);
-var B1581 = not__1523(B1580);
-if ($T(B1581))
+B1746 = anyQ__1726(emptyQ__1727, B1721__1738);
+var B1747 = not__1689(B1746);
+if ($T(B1747))
 {
-var identifier__1574 = first__1564(B1553__1569);
-(function B1558__1575 (identifier__1576)
+var identifier__1740 = first__1730(B1719__1735);
+(function B1724__1741 (identifier__1742)
 {
-var B1559__1577 = destructure_symbol__1541(identifier__1576),
-name__1578 = B1559__1577[0],
-module_name__1579 = B1559__1577[1];
-if ($T(not__1523(module_name__1579)))
-{signal__1536(concatenate__1537("NOT QUALIFIED: ", description__1538(identifier__1576)))};
-return pop__1562(get__1524(env__1568, "identifiers", module_name__1579, name__1578))})(identifier__1574);
-B1553__1569 = rest__1563(B1553__1569);
-B1555__1572 = [B1553__1569]}
+var B1725__1743 = destructure_symbol__1707(identifier__1742),
+name__1744 = B1725__1743[0],
+module_name__1745 = B1725__1743[1];
+if ($T(not__1689(module_name__1745)))
+{signal__1702(concatenate__1703("NOT QUALIFIED: ", description__1704(identifier__1742)))};
+return pop__1728(get__1690(env__1734, "identifiers", module_name__1745, name__1744))})(identifier__1740);
+B1719__1735 = rest__1729(B1719__1735);
+B1721__1738 = [B1719__1735]}
 else
 break};
-return B1556__1571}, false);
-exports["restore-identifiers"] = restore_identifiers__1565}
+return B1722__1737}, false);
+exports["restore-identifiers"] = restore_identifiers__1731}
 {
-var Tnot_foundT__1582;
+var Tnot_foundT__1748;
 false;
-Tnot_foundT__1582 = make_object__1526()}
+Tnot_foundT__1748 = make_object__1692()}
 {
-var find_identifier__1584;
+var find_identifier__1750;
 false;
-find_identifier__1584 = Mmake_function__1522("find_identifier", function find_identifier__1585 (identifier__1586, env__1587)
+find_identifier__1750 = Mmake_function__1688("find_identifier", function find_identifier__1751 (identifier__1752, env__1753)
 {
-var B1583__1588 = destructure_symbol__1541(identifier__1586),
-name__1589 = B1583__1588[0],
-module_name__1590 = B1583__1588[1];
-if ($T(not__1523(module_name__1590)))
-{signal__1536(concatenate__1537("NOT QUALIFIED: ", description__1538(identifier__1586)))};
-var renamings__1591 = get__1524(env__1587, "identifiers", module_name__1590, name__1589),
-B1592;
-if ($T(renamings__1591))
-{B1592 = not__1523(emptyQ__1561(renamings__1591))}
+var B1749__1754 = destructure_symbol__1707(identifier__1752),
+name__1755 = B1749__1754[0],
+module_name__1756 = B1749__1754[1];
+if ($T(not__1689(module_name__1756)))
+{signal__1702(concatenate__1703("NOT QUALIFIED: ", description__1704(identifier__1752)))};
+var renamings__1757 = get__1690(env__1753, "identifiers", module_name__1756, name__1755),
+B1758;
+if ($T(renamings__1757))
+{B1758 = not__1689(emptyQ__1727(renamings__1757))}
 else
-B1592 = false;
-if ($T(B1592))
-{return first__1564(renamings__1591)}
+B1758 = false;
+if ($T(B1758))
+{return first__1730(renamings__1757)}
 else
-return Tnot_foundT__1582}, false);
-exports["find-identifier"] = find_identifier__1584}
+return Tnot_foundT__1748}, false);
+exports["find-identifier"] = find_identifier__1750}
 {
-var B1675 = $S("%method", "ralph/core"),
-B1676 = $S("%bind", "ralph/core"),
-B1677 = $S("%try", "ralph/core"),
-B1678 = $S("%define", "ralph/core"),
-instanceQ__1613 = B1517["instance?"],
-LarrayG__1614 = B1517["<array>"],
-binaryEE__1615 = B1517["binary=="],
-cons__1616 = B1517.cons,
-symbol_name__1617 = B1517["symbol-name"],
-rcurry__1618 = B1517.rcurry,
-LsymbolG__1619 = B1517["<symbol>"],
-alpha_convert__1620;
+var B1841 = $S("%method", "ralph/core"),
+B1842 = $S("%bind", "ralph/core"),
+B1843 = $S("%try", "ralph/core"),
+B1844 = $S("%define", "ralph/core"),
+instanceQ__1779 = B1683["instance?"],
+LarrayG__1780 = B1683["<array>"],
+binaryEE__1781 = B1683["binary=="],
+cons__1782 = B1683.cons,
+symbol_name__1783 = B1683["symbol-name"],
+rcurry__1784 = B1683.rcurry,
+LsymbolG__1785 = B1683["<symbol>"],
+alpha_convert__1786;
 false;
-alpha_convert__1620 = Mmake_function__1522("alpha_convert", function alpha_convert__1621 (form__1622, env__1623)
+alpha_convert__1786 = Mmake_function__1688("alpha_convert", function alpha_convert__1787 (form__1788, env__1789)
 {
-var B1593__1624 = form__1622;
-if ($T(instanceQ__1613(B1593__1624, LarrayG__1614)))
+var B1759__1790 = form__1788;
+if ($T(instanceQ__1779(B1759__1790, LarrayG__1780)))
 {
-var B1594__1625 = symbol_name__1617(first__1564(form__1622));
-if ($T(binaryEE__1615(B1594__1625, "%method")))
+var B1760__1791 = symbol_name__1783(first__1730(form__1788));
+if ($T(binaryEE__1781(B1760__1791, "%method")))
 {
-var ____1626 = form__1622[0],
-name__1627 = form__1622[1],
-arguments__1628 = form__1622[2],
-body__1629 = form__1622[3],
-identifiers__1630 = cons__1616(name__1627, arguments__1628),
-new_identifiers__1631 = rename_identifiers__1542(identifiers__1630, env__1623),
-new_body__1632 = alpha_convert__1621(body__1629, env__1623),
-new_name__1633 = new_identifiers__1631[0],
-new_arguments__1634 = $SL.call(new_identifiers__1631, 1),
-result__1635 = [B1675, new_name__1633, new_arguments__1634, new_body__1632];
-restore_identifiers__1565(identifiers__1630, env__1623);
-return result__1635}
+var ____1792 = form__1788[0],
+name__1793 = form__1788[1],
+arguments__1794 = form__1788[2],
+body__1795 = form__1788[3],
+identifiers__1796 = cons__1782(name__1793, arguments__1794),
+new_identifiers__1797 = rename_identifiers__1708(identifiers__1796, env__1789),
+new_body__1798 = alpha_convert__1787(body__1795, env__1789),
+new_name__1799 = new_identifiers__1797[0],
+new_arguments__1800 = $SL.call(new_identifiers__1797, 1),
+result__1801 = [B1841, new_name__1799, new_arguments__1800, new_body__1798];
+restore_identifiers__1731(identifiers__1796, env__1789);
+return result__1801}
 else
-if ($T(binaryEE__1615(B1594__1625, "%bind")))
+if ($T(binaryEE__1781(B1760__1791, "%bind")))
 {
-var ____1636 = form__1622[0],
-B1595__1637 = form__1622[1],
-var__1638 = B1595__1637[0],
-value__1639 = B1595__1637[1],
-body__1640 = form__1622[2],
-new_value__1641 = alpha_convert__1621(value__1639, env__1623),
-B1596__1642 = rename_identifiers__1542([var__1638], env__1623),
-new_var__1643 = B1596__1642[0],
-result__1644 = [B1676, [new_var__1643, new_value__1641], alpha_convert__1621(body__1640, env__1623)];
-restore_identifiers__1565([var__1638], env__1623);
-return result__1644}
+var ____1802 = form__1788[0],
+B1761__1803 = form__1788[1],
+var__1804 = B1761__1803[0],
+value__1805 = B1761__1803[1],
+body__1806 = form__1788[2],
+new_value__1807 = alpha_convert__1787(value__1805, env__1789),
+B1762__1808 = rename_identifiers__1708([var__1804], env__1789),
+new_var__1809 = B1762__1808[0],
+result__1810 = [B1842, [new_var__1809, new_value__1807], alpha_convert__1787(body__1806, env__1789)];
+restore_identifiers__1731([var__1804], env__1789);
+return result__1810}
 else
-if ($T(binaryEE__1615(B1594__1625, "%try")))
+if ($T(binaryEE__1781(B1760__1791, "%try")))
 {
-var ____1645 = form__1622[0],
-body__1646 = form__1622[1],
-var__1647 = form__1622[2],
-catch__1648 = form__1622[3],
-new_body__1649 = alpha_convert__1621(body__1646, env__1623),
-B1597__1650 = rename_identifiers__1542([var__1647], env__1623),
-new_var__1651 = B1597__1650[0],
-result__1652 = [B1677, new_body__1649, new_var__1651, alpha_convert__1621(catch__1648, env__1623)];
-restore_identifiers__1565([var__1647], env__1623);
-return result__1652}
+var ____1811 = form__1788[0],
+body__1812 = form__1788[1],
+var__1813 = form__1788[2],
+catch__1814 = form__1788[3],
+new_body__1815 = alpha_convert__1787(body__1812, env__1789),
+B1763__1816 = rename_identifiers__1708([var__1813], env__1789),
+new_var__1817 = B1763__1816[0],
+result__1818 = [B1843, new_body__1815, new_var__1817, alpha_convert__1787(catch__1814, env__1789)];
+restore_identifiers__1731([var__1813], env__1789);
+return result__1818}
 else
-if ($T(binaryEE__1615(B1594__1625, "%define")))
+if ($T(binaryEE__1781(B1760__1791, "%define")))
 {
-var ____1653 = form__1622[0],
-identifier__1654 = form__1622[1],
-name__1655 = symbol_name__1617(identifier__1654),
-B1598__1656 = rename_identifiers__1542([identifier__1654], env__1623),
-new_identifier__1657 = B1598__1656[0];
-get_setter__1525(env__1623, "original-identifier", symbol_name__1617(new_identifier__1657), identifier__1654);
-return [B1678, new_identifier__1657]}
-else
-{
-var B1599__1658 = binaryEE__1615(B1594__1625, "%if"),
-B1673;
-if ($T(B1599__1658))
-{B1673 = B1599__1658}
+var ____1819 = form__1788[0],
+identifier__1820 = form__1788[1],
+name__1821 = symbol_name__1783(identifier__1820),
+B1764__1822 = rename_identifiers__1708([identifier__1820], env__1789),
+new_identifier__1823 = B1764__1822[0];
+get_setter__1691(env__1789, "original-identifier", symbol_name__1783(new_identifier__1823), identifier__1820);
+return [B1844, new_identifier__1823]}
 else
 {
-var B1600__1659 = binaryEE__1615(B1594__1625, "%while");
-if ($T(B1600__1659))
-{B1673 = B1600__1659}
+var B1765__1824 = binaryEE__1781(B1760__1791, "%if"),
+B1839;
+if ($T(B1765__1824))
+{B1839 = B1765__1824}
 else
 {
-var B1601__1660 = binaryEE__1615(B1594__1625, "%set");
-if ($T(B1601__1660))
-{B1673 = B1601__1660}
+var B1766__1825 = binaryEE__1781(B1760__1791, "%while");
+if ($T(B1766__1825))
+{B1839 = B1766__1825}
 else
 {
-var B1602__1661 = binaryEE__1615(B1594__1625, "%begin");
-if ($T(B1602__1661))
-{B1673 = B1602__1661}
+var B1767__1826 = binaryEE__1781(B1760__1791, "%set");
+if ($T(B1767__1826))
+{B1839 = B1767__1826}
 else
 {
-var B1603__1662 = binaryEE__1615(B1594__1625, "%get-property");
-if ($T(B1603__1662))
-{B1673 = B1603__1662}
+var B1768__1827 = binaryEE__1781(B1760__1791, "%begin");
+if ($T(B1768__1827))
+{B1839 = B1768__1827}
 else
 {
-var B1604__1663 = binaryEE__1615(B1594__1625, "%object");
-if ($T(B1604__1663))
-{B1673 = B1604__1663}
+var B1769__1828 = binaryEE__1781(B1760__1791, "%get-property");
+if ($T(B1769__1828))
+{B1839 = B1769__1828}
 else
 {
-var B1605__1664 = binaryEE__1615(B1594__1625, "%array");
-if ($T(B1605__1664))
-{B1673 = B1605__1664}
+var B1770__1829 = binaryEE__1781(B1760__1791, "%object");
+if ($T(B1770__1829))
+{B1839 = B1770__1829}
 else
 {
-var B1606__1665 = binaryEE__1615(B1594__1625, "%native");
-if ($T(B1606__1665))
-{B1673 = B1606__1665}
+var B1771__1830 = binaryEE__1781(B1760__1791, "%array");
+if ($T(B1771__1830))
+{B1839 = B1771__1830}
 else
 {
-var B1607__1666 = binaryEE__1615(B1594__1625, "%native-call");
-if ($T(B1607__1666))
-{B1673 = B1607__1666}
+var B1772__1831 = binaryEE__1781(B1760__1791, "%native");
+if ($T(B1772__1831))
+{B1839 = B1772__1831}
 else
 {
-var B1608__1667 = binaryEE__1615(B1594__1625, "%infix");
-if ($T(B1608__1667))
-{B1673 = B1608__1667}
+var B1773__1832 = binaryEE__1781(B1760__1791, "%native-call");
+if ($T(B1773__1832))
+{B1839 = B1773__1832}
 else
 {
-var B1609__1668 = binaryEE__1615(B1594__1625, "%minus");
-if ($T(B1609__1668))
-{B1673 = B1609__1668}
+var B1774__1833 = binaryEE__1781(B1760__1791, "%infix");
+if ($T(B1774__1833))
+{B1839 = B1774__1833}
 else
 {
-var B1610__1669 = binaryEE__1615(B1594__1625, "%plus");
-if ($T(B1610__1669))
-{B1673 = B1610__1669}
+var B1775__1834 = binaryEE__1781(B1760__1791, "%minus");
+if ($T(B1775__1834))
+{B1839 = B1775__1834}
 else
 {
-var B1611__1670 = binaryEE__1615(B1594__1625, "%times");
-if ($T(B1611__1670))
-{B1673 = B1611__1670}
-else
-B1673 = binaryEE__1615(B1594__1625, "%divide")}}}}}}}}}}}};
-if ($T(B1673))
-{return cons__1616(first__1564(form__1622), map__1535(rcurry__1618(alpha_convert__1621, env__1623), rest__1563(form__1622)))}
+var B1776__1835 = binaryEE__1781(B1760__1791, "%plus");
+if ($T(B1776__1835))
+{B1839 = B1776__1835}
 else
 {
-var B1612__1671 = binaryEE__1615(B1594__1625, "%native-name"),
-B1674;
-if ($T(B1612__1671))
-{B1674 = B1612__1671}
+var B1777__1836 = binaryEE__1781(B1760__1791, "%times");
+if ($T(B1777__1836))
+{B1839 = B1777__1836}
 else
-B1674 = binaryEE__1615(B1594__1625, "%symbol");
-if ($T(B1674))
-{return form__1622}
+B1839 = binaryEE__1781(B1760__1791, "%divide")}}}}}}}}}}}};
+if ($T(B1839))
+{return cons__1782(first__1730(form__1788), map__1701(rcurry__1784(alpha_convert__1787, env__1789), rest__1729(form__1788)))}
 else
-return map__1535(rcurry__1618(alpha_convert__1621, env__1623), form__1622)}}}
-else
-if ($T(instanceQ__1613(B1593__1624, LsymbolG__1619)))
 {
-var value__1672 = find_identifier__1584(form__1622, env__1623);
-if ($T(binaryEE__1615(value__1672, Tnot_foundT__1582)))
-{return form__1622}
+var B1778__1837 = binaryEE__1781(B1760__1791, "%native-name"),
+B1840;
+if ($T(B1778__1837))
+{B1840 = B1778__1837}
 else
-return value__1672}
+B1840 = binaryEE__1781(B1760__1791, "%symbol");
+if ($T(B1840))
+{return form__1788}
 else
-return form__1622}, false);
-exports["alpha-convert"] = alpha_convert__1620}
+return map__1701(rcurry__1784(alpha_convert__1787, env__1789), form__1788)}}}
+else
+if ($T(instanceQ__1779(B1759__1790, LsymbolG__1785)))
+{
+var value__1838 = find_identifier__1750(form__1788, env__1789);
+if ($T(binaryEE__1781(value__1838, Tnot_foundT__1748)))
+{return form__1788}
+else
+return value__1838}
+else
+return form__1788}, false);
+exports["alpha-convert"] = alpha_convert__1786}
