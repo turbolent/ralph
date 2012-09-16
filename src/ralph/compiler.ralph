@@ -581,15 +581,22 @@
 (define-core-macro . (_ value #rest calls)
   (reduce (method (value call)
             (destructuring-bind (property #rest arguments) call
-              `((%get-property ,value
-                               ,(select property instance?
-                                  ((<string>)
-                                   property)
-                                  ((<symbol>)
-                                   (symbol-name property))
-                                  (else:
-                                   (signal *dot-name-error*))))
-                ,@arguments)))
+              (bind ((bindings (map (method (argument)
+                                      [(generate-symbol) argument])
+                                    arguments))
+                     (value* (generate-symbol)))
+                ;; prevent lifting through ANF
+                `(bind ((,value* ,value))
+                   (bind ,bindings
+                     ((%get-property ,value*
+                                     ,(select property instance?
+                                        ((<string>)
+                                         property)
+                                        ((<symbol>)
+                                         (symbol-name property))
+                                        (else:
+                                         (signal *dot-name-error*))))
+                      ,@(map first bindings)))))))
           value
           calls))
 
