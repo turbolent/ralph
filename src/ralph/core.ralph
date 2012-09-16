@@ -3,7 +3,7 @@
            <boolean> <function> <error>
            %make-function true? not size %inherit
            %make-class %keywords <keyword> keyword %keys
-           %concat cons as-string as-number as-array
+           %concat cons as-string as-number as-array as-json
            parse-number parse-integer char-code code-char
            empty? rest last (setter last) first (setter first)
            second (setter second) third (setter third)
@@ -56,7 +56,7 @@
            %get-property %native %native-call
            %call %var %array %object %return)
   inline: (not size cons
-           as-string as-number as-array
+           as-string as-number as-array as-json
            parse-number char-code empty?
            rest last (setter last) but-last
            slice %concat reverse!
@@ -157,6 +157,9 @@
 
 (define-function as-array (arguments skip)
   (%native-call "$SL.call" arguments (%infix "||" skip 0)))
+
+(define-function as-json (object)
+  (. (%native "JSON") (stringify object)))
 
 (define parse-number (%native "parseFloat"))
 
@@ -353,7 +356,8 @@
                                      (%get-property object name))))
               (%infix "&&"
                       function
-                      (. function ("apply" object %all-arguments)))))))
+                      ((%get-property function "apply")
+                       object %all-arguments))))))
     (set! (%get-property dispatcher "%generic?") #t)
     (set! (%get-property dispatcher "%name") name)
     dispatcher))
