@@ -1,0 +1,5 @@
+$ NODE_PATH=core node scripts/compile-client-app.js <module-name>
+
+- compiles <module-name>
+- copies and prepares result
+- generates load.js

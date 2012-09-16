@@ -15,6 +15,7 @@
   export: (compile-module
            compile-expression
            analyze-dependencies
+           compile-client-application
            macroexpand-1
            macroexpand
            macroexpand-all
@@ -1391,3 +1392,27 @@
          result)))
     (signal (concatenate "unable to find-module '"
                          module-name "'"))))
+
+(define-function client-path (module-name)
+  (resolve-path "client" (concatenate module-name ".js")))
+
+(define-function compile-client-application (module-name)
+  (compile-module module-name)
+  (bind ((dependencies (analyze-dependencies module-name))
+         (module-names (concatenate dependencies [module-name])))
+    (for-each ((module-name module-names))
+              ()
+      (bind ((path (executable-path module-name))
+             (path2 (client-path module-name)))
+        (ensure-directories-exist path2)
+        (write-file path2
+                    (format-to-string
+                     "define(\"%s\", function (exports) {\n"
+                     module-name))
+        (copy-file path path2 append?: #t)
+        (write-file path2 "})" append?: #t)
+        ;; TODO: minify
+        ))
+    (write-file (client-path "load")
+                (format-to-string
+                 "load(%s)" (as-json module-names)))))
