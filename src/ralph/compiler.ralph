@@ -631,6 +631,7 @@
                       (concatenate macro-name ": "
                                    "method has no arguments"))))
       (bind ((simplified-arguments (simplify-arguments arguments))
+             (name (symbol-name identifier))
              (method-definition
               (macroexpand-all
                (named-method (if name?
@@ -639,15 +640,15 @@
                              simplified-arguments
                              (maybe-begin body))
                env)))
-        (when record?
-          (set! (get env "module" "functions"
-                     (symbol-name identifier))
+        (when (and record?
+                   (member? name (get env module "inline")))
+          (set! (get env "module" "functions" name)
                 method-definition))
         ;; result
         `(define ,identifier
            ,(concatenate
              `(,definer
-               (%native-name ,(symbol-name identifier))
+               (%native-name ,name)
                ,method-definition
                ,setter?)
              (if type/existing?
