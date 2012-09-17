@@ -224,7 +224,9 @@
   (. array ("slice" start end)))
 
 (define-function reduce1 ((function <function>) (values <array>))
-  (reduce function (first values) (rest values)))
+  (if (empty? values)
+      (function)
+      (reduce function (first values) (rest values))))
 
 (define-function reduce ((function <function>) initial-value (values <array>))
   (bind ((value initial-value))
@@ -369,11 +371,10 @@
     (%get-property proto name)))
 
 
-(define-function concatenate (object #rest rest)
-  (reduce (if (instance? object <array>)
-              %concat
-              binary+)
-          object rest))
+(define-function concatenate (#rest values)
+  (if (empty? values)
+      []
+      (reduce1 %concat values)))
 
 (define-function compare ((function <function>) object objects)
   (bind ((failed? #f))
