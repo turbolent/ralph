@@ -689,22 +689,31 @@
       (%native-name ,(symbol-name identifier)))))
 
 (define-core-macro define-class (_ identifier superclass #rest properties)
-  (bind ((object `(%object)))
-    (for-each ((property properties))
-              ()
-      (if (instance? property <array>)
-          (begin
-           (push-last object (symbol-name (first property)))
-           (push-last object `(method ()
-                                ,(second property))))
-          (begin
-           (push-last object (symbol-name property))
-           (push-last object #f))))
-    `(define ,identifier
-       (%make-class
-        ,(unless (empty? superclass)
-           (first superclass))
-        ,object))))
+  `(define ,identifier
+     (%make-class
+      ;; superclass
+      ,(unless (empty? superclass)
+         (first superclass))
+      ;; properties
+      (%object ,@(reduce1 concatenate
+                          (map (method (property)
+                                 (if (instance? property <array>)
+                                     [(symbol-name (first property))
+                                      `(method ()
+                                         ,(second property))]
+                                     [(symbol-name property) #f]))
+                               properties)))
+      ;; constructor
+      (%method ,identifier ()
+        (%begin
+         ,@(map (method (property)
+                  `(%set (%get-property (%native "this")
+                                        ,(if (instance? property <array>)
+                                             (symbol-name (first property))
+                                             (symbol-name property)))
+                         #f))
+                properties))))))
+
 
 (define-function get-import-module-name/options (import)
   [;; module-name

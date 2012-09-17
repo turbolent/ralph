@@ -119,15 +119,16 @@
         superclass)
   class)
 
-(define-function %make-class (superclass properties)
-  (bind ((class (method ())))
-    (set! (%get-property class "%properties")
-          properties)
-    (when superclass
-      (%inherit class superclass)
-      (set! (%get-property properties "__proto__")
-            (%get-property superclass "%properties")))
-    class))
+(define-function %make-class (superclass properties constructor)
+  (unless constructor
+    (set! constructor (method ())))
+  (set! (%get-property constructor "%properties")
+        properties)
+  (when superclass
+    (%inherit constructor superclass)
+    (set! (%get-property properties "__proto__")
+          (%get-property superclass "%properties")))
+  constructor)
 
 (define %keywords (%object))
 
@@ -663,17 +664,16 @@
   (bind ((arguments (as-object rest)))
     (if-bind (properties (%get-property (type object)
                                         "%properties"))
-       (do (method (key)
-             (unless (or (has? (%get-property <object> "prototype") key)
-                         (has? object key))
-               (bind ((value (or (%get-property arguments key)
-                                 (bind ((value (%get-property properties key)))
-                                   (when value
-                                     (value))))))
-                 (set! (%get-property object key)
-                       value))))
-           (object-properties properties
-                              inherited?: #t))))
+      (do (method (property)
+            (unless (has? (%get-property <object> "prototype") property)
+              (bind ((value (or (%get-property arguments property)
+                                (bind ((value (%get-property properties property)))
+                                  (when value
+                                    (value))))))
+                (set! (%get-property object property)
+                      value))))
+          (object-properties properties
+                             inherited?: #t))))
   object)
 
 (define-class <hash-symbol> (<object>)
