@@ -233,12 +233,10 @@
                            (if (instance? binding <array>)
                                binding
                                [binding #f])
+                         ;; NOTE: always initialize, might reset state
                          (concatenate
                           (compile-js var env)
-                          (if value
-                              (concatenate
-                                " = " (compile-js value env))
-                              ""))))
+                          " = " (compile-js value env))))
                      bindings)
                 ",\n"))))
       (("%native")
