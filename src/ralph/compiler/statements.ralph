@@ -83,7 +83,9 @@
          (destructuring-bind (_ test then else) exp
            `(%if
              ;; TODO: only if not boolean
-             ,(add-explicit-true test)
+             ,(add-explicit-true
+               ;; might contain nested method
+               (transform-statements! test env))
              ,(transform-statements! then env)
              ,(transform-statements! else env))))
         (("%while")
