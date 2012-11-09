@@ -677,7 +677,11 @@
     (if-bind (properties (%get-property (type object)
                                         "%properties"))
       (do (method (property)
-            (unless (has? (%get-property <object> "prototype") property)
+            (when (and (not (has? (%get-property <object> "prototype") property))
+                       (%infix "==="
+                               (%native-call "typeof"
+                                             (%get-property object property))
+                               "undefined"))
               (bind ((value (or (%get-property arguments property)
                                 (bind ((value (%get-property properties property)))
                                   (when value
