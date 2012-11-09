@@ -32,13 +32,15 @@
            round floor ceil sin cos atan2 expt sqrt
            mod *pi* as-radiant even? odd?
            signal starts-with?
-           as-property-list
-           as-association-list
+           as-property-list as-association-list
            extend! update-with group-by
            chain-object unchain-object
            as-set set-union! set-add!
            set-subtract! set-remove!
+           conjoin disjoin ignore
            reset-symbol-counter! generate-symbol
+           set-timeout clear-timeout
+           set-interval clear-interval
            ;; macros / special forms
            quote %backquote %comma %at
            begin %begin set! %set if %if
@@ -932,3 +934,37 @@
       (%divide 1 numerator)
       (reduce binary/
               numerator denominators)))
+
+
+(define-function disjoin (predicate1 #rest predicates)
+  (method (#rest arguments)
+    (any? (method (predicate)
+            (apply predicate
+                   arguments))
+          (cons predicate1
+                predicates))))
+
+(define-function conjoin (predicate1 #rest predicates)
+  (method (#rest arguments)
+    (bind ((value #f))
+      (when (every? (method (predicate)
+                      (set! value (apply predicate
+                                         arguments)))
+                    (cons predicate1
+                          predicates))
+        value))))
+
+(define-function ignore ()
+  #f)
+
+(define-function set-timeout (function milliseconds)
+  (%native-call "setTimeout" function milliseconds))
+
+(define-function clear-timeout (timeout-id)
+  (%native-call "clearTimeout" timeout-id))
+
+(define-function set-interval (function milliseconds)
+  (%native-call "setInterval" function milliseconds))
+
+(define-function clear-interval (interval-id)
+  (%native-call "clearInterval" interval-id))
