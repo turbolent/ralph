@@ -287,8 +287,6 @@
                                  (foo i))
                               *environment*))
 
-;; TODO: %array introduced through literal will be prefixed!
-
 (reset-symbol-counter!)
 (check-equal "macroexpand-all: for-each with body"
              `(%bind ($1 (%array 1 2 3 4))
@@ -356,25 +354,24 @@
                          ((not (binary= a b)) #t))
               *environment*))
 
-; TODO: bug in reader?
-; (reset-symbol-counter!)
-; (check-equal "macroexpand-all: backqoute"
-;              `(%array
-;                (%array (%symbol "foo")
-;                        (%symbol "bar")
-;                        3)
-;                (concatenate
-;                 (%array (%symbol "%array") 1 2)
-;                 (%array 3 4))
-;                (%plus 5 6))
-;              (bind ((stream (make <string-stream> string:
-;                                   (concatenate
-;                                    "`((foo bar 3) "
-;                                    ",(concatenate `(%array 1 2) [3 4]) "
-;                                    ",(+ 5 6))")))
-;                     (exp (read stream)))
-;                (macroexpand-all exp
-;                                 *environment*)))
+(reset-symbol-counter!)
+(check-equal "macroexpand-all: backqoute"
+             `(%array
+               (%array (%symbol "foo" "ralph/compiler.test")
+                       (%symbol "bar" "ralph/compiler.test")
+                       3)
+               (concatenate
+                (%array (%symbol "%array" "ralph/core") 1 2)
+                (%array 3 4))
+               (%plus 5 6))
+             (bind ((stream (make <string-stream> string:
+                                  (concatenate
+                                   "`((foo bar 3) "
+                                   ",(concatenate `(%array 1 2) [3 4]) "
+                                   ",(+ 5 6))")))
+                    (exp (read stream)))
+               (macroexpand-all exp
+                                *environment*)))
 
 
 (check-equal "macroexpand-all: symbol macros"
@@ -382,20 +379,20 @@
              (macroexpand-all '(begin 1 next-method 2)
                               *environment*))
 
+(reset-symbol-counter!)
 (check-equal "macroexpand-all: dot"
-             `((%get-property
-                ((%get-property
-                  ((%get-property node "removeClass") "off")
-                  "addClass")
-                 "on")
-                "end"))
+             `(%bind ($5 (%bind ($4 (%bind ($2 node)
+                                        (%bind ($1 "off")
+                                          ((%get-property $2 "removeClass") $1))))
+                            (%bind ($3 "on")
+                              ((%get-property $4 "addClass") $3))))
+                ((%get-property $5 "end")))
              (macroexpand-all
               '(. node
                   ("removeClass" "off")
                   ("addClass" "on")
                   (end))
               *environment*))
-
 
 (reset-symbol-counter!)
 (check-equal "alpha-convert: single method"
@@ -438,7 +435,23 @@
                *environment*)
               *environment*))
 
-;; TODO: test alpha-convert for bind
+(reset-symbol-counter!)
+(check-equal "alpha-convert: single bind"
+             `(%bind (x_1 1) x_1)
+             (alpha-convert
+              (macroexpand-all
+               '(bind ((x 1)) x)
+               *environment*)
+              *environment*))
+
+(reset-symbol-counter!)
+(check-equal "alpha-convert: nested bind"
+             `(%bind (x_2 (%bind (x_1 1) x_1)) x_2)
+             (alpha-convert
+              (macroexpand-all
+               '(bind ((x (bind ((x 1)) x))) x)
+               *environment*)
+              *environment*))
 
 
 (reset-symbol-counter!)
