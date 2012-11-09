@@ -322,12 +322,12 @@
 
 (define-function instance? (object type)
   (if object
-      (bind ((ctor (%get-property object "constructor")))
-        (or
-         ;; primitive
-         (binary== ctor type)
-         ;; object
-         (%infix "instanceof" object type)))
+      (%infix "||"
+              ;; object
+              (%infix "instanceof" object type)
+              ;; primitive
+              (binary== (%get-property object "constructor")
+                        type))
       (binary== type <boolean>)))
 
 (%native "$HP = Object.hasOwnProperty")
@@ -336,29 +336,24 @@
   (%native "$HP.call(" object "," property ")"))
 
 (define-function %make-method (name function setter? type existing)
-  (bind ((prototype (%get-property type "prototype"))
-         (existing-method (and (has? prototype name)
-                               (%get-property prototype name)))
-         (generic? (and existing
-                        (has? existing "%generic?")
-                        (%get-property existing "%generic?"))))
-    ;; definition
-    (set! (%get-property function "%name") name)
-    (set! (%get-property function "%setter?") setter?)
-    (set! (%get-property function "%type") type)
-    (set! (%get-property prototype name) function)
-    ;; implicit definition of generic function?
-    (if generic?
-        existing
-        (%make-generic name))))
+  ;; definition
+  (set! (%get-property function "%name") name)
+  (set! (%get-property function "%setter?") setter?)
+  (set! (%get-property function "%type") type)
+  (set! (%get-property type "prototype" name) function)
+  ;; implicit definition of generic function?
+  (if (and existing
+           (%get-property existing "%generic?"))
+      existing
+      (%make-generic name)))
 
 (define-function %make-generic (name)
   (bind ((dispatcher
           (method (object)
-            (bind ((function (%infix "&&"
-                                     (%infix "!==" object (%native "null"))
-                                     (%infix "!==" object (%native "undefined"))
-                                     (%get-property object name))))
+            (bind ((function (%get-property
+                              (%native "(" object "== null ?"
+                                       " false : " object ")")
+                              name)))
               (%infix "&&"
                       function
                       ((%get-property function "apply")
@@ -611,14 +606,13 @@
       (set! value
             (function (%get-property values i))))))
 
-(define-function member? (value (array <array>) #key (test ==))
+(define-function member? (value (array <array>) #key (test binary==))
   (any? (method (other-value)
           (test value other-value))
         array))
 
 (define-function every? ((function <function>) (array <array>))
-  (not (any? (method (value)
-               (not (function value)))
+  (not (any? (complement function)
              array)))
 
 (define-function map ((function <function>) #rest arrays)
