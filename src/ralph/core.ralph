@@ -3,7 +3,8 @@
            <boolean> <function> <error>
            %make-function true? not size %inherit
            %make-class %keywords <keyword> keyword %keys
-           %concat cons as-string as-number as-array as-json
+           %concat cons as-string as-number as-array
+           as-json parse-json
            parse-number parse-integer char-code code-char
            empty? rest last (setter last) first (setter first)
            second (setter second) third (setter third)
@@ -160,8 +161,8 @@
 (define-function as-array (arguments skip)
   (%native-call "$SL.call" arguments (%infix "||" skip 0)))
 
-(define-function as-json (object)
-  (. (%native "JSON") (stringify object)))
+(define as-json (%native "JSON.stringify"))
+(define parse-json (%native "JSON.parse"))
 
 (define parse-number (%native "parseFloat"))
 
