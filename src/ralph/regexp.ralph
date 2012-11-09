@@ -12,7 +12,7 @@
                    (if global? "g" "")
                    (if ignore-case? "i" "")
                    (if multiline? "m" ""))))
-      (. regexp ("compile" pattern)))))
+      (. regexp ("compile" pattern flags)))))
 
 (define-function find ((regexp <regexp>) (string <string>))
   (bind ((position (. string ("search" regexp))))
