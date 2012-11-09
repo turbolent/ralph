@@ -114,10 +114,12 @@
   (%infix "===" object1 object2))
 
 (define-function %inherit (class superclass)
+  (set! (%get-property class "%superclass")
+        superclass)
   (set! (%get-property class "prototype" "__proto__")
         (%get-property superclass "prototype"))
-  (set! (%get-property class "prototype" "__super__")
-        superclass)
+  (set! (%get-property class "%properties" "__proto__")
+        (%get-property superclass "%properties"))
   class)
 
 (define-function %make-class (superclass properties constructor)
@@ -126,9 +128,7 @@
   (set! (%get-property constructor "%properties")
         properties)
   (when superclass
-    (%inherit constructor superclass)
-    (set! (%get-property properties "__proto__")
-          (%get-property superclass "%properties")))
+    (%inherit constructor superclass))
   constructor)
 
 (define %keywords (%object))
