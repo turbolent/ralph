@@ -1,6 +1,5 @@
 (define-module ralph/compiler/utilities
   export: (expression? setter-identifier?
-           reset-symbol-counter! generate-symbol
            maybe-begin destructure-symbol
            var? set? method? begin? define?
            *defined* localize
@@ -46,23 +45,6 @@
                form)
        (== (symbol-name (first form))
            "setter")))
-
-(define *symbol-count* 0)
-
-(define-function reset-symbol-counter! ()
-  (set! *symbol-count* 0))
-
-(define-function generate-symbol (env prefix)
-  (bind ((name (concatenate
-                (if prefix
-                    (concatenate prefix "_")
-                    "$")
-                (as-string (inc! *symbol-count*))))
-         (result (symbol name (when env
-                                (get env "module" "name")))))
-    (set! (get result "generated?") #t)
-    result))
-
 
 (define-function maybe-begin (expressions)
   (select (size expressions) ==

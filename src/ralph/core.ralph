@@ -37,6 +37,7 @@
            chain-object unchain-object
            as-set set-union! set-add!
            set-subtract! set-remove!
+           reset-symbol-counter! generate-symbol
            ;; macros / special forms
            quote %backquote %comma %at
            begin %begin set! %set if %if
@@ -522,6 +523,22 @@
                     module: module)))))
 
 (%native "$S = " %%symbol)
+
+(define *symbol-count* 0)
+
+(define-function reset-symbol-counter! ()
+  (set! *symbol-count* 0))
+
+(define-function generate-symbol (env prefix)
+  (bind ((name (concatenate
+                (if prefix
+                    (concatenate prefix "_")
+                    "$")
+                (as-string (inc! *symbol-count*))))
+         (result (symbol name (when env
+                                (get env "module" "name")))))
+    (set! (get result "generated?") #t)
+    result))
 
 ;; handles keyword arguments
 (define-function %keys (key-values defaults)
