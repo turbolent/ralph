@@ -54,8 +54,8 @@
                    (set! control-string "")))))))))
 
 (define-function format-out ((control-string <string>) #rest args)
-  "Formats arguments to *standard-out*."
-  (apply format *standard-out* control-string args))
+  "Formats arguments to *standard-output*."
+  (apply format *standard-output* control-string args))
 
 (define-function format-to-string ((control-string <string>) #rest args)
   "Process a format string and return the result as another string.

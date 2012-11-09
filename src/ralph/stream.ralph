@@ -2,7 +2,7 @@
   export: (<stream>
            <string-stream>
            <file-stream>
-           *standard-out*
+           *standard-output*
            *standard-error*
            stream-close
            stream-open?
@@ -126,7 +126,7 @@
 
 ;;;;
 
-(define *standard-out*
+(define *standard-output*
   (make <file-stream>
         file: (%get-property (%native "process") "stdout")))
 
