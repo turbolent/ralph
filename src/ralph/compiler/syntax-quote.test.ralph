@@ -1,0 +1,82 @@
+
+(define-module ralph/compiler/syntax-quote.test
+  import: (ralph/test
+           ralph/compiler2
+           ralph/compiler/syntax-quote))
+
+(define *core* (make <module> name: "ralph/core"))
+
+(define-function make-environment ()
+  (bind ((module (make <module> name: "ralph/compiler/syntax-quote.test"
+                       imports: [[*core* ["+" "-"]]])))
+    (make <environment>
+          module: module
+          special-forms: *core-special-forms*
+          macros: *core-macros*
+          symbol-macros: *core-symbol-macros*)))
+
+(define *environment*
+  (make-environment))
+
+
+;; TODO: change to qualified symbols once reader supports reading them
+(bind (($core-%array (symbol "%array" "ralph/core"))
+       ($core-concatenate (symbol "concatenate" "ralph/core"))
+       ($core-%concat (symbol "%concat" "ralph/core"))
+       ($foo (symbol "foo" "ralph/compiler/syntax-quote.test"))
+       ($core-plus (symbol "+" "ralph/core"))
+       ($plus (symbol "+" "ralph/compiler/syntax-quote.test"))
+       ($core-minus (symbol "-" "ralph/core"))
+       ($a (symbol "a" "ralph/compiler/syntax-quote.test"))
+       ($b (symbol "b" "ralph/compiler/syntax-quote.test")))
+
+  (check-equal "undefined symbol"
+               $foo
+               (syntax-quote-form 'foo *environment*))
+
+  (check-equal "imported symbol"
+               $core-plus
+               (syntax-quote-form '+ *environment*))
+
+  (macroexpand-all '(define + 2)
+                   *environment*)
+
+
+  (check-equal "imported symbol, defined globally"
+               $plus
+               (syntax-quote-form '+ *environment*))
+
+  (check-equal "array of symbols"
+               ; unoptimized:
+               ; [$concatenate [$core-%array 1]
+               ;               [$core-%array $foo]
+               ;               [$core-%array $plus]
+               ;               [$core-%array $core-minus]]
+               ; optimized:
+               [$core-%array 1 $foo $plus $core-minus]
+               (syntax-quote-form '(1 foo + -)
+                                  *environment*))
+
+
+  (check-equal "syntax-quote, syntax-unquote, syntax-unquote-splicing"
+               ; unoptimized:
+               ; [$concatenate
+               ;  [$core-%array 1]
+               ;  [$core-%array $foo]
+               ;  [$core-%array 'foo]
+               ;  [$core-%array
+               ;   [$concatenate [$core-%array $a]
+               ;                 [$core-%array $b]
+               ;                 [$core-%array $plus]
+               ;                 [$core-%array $core-minus]]]
+               ;  [$core-%array ['a2 'b2]]
+               ;  ['a3 'b3]]
+               ; optimized:
+               [$core-%concat [$core-%array 1 $foo 'foo
+                                            [$core-%array $a $b $plus $core-minus]
+                                            ['a2 'b2]]
+                              ['a3 'b3]]
+               (syntax-quote-form [1 'foo [$syntax-unquote 'foo]
+                                     ['a 'b '+ '-] [$syntax-unquote ['a2 'b2]]
+                                     [$syntax-unquote-splicing ['a3 'b3]]]
+                                  *environment*)))
