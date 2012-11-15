@@ -130,6 +130,6 @@
   (make <file-stream>
         file: (%get-property (%native "process") "stdout")))
 
-(define *standard-out*
+(define *standard-error*
   (make <file-stream>
         file: (%get-property (%native "process") "stderr")))
