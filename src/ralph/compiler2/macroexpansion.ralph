@@ -1,0 +1,52 @@
+(define-module ralph/compiler2/macroexpansion
+  import: (ralph/compiler2/environment
+           ralph/compiler2/utilities)
+  export: (macroexpand-1
+           macroexpand
+           macroexpand-all))
+
+
+;;;; macro expansion
+;; * both global and local bindings are taken into
+;;   account when expanding macros and symbol macros
+;;   (see find-macro, find-symbol-macro)
+;; * bindings are ignored when expanding special forms
+;;   (see find-special-form)
+
+
+(define-function macroexpand-1 (form env)
+  (if (expression? form)
+      (bind ((identifier (first form)))
+        (if (special-operator? identifier env)
+            form
+            ;; expand identifier as a symbol macro expanding
+            ;; to another symbol for which a macro is defined
+            ;; could exist
+            (bind ((identifier* (macroexpand identifier env)))
+              (if-bind (macro (when (instance? identifier* <symbol>)
+                                (find-macro identifier* env)))
+                (apply macro env (rest form))
+                form))))
+      (if-bind (symbol-macro (when (instance? form <symbol>)
+                               (find-symbol-macro form env)))
+        (symbol-macro env)
+        form)))
+
+(define-function macroexpand (form env)
+  (bind ((done? #f))
+    (until done?
+      (bind ((expanded (macroexpand-1 form env)))
+        (set! done? (== expanded form))
+        (set! form expanded)))
+    form))
+
+(define-function macroexpand-all (form env)
+  (bind ((form* (macroexpand form env)))
+    (if (instance? form* <array>)
+        (if-bind (special-form
+                  (when (expression? form*)
+                    (find-special-form (first form*) env)))
+          (apply special-form env (rest form*))
+          (map (rcurry macroexpand-all env)
+               form*))
+        form*)))
