@@ -1,0 +1,24 @@
+(define-module ralph/compiler2/module
+  export: (<module>
+           find-module/import-name))
+
+;;;; <module>
+
+(define-class <module> (<object>)
+  name
+  ;; [module [name*]]*
+  (imports []))
+
+(define-function find-module/import-name (definition-name module)
+  (any? (method (import)
+          (destructuring-bind (module names) import
+            (any? (method (name)
+                    (destructuring-bind (import-name new-name)
+                        (if (instance? name <array>)
+                            name
+                            [name name])
+                      (when (== definition-name
+                                new-name)
+                        [module import-name])))
+                  names)))
+        (get module "imports")))
