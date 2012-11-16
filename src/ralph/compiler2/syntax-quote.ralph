@@ -1,60 +1,49 @@
-(define-module ralph/compiler/syntax-quote
-  import: (ralph/compiler2
-           ralph/compiler/utilities)
-  export: (syntax-quote-form
-           ;; TODO: remove once reader supports
-           ;;       reading qualified symbols
-           $syntax-unquote
-           $syntax-unquote-splicing))
+(define-module ralph/compiler2/syntax-quote
+  import: (ralph/compiler2/environment
+           ralph/compiler2/utilities)
+  export: (syntax-quote-form))
 
-(define $syntax-unquote
-  (symbol "syntax-unquote"
-          "ralph/compiler/syntax-quote"))
 
-(define $syntax-unquote-splicing
-  (symbol "syntax-unquote-splicing"
-          "ralph/compiler/syntax-quote"))
-
-(define-function syntax-unquoted? (form env)
+(define-function unquoted? (form env)
   (and (expression? form)
        (== (resolve-symbol (first form) env)
-           $syntax-unquote)))
+           `unquote)))
 
-(define-function syntax-unquote-spliced? (form env)
+(define-function unquote-spliced? (form env)
   (and (expression? form)
        (== (resolve-symbol (first form) env)
-           $syntax-unquote-splicing)))
+           `unquote-splicing)))
 
 
 (define-function syntax-quote-symbol (symbol env)
-  (if (special-operator? symbol env)
-      `(quote ,symbol)
-      (resolve-symbol symbol env)))
+  `(quote ,(if (special-operator? symbol env)
+               symbol
+               (resolve-symbol symbol env))))
 
 ; NOTE: working, but unoptimized version
 ; (define-function syntax-quote-array (array env)
-;   (if (syntax-unquoted? array env)
+;   (if (unquoted? array env)
 ;       (second array)
 ;       `(concatenate ,@(map (method (form)
-;                              (if (syntax-unquote-spliced? form env)
+;                              (if (unquote-spliced? form env)
 ;                                  (second form)
-;                                  `(%array ,(if (syntax-unquoted? form env)
+;                                  `(%array ,(if (unquoted? form env)
 ;                                                (second form)
-;                                                (syntax-quote form env)))))
+;                                                (syntax-quote-form form env)))))
 ;                            array))))
 
 ;; NOTE: optimized
 (define-function syntax-quote-array (array env)
-  (if (syntax-unquoted? array env)
+  (if (unquoted? array env)
       (second array)
       (bind ((part `(%array)))
         (reduce (method (result form)
-                  (if (syntax-unquote-spliced? form env)
+                  (if (unquote-spliced? form env)
                       (begin
                        (set! part #f)
                        `(%concat ,result
                                  ,(second form)))
-                      (bind ((form* (if (syntax-unquoted? form env)
+                      (bind ((form* (if (unquoted? form env)
                                         (second form)
                                         (syntax-quote-form form env))))
                         (if part

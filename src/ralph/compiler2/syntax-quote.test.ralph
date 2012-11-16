@@ -34,6 +34,11 @@
                $foo
                (syntax-quote-form 'foo *environment*))
 
+ (check-equal "qualified symbol"
+               (symbol "foo" "bar")
+               (syntax-quote-form (symbol "foo" "bar")
+                                  *environment*))
+
   (check-equal "imported symbol"
                $core-plus
                (syntax-quote-form '+ *environment*))
