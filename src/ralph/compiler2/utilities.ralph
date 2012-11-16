@@ -1,0 +1,6 @@
+(define-module ralph/compiler2/utilities
+  export: (expression?))
+
+(define-function expression? (form)
+  (and (instance? form <array>)
+       (instance? (first form) <symbol>)))
