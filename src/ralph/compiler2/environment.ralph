@@ -1,0 +1,87 @@
+(define-module ralph/compiler2/environment
+  import: (ralph/compiler2/module)
+  export: (<environment>
+           find-macro
+           find-symbol-macro
+           find-special-form
+           special-operator?
+           resolve-symbol
+           bind-globally! globally-bound?
+           bind! bound? unbind!))
+
+;;;; <environment>
+;; * one compiler environment per module
+;; * class representing the compiler's state for a specific module
+;; * macros, symbol-macros and special-forms are plain objects and
+;;   a deep get is used for lookup to allow extending (prepending
+;;   or appending) the set of definitions
+
+(define-class <environment> (<object>)
+  module
+  (macros (make-plain-object))
+  (symbol-macros (make-plain-object))
+  (special-forms (make-plain-object))
+  (binding-count (make-plain-object))
+  (global-bindings (make-plain-object)))
+
+;;;; expanders
+;; * both global and local bindings are taken into
+;;   account when finding macros and symbol macros
+;; * bindings are ignored when finding special forms
+
+(define-function find-expander (namespace check-bound? identifier env)
+  (unless (and check-bound?
+               (bound? identifier env))
+    (%get-property env namespace
+                   (symbol-name identifier))))
+
+(define find-macro (curry find-expander "macros" #t))
+(define find-symbol-macro (curry find-expander "symbol-macros" #t))
+(define find-special-form (curry find-expander "special-forms" #f))
+
+(define-function special-operator? (identifier env)
+  (has? (get env "special-forms")
+        (symbol-name identifier)))
+
+;;;; symbol resolution
+;; * only global bindings are taken into account
+
+(define-function resolve-symbol (symbol env)
+  (destructuring-bind (name module-name)
+      (destructure-symbol symbol)
+    (if module-name
+        symbol
+        (if-bind (module/import-name
+                  (unless (globally-bound? symbol env)
+                    (find-module/import-name
+                     name (get env "module"))))
+          (destructuring-bind (module import-name)
+              module/import-name
+            (%%symbol import-name (get module "name")))
+          (%%symbol name (get env "module" "name"))))))
+
+
+;;;; binding
+
+(define-function bind-globally! (identifier env)
+  (set! (get env "global-bindings"
+             (symbol-name identifier))
+        #t))
+
+(define-function globally-bound? (identifier env)
+  (get env "global-bindings"
+       (symbol-name identifier)))
+
+(define-function bind! (identifier env)
+  (inc! (get env "binding-count"
+             (symbol-name identifier))))
+
+(define-function bound? (identifier env)
+  (or (globally-bound? identifier env)
+      (if-bind (count (get env "binding-count"
+                           (symbol-name identifier)))
+        (> count 0))))
+
+(define-function unbind! (identifier env)
+  (dec! (get env "binding-count"
+             (symbol-name identifier))))
