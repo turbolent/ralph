@@ -21,13 +21,14 @@
            binary<= <= binary> > binary>= >=
            as-object as-uppercase as-lowercase
            join trim replace make-object make-plain-object
-           <symbol> symbol symbol-name external-symbol
+           <symbol> symbol symbol-name
+           destructure-symbol %%symbol
            element (setter element)
            replace-subsequence replace-subsequence!
            remove remove!
            interpose any? map do copy-sequence slice
            make object-properties object-values initialize
-           <hash-symbol> get (setter get) inc dec split-with
+           <hash-symbol> get (setter get) inc dec split split-with
            as-hex-string description min max abs
            round floor ceil sin cos atan2 expt sqrt
            mod *pi* as-radiant even? odd?
@@ -41,24 +42,34 @@
            reset-symbol-counter! generate-symbol
            set-timeout clear-timeout
            set-interval clear-interval
-           ;; macros / special forms
-           quote %backquote %comma %at
-           begin %begin set! %set if %if
-           method %method %bind bind define %define
-           %while while dotimes for for-each
+           partition
+           ;; primitive operations
            %plus %minus %times %divide
-           and or when unless cond select
-           handler-case %try bind-properties
-           parallel-set! if-bind
-           destructuring-bind bind-methods
-           inc! dec! call-next-method .
-           define-class define-function
-           define-method define-generic
+           ;; core special forms
+           quote bind method set! define if
+           begin while handler-case
+           ;; internal special forms
+           %quote %bind %method %set %define %if
+           %begin %while %try %var %native-name
+           %native-call %infix %native
+           %object %array %get-property
+           ;; TODO: remove, replace with %native-call "return"
+           %return
+           ;; TODO: remove
+           %symbol %call %backquote %comma %at
+           ;; core macros
+           when unless parallel-set! cond
+           and or if-bind until dotimes for
+           for-each select destructuring-bind
+           bind-properties bind-methods
+           inc! dec! .
+           define-function define-method
+           define-class define-generic
            define-module define-macro
            define-symbol-macro
-           %symbol %%symbol %infix %next-method
-           %get-property %native %native-call
-           %call %var %array %object %return)
+           syntax-quote unquote unquote-splicing
+           ;; special
+           call-next-method next-method)
   inline: (not size cons
            as-string as-number as-array as-json
            parse-number char-code empty?
@@ -173,6 +184,8 @@
 
 (define code-char (%native "String.fromCharCode"))
 
+
+;; TODO: !array.length
 (define-function empty? (sequence)
   (binary== (size sequence) 0))
 
@@ -512,6 +525,10 @@
 (define-function symbol-name (symbol)
   (get symbol "name"))
 
+(define-function destructure-symbol (symbol)
+  [(get symbol "name")
+   (get symbol "module")])
+
 (define-function %%symbol (name module)
   (bind ((module* (or module "")))
     (or (get %symbols module* name)
@@ -725,6 +742,9 @@
                object2
                (rest properties/value)))))
 
+
+(define-function split (string separator)
+  (. string (split separator)))
 
 (define-function split-with (function array)
   (bind ((a [])
@@ -968,3 +988,16 @@
 
 (define-function clear-interval (interval-id)
   (%native-call "clearInterval" interval-id))
+
+(define-function partition (count elements #key (step count))
+  (bind ((result [])
+         (total (size elements))
+         (last-index 0))
+    (while (< last-index total)
+      (bind ((new-index (+ last-index count)))
+        (push-last result
+                   (copy-sequence elements
+                                  start: last-index
+                                  end: new-index))
+        (set! last-index new-index)))
+    result))
