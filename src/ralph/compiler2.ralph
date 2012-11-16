@@ -2,8 +2,7 @@
 (define-module ralph/compiler2
   import: (ralph/format
            ralph/compiler2/environment
-           ralph/compiler2/macroexpansion
-           ralph/compiler2/syntax-quote)
+           ralph/compiler2/macroexpansion)
   export: (*core-symbol-macros*
            *core-special-forms*
            *internal-special-forms*
@@ -905,11 +904,6 @@
           (define-function ,identifier ()
             ,@forms)
           (set! (%get-property ,identifier "%symbol-macro?") #t))))
-
-(set! (get *core-macros* "syntax-quote")
-      (method (env form #rest superflous)
-        ;; TODO [#B]: (unless (empty? superflous) (warn ...))
-        (syntax-quote-form form env)))
 
 
 ;; TODO [#A]: define-module

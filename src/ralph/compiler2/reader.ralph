@@ -1,5 +1,8 @@
-(define-module ralph/reader2
-  import: (ralph/stream ralph/format ralph/regexp)
+(define-module ralph/compiler2/reader
+  import: (ralph/stream
+           ralph/format
+           ralph/regexp
+           ralph/compiler2/syntax-quote)
   export: (read))
 
 (define *number-patterns*
@@ -84,9 +87,9 @@
 
 
 (define *wrapper-symbols*
-  [`quote `syntax-quote `unquote `unquote-splicing])
+  [`quote `unquote `unquote-splicing])
 
-(define-function read ((stream <stream>) #key (eof-error? #t) eof-value)
+(define-function read ((stream <stream>) env #key (eof-error? #t) eof-value)
   (bind ((stack [[]])
          (ends [])
          (special? #f))
@@ -96,10 +99,16 @@
                    (add-last! ()
                      (bind ((value (pop-last stack))
                             (l (last stack)))
-                       (if (member? l *wrapper-symbols*)
-                           (add-to-stack!
-                            [(pop-last stack) value])
-                           (push-last l value)))))
+                       (cond
+                        ((== l `syntax-quote)
+                         (pop-last stack)
+                         (add-to-stack!
+                          (syntax-quote-form value env)))
+                        ((member? l *wrapper-symbols*)
+                         (add-to-stack!
+                          [(pop-last stack) value]))
+                        (else:
+                         (push-last l value))))))
       (while (not (stream-at-end? stream))
         (read-whitespace stream)
         (bind ((char (stream-read-element stream)))

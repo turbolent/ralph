@@ -8,7 +8,7 @@
            ralph/compiler2/macroexpansion
            ralph/stream
            ralph/format
-           ralph/reader2))
+           ralph/compiler2/reader))
 
 (define-function make-environment ()
   (bind ((module (make <module> name: "ralph/compiler2.test")))
@@ -628,26 +628,40 @@
 
 (define-function read-form (source)
   (read (make <string-stream>
-              string: source)))
+              string: source)
+        *environment*))
+
+(bind ((form (read-form "(test `(foo `(bar)))")))
+  (check-equal "macroexpand-all: syntax-quote"
+               (read-form
+                "(test (ralph/core::%array
+                        (ralph/core::quote ralph/compiler2.test::foo)
+                        (ralph/core::%array
+                         (ralph/core::quote ralph/core::%array)
+                         (ralph/core::%array
+                          (ralph/core::quote ralph/core::quote)
+                          (ralph/core::quote ralph/compiler2.test::bar)))))")
+               (macroexpand-all form *environment*)))
 
 (bind ((form (read-form "(test `(is ,cool foo::bar ,(+ 2 3) ,@[4 5 6] `(nested)))")))
   (check-equal "macroexpand-all: syntax-quote"
                (read-form
                 "(test (ralph/core::%concat
-                       (ralph/core::%concat
-                        (ralph/core::%array (ralph/core::quote ralph/compiler2.test::is)
-                                            cool
-                                            (ralph/core::quote foo::bar)
-                                            (+ 2 3))
-                        (ralph/core::%array 4 5 6))
-                       (ralph/core::%array
-                        (ralph/core::%array
-                         (ralph/core::quote ralph/core::syntax-quote)
+                        (ralph/core::%concat
                          (ralph/core::%array
-                          (ralph/core::quote ralph/compiler2.test::nested))))))")
-              (macroexpand-all form *environment*)))
-
-
+                          (ralph/core::quote ralph/compiler2.test::is)
+                          cool
+                          (ralph/core::quote foo::bar)
+                          (+ 2 3))
+                         (ralph/core::%array 4 5 6))
+                        (ralph/core::%array
+                         (ralph/core::%array
+                          (ralph/core::quote ralph/core::%array)
+                          (ralph/core::%array
+                           (ralph/core::quote ralph/core::quote)
+                           (ralph/core::quote
+                            ralph/compiler2.test::nested))))))")
+               (macroexpand-all form *environment*)))
 
 (set! (get *environment* "special-forms")
       *internal-special-forms*)
@@ -672,5 +686,6 @@
              (macroexpand-all '(define-function foo ((a <object>) b #rest all #key (c 23) d)
                                  (bind ((when (when a b))) (when c d)))
                               *environment*))
+
 
 
