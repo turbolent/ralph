@@ -1,10 +1,15 @@
-(define-module tests/reader-tests
-  import: (ralph/test ralph/stream ralph/reader))
+(define-module ralph/compiler2/reader.test
+  import: (ralph/test
+           ralph/stream
+           ralph/compiler2/environment
+           ralph/compiler2/reader))
 
-(bind ((stream (make <string-stream> string: "((a (key: (b #t [1 2] \"c\" #f d #key) 2)) () #rest)")))
+(bind ((stream (make <string-stream>
+                     string: "((a (key: (b #t [1 2] \"c\" #f d #key) 2)) () #rest)")))
   (check-equal "expressions"
+
                [[(symbol "a")
-                 [key: [(symbol "b") #t [(symbol "%array") 1 2]
+                 [key: [(symbol "b") #t [(symbol "%array" "ralph/core") 1 2]
                         "c" #f (symbol "d") #key]
                        2]]
                 [] #rest]
@@ -28,48 +33,60 @@
 (bind ((stream (make <string-stream> string: "")))
   (check-equal "empty, no eof-error, default eof-value"
                #f
-               (read stream eof-error?: #f)))
+               (read stream #f eof-error?: #f)))
 
 (bind ((stream (make <string-stream> string: "")))
   (check-equal "empty, no eof-error, eof-value"
                42
-               (read stream eof-error?: #f eof-value: 42)))
+               (read stream #f eof-error?: #f eof-value: 42)))
 
 (bind ((stream (make <string-stream> string: "")))
   (check-condition "empty, eof-error" <string>
                    (method ()
-                     (read stream eof-value: 42))))
+                     (read stream #f eof-value: 42))))
 
 
-(bind ((stream (make <string-stream> string: "\"quoted: \\\"Q\\\" \"")))
+(bind ((stream (make <string-stream>
+                     string: "\"quoted: \\\"Q\\\" \"")))
   (check-equal "quoted"
                "quoted: \"Q\" "
                (read stream)))
 
-(bind ((stream (make <string-stream> string: "\"bla\" \"  ")))
-  (check-condition "missing end of string" <string>
-                   (method () (read stream))))
+(bind ((stream (make <string-stream> string: "\"bla  ")))
+  (check-condition "missing end of string"
+                   <string>
+                   (method ()
+                     (read stream))))
 
 
-(bind ((stream (make <string-stream> string: "(this; asdasd\n isnt ; asdasd \n; asdasd\n a comment)")))
+(bind ((stream (make <string-stream>
+                     string: "(this; asdasd\n isnt ; asdasd \n; asdasd\n a comment)")))
   (check-equal "comments"
                [(symbol "this") (symbol "isnt") (symbol "a") (symbol "comment")]
                (read stream)))
 
-(bind ((stream (make <string-stream> string: "(a `(x ,(y z)) `(,b))")))
+(bind ((env (make <environment>))
+       (stream (make <string-stream> string: "(a `(x ,(y z)) `(,b))")))
   (check-equal "backquote and comma"
                [(symbol "a")
-                [(symbol "%backquote")
-                 [(symbol "x")
-                  [(symbol "%comma")
-                   [(symbol "y") (symbol "z")]]]]
-                [(symbol "%backquote")
-                 [[(symbol "%comma") (symbol "b")]]]]
-               (read stream)))
+                [(symbol "%array" "ralph/core")
+                 [(symbol "quote" "ralph/core")
+                  (symbol "x")]
+                 [(symbol "y") (symbol "z")]]
+                [(symbol "%array" "ralph/core")
+                 (symbol "b")]]
+               (read stream env)))
 
 
 (bind ((stream (make <string-stream> string: "(a (1)))")))
-  (check-condition "too many closing" <string> (method () (read stream))))
+  (read stream)
+  (check-condition "too many closing"
+                   <string>
+                   (method ()
+                     (read stream))))
 
 (bind ((stream (make <string-stream> string: "(a (1")))
-  (check-condition "missing closing" <string> (method () (read stream))))
+  (check-condition "missing closing"
+                   <string>
+                   (method ()
+                     (read stream))))
