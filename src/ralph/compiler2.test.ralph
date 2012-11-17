@@ -6,6 +6,8 @@
            ralph/compiler2/module
            ralph/compiler2/environment
            ralph/compiler2/macroexpansion
+           ralph/compiler2/macros
+           ralph/compiler2/special-forms
            ralph/stream
            ralph/format
            ralph/compiler2/reader))
@@ -20,11 +22,11 @@
             (method (_)
               `(when 23 42)))
       (chain-object symbol-macros
-                    *core-symbol-macros*)
+                    $core-symbol-macros)
       (make <environment>
             module: module
-            special-forms: *all-special-forms*
-            macros: *core-macros*
+            special-forms: $all-special-forms
+            macros: $core-macros
             symbol-macros: symbol-macros))))
 
 (define *environment*
@@ -664,9 +666,9 @@
                (macroexpand-all form *environment*)))
 
 (set! (get *environment* "special-forms")
-      *internal-special-forms*)
+      $internal-special-forms)
 (chain-object (get *environment* "macros")
-              *internal-macros*)
+              $internal-macros)
 (check-equal "macroexpand-all to IR: define-function"
              (read-form
               "(ralph/core::%begin

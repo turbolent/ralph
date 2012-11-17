@@ -1,6 +1,30 @@
 (define-module ralph/compiler2/utilities
-  export: (expression?))
+  import: (ralph/format)
+  export: (expression?
+           check-type
+           destructure-parameter-list))
 
 (define-function expression? (form)
   (and (instance? form <array>)
        (instance? (first form) <symbol>)))
+
+(define-function check-type (value type format-string)
+  (unless (instance? value type)
+    (signal (format-to-string format-string value))))
+
+;; => (normal-parameters
+;;     rest-parameter
+;;     keyword-parameters)
+(define-function destructure-parameter-list (list)
+  (bind-methods ((position (symbol)
+                   (find-key list (curry = symbol))))
+    (bind ((rest (position #rest))
+           (key (position #key)))
+      [(copy-sequence list
+                      end: (or rest key
+                               (size list)))
+       (when rest
+         (element list (inc rest)))
+       (when key
+         (copy-sequence list
+                        start: (inc key)))])))

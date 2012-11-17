@@ -1,0 +1,377 @@
+(define-module ralph/compiler2/special-forms
+  import: (ralph/format
+           ralph/compiler2/utilities
+           ralph/compiler2/macroexpansion
+           ralph/compiler2/environment)
+  export: ($core-special-forms
+           $internal-special-forms
+           $all-special-forms))
+
+;; special forms:
+;;   control expansion, track bindings (shadowing)
+
+;; * "handler-case" is a special form
+;; * "bind-methods" is not a special form, just a macro
+;; * "block" and "for" are not available/implemented, instead: "while"
+
+
+;;;; utilities
+
+(define-function expand-forms (symbol env #rest forms)
+  `(,symbol
+    ,@(map (rcurry macroexpand-all env)
+           forms)))
+
+(define-function check-identifier (identifier env format-string)
+  (unless (or (not (get identifier "module"))
+              (== (get identifier "module")
+                  (get env "module" "name")))
+    (signal (format-to-string (or format-string
+                                  "External identifier: %=")
+                              identifier))))
+
+(define $hash-symbols [#key #rest])
+
+(define-function parameter-list-identifiers (parameter-list)
+  (map (method (parameter)
+         (if (instance? parameter <array>)
+             (first parameter)
+             parameter))
+       (choose (method (parameter)
+                 (not (member? parameter $hash-symbols)))
+               parameter-list)))
+
+;;;; core special forms
+
+(define $core-special-forms
+  (make-plain-object))
+
+(set! (get $core-special-forms "quote")
+      (method (_ form #rest superfluous)
+        ;; TODO [#B]: (unless (empty? superflous) (warn ...))
+        `(quote ,form)))
+
+(set! (get $core-special-forms "bind")
+      (method (env bindings #rest forms)
+        ;; NOTE: sequential check and bind of identifiers
+        (bind ((identifiers [])
+               (bindings*
+                (map (method (binding)
+                       (bind ((array? (instance? bindings <array>)))
+                         (destructuring-bind (identifier value #rest superflous)
+                             (if array?
+                                 binding
+                                 [binding])
+                           ;; TODO [#B]: (unless (empty? superflous) (warn ...))
+                           (check-type identifier <symbol>
+                                       "Non-symbol identifier in bind: %=")
+                           ;; check if identifier is local
+                           (check-identifier identifier env
+                                             "External identifier in bind: %=")
+                           ;; expand value (before binding identifier)
+                           (bind ((value* (macroexpand-all value env)))
+                             ;; bind identifier, save for unbind
+                             ;; after expanding forms
+                             (bind! identifier env)
+                             (push-last identifiers identifier)
+                             ;; result
+                             (if array?
+                                 `(,identifier ,value*)
+                                 identifier)))))
+                     bindings)))
+          ;; expand forms
+          (bind ((forms* (map (rcurry macroexpand-all env)
+                              forms)))
+            ;; unbind identifiers
+            (do (rcurry unbind! env)
+                identifiers)
+            `(bind (,@bindings*)
+               ,@forms*)))))
+
+(set! (get $core-special-forms "method")
+      (method (env parameter-list #rest forms)
+        ;; determine identifiers introduced through parameter list
+        (bind ((identifiers
+                (parameter-list-identifiers parameter-list)))
+          ;; TODO: check identifiers are symbols
+          ;; check if identifiers are local
+          (do (rcurry check-identifier env
+                      "External identifier in parameter list of method: %=")
+              identifiers)
+          ;; generate new parameter-list: expand keyword default values
+          ;; (before binding identifiers)
+          (bind ((parameter-list*
+                  (destructuring-bind (normal-parameters
+                                       rest-parameter
+                                       keyword-parameters)
+                      (destructure-parameter-list parameter-list)
+                    (concatenate normal-parameters
+                                 (if rest-parameter
+                                     `(#rest ,rest-parameter)
+                                     [])
+                                 (if keyword-parameters
+                                     `(#key
+                                       ,@(map (method (parameter)
+                                                (if (instance? parameter <array>)
+                                                    [(first parameter)
+                                                     (macroexpand-all
+                                                      (second parameter) env)]
+                                                    parameter))
+                                              keyword-parameters))
+                                     [])))))
+            ;; bind identifiers
+            (do (rcurry bind! env)
+                identifiers)
+            ;; expand forms
+            (bind ((forms* (map (rcurry macroexpand-all env)
+                                forms)))
+              ;; unbind identifiers
+              (do (rcurry unbind! env)
+                  identifiers)
+              ;; result
+              `(method ,parameter-list*
+                 ,@forms*))))))
+
+(set! (get $core-special-forms "set!")
+      ;; place new-value #rest arguments
+      ;; TODO: expansion of place correct ?
+      (curry expand-forms `set!))
+
+(set! (get $core-special-forms "define")
+      (method (env identifier initial-value #rest superfluous)
+        ;; TODO [#B]: (unless (empty? superflous) (warn ...))
+        (check-type identifier <symbol>
+                    "Non-symbol identifier in define: %=")
+        ;; check if identifier is local
+        (check-identifier identifier env
+                          "External identifier in define: %=")
+        ;; TODO [#A]: warn if identifier is imported
+        ;;            (accidental redefinition)
+        ;; bind identifier
+        (bind-globally! identifier env)
+        ;; result
+        (if initial-value
+            `(define ,identifier
+               ,(macroexpand-all initial-value env))
+            `(define ,identifier))))
+
+(set! (get $core-special-forms "if")
+      (method (env test consequent alternate #rest superfluous)
+        ;; TODO [#B]: (unless (empty? superflous) (warn ...))
+        `(if ,@(map (rcurry macroexpand-all env)
+                    [test consequent alternate]))))
+
+(set! (get $core-special-forms "begin")
+      (curry expand-forms `begin))
+
+
+(set! (get $core-special-forms "while")
+      ;; test #rest forms
+      (curry expand-forms `while))
+
+(set! (get $core-special-forms "handler-case")
+      (method (env protected-form #rest cases)
+        `(handler-case
+          ,(macroexpand-all protected-form env)
+          ,@(map (method (case)
+                   (check-type case <array>
+                               "Non-array case in handler-case: %=")
+                   (destructuring-bind (binding #rest forms) case
+                     (check-type binding <array>
+                                 "Non-array case-binding in handler-case: %=")
+                     (destructuring-bind (type #key condition) binding
+                       (when condition
+                         (check-type condition <symbol>
+                                     "Non-symbol condition variable in handler-case: %=")
+                         ;; check if identifier is local
+                         (check-identifier condition env
+                                           "External identifier in handler-case: %=")
+                         ;; bind condition
+                         (bind! condition env))
+                       ;; expand type and forms
+                       (bind ((type* (macroexpand-all type env))
+                              (forms* (map (rcurry macroexpand-all env)
+                                           forms)))
+                         (when condition
+                           ;; unbind condition
+                           (unbind! condition env))
+                         ;; result: new case
+                         `((,type* ,@(rest binding)) ,@forms*)))))
+                 cases))))
+
+;;;; internal special forms
+
+(define $internal-special-forms
+  (make-plain-object))
+
+(set! (get $internal-special-forms "%quote")
+      (method (_ form #rest superfluous)
+        ;; TODO [#B]: (unless (empty? superflous) (warn ...))
+        `(%quote ,form)))
+
+(set! (get $internal-special-forms "%bind")
+      (method (env binding form #rest superflous)
+        ;; TODO [#B]: (unless (empty? superflous) (warn ...))
+        (check-type binding <array>
+                    "Non-array binding in %%bind: %=")
+        (destructuring-bind (identifier value) binding
+          ;; TODO: check identifier is a symbol
+          ;; check if identifier is local
+          (check-identifier identifier env
+                            "External identifier in %%bind: %=")
+          ;; expand value (before binding identifier)
+          (bind ((value* (macroexpand-all value env)))
+            ;; bind identifier
+            (bind! identifier env)
+            ;; expand form
+            (bind ((form* (macroexpand-all form env)))
+              ;; unbind identifier
+              (unbind! identifier env)
+              ;; result
+              `(%bind (,identifier ,value*)
+                      ,form*))))))
+
+(set! (get $internal-special-forms "%method")
+      (method (env name parameters form #rest superfluous)
+        ;; TODO [#B]: (unless (empty? superflous) (warn ...))
+        (bind ((identifiers (cons name parameters)))
+          ;; check name is a symbol
+          (check-type name <symbol>
+                      "Non-symbol name in %%method: %=")
+          ;; check all parameters are symbols
+          (do (method (parameter)
+                (check-type parameter <symbol>
+                            "Non-symbol parameter in %%method: %="))
+              parameters)
+          ;; check if identifiers are local
+          (do (rcurry check-identifier env
+                      "External identifier in parameter list of %%method: %=")
+              identifiers)
+          ;; bind identifiers
+          (do (rcurry bind! env)
+              identifiers)
+          ;; expand form
+          (bind ((form* (macroexpand-all form env)))
+            ;; unbind identifiers
+            (do (rcurry unbind! env)
+                identifiers)
+            ;; result
+            `(%method ,name ,parameters
+                      ,form*)))))
+
+(set! (get $internal-special-forms "%set")
+      (method (env identifier value #rest superflous)
+        ;; TODO [#B]: (unless (empty? superflous) (warn ...))
+        (check-type identifier <symbol>
+                    "Non-symbol identifier in %%set: %=")
+        ;; TODO [#A]: check if identifier is local ?
+        `(%set ,identifier
+               ,(macroexpand-all value env))))
+
+(set! (get $internal-special-forms "%define")
+      (method (env identifier #rest superflous)
+        ;; TODO [#B]: (unless (empty? superflous) (warn ...))
+        (check-type identifier <symbol>
+                    "Non-symbol identifier in %%define: %=")
+        ;; bind identifier
+        (bind-globally! identifier env)
+        `(%define ,identifier)))
+
+(set! (get $internal-special-forms "%if")
+      (method (env test consequent alternate #rest superfluous)
+        ;; TODO [#B]: (unless (empty? superflous) (warn ...))
+        `(%if ,@(map (rcurry macroexpand-all env)
+                     [test consequent alternate]))))
+
+(set! (get $internal-special-forms "%begin")
+      ;; #rest forms
+      (curry expand-forms `%begin))
+
+(set! (get $internal-special-forms "%while")
+      (method (env test form #rest superfluous)
+        ;; TODO [#B]: (unless (empty? superflous) (warn ...))
+        `(%while ,@(map (rcurry macroexpand-all env)
+                        [test form]))))
+
+(set! (get $internal-special-forms "%try")
+      (method (env protected-form identifier handling-form #rest superfluous)
+        ;; TODO [#B]: (unless (empty? superflous) (warn ...))
+        (check-type identifier <symbol>
+                    "Non-symbol identifier in %%try: %=")
+        ;; check if identifier is local
+        (check-identifier identifier env
+                          "External identifier in %%try: %=")
+        ;; bind identifier
+        (bind! identifier env)
+        ;; expand handling form
+        (bind ((handling-form* (macroexpand-all handling-form env)))
+          ;; unbind identifier
+          (unbind! identifier env)
+          ;; result
+          `(%try ,(macroexpand-all protected-form env)
+                 ,identifier
+                 ,handling-form*))))
+
+(set! (get $internal-special-forms "%var")
+      (method (env identifier #rest superflous)
+        ;; TODO [#B]: (unless (empty? superflous) (warn ...))
+        (check-type identifier <symbol>
+                    "Non-symbol identifier in %%var: %=")
+        `(%var ,identifier)))
+
+(set! (get $internal-special-forms "%native-name")
+      (method (env name #rest superflous)
+        ;; TODO [#B]: (unless (empty? superflous) (warn ...))
+        (check-type name <string>
+                    "Non-string name in %%native-name: %=")
+        `(%native-name ,name)))
+
+(set! (get $internal-special-forms "%native-call")
+      (method (env operator #rest arguments)
+        (check-type operator <string>
+                    "Non-string operator in %%native-call: %=")
+        `(%native-call ,operator
+                       ,@(map (rcurry macroexpand-all env)
+                              arguments))))
+
+(set! (get $internal-special-forms "%infix")
+      (method (env operator #rest arguments)
+        ;; TODO [#B]: check operator is a string
+        `(%infix ,operator
+                 ,@(map (rcurry macroexpand-all env)
+                        arguments))))
+
+(set! (get $internal-special-forms "%native")
+      ;; #rest forms
+      (curry expand-forms `%native))
+
+(set! (get $internal-special-forms "%object")
+      (method (env #rest property/values)
+        `(%object ,@(reduce1 concatenate
+                             (map (method (property/value)
+                                    (destructuring-bind (property value)
+                                        property/value
+                                      (check-type property <string>
+                                                  "Non-string property in %%object: %=")
+                                      [property (macroexpand-all value env)]))
+                                  (partition 2 property/values))))))
+
+(set! (get $internal-special-forms "%array")
+      ;; #rest elements
+      (curry expand-forms `%array))
+
+(set! (get $internal-special-forms "%get-property")
+      ;; object #rest properties
+      (curry expand-forms `%get-property))
+
+
+
+;;;; all special forms
+
+(define $all-special-forms
+  (make-plain-object))
+
+(extend! $all-special-forms
+         $internal-special-forms)
+(extend! $all-special-forms
+         $core-special-forms)
