@@ -337,8 +337,8 @@
                         (identifier parameter-list #rest forms)
                         binding
                       `(set! ,identifier
-                             ,(named-method identifier parameter-list
-                                            `(begin ,@forms)))))
+                             (method ,parameter-list
+                               ,@forms))))
                   bindings)
            ,@forms)))
 
@@ -394,7 +394,7 @@
                 calls)))
 
 (define-function make-function-definer
-    (macro-name definer #key name? type/existing? record?)
+    (macro-name definer #key type/existing? record?)
   (method (env identifier parameter-list #rest forms)
     (destructuring-bind (setter? identifier)
         (if (setter-identifier? identifier)
@@ -409,20 +409,16 @@
         (signal (format-to-string "Empty parameter-list in %s: %="
                                   macro-name parameter-list)))
       (bind ((name (symbol-name identifier))
-             (method-definition
-              (named-method (if name?
-                                identifier
-                                (generate-symbol))
-                            parameter-list
-                            `(begin ,@forms))))
+             (definition `(method ,parameter-list
+                            ,@forms)))
         (when record?
           (set! (get env "module" "functions" name)
-                method-definition))
+                definition))
         ;; result
         `(define ,identifier
            (,definer
              (%native-name ,name)
-             ,method-definition
+             ,definition
              ,setter?
              ,@(if type/existing?
                    `(,(bind ((head (first parameter-list)))
@@ -434,8 +430,7 @@
                    [])))))))
 
 (for-each ((arguments [["define-function" `%make-function
-                        record?: #t
-                        name?: #t]
+                        record?: #t]
                        ["define-method" `%make-method
                         type/existing?: #t]]))
           ()
@@ -573,10 +568,7 @@
 
 (set! (get $internal-macros "define")
       (method (env identifier value)
-        `(begin
-          (%define ,identifier)
-          (%set ,identifier ,value))))
-
+        `(%define ,identifier ,(or value #f))))
 
 (set! (get $internal-macros "handler-case")
       (method  (_ protected-form #rest cases)

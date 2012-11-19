@@ -269,13 +269,15 @@
                ,(macroexpand-all value env))))
 
 (set! (get $internal-special-forms "%define")
-      (method (env identifier #rest superflous)
+      (method (env identifier value #rest superflous)
         ;; TODO [#B]: (unless (empty? superflous) (warn ...))
         (check-type identifier <symbol>
                     "Non-symbol identifier in %%define: %=")
-        ;; bind identifier
-        (bind-globally! identifier env)
-        `(%define ,identifier)))
+        (bind ((value* (macroexpand-all value env)))
+          ;; bind identifier
+          (bind-globally! identifier env)
+          ;; result
+          `(%define ,identifier ,value*))))
 
 (set! (get $internal-special-forms "%if")
       (method (env test consequent alternate #rest superfluous)
@@ -301,16 +303,17 @@
         ;; check if identifier is local
         (check-identifier identifier env
                           "External identifier in %%try: %=")
-        ;; bind identifier
-        (bind! identifier env)
-        ;; expand handling form
-        (bind ((handling-form* (macroexpand-all handling-form env)))
-          ;; unbind identifier
-          (unbind! identifier env)
-          ;; result
-          `(%try ,(macroexpand-all protected-form env)
-                 ,identifier
-                 ,handling-form*))))
+        (bind ((protected-form* (macroexpand-all protected-form env)))
+          ;; bind identifier
+          (bind! identifier env)
+          ;; expand handling form
+          (bind ((handling-form* (macroexpand-all handling-form env)))
+            ;; unbind identifier
+            (unbind! identifier env)
+            ;; result
+            `(%try ,protected-form*
+                   ,identifier
+                   ,handling-form*)))))
 
 (set! (get $internal-special-forms "%var")
       (method (env identifier #rest superflous)
@@ -327,17 +330,17 @@
         `(%native-name ,name)))
 
 (set! (get $internal-special-forms "%native-call")
-      (method (env operator #rest arguments)
-        (check-type operator <string>
-                    "Non-string operator in %%native-call: %=")
-        `(%native-call ,operator
+      (method (env operator-name #rest arguments)
+        (check-type operator-name <string>
+                    "Non-string operator-name in %%native-call: %=")
+        `(%native-call ,operator-name
                        ,@(map (rcurry macroexpand-all env)
                               arguments))))
 
 (set! (get $internal-special-forms "%infix")
-      (method (env operator #rest arguments)
-        ;; TODO [#B]: check operator is a string
-        `(%infix ,operator
+      (method (env operator-name #rest arguments)
+        ;; TODO [#B]: check operator-name is a string
+        `(%infix ,operator-name
                  ,@(map (rcurry macroexpand-all env)
                         arguments))))
 
@@ -346,15 +349,15 @@
       (curry expand-forms `%native))
 
 (set! (get $internal-special-forms "%object")
-      (method (env #rest property/values)
+      (method (env #rest property-name/values)
         `(%object ,@(reduce1 concatenate
-                             (map (method (property/value)
-                                    (destructuring-bind (property value)
-                                        property/value
-                                      (check-type property <string>
-                                                  "Non-string property in %%object: %=")
-                                      [property (macroexpand-all value env)]))
-                                  (partition 2 property/values))))))
+                             (map (method (property-name/value)
+                                    (destructuring-bind (property-name value)
+                                        property-name/value
+                                      (check-type property-name <string>
+                                                  "Non-string property-name in %%object: %=")
+                                      [property-name (macroexpand-all value env)]))
+                                  (partition 2 property-name/values))))))
 
 (set! (get $internal-special-forms "%array")
       ;; #rest elements
