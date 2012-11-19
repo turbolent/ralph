@@ -1,0 +1,135 @@
+(define-module ralph/compiler2/alpha
+  import: (ralph/format
+           ralph/compiler2/environment
+           ralph/compiler2/utilities)
+  export: (alpha-convert))
+
+;; "identifiers" => module name => symbol name => renaming+
+
+(define-function ensure-naming-structure (env module-name name)
+  ;; ensure renaming object for env
+  (unless (get env "identifiers" module-name)
+    (set! (get env "identifiers" module-name)
+          (make-object)))
+  ;; ensure renaming list for variable
+  (bind ((module-renamings (get env "identifiers" module-name)))
+    (unless (get module-renamings name)
+      (set! (get module-renamings name)
+            [])))
+  env)
+
+(define $special-symbols '(%all-arguments))
+
+(define-function rename-identifiers (identifiers env)
+  (map (method (identifier)
+         (if (member? identifier $special-symbols)
+             identifier
+             (destructuring-bind (name module-name)
+                 (destructure-symbol identifier)
+               (unless module-name
+                 (set! module-name
+                       (get env "module" "name")))
+               (bind ((identifier*
+                       (generate-symbol
+                        env (unless (get identifier "generated?")
+                              name))))
+                 (ensure-naming-structure env module-name name)
+                 (push (get env "identifiers" module-name name)
+                       identifier*)
+                 identifier*))))
+       identifiers))
+
+(define-function restore-identifiers (identifiers env)
+  (for-each ((identifier identifiers))
+            ()
+    (unless (member? identifier $special-symbols)
+      (destructuring-bind (name module-name)
+          (destructure-symbol identifier)
+        (unless module-name
+          (set! module-name (get env "module" "name")))
+        (pop (get env "identifiers" module-name name))))))
+
+(define-function find-identifier (identifier env)
+  (if (member? identifier $special-symbols)
+      identifier
+      (destructuring-bind (name module-name)
+          (destructure-symbol identifier)
+        (unless module-name
+          (set! module-name (get env "module" "name")))
+        (bind ((renamings (get env "identifiers"
+                               module-name name)))
+          (when (and renamings
+                     (not (empty? renamings)))
+            (first renamings))))))
+
+(define-function alpha-convert (exp env)
+  (select exp instance?
+    ((<array>)
+     (select (symbol-name (first exp)) ==
+       (("%quote" "%native-name") exp)
+       (("%bind")
+        (destructuring-bind (_ (identifier value) form) exp
+          ;; convert value, before renaming
+          (bind ((value* (alpha-convert value env)))
+            (destructuring-bind (identifier*)
+                (rename-identifiers [identifier] env)
+              (bind ((form* (alpha-convert form env)))
+                (restore-identifiers [identifier] env)
+                `(%bind (,identifier* ,value*)
+                   ,form*))))))
+       (("%method")
+        (destructuring-bind (_ name parameters form) exp
+          (bind ((identifiers (cons name parameters)))
+            (destructuring-bind (name* #rest parameters*)
+                (rename-identifiers identifiers env)
+              (bind ((form* (alpha-convert form env)))
+                (restore-identifiers identifiers env)
+                `(%method ,name* ,parameters*
+                   ,form*))))))
+       ;; skip
+       (("%set" "%if" "%begin" "%while" "%native"
+         "%native-call" "%infix"
+         "%object" "%array" "%get-property"
+         "%minus" "%plus" "%times" "%divide")
+        (cons (first exp)
+              (map (rcurry alpha-convert env)
+                   (rest exp))))
+       (("%define")
+        (destructuring-bind (_ identifier value) exp
+          ;; convert value, before renaming
+          (bind ((value* (alpha-convert value env))
+                 (name (symbol-name identifier)))
+            (bind ((identifier*
+                    ;; already renamed ahead of definition?
+                    ;; (see <symbol>)
+                    (or (find-identifier identifier env)
+                        ;; NOTE: not reverted, modifies env!
+                        (first (rename-identifiers
+                                [identifier] env)))))
+              `(%define ,identifier* ,value*)))))
+       (("%try")
+        (destructuring-bind (_ protected-form identifier handling-form) exp
+          ;; convert protected-form, before renaming
+          (bind ((protected-form* (alpha-convert protected-form env)))
+            (destructuring-bind (identifier*)
+                (rename-identifiers [identifier] env)
+              (bind ((handling-form* (alpha-convert handling-form env)))
+                (restore-identifiers [identifier] env)
+                `(%try ,protected-form*
+                       ,identifier*
+                       ,handling-form*))))))
+       (else:
+        (map (rcurry alpha-convert env)
+             exp))))
+    ((<symbol>)
+     (or (find-identifier exp env)
+         (bind ((symbol (resolve-symbol exp env)))
+           (if (== (get symbol "module")
+                   (get env "module" "name"))
+               ;; local, free variable: rename ahead of definition
+               ;; (see handling in %define)
+               (first (rename-identifiers [symbol] env))
+               (begin
+                ;; TODO [#A]: prepend external definition
+                symbol)))))
+    (else: exp)))
