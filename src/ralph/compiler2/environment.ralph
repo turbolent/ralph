@@ -5,9 +5,9 @@
            find-symbol-macro
            find-special-form
            special-operator?
-           resolve-symbol
            bind-globally! globally-bound?
-           bind! bound? unbind!))
+           bind! bound? unbind!
+           resolve-symbol))
 
 ;;;; <environment>
 ;; * one compiler environment per module
@@ -35,30 +35,18 @@
     (%get-property env namespace
                    (symbol-name identifier))))
 
-(define find-macro (curry find-expander "macros" #t))
-(define find-symbol-macro (curry find-expander "symbol-macros" #t))
-(define find-special-form (curry find-expander "special-forms" #f))
+(define find-macro
+  (curry find-expander "macros" #t))
+
+(define find-symbol-macro
+  (curry find-expander "symbol-macros" #t))
+
+(define find-special-form
+  (curry find-expander "special-forms" #f))
 
 (define-function special-operator? (identifier env)
   (has? (get env "special-forms")
         (symbol-name identifier)))
-
-;;;; symbol resolution
-;; * only global bindings are taken into account
-
-(define-function resolve-symbol (symbol env)
-  (destructuring-bind (name module-name)
-      (destructure-symbol symbol)
-    (if module-name
-        symbol
-        (if-bind (module/import-name
-                  (unless (globally-bound? symbol env)
-                    (find-module/import-name
-                     name (get env "module"))))
-          (destructuring-bind (module import-name)
-              module/import-name
-            (%%symbol import-name (get module "name")))
-          (%%symbol name (get env "module" "name"))))))
 
 
 ;;;; binding
@@ -85,3 +73,19 @@
 (define-function unbind! (identifier env)
   (dec! (get env "binding-count"
              (symbol-name identifier))))
+
+;;;; symbol resolution
+
+(define-function resolve-symbol (symbol env #key import-guard)
+  (if (get symbol "module")
+      symbol
+      (bind ((name (symbol-name symbol)))
+        (if-bind (module/import-name
+                  (when (or (not import-guard)
+                            (import-guard symbol env))
+                    (find-module/import-name
+                     name (get env "module"))))
+          (destructuring-bind (module import-name)
+              module/import-name
+            (%%symbol import-name (get module "name")))
+          (%%symbol name (get env "module" "name"))))))

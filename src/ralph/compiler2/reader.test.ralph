@@ -2,33 +2,36 @@
   import: (ralph/test
            ralph/stream
            ralph/compiler2/environment
+           ralph/compiler2/module
            ralph/compiler2/reader))
 
-(bind ((stream (make <string-stream>
-                     string: "((a (key: (b #t [1 2] \"c\" #f d #key) 2)) () #rest)")))
-  (check-equal "expressions"
+(define *environment* (make <environment>
+                            module: (make <module> name: "ralph/compiler2/reader.test")))
 
-               [[(symbol "a")
-                 [key: [(symbol "b") #t [(symbol "%array" "ralph/core") 1 2]
-                        "c" #f (symbol "d") #key]
-                       2]]
-                [] #rest]
-               (read stream)))
+(define-function read-form (source)
+  (read (make <string-stream>
+              string: source)
+        *environment*))
 
-(bind ((stream (make <string-stream> string: "(((a 1)))")))
-  (check-equal "parens"
-               [[[(symbol "a") 1]]]
-               (read stream)))
+(check-equal "expressions"
+             [[(symbol "a")
+               [key: [(symbol "b") #t [(symbol "%array" "ralph/core") 1 2]
+                      "c" #f (symbol "d") #key]
+                     2]]
+              [] #rest]
+             (read-form "((a (key: (b #t [1 2] \"c\" #f d #key) 2)) () #rest)"))
 
-(bind ((stream (make <string-stream> string: " #rest  ")))
-  (check-equal "special"
-               #rest
-               (read stream)))
+(check-equal "parens"
+             [[[(symbol "a") 1]]]
+             (read-form "(((a 1)))"))
 
-(bind ((stream (make <string-stream> string: "() ")))
-  (check-equal "one list"
-               []
-               (read stream)))
+(check-equal "special"
+             #rest
+             (read-form " #rest  "))
+
+(check-equal "one list"
+             []
+             (read-form "() "))
 
 (bind ((stream (make <string-stream> string: "")))
   (check-equal "empty, no eof-error, default eof-value"
@@ -45,37 +48,19 @@
                    (method ()
                      (read stream #f eof-value: 42))))
 
+(check-equal "quoted"
+             "quoted: \"Q\" "
+             (read-form "\"quoted: \\\"Q\\\" \""))
 
-(bind ((stream (make <string-stream>
-                     string: "\"quoted: \\\"Q\\\" \"")))
-  (check-equal "quoted"
-               "quoted: \"Q\" "
-               (read stream)))
+(check-condition "missing end of string"
+                 <string>
+                 (method ()
+                   (read-form "\"bla  ")))
 
-(bind ((stream (make <string-stream> string: "\"bla  ")))
-  (check-condition "missing end of string"
-                   <string>
-                   (method ()
-                     (read stream))))
+(check-equal "comments"
+             [(symbol "this") (symbol "isnt") (symbol "a") (symbol "comment")]
+             (read-form "(this; asdasd\n isnt ; asdasd \n; asdasd\n a comment)"))
 
-
-(bind ((stream (make <string-stream>
-                     string: "(this; asdasd\n isnt ; asdasd \n; asdasd\n a comment)")))
-  (check-equal "comments"
-               [(symbol "this") (symbol "isnt") (symbol "a") (symbol "comment")]
-               (read stream)))
-
-(bind ((env (make <environment>))
-       (stream (make <string-stream> string: "(a `(x ,(y z)) `(,b))")))
-  (check-equal "backquote and comma"
-               [(symbol "a")
-                [(symbol "%array" "ralph/core")
-                 [(symbol "quote" "ralph/core")
-                  (symbol "x")]
-                 [(symbol "y") (symbol "z")]]
-                [(symbol "%array" "ralph/core")
-                 (symbol "b")]]
-               (read stream env)))
 
 
 (bind ((stream (make <string-stream> string: "(a (1)))")))
@@ -85,8 +70,49 @@
                    (method ()
                      (read stream))))
 
-(bind ((stream (make <string-stream> string: "(a (1")))
-  (check-condition "missing closing"
-                   <string>
-                   (method ()
-                     (read stream))))
+(check-condition "missing closing"
+                 <string>
+                 (method ()
+                   (read-form "(a (1")))
+
+(check-equal "syntax quote"
+             [(symbol "a")
+              [(symbol "%array" "ralph/core")
+               [(symbol "quote" "ralph/core")
+                (symbol "x" "ralph/compiler2/reader.test")]
+               [(symbol "y") (symbol "z")]]
+              [(symbol "%array" "ralph/core")
+               (symbol "b")]]
+             (read-form "(a `(x ,(y z)) `(,b))"))
+
+(bind ((form (read-form "(test `(foo `(bar)))")))
+  (check-equal "nested syntax-quote"
+               (read-form
+                "(test (ralph/core::%array
+                        (ralph/core::quote ralph/compiler2/reader.test::foo)
+                        (ralph/core::%array
+                         (ralph/core::quote ralph/core::%array)
+                         (ralph/core::%array
+                          (ralph/core::quote ralph/core::quote)
+                          (ralph/core::quote ralph/compiler2/reader.test::bar)))))")
+               form))
+
+(bind ((form (read-form "(test `(is ,cool foo::bar ,(+ 2 3) ,@[4 5 6] `(nested)))")))
+  (check-equal "complex syntax-quote"
+               (read-form
+                "(test (ralph/core::%concat
+                        (ralph/core::%concat
+                         (ralph/core::%array
+                          (ralph/core::quote ralph/compiler2/reader.test::is)
+                          cool
+                          (ralph/core::quote foo::bar)
+                          (+ 2 3))
+                         (ralph/core::%array 4 5 6))
+                        (ralph/core::%array
+                         (ralph/core::%array
+                          (ralph/core::quote ralph/core::%array)
+                          (ralph/core::%array
+                           (ralph/core::quote ralph/core::quote)
+                           (ralph/core::quote
+                            ralph/compiler2/reader.test::nested))))))")
+               form))

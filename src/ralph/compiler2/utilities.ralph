@@ -6,7 +6,8 @@
 
 (define-function expression? (form)
   (and (instance? form <array>)
-       (instance? (first form) <symbol>)))
+       (instance? (first form)
+                  <symbol>)))
 
 (define-function check-type (value type format-string)
   (unless (instance? value type)

@@ -1,24 +1,34 @@
 (define-module ralph/compiler2/syntax-quote
-  import: (ralph/compiler2/environment
+  import: (ralph/compiler2/module
+           ralph/compiler2/environment
            ralph/compiler2/utilities)
   export: (syntax-quote-form))
 
+;;;; symnol resolution:
+;; * global binding have precedence over imports
+
+(define resolve
+  (rcurry resolve-symbol
+          import-guard: (complement globally-bound?)))
+
+;;;; utilities
 
 (define-function unquoted? (form env)
   (and (expression? form)
-       (== (resolve-symbol (first form) env)
+       (== (resolve (first form) env)
            `unquote)))
 
 (define-function unquote-spliced? (form env)
   (and (expression? form)
-       (== (resolve-symbol (first form) env)
+       (== (resolve (first form) env)
            `unquote-splicing)))
 
+;;;; syntax-quoting
 
 (define-function syntax-quote-symbol (symbol env)
   `(quote ,(if (special-operator? symbol env)
                symbol
-               (resolve-symbol symbol env))))
+               (resolve symbol env))))
 
 ; NOTE: working, but unoptimized version
 ; (define-function syntax-quote-array (array env)
@@ -55,6 +65,7 @@
                              `(%concat ,result ,part))))))
                 part array))))
 
+;; TODO [#B]: turn into methods ?
 
 (define-function syntax-quote-form (form env)
   (select form instance?

@@ -1,0 +1,528 @@
+(define-module ralph/compiler2/special-forms.test
+  import: (ralph/test
+           ralph/compiler2/module
+           ralph/compiler2/environment
+           ralph/compiler2/macroexpansion
+           ralph/compiler2/macros
+           ralph/compiler2/special-forms))
+
+(define-function make-environment ()
+  (bind ((module (make <module> name: "ralph/compiler2/special-forms.test")))
+    ;; (import-module module "ralph/core")
+
+    (bind ((symbol-macros
+            (make-plain-object)))
+      (set! (get symbol-macros "foo")
+            (method (_)
+              `(when 23 42)))
+      (chain-object symbol-macros
+                    $core-symbol-macros)
+      (make <environment>
+            module: module
+            special-forms: $all-special-forms
+            macros: $core-macros
+            symbol-macros: symbol-macros))))
+
+(define *environment*
+  (make-environment))
+
+;;;; core special forms
+
+;; quote
+
+(check-equal "special form: quote (array)"
+             `(,'+ 1 (quote (,'when 1 2)) 2)
+             (macroexpand-all
+              '(+ 1 (quote (when 1 2) ignored) 2)
+              *environment*))
+
+(check-equal "special form: quote (symbol)"
+             `(,'+ 1 (quote ,'foo) 2)
+             (macroexpand-all
+              '(+ 1 (quote foo) 2)
+              *environment*))
+
+;; bind
+
+(check-equal "special form: bind"
+             `(,'+ 1 (bind ((,'a (if 1 (begin 2) #f))
+                            (,'foo (if 23 (begin 42) #f))
+                            (,'when 3)
+                            (,'c (,'when 5 6))
+                            (,'bind ((,'x (,'when 7 8)))))
+
+                       (bind ((,'y (,'when 23 42)))
+                         (,'when #f ,'y))))
+             (macroexpand-all
+              '(+ 1 (bind ((a (when 1 2))
+                           (foo foo)
+                           (when 3 ignored)
+                           (c (when 5 6))
+                           (bind ((x (when 7 8))) ignored))
+                      (bind ((y (when 23 42)))
+                        (when #f y))))
+              *environment*))
+
+
+(check-condition "special form: bind (use of external identifier)"
+                 <error>
+                 (method ()
+                   (macroexpand-all `(bind ((+ 1))
+                                       +)
+                                    *environment*)))
+;; method
+
+(check-equal "special form: method"
+             `(if ,'a (begin (method (,'when (,'x ,'<y>)
+                                       #rest ,'foo
+                                       #key ,'key1 (,'when (if 1 (begin 2) #f)))
+                               (,'when ,'b ,'c)))
+                  #f)
+             (macroexpand-all
+              '(when a (method (when (x <y>) #rest foo #key key1 (when (when 1 2)))
+                         (when b c)))
+              *environment*))
+
+(check-condition "special form: method (use of external identifier)"
+                 <error>
+                 (method ()
+                   (macroexpand-all `(method (a +) 1)
+                                    *environment*)))
+
+;; set!
+
+(check-equal "special form: set!"
+             `(,'+ 1 (set! (if 1 (begin 2) #f)
+                           (if 3 (begin 4) #f)
+                           (if 5 (begin 6) #f)))
+             (macroexpand-all
+              '(+ 1 (set! (when 1 2) (when 3 4) (when 5 6)))
+              *environment*))
+
+;; define
+
+(bind ((env (make-environment)))
+  (check-equal "special form: define"
+               `(,'+ 1
+                     (define ,'x)
+                     (define ,'a
+                       (if 1 (begin 2) #f))
+                     (define ,'when)
+                     (define ,'define)
+                     (define ,'b (,'when 3 4)))
+               (macroexpand-all
+                '(+ 1
+                    (define x)
+                    (define a (when 1 2))
+                    (define when)
+                    (define define)
+                    (define b (when 3 4)))
+                env))
+
+  (check-condition "special form: method (use of external identifier)"
+                   <error>
+                   (method ()
+                     (macroexpand-all `(define + 1)
+                                      env)))
+
+  (check-condition "special form: method (non-symbol identifier)"
+                   <error>
+                   (method ()
+                     (macroexpand-all `(define (when 1 2) 3)
+                                      env))))
+
+;; if
+
+(check-equal "special form: if"
+             `(,'+ 1 (if (if 1 (begin 2) #f)
+                         (if 3 (begin 4) #f)
+                         (if 5 (begin 6) #f)))
+             (macroexpand-all
+              '(+ 1 (if (when 1 2)
+                        (when 3 4)
+                        (when 5 6)
+                        ignored))
+              *environment*))
+
+;; begin
+
+(check-equal "special form: begin"
+             `(,'+ 1 (begin (if 1 (begin 2) #f)
+                            (if 3 (begin 4) #f)
+                            (if 5 (begin 6) #f)
+                            ,'not-ignored))
+             (macroexpand-all
+              '(+ 1 (begin (when 1 2)
+                           (when 3 4)
+                           (when 5 6)
+                           not-ignored))
+              *environment*))
+
+;; while
+
+(check-equal "special form: while"
+             `(,'+ 1 (while (if 1 (begin 2) #f)
+                       (if 3 (begin 4) #f)
+                       (if 5 (begin 6) #f)
+                       ,'not-ignored))
+             (macroexpand-all
+              '(+ 1 (while (when 1 2)
+                      (when 3 4)
+                      (when 5 6)
+                      not-ignored))
+              *environment*))
+
+;; handler-case
+
+(check-equal "special form: handler-case (protected form is expanded)"
+             `(,'+ 1 (handler-case
+                      (begin
+                       (if 1 (begin 2) #f)
+                       3)))
+             (macroexpand-all
+              '(+ 1 (handler-case
+                     (begin
+                      (when 1 2)
+                      3)))
+              *environment*))
+
+(check-equal "special form: handler-case (case without identifier)"
+             `(,'+ 1 (handler-case 1
+                      ((,'<error>) (if 2 (begin 3) #f))))
+             (macroexpand-all
+              '(+ 1 (handler-case 1
+                     ((<error>) (when 2 3))))
+              *environment*))
+
+(check-equal "special form: handler-case (case with identifier)"
+             `(,'+ 1 (handler-case 1
+                      ((,'<error> condition: ,'when)
+                       (,'when 2 3))))
+             (macroexpand-all
+              '(+ 1 (handler-case 1
+                     ((<error> condition: when)
+                      (when 2 3))))
+              *environment*))
+
+(check-condition "special form: handler-case (use of external identifier for condition variable)"
+                 <error>
+                 (method ()
+                   (macroexpand-all `(handler-case 1
+                                      ((<error> condition: +)
+                                       (+ 1 2)))
+                                    *environment*)))
+
+(check-condition "special form: handler-case (case identifier should be a symbol)"
+                 <error>
+                 (method ()
+                   (macroexpand-all
+                    '(+ 1 (handler-case 1
+                           ((<error> condition: (when 1 2))
+                            (when 3 4))))
+                    *environment*)))
+
+
+(check-no-error "special form: handler-case (case is an array)"
+                (method ()
+                  (macroexpand-all
+                   '(+ 1 (handler-case 1
+                          ((<error>) 2)))
+                   *environment*)))
+
+(check-condition "special form: handler-case (case should be array)"
+                 <error>
+                 (method ()
+                   (macroexpand-all
+                    '(+ 1 (handler-case 1
+                           foo))
+                    *environment*)))
+
+(check-no-error "special form: handler-case (case binding is an array)"
+                (method ()
+                  (macroexpand-all
+                   '(+ 1 (handler-case 1
+                          ((<error>) 2)))
+                   *environment*)))
+
+(check-condition "special form: handler-case (case binding should be array)"
+                 <error>
+                 (method ()
+                   (macroexpand-all
+                    '(+ 1 (handler-case 1
+                           (foo 2)))
+                    *environment*)))
+
+(check-equal "special form: handler-case (case binding is not expanded)"
+             `(,'+ 1 (handler-case 1
+                      ((,'when 1 2)
+                       (if 3 (begin 4) #f))))
+             (macroexpand-all
+              '(+ 1 (handler-case 1
+                     ((when 1 2)
+                      (when 3 4))))
+              *environment*))
+
+
+;;;; internal special forms
+
+;; %quote
+
+(check-equal "special form: %quote"
+             `(,'+ 1 (%quote (,'when 1 2)) 2)
+             (macroexpand-all
+              '(+ 1 (%quote (when 1 2) 'ignored) 2)
+              *environment*))
+
+;; %bind
+
+(check-equal "special form: %bind"
+             `(,'+ 1 (%bind (,'a (if 1 (begin 2) #f))
+                       (%bind (,'when 3)
+                         (%bind (,'c (,'when 5 6))
+                           (%bind (,'%bind (,'x (,'when 7 8)))
+                             (%bind (,'y (,'when 23 42))
+                               (,'when #f ,'y)))))))
+             (macroexpand-all
+              '(+ 1 (%bind (a (when 1 2))
+                      (%bind (when 3 'ignored)
+                        (%bind (c (when 5 6))
+                          (%bind (%bind (x (when 7 8)) 'ignored)
+                            (%bind (y (when 23 42))
+                              (when #f y)))))))
+              *environment*))
+
+(check-condition "special form: %bind (use of external identifier)"
+                 <error>
+                 (method ()
+                   (macroexpand-all `(%bind (+ 1) +)
+                                    *environment*)))
+
+
+;; %method
+
+(check-equal "special form: %method"
+             `(if ,'a (begin (%method ,'test (,'when ,'x)
+                               (,'when ,'b ,'c)))
+                  #f)
+             (macroexpand-all
+              '(when a (%method test (when x)
+                         (when b c)))
+              *environment*))
+
+
+(check-condition "special form: %method (use of external identifier)"
+                 <error>
+                 (method ()
+                   (macroexpand-all `(%method foo (a +) 1)
+                                    *environment*)))
+
+(check-condition "special form: %method (name should be symbol)"
+                 <error>
+                 (method ()
+                   (macroexpand-all `(%method (when x y) (a b) 1)
+                                    *environment*)))
+
+(check-condition "special form: %method (parameters should be symbol)"
+                 <error>
+                 (method ()
+                   (macroexpand-all `(%method foo ((a <object>) b) 1)
+                                    *environment*)))
+
+;; %set
+
+(check-equal "special form: %set"
+             `(,'+ 1 (%set ,'x
+                           (if 3 (begin 4) #f)))
+             (macroexpand-all
+              '(+ 1 (%set x
+                          (when 3 4)
+                          ignored))
+              *environment*))
+
+(check-condition "special form: %set (identifier shoud be a symbol)"
+                 <error>
+                 (method ()
+                   (macroexpand-all
+                    '(+ 1 (%set (when 3 4)
+                                (when 3 4)))
+                    *environment*)))
+
+;; %if
+
+(check-equal "special form: %if"
+             `(,'+ 1 (%if (if 1 (begin 2) #f)
+                          (if 3 (begin 4) #f)
+                          (if 5 (begin 6) #f)))
+             (macroexpand-all
+              '(+ 1 (%if (when 1 2)
+                         (when 3 4)
+                         (when 5 6)
+                         ignored))
+              *environment*))
+
+;; %while
+
+(check-equal "special form: %while"
+             `(,'+ 1 (%while (if 1 (begin 2) #f)
+                             (if 3 (begin 4) #f)))
+             (macroexpand-all
+              '(+ 1 (%while (when 1 2)
+                            (when 3 4)
+                            ignored))
+              *environment*))
+
+;; %try
+
+(check-equal "special form: %try"
+             `(,'+ 1 (%try (if 1 (begin 2) #f)
+                           ,'c
+                           (if 3 (begin 4) #f)))
+             (macroexpand-all
+              '(+ 1 (%try (when 1 2)
+                          c
+                          (when 3 4)))
+              *environment*))
+
+(check-condition "special form: %try (identifier shoud be a symbol)"
+                 <error>
+                 (method ()
+                   (macroexpand-all
+                    '(+ 1 (%try (when 1 2)
+                                (when 3 4)
+                                (when 5 6)))
+                    *environment*)))
+
+(check-equal "special form: %try (identifier is bound in handler form)"
+             `(,'+ 1 (%try (if 1 (begin 2) #f)
+                           ,'when
+                           (,'when 3 4)))
+             (macroexpand-all
+              '(+ 1 (%try (when 1 2)
+                          when
+                          (when 3 4)))
+              *environment*))
+
+;; %define
+
+(bind ((env (make-environment)))
+  (check-equal "special form: %define"
+               `(,'+ 1 (%define ,'foo 3) 2)
+               (macroexpand-all
+                '(+ 1 (%define foo 3) 2)
+                env)))
+
+(bind ((env (make-environment)))
+  (check-equal "special form: %define (with value)"
+               `(,'+ 1 (%define ,'foo (if (if 23 (begin 42) #f)
+                                          (begin 3)
+                                          #f)))
+               (macroexpand-all
+                '(+ 1 (%define foo (when foo 3)))
+                env)))
+
+(check-condition "special form: %define (identifier shoud be a symbol)"
+                 <error>
+                 (method ()
+                   (macroexpand-all
+                    '(+ 1 (%define (when 1 2)))
+                    *environment*)))
+
+
+;; %var
+
+(check-equal "special form: %var"
+             `(,'+ 1 (%var ,'foo) 2)
+             (macroexpand-all
+              '(+ 1 (%var foo ignored) 2)
+              *environment*))
+
+(check-condition "special form: %var (identifier shoud be a symbol)"
+                 <error>
+                 (method ()
+                   (macroexpand-all
+                    '(+ 1 (%var (when 1 2)))
+                    *environment*)))
+
+;; %native-name
+
+(check-equal "special form: %native-name"
+             `(,'+ 1 (%native-name "<foo>") 2)
+             (macroexpand-all
+              '(+ 1 (%native-name "<foo>" ignored) 2)
+              *environment*))
+
+(check-condition "special form: %native-name (identifier shoud be a symbol)"
+                 <error>
+                 (method ()
+                   (macroexpand-all
+                    '(+ 1 (%native-name (when 1 2)))
+                    *environment*)))
+
+;; %native-call
+
+(check-equal "special form: %native-call"
+             `(,'+ 1 (%native-call "return" (if 1 (begin 2) #f)) 3)
+             (macroexpand-all
+              '(+ 1 (%native-call "return" (when 1 2)) 3)
+              *environment*))
+
+(check-condition "special form: %native-call (operator shoud be a string)"
+                 <error>
+                 (method ()
+                   (macroexpand-all
+                    '(+ 1 (%native-call foo 1))
+                    *environment*)))
+
+;; %native
+
+(check-equal "special form: %native"
+             `(,'+ 1 (%native (if 1 (begin 2) #f)
+                              "test"
+                              ,'bar))
+             (macroexpand-all
+              '(+ 1 (%native (when 1 2)
+                             "test"
+                             bar))
+              *environment*))
+
+
+;; %object
+
+(check-equal "special form: %object"
+             `(,'+ 1 (%object "a" (if 1 (begin 2) #f)
+                              "b" (if 23 (begin 42) #f)))
+             (macroexpand-all
+              '(+ 1 (%object "a" (when 1 2)
+                             "b" foo))
+              *environment*))
+
+(check-condition "special form: %object (property shoud be a string)"
+                 <error>
+                 (method ()
+                   (macroexpand-all
+                    '(+ 1 (%object foo (when 1 2)))
+                    *environment*)))
+
+;; %array
+
+(check-equal "special form: %array"
+             `(,'+ 1 (%array (if 1 (begin 2) #f)
+                             "test"
+                             ,'bar))
+             (macroexpand-all
+              '(+ 1 (%array (when 1 2)
+                            "test"
+                            bar))
+              *environment*))
+
+;; %get-property
+
+(check-equal "special form: %array"
+             `(,'+ 1 (%get-property (if 1 (begin 2) #f)
+                                    "test"
+                                    ,'bar))
+             (macroexpand-all
+              '(+ 1 (%get-property (when 1 2)
+                                   "test"
+                                   bar))
+              *environment*))
