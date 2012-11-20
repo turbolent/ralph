@@ -512,11 +512,21 @@
 (define $internal-macros
   (make-plain-object))
 
+
+(define-function transform-quoted (form)
+  (select form instance?
+    ((<array>)
+     `(%array
+       ,@(map transform-quoted form)))
+    ((<symbol>)
+     `(%quote ,form))
+    (else: form)))
+
 (set! (get $internal-macros "quote")
       (method (_ form #rest superflous)
         ;; TODO [#B]: (unless (empty? superflous) (warn ...))
         ;;            NOTE: also already checked by if
-        `(%quote ,form)))
+        (transform-quoted form)))
 
 (set! (get $internal-macros "begin")
       (method (_ #rest forms)

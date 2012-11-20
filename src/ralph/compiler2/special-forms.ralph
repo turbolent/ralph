@@ -205,9 +205,11 @@
   (make-plain-object))
 
 (set! (get $internal-special-forms "%quote")
-      (method (_ form #rest superfluous)
+      (method (_ symbol #rest superfluous)
         ;; TODO [#B]: (unless (empty? superflous) (warn ...))
-        `(%quote ,form)))
+        (check-type symbol <symbol>
+                    "Non-symbol in %quote: %=")
+        `(%quote ,symbol)))
 
 (set! (get $internal-special-forms "%bind")
       (method (env binding form #rest superflous)
