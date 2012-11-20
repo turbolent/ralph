@@ -124,29 +124,20 @@
     (else:
      (description exp))))
 
-(define-function transform-quoted (form)
-  (select form instance?
-   ((<array>)
-    `(%array ,@(map transform-quoted form)))
-   ((<symbol>)
-    (destructuring-bind (name module-name)
-        (destructure-symbol form)
-      ;; TODO [#A]: use identifier if lifted
-      `(%native-call "$S" ,name
-                     ,@(if module-name
-                           [module-name]
-                           []))))
-   (else: form)))
-
 ;; NOTE: %bind already transformed to %var
 
 (define-function compile-js-exp (exp env)
   (bind ((name (symbol-name (first exp))))
     (select name ==
       (("%quote")
-       (compile-js
-        (transform-quoted (second exp))
-        env))
+       (destructuring-bind (name module-name)
+           (destructure-symbol (second exp))
+         (compile-js-exp
+          `(%native-call "$S" ,name
+                         ,@(if module-name
+                               [module-name]
+                               []))
+          env)))
       (("%method")
        (destructuring-bind (_ name arguments body) exp
          (bind ((previous-method (get env "current-method")))
