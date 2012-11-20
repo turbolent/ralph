@@ -1,6 +1,5 @@
 (define-module ralph/compiler2/alpha
-  import: (ralph/format
-           ralph/compiler2/environment
+  import: (ralph/compiler2/environment
            ralph/compiler2/utilities)
   export: (alpha-convert-form))
 
@@ -99,8 +98,7 @@
        ;; skip
        (("%set" "%if" "%begin" "%while" "%native"
          "%native-call" "%infix"
-         "%object" "%array" "%get-property"
-         "%minus" "%plus" "%times" "%divide")
+         "%object" "%array" "%get-property")
         (destructuring-bind (op #rest arguments) exp
           (alpha-convert*
            arguments env
