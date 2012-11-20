@@ -2,7 +2,7 @@
   import: (ralph/format
            ralph/compiler2/environment
            ralph/compiler2/utilities)
-  export: (alpha-convert))
+  export: (alpha-convert-form))
 
 ;; "identifiers" => module name => symbol name => renaming+
 
@@ -62,74 +62,113 @@
                      (not (empty? renamings)))
             (first renamings))))))
 
-(define-function alpha-convert (exp env)
+(define-function alpha-convert-form (exp env)
+  (alpha-convert exp env identity))
+
+(define-function alpha-convert (exp env k)
   (select exp instance?
     ((<array>)
      (select (symbol-name (first exp)) ==
-       (("%quote" "%native-name") exp)
+       (("%quote" "%native-name")
+        (k exp env))
        (("%bind")
         (destructuring-bind (_ (identifier value) form) exp
           ;; convert value, before renaming
-          (bind ((value* (alpha-convert value env)))
-            (destructuring-bind (identifier*)
-                (rename-identifiers [identifier] env)
-              (bind ((form* (alpha-convert form env)))
-                (restore-identifiers [identifier] env)
-                `(%bind (,identifier* ,value*)
-                   ,form*))))))
+          (alpha-convert
+           value env
+           (method (value* env)
+             (destructuring-bind (identifier*)
+                 (rename-identifiers [identifier] env)
+               (alpha-convert
+                form env
+                (method (form* env)
+                  (restore-identifiers [identifier] env)
+                  (k `(%bind (,identifier* ,value*)
+                        ,form*)
+                     env))))))))
        (("%method")
         (destructuring-bind (_ name parameters form) exp
           (bind ((identifiers (cons name parameters)))
             (destructuring-bind (name* #rest parameters*)
                 (rename-identifiers identifiers env)
-              (bind ((form* (alpha-convert form env)))
-                (restore-identifiers identifiers env)
-                `(%method ,name* ,parameters*
-                   ,form*))))))
+              (alpha-convert
+               form env
+               (method (form* env)
+                 (restore-identifiers identifiers env)
+                 (k `(%method ,name* ,parameters*
+                       ,form*)
+                    env)))))))
        ;; skip
        (("%set" "%if" "%begin" "%while" "%native"
          "%native-call" "%infix"
          "%object" "%array" "%get-property"
          "%minus" "%plus" "%times" "%divide")
-        (cons (first exp)
-              (map (rcurry alpha-convert env)
-                   (rest exp))))
+        (destructuring-bind (op #rest arguments) exp
+          (alpha-convert*
+           arguments env
+           (method (arguments* env)
+             (k (cons op arguments*)
+                env)))))
        (("%define")
         (destructuring-bind (_ identifier value) exp
           ;; convert value, before renaming
-          (bind ((value* (alpha-convert value env))
-                 (name (symbol-name identifier)))
-            (bind ((identifier*
-                    ;; already renamed ahead of definition?
-                    ;; (see <symbol>)
-                    (or (find-identifier identifier env)
-                        ;; NOTE: not reverted, modifies env!
-                        (first (rename-identifiers
-                                [identifier] env)))))
-              `(%define ,identifier* ,value*)))))
+          (alpha-convert
+           value env
+           (method (value* env)
+             (bind ((identifier*
+                     ;; already renamed ahead of definition?
+                     ;; (see <symbol>)
+                     (or (find-identifier identifier env)
+                         ;; NOTE: not reverted, modifies env!
+                         (first (rename-identifiers
+                                 [identifier] env)))))
+               (k `(%define ,identifier* ,value*)
+                  env))))))
        (("%try")
         (destructuring-bind (_ protected-form identifier handling-form) exp
           ;; convert protected-form, before renaming
-          (bind ((protected-form* (alpha-convert protected-form env)))
-            (destructuring-bind (identifier*)
-                (rename-identifiers [identifier] env)
-              (bind ((handling-form* (alpha-convert handling-form env)))
-                (restore-identifiers [identifier] env)
-                `(%try ,protected-form*
-                       ,identifier*
-                       ,handling-form*))))))
+          (alpha-convert
+           protected-form env
+           (method (protected-form* env)
+             (destructuring-bind (identifier*)
+                 (rename-identifiers [identifier] env)
+               (alpha-convert
+                handling-form env
+                (method (handling-form* env)
+                  (restore-identifiers [identifier] env)
+                  (k `(%try ,protected-form*
+                            ,identifier*
+                            ,handling-form*)
+                     env))))))))
        (else:
-        (map (rcurry alpha-convert env)
-             exp))))
+        (alpha-convert** exp env k))))
     ((<symbol>)
-     (or (find-identifier exp env)
-         (bind ((symbol (resolve-symbol exp env)))
-           (if (== (get symbol "module")
-                   (get env "module" "name"))
-               ;; local, free variable: rename ahead of definition
-               ;; (see handling in %define)
-               (first (rename-identifiers [symbol] env))
-               (begin
-                ;; TODO [#A]: prepend external definition
-                symbol)))))
-    (else: exp)))
+     (if-bind (identifier (find-identifier exp env))
+       (k identifier env)
+       (bind ((symbol (resolve-symbol exp env)))
+         (if (== (get symbol "module")
+                 (get env "module" "name"))
+             ;; local, free variable: rename ahead of definition
+             ;; (see handling in %define)
+             (k (first (rename-identifiers [symbol] env))
+                env)
+             `(begin
+               ;; TODO [#A]: external definition
+               ,(k symbol env))))))
+    (else:
+     (k exp env))))
+
+(define-function alpha-convert* (exp* env k)
+  (if (empty? exp*)
+      (k [] env)
+      (alpha-convert** exp* env k)))
+
+(define-function alpha-convert** (exp env k)
+  (alpha-convert
+   (first exp) env
+   (method (t env)
+     (alpha-convert*
+      (rest exp) env
+      (method (t* env)
+        (k (cons t t*)
+           env))))))
