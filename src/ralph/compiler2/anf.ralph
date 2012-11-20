@@ -26,7 +26,7 @@
   (if (and (instance? exp <array>)
            (not (empty? exp)))
       (select (symbol-name (first exp)) ==
-        (("%quote")
+        (("%quote" "%native-name")
          (k exp))
         (("%bind")
          (destructuring-bind (_ (identifier value) form) exp

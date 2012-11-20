@@ -18,7 +18,7 @@
             [])))
   env)
 
-(define $special-symbols '(%all-arguments))
+(define $special-symbols '(%all-arguments %this-method))
 
 (define-function rename-identifiers (identifiers env)
   (map (method (identifier)
