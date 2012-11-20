@@ -70,22 +70,21 @@
     ((<array>)
      (select (symbol-name (first exp)) ==
        (("%quote" "%native-name")
-        (k exp env))
+        (k exp))
        (("%bind")
         (destructuring-bind (_ (identifier value) form) exp
           ;; convert value, before renaming
           (alpha-convert
            value env
-           (method (value* env)
+           (method (value*)
              (destructuring-bind (identifier*)
                  (rename-identifiers [identifier] env)
                (alpha-convert
                 form env
-                (method (form* env)
+                (method (form*)
                   (restore-identifiers [identifier] env)
                   (k `(%bind (,identifier* ,value*)
-                        ,form*)
-                     env))))))))
+                        ,form*)))))))))
        (("%method")
         (destructuring-bind (_ name parameters form) exp
           (bind ((identifiers (cons name parameters)))
@@ -93,11 +92,10 @@
                 (rename-identifiers identifiers env)
               (alpha-convert
                form env
-               (method (form* env)
+               (method (form*)
                  (restore-identifiers identifiers env)
                  (k `(%method ,name* ,parameters*
-                       ,form*)
-                    env)))))))
+                       ,form*))))))))
        ;; skip
        (("%set" "%if" "%begin" "%while" "%native"
          "%native-call" "%infix"
@@ -106,15 +104,14 @@
         (destructuring-bind (op #rest arguments) exp
           (alpha-convert*
            arguments env
-           (method (arguments* env)
-             (k (cons op arguments*)
-                env)))))
+           (method (arguments*)
+             (k (cons op arguments*))))))
        (("%define")
         (destructuring-bind (_ identifier value) exp
           ;; convert value, before renaming
           (alpha-convert
            value env
-           (method (value* env)
+           (method (value*)
              (bind ((identifier*
                      ;; already renamed ahead of definition?
                      ;; (see <symbol>)
@@ -122,29 +119,27 @@
                          ;; NOTE: not reverted, modifies env!
                          (first (rename-identifiers
                                  [identifier] env)))))
-               (k `(%define ,identifier* ,value*)
-                  env))))))
+               (k `(%define ,identifier* ,value*)))))))
        (("%try")
         (destructuring-bind (_ protected-form identifier handling-form) exp
           ;; convert protected-form, before renaming
           (alpha-convert
            protected-form env
-           (method (protected-form* env)
+           (method (protected-form*)
              (destructuring-bind (identifier*)
                  (rename-identifiers [identifier] env)
                (alpha-convert
                 handling-form env
-                (method (handling-form* env)
+                (method (handling-form*)
                   (restore-identifiers [identifier] env)
                   (k `(%try ,protected-form*
                             ,identifier*
-                            ,handling-form*)
-                     env))))))))
+                            ,handling-form*)))))))))
        (else:
         (alpha-convert** exp env k))))
     ((<symbol>)
      (if-bind (identifier (find-identifier exp env))
-       (k identifier env)
+       (k identifier)
        (bind ((symbol (resolve-symbol exp env)))
          (destructuring-bind (name module-name)
              (destructure-symbol symbol)
@@ -152,12 +147,11 @@
                    (get env "module" "name"))
                ;; local, free variable: rename ahead of definition
                ;; (see handling in %define)
-               (k (first (rename-identifiers [symbol] env))
-                  env)
+               (k (first (rename-identifiers [symbol] env)))
                ;; external, free variable
                (if (get env "definition-imported?"
                         module-name name)
-                   (k symbol env)
+                   (k symbol)
                    ;; prepend import statement
                    (begin
                     (set! (get env "definition-imported?"
@@ -178,21 +172,20 @@
                                          (%native-call "require" ,module-name))])
                         (%var ,symbol
                               (%get-property ,module-symbol ,name))
-                        ,(k symbol env))))))))))
+                        ,(k symbol))))))))))
     (else:
-     (k exp env))))
+     (k exp))))
 
 (define-function alpha-convert* (exp* env k)
   (if (empty? exp*)
-      (k [] env)
+      (k [])
       (alpha-convert** exp* env k)))
 
 (define-function alpha-convert** (exp env k)
   (alpha-convert
    (first exp) env
-   (method (t env)
+   (method (t)
      (alpha-convert*
       (rest exp) env
-      (method (t* env)
-        (k (cons t t*)
-           env))))))
+      (method (t*)
+        (k (cons t t*)))))))
