@@ -1,0 +1,86 @@
+(define-module ralph/compiler2/symbol-lifting
+  export: (lift-symbols))
+
+(define-function lift-symbols (exp env)
+  (lift-symbol exp env identity))
+
+(define-function lift-symbol (exp env k)
+  (if (and (instance? exp <array>)
+           (not (empty? exp)))
+      (select (symbol-name (first exp)) ==
+        (("%quote")
+         (destructuring-bind (name module-name)
+             (destructure-symbol (second exp))
+           (lift-value name exp "symbol" env k
+                       module: module-name)))
+        (("%bind")
+         (destructuring-bind (_ (identifier value) form) exp
+           (lift-symbol
+            value env
+            (method (value* env)
+              (lift-symbol
+               form env
+               (method (form* env)
+                 (k `(%bind (,identifier ,value*)
+                       ,form*))))))))
+        (("%method")
+         (destructuring-bind (_ name parameters form) exp
+           (lift-symbol
+            form env
+            (method (form*)
+              (k `(%method ,name ,parameters
+                    ,form*))))))
+        (("%set" "%define" "%var")
+         (destructuring-bind (op identifier value) exp
+           (lift-symbol
+            value env
+            (method (value*)
+              (k `(,op ,identifier ,value*))))))
+        (("%if" "%begin" "%while" "%native-name" "%native-call"
+          "%infix" "%native" "%object" "%array" "%get-property")
+         (destructuring-bind (op #rest forms) exp
+           (lift-symbol*
+            forms env
+            (method (forms*)
+              (k `(,op ,@forms*))))))
+        (("%try")
+         (destructuring-bind (_ protected-form identifier handling-form) exp
+           (lift-symbol*
+            [protected-form handling-form] env
+            (method (forms*)
+              (destructuring-bind (protected-form* handling-form*)
+                  forms*
+                (k `(%try ,protected-form*
+                          ,identifier
+                          ,handling-form*)))))))
+        (else:
+         (lift-symbol** exp env k)))
+      (select exp instance?
+        ((<keyword>)
+         (lift-value (symbol-name exp) exp "keyword" env k))
+        ((<hash-symbol>)
+         (lift-value (symbol-name exp) exp "hash" env k))
+        (else:
+         (k exp)))))
+
+(define-function lift-value (name value type env k #key (module ""))
+  (if-bind (t (get env "lifted" type module name))
+    (k t)
+    (bind ((t (set! (get env "lifted" type module name)
+                    (generate-symbol env))))
+      `(%bind (,t ,value)
+         ,(k t)))))
+
+(define-function lift-symbol* (exp* env k)
+  (if (empty? exp*)
+      (k [])
+      (lift-symbol** exp* env k)))
+
+(define-function lift-symbol** (exp env k)
+  (lift-symbol
+   (first exp) env
+   (method (t)
+     (lift-symbol*
+      (rest exp) env
+      (method (t*)
+        (k (cons t t*)))))))
