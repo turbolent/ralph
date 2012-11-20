@@ -2,6 +2,8 @@
 (define-module ralph/compiler2.test
   import: (ralph/test
            ralph/reader
+           ralph/stream
+           ralph/format
            ralph/compiler2
            ralph/compiler2/module
            ralph/compiler2/environment
@@ -9,9 +11,12 @@
            ralph/compiler2/macros
            ralph/compiler2/special-forms
            ralph/compiler2/alpha
-           ralph/stream
-           ralph/format
-           ralph/compiler2/reader))
+           ralph/compiler2/reader
+           ralph/compiler2/anf
+           ralph/compiler2/statements
+           ralph/compiler2/flattening
+           ralph/compiler2/javascript
+           ralph/compiler2/symbol-lifting))
 
 (define-function make-environment ()
   (bind ((module (make <module> name: "ralph/compiler2.test")))
@@ -52,13 +57,35 @@
           exp
           [["macroexpansion"
             (rcurry macroexpand-all env)]
+           ["symbol lifting"
+            (rcurry lift-symbols env)]
            ["alpha conversion"
-            (rcurry alpha-convert env)]]))
+            (rcurry alpha-convert-form env)]
+           ["ANF transformation"
+            (rcurry normalize-term env)]
+           ["statement transfomation"
+            (rcurry transform-statements! env)]
+           ["statement flattening"
+            flatten-statements!]
+           ["code generation"
+            (rcurry compile-js env)]]))
 
-
-
-(compile-expression '(define-function foo ((a <object>) b #rest all #key (c 23) d)
-                       (bind ((when (when a b)))
-                         (+ (when c d) 2)))
+(compile-expression '(begin
+                      (bind ((x (bind ((x 1)) x)))
+                        (bind ((x x)) x))
+                      (define x 3))
                     *environment*)
 
+
+(compile-expression '(begin
+                      (define-function foo ((a <object>) b #rest all #key (c 23) d)
+                        (bind ((when (when a b)))
+                          (+ (when c d) 2)))
+                      (define-function bar () foo))
+                    *environment*)
+
+
+(compile-expression '(begin
+                      (quote (this is a test))
+                      (quote (this is (another test))))
+                    *environment*)
