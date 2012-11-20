@@ -146,15 +146,39 @@
      (if-bind (identifier (find-identifier exp env))
        (k identifier env)
        (bind ((symbol (resolve-symbol exp env)))
-         (if (== (get symbol "module")
-                 (get env "module" "name"))
-             ;; local, free variable: rename ahead of definition
-             ;; (see handling in %define)
-             (k (first (rename-identifiers [symbol] env))
-                env)
-             `(begin
-               ;; TODO [#A]: external definition
-               ,(k symbol env))))))
+         (destructuring-bind (name module-name)
+             (destructure-symbol symbol)
+           (if (== module-name
+                   (get env "module" "name"))
+               ;; local, free variable: rename ahead of definition
+               ;; (see handling in %define)
+               (k (first (rename-identifiers [symbol] env))
+                  env)
+               ;; external, free variable
+               (if (get env "definition-imported?"
+                        module-name name)
+                   (k symbol env)
+                   ;; prepend import statement
+                   (begin
+                    (set! (get env "definition-imported?"
+                               module-name name)
+                          #t)
+                    ;; module import statement required?
+                    (bind ((current-module-symbol
+                            (get env "module-symbol"
+                                 module-name))
+                           (module-symbol
+                            (or current-module-symbol
+                                (set! (get env "module-symbol"
+                                           module-name)
+                                      (generate-symbol env)))))
+                      `(%begin
+                        ,@(if current-module-symbol []
+                              [`(%define ,module-symbol
+                                         (%native-call "require" ,module-name))])
+                        (%var ,symbol
+                              (%get-property ,module-symbol ,name))
+                        ,(k symbol env))))))))))
     (else:
      (k exp env))))
 
