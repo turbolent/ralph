@@ -315,12 +315,21 @@
                    ,identifier
                    ,handling-form*)))))
 
+;; like %define, but allows defining external identifiers
 (set! (get $internal-special-forms "%var")
-      (method (env identifier #rest superflous)
+      (method (env identifier value #rest superflous)
         ;; TODO [#B]: (unless (empty? superflous) (warn ...))
         (check-type identifier <symbol>
                     "Non-symbol identifier in %%var: %=")
-        `(%var ,identifier)))
+        (bind ((value* (macroexpand-all value env))
+               (module-name (get identifier "module")))
+          ;; bind identifier if local
+          (when (or (not module-name)
+                    (== module-name
+                        (get env "module" "name")))
+            (bind-globally! identifier env))
+          ;; result
+          `(%var ,identifier ,value*))))
 
 (set! (get $internal-special-forms "%native-name")
       (method (env name #rest superflous)

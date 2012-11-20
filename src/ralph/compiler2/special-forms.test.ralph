@@ -119,13 +119,13 @@
                     (define b (when 3 4)))
                 env))
 
-  (check-condition "special form: method (use of external identifier)"
+  (check-condition "special form: define (use of external identifier)"
                    <error>
                    (method ()
                      (macroexpand-all `(define + 1)
                                       env)))
 
-  (check-condition "special form: method (non-symbol identifier)"
+  (check-condition "special form: define (non-symbol identifier)"
                    <error>
                    (method ()
                      (macroexpand-all `(define (when 1 2) 3)
@@ -428,13 +428,28 @@
                     *environment*)))
 
 
+(check-condition "special form: %define (use of external identifier)"
+                 <error>
+                 (method ()
+                   (macroexpand-all `(%define + 1)
+                                    env)))
 ;; %var
 
-(check-equal "special form: %var"
-             `(,'+ 1 (%var ,'foo) 2)
-             (macroexpand-all
-              '(+ 1 (%var foo ignored) 2)
-              *environment*))
+(bind ((env (make-environment)))
+  (check-equal "special form: %var"
+               `(,'+ 1 (%var ,'foo 3) 2)
+               (macroexpand-all
+                '(+ 1 (%var foo 3) 2)
+                env)))
+
+(bind ((env (make-environment)))
+  (check-equal "special form: %var (with value)"
+               `(,'+ 1 (%var ,'foo (if (if 23 (begin 42) #f)
+                                          (begin 3)
+                                          #f)))
+               (macroexpand-all
+                '(+ 1 (%var foo (when foo 3)))
+                env)))
 
 (check-condition "special form: %var (identifier shoud be a symbol)"
                  <error>
@@ -442,6 +457,12 @@
                    (macroexpand-all
                     '(+ 1 (%var (when 1 2)))
                     *environment*)))
+
+
+(check-no-error "special form: %var (use of external identifier)"
+                (method ()
+                  (macroexpand-all `(%var + 1)
+                                   *environment*)))
 
 ;; %native-name
 
