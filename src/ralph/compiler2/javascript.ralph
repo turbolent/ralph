@@ -1,35 +1,9 @@
 (define-module ralph/compiler2/javascript
   import: (ralph/regexp
-           ralph/compiler2/utilities)
+           ralph/compiler2/utilities
+           (escodegen rename: (generate compile-tree)))
   export: (compile-js))
 
-(define *escaped*
-  (make-object
-   "\"" "\""
-   "\\" "\\"
-   "\b" "b"
-   "\f" "f"
-   "\n" "n"
-   "\r" "r"
-   "\v" "v"
-   "\t" "t"))
-
-(define-function fill-zeros (string)
-  (concatenate
-   (slice "0000" 0 (- 4 (size string)))
-   string))
-
-(define-function escape-string (string)
-  (join (map (method (char)
-               (if-bind (escaped (get *escaped* char))
-                 (concatenate "\\" escaped)
-                 (bind ((code (char-code char)))
-                   (if (< 0x1f code 0x7f)
-                       char
-                       (concatenate
-                        "\\u" (fill-zeros (as-hex-string code)))))))
-             (as-array string))
-        ""))
 
 (define *reserved*
   ["break" "case" "catch" "continue" "default" "delete" "do" "else"
@@ -90,197 +64,181 @@
   (and (not (member? identifier *reserved*))
        (match "^\\w+$" identifier)))
 
+
 (define-function compile-js (exp env)
+  (bind ((ast (compile exp env)))
+    (. (%native "console")
+       (error "AST:" (%native "require('util').inspect(" ast ",false,null)")))
+    (compile-tree ast)))
+
+(define-function as-statement (exp)
+  (if (or (position (get exp "type")
+                    "Statement")
+          (position (get exp "type")
+                    "Declaration"))
+      exp
+      (%object "type" "ExpressionStatement"
+               "expression" exp)))
+
+(define-function compile (exp env)
   (select exp instance?
     ((<array>)
      (if (empty? exp)
          (signal (make <error> message: "empty expression"))
-         (compile-js-exp exp env)))
-    ((<number>)
-     (as-string exp))
-    ((<boolean>)
-     (if exp "true" "false"))
-    ((<string>)
-     (concatenate "\"" (escape-string exp) "\""))
+         (compile-exp exp env)))
     ((<hash-symbol>)
-     (concatenate
-      "$" (as-uppercase (symbol-name exp))))
+     (%object "type" "Identifier"
+              "name" (concatenate
+                      "$" (as-uppercase (symbol-name exp)))))
     ((<keyword>)
-     (concatenate
-      "$K(\"" (symbol-name exp) "\")"))
+     (%object "type" "CallExpression"
+              "callee" (%object "type" "Identifier"
+                                "name" "$K")
+              "arguments" [(compile (symbol-name exp) env)]))
     ((<symbol>)
      (select (symbol-name exp) ==
        (("%this-method")
-        (compile-js (get env "current-method")
-                    env))
+        (compile (get env "current-method") env))
        (("%all-arguments")
-        "arguments")
+        (%object "type" "Identifier"
+                 "name" "arguments"))
        (else:
-        (escape-name
-         (if (== (get exp "module")
-                 (get env "module" "name"))
-             (symbol-name exp)
-             (description exp))))))
+        (%object "type" "Identifier"
+                 "name" (escape-name
+                         (if (== (get exp "module")
+                                 (get env "module" "name"))
+                             (symbol-name exp)
+                             (description exp)))))))
     (else:
-     (description exp))))
+     (%object "type" "Literal"
+              "value" exp))))
 
-;; NOTE: %bind already transformed to %var
-
-(define-function compile-js-exp (exp env)
+(define-function compile-exp (exp env)
   (bind ((name (symbol-name (first exp))))
     (select name ==
       (("%quote")
        (destructuring-bind (name module-name)
            (destructure-symbol (second exp))
-         (compile-js-exp
+         (compile
           `(%native-call "$S" ,name
                          ,@(if module-name
                                [module-name]
                                []))
           env)))
       (("%method")
-       (destructuring-bind (_ name arguments body) exp
+       (destructuring-bind (_ name parameters form) exp
          (bind ((previous-method (get env "current-method")))
-           (concatenate
-            "function " (compile-js name env)
-            " (" (join (map (rcurry compile-js env)
-                            arguments)
-                       ", ")
-            ")\n"
-            (begin
-             (set! (get env "current-method") name)
-             (bind ((body* (compile-js body env)))
-               (set! (get env "current-method") previous-method)
-               (if (op? "%begin" body)
-                   body*
-                   (concatenate "{" body* "}"))))))))
+           (%object "type" "FunctionExpression"
+                    "id" (compile name env)
+                    "params" (map (rcurry compile env)
+                                  parameters)
+                    "body" (begin
+                            (set! (get env "current-method")
+                                  name)
+                            (bind ((form* (compile (if (op? "%begin" form)
+                                                       form
+                                                       `(%begin ,form))
+                                                   env)))
+                              (set! (get env "current-method")
+                                    previous-method)
+                              form*))))))
       (("%set")
-       (destructuring-bind (_ var value) exp
-         (concatenate
-          (compile-js var env) " = "
-          (compile-js value env))))
+       (destructuring-bind (_ identifier value) exp
+         (%object "type" "AssignmentExpression"
+                  "operator" "="
+                  "left" (compile identifier env)
+                  "right" (compile value env))))
       (("%if")
-       (destructuring-bind (_ test then else) exp
-         (bind ((then* (compile-js then env)))
-           (concatenate
-            "if (" (compile-js test env) ")\n"
-            (if (op? "%begin" then)
-                then*
-                (concatenate "{" then* "}"))
-            ;; optimization: default is false
-            (if (and else
-                     (not (= else `(%return #f))))
-                (concatenate
-                 "\nelse\n" (compile-js else env))
-                "")))))
+       (destructuring-bind (_ test consequent alternate) exp
+         (%object "type" "IfStatement"
+                  "test" (compile test env)
+                  "consequent" (as-statement
+                                (compile consequent env))
+                  "alternate" (when alternate
+                                (as-statement
+                                 (compile alternate env))))))
       (("%begin")
-       (concatenate
-        "{\n" (join (map (rcurry compile-js env)
-                         (rest exp))
-                    ";\n")
-        "}"))
+       (%object "type" "BlockStatement"
+                "body" (map (method (exp)
+                              (as-statement
+                               (compile exp env)))
+                            (rest exp))))
       (("%while")
-       (destructuring-bind (_ test body) exp
-         (concatenate "while (" (compile-js test env) ")\n"
-                      (compile-js body env))))
+       (destructuring-bind (_ test form) exp
+         (%object "type" "WhileStatement"
+                  "test" (compile test env)
+                  "body" (as-statement
+                          (compile form env)))))
       (("%try")
-       (destructuring-bind (_ body var catch) exp
-         (concatenate "try {" (compile-js body env) "}\n"
-                      "catch (" (compile-js var env) ")\n"
-                      "{" (compile-js catch env) "}")))
+       (destructuring-bind (_ protected-form identifier handling-form) exp
+         (%object "type" "TryStatement"
+                  "block" (as-statement
+                           (compile protected-form env))
+                  "handlers" [(%object "type" "CatchClause"
+                                       "param" (compile identifier env)
+                                       "body" (as-statement
+                                               (compile handling-form env)))])))
       (("%var")
        (destructuring-bind (_ #rest bindings) exp
-         (concatenate
-          "var "
-          (join (map (method (binding)
-                       (destructuring-bind (var value)
-                           (if (instance? binding <array>)
-                               binding
-                               [binding #f])
-                         ;; NOTE: always initialize, might reset state
-                         (concatenate
-                          (compile-js var env)
-                          " = " (compile-js value env))))
-                     (partition 2 bindings))
-                ",\n"))))
+         (%object "type" "VariableDeclaration"
+                  "kind" "var"
+                  "declarations"
+                  (map (method (binding)
+                         (destructuring-bind (var value)
+                             (if (instance? binding <array>)
+                                 binding
+                                 [binding #f])
+                           ;; NOTE: always initialize, might reset state
+                           (%object "type" "VariableDeclarator"
+                                    "id" (compile var env)
+                                    "init" (compile value env))))
+                       (partition 2 bindings)))))
       (("%native-name")
-       (concatenate
-        "\"" (escape-name (second exp)) "\""))
+       (compile (escape-name (second exp)) env))
       (("%native-call")
-       (destructuring-bind (_ operator #rest values) exp
-         (concatenate
-          operator (compile-js-call values env))))
+       (destructuring-bind (_ operator #rest arguments) exp
+         (%object "type" "CallExpression"
+                  "callee" (%object "type" "Identifier"
+                                    "name" operator)
+                  "arguments" (map (rcurry compile env)
+                                   arguments))))
       (("%infix")
-       (destructuring-bind (_ operator #rest values) exp
-         (concatenate
-          "(" (join (map (rcurry compile-js env)
-                         values)
-                    (concatenate
-                     " " operator " "))
-          ")")))
-      (("%native")
-       (reduce1 concatenate
-                (map (method (e)
-                       (select e instance?
-                         ((<symbol> <array>)
-                          (compile-js e env))
-                         (else:
-                          (as-string e))))
-                     (rest exp))))
+       (destructuring-bind (_ operator #rest arguments) exp
+         (reduce1 (method (result exp)
+                    (%object "type" "BinaryExpression"
+                             "operator" operator
+                             "left" result
+                             "right" exp))
+                  (map (rcurry compile env)
+                       arguments))))
+      ;; TODO [#A]: %native; how?
       (("%object")
-       (bind ((key-values (rest exp))
-              (entries []))
-         (dotimes (i (/ (size key-values) 2))
-           (push-last entries
-                      (concatenate
-                       (bind ((name (element key-values (* i 2))))
-                         (if (valid-js-name? name)
-                             name
-                             (compile-js name env)))
-                       ":" (compile-js
-                            (element key-values (+ (* i 2) 1))
-                            env))))
-         (concatenate
-          "{" (join entries ",\n") "}")))
+       (%object "type" "ObjectExpression"
+                "properties" (map (method (property/value)
+                                    (destructuring-bind (property value)
+                                        property/value
+                                      (%object "type" "Property"
+                                               "key" (compile property env)
+                                               "value" (compile value env)
+                                               "kind" "init")))
+                                  (partition 2 (rest exp)))))
       (("%array")
        (destructuring-bind (_ #rest elements) exp
-         (concatenate
-          "[" (join (map (rcurry compile-js env)
-                         elements)
-                    ", ")
-          "]")))
+         (%object "type" "ArrayExpression"
+                  "elements" (map (rcurry compile env)
+                                  elements))))
       (("%get-property")
        (destructuring-bind (_ object #rest properties) exp
-         (concatenate
-          (if (instance? object <number>)
-              (concatenate "(" (compile-js object env) ")")
-              (compile-js object env))
-          (reduce (method (result property)
-                    (concatenate
-                     result
-                     (if (and (instance? property <string>)
-                              (valid-js-name? property))
-                         (concatenate "." property)
-                         (concatenate "[" (compile-js property env) "]"))))
-                  "" properties))))
-      (("%symbol")
-       (destructuring-bind (name module-name) (rest exp)
-         (concatenate "$S" (compile-js-call [(as-lowercase name)
-                                             (when module-name
-                                               (as-lowercase module-name))]
-                                            env))))
+         (reduce (method (object property)
+                   (%object "type" "MemberExpression"
+                            "object" (compile object env)
+                            "property" (compile property env)
+                            "computed" #t))
+                 object
+                 properties)))
       (else:
-       (destructuring-bind (function #rest values) exp
-         (concatenate
-          (bind ((function* (compile-js function env)))
-            (if (op? "%method" function)
-                (concatenate "(" function* ")")
-                function*))
-          (compile-js-call values env)))))))
-
-(define-function compile-js-call (values env)
-  (concatenate
-   "(" (join (map (rcurry compile-js env)
-                  values)
-             ", ")
-   ")"))
+       (destructuring-bind (function #rest arguments) exp
+         (%object "type" "CallExpression"
+                  "callee" (compile function env)
+                  "arguments" (map (rcurry compile env)
+                                   arguments)))))))
