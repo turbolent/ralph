@@ -6,8 +6,13 @@
 
 (define-class <module> (<object>)
   name
+  native?
   ;; [module [name*]]*
-  (imports []))
+  (imports [])
+  ;; name*
+  (exports [])
+  ;; module-name*
+  (dependencies []))
 
 (define-function find-module/import-name (definition-name module)
   (any? (method (import)
