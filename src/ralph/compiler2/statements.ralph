@@ -16,7 +16,7 @@
                (wrap-value! (last exp) wrapper))
          exp)
         (("%if")
-         ;; wrap then and else
+         ;; wrap consequent and alternate
          (set! (third exp)
                (wrap-value! (third exp) wrapper))
          (set! (last exp)
@@ -54,6 +54,26 @@
       (true? exp)
       `((%native "$T") ,exp)))
 
+
+(define-function wrap-export (identifier exp env)
+  (bind ((definition-name
+           (if-bind (original-identifier
+                     (when (instance? identifier <symbol>)
+                       (get env "original-identifier"
+                            (symbol-name identifier))))
+             (symbol-name original-identifier)))
+         (exported? (and definition-name
+                         (member? definition-name
+                                  (get env "module" "exports")))))
+    ;; defined and exported?
+    (if exported?
+        `(%begin
+          ,exp
+          (%set (%get-property (%native "exports")
+                               ,definition-name)
+                ,identifier))
+        exp)))
+
 (define-function transform-statements! (exp env)
   (if (instance? exp <array>)
       (select (symbol-name (first exp)) ==
@@ -77,31 +97,17 @@
                                       env)))
          exp)
         (("%set")
-         (destructuring-bind (_ identifier value) exp
-           (bind ((value* (transform-statements! value env))
-                  (definition-name (symbol-name
-                                    (get env "original-identifier"
-                                         (symbol-name identifier)))))
-             ;; check if exported definition
-             (if (and definition-name
-                      (member? definition-name
-                               (get env "module" "exports")))
-                 (begin
-                  (set! (first exp)
-                        `%begin)
-                  (set! (second exp)
-                        `(%set ,identifier ,value*))
-                  (set! (third exp)
-                        `(%set (%get-property (%native "exports")
-                                              ,definition-name)
-                               ,identifier)))
-                 ;; no re-export, leave as is
-                 (set! (third exp) value*))))
-         exp)
+         (destructuring-bind (_ place value) exp
+           (wrap-export place
+                        `(%set ,place
+                               ,(transform-statements!
+                                 value env))
+                        env)))
         (("%define")
          (transform-statements!
           `(%var ,(second exp)
-                 ,(third exp))))
+                 ,(third exp))
+          env))
         (("%if")
          (destructuring-bind (_ test then else) exp
            `(%if
@@ -131,9 +137,12 @@
                (transform-statements! (last exp) env))
          exp)
         (("%var")
-         (set! (third exp)
-               (transform-statements! (third exp) env))
-         exp)
+         (destructuring-bind (_ identifier value) exp
+           (wrap-export identifier
+                        `(%var ,identifier
+                               ,(transform-statements!
+                                 value env))
+                        env)))
         (else:
          (map (rcurry transform-statements! env) exp)))
       exp))
