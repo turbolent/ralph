@@ -7,7 +7,10 @@
            special-operator?
            bind-globally! globally-bound?
            bind! bound? unbind!
-           resolve-symbol))
+           resolve-symbol
+           find-import-identifier
+           make-import-identifier
+           make-import-definition))
 
 ;;;; <environment>
 ;; * one compiler environment per module
@@ -89,3 +92,19 @@
               module/import-name
             (%%symbol import-name (get module "name")))
           (%%symbol name (get env "module" "name"))))))
+
+
+;;;; import identifiers
+
+(define-function find-import-identifier (module-name env)
+  (get env "import-identifiers" module-name))
+
+(define-function make-import-identifier (module-name env)
+  (bind ((identifier (generate-symbol env)))
+    (set! (get env "import-identifiers" module-name)
+          identifier)
+    identifier))
+
+(define-function make-import-definition (module-name env)
+  `(%define ,(make-import-identifier module-name env)
+            (%native-call "require" ,module-name)))
