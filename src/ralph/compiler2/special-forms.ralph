@@ -4,8 +4,7 @@
            ralph/compiler2/macroexpansion
            ralph/compiler2/environment)
   export: ($core-special-forms
-           $internal-special-forms
-           $all-special-forms))
+           $internal-special-forms))
 
 ;; special forms:
 ;;   control expansion, track bindings (shadowing)
@@ -199,6 +198,11 @@
                          `((,type* ,@(rest binding)) ,@forms*)))))
                  cases))))
 
+(set! (get $core-special-forms "define-module")
+      (method (_ #rest arguments)
+        ;; leave as-is, handled by internal macro
+        `(define-module ,@arguments)))
+
 ;;;; internal special forms
 
 (define $internal-special-forms
@@ -262,13 +266,20 @@
                       ,form*)))))
 
 (set! (get $internal-special-forms "%set")
-      (method (env identifier value #rest superflous)
+      (method (env place value #rest superflous)
         ;; TODO [#B]: (unless (empty? superflous) (warn ...))
-        (check-type identifier <symbol>
-                    "Non-symbol identifier in %%set: %=")
-        ;; TODO [#A]: check if identifier is local ?
-        `(%set ,identifier
-               ,(macroexpand-all value env))))
+        (cond
+         ((instance? place <symbol>)
+          ;; TODO [#A]: check if identifier is local ?
+          `(%set ,place
+                 ,(macroexpand-all value env)))
+         ((op? "%get-property" place)
+          `(%set ,(macroexpand-all place env)
+                 ,(macroexpand-all value env)))
+         (else:
+          (signal (format-to-string
+                   "Non-symbol identifier or %get-property in %%set: %="
+                   place))))))
 
 (set! (get $internal-special-forms "%define")
       (method (env identifier value #rest superflous)
@@ -377,15 +388,3 @@
 (set! (get $internal-special-forms "%get-property")
       ;; object #rest properties
       (curry expand-forms `%get-property))
-
-
-
-;;;; all special forms
-
-(define $all-special-forms
-  (make-plain-object))
-
-(extend! $all-special-forms
-         $internal-special-forms)
-(extend! $all-special-forms
-         $core-special-forms)
