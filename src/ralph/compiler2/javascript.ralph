@@ -66,10 +66,9 @@
 
 
 (define-function compile-js (exp env)
-  (bind ((ast (compile exp env)))
-    (. (%native "console")
-       (error "AST:" (%native "require('util').inspect(" ast ",false,null)")))
-    (compile-tree ast)))
+  (compile-tree (as-statement
+                 (compile exp env))
+                (%object "verbatim" "x-verbatim")))
 
 (define-function as-statement (exp)
   (if (or (position (get exp "type")
@@ -109,9 +108,18 @@
                                  (get env "module" "name"))
                              (symbol-name exp)
                              (description exp)))))))
+    ((<number>)
+     (if (< exp 0)
+         (%object "type" "UnaryExpression"
+                  "operator" "-"
+                  "prefix" #t
+                  "argument" (%object "type" "Literal"
+                                      "value" (abs exp)))
+         (%object "type" "Literal"
+                  "value" exp)))
     (else:
      (%object "type" "Literal"
-              "value" exp))))
+              "value" (or exp #f)))))
 
 (define-function compile-exp (exp env)
   (bind ((name (symbol-name (first exp))))
@@ -211,7 +219,19 @@
                              "right" exp))
                   (map (rcurry compile env)
                        arguments))))
-      ;; TODO [#A]: %native; how?
+      (("%native")
+       (%object "type" "Expression"
+                "x-verbatim"
+                (reduce1 concatenate
+                         (map (method (e)
+                                (select e instance?
+                                  ((<symbol> <array>)
+                                   ;; returns statement, strip semicolon
+                                   (but-last
+                                    (compile-js e env)))
+                                  (else:
+                                   (as-string e))))
+                              (rest exp)))))
       (("%object")
        (%object "type" "ObjectExpression"
                 "properties" (map (method (property/value)
@@ -231,10 +251,10 @@
        (destructuring-bind (_ object #rest properties) exp
          (reduce (method (object property)
                    (%object "type" "MemberExpression"
-                            "object" (compile object env)
+                            "object" object
                             "property" (compile property env)
                             "computed" #t))
-                 object
+                 (compile object env)
                  properties)))
       (else:
        (destructuring-bind (function #rest arguments) exp
