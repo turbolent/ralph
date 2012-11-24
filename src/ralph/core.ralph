@@ -241,17 +241,28 @@
 (define-function slice ((array <array>) start end)
   (. array ("slice" start end)))
 
-(define-function reduce1 ((function <function>) (values <array>))
+(define-function reduce1 ((function <function>) (values <array>) #key from-end?)
   (if (empty? values)
       (function)
-      (reduce function (first values) (rest values))))
+      (apply reduce function
+             (%concat
+              (if from-end?
+                  [(last values) (but-last values)]
+                  [(first values) (rest values)])
+              [from-end?: from-end?]))))
 
-(define-function reduce ((function <function>) initial-value (values <array>))
-  (bind ((value initial-value))
-    (dotimes (i (size values))
-      (set! value (function value
-                            (%get-property values i))))
-    value))
+(define-function reduce
+    ((function <function>) initial-value (values <array>) #key from-end?)
+  (bind ((result initial-value))
+    (if from-end?
+        (bind ((values (reverse values)))
+          (dotimes (i (size values))
+            (set! result (function (%get-property values i)
+                                   result))))
+        (dotimes (i (size values))
+          (set! result (function result
+                                 (%get-property values i)))))
+    result))
 
 (define-function reverse! ((array <array>))
   (. array ("reverse")))
