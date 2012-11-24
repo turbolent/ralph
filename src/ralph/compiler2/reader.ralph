@@ -3,7 +3,7 @@
            ralph/format
            ralph/regexp
            ralph/compiler2/syntax-quote)
-  export: (read))
+  export: (read $end-of-file))
 
 (define *number-patterns*
   (map (curry make <regexp> ignore-case?: #t pattern:)
@@ -89,7 +89,11 @@
 (define *wrapper-symbols*
   [`quote `unquote `unquote-splicing])
 
-(define-function read ((stream <stream>) env #key (eof-error? #t) eof-value)
+(define $end-of-file
+  (make-object))
+
+(define-function read ((stream <stream>) env #key (eof-error? #t)
+                                                  (eof-value $end-of-file))
   (bind ((stack [[]])
          (ends [])
          (read? #t)
@@ -151,7 +155,8 @@
                  (stream-unread-element stream)
                  (add-to-stack!
                   (make-atom (first (match-stream *atom-pattern* stream))))))
-              (when (== (size stack) 1)
+              (when (and (== (size stack) 1)
+                         (not (empty? (first stack))))
                 (set! read? #f)
                 (set! result (first (first stack)))))))
       result)))
