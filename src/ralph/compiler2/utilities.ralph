@@ -2,7 +2,12 @@
   import: (ralph/format)
   export: (expression?
            check-type
-           destructure-parameter-list))
+           destructure-parameter-list
+           op?
+           process-import-names
+           transform-setter-identifier
+           setter-identifier?
+           identifier-name))
 
 (define-function expression? (form)
   (and (instance? form <array>)
@@ -29,3 +34,55 @@
        (when key
          (copy-sequence list
                         start: (inc key)))])))
+
+(define-function op? (op exp)
+  (and (expression? exp)
+       (== (symbol-name (first exp))
+           op)))
+
+(define-function process-import-names (all #key only exclude prefix rename)
+  (bind-methods ((resolve (exp)
+                   (if (instance? exp <string>)
+                       exp
+                       (identifier-name exp))))
+    (bind ((names (as-set (if (instance? only <array>)
+                              (map resolve only)
+                              all)))
+           (renamings (as-object (map resolve
+                                      (or rename [])))))
+      ;; remove all from exclude
+      (do (curry remove! names)
+          (map resolve exclude))
+      ;; rename overwrites only
+      (set-union! names
+                  (object-properties renamings))
+      ;; prefix or rename
+      (map (method (name)
+             (if-bind (renaming (get renamings name))
+               [name renaming]
+               (if (instance? prefix <string>)
+                   [name (concatenate prefix name)]
+                   name)))
+           names))))
+
+
+;;;; identifiers
+
+(define-function transform-setter-identifier (identifier)
+  (symbol (concatenate (symbol-name identifier)
+                       "-setter")))
+
+(define-function setter-identifier? (form)
+  (and (instance? form <array>)
+       (== (size form) 2)
+       (every? (rcurry instance? <symbol>)
+               form)
+       (== (symbol-name (first form))
+           "setter")))
+
+(define-function identifier-name (identifier)
+  (symbol-name
+   (if (setter-identifier? identifier)
+       (transform-setter-identifier
+        (second identifier))
+       identifier)))
