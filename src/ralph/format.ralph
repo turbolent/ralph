@@ -6,8 +6,8 @@
 (define-function format-integer ((number <number>))
   (as-string number))
 
+;; Format a string and write it to a stream.
 (define-function format ((stream <stream>) (control-string <string>) #rest args)
-  "Format a string and write it to a stream."
   (bind-methods ((dispatch (char arg)
                    (select (as-lowercase char) ==
                      (("s" "c")
@@ -53,13 +53,13 @@
                    (stream-write stream control-string)
                    (set! control-string "")))))))))
 
+;; Formats arguments to *standard-output*"
 (define-function format-out ((control-string <string>) #rest args)
-  "Formats arguments to *standard-output*."
   (apply format *standard-output* control-string args))
 
+;; Process a format string and return the result as another string.
+;; (Effectively calls format and returns the result as a string.)
 (define-function format-to-string ((control-string <string>) #rest args)
-  "Process a format string and return the result as another string.
-This function effectively calls format and returns the result as a string."
   (bind ((stream (make <string-stream>)))
     (apply format stream control-string args)
     (stream-contents stream)))

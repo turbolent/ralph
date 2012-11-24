@@ -121,7 +121,8 @@
   file)
 
 (define-method stream-write ((stream <file-stream>) (string <string>))
-  ((%get-property stream "file" "write") string))
+  (. (get stream "file")
+     ("write" string)))
 
 
 ;;;;

@@ -31,7 +31,7 @@
            <hash-symbol> get (setter get) inc dec split split-with
            as-hex-string description min max abs
            round floor ceil sin cos atan2 expt sqrt
-           mod *pi* as-radiant even? odd?
+           mod $pi as-radiant even? odd?
            signal starts-with?
            as-property-list as-association-list
            extend! update-with group-by
@@ -43,8 +43,6 @@
            set-timeout clear-timeout
            set-interval clear-interval
            partition
-           ;; primitive operations
-           %plus %minus %times %divide
            ;; core special forms
            quote bind method set! define if
            begin while handler-case
@@ -53,10 +51,6 @@
            %begin %while %try %var %native-name
            %native-call %infix %native
            %object %array %get-property
-           ;; TODO: remove, replace with %native-call "return"
-           %return
-           ;; TODO: remove
-           %symbol %call %backquote %comma %at
            ;; core macros
            when unless parallel-set! cond
            and or if-bind until dotimes for
@@ -68,7 +62,6 @@
            define-module define-macro
            define-symbol-macro
            syntax-quote unquote unquote-splicing
-           ;; special
            call-next-method next-method)
   inline: (not size cons
            as-string as-number as-array as-json
@@ -119,10 +112,10 @@
 (%native "$SL = [].slice")
 
 (define-function inc ((number <number>))
-  (%plus number 1))
+  (%infix "+" number 1))
 
 (define-function dec ((number <number>))
-  (%minus number 1))
+  (%infix "-" number 1))
 
 (define-function binary== (object1 object2)
   (%infix "===" object1 object2))
@@ -285,7 +278,7 @@
 (define-function apply ((function <function>))
   (bind ((actual (%native-call "$SL.call" %all-arguments 1 -1))
          (last (%get-property %all-arguments
-                              (%minus (size %all-arguments) 1)))
+                              (%infix "-" (size %all-arguments) 1)))
          (arguments (if (binary== last function)
                         actual
                         (%concat actual last))))
@@ -328,16 +321,16 @@
                 from-end?: #t))))
 
 (define-function binary+ (number1 number2)
-  (%plus number1 number2))
+  (%infix "+" number1 number2))
 
 (define-function binary- (number1 number2)
-  (%minus number1 number2))
+  (%infix "-" number1 number2))
 
 (define-function binary* (number1 number2)
-  (%times number1 number2))
+  (%infix "*" number1 number2))
 
 (define-function binary/ (number1 number2)
-  (%divide number1 number2))
+  (%infix "/" number1 number2))
 
 
 
@@ -823,12 +816,12 @@
 (define-function mod (number1 number2)
   (%infix "%" number1 number2))
 
-(define *pi* (%native "Math.PI"))
+(define $pi (%native "Math.PI"))
 
-(define *radiant* (%divide *pi* 180))
+(define $radiant (%infix "/" $pi 180))
 
 (define-function as-radiant (number)
-  (%times number *radiant*))
+  (* number $radiant))
 
 (define-function signal ((error <error>))
   (%native-call "throw" error)
@@ -988,17 +981,13 @@
 (define-function ignore ()
   #f)
 
-(define-function set-timeout (function milliseconds)
-  (%native-call "setTimeout" function milliseconds))
+(define set-timeout (%native "setTimeout"))
 
-(define-function clear-timeout (timeout-id)
-  (%native-call "clearTimeout" timeout-id))
+(define clear-timeout (%native "clearTimeout"))
 
-(define-function set-interval (function milliseconds)
-  (%native-call "setInterval" function milliseconds))
+(define set-interval (%native "setInterval"))
 
-(define-function clear-interval (interval-id)
-  (%native-call "clearInterval" interval-id))
+(define clear-interval (%native "clearInterval"))
 
 (define-function partition (count elements #key (step count))
   (bind ((result [])
