@@ -62,7 +62,8 @@
            define-module define-macro
            define-symbol-macro
            syntax-quote unquote unquote-splicing
-           call-next-method next-method)
+           call-next-method next-method
+           once-only)
   inline: (not size cons
            as-string as-number as-array as-json
            parse-number char-code empty?
