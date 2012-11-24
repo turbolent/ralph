@@ -19,6 +19,15 @@
 
 (define $special-symbols '(%all-arguments %this-method))
 
+(define-function rename-definition (identifier env)
+  (bind ((new-identifier
+          (first (rename-identifiers
+                  [identifier] env))))
+    (set! (get env "original-identifier"
+               (symbol-name new-identifier))
+          identifier)
+    new-identifier))
+
 (define-function rename-identifiers (identifiers env)
   (map (method (identifier)
          (if (member? identifier $special-symbols)
@@ -114,9 +123,7 @@
                      ;; already renamed ahead of definition?
                      ;; (see <symbol>)
                      (or (find-identifier identifier env)
-                         ;; NOTE: not reverted, modifies env!
-                         (first (rename-identifiers
-                                 [identifier] env)))))
+                         (rename-definition identifier env))))
                (k `(%define ,identifier* ,value*)))))))
        (("%try")
         (destructuring-bind (_ protected-form identifier handling-form) exp
@@ -145,7 +152,7 @@
                    (get env "module" "name"))
                ;; local, free variable: rename ahead of definition
                ;; (see handling in %define)
-               (k (first (rename-identifiers [symbol] env)))
+               (k (rename-definition symbol env))
                ;; external, free variable
                (if (get env "definition-imported?"
                         module-name name)
@@ -156,21 +163,21 @@
                                module-name name)
                           #t)
                     ;; module import statement required?
-                    (bind ((current-module-symbol
-                            (get env "module-symbol"
-                                 module-name))
-                           (module-symbol
-                            (or current-module-symbol
-                                (set! (get env "module-symbol"
-                                           module-name)
-                                      (generate-symbol env)))))
-                      `(%begin
-                        ,@(if current-module-symbol []
-                              [`(%define ,module-symbol
-                                         (%native-call "require" ,module-name))])
-                        (%var ,symbol
-                              (%get-property ,module-symbol ,name))
-                        ,(k symbol))))))))))
+                    (bind ((import-identifier
+                            (find-import-identifier module-name env))
+                           (result
+                            (alpha-convert-form
+                             `(%begin
+                               ,@(if import-identifier []
+                                     [(make-import-definition module-name env)])
+                               (%var ,symbol
+                                     (%get-property ,(or import-identifier
+                                                         (find-import-identifier
+                                                          module-name env))
+                                                    ,name)))
+                             env)))
+                      (push-last result (k symbol))
+                      result))))))))
     (else:
      (k exp))))
 
