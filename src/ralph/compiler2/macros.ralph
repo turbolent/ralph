@@ -2,9 +2,12 @@
 (define-module ralph/compiler2/macros
   import: (ralph/format
            ralph/compiler2/utilities)
-  export: ($core-macros
+  export: (;; macros
+           $core-macros
+           $internal-macros
+           ;; symbol macros
            $core-symbol-macros
-           $internal-macros))
+           $internal-symbol-macros))
 
 ;;;; utilities
 
@@ -64,18 +67,6 @@
                 normal-parameters
                 rest-parameter
                 keyword-parameters))))
-
-(define-function transform-setter-identifier (identifier)
-  (symbol (concatenate (symbol-name identifier)
-                       "-setter")))
-
-(define-function setter-identifier? (form)
-  (and (instance? form <array>)
-       (== (size form) 2)
-       (every? (rcurry instance? <symbol>)
-               form)
-       (== (symbol-name (first form))
-           "setter")))
 
 
 ;;;; core macros
@@ -165,8 +156,8 @@
             (check-type var <symbol>
                         "Non-symbol var in dotimes: %=")
             `(bind ((,temp ,count))
-               (for ((,var 0 (+ ,var 1)))
-                   ((>= ,var ,temp) ,(or result #f))
+               (for ((,var 0 (inc ,var)))
+                   ((binary>= ,var ,temp) ,(or result #f))
                  ,@forms))))))
 
 (set! (get $core-macros "for")
@@ -498,14 +489,28 @@
             ,@forms)
           (set! (%get-property ,identifier "%symbol-macro?") #t))))
 
+;; TODO [#B]: backend-specific
+(set! (get $core-macros "call-next-method")
+      (method (_ #rest superflous)
+        ;; TODO [#B]: (unless (empty? superflous) (warn ...))
+        `((%get-property next-method "apply")
+          (%native "null") ,'%all-arguments)))
 
-;; TODO [#A]: define-module
+
+;; NOTE: define-module: see ralph/compiler
 
 
 ;;;; core symbol macros
 
 (define $core-symbol-macros
   (make-plain-object))
+
+
+(set! (get $core-symbol-macros "next-method")
+      (method (_ #rest superflous)
+        ;; TODO [#B]: (unless (empty? superflous) (warn ...))
+        `(%next-method ,'%this-method)))
+
 
 ;;;; internal macros
 
@@ -594,3 +599,10 @@
                                                   ,@body))
                                               body))))
                          cases))))))
+
+
+;;;; internal symbol macros
+
+(define $internal-symbol-macros
+  (make-plain-object))
+
