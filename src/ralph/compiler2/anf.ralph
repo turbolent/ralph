@@ -1,4 +1,5 @@
 (define-module ralph/compiler2/anf
+  import: (ralph/compiler2/utilities)
   export: (normalize-term))
 
 
@@ -39,7 +40,22 @@
          (destructuring-bind (_ name parameters form) exp
            (k `(%method ,name ,parameters
                  ,(normalize-term form env)))))
-        (("%set" "%define" "%var")
+        (("%set")
+         (destructuring-bind (_ place value) exp
+           (if (op? "%get-property" place)
+               (normalize**
+                (rest place) env
+                (method (arguments*)
+                  (normalize-value
+                   value env
+                   (method (value*)
+                     (k `(%set (%get-property ,@arguments*)
+                               ,value*))))))
+               (normalize-value
+                value env
+                (method (value*)
+                  (k `(%set ,place ,value*)))))))
+        (("%define" "%var")
          (destructuring-bind (op identifier value) exp
            (normalize-value
             value env
