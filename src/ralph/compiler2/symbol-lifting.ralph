@@ -1,4 +1,5 @@
 (define-module ralph/compiler2/symbol-lifting
+  import: (ralph/compiler2/utilities)
   export: (lift-symbols))
 
 (define-function lift-symbols (exp env)
@@ -15,14 +16,12 @@
                        module: module-name)))
         (("%bind")
          (destructuring-bind (_ (identifier value) form) exp
-           (lift-symbol
-            value env
-            (method (value* env)
-              (lift-symbol
-               form env
-               (method (form* env)
-                 (k `(%bind (,identifier ,value*)
-                       ,form*))))))))
+           (lift-symbol*
+            [value form] env
+            (method (forms*)
+              (destructuring-bind (value* form*) forms*
+                (k `(%bind (,identifier ,value*)
+                      ,form*)))))))
         (("%method")
          (destructuring-bind (_ name parameters form) exp
            (lift-symbol
@@ -30,7 +29,19 @@
             (method (form*)
               (k `(%method ,name ,parameters
                     ,form*))))))
-        (("%set" "%define" "%var")
+        (("%set")
+         (destructuring-bind (_ place value) exp
+           (lift-symbol
+            value env
+            (method (value*)
+              (if (op? "%get-property" place)
+                  (lift-symbol**
+                   (rest place) env
+                   (method (arguments*)
+                     (k `(%set (%get-property ,@arguments*)
+                               ,value*))))
+                  (k `(%set ,place ,value*)))))))
+        (("%define" "%var")
          (destructuring-bind (op identifier value) exp
            (lift-symbol
             value env
@@ -68,8 +79,10 @@
     (k t)
     (bind ((t (set! (get env "lifted" type module name)
                     (generate-symbol env))))
-      `(%bind (,t ,value)
-         ,(k t)))))
+
+      `(%begin
+        (%define ,t ,value)
+        ,(k t)))))
 
 (define-function lift-symbol* (exp* env k)
   (if (empty? exp*)
