@@ -1,5 +1,5 @@
-(define-module ralph/compiler2/environment
-  import: (ralph/compiler2/module)
+(define-module ralph/compiler/environment
+  import: (ralph/compiler/module)
   export: (<environment>
            find-macro
            find-symbol-macro

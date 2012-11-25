@@ -1,7 +1,8 @@
 
 (define-module ralph/compiler/syntax-quote.test
   import: (ralph/test
-           ralph/compiler2
+           ralph/compiler/module
+           ralph/compiler/environment
            ralph/compiler/syntax-quote))
 
 (define *core* (make <module> name: "ralph/core"))

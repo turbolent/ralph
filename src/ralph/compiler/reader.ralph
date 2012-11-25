@@ -1,8 +1,8 @@
-(define-module ralph/compiler2/reader
+(define-module ralph/compiler/reader
   import: (ralph/stream
            ralph/format
            ralph/regexp
-           ralph/compiler2/syntax-quote)
+           ralph/compiler/syntax-quote)
   export: (read $end-of-file))
 
 (define *number-patterns*

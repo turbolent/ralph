@@ -1,7 +1,7 @@
 
-(define-module ralph/compiler2/macros
+(define-module ralph/compiler/macros
   import: (ralph/format
-           ralph/compiler2/utilities)
+           ralph/compiler/utilities)
   export: (;; macros
            $core-macros
            $internal-macros

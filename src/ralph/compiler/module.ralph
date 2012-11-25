@@ -1,4 +1,4 @@
-(define-module ralph/compiler2/module
+(define-module ralph/compiler/module
   export: (<module>
            find-module/import-name))
 

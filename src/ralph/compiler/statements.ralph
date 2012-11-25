@@ -9,13 +9,14 @@
 (define-function wrap-value! (exp wrapper)
   (if (instance? exp <array>)
       (select (symbol-name (first exp)) ==
+        (("%quote" "%native-name") exp)
         (("%begin" "%bind")
          ;; wrap body
          (set! (last exp)
                (wrap-value! (last exp) wrapper))
          exp)
         (("%if")
-         ;; wrap then and else
+         ;; wrap consequent and alternate
          (set! (third exp)
                (wrap-value! (third exp) wrapper))
          (set! (last exp)
@@ -37,7 +38,7 @@
 
 
 (define-function add-explicit-return (exp)
-  (wrap-value! exp `(%return)))
+  (wrap-value! exp `(%native-call "return")))
 
 ;; after ANF: if value of binding is control-flow (%if, %while, etc.):
 ;; turn into statement form, then "sink" assignment
@@ -53,20 +54,30 @@
       (true? exp)
       `((%native "$T") ,exp)))
 
+
+(define-function wrap-export (identifier exp env)
+  (bind ((definition-name
+           (if-bind (original-identifier
+                     (when (instance? identifier <symbol>)
+                       (get env "original-identifier"
+                            (symbol-name identifier))))
+             (symbol-name original-identifier)))
+         (exported? (and definition-name
+                         (member? definition-name
+                                  (get env "module" "exports")))))
+    ;; defined and exported?
+    (if exported?
+        `(%begin
+          ,exp
+          (%set (%get-property (%native "exports")
+                               ,definition-name)
+                ,identifier))
+        exp)))
+
 (define-function transform-statements! (exp env)
   (if (instance? exp <array>)
       (select (symbol-name (first exp)) ==
-        (("%method")
-         (set! (last exp)
-               (add-explicit-return
-                (transform-statements! (last exp)
-                                      env)))
-         exp)
-        (("%begin")
-         (destructuring-bind (_ #rest exps) exp
-           (maybe-begin
-            (map (rcurry transform-statements! env)
-                 exps))))
+        (("%quote" "%native-name") exp)
         (("%bind")
          (destructuring-bind (_ (var value) body) exp
            (if (statement? value)
@@ -79,6 +90,24 @@
                `(%bind (,var
                         ,(transform-statements! value env))
                   ,(transform-statements! body env)))))
+        (("%method")
+         (set! (last exp)
+               (add-explicit-return
+                (transform-statements! (last exp)
+                                      env)))
+         exp)
+        (("%set")
+         (destructuring-bind (_ place value) exp
+           (wrap-export place
+                        `(%set ,place
+                               ,(transform-statements!
+                                 value env))
+                        env)))
+        (("%define")
+         (transform-statements!
+          `(%var ,(second exp)
+                 ,(third exp))
+          env))
         (("%if")
          (destructuring-bind (_ test then else) exp
            `(%if
@@ -88,9 +117,16 @@
                (transform-statements! test env))
              ,(transform-statements! then env)
              ,(transform-statements! else env))))
+        (("%begin")
+         (destructuring-bind (_ #rest exps) exp
+           `(%begin
+             ,@(map (rcurry transform-statements! env)
+                    exps))))
         (("%while")
          (set! (second exp)
-               (add-explicit-true (second exp)))
+               ;; TODO: only if not boolean
+               (add-explicit-true
+                (transform-statements! (second exp) env)))
          (set! (third exp)
                (transform-statements! (third exp) env))
          exp)
@@ -100,30 +136,13 @@
          (set! (last exp)
                (transform-statements! (last exp) env))
          exp)
-        (("%set")
+        (("%var")
          (destructuring-bind (_ identifier value) exp
-           (bind ((value* (transform-statements! value env))
-                  (definition-name (symbol-name
-                                    (get env "original-identifier"
-                                         (symbol-name identifier)))))
-             ;; check if exported definition
-             (if (and definition-name
-                      (member? definition-name
-                               (get env "module" "exports")))
-                 (begin
-                  (set! (first exp)
-                        `%begin)
-                  (set! (second exp)
-                        `(%set ,identifier ,value*))
-                  (set! (third exp)
-                        `(%set (%get-property (%native "exports")
-                                              ,definition-name)
-                               ,identifier)))
-                 ;; no re-export, leave as is
-                 (set! (third exp) value*))))
-         exp)
-        (("%define")
-         `(%var (,(last exp) #f)))
+           (wrap-export identifier
+                        `(%var ,identifier
+                               ,(transform-statements!
+                                 value env))
+                        env)))
         (else:
          (map (rcurry transform-statements! env) exp)))
       exp))

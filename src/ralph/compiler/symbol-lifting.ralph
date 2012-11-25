@@ -1,5 +1,5 @@
-(define-module ralph/compiler2/symbol-lifting
-  import: (ralph/compiler2/utilities)
+(define-module ralph/compiler/symbol-lifting
+  import: (ralph/compiler/utilities)
   export: (lift-symbols))
 
 (define-function lift-symbols (exp env)

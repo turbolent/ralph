@@ -1,17 +1,17 @@
 
-(define-module ralph/compiler2/macroexpansion.test
+(define-module ralph/compiler/macroexpansion.test
   import: (ralph/test
            ralph/stream
-           ralph/compiler2/module
-           ralph/compiler2/environment
-           ralph/compiler2/macroexpansion
-           ralph/compiler2/macros
-           ralph/compiler2/special-forms
-           ralph/compiler2/reader))
+           ralph/compiler/module
+           ralph/compiler/environment
+           ralph/compiler/macroexpansion
+           ralph/compiler/macros
+           ralph/compiler/special-forms
+           ralph/compiler/reader))
 
 
 (define-function make-environment ()
-  (bind ((module (make <module> name: "ralph/compiler2/macroexpansion.test")))
+  (bind ((module (make <module> name: "ralph/compiler/macroexpansion.test")))
     ;; (import-module module "ralph/core")
 
     (bind ((symbol-macros

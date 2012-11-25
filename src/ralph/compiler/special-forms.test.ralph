@@ -1,13 +1,13 @@
-(define-module ralph/compiler2/special-forms.test
+(define-module ralph/compiler/special-forms.test
   import: (ralph/test
-           ralph/compiler2/module
-           ralph/compiler2/environment
-           ralph/compiler2/macroexpansion
-           ralph/compiler2/macros
-           ralph/compiler2/special-forms))
+           ralph/compiler/module
+           ralph/compiler/environment
+           ralph/compiler/macroexpansion
+           ralph/compiler/macros
+           ralph/compiler/special-forms))
 
 (define-function make-environment ()
-  (bind ((module (make <module> name: "ralph/compiler2/special-forms.test")))
+  (bind ((module (make <module> name: "ralph/compiler/special-forms.test")))
     ;; (import-module module "ralph/core")
 
     (bind ((symbol-macros

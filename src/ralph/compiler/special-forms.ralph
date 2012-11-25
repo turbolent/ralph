@@ -1,8 +1,8 @@
-(define-module ralph/compiler2/special-forms
+(define-module ralph/compiler/special-forms
   import: (ralph/format
-           ralph/compiler2/utilities
-           ralph/compiler2/macroexpansion
-           ralph/compiler2/environment)
+           ralph/compiler/utilities
+           ralph/compiler/macroexpansion
+           ralph/compiler/environment)
   export: ($core-special-forms
            $internal-special-forms))
 

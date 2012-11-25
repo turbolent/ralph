@@ -1,7 +1,7 @@
-(define-module ralph/compiler2/syntax-quote
-  import: (ralph/compiler2/module
-           ralph/compiler2/environment
-           ralph/compiler2/utilities)
+(define-module ralph/compiler/syntax-quote
+  import: (ralph/compiler/module
+           ralph/compiler/environment
+           ralph/compiler/utilities)
   export: (syntax-quote-form))
 
 ;;;; symnol resolution:

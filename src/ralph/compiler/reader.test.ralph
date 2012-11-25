@@ -1,12 +1,12 @@
-(define-module ralph/compiler2/reader.test
+(define-module ralph/compiler/reader.test
   import: (ralph/test
            ralph/stream
-           ralph/compiler2/environment
-           ralph/compiler2/module
-           ralph/compiler2/reader))
+           ralph/compiler/environment
+           ralph/compiler/module
+           ralph/compiler/reader))
 
 (define *environment* (make <environment>
-                            module: (make <module> name: "ralph/compiler2/reader.test")))
+                            module: (make <module> name: "ralph/compiler/reader.test")))
 
 (define-function read-form (source)
   (read (make <string-stream>
@@ -79,7 +79,7 @@
              [(symbol "a")
               [(symbol "%array" "ralph/core")
                [(symbol "quote" "ralph/core")
-                (symbol "x" "ralph/compiler2/reader.test")]
+                (symbol "x" "ralph/compiler/reader.test")]
                [(symbol "y") (symbol "z")]]
               [(symbol "%array" "ralph/core")
                (symbol "b")]]
@@ -89,12 +89,12 @@
   (check-equal "nested syntax-quote"
                (read-form
                 "(test (ralph/core::%array
-                        (ralph/core::quote ralph/compiler2/reader.test::foo)
+                        (ralph/core::quote ralph/compiler/reader.test::foo)
                         (ralph/core::%array
                          (ralph/core::quote ralph/core::%array)
                          (ralph/core::%array
                           (ralph/core::quote ralph/core::quote)
-                          (ralph/core::quote ralph/compiler2/reader.test::bar)))))")
+                          (ralph/core::quote ralph/compiler/reader.test::bar)))))")
                form))
 
 (bind ((form (read-form "(test `(is ,cool foo::bar ,(+ 2 3) ,@[4 5 6] `(nested)))")))
@@ -103,7 +103,7 @@
                 "(test (ralph/core::%concat
                         (ralph/core::%concat
                          (ralph/core::%array
-                          (ralph/core::quote ralph/compiler2/reader.test::is)
+                          (ralph/core::quote ralph/compiler/reader.test::is)
                           cool
                           (ralph/core::quote foo::bar)
                           (+ 2 3))
@@ -114,5 +114,5 @@
                           (ralph/core::%array
                            (ralph/core::quote ralph/core::quote)
                            (ralph/core::quote
-                            ralph/compiler2/reader.test::nested))))))")
+                            ralph/compiler/reader.test::nested))))))")
                form))
