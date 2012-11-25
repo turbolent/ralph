@@ -1,129 +1,76 @@
+var B1269 = require('ralph/core');
+var B1386 = require('ralph/stream');
+var ralphScoreCCMvar = B1269['%var'], ralphScoreCCMmake_function = B1269['%make-function'], ralphScoreCCas_string = B1269['as-string'], format_integer__1390 = ralphScoreCCMmake_function('format_integer', function B1388(number__1389) {
+        return(ralphScoreCCas_string(number__1389));
+    }, false);
 {
-var B1183;
-false;
-B1183 = require("ralph/core")}
+    var ralphScoreCCas_lowercase = B1269['as-lowercase'], ralphScoreCCEE = B1269['=='], ralphScoreCCdescription = B1269['description'], ralphScoreCCsignal = B1269['signal'], ralphScoreCCmake = B1269['make'], ralphScoreCCLerrorG = B1269['<error>'], ralphScoreCCconcatenate = B1269['concatenate'], ralphScoreCCnot = B1269['not'], ralphScoreCCemptyQ = B1269['empty?'], ralphScoreCCposition = B1269['position'], ralphScoreCCG = B1269['>'], ralphSstreamCCstream_write = B1386['stream-write'], ralphScoreCCslice = B1269['slice'], ralphScoreCCelement = B1269['element'], ralphScoreCCsecond = B1269['second'], ralphScoreCCP = B1269['+'], B1397 = $K('message'), format__1414 = ralphScoreCCMmake_function('format', function B1398(stream__1399, control_string__1400) {
+            var args__1401 = $SL.call(arguments, 2), dispatch__1402 = false;
+            dispatch__1402 = function B1403(char__1404, arg__1405) {
+                var B1406 = ralphScoreCCas_lowercase(char__1404), B1407 = ralphScoreCCEE(B1406, 's'), B1415 = false;
+                if (($T)(B1407))
+                    B1415 = B1407;
+                else
+                    B1415 = ralphScoreCCEE(B1406, 'c');
+                if (($T)(B1415))
+                    return(arg__1405);
+                else if (($T)(ralphScoreCCEE(B1406, '='))) {
+                    var B1408 = ralphScoreCCdescription(arg__1405);
+                    if (($T)(B1408))
+                        return(B1408);
+                    else
+                        return('');
+                } else if (($T)(ralphScoreCCEE(B1406, 'b')))
+                    return(format_integer__1390(arg__1405, 2));
+                else if (($T)(ralphScoreCCEE(B1406, 'o')))
+                    return(format_integer__1390(arg__1405, 8));
+                else if (($T)(ralphScoreCCEE(B1406, 'd')))
+                    return(format_integer__1390(arg__1405, 10));
+                else if (($T)(ralphScoreCCEE(B1406, 'x')))
+                    return(format_integer__1390(arg__1405, 16));
+                else if (($T)(ralphScoreCCEE(B1406, 'm'))) {
+                    arg__1405(stream__1399);
+                    return('');
+                } else
+                    return(ralphScoreCCsignal(ralphScoreCCmake(ralphScoreCCLerrorG, B1397, ralphScoreCCconcatenate('Unknown format dispatch character ', char__1404))));
+            };
+            var index__1409 = 0;
+            while (($T)(ralphScoreCCnot(ralphScoreCCemptyQ(control_string__1400)))) {
+                var next_dispatch__1410 = ralphScoreCCposition(control_string__1400, '%');
+                if (($T)(ralphScoreCCG(next_dispatch__1410, 0))) {
+                    ralphSstreamCCstream_write(stream__1399, ralphScoreCCslice(control_string__1400, 0, next_dispatch__1410));
+                    control_string__1400 = ralphScoreCCslice(control_string__1400, next_dispatch__1410);
+                } else if (($T)(next_dispatch__1410)) {
+                    var arg__1411 = ralphScoreCCelement(args__1401, index__1409), char__1412 = ralphScoreCCsecond(control_string__1400), percent__1413 = ralphScoreCCEE(char__1412, '%'), B1416 = false;
+                    if (($T)(percent__1413))
+                        B1416 = '%';
+                    else
+                        B1416 = dispatch__1402(char__1412, arg__1411);
+                    ralphSstreamCCstream_write(stream__1399, B1416);
+                    control_string__1400 = ralphScoreCCslice(control_string__1400, 2);
+                    if (($T)(ralphScoreCCnot(percent__1413)))
+                        index__1409 = ralphScoreCCP(index__1409, 1);
+                } else {
+                    ralphSstreamCCstream_write(stream__1399, control_string__1400);
+                    control_string__1400 = '';
+                }
+            }
+            return(false);
+        }, false);
+    (exports)['format'] = format__1414;
+}
 {
-var B1185;
-false;
-B1185 = require("ralph/stream")}
+    var ralphScoreCCapply = B1269['apply'], ralphSstreamCCTstandard_outputT = B1386['*standard-output*'], format_out__1421 = ralphScoreCCMmake_function('format_out', function B1418(control_string__1419) {
+            var args__1420 = $SL.call(arguments, 1);
+            return(ralphScoreCCapply(format__1414, ralphSstreamCCTstandard_outputT, control_string__1419, args__1420));
+        }, false);
+    (exports)['format-out'] = format_out__1421;
+}
 {
-var Mmake_function__1186 = B1183["%make-function"],
-as_string__1187 = B1183["as-string"],
-format_integer__1188;
-false;
-format_integer__1188 = Mmake_function__1186("format_integer", function format_integer__1189 (number__1190)
-{return as_string__1187(number__1190)}, false)}
-{
-var B1228 = $K("message"),
-binaryEE__1194 = B1183["binary=="],
-description__1195 = B1183.description,
-signal__1196 = B1183.signal,
-make__1197 = B1183.make,
-LerrorG__1198 = B1183["<error>"],
-concatenate__1199 = B1183.concatenate,
-as_lowercase__1200 = B1183["as-lowercase"],
-not__1201 = B1183.not,
-emptyQ__1202 = B1183["empty?"],
-G__1203 = B1183[">"],
-stream_write__1204 = B1185["stream-write"],
-slice__1205 = B1183.slice,
-second__1206 = B1183.second,
-element__1207 = B1183.element,
-position__1208 = B1183.position,
-format__1209;
-false;
-format__1209 = Mmake_function__1186("format", function format__1210 (stream__1211, control_string__1212)
-{
-var args__1213 = $SL.call(arguments, 2);
-"Format a string and write it to a stream.";
-var dispatch__1214 = function dispatch__1215 (char__1216, arg__1217)
-{
-var B1191__1218 = as_lowercase__1200(char__1216),
-B1192__1219 = binaryEE__1194(B1191__1218, "s"),
-B1226;
-if ($T(B1192__1219))
-{B1226 = B1192__1219}
-else
-B1226 = binaryEE__1194(B1191__1218, "c");
-if ($T(B1226))
-{return arg__1217}
-else
-if ($T(binaryEE__1194(B1191__1218, "=")))
-{
-var B1193__1220 = description__1195(arg__1217);
-if ($T(B1193__1220))
-{return B1193__1220}
-else
-return ""}
-else
-if ($T(binaryEE__1194(B1191__1218, "b")))
-{return format_integer__1188(arg__1217, 2)}
-else
-if ($T(binaryEE__1194(B1191__1218, "o")))
-{return format_integer__1188(arg__1217, 8)}
-else
-if ($T(binaryEE__1194(B1191__1218, "d")))
-{return format_integer__1188(arg__1217, 10)}
-else
-if ($T(binaryEE__1194(B1191__1218, "x")))
-{return format_integer__1188(arg__1217, 16)}
-else
-if ($T(binaryEE__1194(B1191__1218, "m")))
-{
-arg__1217(stream__1211);
-return ""}
-else
-return signal__1196(make__1197(LerrorG__1198, B1228, concatenate__1199("Unknown format dispatch character ", char__1216)))},
-index__1221 = 0;
-while ($T(not__1201(emptyQ__1202(control_string__1212))))
-{
-var next_dispatch__1222 = position__1208(control_string__1212, "%");
-if ($T(G__1203(next_dispatch__1222, 0)))
-{
-stream_write__1204(stream__1211, slice__1205(control_string__1212, 0, next_dispatch__1222));
-control_string__1212 = slice__1205(control_string__1212, next_dispatch__1222)}
-else
-if ($T(next_dispatch__1222))
-{
-var arg__1223 = element__1207(args__1213, index__1221),
-char__1224 = second__1206(control_string__1212),
-percent__1225 = binaryEE__1194(char__1224, "%"),
-B1227;
-if ($T(percent__1225))
-{B1227 = "%"}
-else
-B1227 = dispatch__1214(char__1224, arg__1223);
-stream_write__1204(stream__1211, B1227);
-control_string__1212 = slice__1205(control_string__1212, 2);
-if ($T(not__1201(percent__1225)))
-{index__1221 = (index__1221 + 1)}}
-else
-{
-stream_write__1204(stream__1211, control_string__1212);
-control_string__1212 = ""}};
-return false}, false);
-exports.format = format__1209}
-{
-var apply__1229 = B1183.apply,
-Tstandard_outT__1230 = B1185["*standard-out*"],
-format_out__1231;
-false;
-format_out__1231 = Mmake_function__1186("format_out", function format_out__1232 (control_string__1233)
-{
-var args__1234 = $SL.call(arguments, 1);
-"Formats arguments to *standard-out*.";
-return apply__1229(format__1209, Tstandard_outT__1230, control_string__1233, args__1234)}, false);
-exports["format-out"] = format_out__1231}
-{
-var stream_contents__1235 = B1185["stream-contents"],
-Lstring_streamG__1236 = B1185["<string-stream>"],
-format_to_string__1237;
-false;
-format_to_string__1237 = Mmake_function__1186("format_to_string", function format_to_string__1238 (control_string__1239)
-{
-var args__1240 = $SL.call(arguments, 1);
-"Process a format string and return the result as another string.\nThis function effectively calls format and returns the result as a string.";
-var stream__1241 = make__1197(Lstring_streamG__1236);
-apply__1229(format__1209, stream__1241, control_string__1239, args__1240);
-return stream_contents__1235(stream__1241)}, false);
-exports["format-to-string"] = format_to_string__1237}
+    var ralphSstreamCCLstring_streamG = B1386['<string-stream>'], ralphSstreamCCstream_contents = B1386['stream-contents'], format_to_string__1427 = ralphScoreCCMmake_function('format_to_string', function B1423(control_string__1424) {
+            var args__1425 = $SL.call(arguments, 1), stream__1426 = ralphScoreCCmake(ralphSstreamCCLstring_streamG);
+            ralphScoreCCapply(format__1414, stream__1426, control_string__1424, args__1425);
+            return(ralphSstreamCCstream_contents(stream__1426));
+        }, false);
+    (exports)['format-to-string'] = format_to_string__1427;
+}

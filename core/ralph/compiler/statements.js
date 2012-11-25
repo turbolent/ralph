@@ -1,175 +1,196 @@
+var B3433 = require('ralph/core');
+var B3435 = require('ralph/compiler/utilities');
+var ralphScoreCCMvar = B3433['%var'], ralphScoreCCMmake_function = B3433['%make-function'], ralphScoreCCinstanceQ = B3433['instance?'], ralphScoreCCLarrayG = B3433['<array>'], ralphScoreCCsymbol_name = B3433['symbol-name'], ralphScoreCCfirst = B3433['first'], ralphScoreCCEE = B3433['=='], ralphScoreCClast_setter = B3433['last-setter'], ralphScoreCClast = B3433['last'], ralphScoreCCthird_setter = B3433['third-setter'], ralphScoreCCthird = B3433['third'], ralphScoreCCsecond_setter = B3433['second-setter'], ralphScoreCCsecond = B3433['second'], ralphScoreCCconcatenate = B3433['concatenate'], B3441 = $S('%begin'), wrap_valueN__3448 = ralphScoreCCMmake_function('wrap_valueN', function B3442(exp__3443, wrapper__3444) {
+        if (($T)(ralphScoreCCinstanceQ(exp__3443, ralphScoreCCLarrayG))) {
+            var B3445 = ralphScoreCCsymbol_name(ralphScoreCCfirst(exp__3443)), B3446 = ralphScoreCCEE(B3445, '%quote'), B3449 = false;
+            if (($T)(B3446))
+                B3449 = B3446;
+            else
+                B3449 = ralphScoreCCEE(B3445, '%native-name');
+            if (($T)(B3449))
+                return(exp__3443);
+            else {
+                var B3447 = ralphScoreCCEE(B3445, '%begin'), B3450 = false;
+                if (($T)(B3447))
+                    B3450 = B3447;
+                else
+                    B3450 = ralphScoreCCEE(B3445, '%bind');
+                if (($T)(B3450)) {
+                    ralphScoreCClast_setter(exp__3443, wrap_valueN__3448(ralphScoreCClast(exp__3443), wrapper__3444));
+                    return(exp__3443);
+                } else if (($T)(ralphScoreCCEE(B3445, '%if'))) {
+                    ralphScoreCCthird_setter(exp__3443, wrap_valueN__3448(ralphScoreCCthird(exp__3443), wrapper__3444));
+                    ralphScoreCClast_setter(exp__3443, wrap_valueN__3448(ralphScoreCClast(exp__3443), wrapper__3444));
+                    return(exp__3443);
+                } else if (($T)(ralphScoreCCEE(B3445, '%while')))
+                    return([
+                        B3441,
+                        exp__3443,
+                        wrap_valueN__3448(false, wrapper__3444)
+                    ]);
+                else if (($T)(ralphScoreCCEE(B3445, '%try'))) {
+                    ralphScoreCCsecond_setter(exp__3443, wrap_valueN__3448(ralphScoreCCsecond(exp__3443), wrapper__3444));
+                    ralphScoreCClast_setter(exp__3443, wrap_valueN__3448(ralphScoreCClast(exp__3443), wrapper__3444));
+                    return(exp__3443);
+                } else
+                    return(ralphScoreCCconcatenate(wrapper__3444, [exp__3443]));
+            }
+        } else
+            return(ralphScoreCCconcatenate(wrapper__3444, [exp__3443]));
+    }, false);
+var B3453 = $S('%native-call'), add_explicit_return__3456 = ralphScoreCCMmake_function('add_explicit_return', function B3454(exp__3455) {
+        return(wrap_valueN__3448(exp__3455, [
+            B3453,
+            'return'
+        ]));
+    }, false);
+var ralphScoreCCnot = B3433['not'], ralphScoreCCemptyQ = B3433['empty?'], ralphScoreCCmemberQ = B3433['member?'], B3462 = $S('%if'), B3463 = $S('%while'), B3464 = $S('%bind'), B3465 = $S('%try'), statementQ__3468 = ralphScoreCCMmake_function('statementQ', function B3466(exp__3467) {
+        if (($T)(ralphScoreCCinstanceQ(exp__3467, ralphScoreCCLarrayG)))
+            if (($T)(ralphScoreCCnot(ralphScoreCCemptyQ(exp__3467))))
+                return(ralphScoreCCmemberQ(ralphScoreCCfirst(exp__3467), [
+                    B3462,
+                    B3463,
+                    B3441,
+                    B3464,
+                    B3465
+                ]));
+            else
+                return(false);
+        else
+            return(false);
+    }, false);
+var ralphScoreCCLbooleanG = B3433['<boolean>'], ralphScoreCCtrueQ = B3433['true?'], B3471 = $S('%native'), add_explicit_true__3474 = ralphScoreCCMmake_function('add_explicit_true', function B3472(exp__3473) {
+        if (($T)(ralphScoreCCinstanceQ(exp__3473, ralphScoreCCLbooleanG)))
+            return(ralphScoreCCtrueQ(exp__3473));
+        else
+            return([
+                [
+                    B3471,
+                    '$T'
+                ],
+                exp__3473
+            ]);
+    }, false);
+var ralphScoreCCLsymbolG = B3433['<symbol>'], ralphScoreCCget = B3433['get'], B3479 = $S('%set'), B3480 = $S('%get-property'), wrap_export__3489 = ralphScoreCCMmake_function('wrap_export', function B3481(identifier__3482, exp__3483, env__3484) {
+        var B3485 = false;
+        if (($T)(ralphScoreCCinstanceQ(identifier__3482, ralphScoreCCLsymbolG)))
+            B3485 = ralphScoreCCget(env__3484, 'original-identifier', ralphScoreCCsymbol_name(identifier__3482));
+        else
+            B3485 = false;
+        var definition_name__3487 = false;
+        if (($T)(B3485)) {
+            var original_identifier__3486 = B3485;
+            definition_name__3487 = ralphScoreCCsymbol_name(original_identifier__3486);
+        } else
+            definition_name__3487 = false;
+        var exportedQ__3488 = false;
+        if (($T)(definition_name__3487))
+            exportedQ__3488 = ralphScoreCCmemberQ(definition_name__3487, ralphScoreCCget(env__3484, 'module', 'exports'));
+        else
+            exportedQ__3488 = false;
+        if (($T)(exportedQ__3488))
+            return([
+                B3441,
+                exp__3483,
+                [
+                    B3479,
+                    [
+                        B3480,
+                        [
+                            B3471,
+                            'exports'
+                        ],
+                        definition_name__3487
+                    ],
+                    identifier__3482
+                ]
+            ]);
+        else
+            return(exp__3483);
+    }, false);
 {
-var B2219;
-false;
-B2219 = require("ralph/core")}
-{
-var B2221;
-false;
-B2221 = require("ralph/compiler/utilities")}
-{
-var B2244 = $S("%begin", "ralph/core"),
-Mmake_function__2224 = B2219["%make-function"],
-instanceQ__2225 = B2219["instance?"],
-LarrayG__2226 = B2219["<array>"],
-binaryEE__2227 = B2219["binary=="],
-last_setter__2228 = B2219["last-setter"],
-last__2229 = B2219.last,
-third_setter__2230 = B2219["third-setter"],
-third__2231 = B2219.third,
-second_setter__2232 = B2219["second-setter"],
-second__2233 = B2219.second,
-concatenate__2234 = B2219.concatenate,
-symbol_name__2235 = B2219["symbol-name"],
-first__2236 = B2219.first,
-wrap_valueN__2237;
-false;
-wrap_valueN__2237 = Mmake_function__2224("wrap_valueN", function wrap_valueN__2238 (exp__2239, wrapper__2240)
-{if ($T(instanceQ__2225(exp__2239, LarrayG__2226)))
-{
-var B2222__2241 = symbol_name__2235(first__2236(exp__2239)),
-B2223__2242 = binaryEE__2227(B2222__2241, "%begin"),
-B2243;
-if ($T(B2223__2242))
-{B2243 = B2223__2242}
-else
-B2243 = binaryEE__2227(B2222__2241, "%bind");
-if ($T(B2243))
-{
-last_setter__2228(exp__2239, wrap_valueN__2238(last__2229(exp__2239), wrapper__2240));
-return exp__2239}
-else
-if ($T(binaryEE__2227(B2222__2241, "%if")))
-{
-third_setter__2230(exp__2239, wrap_valueN__2238(third__2231(exp__2239), wrapper__2240));
-last_setter__2228(exp__2239, wrap_valueN__2238(last__2229(exp__2239), wrapper__2240));
-return exp__2239}
-else
-if ($T(binaryEE__2227(B2222__2241, "%while")))
-{return [B2244, exp__2239, wrap_valueN__2238(false, wrapper__2240)]}
-else
-if ($T(binaryEE__2227(B2222__2241, "%try")))
-{
-second_setter__2232(exp__2239, wrap_valueN__2238(second__2233(exp__2239), wrapper__2240));
-last_setter__2228(exp__2239, wrap_valueN__2238(last__2229(exp__2239), wrapper__2240));
-return exp__2239}
-else
-return concatenate__2234(wrapper__2240, [exp__2239])}
-else
-return concatenate__2234(wrapper__2240, [exp__2239])}, false)}
-{
-var B2248 = $S("%return", "ralph/core"),
-add_explicit_return__2245;
-false;
-add_explicit_return__2245 = Mmake_function__2224("add_explicit_return", function add_explicit_return__2246 (exp__2247)
-{return wrap_valueN__2237(exp__2247, [B2248])}, false)}
-{
-var B2255 = $S("%if", "ralph/core"),
-B2256 = $S("%while", "ralph/core"),
-B2257 = $S("%bind", "ralph/core"),
-B2258 = $S("%try", "ralph/core"),
-not__2249 = B2219.not,
-emptyQ__2250 = B2219["empty?"],
-memberQ__2251 = B2219["member?"],
-statementQ__2252;
-false;
-statementQ__2252 = Mmake_function__2224("statementQ", function statementQ__2253 (exp__2254)
-{if ($T(instanceQ__2225(exp__2254, LarrayG__2226)))
-{if ($T(not__2249(emptyQ__2250(exp__2254))))
-{return memberQ__2251(first__2236(exp__2254), [B2255, B2256, B2244, B2257, B2258])}}}, false)}
-{
-var B2264 = $S("%native", "ralph/core"),
-LbooleanG__2259 = B2219["<boolean>"],
-trueQ__2260 = B2219["true?"],
-add_explicit_true__2261;
-false;
-add_explicit_true__2261 = Mmake_function__2224("add_explicit_true", function add_explicit_true__2262 (exp__2263)
-{if ($T(instanceQ__2225(exp__2263, LbooleanG__2259)))
-{return trueQ__2260(exp__2263)}
-else
-return [[B2264, "$T"], exp__2263]}, false)}
-{
-var B2294 = $S("%set", "ralph/core"),
-B2295 = $S("%get-property", "ralph/core"),
-B2296 = $S("%var", "ralph/core"),
-maybe_begin__2267 = B2221["maybe-begin"],
-map__2268 = B2219.map,
-rcurry__2269 = B2219.rcurry,
-get__2270 = B2219.get,
-first_setter__2271 = B2219["first-setter"],
-transform_statementsN__2272;
-false;
-transform_statementsN__2272 = Mmake_function__2224("transform_statementsN", function transform_statementsN__2273 (exp__2274, env__2275)
-{if ($T(instanceQ__2225(exp__2274, LarrayG__2226)))
-{
-var B2265__2276 = symbol_name__2235(first__2236(exp__2274));
-if ($T(binaryEE__2227(B2265__2276, "%method")))
-{
-last_setter__2228(exp__2274, add_explicit_return__2245(transform_statementsN__2273(last__2229(exp__2274), env__2275)));
-return exp__2274}
-else
-if ($T(binaryEE__2227(B2265__2276, "%begin")))
-{
-var ____2277 = exp__2274[0],
-exps__2278 = $SL.call(exp__2274, 1);
-return maybe_begin__2267(map__2268(rcurry__2269(transform_statementsN__2273, env__2275), exps__2278))}
-else
-if ($T(binaryEE__2227(B2265__2276, "%bind")))
-{
-var ____2279 = exp__2274[0],
-B2266__2280 = exp__2274[1],
-var__2281 = B2266__2280[0],
-value__2282 = B2266__2280[1],
-body__2283 = exp__2274[2];
-if ($T(statementQ__2252(value__2282)))
-{return [B2257, [var__2281, false], [B2244, wrap_valueN__2237(transform_statementsN__2273(value__2282, env__2275), [B2294, var__2281]), transform_statementsN__2273(body__2283, env__2275)]]}
-else
-return [B2257, [var__2281, transform_statementsN__2273(value__2282, env__2275)], transform_statementsN__2273(body__2283, env__2275)]}
-else
-if ($T(binaryEE__2227(B2265__2276, "%if")))
-{
-var ____2284 = exp__2274[0],
-test__2285 = exp__2274[1],
-then__2286 = exp__2274[2],
-else__2287 = exp__2274[3];
-return [B2255, add_explicit_true__2261(test__2285), transform_statementsN__2273(then__2286, env__2275), transform_statementsN__2273(else__2287, env__2275)]}
-else
-if ($T(binaryEE__2227(B2265__2276, "%while")))
-{
-second_setter__2232(exp__2274, add_explicit_true__2261(second__2233(exp__2274)));
-third_setter__2230(exp__2274, transform_statementsN__2273(third__2231(exp__2274), env__2275));
-return exp__2274}
-else
-if ($T(binaryEE__2227(B2265__2276, "%try")))
-{
-second_setter__2232(exp__2274, transform_statementsN__2273(second__2233(exp__2274), exp__2274));
-last_setter__2228(exp__2274, transform_statementsN__2273(last__2229(exp__2274), env__2275));
-return exp__2274}
-else
-if ($T(binaryEE__2227(B2265__2276, "%set")))
-{
-var ____2288 = exp__2274[0],
-identifier__2289 = exp__2274[1],
-value__2290 = exp__2274[2],
-valueT__2291 = transform_statementsN__2273(value__2290, env__2275),
-definition_name__2292 = symbol_name__2235(get__2270(env__2275, "original-identifier", symbol_name__2235(identifier__2289))),
-B2293;
-if ($T(definition_name__2292))
-{B2293 = memberQ__2251(definition_name__2292, get__2270(env__2275, "module", "exports"))}
-else
-B2293 = false;
-if ($T(B2293))
-{
-first_setter__2271(exp__2274, B2244);
-second_setter__2232(exp__2274, [B2294, identifier__2289, valueT__2291]);
-third_setter__2230(exp__2274, [B2294, [B2295, [B2264, "exports"], definition_name__2292], identifier__2289])}
-else
-third_setter__2230(exp__2274, valueT__2291);
-return exp__2274}
-else
-if ($T(binaryEE__2227(B2265__2276, "%define")))
-{return [B2296, [last__2229(exp__2274), false]]}
-else
-return map__2268(rcurry__2269(transform_statementsN__2273, env__2275), exp__2274)}
-else
-return exp__2274}, false);
-exports["transform-statements!"] = transform_statementsN__2272}
+    var ralphScoreCCMconcat = B3433['%concat'], ralphScoreCCmap = B3433['map'], ralphScoreCCrcurry = B3433['rcurry'], B3495 = $S('%var'), transform_statementsN__3506 = ralphScoreCCMmake_function('transform_statementsN', function B3496(exp__3497, env__3498) {
+            if (($T)(ralphScoreCCinstanceQ(exp__3497, ralphScoreCCLarrayG))) {
+                var B3499 = ralphScoreCCsymbol_name(ralphScoreCCfirst(exp__3497)), B3500 = ralphScoreCCEE(B3499, '%quote'), B3519 = false;
+                if (($T)(B3500))
+                    B3519 = B3500;
+                else
+                    B3519 = ralphScoreCCEE(B3499, '%native-name');
+                if (($T)(B3519))
+                    return(exp__3497);
+                else if (($T)(ralphScoreCCEE(B3499, '%bind'))) {
+                    var ____3501 = exp__3497[0], B3502 = exp__3497[1], var__3503 = B3502[0], value__3504 = B3502[1], body__3505 = exp__3497[2];
+                    if (($T)(statementQ__3468(value__3504)))
+                        return([
+                            B3464,
+                            [
+                                var__3503,
+                                false
+                            ],
+                            [
+                                B3441,
+                                wrap_valueN__3448(transform_statementsN__3506(value__3504, env__3498), [
+                                    B3479,
+                                    var__3503
+                                ]),
+                                transform_statementsN__3506(body__3505, env__3498)
+                            ]
+                        ]);
+                    else
+                        return([
+                            B3464,
+                            [
+                                var__3503,
+                                transform_statementsN__3506(value__3504, env__3498)
+                            ],
+                            transform_statementsN__3506(body__3505, env__3498)
+                        ]);
+                } else if (($T)(ralphScoreCCEE(B3499, '%method'))) {
+                    ralphScoreCClast_setter(exp__3497, add_explicit_return__3456(transform_statementsN__3506(ralphScoreCClast(exp__3497), env__3498)));
+                    return(exp__3497);
+                } else if (($T)(ralphScoreCCEE(B3499, '%set'))) {
+                    var ____3507 = exp__3497[0], place__3508 = exp__3497[1], value__3509 = exp__3497[2];
+                    return(wrap_export__3489(place__3508, [
+                        B3479,
+                        place__3508,
+                        transform_statementsN__3506(value__3509, env__3498)
+                    ], env__3498));
+                } else if (($T)(ralphScoreCCEE(B3499, '%define')))
+                    return(transform_statementsN__3506([
+                        B3495,
+                        ralphScoreCCsecond(exp__3497),
+                        ralphScoreCCthird(exp__3497)
+                    ], env__3498));
+                else if (($T)(ralphScoreCCEE(B3499, '%if'))) {
+                    var ____3510 = exp__3497[0], test__3511 = exp__3497[1], then__3512 = exp__3497[2], else__3513 = exp__3497[3];
+                    return([
+                        B3462,
+                        add_explicit_true__3474(transform_statementsN__3506(test__3511, env__3498)),
+                        transform_statementsN__3506(then__3512, env__3498),
+                        transform_statementsN__3506(else__3513, env__3498)
+                    ]);
+                } else if (($T)(ralphScoreCCEE(B3499, '%begin'))) {
+                    var ____3514 = exp__3497[0], exps__3515 = $SL.call(exp__3497, 1);
+                    return(ralphScoreCCMconcat([B3441], ralphScoreCCmap(ralphScoreCCrcurry(transform_statementsN__3506, env__3498), exps__3515)));
+                } else if (($T)(ralphScoreCCEE(B3499, '%while'))) {
+                    ralphScoreCCsecond_setter(exp__3497, add_explicit_true__3474(transform_statementsN__3506(ralphScoreCCsecond(exp__3497), env__3498)));
+                    ralphScoreCCthird_setter(exp__3497, transform_statementsN__3506(ralphScoreCCthird(exp__3497), env__3498));
+                    return(exp__3497);
+                } else if (($T)(ralphScoreCCEE(B3499, '%try'))) {
+                    ralphScoreCCsecond_setter(exp__3497, transform_statementsN__3506(ralphScoreCCsecond(exp__3497), exp__3497));
+                    ralphScoreCClast_setter(exp__3497, transform_statementsN__3506(ralphScoreCClast(exp__3497), env__3498));
+                    return(exp__3497);
+                } else if (($T)(ralphScoreCCEE(B3499, '%var'))) {
+                    var ____3516 = exp__3497[0], identifier__3517 = exp__3497[1], value__3518 = exp__3497[2];
+                    return(wrap_export__3489(identifier__3517, [
+                        B3495,
+                        identifier__3517,
+                        transform_statementsN__3506(value__3518, env__3498)
+                    ], env__3498));
+                } else
+                    return(ralphScoreCCmap(ralphScoreCCrcurry(transform_statementsN__3506, env__3498), exp__3497));
+            } else
+                return(exp__3497);
+        }, false);
+    (exports)['transform-statements!'] = transform_statementsN__3506;
+}

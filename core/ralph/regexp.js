@@ -1,69 +1,48 @@
-{
-var B1294;
+var B1782 = require('ralph/core');
 false;
-B1294 = require("ralph/core")}
-false
 {
-var LregexpG__1295;
-false;
-LregexpG__1295 = RegExp;
-exports["<regexp>"] = LregexpG__1295}
+    var LregexpG__1783 = (RegExp);
+    (exports)['<regexp>'] = LregexpG__1783;
+}
+var ralphScoreCCMvar = B1782['%var'], ralphScoreCCMmake_method = B1782['%make-method'], ralphScoreCCMkeys = B1782['%keys'], ralphScoreCCconcatenate = B1782['concatenate'], ralphScoreCCinitialize = B1782['initialize'], initialize__1802 = ralphScoreCCMmake_method('initialize', function B1790(regexp__1791) {
+        var B1792 = $SL.call(arguments, 1), B1793 = ralphScoreCCMkeys(B1792, {
+                'pattern': false,
+                'global?': false,
+                'ignore-case?': false,
+                'multiline?': false
+            }), pattern__1794 = B1793['pattern'], globalQ__1795 = B1793['global?'], ignore_caseQ__1796 = B1793['ignore-case?'], multilineQ__1797 = B1793['multiline?'];
+        if (($T)(pattern__1794)) {
+            var B1803 = false;
+            if (($T)(globalQ__1795))
+                B1803 = 'g';
+            else
+                B1803 = '';
+            var B1804 = false;
+            if (($T)(ignore_caseQ__1796))
+                B1804 = 'i';
+            else
+                B1804 = '';
+            var B1805 = false;
+            if (($T)(multilineQ__1797))
+                B1805 = 'm';
+            else
+                B1805 = '';
+            var flags__1798 = ralphScoreCCconcatenate(B1803, B1804, B1805), B1799 = regexp__1791, B1800 = pattern__1794, B1801 = flags__1798;
+            return(B1799['compile'](B1800, B1801));
+        } else
+            return(false);
+    }, false, LregexpG__1783, ralphScoreCCinitialize);
+var ralphScoreCCMmake_function = B1782['%make-function'], ralphScoreCCG = B1782['>'], find__1815 = ralphScoreCCMmake_function('find', function B1809(regexp__1810, string__1811) {
+        var B1812 = string__1811, B1813 = regexp__1810, position__1814 = B1812['search'](B1813);
+        if (($T)(ralphScoreCCG(position__1814, -1)))
+            return(position__1814);
+        else
+            return(false);
+    }, false);
 {
-var Mmake_method__1301 = B1294["%make-method"],
-concatenate__1302 = B1294.concatenate,
-Mkeys__1303 = B1294["%keys"],
-initialize__1304;
-false;
-initialize__1304 = Mmake_method__1301("initialize", function B1296__1305 (regexp__1306)
-{
-var B1297__1307 = $SL.call(arguments, 1),
-B1298__1308 = Mkeys__1303(B1297__1307, {pattern:false,
-"global?":false,
-"ignore-case?":false,
-"multiline?":false}),
-pattern__1309 = B1298__1308.pattern,
-globalQ__1310 = B1298__1308["global?"],
-ignore_caseQ__1311 = B1298__1308["ignore-case?"],
-multilineQ__1312 = B1298__1308["multiline?"];
-if ($T(pattern__1309))
-{
-var B1316;
-if ($T(globalQ__1310))
-{B1316 = "g"}
-else
-B1316 = "";
-var B1317;
-if ($T(ignore_caseQ__1311))
-{B1317 = "i"}
-else
-B1317 = "";
-var B1318;
-if ($T(multilineQ__1312))
-{B1318 = "m"}
-else
-B1318 = "";
-var flags__1313 = concatenate__1302(B1316, B1317, B1318),
-B1300__1314 = regexp__1306,
-B1299__1315 = pattern__1309;
-return B1300__1314.compile(B1299__1315)}}, false, LregexpG__1295, initialize__1304)}
-{
-var Mmake_function__1321 = B1294["%make-function"],
-G__1322 = B1294[">"],
-find__1323;
-false;
-find__1323 = Mmake_function__1321("find", function find__1324 (regexp__1325, string__1326)
-{
-var B1320__1327 = string__1326,
-B1319__1328 = regexp__1325,
-position__1329 = B1320__1327.search(B1319__1328);
-if ($T(G__1322(position__1329, -1)))
-{return position__1329}}, false)}
-{
-var match__1332;
-false;
-match__1332 = Mmake_function__1321("match", function match__1333 (regexp__1334, string__1335)
-{
-var B1331__1336 = string__1335,
-B1330__1337 = regexp__1334;
-return B1331__1336.match(B1330__1337)}, false);
-exports.match = match__1332}
+    var match__1824 = ralphScoreCCMmake_function('match', function B1819(regexp__1820, string__1821) {
+            var B1822 = string__1821, B1823 = regexp__1820;
+            return(B1822['match'](B1823));
+        }, false);
+    (exports)['match'] = match__1824;
+}

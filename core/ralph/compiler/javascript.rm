@@ -1,1 +1,1 @@
-("ralph/compiler/javascript" exports: ("compile-js") inline: () dependencies: ("ralph/compiler/utilities" "ralph/regexp" "ralph/core"))
+("ralph/compiler/javascript" exports: ("compile-js") inline: () dependencies: ("escodegen" "ralph/compiler/utilities" "ralph/regexp" "ralph/core"))

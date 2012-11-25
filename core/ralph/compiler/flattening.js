@@ -1,151 +1,110 @@
+var B3522 = require('ralph/core');
+var B3524 = require('ralph/compiler/utilities');
+var ralphScoreCCMvar = B3522['%var'], ralphScoreCCMmake_function = B3522['%make-function'], ralphScoreCCreduce1 = B3522['reduce1'], ralphScoreCCconcatenate = B3522['concatenate'], ralphScoreCCmap = B3522['map'], ralphScompilerSutilitiesCCopQ = B3524['op?'], ralphScoreCCrest = B3522['rest'], flatten_begins__3533 = ralphScoreCCMmake_function('flatten_begins', function B3527(exps__3528) {
+        return(ralphScoreCCreduce1(ralphScoreCCconcatenate, ralphScoreCCmap(function B3529(exp__3530) {
+            var flattened__3532 = flatten_statementsN__3531(exp__3530);
+            if (($T)(ralphScompilerSutilitiesCCopQ('%begin', flattened__3532)))
+                return(ralphScoreCCrest(flattened__3532));
+            else
+                return([flattened__3532]);
+        }, exps__3528)));
+    }, false);
+var ralphScoreCCreduce = B3522['reduce'], ralphScoreCCnot = B3522['not'], ralphScoreCCemptyQ = B3522['empty?'], ralphScoreCClast = B3522['last'], ralphScoreCCdo = B3522['do'], ralphScoreCCpush_last = B3522['push-last'], ralphScoreCCsecond = B3522['second'], ralphScoreCCEE = B3522['=='], ralphScoreCCfirst = B3522['first'], ralphScoreCCsecond_setter = B3522['second-setter'], ralphScoreCCthird = B3522['third'], flatten_varsN__3549 = ralphScoreCCMmake_function('flatten_varsN', function B3537(exps__3538) {
+        return(ralphScoreCCreduce(function B3539(result__3540, exp__3541) {
+            var previous__3542 = false;
+            if (($T)(ralphScoreCCnot(ralphScoreCCemptyQ(result__3540))))
+                previous__3542 = ralphScoreCClast(result__3540);
+            else
+                previous__3542 = false;
+            var previous_varQ__3543 = false;
+            if (($T)(previous__3542))
+                previous_varQ__3543 = ralphScompilerSutilitiesCCopQ('%var', previous__3542);
+            else
+                previous_varQ__3543 = false;
+            var B3550 = false;
+            if (($T)(previous_varQ__3543))
+                B3550 = ralphScompilerSutilitiesCCopQ('%var', exp__3541);
+            else
+                B3550 = false;
+            if (($T)(B3550)) {
+                ralphScoreCCdo(function B3544(binding__3545) {
+                    return(ralphScoreCCpush_last(ralphScoreCClast(result__3540), binding__3545));
+                }, ralphScoreCCrest(exp__3541));
+                return(result__3540);
+            } else {
+                var mergeQ__3546 = false;
+                if (($T)(previous_varQ__3543))
+                    mergeQ__3546 = ralphScompilerSutilitiesCCopQ('%set', exp__3541);
+                else
+                    mergeQ__3546 = false;
+                var binding__3547 = false;
+                if (($T)(mergeQ__3546))
+                    binding__3547 = ralphScoreCClast(ralphScoreCClast(result__3540));
+                else
+                    binding__3547 = false;
+                var identifier__3548 = false;
+                if (($T)(mergeQ__3546))
+                    identifier__3548 = ralphScoreCCsecond(exp__3541);
+                else
+                    identifier__3548 = false;
+                if (($T)(ralphScoreCCEE(ralphScoreCCfirst(binding__3547), identifier__3548))) {
+                    ralphScoreCCsecond_setter(binding__3547, ralphScoreCCthird(exp__3541));
+                    return(result__3540);
+                } else
+                    return(ralphScoreCCconcatenate(result__3540, [exp__3541]));
+            }
+        }, [], exps__3538));
+    }, false);
 {
-var B2394;
-false;
-B2394 = require("ralph/core")}
-{
-var B2396;
-false;
-B2396 = require("ralph/compiler/utilities")}
-{
-var Mmake_function__2398 = B2394["%make-function"],
-reduce1__2399 = B2394.reduce1,
-concatenate__2400 = B2394.concatenate,
-map__2401 = B2394.map,
-beginQ__2402 = B2396["begin?"],
-rest__2403 = B2394.rest,
-flatten_statementsN__2404,
-flatten_begins__2405;
-false;
-flatten_begins__2405 = Mmake_function__2398("flatten_begins", function flatten_begins__2406 (exps__2407)
-{return reduce1__2399(concatenate__2400, map__2401(function B2397__2408 (exp__2409)
-{
-var flattened__2410 = flatten_statementsN__2404(exp__2409);
-if ($T(beginQ__2402(flattened__2410)))
-{return rest__2403(flattened__2410)}
-else
-return [flattened__2410]}, exps__2407))}, false)}
-{
-var reduce__2413 = B2394.reduce,
-varQ__2414 = B2396["var?"],
-do__2415 = B2394["do"],
-push_last__2416 = B2394["push-last"],
-last__2417 = B2394.last,
-binaryEE__2418 = B2394["binary=="],
-first__2419 = B2394.first,
-second_setter__2420 = B2394["second-setter"],
-third__2421 = B2394.third,
-second__2422 = B2394.second,
-setQ__2423 = B2396["set?"],
-not__2424 = B2394.not,
-emptyQ__2425 = B2394["empty?"],
-flatten_varsN__2426;
-false;
-flatten_varsN__2426 = Mmake_function__2398("flatten_varsN", function flatten_varsN__2427 (exps__2428)
-{return reduce__2413(function B2411__2429 (result__2430, exp__2431)
-{
-var previous__2432;
-if ($T(not__2424(emptyQ__2425(result__2430))))
-{previous__2432 = last__2417(result__2430)}
-else
-previous__2432 = false;
-var previous_varQ__2433;
-if ($T(previous__2432))
-{previous_varQ__2433 = varQ__2414(previous__2432)}
-else
-previous_varQ__2433 = false;
-var B2439;
-if ($T(previous_varQ__2433))
-{B2439 = varQ__2414(exp__2431)}
-else
-B2439 = false;
-if ($T(B2439))
-{
-do__2415(function B2412__2434 (binding__2435)
-{return push_last__2416(last__2417(result__2430), binding__2435)}, rest__2403(exp__2431));
-return result__2430}
-else
-{
-var mergeQ__2436;
-if ($T(previous_varQ__2433))
-{mergeQ__2436 = setQ__2423(exp__2431)}
-else
-mergeQ__2436 = false;
-var binding__2437;
-if ($T(mergeQ__2436))
-{binding__2437 = last__2417(last__2417(result__2430))}
-else
-binding__2437 = false;
-var identifier__2438;
-if ($T(mergeQ__2436))
-{identifier__2438 = second__2422(exp__2431)}
-else
-identifier__2438 = false;
-if ($T(binaryEE__2418(first__2419(binding__2437), identifier__2438)))
-{
-second_setter__2420(binding__2437, third__2421(exp__2431));
-return result__2430}
-else
-return concatenate__2400(result__2430, [exp__2431])}}, [], exps__2428)}, false)}
-{
-var B2460 = $S("%begin", "ralph/core"),
-B2461 = $S("%var", "ralph/core"),
-instanceQ__2443 = B2394["instance?"],
-LarrayG__2444 = B2394["<array>"],
-last_setter__2445 = B2394["last-setter"],
-maybe_begin__2446 = B2396["maybe-begin"],
-third_setter__2447 = B2394["third-setter"],
-symbol_name__2448 = B2394["symbol-name"];
-false;
-flatten_statementsN__2404 = Mmake_function__2398("flatten_statementsN", function flatten_statementsN__2449 (exp__2450)
-{B2462:while(true){
-if ($T(instanceQ__2443(exp__2450, LarrayG__2444)))
-{
-var B2440__2451 = symbol_name__2448(first__2419(exp__2450)),
-B2441__2452 = binaryEE__2418(B2440__2451, "%method"),
-B2459;
-if ($T(B2441__2452))
-{B2459 = B2441__2452}
-else
-{
-var B2442__2453 = binaryEE__2418(B2440__2451, "%while");
-if ($T(B2442__2453))
-{B2459 = B2442__2453}
-else
-B2459 = binaryEE__2418(B2440__2451, "%set")};
-if ($T(B2459))
-{
-last_setter__2445(exp__2450, flatten_statementsN__2449(last__2417(exp__2450)));
-return exp__2450}
-else
-if ($T(binaryEE__2418(B2440__2451, "%begin")))
-{
-var ____2454 = exp__2450[0],
-exps__2455 = $SL.call(exp__2450, 1);
-return maybe_begin__2446(flatten_varsN__2426(flatten_begins__2405(exps__2455)))}
-else
-if ($T(binaryEE__2418(B2440__2451, "%bind")))
-{
-var ____2456 = exp__2450[0],
-binding__2457 = exp__2450[1],
-body__2458 = exp__2450[2];
-arguments = [[B2460, [B2461, binding__2457], body__2458]];
-exp__2450 = arguments[0];
-continue B2462}
-else
-if ($T(binaryEE__2418(B2440__2451, "%if")))
-{
-third_setter__2447(exp__2450, flatten_statementsN__2449(third__2421(exp__2450)));
-last_setter__2445(exp__2450, flatten_statementsN__2449(last__2417(exp__2450)));
-return exp__2450}
-else
-if ($T(binaryEE__2418(B2440__2451, "%try")))
-{
-second_setter__2420(exp__2450, flatten_statementsN__2449(second__2422(exp__2450)));
-last_setter__2445(exp__2450, flatten_statementsN__2449(last__2417(exp__2450)));
-return exp__2450}
-else
-return map__2401(flatten_statementsN__2449, exp__2450)}
-else
-return exp__2450;
-break}}, false);
-exports["flatten-statements!"] = flatten_statementsN__2404}
+    var ralphScoreCCinstanceQ = B3522['instance?'], ralphScoreCCLarrayG = B3522['<array>'], ralphScoreCCsymbol_name = B3522['symbol-name'], ralphScoreCCMconcat = B3522['%concat'], ralphScoreCClast_setter = B3522['last-setter'], ralphScoreCCthird_setter = B3522['third-setter'], ralphScoreCCL = B3522['<'], ralphScoreCCsize = B3522['size'], B3558 = $S('%begin'), B3559 = $S('%var'), flatten_statementsN__3531 = ralphScoreCCMmake_function('flatten_statementsN', function B3560(exp__3561) {
+            if (($T)(ralphScoreCCinstanceQ(exp__3561, ralphScoreCCLarrayG))) {
+                var B3562 = ralphScoreCCsymbol_name(ralphScoreCCfirst(exp__3561)), B3563 = ralphScoreCCEE(B3562, '%quote'), B3572 = false;
+                if (($T)(B3563))
+                    B3572 = B3563;
+                else
+                    B3572 = ralphScoreCCEE(B3562, '%native-name');
+                if (($T)(B3572))
+                    return(exp__3561);
+                else if (($T)(ralphScoreCCEE(B3562, '%bind'))) {
+                    var ____3564 = exp__3561[0], binding__3565 = exp__3561[1], body__3566 = exp__3561[2];
+                    return(flatten_statementsN__3531([
+                        B3558,
+                        ralphScoreCCMconcat([B3559], binding__3565),
+                        body__3566
+                    ]));
+                } else {
+                    var B3567 = ralphScoreCCEE(B3562, '%method'), B3573 = false;
+                    if (($T)(B3567))
+                        B3573 = B3567;
+                    else {
+                        var B3568 = ralphScoreCCEE(B3562, '%set');
+                        if (($T)(B3568))
+                            B3573 = B3568;
+                        else
+                            B3573 = ralphScoreCCEE(B3562, '%while');
+                    }
+                    if (($T)(B3573)) {
+                        ralphScoreCClast_setter(exp__3561, flatten_statementsN__3531(ralphScoreCClast(exp__3561)));
+                        return(exp__3561);
+                    } else if (($T)(ralphScoreCCEE(B3562, '%if'))) {
+                        ralphScoreCCthird_setter(exp__3561, flatten_statementsN__3531(ralphScoreCCthird(exp__3561)));
+                        ralphScoreCClast_setter(exp__3561, flatten_statementsN__3531(ralphScoreCClast(exp__3561)));
+                        return(exp__3561);
+                    } else if (($T)(ralphScoreCCEE(B3562, '%begin'))) {
+                        var ____3569 = exp__3561[0], forms__3570 = $SL.call(exp__3561, 1), formsT__3571 = flatten_varsN__3549(flatten_begins__3533(forms__3570));
+                        if (($T)(ralphScoreCCL(ralphScoreCCsize(formsT__3571), 2)))
+                            return(ralphScoreCCfirst(formsT__3571));
+                        else
+                            return(ralphScoreCCMconcat([B3558], formsT__3571));
+                    } else if (($T)(ralphScoreCCEE(B3562, '%try'))) {
+                        ralphScoreCCsecond_setter(exp__3561, flatten_statementsN__3531(ralphScoreCCsecond(exp__3561)));
+                        ralphScoreCClast_setter(exp__3561, flatten_statementsN__3531(ralphScoreCClast(exp__3561)));
+                        return(exp__3561);
+                    } else
+                        return(ralphScoreCCmap(flatten_statementsN__3531, exp__3561));
+                }
+            } else
+                return(exp__3561);
+        }, false);
+    (exports)['flatten-statements!'] = flatten_statementsN__3531;
+}
