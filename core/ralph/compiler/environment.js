@@ -59,8 +59,8 @@ var ralphScoreCCMmake_function = B1669['%make-function'], ralphScoreCCnot = B166
     (exports)['find-special-form'] = find_special_form__1702;
 }
 {
-    var ralphScoreCChasQ = B1669['has?'], ralphScoreCCget = B1669['get'], special_operatorQ__1707 = ralphScoreCCMmake_function('special_operatorQ', function B1704(identifier__1705, env__1706) {
-            return(ralphScoreCChasQ(ralphScoreCCget(env__1706, 'special-forms'), ralphScoreCCsymbol_name(identifier__1705)));
+    var ralphScoreCCtrueQ = B1669['true?'], ralphScoreCCget = B1669['get'], special_operatorQ__1707 = ralphScoreCCMmake_function('special_operatorQ', function B1704(identifier__1705, env__1706) {
+            return(ralphScoreCCtrueQ(ralphScoreCCget(env__1706, 'special-forms')[ralphScoreCCsymbol_name(identifier__1705)]));
         }, false);
     (exports)['special-operator?'] = special_operatorQ__1707;
 }
@@ -144,7 +144,7 @@ var ralphScoreCCMmake_function = B1669['%make-function'], ralphScoreCCnot = B166
     (exports)['make-import-identifier'] = make_import_identifier__1766;
 }
 {
-    var B1770 = $S('%define'), B1771 = $S('%native-call'), make_import_definition__1775 = ralphScoreCCMmake_function('make_import_definition', function B1772(module_name__1773, env__1774) {
+    var B1770 = $S('%define', 'ralph/core'), B1771 = $S('%native-call', 'ralph/core'), make_import_definition__1775 = ralphScoreCCMmake_function('make_import_definition', function B1772(module_name__1773, env__1774) {
             return([
                 B1770,
                 make_import_identifier__1766(module_name__1773, env__1774),

@@ -448,8 +448,8 @@ $K = keyword__65;
             else
                 return(function B339() {
                     var arguments__340 = $SL.call(arguments, 0);
-                    return(reduce__210(function B341(value__342, function__343) {
-                        return(function__343(value__342));
+                    return(reduce__210(function B341(function__342, value__343) {
+                        return(function__342(value__343));
                     }, apply__209(last__114(functions__338), arguments__340), but_last__184(functions__338), B201, true));
                 });
         }, false);

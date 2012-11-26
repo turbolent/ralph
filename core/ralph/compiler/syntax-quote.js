@@ -13,63 +13,58 @@ var B1846 = $S('unquote-splicing', 'ralph/core'), unquote_splicedQ__1850 = ralph
         else
             return(false);
     }, false);
-var ralphScompilerSenvironmentCCspecial_operatorQ = B1832['special-operator?'], B1853 = $S('quote', 'ralph/core'), syntax_quote_symbol__1857 = ralphScoreCCMmake_function('syntax_quote_symbol', function B1854(symbol__1855, env__1856) {
-        var B1858 = false;
-        if (($T)(ralphScompilerSenvironmentCCspecial_operatorQ(symbol__1855, env__1856)))
-            B1858 = symbol__1855;
-        else
-            B1858 = resolve__1836(symbol__1855, env__1856);
+var B1853 = $S('quote', 'ralph/core'), syntax_quote_symbol__1857 = ralphScoreCCMmake_function('syntax_quote_symbol', function B1854(symbol__1855, env__1856) {
         return([
             B1853,
-            B1858
+            resolve__1836(symbol__1855, env__1856)
         ]);
     }, false);
-var ralphScoreCCsecond = B1827['second'], ralphScoreCCreduce = B1827['reduce'], ralphScoreCCpush_last = B1827['push-last'], B1863 = $S('%array'), B1864 = $S('%concat', 'ralph/core'), syntax_quote_array__1874 = ralphScoreCCMmake_function('syntax_quote_array', function B1865(array__1866, env__1867) {
-        if (($T)(unquotedQ__1843(array__1866, env__1867)))
-            return(ralphScoreCCsecond(array__1866));
+var ralphScoreCCsecond = B1827['second'], ralphScoreCCreduce = B1827['reduce'], ralphScoreCCpush_last = B1827['push-last'], B1862 = $S('%array', 'ralph/core'), B1863 = $S('%concat', 'ralph/core'), syntax_quote_array__1873 = ralphScoreCCMmake_function('syntax_quote_array', function B1864(array__1865, env__1866) {
+        if (($T)(unquotedQ__1843(array__1865, env__1866)))
+            return(ralphScoreCCsecond(array__1865));
         else {
-            var part__1868 = [B1863];
-            return(ralphScoreCCreduce(function B1869(result__1870, form__1871) {
-                if (($T)(unquote_splicedQ__1850(form__1871, env__1867))) {
-                    part__1868 = false;
+            var part__1867 = [B1862];
+            return(ralphScoreCCreduce(function B1868(result__1869, form__1870) {
+                if (($T)(unquote_splicedQ__1850(form__1870, env__1866))) {
+                    part__1867 = false;
                     return([
-                        B1864,
-                        result__1870,
-                        ralphScoreCCsecond(form__1871)
+                        B1863,
+                        result__1869,
+                        ralphScoreCCsecond(form__1870)
                     ]);
                 } else {
-                    var formT__1873 = false;
-                    if (($T)(unquotedQ__1843(form__1871, env__1867)))
-                        formT__1873 = ralphScoreCCsecond(form__1871);
+                    var formT__1872 = false;
+                    if (($T)(unquotedQ__1843(form__1870, env__1866)))
+                        formT__1872 = ralphScoreCCsecond(form__1870);
                     else
-                        formT__1873 = syntax_quote_form__1872(form__1871, env__1867);
-                    if (($T)(part__1868)) {
-                        ralphScoreCCpush_last(part__1868, formT__1873);
-                        return(result__1870);
+                        formT__1872 = syntax_quote_form__1871(form__1870, env__1866);
+                    if (($T)(part__1867)) {
+                        ralphScoreCCpush_last(part__1867, formT__1872);
+                        return(result__1869);
                     } else {
-                        part__1868 = [
-                            B1863,
-                            formT__1873
+                        part__1867 = [
+                            B1862,
+                            formT__1872
                         ];
                         return([
-                            B1864,
-                            result__1870,
-                            part__1868
+                            B1863,
+                            result__1869,
+                            part__1867
                         ]);
                     }
                 }
-            }, part__1868, array__1866));
+            }, part__1867, array__1865));
         }
     }, false);
 {
-    var ralphScoreCCinstanceQ = B1827['instance?'], ralphScoreCCLarrayG = B1827['<array>'], ralphScoreCCLsymbolG = B1827['<symbol>'], syntax_quote_form__1872 = ralphScoreCCMmake_function('syntax_quote_form', function B1877(form__1878, env__1879) {
-            var B1880 = form__1878;
-            if (($T)(ralphScoreCCinstanceQ(B1880, ralphScoreCCLarrayG)))
-                return(syntax_quote_array__1874(form__1878, env__1879));
-            else if (($T)(ralphScoreCCinstanceQ(B1880, ralphScoreCCLsymbolG)))
-                return(syntax_quote_symbol__1857(form__1878, env__1879));
+    var ralphScoreCCinstanceQ = B1827['instance?'], ralphScoreCCLarrayG = B1827['<array>'], ralphScoreCCLsymbolG = B1827['<symbol>'], syntax_quote_form__1871 = ralphScoreCCMmake_function('syntax_quote_form', function B1876(form__1877, env__1878) {
+            var B1879 = form__1877;
+            if (($T)(ralphScoreCCinstanceQ(B1879, ralphScoreCCLarrayG)))
+                return(syntax_quote_array__1873(form__1877, env__1878));
+            else if (($T)(ralphScoreCCinstanceQ(B1879, ralphScoreCCLsymbolG)))
+                return(syntax_quote_symbol__1857(form__1877, env__1878));
             else
-                return(form__1878);
+                return(form__1877);
         }, false);
-    (exports)['syntax-quote-form'] = syntax_quote_form__1872;
+    (exports)['syntax-quote-form'] = syntax_quote_form__1871;
 }

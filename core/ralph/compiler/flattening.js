@@ -1,110 +1,110 @@
-var B3522 = require('ralph/core');
-var B3524 = require('ralph/compiler/utilities');
-var ralphScoreCCMvar = B3522['%var'], ralphScoreCCMmake_function = B3522['%make-function'], ralphScoreCCreduce1 = B3522['reduce1'], ralphScoreCCconcatenate = B3522['concatenate'], ralphScoreCCmap = B3522['map'], ralphScompilerSutilitiesCCopQ = B3524['op?'], ralphScoreCCrest = B3522['rest'], flatten_begins__3533 = ralphScoreCCMmake_function('flatten_begins', function B3527(exps__3528) {
-        return(ralphScoreCCreduce1(ralphScoreCCconcatenate, ralphScoreCCmap(function B3529(exp__3530) {
-            var flattened__3532 = flatten_statementsN__3531(exp__3530);
-            if (($T)(ralphScompilerSutilitiesCCopQ('%begin', flattened__3532)))
-                return(ralphScoreCCrest(flattened__3532));
+var B3521 = require('ralph/core');
+var B3523 = require('ralph/compiler/utilities');
+var ralphScoreCCMvar = B3521['%var'], ralphScoreCCMmake_function = B3521['%make-function'], ralphScoreCCreduce1 = B3521['reduce1'], ralphScoreCCconcatenate = B3521['concatenate'], ralphScoreCCmap = B3521['map'], ralphScompilerSutilitiesCCopQ = B3523['op?'], ralphScoreCCrest = B3521['rest'], flatten_begins__3532 = ralphScoreCCMmake_function('flatten_begins', function B3526(exps__3527) {
+        return(ralphScoreCCreduce1(ralphScoreCCconcatenate, ralphScoreCCmap(function B3528(exp__3529) {
+            var flattened__3531 = flatten_statementsN__3530(exp__3529);
+            if (($T)(ralphScompilerSutilitiesCCopQ('%begin', flattened__3531)))
+                return(ralphScoreCCrest(flattened__3531));
             else
-                return([flattened__3532]);
-        }, exps__3528)));
+                return([flattened__3531]);
+        }, exps__3527)));
     }, false);
-var ralphScoreCCreduce = B3522['reduce'], ralphScoreCCnot = B3522['not'], ralphScoreCCemptyQ = B3522['empty?'], ralphScoreCClast = B3522['last'], ralphScoreCCdo = B3522['do'], ralphScoreCCpush_last = B3522['push-last'], ralphScoreCCsecond = B3522['second'], ralphScoreCCEE = B3522['=='], ralphScoreCCfirst = B3522['first'], ralphScoreCCsecond_setter = B3522['second-setter'], ralphScoreCCthird = B3522['third'], flatten_varsN__3549 = ralphScoreCCMmake_function('flatten_varsN', function B3537(exps__3538) {
-        return(ralphScoreCCreduce(function B3539(result__3540, exp__3541) {
-            var previous__3542 = false;
-            if (($T)(ralphScoreCCnot(ralphScoreCCemptyQ(result__3540))))
-                previous__3542 = ralphScoreCClast(result__3540);
+var ralphScoreCCreduce = B3521['reduce'], ralphScoreCCnot = B3521['not'], ralphScoreCCemptyQ = B3521['empty?'], ralphScoreCClast = B3521['last'], ralphScoreCCdo = B3521['do'], ralphScoreCCpush_last = B3521['push-last'], ralphScoreCCsecond = B3521['second'], ralphScoreCCEE = B3521['=='], ralphScoreCCfirst = B3521['first'], ralphScoreCCsecond_setter = B3521['second-setter'], ralphScoreCCthird = B3521['third'], flatten_varsN__3548 = ralphScoreCCMmake_function('flatten_varsN', function B3536(exps__3537) {
+        return(ralphScoreCCreduce(function B3538(result__3539, exp__3540) {
+            var previous__3541 = false;
+            if (($T)(ralphScoreCCnot(ralphScoreCCemptyQ(result__3539))))
+                previous__3541 = ralphScoreCClast(result__3539);
             else
-                previous__3542 = false;
-            var previous_varQ__3543 = false;
-            if (($T)(previous__3542))
-                previous_varQ__3543 = ralphScompilerSutilitiesCCopQ('%var', previous__3542);
+                previous__3541 = false;
+            var previous_varQ__3542 = false;
+            if (($T)(previous__3541))
+                previous_varQ__3542 = ralphScompilerSutilitiesCCopQ('%var', previous__3541);
             else
-                previous_varQ__3543 = false;
-            var B3550 = false;
-            if (($T)(previous_varQ__3543))
-                B3550 = ralphScompilerSutilitiesCCopQ('%var', exp__3541);
+                previous_varQ__3542 = false;
+            var B3549 = false;
+            if (($T)(previous_varQ__3542))
+                B3549 = ralphScompilerSutilitiesCCopQ('%var', exp__3540);
             else
-                B3550 = false;
-            if (($T)(B3550)) {
-                ralphScoreCCdo(function B3544(binding__3545) {
-                    return(ralphScoreCCpush_last(ralphScoreCClast(result__3540), binding__3545));
-                }, ralphScoreCCrest(exp__3541));
-                return(result__3540);
+                B3549 = false;
+            if (($T)(B3549)) {
+                ralphScoreCCdo(function B3543(binding__3544) {
+                    return(ralphScoreCCpush_last(ralphScoreCClast(result__3539), binding__3544));
+                }, ralphScoreCCrest(exp__3540));
+                return(result__3539);
             } else {
-                var mergeQ__3546 = false;
-                if (($T)(previous_varQ__3543))
-                    mergeQ__3546 = ralphScompilerSutilitiesCCopQ('%set', exp__3541);
+                var mergeQ__3545 = false;
+                if (($T)(previous_varQ__3542))
+                    mergeQ__3545 = ralphScompilerSutilitiesCCopQ('%set', exp__3540);
                 else
-                    mergeQ__3546 = false;
-                var binding__3547 = false;
-                if (($T)(mergeQ__3546))
-                    binding__3547 = ralphScoreCClast(ralphScoreCClast(result__3540));
+                    mergeQ__3545 = false;
+                var binding__3546 = false;
+                if (($T)(mergeQ__3545))
+                    binding__3546 = ralphScoreCClast(ralphScoreCClast(result__3539));
                 else
-                    binding__3547 = false;
-                var identifier__3548 = false;
-                if (($T)(mergeQ__3546))
-                    identifier__3548 = ralphScoreCCsecond(exp__3541);
+                    binding__3546 = false;
+                var identifier__3547 = false;
+                if (($T)(mergeQ__3545))
+                    identifier__3547 = ralphScoreCCsecond(exp__3540);
                 else
-                    identifier__3548 = false;
-                if (($T)(ralphScoreCCEE(ralphScoreCCfirst(binding__3547), identifier__3548))) {
-                    ralphScoreCCsecond_setter(binding__3547, ralphScoreCCthird(exp__3541));
-                    return(result__3540);
+                    identifier__3547 = false;
+                if (($T)(ralphScoreCCEE(ralphScoreCCfirst(binding__3546), identifier__3547))) {
+                    ralphScoreCCsecond_setter(binding__3546, ralphScoreCCthird(exp__3540));
+                    return(result__3539);
                 } else
-                    return(ralphScoreCCconcatenate(result__3540, [exp__3541]));
+                    return(ralphScoreCCconcatenate(result__3539, [exp__3540]));
             }
-        }, [], exps__3538));
+        }, [], exps__3537));
     }, false);
 {
-    var ralphScoreCCinstanceQ = B3522['instance?'], ralphScoreCCLarrayG = B3522['<array>'], ralphScoreCCsymbol_name = B3522['symbol-name'], ralphScoreCCMconcat = B3522['%concat'], ralphScoreCClast_setter = B3522['last-setter'], ralphScoreCCthird_setter = B3522['third-setter'], ralphScoreCCL = B3522['<'], ralphScoreCCsize = B3522['size'], B3558 = $S('%begin'), B3559 = $S('%var'), flatten_statementsN__3531 = ralphScoreCCMmake_function('flatten_statementsN', function B3560(exp__3561) {
-            if (($T)(ralphScoreCCinstanceQ(exp__3561, ralphScoreCCLarrayG))) {
-                var B3562 = ralphScoreCCsymbol_name(ralphScoreCCfirst(exp__3561)), B3563 = ralphScoreCCEE(B3562, '%quote'), B3572 = false;
-                if (($T)(B3563))
-                    B3572 = B3563;
+    var ralphScoreCCinstanceQ = B3521['instance?'], ralphScoreCCLarrayG = B3521['<array>'], ralphScoreCCsymbol_name = B3521['symbol-name'], ralphScoreCCMconcat = B3521['%concat'], ralphScoreCClast_setter = B3521['last-setter'], ralphScoreCCthird_setter = B3521['third-setter'], ralphScoreCCL = B3521['<'], ralphScoreCCsize = B3521['size'], B3557 = $S('%begin', 'ralph/core'), B3558 = $S('%var', 'ralph/core'), flatten_statementsN__3530 = ralphScoreCCMmake_function('flatten_statementsN', function B3559(exp__3560) {
+            if (($T)(ralphScoreCCinstanceQ(exp__3560, ralphScoreCCLarrayG))) {
+                var B3561 = ralphScoreCCsymbol_name(ralphScoreCCfirst(exp__3560)), B3562 = ralphScoreCCEE(B3561, '%quote'), B3571 = false;
+                if (($T)(B3562))
+                    B3571 = B3562;
                 else
-                    B3572 = ralphScoreCCEE(B3562, '%native-name');
-                if (($T)(B3572))
-                    return(exp__3561);
-                else if (($T)(ralphScoreCCEE(B3562, '%bind'))) {
-                    var ____3564 = exp__3561[0], binding__3565 = exp__3561[1], body__3566 = exp__3561[2];
-                    return(flatten_statementsN__3531([
-                        B3558,
-                        ralphScoreCCMconcat([B3559], binding__3565),
-                        body__3566
+                    B3571 = ralphScoreCCEE(B3561, '%native-name');
+                if (($T)(B3571))
+                    return(exp__3560);
+                else if (($T)(ralphScoreCCEE(B3561, '%bind'))) {
+                    var ____3563 = exp__3560[0], binding__3564 = exp__3560[1], body__3565 = exp__3560[2];
+                    return(flatten_statementsN__3530([
+                        B3557,
+                        ralphScoreCCMconcat([B3558], binding__3564),
+                        body__3565
                     ]));
                 } else {
-                    var B3567 = ralphScoreCCEE(B3562, '%method'), B3573 = false;
-                    if (($T)(B3567))
-                        B3573 = B3567;
+                    var B3566 = ralphScoreCCEE(B3561, '%method'), B3572 = false;
+                    if (($T)(B3566))
+                        B3572 = B3566;
                     else {
-                        var B3568 = ralphScoreCCEE(B3562, '%set');
-                        if (($T)(B3568))
-                            B3573 = B3568;
+                        var B3567 = ralphScoreCCEE(B3561, '%set');
+                        if (($T)(B3567))
+                            B3572 = B3567;
                         else
-                            B3573 = ralphScoreCCEE(B3562, '%while');
+                            B3572 = ralphScoreCCEE(B3561, '%while');
                     }
-                    if (($T)(B3573)) {
-                        ralphScoreCClast_setter(exp__3561, flatten_statementsN__3531(ralphScoreCClast(exp__3561)));
-                        return(exp__3561);
-                    } else if (($T)(ralphScoreCCEE(B3562, '%if'))) {
-                        ralphScoreCCthird_setter(exp__3561, flatten_statementsN__3531(ralphScoreCCthird(exp__3561)));
-                        ralphScoreCClast_setter(exp__3561, flatten_statementsN__3531(ralphScoreCClast(exp__3561)));
-                        return(exp__3561);
-                    } else if (($T)(ralphScoreCCEE(B3562, '%begin'))) {
-                        var ____3569 = exp__3561[0], forms__3570 = $SL.call(exp__3561, 1), formsT__3571 = flatten_varsN__3549(flatten_begins__3533(forms__3570));
-                        if (($T)(ralphScoreCCL(ralphScoreCCsize(formsT__3571), 2)))
-                            return(ralphScoreCCfirst(formsT__3571));
+                    if (($T)(B3572)) {
+                        ralphScoreCClast_setter(exp__3560, flatten_statementsN__3530(ralphScoreCClast(exp__3560)));
+                        return(exp__3560);
+                    } else if (($T)(ralphScoreCCEE(B3561, '%if'))) {
+                        ralphScoreCCthird_setter(exp__3560, flatten_statementsN__3530(ralphScoreCCthird(exp__3560)));
+                        ralphScoreCClast_setter(exp__3560, flatten_statementsN__3530(ralphScoreCClast(exp__3560)));
+                        return(exp__3560);
+                    } else if (($T)(ralphScoreCCEE(B3561, '%begin'))) {
+                        var ____3568 = exp__3560[0], forms__3569 = $SL.call(exp__3560, 1), formsT__3570 = flatten_varsN__3548(flatten_begins__3532(forms__3569));
+                        if (($T)(ralphScoreCCL(ralphScoreCCsize(formsT__3570), 2)))
+                            return(ralphScoreCCfirst(formsT__3570));
                         else
-                            return(ralphScoreCCMconcat([B3558], formsT__3571));
-                    } else if (($T)(ralphScoreCCEE(B3562, '%try'))) {
-                        ralphScoreCCsecond_setter(exp__3561, flatten_statementsN__3531(ralphScoreCCsecond(exp__3561)));
-                        ralphScoreCClast_setter(exp__3561, flatten_statementsN__3531(ralphScoreCClast(exp__3561)));
-                        return(exp__3561);
+                            return(ralphScoreCCMconcat([B3557], formsT__3570));
+                    } else if (($T)(ralphScoreCCEE(B3561, '%try'))) {
+                        ralphScoreCCsecond_setter(exp__3560, flatten_statementsN__3530(ralphScoreCCsecond(exp__3560)));
+                        ralphScoreCClast_setter(exp__3560, flatten_statementsN__3530(ralphScoreCClast(exp__3560)));
+                        return(exp__3560);
                     } else
-                        return(ralphScoreCCmap(flatten_statementsN__3531, exp__3561));
+                        return(ralphScoreCCmap(flatten_statementsN__3530, exp__3560));
                 }
             } else
-                return(exp__3561);
+                return(exp__3560);
         }, false);
-    (exports)['flatten-statements!'] = flatten_statementsN__3531;
+    (exports)['flatten-statements!'] = flatten_statementsN__3530;
 }
