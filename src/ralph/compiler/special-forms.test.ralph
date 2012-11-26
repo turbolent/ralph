@@ -6,6 +6,13 @@
            ralph/compiler/macros
            ralph/compiler/special-forms))
 
+
+(define $all-special-forms
+  (make-plain-object))
+
+(extend! $all-special-forms $internal-special-forms)
+(extend! $all-special-forms $core-special-forms)
+
 (define-function make-environment ()
   (bind ((module (make <module> name: "ralph/compiler/special-forms.test")))
     ;; (import-module module "ralph/core")
@@ -268,10 +275,17 @@
 ;; %quote
 
 (check-equal "special form: %quote"
-             `(,'+ 1 (%quote (,'when 1 2)) 2)
+             `(,'+ 1 (%quote ,'foo) 2)
              (macroexpand-all
-              '(+ 1 (%quote (when 1 2) 'ignored) 2)
+              '(+ 1 (%quote foo 'ignored) 2)
               *environment*))
+
+(check-condition "special form: %quote (non-symbol)"
+                 <error>
+                 (method ()
+                   (macroexpand-all
+                    '(+ 1 (%quote (when 1 2) 'ignored) 2)
+                    *environment*)))
 
 ;; %bind
 

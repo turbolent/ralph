@@ -1,0 +1,27 @@
+(define-module ralph/compiler/utilities.test
+  import: (ralph/test
+           ralph/compiler/utilities))
+
+(check-equal "destructure-parameter-list: rest and key"
+             ['(a b) 'r '((c 1) (d 2))]
+             (destructure-parameter-list
+              '(a b #rest r #key (c 1) (d 2))))
+
+(check-equal "destructure-parameter-list: rest only"
+             ['(a b) 'r []]
+             (destructure-parameter-list
+              '(a b #rest r)))
+
+(check-equal "destructure-parameter-list: key only"
+             ['(a b) #f '((c 1))]
+             (destructure-parameter-list
+              '(a b #key (c 1))))
+
+(check-equal "destructure-parameter-list: none, but key"
+             [[] #f '((c 1))]
+             (destructure-parameter-list
+              '(#key (c 1))))
+
+(check-equal "destructure-parameter-list: none"
+             [[] #f []]
+             (destructure-parameter-list []))

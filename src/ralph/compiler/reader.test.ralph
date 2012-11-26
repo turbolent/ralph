@@ -3,10 +3,12 @@
            ralph/stream
            ralph/compiler/environment
            ralph/compiler/module
-           ralph/compiler/reader))
+           ralph/compiler/reader
+           ralph/compiler/special-forms))
 
 (define *environment* (make <environment>
-                            module: (make <module> name: "ralph/compiler/reader.test")))
+                            module: (make <module> name: "ralph/compiler/reader.test")
+                            special-forms: $core-special-forms))
 
 (define-function read-form (source)
   (read (make <string-stream>
@@ -35,7 +37,7 @@
 
 (bind ((stream (make <string-stream> string: "")))
   (check-equal "empty, no eof-error, default eof-value"
-               #f
+               $end-of-file
                (read stream #f eof-error?: #f)))
 
 (bind ((stream (make <string-stream> string: "")))

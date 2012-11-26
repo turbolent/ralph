@@ -9,6 +9,12 @@
            ralph/compiler/special-forms
            ralph/compiler/reader))
 
+(define $all-special-forms
+  (make-plain-object))
+
+(extend! $all-special-forms $internal-special-forms)
+(extend! $all-special-forms $core-special-forms)
+
 
 (define-function make-environment ()
   (bind ((module (make <module> name: "ralph/compiler/macroexpansion.test")))
@@ -29,6 +35,26 @@
 
 (define *environment*
   (make-environment))
+
+
+
+(set! (get *environment* "macros" "alpha")
+      (method (_ x y)
+        `(beta ,x ,y)))
+
+(set! (get *environment* "macros" "beta")
+      (method (_ x y)
+        `(gamma ,x ,y)))
+
+
+
+(check-equal "macroexpand-1: alpha"
+             `(beta 1 2)
+             (macroexpand-1 '(alpha 1 2) *environment*))
+
+(check-equal "macroexpand: alpha"
+             `(gamma 1 2)
+             (macroexpand '(alpha 1 2) *environment*))
 
 
 
@@ -126,6 +152,54 @@
       $internal-special-forms)
 (chain-object (get *environment* "macros")
               $internal-macros)
+
+
+
+(check-equal "macroexpand: bind"
+             `(%bind (,'a 1)
+                (%bind (,'b (,'+ ,'a 1))
+                  (begin ,'b)))
+             (macroexpand '(bind ((a 1)
+                                  (b (+ a 1)))
+                             b)
+                          *environment*))
+
+(check-equal "macroexpand-1: cond"
+             `(if (,'a)
+                  (begin 1 2)
+                  (cond
+                   (,'b 3)
+                   (else: 4 5)))
+              (macroexpand-1 '(cond
+                               ((a) 1 2)
+                               (b 3)
+                               (else: 4 5))
+                             *environment*))
+
+
+
+(check-equal "macroexpand: prevent expansion of sepcial forms"
+             '(%bind (cond
+                      ((a) b)
+                      (else: c))
+                     d)
+             (macroexpand '(%bind (cond
+                                   ((a) b)
+                                   (else: c))
+                             d)
+                          *environment*))
+
+
+(check-equal "macroexpand-all: prevent expansion of sepcial forms (2)"
+             `(%bind (,'cond ((,'a) ,'b))
+                ,'d)
+             (macroexpand-all '(bind ((cond
+                                       ((a) b)
+                                       (else: c)))
+                                 d)
+                              *environment*))
+
+
 
 (reset-symbol-counter!)
 (check-equal "macroexpand-all to IR: define-function"
