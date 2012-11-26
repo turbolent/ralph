@@ -314,7 +314,7 @@
   (if (empty? functions)
       identity
       (method (#rest arguments)
-        (reduce (method (value function)
+        (reduce (method (function value)
                   (function value))
                 (apply (last functions)
                        arguments)
