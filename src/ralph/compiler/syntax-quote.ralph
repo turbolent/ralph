@@ -26,9 +26,7 @@
 ;;;; syntax-quoting
 
 (define-function syntax-quote-symbol (symbol env)
-  `(quote ,(if (special-operator? symbol env)
-               symbol
-               (resolve symbol env))))
+  `(quote ,(resolve symbol env)))
 
 ; NOTE: working, but unoptimized version
 ; (define-function syntax-quote-array (array env)

@@ -571,8 +571,8 @@
 (set! (get $internal-macros "set!")
       (method (_ place #rest new-values)
         (if (and (instance? place <array>)
-                 (not (== (first place)
-                          '%get-property)))
+                 (not (== (symbol-name (first place))
+                          "%get-property")))
             ;; invoke setter
             `(,(transform-setter-identifier (first place))
               ,@(rest place)

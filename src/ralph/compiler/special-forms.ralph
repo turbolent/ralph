@@ -212,7 +212,7 @@
       (method (_ symbol #rest superfluous)
         ;; TODO [#B]: (unless (empty? superflous) (warn ...))
         (check-type symbol <symbol>
-                    "Non-symbol in %quote: %=")
+                    "Non-symbol in %%quote: %=")
         `(%quote ,symbol)))
 
 (set! (get $internal-special-forms "%bind")

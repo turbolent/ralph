@@ -48,8 +48,8 @@
   (curry find-expander "special-forms" #f))
 
 (define-function special-operator? (identifier env)
-  (has? (get env "special-forms")
-        (symbol-name identifier)))
+  (true? (%get-property (get env "special-forms")
+                        (symbol-name identifier))))
 
 
 ;;;; binding
