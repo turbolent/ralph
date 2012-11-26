@@ -184,8 +184,10 @@
                            (compile protected-form env))
                   "handlers" [(%object "type" "CatchClause"
                                        "param" (compile identifier env)
-                                       "body" (as-statement
-                                               (compile handling-form env)))])))
+                                       "body" (%object "type" "BlockStatement"
+                                                       "body"
+                                                       (as-statement
+                                                        (compile handling-form env))))])))
       (("%var")
        (destructuring-bind (_ #rest bindings) exp
          (%object "type" "VariableDeclaration"
