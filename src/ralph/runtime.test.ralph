@@ -811,6 +811,20 @@
 (test-hygiene "a" "b" "c")
 
 
+;; partition
+(check-equal "partition: #1"
+             [[1 2 3] [4 5 6] [7 8]]
+             (partition 3 [1 2 3 4 5 6 7 8]))
+
+(check-equal "partition: #2"
+             [[1 2 3] [4 5 6]]
+             (partition 3 [1 2 3 4 5 6]))
+
+(check-equal "partition: empty array"
+             []
+             (partition 3 []))
+
+
 
 ;; NOTE: add tests ABOVE!
 
