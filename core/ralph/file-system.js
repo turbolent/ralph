@@ -27,8 +27,8 @@ var ralphScoreCCbut_last = B1431['but-last'], strip_trailing_slashes__1447 = ral
     }, false);
 {
     var path_parent_directory__1452 = ralphScoreCCMmake_function('path_parent_directory', function B1449(path__1450) {
-            var pathT__1451 = strip_trailing_slashes__1447(path_directory__1441(path__1450));
-            return(ralphScoreCCconcatenate(pathCCdirname(pathT__1451), '/'));
+            var path = path__1450[path__1450.length - 1] == '/' ? path__1450 : pathCCdirname(path__1450); 
+            return pathCCdirname(path) + '/';
         }, false);
     (exports)['path-parent-directory'] = path_parent_directory__1452;
 }
