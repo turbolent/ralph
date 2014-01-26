@@ -2,40 +2,24 @@
 (define-module ralph/compiler/macroexpansion.test
   import: (ralph/test
            ralph/stream
-           ralph/compiler/module
-           ralph/compiler/environment
+           ralph/compiler/reader
            ralph/compiler/macroexpansion
-           ralph/compiler/macros
            ralph/compiler/special-forms
-           ralph/compiler/reader))
+           ralph/compiler/macros
+           ralph/compiler/environment.test))
 
-(define $all-special-forms
-  (make-plain-object))
-
-(extend! $all-special-forms $internal-special-forms)
-(extend! $all-special-forms $core-special-forms)
-
-
-(define-function make-environment ()
-  (bind ((module (make <module> name: "ralph/compiler/macroexpansion.test")))
-    ;; (import-module module "ralph/core")
-
-    (bind ((symbol-macros
-            (make-plain-object)))
-      (set! (get symbol-macros "foo")
-            (method (_)
-              `(when 23 42)))
-      (chain-object symbol-macros
-                    $core-symbol-macros)
-      (make <environment>
-            module: module
-            special-forms: $all-special-forms
-            macros: $core-macros
-            symbol-macros: symbol-macros))))
 
 (define *environment*
-  (make-environment))
+  (make-test-environment "ralph/compiler/macroexpansion.test"))
 
+(bind ((symbol-macros (make-plain-object)))
+  (set! (get symbol-macros "foo")
+        (method (_)
+          `(when 23 42)))
+  (chain-object (get *environment* "symbol-macros")
+                symbol-macros))
+
+;;;;
 
 
 (set! (get *environment* "macros" "alpha")
@@ -71,7 +55,7 @@
 
 
 (check-equal "symbol macro: foo"
-             `(,'+ 1 (if 23 (begin 42) #f))
+             `(,'+ 1 (%if 23 42 #f))
              (macroexpand-all
               '(+ 1 foo)
               *environment*))
@@ -79,48 +63,49 @@
 
 
 (check-equal "symbol macro at head"
-             `((if 23 (begin 42) #f) ,'x ,'y)
+             `((%if 23 42 #f) ,'x ,'y)
              (macroexpand-all
               '(foo x y)
               *environment*))
 
 (check-equal "symbol macro at head (two levels)"
-             `((if 23 (begin 42) #f) ,'x ,'y)
+             `((%if 23 42 #f) ,'x ,'y)
              (macroexpand-all
               '(bar x y)
               *environment*))
 
 (check-equal "symbol macro expanding to symbol with macro definition"
-             `(if ,'x (begin ,'y) #f)
+             `(%if ,'x ,'y #f)
              (macroexpand-all
               '(when2 x y)
               *environment*))
 
 (check-equal "symbol macro (two levels)"
-             `(,'+ (if 23 (begin 42) #f) 2)
+             `(,'+ (%if 23 42 #f) 2)
              (macroexpand-all
               '(+ bar 2)
               *environment*))
 
 (check-equal "macros and special forms shadowing"
-             `(,'+ 1 (bind ((,'quote
+             `(,'+ 1 (%bind (,'quote
                              ;; quote special form and when macro still works
-                             (if 5 (begin (quote (,'when 7 8))) #f))
-                            (,'when (method (,'foo ,'b)
-                                      ;; parameter foo shadows symbol macro
-                                      ;; when macro still works
-                                      (,'not (if ,'foo
-                                                 (begin ,'b)
-                                                 #f)))))
-                       ;; TODO [#A]: foo only expands to when, but should completely to if:
-                       ;; (,'- (if 23 (begin 42) #f) ,'xyz)
-                       ;; -> expansion needs to take symbol's module into account (hygienic expansion)
-                       ;; - foo is producing ralph/core::when so shouldn't clash with locally bound when
-                       (,'- (when 23 42) ,'xyz)
-                       ;; when binding shadows when macro
-                       (,'when ,'a ,'b)
-                       ;; quote special form not shadowed
-                       (quote (,'when ,'a ,'b))))
+                             (%if 5 [(%quote ,'when) 7 8] #f))
+                       (%bind (,'when (%method ,'$1 (,'foo ,'b)
+                                  ;; parameter foo shadows symbol macro
+                                  ;; when macro still works
+                                  (,'not (%if ,'foo
+                                              ,'b
+                                              #f))))
+                          (%begin
+                           ;; TODO [#A]: foo only expands to when, but should completely to if:
+                           ;; (,'- (%if 23 42 #f) ,'xyz)
+                           ;; expansion needs to take symbol's module into account (hygienic expansion),
+                           ;; foo is producing ralph/core::when so shouldn't clash with locally bound when
+                           (,'- (when 23 42) ,'xyz)
+                           ;; when binding shadows when macro
+                           (,'when ,'a ,'b)
+                           ;; quote special form not shadowed
+                           (,'quote (,'when ,'a ,'b))))))
              (macroexpand-all
               '(+ 1 (bind ((quote (when 5 (quote (when 7 8))))
                            (when (method (foo b) (not (when foo b)))))
@@ -129,18 +114,19 @@
                       (quote (when a b))))
               *environment*))
 
+
 (check-equal "identifiers shadow macros, but not special forms: method"
-             `(method (,'when ,'quote ,'foo)
-                ,'foo
-                (quote (,'when 1 2))
-                (,'when 3 4))
+             `(%method ,'$2 (,'when ,'quote ,'foo)
+                (%begin
+                 ,'foo
+                 (,'quote (,'when 1 2))
+                 (,'when 3 4)))
              (macroexpand-all
               '(method (when quote foo)
                  foo
                  (quote (when 1 2))
                  (when 3 4))
               *environment*))
-
 
 (define-function read-form (source)
   (read (make <string-stream>
