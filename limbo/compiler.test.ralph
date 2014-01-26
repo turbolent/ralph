@@ -125,35 +125,6 @@
 
 
 
-;;;; flatten statements
-
-(reset-symbol-counter!)
-(bind ((module (make-core-environment)))
-  (check-equal "flatten-statements!"
-               `(%begin
-                 (%var ($1 (%symbol "a"))
-                       ($2 (%symbol "b"))
-                       ($3 (%symbol "c")))
-                 (%if $1
-                      (%while (bar $2)
-                        (%begin $1 23 $3))
-                      $3)
-                 $2)
-               (flatten-statements!
-                (lift-symbols
-                 (macroexpand-all
-                  '(begin
-                    (if (symbol "a")
-                        (while (bar (symbol "b"))
-                          (symbol "a")
-                          23
-                          (symbol "c"))
-                        (symbol "c"))
-                    (symbol "b"))
-                  module)
-                 module))))
-
-
 ;;;; lift-defines (GONE)
 
 

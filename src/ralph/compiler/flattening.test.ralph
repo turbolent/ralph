@@ -1,0 +1,40 @@
+
+
+(define-module ralph/compiler/flattening.test
+  import: (ralph/test
+           ralph/compiler/macroexpansion
+           ralph/compiler/statements
+           ralph/compiler/flattening
+           ralph/compiler/symbol-lifting
+           ralph/compiler/environment.test))
+
+
+(define *environment*
+  (make-test-environment "ralph/compiler/flattening.test"))
+
+;;;;
+
+(reset-symbol-counter!)
+(check-equal "flatten-statements!"
+            `(%begin
+               (%define $1 (%quote ,'a))
+               (%define $2 (%quote ,'b))
+               (%define $3 (%quote ,'c))
+               (%if $1
+                    (%while (,'bar $2)
+                      (%begin $1 23 $3))
+                    $3)
+               $2)
+             (flatten-statements!
+              (lift-symbols
+               (macroexpand-all
+                '(begin
+                  (if 'a
+                      (while (bar 'b)
+                        'a
+                        23
+                        'c)
+                      'c)
+                  'b)
+                *environment*)
+               *environment*)))
