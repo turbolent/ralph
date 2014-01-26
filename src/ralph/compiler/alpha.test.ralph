@@ -1,0 +1,148 @@
+
+(define-module ralph/compiler/alpha.test
+  import: (ralph/test
+           ralph/compiler/module
+           ralph/compiler/environment
+           ralph/compiler/macroexpansion
+           ralph/compiler/macros
+           ralph/compiler/special-forms
+           ralph/compiler/alpha))
+
+
+
+(define $all-symbol-macros
+  (make-plain-object))
+
+(extend! $all-symbol-macros $internal-symbol-macros)
+(extend! $all-symbol-macros $core-symbol-macros)
+
+(define $all-macros
+  (make-plain-object))
+
+(extend! $all-macros $internal-macros)
+(extend! $all-macros $core-macros)
+
+
+(define-function make-environment ()
+  (bind ((module (make <module> name: "ralph/compiler/alpha.test")))
+    ;; (import-module module "ralph/core")
+    (make <environment>
+          module: module
+          special-forms: $internal-special-forms
+          macros: $all-macros
+          symbol-macros: $all-symbol-macros)))
+
+(define *environment*
+  (make-environment))
+
+
+;;;; 
+
+(reset-symbol-counter!)
+(check-equal "alpha-convert: single method"
+             `(%method x_1 (a_2) 1)
+             (alpha-convert-form
+              (macroexpand-all
+               '(%method x (a) 1)
+               *environment*)
+              *environment*))
+
+(reset-symbol-counter!)
+(check-equal "alpha-convert: nested methods"
+             `((%method x_1 (a_2)
+                 ((%method y_3 (a_4)
+                    a_4)
+                  a_2))
+               1)
+             (alpha-convert-form
+              (macroexpand-all
+               '((%method x (a)
+                   ((%method y (a)
+                      a)
+                    a))
+                 1)
+               *environment*)
+              *environment*))
+
+(reset-symbol-counter!)
+(check-equal "alpha-convert: define"
+             `(%begin
+               (%define a_1 #f)
+               (%method x_2 (a_3)
+                 a_3))
+             (alpha-convert-form
+              (macroexpand-all
+               '(%begin
+                 (%define a)
+                 (%method x (a)
+                   a))
+               *environment*)
+              *environment*))
+
+
+(reset-symbol-counter!)
+(check-equal "alpha-convert: single bind"
+             `(%bind (x_1 1) x_1)
+             (alpha-convert-form
+              (macroexpand-all
+               '(bind ((x 1)) x)
+               *environment*)
+              *environment*))
+
+(reset-symbol-counter!)
+(check-equal "alpha-convert: nested bind"
+             `(%bind (x_2 (%bind (x_1 1) x_1)) x_2)
+             (alpha-convert-form
+              (macroexpand-all
+               '(bind ((x (bind ((x 1)) x))) x)
+               *environment*)
+              *environment*))
+
+
+(reset-symbol-counter!)
+(bind ((expanded
+        (macroexpand-all '(bind ((c 1))
+                            (bind ((a 2)
+                                   (b 3))
+                              (- 1 c)
+                              (+ a b)))
+                         *environment*)))
+
+  (check-equal ""
+               `(%bind (,'c 1)
+                  (%bind (,'a 2)
+                    (%bind (,'b 3)
+                      (%begin
+                       (,'- 1 ,'c)
+                       (,'+ ,'a ,'b)))))
+               expanded)
+  (check-equal ""
+               `(%bind (c_1 1)
+                  (%bind (a_2 2)
+                    (%bind (b_3 3)
+                      (%begin
+                       (-_4 1 c_1)
+                       (+_5 a_2 b_3)))))
+               (alpha-convert-form expanded
+                                   *environment*)))
+
+
+(reset-symbol-counter!)
+(bind ((expanded
+        (macroexpand-all '((method (a b)
+                             (+ a b))
+                           1 2)
+                         *environment*)))
+
+  (check-equal ""
+               `((%method ,'$1 (,'a ,'b)
+                   (,'+ ,'a ,'b))
+                 1 2)
+               expanded)
+  (reset-symbol-counter!)
+  (check-equal ""
+               `((%method $1 (a_2 b_3)
+                   (+_5 a_2 b_3))
+                 1 2)
+               (alpha-convert-form expanded
+                                   *environment*)))
