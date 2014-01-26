@@ -384,49 +384,61 @@
                 form
                 calls)))
 
-(define-function make-function-definer
-    (macro-name definer #key type/existing? record?)
-  (method (env identifier parameter-list #rest forms)
-    (destructuring-bind (setter? identifier)
-        (if (setter-identifier? identifier)
-            [#t (transform-setter-identifier (second identifier))]
-            [#f identifier])
-      (unless (or (instance? identifier <symbol>)
-                  setter?)
-        (signal (format-to-string "Identifier not symbol or setter in %s: %="
-                                  macro-name identifier)))
-      (when (and type/existing?
-                 (empty? parameter-list))
-        (signal (format-to-string "Empty parameter-list in %s: %="
-                                  macro-name parameter-list)))
-      (bind ((name (symbol-name identifier))
-             (definition `(method ,parameter-list
-                            ,@forms)))
-        (when record?
-          (set! (get env "module" "functions" name)
-                definition))
-        ;; result
-        `(define ,identifier
-           (,definer
-             (%native-name ,name)
-             ,definition
-             ,setter?
-             ,@(if type/existing?
-                   `(,(bind ((head (first parameter-list)))
-                        (if (and (instance? head <array>)
-                                 (> (size head) 1))
-                            (second head)
-                            `<object>))
-                     ,identifier)
-                   [])))))))
 
-(for-each ((arguments [["define-function" `%make-function
-                        record?: #t]
-                       ["define-method" `%make-method
-                        type/existing?: #t]]))
-          ()
-  (set! (get $core-macros (first arguments))
-        (apply make-function-definer arguments)))
+
+(set! (get $core-macros "define-method")
+      (method (env identifier parameter-list #rest forms)
+        (destructuring-bind (setter? identifier)
+            (if (setter-identifier? identifier)
+                [#t (transform-setter-identifier (second identifier))]
+                [#f identifier])
+          (unless (or (instance? identifier <symbol>)
+                      setter?)
+            (signal (format-to-string "Identifier not symbol or setter in define-method: %="
+                                      identifier)))
+          (when (empty? parameter-list)
+            (signal (format-to-string "Empty parameter-list in define-method: %="
+                                      identifier)))
+          (bind ((name (symbol-name identifier))
+                 (definition `(method ,parameter-list
+                                ,@forms)))
+            ;; result
+            `(define ,identifier
+               (%make-method
+                 (%native-name ,name)
+                 ,definition
+                 ,setter?
+                 ,(bind ((head (first parameter-list)))
+                    (if (and (instance? head <array>)
+                             (> (size head) 1))
+                        (second head)
+                        `<object>))
+                 ,identifier))))))
+
+
+(set! (get $core-macros "define-function")
+      (method (env identifier parameter-list #rest forms)
+        (destructuring-bind (setter? identifier)
+            (if (setter-identifier? identifier)
+                [#t (transform-setter-identifier (second identifier))]
+                [#f identifier])
+          (unless (or (instance? identifier <symbol>)
+                      setter?)
+            (signal (format-to-string "Identifier not symbol or setter in define-function: %="
+                                      identifier)))
+          (bind ((name (symbol-name identifier))
+                 (definition `(method ,parameter-list
+                                ,@forms)))
+            (set! (get env "module" "functions" name)
+                  definition)
+            ;; result
+            `(define ,identifier
+               (%make-function
+                 (%native-name ,name)
+                 ,definition
+                 ,setter?))))))
+
+
 
 (set! (get $core-macros "define-generic")
       (method (_ identifier arguments #rest superflous)
