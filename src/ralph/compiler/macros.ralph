@@ -384,8 +384,6 @@
                 form
                 calls)))
 
-
-
 (set! (get $core-macros "define-method")
       (method (env identifier parameter-list #rest forms)
         (destructuring-bind (setter? identifier)
@@ -415,7 +413,6 @@
                         `<object>))
                  ,identifier))))))
 
-
 (set! (get $core-macros "define-function")
       (method (env identifier parameter-list #rest forms)
         (destructuring-bind (setter? identifier)
@@ -432,13 +429,11 @@
             (set! (get env "module" "functions" name)
                   definition)
             ;; result
-            `(define ,identifier
-               (%make-function
-                 (%native-name ,name)
-                 ,definition
-                 ,setter?))))))
-
-
+            `(%begin
+               (define ,identifier ,definition)
+               (%annotate-function ,identifier
+                                   (%native-name ,name)
+                                   ,setter?))))))
 
 (set! (get $core-macros "define-generic")
       (method (_ identifier arguments #rest superflous)

@@ -1,7 +1,7 @@
 (define-module ralph/core
   export: (<object> <string> <number> <array>
            <boolean> <function> <error>
-           %make-function true? not size %inherit
+           %annotate-function true? not size %inherit
            %make-class %keywords <keyword> keyword %keys
            %concat cons as-string as-number as-array
            as-json parse-json
@@ -88,8 +88,8 @@
 (set! (%get-property <error> "%properties")
       (%object "message" #f))
 
-(define %make-function
-  (method (name function setter?)
+(define %annotate-function
+  (method (function name setter?)
     (set! (%get-property function "%name") name)
     (set! (%get-property function "%setter?") setter?)
     function))

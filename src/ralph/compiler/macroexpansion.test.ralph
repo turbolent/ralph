@@ -199,21 +199,20 @@
                                  d)
                               *environment*))
 
-
-
 (reset-symbol-counter!)
 (check-equal "macroexpand-all to IR: define-function"
              (read-form
-              "(ralph/core::%define foo
-                 (ralph/core::%make-function
-                   (ralph/core::%native-name \"foo\")
+              "(ralph/core::%begin
+                 (ralph/core::%define foo
                    (ralph/core::%method $1 (a b)
                      (ralph/core::%bind (all (ralph/core::%native-call \"$SL.call\" %all-arguments 2))
                        (ralph/core::%bind ($2 (ralph/core::%keys all (ralph/core::%object \"c\" 23 \"d\" #f)))
                          (ralph/core::%bind (c (ralph/core::%get-property $2 \"c\"))
                            (ralph/core::%bind (d (ralph/core::%get-property $2 \"d\"))
                              (ralph/core::%bind (when (ralph/core::%if a b #f))
-                               (when c d)))))))
+                               (when c d))))))))
+                 (ralph/core::%annotate-function foo
+                   (ralph/core::%native-name \"foo\")
                    #f))")
              (macroexpand-all '(define-function foo ((a <object>) b #rest all #key (c 23) d)
                                  (bind ((when (when a b))) (when c d)))
