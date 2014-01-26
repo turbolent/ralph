@@ -1,100 +1,7 @@
 
 
 
-(reset-symbol-counter!)
-(check-equal "statements: or"
-             `(%bind ($1 #f)
-                (%bind ($3 #f)
-                  (%begin
-                   (%if ((%native "$T") $1)
-                        (%set $3 $1)
-                        (%bind ($2 2)
-                          (%if ((%native "$T") $2)
-                               (%set $3 $2)
-                               (%set $3 3))))
-                   (foo $3 bar))))
-              (transform-statements!
-               (normalize-term
-                (macroexpand-all
-                 `(foo (or #f 2 3) bar)
-                 *environment*)
-                *environment*)
-               *environment*))
-
-(reset-symbol-counter!)
-(check-equal "statements: if exp. in if stmt."
-             `(%bind ($1 #f)
-                (%begin
-                 (%if ((%native "$T") a)
-                      (%set $1 1)
-                      (%set $1 2))
-                 (%if ((%native "$T") $1)
-                      3
-                      4)))
-             (transform-statements!
-               (normalize-term
-                (macroexpand-all
-                 `(if (if a 1 2) 3 4)
-                 *environment*)
-                *environment*)
-               *environment*))
-
-(reset-symbol-counter!)
-(check-equal "statements: while exp. in while stmt."
-             `(%while ((%native "$T") (> a 2))
-                (%bind (a #f)
-                  (%begin
-                   (%begin
-                    (%while ((%native "$T") (< b 3))
-                      (%if ((%native "$T") a)
-                           (%bind (c #f)
-                             (%begin
-                              (%if ((%native "$T") c)
-                                   (%set c 5)
-                                   (%set c 6))
-                              c))
-                           #f))
-                    (%set a #f))
-                   4)))
-             (transform-statements!
-               (normalize-term
-                (macroexpand-all
-                 '(while (> a 2)
-                    (bind ((a (while (< b 3)
-                                (if a
-                                    (bind ((c (if c 5 6)))
-                                      c)
-                                    #f))))
-                      4))
-                 *environment*)
-                *environment*)
-               *environment*))
-
-
-(reset-symbol-counter!)
-(check-equal "statements: value of while applied to method"
-             `(%bind (y 5)
-                (%bind ($2 (%method $1 (x)
-                             (%if ((%native "$T") x)
-                                  (%return 1)
-                                  (%return 2))))
-                  (%bind ($3 #f)
-                    (%begin
-                     (%begin
-                      (%while ((%native "$T") (> y 2))
-                        (%set y (%minus y 1)))
-                      (%set $3 #f))
-                     ($2 $3)))))
-             (transform-statements!
-               (normalize-term
-                (macroexpand-all
-                 '(bind ((y 5))
-                    ((method (x) (if x 1 2))
-                     (while (> y 2)
-                       (dec! y))))
-                 *environment*)
-                *environment*)
-               *environment*))
+;;;; lift-symbols
 
 
 (reset-symbol-counter!)
@@ -216,6 +123,10 @@
                  module)
                 module)))
 
+
+
+;;;; flatten statements
+
 (reset-symbol-counter!)
 (bind ((module (make-core-environment)))
   (check-equal "flatten-statements!"
@@ -241,6 +152,9 @@
                     (symbol "b"))
                   module)
                  module))))
+
+
+;;;; lift-defines (GONE)
 
 
 (reset-symbol-counter!)
@@ -292,6 +206,10 @@
                       (define x 2))
                  module)
                 module)))
+
+
+
+;;;; define free variables (GONE)
 
 (reset-symbol-counter!)
 (bind ((module (make-core-environment)))
