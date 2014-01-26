@@ -1,39 +1,13 @@
 
 (define-module ralph/compiler/alpha.test
   import: (ralph/test
-           ralph/compiler/module
-           ralph/compiler/environment
            ralph/compiler/macroexpansion
-           ralph/compiler/macros
-           ralph/compiler/special-forms
-           ralph/compiler/alpha))
+           ralph/compiler/alpha
+           ralph/compiler/environment.test))
 
-
-
-(define $all-symbol-macros
-  (make-plain-object))
-
-(extend! $all-symbol-macros $internal-symbol-macros)
-(extend! $all-symbol-macros $core-symbol-macros)
-
-(define $all-macros
-  (make-plain-object))
-
-(extend! $all-macros $internal-macros)
-(extend! $all-macros $core-macros)
-
-
-(define-function make-environment ()
-  (bind ((module (make <module> name: "ralph/compiler/alpha.test")))
-    ;; (import-module module "ralph/core")
-    (make <environment>
-          module: module
-          special-forms: $internal-special-forms
-          macros: $all-macros
-          symbol-macros: $all-symbol-macros)))
 
 (define *environment*
-  (make-environment))
+  (make-test-environment "ralph/compiler/alpha.test"))
 
 
 ;;;; 
