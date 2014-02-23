@@ -137,6 +137,7 @@
     (set! constructor (method ())))
   (set! (%get-property constructor "%properties")
         properties)
+  (set! (%get-property constructor "%class?") #t)
   (when superclass
     (%inherit constructor superclass))
   constructor)
@@ -793,6 +794,12 @@
 (define-method description ((symbol <hash-symbol>))
   (%infix "+" "#" (symbol-name symbol)))
 
+(define-method description ((function <function>))
+  ;; TODO: include %name, and for class also %properties; requires
+  ;;       passing ralph name to %annotate-function and %make-class
+  (if (get function "%class?")
+      "#{class}"
+      "#{function}"))
 
 (define min (%native "Math.min"))
 
