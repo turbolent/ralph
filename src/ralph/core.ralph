@@ -63,7 +63,7 @@
            define-symbol-macro
            syntax-quote unquote unquote-splicing
            call-next-method next-method
-           once-only)
+           once-only repeat-string)
   inline: (not size cons
            as-string as-number as-array as-json
            parse-number char-code empty?
@@ -1016,4 +1016,13 @@
                                   start: last-index
                                   end: new-index))
         (set! last-index new-index)))
+    result))
+
+(define-function repeat-string (string count)
+  (bind ((result ""))
+    (while (> count 0)
+      (when (odd? count)
+        (set! result (%concat result string)))
+      (%infix ">>=" count 1)
+      (set! string (%concat string string)))
     result))
