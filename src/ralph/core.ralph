@@ -68,11 +68,11 @@
            as-string as-number as-array as-json
            parse-number char-code empty?
            rest last (setter last) but-last
-           slice %concat reverse!
+           slice %concat reverse! reverse
            first second third
            (setter first) (setter second) (setter third)
            replace push push-last pop pop-last
-           reduce1 as-hex-string starts-with?
+           as-hex-string starts-with?
            as-uppercase as-lowercase trim
            inc dec mod as-radiant even? odd?
            has? signal binary==))
@@ -700,7 +700,8 @@
 
 
 (define-function object-values (object)
-  (map (curry get object)
+  (map (method (property)
+         (get object property))
        (object-properties object)))
 
 (define-generic initialize (object #rest))
