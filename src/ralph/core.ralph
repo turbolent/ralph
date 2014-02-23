@@ -682,16 +682,22 @@
     object))
 
 (define-function object-properties (object #key inherited?)
-  (bind ((result []))
-    (if (instance? object <array>)
+  (if (instance? object <array>)
+      (bind ((result []))
         (dotimes (i (size object))
           (push-last result i))
-        (bind (i)
-          (%native "for (" i " in " object ") "
-                   "(" inherited? "||"
-                   "$HP.call(" object ", " i ")) &&"
-                   result ".push(" i ")")))
-    result))
+        result)
+      (if (or inherited?
+          (%infix "!==" (%native-call "typeof" object)
+                        "object"))
+          (bind (i (result []))
+            (%native "for (" i " in " object ") "
+                     "(" inherited? "||"
+                     "$HP.call(" object ", " i ")) &&"
+                     result ".push(" i ")")
+            result)
+          (%native-call "Object.keys" object))))
+
 
 (define-function object-values (object)
   (map (curry get object)
