@@ -1,5 +1,6 @@
 (define-module ralph/format
-  import: (ralph/stream)
+  import: (ralph/stream
+           ralph/file-stream)
   export: (format-out format-to-string format))
 
 ;; TODO:
@@ -63,3 +64,4 @@
   (bind ((stream (make <string-stream>)))
     (apply format stream control-string args)
     (stream-contents stream)))
+
