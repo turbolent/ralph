@@ -2,6 +2,7 @@
 (define-module ralph/compiler
   import: (ralph/format
            ralph/stream
+           ralph/file-stream
            ralph/file-system
            ralph/compiler/utilities
            ralph/compiler/module
@@ -125,61 +126,73 @@
                (< (get (file-properties path) "modification-date")
                   (get (file-properties path2) "modification-date")))))))
 
+
+(define-function compile-form (form stream env)
+  (stream-write stream
+                (compile-expression form env)))
+
+
+(define-function compile-stream (input-stream output-stream env)
+  (bind ((read? #t))
+    (while read?
+      (bind ((form (read input-stream env eof-error?: #f)))
+       (set! read? (not (== form $end-of-file)))
+       (when read?
+         (compile-form form output-stream env))))))
+
+
 (define-function compile-module (module-name)
   ;; module in source directory? (native)
   (unless (has? *modules* module-name)
     (if-bind (module (read-module "src" module-name))
       (set! (get *modules* module-name)
             module)))
-   (when (recompile? module-name)
-     (format-out "Compiling: %s\n" module-name)
-     (unless (file-exists? (source-path module-name))
-       (signal (format-to-string
-                "Unable to compile non-existing module '%s'"
-                module-name)))
-     (bind ((module (make <module> name: module-name))
-            (env (make <environment>
-                       module: module
-                       special-forms: $internal-special-forms
-                       macros: $all-macros
-                       symbol-macros: $all-symbol-macros))
-            (source (read-file (source-path module-name)))
-            (stream (make <string-stream>
-                          string: source))
-            (result ""))
-       (bind-methods ((compile (form)
-                        ;; (format-out ">>> %=\n" form)
-                        (bind ((compiled (compile-expression form env)))
-                          ;; (format-out "<<< %=\n" compiled)
-                          (set! result
-                                (concatenate result compiled "\n")))))
-         (set! (get *modules* module-name)
-               module)
-         ;; special case core?
-         (unless (== module-name "ralph/core")
-           ;; implicitly import and load core
-           (import-module module "ralph/core")
-           (compile (make-import-definition "ralph/core" env)))
-         (bind ((read? #t))
-           (while read?
-             (bind ((form (read stream env
-                                eof-error?: #f)))
-               (set! read? (not (== form $end-of-file)))
-               (when read?
-                 (compile form))))))
-       ;; write executable
-       (write-file (executable-path module-name)
-                   result)
-       ;; write module
-       (write-file
-        (module-path "build" module-name)
-        ;; ignore imports for now
-        (description [module-name
-                      exports: (get module "exports")
-                      inline: (object-properties (get module "inline"))
-                      dependencies: (get module "dependencies")]))
-       (format-out "Finished: %s\n" module-name)
-       module)))
+  (when (recompile? module-name)
+    (format-out "Compiling: %s\n" module-name)
+    (unless (file-exists? (source-path module-name))
+      (signal (format-to-string
+              "Unable to compile non-existing module '%s'"
+              module-name)))
+    (bind ((module (make <module> name: module-name))
+           (env (make <environment>
+                      module: module
+                      special-forms: $internal-special-forms
+                      macros: $all-macros
+                      symbol-macros: $all-symbol-macros))
+           (target-path (executable-path module-name))
+           (output-stream
+            (begin
+              ;; TODO: should be ensured by
+              ;; (make <file-stream> if-does-not-exist: 'create
+              (ensure-directories-exist target-path)
+              (make <file-stream>
+                    path: target-path
+                    direction: 'output)))
+           ;; TODO: read directly from <file-stream>
+           (source (read-file (source-path module-name)))
+           (input-stream (make <string-stream>
+                         string: source)))
+      (set! (get *modules* module-name)
+            module)
+      ;; special case core?
+      (unless (== module-name "ralph/core")
+        ;; implicitly import and load core
+        (import-module module "ralph/core")
+        (compile-form (make-import-definition "ralph/core" env)
+                      output-stream
+                      env))
+      ;; write executable
+      (compile-stream input-stream output-stream env)
+      (stream-close output-stream)
+      ;; write module
+      (write-file (module-path "build" module-name)
+                  ;; ignore imports for now
+                  (description [module-name
+                                exports: (get module "exports")
+                                inline: (object-properties (get module "inline"))
+                                dependencies: (get module "dependencies")]))
+      (format-out "Finished: %s\n" module-name)
+      module)))
 
 
 ;; => [module-name options])
