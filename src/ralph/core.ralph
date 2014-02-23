@@ -218,12 +218,12 @@
   elements)
 
 (define-function push ((array <array>) value)
-  (%native array ".unshift(" value ")")
-  array)
+  (. array ("unshift" value))
+  value)
 
 (define-function push-last ((array <array>) value)
-  (%native array ".push(" value ")")
-  array)
+  (. array ("push" value))
+  value)
 
 (define-function pop ((array <array>))
   (. array ("shift")))
