@@ -126,8 +126,10 @@
         superclass)
   (set! (%get-property class "prototype" "__proto__")
         (%get-property superclass "prototype"))
-  (set! (%get-property class "%properties" "__proto__")
-        (%get-property superclass "%properties"))
+  (bind ((super-properties (%get-property superclass "%properties")))
+    (when (%infix "instanceof" super-properties <object>)
+      (set! (%get-property class "%properties" "__proto__")
+            super-properties)))
   class)
 
 (define-function %make-class (superclass properties constructor)
