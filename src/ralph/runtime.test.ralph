@@ -424,6 +424,22 @@
   (check-equal "get: '1' -> '2' -> '3' = 4"
                4 (get x "1" "2" "3")))
 
+;; handler-case
+(check-equal "handler-case: protected form returns value"
+             2 (bind ((val (handler-case
+                             (begin 1 2)
+                             ((<error> condition: condition)
+                              3))))
+                 val))
+
+(check-equal "handler-case: protected form fails"
+             3 (bind ((val (handler-case
+                             (begin 1 x 2)
+                             ((<error> condition: condition)
+                              3))))
+                 val))
+
+
 ;; if-bind
 (check-true "if-bind: test is true, shouldn't be visible in then"
             (if-bind (a #t)

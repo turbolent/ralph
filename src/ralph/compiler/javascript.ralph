@@ -79,6 +79,10 @@
       (%object "type" "ExpressionStatement"
                "expression" exp)))
 
+(define-function make-block (statements)
+  (%object "type" "BlockStatement"
+           "body" statements))
+
 (define-function compile (exp env)
   (select exp instance?
     ((<array>)
@@ -166,11 +170,10 @@
                                 (as-statement
                                  (compile alternate env))))))
       (("%begin")
-       (%object "type" "BlockStatement"
-                "body" (map (method (exp)
-                              (as-statement
-                               (compile exp env)))
-                            (rest exp))))
+       (make-block (map (method (exp)
+                          (as-statement
+                           (compile exp env)))
+                        (rest exp))))
       (("%while")
        (destructuring-bind (_ test form) exp
          (%object "type" "WhileStatement"
@@ -182,27 +185,25 @@
          (%object "type" "TryStatement"
                   "block" (as-statement
                            (compile protected-form env))
-                  "handlers" [(%object "type" "CatchClause"
-                                       "param" (compile identifier env)
-                                       "body" (%object "type" "BlockStatement"
-                                                       "body"
-                                                       (as-statement
-                                                        (compile handling-form env))))])))
+                  "handler" (%object "type" "CatchClause"
+                                     "param" (compile identifier env)
+                                     "body" (make-block
+                                              [(as-statement
+                                                 (compile handling-form env))])))))
       (("%var")
        (destructuring-bind (_ #rest bindings) exp
-         (%object "type" "BlockStatement"
-                  "body" (map (method (binding)
-                                (destructuring-bind (var value)
-                                  (if (instance? binding <array>)
-                                      binding
-                                      [binding #f])
-                                  ;; NOTE: always initialize, might reset state
-                                  (%object "type" "VariableDeclaration"
-                                           "kind" "var"
-                                           "declarations" [(%object "type" "VariableDeclarator"
-                                                                    "id" (compile var env)
-                                                                    "init" (compile value env))])))
-                              (partition 2 bindings)))))
+         (make-block (map (method (binding)
+                       (destructuring-bind (var value)
+                         (if (instance? binding <array>)
+                             binding
+                             [binding #f])
+                         ;; NOTE: always initialize, might reset state
+                         (%object "type" "VariableDeclaration"
+                                  "kind" "var"
+                                  "declarations" [(%object "type" "VariableDeclarator"
+                                                           "id" (compile var env)
+                                                           "init" (compile value env))])))
+                     (partition 2 bindings)))))
       (("%native-name")
        (compile (escape-name (second exp)) env))
       (("%native-call")
