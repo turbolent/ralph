@@ -126,19 +126,25 @@
   (check-equal "parallel-set!: v = 0 set to incremented i still 1"
                1 v))
 
-;; TODO
-; ;; block
-; (check-true "block: without non-local-exit function"
-;             (block () #t))
-; (check-true "block: with non-local-exit function"
-;             (block (return)
-;               (return #t)
-;               #f))
-; (check-equal "block: invoke non-local-exit function with value"
-;              2 (block (foo)
-;                  1
-;                  (foo 2)
-;                  3))
+;; block
+(check-true "block: without non-local-exit function"
+            (block () #t))
+(check-true "block: with non-local-exit function"
+            (block (return)
+              (return #t)
+              #f))
+(check-equal "block: invoke non-local-exit function with value"
+             2 (block (foo)
+                 1
+                 (foo 2)
+                 3))
+(check-equal "block: invoke non-local-exit function from inside nested method"
+             3 (block (exit)
+                 (do (method (item)
+                       (when (== item 3)
+                         (exit item)))
+                     [1 2 3 4])
+                 5))
 
 ;; signal
 (check-condition "signal <error>" <error>

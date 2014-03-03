@@ -504,6 +504,25 @@
           (%native "null") ,'%all-arguments)))
 
 
+(set! (get $core-macros "block")
+      (method  (_ name #rest body)
+        (if-bind (name (and (not (empty? name))
+                            (first name)))
+          (bind ((block-var (generate-symbol))
+                 (condition-var (generate-symbol)))
+            `(bind ((,name (%make-exit-function))
+                    (,block-var (method () ,@body)))
+               (%try (,block-var)
+                     ,condition-var
+                     (if (and (instance? ,condition-var <non-local-exit>)
+                              (%infix "===" (%get-property ,condition-var "identifier")
+                                            (%get-property ,name "identifier")))
+                         (%get-property ,condition-var "return-value")
+                         (signal ,condition-var)))))
+          `(begin ,@body))))
+
+
+
 ;; NOTE: define-module: see ralph/compiler
 
 
@@ -606,6 +625,7 @@
                                                   ,@body))
                                               body))))
                          cases))))))
+
 
 
 ;;;; internal symbol macros

@@ -3,6 +3,7 @@
            <boolean> <function> <error>
            %annotate-function true? not size %inherit
            %make-class %keywords <keyword> keyword %keys
+           %make-exit-function <non-local-exit>
            %concat cons as-string as-number as-array
            as-json parse-json
            parse-number parse-integer char-code code-char
@@ -156,6 +157,23 @@
           keyword))))
 
 (%native "$K = " keyword)
+
+(define *exit-function-counter* 0)
+
+(define-class <non-local-exit> (<object>))
+
+(define-function %make-exit-function ()
+  (bind ((identifier (inc! *exit-function-counter*))
+         (exit-function (method (return-value)
+                          (bind ((condition (%native-call "new" <non-local-exit>)))
+                            (set! (%get-property condition "identifier")
+                                  identifier)
+                            (set! (%get-property condition "return-value")
+                                  return-value)
+                            (signal condition)))))
+    (set! (%get-property exit-function "identifier")
+          identifier)
+    exit-function))
 
 
 (define-function %concat ((array1 <array>) (array2 <array>))
