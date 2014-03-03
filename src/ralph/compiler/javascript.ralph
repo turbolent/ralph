@@ -183,8 +183,8 @@
       (("%try")
        (destructuring-bind (_ protected-form identifier handling-form) exp
          (%object "type" "TryStatement"
-                  "block" (as-statement
-                           (compile protected-form env))
+                  "block" (make-block [(as-statement
+                                        (compile protected-form env))])
                   "handler" (%object "type" "CatchClause"
                                      "param" (compile identifier env)
                                      "body" (make-block
