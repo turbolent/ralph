@@ -509,6 +509,23 @@
 ;; position
 (check-equal "position: find 2 in (1 2 3)"
              1 (position [1 2 3] 2))
+(check-false "position: find 2 in ()"
+             (position [] 2))
+(check-equal "position: find 2 in (1 2 3 2)"
+             1 (position [1 2 3 2] 2))
+
+;; count
+(check-equal "count: 'x in '()"
+             0 (count 'x '()))
+(check-equal "count: 'x in '(a b c d)"
+             0 (count 'x '(a b c d)))
+(check-equal "count: 'x in '(a b x c d)"
+             1 (count 'x '(a b x c d)))
+(check-equal "count: 'x in '(a b x c d x)"
+             2 (count 'x '(a b x c d x)))
+(check-equal "count: 'x in '(a b x c d x x)"
+             3 (count 'x '(a b x c d x x)))
+
 
 ;; <string-stream>
 (bind ((stream (make <string-stream> string: "test")))

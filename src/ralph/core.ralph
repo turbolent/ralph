@@ -12,7 +12,7 @@
            make-array push push-last pop
            pop-last but-last every? reduce1
            reduce reverse! reverse choose
-           find-key position last-position member?
+           find-key position last-position member? count
            sort! sort apply curry
            rcurry always repeatedly identity
            complement compose + - * / type
@@ -506,8 +506,8 @@
     result))
 
 ;; <array> <object> or <string> <string>
-(define-function position ((array <array>) element)
-  (bind ((position (. array ("indexOf" element))))
+(define-function position ((array <array>) element #key (start 0))
+  (bind ((position (. array ("indexOf" element start))))
     (when (> position -1)
       position)))
 
@@ -515,6 +515,11 @@
   (bind ((position (. array ("lastIndexOf" element))))
     (when (> position -1)
       position)))
+
+(define-function count (item (array <array>))
+  (for ((result -1 (inc result))
+        (pos 0 (position array item start: (inc pos))))
+       ((not pos) result)))
 
 (define-function as-uppercase ((string <string>))
   (. string ("toUpperCase")))
