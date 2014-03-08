@@ -145,6 +145,24 @@
                          (exit item)))
                      [1 2 3 4])
                  5))
+(check-equal "block: invoke non-local-exit function from inside another block"
+             [3 5] (bind (inner)
+                   (block (exit1)
+                     1
+                     (set! inner (block (exit2)
+                                   2
+                                   (exit2 3)
+                                   4))
+                     [inner 5])))
+(check-equal "block: invoke outer non-local-exit function from inside another block"
+             3 (bind (inner)
+                 (block (exit1)
+                   1
+                   (set! inner (block (exit2)
+                                 2
+                                 (exit1 3)
+                                 4))
+                   5)))
 
 ;; signal
 (check-condition "signal <error>" <error>
