@@ -156,33 +156,27 @@
     (else:
      (k exp))))
 
+(define-function make-external-reference (name module-name env)
+  `(%get-property ,(find-import-identifier module-name env)
+                  ,name))
+
 (define-function convert-free-variable (symbol env k)
   (destructuring-bind (name module-name)
       (destructure-symbol symbol)
-    (if (get env "definition-imported?"
-                 module-name name)
-        (k symbol)
+    ;; module import statement required?
+    (if-bind (import-identifier (find-import-identifier module-name env))
+        ;; module already imported
+        (bind ((reference (make-external-reference name module-name env)))
+          (alpha-convert reference env k))
         ;; prepend import statement
-        (begin
-         (set! (get env "definition-imported?"
-                    module-name name)
-               #t)
-         ;; module import statement required?
-         (bind ((import-identifier
-                 (find-import-identifier module-name env))
-                (result
-                 (alpha-convert-form
-                  `(%begin
-                    ,@(if import-identifier []
-                          [(make-import-definition module-name env)])
-                    (%var ,symbol
-                          (%get-property ,(or import-identifier
-                                              (find-import-identifier
-                                               module-name env))
-                                         ,name)))
-                  env)))
-           (push-last result (k symbol))
-           result)))))
+        (alpha-convert*
+            [(make-import-definition module-name env)
+             (make-external-reference name module-name env)]
+            env
+            (method (forms*)
+              (destructuring-bind (import* reference*) forms*
+                `(%begin ,import* ,(k reference*))))))))
+
 
 (define-function alpha-convert* (exp* env k)
   (if (empty? exp*)
