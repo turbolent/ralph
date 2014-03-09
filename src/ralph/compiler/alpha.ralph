@@ -146,40 +146,43 @@
      (if-bind (identifier (find-identifier exp env))
        (k identifier)
        (bind ((symbol (resolve-symbol exp env)))
-         (destructuring-bind (name module-name)
-             (destructure-symbol symbol)
-           (if (== module-name
-                   (get env "module" "name"))
-               ;; local, free variable: rename ahead of definition
-               ;; (see handling in %define)
-               (k (rename-definition symbol env))
-               ;; external, free variable
-               (if (get env "definition-imported?"
-                        module-name name)
-                   (k symbol)
-                   ;; prepend import statement
-                   (begin
-                    (set! (get env "definition-imported?"
-                               module-name name)
-                          #t)
-                    ;; module import statement required?
-                    (bind ((import-identifier
-                            (find-import-identifier module-name env))
-                           (result
-                            (alpha-convert-form
-                             `(%begin
-                               ,@(if import-identifier []
-                                     [(make-import-definition module-name env)])
-                               (%var ,symbol
-                                     (%get-property ,(or import-identifier
-                                                         (find-import-identifier
-                                                          module-name env))
-                                                    ,name)))
-                             env)))
-                      (push-last result (k symbol))
-                      result))))))))
+          (if (== (get symbol "module")
+                  (get env "module" "name"))
+              ;; local, free variable: rename ahead of definition
+              ;; (see handling in %define)
+              (k (rename-definition symbol env))
+              ;; external, free variable
+              (convert-free-variable symbol env k)))))
     (else:
      (k exp))))
+
+(define-function convert-free-variable (symbol env k)
+  (destructuring-bind (name module-name)
+      (destructure-symbol symbol)
+    (if (get env "definition-imported?"
+                 module-name name)
+        (k symbol)
+        ;; prepend import statement
+        (begin
+         (set! (get env "definition-imported?"
+                    module-name name)
+               #t)
+         ;; module import statement required?
+         (bind ((import-identifier
+                 (find-import-identifier module-name env))
+                (result
+                 (alpha-convert-form
+                  `(%begin
+                    ,@(if import-identifier []
+                          [(make-import-definition module-name env)])
+                    (%var ,symbol
+                          (%get-property ,(or import-identifier
+                                              (find-import-identifier
+                                               module-name env))
+                                         ,name)))
+                  env)))
+           (push-last result (k symbol))
+           result)))))
 
 (define-function alpha-convert* (exp* env k)
   (if (empty? exp*)
