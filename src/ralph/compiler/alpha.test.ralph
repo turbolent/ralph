@@ -41,9 +41,9 @@
 (reset-symbol-counter!)
 (check-equal "alpha-convert: define"
              `(%begin
-               (%define a_1 #f)
-               (%method x_2 (a_3)
-                 a_3))
+               (%define a #f)
+               (%method x_1 (a_2)
+                 a_2))
              (alpha-convert-form
               (macroexpand-all
                '(%begin
@@ -52,7 +52,6 @@
                    a))
                *environment*)
               *environment*))
-
 
 (reset-symbol-counter!)
 (check-equal "alpha-convert: single bind"
@@ -78,8 +77,8 @@
         (macroexpand-all '(bind ((c 1))
                             (bind ((a 2)
                                    (b 3))
-                              (- 1 c)
-                              (+ a b)))
+                              (foo 1 c)
+                              (bar a b)))
                          *environment*)))
 
   (check-equal ""
@@ -87,16 +86,16 @@
                   (%bind (,'a 2)
                     (%bind (,'b 3)
                       (%begin
-                       (,'- 1 ,'c)
-                       (,'+ ,'a ,'b)))))
+                       (,'foo 1 ,'c)
+                       (,'bar ,'a ,'b)))))
                expanded)
   (check-equal ""
                `(%bind (c_1 1)
                   (%bind (a_2 2)
                     (%bind (b_3 3)
                       (%begin
-                       (-_4 1 c_1)
-                       (+_5 a_2 b_3)))))
+                       (foo 1 c_1)
+                       (bar a_2 b_3)))))
                (alpha-convert-form expanded
                                    *environment*)))
 
@@ -104,19 +103,19 @@
 (reset-symbol-counter!)
 (bind ((expanded
         (macroexpand-all '((method (a b)
-                             (+ a b))
+                             (foo a b))
                            1 2)
                          *environment*)))
 
   (check-equal ""
                `((%method ,'$1 (,'a ,'b)
-                   (,'+ ,'a ,'b))
+                   (,'foo ,'a ,'b))
                  1 2)
                expanded)
   (reset-symbol-counter!)
   (check-equal ""
                `((%method $1 (a_2 b_3)
-                   (+_5 a_2 b_3))
+                   (foo a_2 b_3))
                  1 2)
                (alpha-convert-form expanded
                                    *environment*)))

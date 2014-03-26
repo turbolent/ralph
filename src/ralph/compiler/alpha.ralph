@@ -121,7 +121,7 @@
            (method (value*)
              (bind ((identifier*
                      (or (find-identifier identifier env)
-                         identifier)))
+                         (qualify-symbol identifier env))))
                (k `(%define ,identifier* ,value*)))))))
        (("%try")
         (destructuring-bind (_ protected-form identifier handling-form) exp

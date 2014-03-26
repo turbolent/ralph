@@ -8,6 +8,7 @@
            bind-globally! globally-bound?
            bind! bound? unbind!
            resolve-symbol
+           qualify-symbol
            find-import-identifier
            make-import-identifier
            make-import-definition))
@@ -91,6 +92,10 @@
               module/import-name
             (%%symbol import-name (get module "name")))
           (%%symbol name (get env "module" "name"))))))
+
+(define-function qualify-symbol (symbol env)
+  (%%symbol (get symbol "name")
+            (get env "module" "name")))
 
 
 ;;;; import identifiers
