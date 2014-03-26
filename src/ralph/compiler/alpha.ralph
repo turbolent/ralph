@@ -120,10 +120,8 @@
            value env
            (method (value*)
              (bind ((identifier*
-                     ;; already renamed ahead of definition?
-                     ;; (see <symbol>)
                      (or (find-identifier identifier env)
-                         (rename-definition identifier env))))
+                         identifier)))
                (k `(%define ,identifier* ,value*)))))))
        (("%try")
         (destructuring-bind (_ protected-form identifier handling-form) exp
@@ -148,9 +146,7 @@
        (bind ((symbol (resolve-symbol exp env)))
           (if (== (get symbol "module")
                   (get env "module" "name"))
-              ;; local, free variable: rename ahead of definition
-              ;; (see handling in %define)
-              (k (rename-definition symbol env))
+              (k symbol)
               ;; external, free variable
               (convert-free-variable symbol env k)))))
     (else:

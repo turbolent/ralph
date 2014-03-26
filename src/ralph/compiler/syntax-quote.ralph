@@ -4,29 +4,22 @@
            ralph/compiler/utilities)
   export: (syntax-quote-form))
 
-;;;; symnol resolution:
-;; * global binding have precedence over imports
-
-(define resolve
-  (rcurry resolve-symbol
-          import-guard: (complement globally-bound?)))
-
 ;;;; utilities
 
 (define-function unquoted? (form env)
   (and (expression? form)
-       (== (resolve (first form) env)
+       (== (resolve-symbol (first form) env)
            `unquote)))
 
 (define-function unquote-spliced? (form env)
   (and (expression? form)
-       (== (resolve (first form) env)
+       (== (resolve-symbol (first form) env)
            `unquote-splicing)))
 
 ;;;; syntax-quoting
 
 (define-function syntax-quote-symbol (symbol env)
-  `(quote ,(resolve symbol env)))
+  `(quote ,(resolve-symbol symbol env)))
 
 ; NOTE: working, but unoptimized version
 ; (define-function syntax-quote-array (array env)

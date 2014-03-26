@@ -56,15 +56,9 @@
 
 
 (define-function wrap-export (identifier exp env)
-  (bind ((definition-name
-           (if-bind (original-identifier
-                     (when (instance? identifier <symbol>)
-                       (get env "original-identifier"
-                            (symbol-name identifier))))
-             (symbol-name original-identifier)))
-         (exported? (and definition-name
-                         (member? definition-name
-                                  (get env "module" "exports")))))
+  (bind ((definition-name (symbol-name identifier))
+         (exported? (member? definition-name
+                             (get env "module" "exports"))))
     ;; defined and exported?
     (if exported?
         `(%begin

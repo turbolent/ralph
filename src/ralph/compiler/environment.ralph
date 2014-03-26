@@ -78,16 +78,15 @@
              (symbol-name identifier))))
 
 ;;;; symbol resolution
+;; global bindings have precedence over imports
 
-(define-function resolve-symbol (symbol env #key import-guard)
+(define-function resolve-symbol (symbol env)
   (if (get symbol "module")
       symbol
       (bind ((name (symbol-name symbol)))
         (if-bind (module/import-name
-                  (when (or (not import-guard)
-                            (import-guard symbol env))
-                    (find-module/import-name
-                     name (get env "module"))))
+                  (unless (globally-bound? symbol env)
+                    (find-module/import-name name (get env "module"))))
           (destructuring-bind (module import-name)
               module/import-name
             (%%symbol import-name (get module "name")))
