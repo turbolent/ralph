@@ -64,7 +64,8 @@
            define-symbol-macro
            syntax-quote unquote unquote-splicing
            call-next-method next-method
-           once-only repeat-string)
+           once-only repeat-string substring
+           expression?)
   inline: (not size cons
            as-string as-number as-array as-json
            parse-number char-code empty?
@@ -1050,3 +1051,19 @@
       (%infix ">>=" count 1)
       (set! string (%concat string string)))
     result))
+
+(define-function substring (string start #key end length)
+  (cond
+    ((and end length)
+     (substring string start end: (min end (+ start length))))
+    (end
+     (. string (substring start end)))
+    (length
+     (. string (substr start length)))
+    (else:
+     (. string (substring start)))))
+
+(define-function expression? (form)
+  (and (instance? form <array>)
+       (instance? (first form)
+                  <symbol>)))

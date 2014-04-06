@@ -1,18 +1,12 @@
 (define-module ralph/compiler/utilities
   import: (ralph/format)
-  export: (expression?
-           check-type
+  export: (check-type
            destructure-parameter-list
            op?
            process-import-names
            transform-setter-identifier
            setter-identifier?
            identifier-name))
-
-(define-function expression? (form)
-  (and (instance? form <array>)
-       (instance? (first form)
-                  <symbol>)))
 
 (define-function check-type (value type format-string)
   (unless (instance? value type)
