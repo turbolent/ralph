@@ -47,8 +47,9 @@
             value env
             (method (value*)
               (k `(,op ,identifier ,value*))))))
-        (("%if" "%begin" "%while" "%native-name" "%native-call"
-          "%infix" "%native" "%object" "%array" "%get-property")
+        (("%if" "%begin" "%while"
+          "%infix" "%native" "%native-call"
+          "%object" "%array" "%get-property")
          (destructuring-bind (op #rest forms) exp
            (lift-symbol*
             forms env

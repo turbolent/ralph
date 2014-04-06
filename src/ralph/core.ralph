@@ -49,7 +49,7 @@
            begin while handler-case
            ;; internal special forms
            %quote %bind %method %set %define %if
-           %begin %while %try %var %native-name
+           %begin %while %try %var
            %native-call %infix %native
            %object %array %get-property
            ;; core macros

@@ -344,13 +344,6 @@
           ;; result
           `(%var ,identifier ,value*))))
 
-(set! (get $internal-special-forms "%native-name")
-      (method (env name #rest superflous)
-        ;; TODO [#B]: (unless (empty? superflous) (warn ...))
-        (check-type name <string>
-                    "Non-string name in %%native-name: %=")
-        `(%native-name ,name)))
-
 (set! (get $internal-special-forms "%native-call")
       (method (env operator-name #rest arguments)
         (check-type operator-name <string>

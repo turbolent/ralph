@@ -197,9 +197,7 @@
                            (ralph/core::%bind (d (ralph/core::%get-property $2 \"d\"))
                              (ralph/core::%bind (when (ralph/core::%if a b #f))
                                (when c d))))))))
-                 (ralph/core::%annotate-function foo
-                   (ralph/core::%native-name \"foo\")
-                   #f))")
+                 (ralph/core::%annotate-function foo \"foo\" #f))")
              (macroexpand-all '(define-function foo ((a <object>) b #rest all #key (c 23) d)
                                  (bind ((when (when a b))) (when c d)))
                               *environment*))

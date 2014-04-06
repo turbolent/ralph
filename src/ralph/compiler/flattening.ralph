@@ -42,14 +42,15 @@
 (define-function flatten-statements! (exp)
   (if (instance? exp <array>)
       (select (symbol-name (first exp)) ==
-        (("%quote" "%native-name") exp)
+        (("%quote")
+         exp)
         (("%bind")
          (destructuring-bind (_ binding body) exp
            (flatten-statements!
             `(%begin
               (%var ,@binding)
               ,body))))
-        (("%method" "%set" "%while" )
+        (("%method" "%set" "%while")
          (set! (last exp)
                (flatten-statements! (last exp)))
          exp)

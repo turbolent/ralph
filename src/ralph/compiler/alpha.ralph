@@ -77,7 +77,7 @@
   (select exp instance?
     ((<array>)
      (select (symbol-name (first exp)) ==
-       (("%quote" "%native-name")
+       (("%quote")
         (k exp))
        (("%bind")
         (destructuring-bind (_ (identifier value) form) exp

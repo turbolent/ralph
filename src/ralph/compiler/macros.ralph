@@ -403,7 +403,7 @@
             ;; result
             `(define ,identifier
                (%make-method
-                 (%native-name ,name)
+                 ,name
                  ,definition
                  ,setter?
                  ,(bind ((head (first parameter-list)))
@@ -432,15 +432,14 @@
             `(%begin
                (define ,identifier ,definition)
                (%annotate-function ,identifier
-                                   (%native-name ,name)
+                                   ,name
                                    ,setter?))))))
 
 (set! (get $core-macros "define-generic")
       (method (_ identifier arguments #rest superflous)
         ;; TODO [#B]: (unless (empty? superflous) (warn ...))
         `(define ,identifier
-           (%make-generic
-            (%native-name ,(symbol-name identifier))))))
+           (%make-generic ,(symbol-name identifier)))))
 
 (set! (get $core-macros "define-class")
       (method (_ identifier superclass #rest properties)

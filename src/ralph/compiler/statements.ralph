@@ -9,7 +9,8 @@
 (define-function wrap-value! (exp wrapper)
   (if (instance? exp <array>)
       (select (symbol-name (first exp)) ==
-        (("%quote" "%native-name") exp)
+        (("%quote") 
+         exp)
         (("%begin" "%bind")
          ;; wrap body
          (set! (last exp)
@@ -71,7 +72,8 @@
 (define-function transform-statements! (exp env)
   (if (instance? exp <array>)
       (select (symbol-name (first exp)) ==
-        (("%quote" "%native-name") exp)
+        (("%quote")
+         exp)
         (("%bind")
          (destructuring-bind (_ (var value) body) exp
            (if (statement? value)

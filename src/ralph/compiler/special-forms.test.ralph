@@ -478,20 +478,6 @@
                   (macroexpand-all `(%var + 1)
                                    *environment*)))
 
-;; %native-name
-
-(check-equal "special form: %native-name"
-             `(,'+ 1 (%native-name "<foo>") 2)
-             (macroexpand-all
-              '(+ 1 (%native-name "<foo>" ignored) 2)
-              *environment*))
-
-(check-condition "special form: %native-name (identifier shoud be a symbol)"
-                 <error>
-                 (method ()
-                   (macroexpand-all
-                    '(+ 1 (%native-name (when 1 2)))
-                    *environment*)))
 
 ;; %native-call
 

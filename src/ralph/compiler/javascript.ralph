@@ -204,8 +204,6 @@
                                                            "id" (compile var env)
                                                            "init" (compile value env))])))
                      (partition 2 bindings)))))
-      (("%native-name")
-       (compile (escape-name (second exp)) env))
       (("%native-call")
        (destructuring-bind (_ operator #rest arguments) exp
          (%object "type" "CallExpression"
