@@ -11,34 +11,6 @@
                         [flattened])))
                 exps)))
 
-
-(define-function flatten-vars! (exps)
-  (reduce (method (result exp)
-            (bind ((previous (and (not (empty? result))
-                                  (last result)))
-                   (previous-var? (and previous
-                                       (op? "%var" previous))))
-              (if (and previous-var? (op? "%var" exp))
-                  ;; add current bindings to previous
-                  (begin
-                   (do (method (binding)
-                         (push-last (last result)
-                                    binding))
-                       (rest exp))
-                   result)
-                  ;; add assignment to previous binding?
-                  (bind ((merge? (and previous-var? (op? "%set" exp)))
-                         (binding (and merge? (last (last result))))
-                         (identifier (and merge? (second exp))))
-                    (if (== (first binding)
-                            identifier)
-                        (begin
-                         (set! (second binding)
-                               (third exp))
-                         result)
-                        (concatenate result [exp]))))))
-          [] exps))
-
 (define-function flatten-statements! (exp)
   (if (instance? exp <array>)
       (select (symbol-name (first exp)) ==
@@ -62,9 +34,7 @@
          exp)
         (("%begin")
          (destructuring-bind (_ #rest forms) exp
-           (bind ((forms*
-                   (flatten-vars!
-                    (flatten-begins forms))))
+           (bind ((forms* (flatten-begins forms)))
              (if (< (size forms*) 2)
                  (first forms*)
                  `(%begin ,@forms*)))))

@@ -191,19 +191,13 @@
                                               [(as-statement
                                                  (compile handling-form env))])))))
       (("%var")
-       (destructuring-bind (_ #rest bindings) exp
-         (make-block (map (method (binding)
-                       (destructuring-bind (var value)
-                         (if (instance? binding <array>)
-                             binding
-                             [binding #f])
-                         ;; NOTE: always initialize, might reset state
-                         (%object "type" "VariableDeclaration"
-                                  "kind" "var"
-                                  "declarations" [(%object "type" "VariableDeclarator"
-                                                           "id" (compile var env)
-                                                           "init" (compile value env))])))
-                     (partition 2 bindings)))))
+       (destructuring-bind (_ identifier value) exp
+         ;; NOTE: always initialize, might reset state
+         (%object "type" "VariableDeclaration"
+                  "kind" "var"
+                  "declarations" [(%object "type" "VariableDeclarator"
+                                           "id" (compile identifier env)
+                                           "init" (compile (or value #f) env))])))
       (("%native-call")
        (destructuring-bind (_ operator #rest arguments) exp
          (%object "type" "CallExpression"
