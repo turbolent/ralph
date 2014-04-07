@@ -72,7 +72,7 @@
       (bind ((head (first expression)))
         (if-bind (printer (get env "printers" (symbol-name head)))
           (printer expression env column)
-          (if (> (size (symbol-name head))
+          (if (> (size (description head))
                  (get env "max-call-head-width"))
               (print-general expression env column #f
                              #f #f print-expression)
@@ -160,12 +160,12 @@
     "define" print-define
     "define-function" print-define-function))
 
-(define-function pretty-print
-    (object stream #key (width 60)
-                        (max-call-head-width 10)
-                        (max-array-width 26)
-                        (indent-general 2)
-                        (printers *printers*))
+(define-function pretty-print (object #key (stream (make <string-stream>))
+                                           (width 60)
+                                           (max-call-head-width 10)
+                                           (max-array-width 26)
+                                           (indent-general 2)
+                                           (printers *printers*))
   ;; pass constant parameters in an object
   (bind ((env (make-object "stream" stream
                            "width" width
@@ -175,4 +175,6 @@
                            "printers" printers)))
     (if (instance? object <array>)
         (print-expression object env 0)
-        (print-object object env 0 print-expression))))
+        (print-object object env 0 print-expression))
+    (when (instance? stream <string-stream>)
+      (stream-contents stream))))
