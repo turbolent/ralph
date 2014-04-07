@@ -15,7 +15,6 @@
            ralph/compiler/alpha
            ralph/compiler/anf
            ralph/compiler/statements
-           ralph/compiler/flattening
            ralph/compiler/javascript)
   export: (compile-module))
 
@@ -103,8 +102,6 @@
             (rcurry normalize-term env)]
            ["statement transfomation"
             (rcurry transform-statements! env)]
-           ["statement flattening"
-            flatten-statements!]
            ["code generation"
             (rcurry compile-js env)]]))
 

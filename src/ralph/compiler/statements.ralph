@@ -9,7 +9,7 @@
 (define-function wrap-value! (exp wrapper)
   (if (instance? exp <array>)
       (select (symbol-name (first exp)) ==
-        (("%quote") 
+        (("%quote")
          exp)
         (("%begin" "%bind")
          ;; wrap body
@@ -77,13 +77,14 @@
         (("%bind")
          (destructuring-bind (_ (var value) body) exp
            (if (statement? value)
-               `(%bind (,var #f)
-                  (%begin
-                   ,(wrap-value!
-                     (transform-statements! value env)
-                     `(%set ,var))
-                   ,(transform-statements! body env)))
-               `(%bind (,var
+               `(%begin
+                  (%var ,var #f)
+                  ,(wrap-value!
+                    (transform-statements! value env)
+                    `(%set ,var))
+                  ,(transform-statements! body env))
+               `(%begin
+                  (%var ,var
                         ,(transform-statements! value env))
                   ,(transform-statements! body env)))))
         (("%method")
