@@ -10,7 +10,7 @@
   (make-test-environment "ralph/compiler/anf.test"))
 
 
-;;;; 
+;;;;
 
 (reset-symbol-counter!)
 (check-equal "ANF: simple expression"
@@ -27,10 +27,10 @@
 
 (reset-symbol-counter!)
 (check-equal "ANF: bind"
-             `(%bind ($1 (,'+ 2 2))
-                (%bind (,'x 1)
-                  (%bind ($2 (,'f ,'x))
-                    (,'+ $1 $2))))
+             '(ralph/core::%bind ($1 (+ 2 2))
+                (ralph/core::%bind (x 1)
+                  (ralph/core::%bind ($2 (f x))
+                    (+ $1 $2))))
              (normalize-term
               (macroexpand-all
                '(+ (+ 2 2)
@@ -42,14 +42,14 @@
 
 (reset-symbol-counter!)
 (check-equal "ANF: begin 1"
-             `(%begin
+             '(ralph/core::%begin
                1
-               (%begin
-                (,'+ 2 2)
-                (%bind ($1 (,'- 3 3))
-                  (%bind (,'x 1)
-                    (%bind ($2 (,'f ,'x))
-                      (,'+ $1 $2))))))
+               (ralph/core::%begin
+                (+ 2 2)
+                (ralph/core::%bind ($1 (- 3 3))
+                  (ralph/core::%bind (x 1)
+                    (ralph/core::%bind ($2 (f x))
+                      (+ $1 $2))))))
              (normalize-term
               (macroexpand-all
                '(begin
@@ -63,9 +63,9 @@
 
 (reset-symbol-counter!)
 (check-equal "ANF: if: trivial expressions"
-             `(%if (,'= ,'n 0)
-                   1
-                   (,'* ,'n (,'f (,'- ,'n 1))))
+             '(ralph/core::%if (= n 0)
+                               1
+                               (* n (f (- n 1))))
              (normalize-term
               (macroexpand-all
                '(if (= n 0)
@@ -76,9 +76,9 @@
 
 (reset-symbol-counter!)
 (check-equal "ANF: application"
-             `(%bind (,'id (%method ,'$1 (,'x) ,'x))
-                (%bind (,'apply (%method ,'$2 (,'f ,'x) (,'f ,'x)))
-                  ((,'id ,'apply) (,'id 3))))
+             '(ralph/core::%bind (id (ralph/core::%method $1 (x) x))
+                (ralph/core::%bind (apply (ralph/core::%method $2 (f x) (f x)))
+                  ((id apply) (id 3))))
              (normalize-term
               (macroexpand-all
                '(bind ((id (method (x) x))
@@ -89,11 +89,11 @@
 
 (reset-symbol-counter!)
 (check-equal "ANF: method"
-             `(%method ,'$1 (,'a)
-                (%method ,'$2 (,'b)
-                  (%begin
-                   (,'- ,'a ,'b)
-                   (,'+ (,'- ,'a ,'b) ,'b))))
+             '(ralph/core::%method $1 (a)
+                (ralph/core::%method $2 (b)
+                  (ralph/core::%begin
+                   (- a b)
+                   (+ (- a b) b))))
              (normalize-term
               (macroexpand-all
                '(method (a)
@@ -105,15 +105,15 @@
 
 (reset-symbol-counter!)
 (check-equal "ANF: begin 2"
-             `(%begin
+             '(ralph/core::%begin
                1
-               (%begin
-                (,'c)
-                (%begin
-                 (,'b (,'+ 1 (,'a)))
-                 (%begin
+               (ralph/core::%begin
+                (c)
+                (ralph/core::%begin
+                 (b (+ 1 (a)))
+                 (ralph/core::%begin
                   5
-                  (,'- (,'d) 23)))))
+                  (- (d) 23)))))
              (normalize-term
               (macroexpand-all
                '(begin
@@ -128,9 +128,9 @@
 
 (reset-symbol-counter!)
 (check-equal "ANF: nested set!"
-             `(%begin
-               (%set ,'a (,'+ (,'- ,'b 3) ,'c))
-               (%set ,'x (,'* (%set ,'z ,'a) 5)))
+             '(ralph/core::%begin
+               (ralph/core::%set a (+ (- b 3) c))
+               (ralph/core::%set x (* (ralph/core::%set z a) 5)))
              (normalize-term
               (macroexpand-all
                '(begin
@@ -151,12 +151,12 @@
 
 (reset-symbol-counter!)
 (check-equal "ANF: nested set! with if"
-             `(%begin
-               (%set ,'a (,'+ (,'- ,'b 3) ,'c))
-               (%bind ($1 (%if ,'a ,'b ,'c))
-                 (%bind ($2 (%set ,'z $1))
-                   (%bind ($3 (,'* $2 5))
-                     (%set ,'x $3)))))
+             '(ralph/core::%begin
+               (ralph/core::%set a (+ (- b 3) c))
+               (ralph/core::%bind ($1 (ralph/core::%if a b c))
+                 (ralph/core::%bind ($2 (ralph/core::%set z $1))
+                   (ralph/core::%bind ($3 (* $2 5))
+                     (ralph/core::%set x $3)))))
              (normalize-term
               (macroexpand-all
                '(begin
@@ -176,17 +176,17 @@
                *environment*)
               *environment*))
 
-;; TODO: why is $3 not namespaced?
 (reset-symbol-counter!)
 (check-equal "ANF: or"
              ;; usage of %if as expression OK,
              ;; not in statement form yet
-             `(%bind (,'$1 #f)
-                (%bind ($3 (%if ,'$1
-                                ,'$1
-                                (%bind (,'$2 2)
-                                  (%if ,'$2 ,'$2 3))))
-                  (,'foo $3 ,'bar)))
+             '(ralph/core::%bind ($1 #f)
+                (ralph/core::%bind
+                    ($3 (ralph/core::%if $1
+                                         $1
+                                         (ralph/core::%bind ($2 2)
+                                           (ralph/core::%if $2 $2 3))))
+                  (foo $3 bar)))
              (normalize-term
               (macroexpand-all
                '(foo (or #f 2 3) bar)
@@ -195,14 +195,14 @@
 
 (reset-symbol-counter!)
 (check-equal "ANF: while"
-             `(%bind (,'counter 5)
-                (%bind (,'result 1)
-                  (%begin
-                   (%while (,'> ,'counter 0)
-                     (%begin
-                      (%set ,'factorial (,'* ,'factorial ,'counter))
-                      (%set ,'counter (,'- ,'counter 1))))
-                   ,'counter)))
+             '(ralph/core::%bind (counter 5)
+                (ralph/core::%bind (result 1)
+                  (ralph/core::%begin
+                   (ralph/core::%while (> counter 0)
+                     (ralph/core::%begin
+                      (ralph/core::%set factorial (* factorial counter))
+                      (ralph/core::%set counter (- counter 1))))
+                   counter)))
              (normalize-term
               (macroexpand-all
                '(bind ((counter 5)
@@ -216,14 +216,15 @@
 
 (reset-symbol-counter!)
 (check-equal "ANF: while as expression"
-             `(%bind (,'run? #t)
-                (%bind (,'value (%while ,'run?
-                                   (%begin
-                                    (,'foo)
-                                    (%begin
-                                     (%set ,'run? #f)
-                                     23))))
-                  (,'== ,'value #f)))
+             '(ralph/core::%bind (run? #t)
+                (ralph/core::%bind
+                    (value (ralph/core::%while run?
+                             (ralph/core::%begin
+                               (foo)
+                               (ralph/core::%begin
+                                 (ralph/core::%set run? #f)
+                                 23))))
+                  (== value #f)))
              (normalize-term
               (macroexpand-all
                '(bind ((run? #t)
@@ -239,10 +240,12 @@
 
 (reset-symbol-counter!)
 (check-equal "ANF: while in if"
-             `(%bind ($1 (%while ,'run?
-                             (,'foo)))
-                (%bind (,'x (%if $1 42 23))
-                  (,'bar ,'x)))
+             '(ralph/core::%bind
+                 ($1 (ralph/core::%while run?
+                       (foo)))
+               (ralph/core::%bind
+                   (x (ralph/core::%if $1 42 23))
+                 (bar x)))
              (normalize-term
               (macroexpand-all
                '(bind ((x (if (while run?
@@ -253,17 +256,15 @@
                *environment*)
               *environment*))
 
-
-;; TODO [#A]: $2 namespaces, $1 not?!
-
 (reset-symbol-counter!)
 (check-equal "ANF: if in while"
-             `(%while #t
-                (%bind (,'$1 (,'foo))
-                  (%bind ($2 (%if ,'$1 ,'$1 (,'bar)))
-                    (%if $2
-                         (,'baz)
-                         (%native "break")))))
+             '(ralph/core::%while #t
+                (ralph/core::%bind ($1 (foo))
+                  (ralph/core::%bind
+                      ($2 (ralph/core::%if $1 $1 (bar)))
+                    (ralph/core::%if $2
+                                     (baz)
+                                     (ralph/core::%native "break")))))
              (normalize-term
               (macroexpand-all
                '(while (or (foo) (bar))
@@ -273,10 +274,10 @@
 
 (reset-symbol-counter!)
 (check-equal "ANF: begin as expression"
-             `(%bind ($1 (,'curry ,'+ 1))
-                (%begin
+             '(ralph/core::%bind ($1 (curry + 1))
+                (ralph/core::%begin
                  1
-                 (%bind ($2 (,'+ 2 3))
+                 (ralph/core::%bind ($2 (+ 2 3))
                    ($1 $2 4))))
              (normalize-term
               (macroexpand-all
@@ -284,22 +285,23 @@
                *environment*)
               *environment*))
 
-;; TODO [#A]: $1, $2 not namespaced, but $3?!
-
 (reset-symbol-counter!)
 (check-equal "ANF: select"
-             `(%bind (,'$1 ,'x)
-                (%bind (,'$2 (,'instance? ,'$1 ,'<array>))
-                  (%bind ($3 (%if ,'$2 ,'$2 (,'instance? ,'$1 ,'<string>)))
-                    (%if $3
-                         (%begin
-                          (,'print ,'x)
-                          (,'slice ,'x 2))
-                         (%if (,'instance? ,'$1 ,'<number>)
-                              (,'* ,'x 23)
-                              (%begin
-                               (,'do-sth)
-                               ,'else))))))
+             '(ralph/core::%bind ($1 x)
+                (ralph/core::%bind
+                    ($2 (instance? $1 <array>))
+                  (ralph/core::%bind
+                      ($3 (ralph/core::%if
+                            $2 $2 (instance? $1 <string>)))
+                    (ralph/core::%if $3
+                                     (ralph/core::%begin
+                                      (print x)
+                                      (slice x 2))
+                                     (ralph/core::%if (instance? $1 <number>)
+                                                      (* x 23)
+                                                      (ralph/core::%begin
+                                                       (do-sth)
+                                                       else))))))
              (normalize-term
               (macroexpand-all
                '(select x instance?
@@ -314,14 +316,13 @@
                *environment*)
               *environment*))
 
-
-;; TODO [#A]: $1, $2 not namespaced, but $3?!
 (reset-symbol-counter!)
 (check-equal "ANF: if in expression"
-             `(%method ,'$1 ()
-                (,'bar (%method ,'$2 (,'item)
-                         (%bind ($3 (%if ,'a ,'b ,'c))
-                           (,'baz $3 ,'item)))))
+             '(ralph/core::%method $1 ()
+                (bar (ralph/core::%method $2 (item)
+                       (ralph/core::%bind
+                           ($3 (ralph/core::%if a b c))
+                         (baz $3 item)))))
              (normalize-term
               (macroexpand-all
                '(method ()
@@ -331,14 +332,15 @@
                *environment*)
               *environment*))
 
-;; TODO [#A]: $1, $2 not namespaced, but $3 and $4?!
 (reset-symbol-counter!)
 (check-equal "ANF: if in expression 2"
-             `(%method ,'$1 ()
-                (,'bar (%method ,'$2 (,'item)
-                         (%bind ($3 (%if ,'c ,'b ,'a))
-                           (%bind ($4 (%if ,'a ,'b ,'c))
-                             ($3 $4 ,'item))))))
+             '(ralph/core::%method $1 ()
+                (bar (ralph/core::%method $2 (item)
+                       (ralph/core::%bind
+                           ($3 (ralph/core::%if c b a))
+                         (ralph/core::%bind
+                             ($4 (ralph/core::%if a b c))
+                           ($3 $4 item))))))
              (normalize-term
               (macroexpand-all
                '(method ()
@@ -351,12 +353,14 @@
 
 (reset-symbol-counter!)
 (check-equal "ANF: while in if in exp"
-             `(%bind ($1 (%while run? (foo)))
-                (%bind ($2 (%if $1 42 23))
+             '(ralph/core::%bind
+                  ($1 (ralph/core::%while run? (foo)))
+                (ralph/core::%bind
+                    ($2 (ralph/core::%if $1 42 23))
                   (foo $2)))
              (normalize-term
               (macroexpand-all
-               `(foo (if (while run?
+               '(foo (if (while run?
                            (foo))
                          42
                          23))

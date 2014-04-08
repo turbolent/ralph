@@ -104,7 +104,7 @@
   (get env "import-identifiers" module-name))
 
 (define-function make-import-identifier (module-name env)
-  (bind ((identifier (generate-symbol env)))
+  (bind ((identifier (generate-symbol)))
     (set! (get env "import-identifiers" module-name)
           identifier)
     identifier))

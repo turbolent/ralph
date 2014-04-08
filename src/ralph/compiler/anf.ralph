@@ -2,6 +2,11 @@
   import: (ralph/compiler/utilities)
   export: (normalize-term))
 
+;;;; based on the linear-time A-normalization algorithm
+;;;; as found in "The Essence of Compiling with Continuations".
+
+;;;; generates-statements? is introduced to fold bindings which 
+;;;; will not generate statements in the resulting JavaScript code
 
 (define-function atomic? (expression)
   (any? (curry instance? expression)
@@ -121,7 +126,7 @@
              (method (exp*)
                (if (atomic? exp*)
                    (k exp*)
-                   (bind ((t (generate-symbol env)))
+                   (bind ((t (generate-symbol)))
                      `(%bind (,t ,exp*)
                         ,(k t)))))))
 

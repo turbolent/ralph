@@ -16,8 +16,8 @@
 (reset-symbol-counter!)
 (bind ((env (make-environment)))
   (check-equal "lift-symbols: simple"
-               `(%begin
-                  (%define $1 (%quote ,'a))
+               '(ralph/core::%begin
+                  (ralph/core::%define $1 (ralph/core::%quote a))
                   $1)
                (lift-symbols
                 (macroexpand-all
@@ -29,15 +29,15 @@
 (reset-symbol-counter!)
 (bind ((env (make-environment)))
   (check-equal "lift-symbols: multiple uses"
-               `(%begin
-                 (%define $1 (%quote ,'a))
-                 (%begin
-                   (%define $2 (%quote ,'b))
-                   (%begin
-                     (%define $3 (%quote ,'c))
-                     (%bind (,'a $1)
-                      (%bind (,'b $2)
-                       (,'foo ,'a $1 ,'b $2 $3))))))
+               '(ralph/core::%begin
+                 (ralph/core::%define $1 (ralph/core::%quote a))
+                 (ralph/core::%begin
+                   (ralph/core::%define $2 (ralph/core::%quote b))
+                   (ralph/core::%begin
+                     (ralph/core::%define $3 (ralph/core::%quote c))
+                     (ralph/core::%bind (a $1)
+                      (ralph/core::%bind (b $2)
+                       (foo a $1 b $2 $3))))))
                (lift-symbols
                 (macroexpand-all
                  '(bind ((a 'a)
@@ -53,11 +53,11 @@
 (reset-symbol-counter!)
 (bind ((env (make-environment)))
   (check-equal "lift-symbols: method"
-               `(%begin
-                  (%define $2 (%quote ,'a))
-                  (%begin
+               '(ralph/core::%begin
+                  (ralph/core::%define $2 (ralph/core::%quote a))
+                  (ralph/core::%begin
                    23
-                   (%method ,'$1 (,'x)
+                   (ralph/core::%method $1 (x)
                      $2)))
                (lift-symbols
                 (macroexpand-all
@@ -72,16 +72,16 @@
 (reset-symbol-counter!)
 (bind ((env (make-environment)))
   (check-equal "lift-symbols: begin, if, while"
-               `(%begin
-                  (%define $1 (%quote ,'a))
-                  (%begin
-                    (%define $2 (%quote ,'b))
-                    (%begin
-                      (%define $3 (%quote ,'c))
-                      (%begin
-                        (%if $1
-                             (%while (,'bar $2)
-                               (%begin $1 23 $3))
+               '(ralph/core::%begin
+                  (ralph/core::%define $1 (ralph/core::%quote a))
+                  (ralph/core::%begin
+                    (ralph/core::%define $2 (ralph/core::%quote b))
+                    (ralph/core::%begin
+                      (ralph/core::%define $3 (ralph/core::%quote c))
+                      (ralph/core::%begin
+                        (ralph/core::%if $1
+                             (ralph/core::%while (bar $2)
+                               (ralph/core::%begin $1 23 $3))
                              $3)
                         $2))))
                (lift-symbols

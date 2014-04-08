@@ -79,8 +79,7 @@
   (if-bind (t (get env "lifted" type module name))
     (k t)
     (bind ((t (set! (get env "lifted" type module name)
-                    (generate-symbol env))))
-
+                    (generate-symbol))))
       `(%begin
         (%define ,t ,value)
         ,(k t)))))
