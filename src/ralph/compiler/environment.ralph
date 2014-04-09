@@ -6,7 +6,8 @@
            find-special-form
            special-operator?
            bind-globally! globally-bound?
-           bind! bound? unbind!
+           bind-locally! unbind-locally!
+           locally-bound? bound?
            resolve-symbol
            qualify-symbol
            find-import-identifier
@@ -64,19 +65,22 @@
   (get env "global-bindings"
        (symbol-name identifier)))
 
-(define-function bind! (identifier env)
-  (inc! (get env "binding-count"
-             (symbol-name identifier))))
+(define-function bind-locally! (identifier env)
+  (bind ((name (symbol-name identifier)))
+    (inc! (get env "binding-count" name))))
 
 (define-function bound? (identifier env)
   (or (globally-bound? identifier env)
-      (if-bind (count (get env "binding-count"
-                           (symbol-name identifier)))
-        (> count 0))))
+      (locally-bound? identifier env)))
 
-(define-function unbind! (identifier env)
-  (dec! (get env "binding-count"
-             (symbol-name identifier))))
+(define-function locally-bound? (identifier env)
+  (bind ((name (symbol-name identifier)))
+    (if-bind (count (get env "binding-count" name))
+      (> count 0))))
+
+(define-function unbind-locally! (identifier env)
+  (bind ((name (symbol-name identifier)))
+    (dec! (get env "binding-count" name))))
 
 ;;;; symbol resolution
 ;; global bindings have precedence over imports

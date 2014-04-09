@@ -71,7 +71,7 @@
                            (bind ((value* (macroexpand-all value env)))
                              ;; bind identifier, save for unbind
                              ;; after expanding forms
-                             (bind! identifier env)
+                             (bind-locally! identifier env)
                              (push-last identifiers identifier)
                              ;; result
                              (if array?
@@ -82,7 +82,7 @@
           (bind ((forms* (map (rcurry macroexpand-all env)
                               forms)))
             ;; unbind identifiers
-            (do (rcurry unbind! env)
+            (do (rcurry unbind-locally! env)
                 identifiers)
             `(bind (,@bindings*)
                ,@forms*)))))
@@ -119,13 +119,13 @@
                                               keyword-parameters))
                                      [])))))
             ;; bind identifiers
-            (do (rcurry bind! env)
+            (do (rcurry bind-locally! env)
                 identifiers)
             ;; expand forms
             (bind ((forms* (map (rcurry macroexpand-all env)
                                 forms)))
               ;; unbind identifiers
-              (do (rcurry unbind! env)
+              (do (rcurry unbind-locally! env)
                   identifiers)
               ;; result
               `(method ,parameter-list*
@@ -186,14 +186,14 @@
                          (check-identifier condition env
                                            "External identifier in handler-case: %=")
                          ;; bind condition
-                         (bind! condition env))
+                         (bind-locally! condition env))
                        ;; expand type and forms
                        (bind ((type* (macroexpand-all type env))
                               (forms* (map (rcurry macroexpand-all env)
                                            forms)))
                          (when condition
                            ;; unbind condition
-                           (unbind! condition env))
+                           (unbind-locally! condition env))
                          ;; result: new case
                          `((,type* ,@(rest binding)) ,@forms*)))))
                  cases))))
@@ -228,11 +228,11 @@
           ;; expand value (before binding identifier)
           (bind ((value* (macroexpand-all value env)))
             ;; bind identifier
-            (bind! identifier env)
+            (bind-locally! identifier env)
             ;; expand form
             (bind ((form* (macroexpand-all form env)))
               ;; unbind identifier
-              (unbind! identifier env)
+              (unbind-locally! identifier env)
               ;; result
               `(%bind (,identifier ,value*)
                       ,form*))))))
@@ -254,12 +254,12 @@
                       "External identifier in parameter list of %%method: %=")
               identifiers)
           ;; bind identifiers
-          (do (rcurry bind! env)
+          (do (rcurry bind-locally! env)
               identifiers)
           ;; expand form
           (bind ((form* (macroexpand-all form env)))
             ;; unbind identifiers
-            (do (rcurry unbind! env)
+            (do (rcurry unbind-locally! env)
                 identifiers)
             ;; result
             `(%method ,name ,parameters
@@ -318,11 +318,11 @@
                           "External identifier in %%try: %=")
         (bind ((protected-form* (macroexpand-all protected-form env)))
           ;; bind identifier
-          (bind! identifier env)
+          (bind-locally! identifier env)
           ;; expand handling form
           (bind ((handling-form* (macroexpand-all handling-form env)))
             ;; unbind identifier
-            (unbind! identifier env)
+            (unbind-locally! identifier env)
             ;; result
             `(%try ,protected-form*
                    ,identifier
@@ -361,6 +361,7 @@
 
 (set! (get $internal-special-forms "%native")
       ;; #rest forms
+      ;; TODO: verify
       (curry expand-forms `%native))
 
 (set! (get $internal-special-forms "%object")
