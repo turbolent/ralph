@@ -190,7 +190,10 @@
 (define-function as-array (arguments skip)
   (%native-call "$SL.call" arguments (%infix "||" skip 0)))
 
-(define as-json (%native "JSON.stringify"))
+(define-function as-json (value #key (replacer (%native "null"))
+                                     indent)
+  (%native-call "JSON.stringify" value replacer indent))
+
 (define parse-json (%native "JSON.parse"))
 
 (define parse-number (%native "parseFloat"))
