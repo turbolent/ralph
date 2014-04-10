@@ -1,49 +1,17 @@
 (define-module ralph/compiler/special-forms
   import: (ralph/format
            ralph/compiler/utilities
+           ralph/compiler/transformer
            ralph/compiler/macroexpansion
            ralph/compiler/environment)
   export: ($core-special-forms
            $internal-special-forms))
 
 ;; special forms:
-;;   control expansion, track bindings (shadowing)
-
-;; * "handler-case" is a special form
-;; * "bind-methods" is not a special form, just a macro
-;; * "block" and "for" are not available/implemented, instead: "while"
-
-
-
-
-
-(define-function make-rest-transformer (symbol transformer #key count)
-  (method (env #rest forms)
-    ;; TODO [#B]: (unless (== (size forms) count) (warn ...))
-    `(,symbol
-      ,@(map (rcurry transformer env)
-             (if count
-                 (copy-sequence forms end: count)
-                 forms)))))
-
-(define-function make-quote-transformer (symbol #key check?)
-  (method (env value #rest superfluous)
-    ;; TODO [#B]: (unless (empty? superflous) (warn ...))
-    (when check?
-      (check-type value <symbol>
-                  (format-to-string "Non-symbol value in %= %%=" symbol)))
-    `(,symbol ,value)))
+;;   control macro expansion, track bindings (shadowing)
 
 
 ;;;; utilities
-
-(define-function check-identifier (identifier env format-string)
-  (unless (or (not (get identifier "module"))
-              (== (get identifier "module")
-                  (get env "module" "name")))
-    (signal (format-to-string (or format-string
-                                  "External identifier: %=")
-                              identifier))))
 
 (define $hash-symbols [#key #rest])
 
@@ -60,9 +28,6 @@
 
 (define $core-special-forms
   (make-plain-object))
-
-(set! (get $core-special-forms "quote")
-      (make-quote-transformer `quote))
 
 (set! (get $core-special-forms "bind")
       (method (env bindings #rest forms)
@@ -163,19 +128,6 @@
                ,(macroexpand-all initial-value env))
             `(define ,identifier))))
 
-;; TODO: expansion of place correct ?
-(set! (get $core-special-forms "set!")
-      (make-rest-transformer `set! macroexpand-all))
-
-(set! (get $core-special-forms "if")
-      (make-rest-transformer `if macroexpand-all count: 3))
-
-(set! (get $core-special-forms "begin")
-      (make-rest-transformer `begin macroexpand-all))
-
-(set! (get $core-special-forms "while")
-      (make-rest-transformer `while macroexpand-all count: 2))
-
 (set! (get $core-special-forms "handler-case")
       (method (env protected-form #rest cases)
         `(handler-case
@@ -206,129 +158,31 @@
                          `((,type* ,@(rest binding)) ,@forms*)))))
                  cases))))
 
+(set! (get $core-special-forms "quote")
+      (make-quote-transformer `quote))
+
+;; TODO: expansion of place correct ?
+(set! (get $core-special-forms "set!")
+      (make-rest-transformer `set! macroexpand-all))
+
+(set! (get $core-special-forms "if")
+      (make-rest-transformer `if macroexpand-all count: 3))
+
+(set! (get $core-special-forms "begin")
+      (make-rest-transformer `begin macroexpand-all))
+
+(set! (get $core-special-forms "while")
+      (make-rest-transformer `while macroexpand-all))
+
 (set! (get $core-special-forms "define-module")
       (method (_ #rest arguments)
         ;; leave as-is, handled by internal macro
         `(define-module ,@arguments)))
 
-
 ;;;; internal special forms
 
 (define $internal-special-forms
   (make-plain-object))
-
-
-(define-function make-bind-transformer (transformer)
-  (method (env binding form #rest superflous)
-    ;; TODO [#B]: (unless (empty? superflous) (warn ...))
-    (check-type binding <array>
-                "Non-array binding in %%bind: %=")
-    (destructuring-bind (identifier value) binding
-      ;; TODO: check identifier is a symbol
-      (check-identifier identifier env
-                        "External identifier in %%bind: %=")
-      (bind ((value* (transformer value env)))
-        (bind-locally! identifier env)
-        (bind ((form* (transformer form env)))
-          (unbind-locally! identifier env)
-          `(%bind (,identifier ,value*)
-             ,form*))))))
-
-(define-function make-method-transformer (transformer)
-  (method (env name parameters form #rest superfluous)
-    ;; TODO [#B]: (unless (empty? superflous) (warn ...))
-    (check-type name <symbol>
-            "Non-symbol name in %%method: %=")
-    (bind ((identifiers (cons name parameters)))
-      (do (method (parameter)
-            (check-type parameter <symbol>
-                        "Non-symbol parameter in %%method: %="))
-          parameters)
-      (do (rcurry check-identifier env
-                  "External identifier in parameter list of %%method: %=")
-          identifiers)
-      (do (rcurry bind-locally! env)
-          identifiers)
-      (bind ((form* (transformer form env)))
-        (do (rcurry unbind-locally! env)
-            identifiers)
-        `(%method ,name ,parameters
-           ,form*)))))
-
-(define-function make-set-transformer (transformer)
-  (method (env place value #rest superflous)
-    ;; TODO [#B]: (unless (empty? superflous) (warn ...))
-    (cond
-     ((instance? place <symbol>)
-      ;; TODO [#A]: check if identifier is local
-      `(%set ,place
-             ,(transformer value env)))
-     ((op? "%get-property" place)
-      `(%set ,(transformer place env)
-             ,(transformer value env)))
-     (else:
-      (signal (format-to-string
-               "Non-symbol identifier or %get-property in %%set: %="
-               place))))))
-
-(define-function make-define-transformer (transformer)
-  (method (env identifier value #rest superflous)
-    ;; TODO [#B]: (unless (empty? superflous) (warn ...))
-    (check-type identifier <symbol>
-                "Non-symbol identifier in %%define: %=")
-    (bind ((value* (transformer value env)))
-      (bind-globally! identifier env)
-      `(%define ,identifier ,value*))))
-
-(define-function make-try-transformer (transformer)
-  (method (env protected-form identifier handling-form #rest superfluous)
-     ;; TODO [#B]: (unless (empty? superflous) (warn ...))
-     (check-type identifier <symbol>
-                 "Non-symbol identifier in %%try: %=")
-     (check-identifier identifier env
-                       "External identifier in %%try: %=")
-     (bind ((protected-form* (transformer protected-form env)))
-       (bind-locally! identifier env)
-       (bind ((handling-form* (transformer handling-form env)))
-         (unbind-locally! identifier env)
-         `(%try ,protected-form*
-                ,identifier
-                ,handling-form*)))))
-
-(define-function make-var-transformer (transformer)
-  (method (env identifier value #rest superflous)
-    ;; TODO [#B]: (unless (empty? superflous) (warn ...))
-    (check-type identifier <symbol>
-                "Non-symbol identifier in %%var: %=")
-    (bind ((value* (transformer value env))
-           (module-name (get identifier "module")))
-      ;; bind identifier if local
-      (when (or (not module-name)
-                (== module-name
-                    (get env "module" "name")))
-        (bind-globally! identifier env))
-      ;; result
-      `(%var ,identifier ,value*))))
-
-(define-function make-operator-transformer (symbol transformer)
-  (method (env operator-name #rest arguments)
-    (check-type operator-name <string>
-                "Non-string operator-name in %%native-call: %=")
-    `(,symbol ,operator-name
-              ,@(map (rcurry transformer env)
-                     arguments))))
-
-(define-function make-object-transformer (transformer)
-  (method (env #rest property-name/values)
-    `(%object ,@(reduce1 concatenate
-                         (map (method (property-name/value)
-                                (destructuring-bind (property-name value)
-                                    property-name/value
-                                  (check-type property-name <string>
-                                              "Non-string property-name in %%object: %=")
-                                  [property-name (transformer value env)]))
-                              (partition 2 property-name/values))))))
-
 
 (set! (get $internal-special-forms "%quote")
       (make-quote-transformer `%quote check?: #t))

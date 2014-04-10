@@ -1,6 +1,7 @@
 (define-module ralph/compiler/utilities
   import: (ralph/format)
   export: (check-type
+           check-identifier
            destructure-parameter-list
            op?
            process-import-names
@@ -11,6 +12,14 @@
 (define-function check-type (value type format-string)
   (unless (instance? value type)
     (signal (format-to-string format-string value))))
+
+(define-function check-identifier (identifier env format-string)
+  (unless (or (not (get identifier "module"))
+              (== (get identifier "module")
+                  (get env "module" "name")))
+    (signal (format-to-string (or format-string
+                                  "External identifier: %=")
+                              identifier))))
 
 ;; => (normal-parameters
 ;;     rest-parameter

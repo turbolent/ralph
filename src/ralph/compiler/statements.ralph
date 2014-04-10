@@ -1,6 +1,7 @@
 (define-module ralph/compiler/statements
   import: (ralph/compiler/utilities
            ralph/compiler/environment
+           ralph/compiler/transformer
            ralph/format)
   export: (transform-statements!))
 
@@ -77,9 +78,11 @@
   (select exp instance?
     ((<array>)
      (select (symbol-name (first exp)) ==
-       (("%quote" "%native" "%native-call")
-        exp)
-       (("%infix" "%object" "%array" "%get-property")
+       (("%quote")
+        (apply *quote-transformer* env (rest exp)))
+       (("%begin")
+        (apply *begin-transformer* env (rest exp)))
+       (("%infix" "%object" "%array" "%get-property" "%native" "%native-call")
         `(,(first exp)
           ,@(map (rcurry transform-statements! env)
                  (rest exp))))
@@ -134,11 +137,6 @@
               (transform-statements! test env))
             ,(transform-statements! then env)
             ,(transform-statements! else env))))
-       (("%begin")
-        (destructuring-bind (_ #rest exps) exp
-          `(%begin
-            ,@(map (rcurry transform-statements! env)
-                   exps))))
        (("%while")
         (set! (second exp)
               ;; TODO: only if not boolean
@@ -167,3 +165,6 @@
     ((<symbol>)
       exp)
     (else: exp)))
+
+(define *quote-transformer* (make-quote-transformer `%quote))
+(define *begin-transformer* (make-rest-transformer `%begin transform-statements!))
