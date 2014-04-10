@@ -72,99 +72,112 @@
                 ,identifier))
         exp)))
 
+
+
+(define *transformers*
+  (make-plain-object))
+
 ;; TODO: very similar to internal-special-forms, refactor:
 ;;       pass transformation function and callback
 (define-function transform-statements! (exp env)
   (select exp instance?
     ((<array>)
-     (select (symbol-name (first exp)) ==
-       (("%quote")
-        (apply *quote-transformer* env (rest exp)))
-       (("%begin")
-        (apply *begin-transformer* env (rest exp)))
-       (("%infix" "%object" "%array" "%get-property" "%native" "%native-call")
-        `(,(first exp)
-          ,@(map (rcurry transform-statements! env)
-                 (rest exp))))
-       (("%bind")
-        (destructuring-bind (_ (identifier value) body) exp
-          (bind ((value* (transform-statements! value env)))
-            (bind-locally! identifier env)
-            (bind ((body* (transform-statements! body env)))
-              (unbind-locally! identifier env)
-              (if (statement? value)
-                  `(%begin
-                     (%var ,identifier #f)
-                     ,(wrap-value! value* `(%set ,identifier))
-                     ,body*)
-                  `(%begin
-                     (%var ,identifier ,value*)
-                     ,body*))))))
-       (("%method")
-        (destructuring-bind (_ name parameters form) exp
-          (bind ((identifiers (cons name parameters)))
-            ;; bind identifiers
-            (do (rcurry bind-locally! env)
-                identifiers)
-            ;; expand form
-            (bind ((form* (transform-statements! form env)))
-              ;; unbind identifiers
-              (do (rcurry unbind-locally! env)
+     (bind ((name (symbol-name (first exp))))
+       (select name ==
+         (("%bind")
+          (destructuring-bind (_ (identifier value) body) exp
+            (bind ((value* (transform-statements! value env)))
+              (bind-locally! identifier env)
+              (bind ((body* (transform-statements! body env)))
+                (unbind-locally! identifier env)
+                (if (statement? value)
+                    `(%begin
+                       (%var ,identifier #f)
+                       ,(wrap-value! value* `(%set ,identifier))
+                       ,body*)
+                    `(%begin
+                       (%var ,identifier ,value*)
+                       ,body*))))))
+         (("%method")
+          (destructuring-bind (_ name parameters form) exp
+            (bind ((identifiers (cons name parameters)))
+              ;; bind identifiers
+              (do (rcurry bind-locally! env)
                   identifiers)
-              ;; result
-              `(%method ,name ,parameters
-                        ,(add-explicit-return form*))))))
-       (("%set")
-        (destructuring-bind (_ place value) exp
-          (wrap-export place
-                       `(%set ,place
-                              ,(transform-statements!
-                                value env))
-                       env)))
-       (("%define")
-        (destructuring-bind (_ identifier value) exp
-          (bind ((exp* (transform-statements!
-                         `(%var ,identifier ,value)
+              ;; expand form
+              (bind ((form* (transform-statements! form env)))
+                ;; unbind identifiers
+                (do (rcurry unbind-locally! env)
+                    identifiers)
+                ;; result
+                `(%method ,name ,parameters
+                          ,(add-explicit-return form*))))))
+         (("%set")
+          (destructuring-bind (_ place value) exp
+            (wrap-export place
+                         `(%set ,place
+                                ,(transform-statements!
+                                  value env))
                          env)))
-            (bind-globally! identifier env)
-            exp*)))
-       (("%if")
-        (destructuring-bind (_ test then else) exp
-          `(%if
-            ;; TODO: only if not boolean
-            ,(add-explicit-true
-              ;; might contain nested method
-              (transform-statements! test env))
-            ,(transform-statements! then env)
-            ,(transform-statements! else env))))
-       (("%while")
-        (set! (second exp)
+         (("%define")
+          (destructuring-bind (_ identifier value) exp
+            (bind ((exp* (transform-statements!
+                           `(%var ,identifier ,value)
+                           env)))
+              (bind-globally! identifier env)
+              exp*)))
+         (("%if")
+          (destructuring-bind (_ test then else) exp
+            `(%if
               ;; TODO: only if not boolean
-              (add-explicit-true
-               (transform-statements! (second exp) env)))
-        (set! (third exp)
-              (transform-statements! (third exp) env))
-        exp)
-       ;; TODO: bind-locally!
-       (("%try")
-        (set! (second exp)
-              (transform-statements! (second exp) exp))
-        (set! (last exp)
-              (transform-statements! (last exp) env))
-        exp)
-       ;; TODO: bind-globally!
-       (("%var")
-        (destructuring-bind (_ identifier value) exp
-          (wrap-export identifier
-                       `(%var ,identifier
-                              ,(transform-statements!
-                                value env))
-                       env)))
-       (else:
-        (map (rcurry transform-statements! env) exp))))
+              ,(add-explicit-true
+                ;; might contain nested method
+                (transform-statements! test env))
+              ,(transform-statements! then env)
+              ,(transform-statements! else env))))
+         (("%while")
+          (set! (second exp)
+                ;; TODO: only if not boolean
+                (add-explicit-true
+                 (transform-statements! (second exp) env)))
+          (set! (third exp)
+                (transform-statements! (third exp) env))
+          exp)
+         ;; TODO: bind-locally!
+         (("%try")
+          (set! (second exp)
+                (transform-statements! (second exp) exp))
+          (set! (last exp)
+                (transform-statements! (last exp) env))
+          exp)
+         ;; TODO: bind-globally!
+         (("%var")
+          (destructuring-bind (_ identifier value) exp
+            (wrap-export identifier
+                         `(%var ,identifier
+                                ,(transform-statements!
+                                  value env))
+                         env)))
+         (else:
+          (if-bind (transformer (get *transformers* name))
+            (apply transformer env (rest exp))
+            (map (rcurry transform-statements! env) exp))))))
     ((<symbol>)
+      (when (and (. (symbol-name exp) (match "_\\d+$"))
+                 (not (locally-bound? exp env)))
+        (format-out "LOCAL SYMBOL NOT LOCALLY BOUND: %=\n" exp))
       exp)
     (else: exp)))
 
-(define *quote-transformer* (make-quote-transformer `%quote))
-(define *begin-transformer* (make-rest-transformer `%begin transform-statements!))
+(set! (get *transformers* "%quote")
+      (make-quote-transformer `%quote))
+
+(for-each ((symbol `(%native-call %infix)))
+          ()
+  (set! (get *transformers* (symbol-name symbol))
+        (make-operator-transformer symbol transform-statements!)))
+
+(for-each ((symbol `(%begin %native %array %get-property)))
+          ()
+  (set! (get *transformers* (symbol-name symbol))
+        (make-rest-transformer symbol transform-statements!)))

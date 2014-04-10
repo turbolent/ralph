@@ -202,9 +202,6 @@
 (set! (get $internal-special-forms "%if")
       (make-rest-transformer `%if macroexpand-all count: 3))
 
-(set! (get $internal-special-forms "%begin")
-      (make-rest-transformer `%begin macroexpand-all))
-
 (set! (get $internal-special-forms "%while")
       (make-rest-transformer `%while macroexpand-all count: 2))
 
@@ -215,20 +212,12 @@
 (set! (get $internal-special-forms "%var")
       (make-var-transformer macroexpand-all))
 
-(set! (get $internal-special-forms "%native-call")
-      (make-operator-transformer `%native-call macroexpand-all))
+(for-each ((symbol `(%native-call %infix)))
+          ()
+  (set! (get $internal-special-forms (symbol-name symbol))
+        (make-operator-transformer symbol macroexpand-all)))
 
-(set! (get $internal-special-forms "%infix")
-      (make-operator-transformer `%infix macroexpand-all))
-
-(set! (get $internal-special-forms "%native")
-      (make-rest-transformer `%native macroexpand-all))
-
-(set! (get $internal-special-forms "%object")
-      (make-object-transformer macroexpand-all))
-
-(set! (get $internal-special-forms "%array")
-      (make-rest-transformer `%array macroexpand-all))
-
-(set! (get $internal-special-forms "%get-property")
-      (make-rest-transformer `%get-property macroexpand-all))
+(for-each ((symbol `(%begin %native %array %get-property)))
+          ()
+  (set! (get $internal-special-forms (symbol-name symbol))
+        (make-rest-transformer symbol macroexpand-all)))
