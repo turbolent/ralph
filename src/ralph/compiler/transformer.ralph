@@ -22,16 +22,19 @@
                   (format-to-string "Non-symbol value in %= %%=" symbol)))
     `(,symbol ,value)))
 
-(define-function make-rest-transformer (symbol transformer #key count)
+(define-function make-rest-transformer (transformer #key count symbol k)
   (method (env #rest forms)
     ;; TODO [#B]: (unless (== (size forms) count) (warn ...))
-    `(,symbol
-      ,@(map (rcurry transformer env)
-             (if count
-                 (copy-sequence forms end: count)
-                 forms)))))
+    (bind ((forms* (map (rcurry transformer env)
+                        (if count
+                            (copy-sequence forms end: count)
+                            forms))))
+      (cond
+        (k (apply k forms*))
+        (symbol `(,symbol ,@forms*))
+        (else: (signal "rest transformer without symbol or continuation"))))))
 
-(define-function make-bind-transformer (transformer)
+(define-function make-bind-transformer (transformer k)
   (method (env binding form #rest superflous)
     ;; TODO [#B]: (unless (empty? superflous) (warn ...))
     (check-type binding <array>
@@ -44,10 +47,9 @@
         (bind-locally! identifier env)
         (bind ((form* (transformer form env)))
           (unbind-locally! identifier env)
-          `(%bind (,identifier ,value*)
-             ,form*))))))
+          (k identifier value* form*))))))
 
-(define-function make-method-transformer (transformer)
+(define-function make-method-transformer (transformer k)
   (method (env name parameters form #rest superfluous)
     ;; TODO [#B]: (unless (empty? superflous) (warn ...))
     (check-type name <symbol>
@@ -65,8 +67,7 @@
       (bind ((form* (transformer form env)))
         (do (rcurry unbind-locally! env)
             identifiers)
-        `(%method ,name ,parameters
-           ,form*)))))
+        (k name parameters form*)))))
 
 (define-function make-set-transformer (transformer)
   (method (env place value #rest superflous)

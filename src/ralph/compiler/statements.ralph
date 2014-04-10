@@ -41,19 +41,21 @@
       (concatenate wrapper [exp])))
 
 
-(define-function add-explicit-return (exp)
+(define-function wrap-return (exp)
   (wrap-value! exp `(%native-call "return")))
 
 ;; after ANF: if value of binding is control-flow (%if, %while, etc.):
 ;; turn into statement form, then "sink" assignment
 
-(define-function statement? (exp)
+(define $statement-symbols `(%if %while %begin %bind %try))
+
+(define-function generates-statement? (exp)
   (and (instance? exp <array>)
        (not (empty? exp))
        (member? (first exp)
-                `(%if %while %begin %bind %try))))
+                $statement-symbols)))
 
-(define-function add-explicit-true (exp)
+(define-function wrap-true (exp)
   (if (instance? exp <boolean>)
       (true? exp)
       `((%native "$T") ,exp)))
@@ -77,41 +79,11 @@
 (define *transformers*
   (make-plain-object))
 
-;; TODO: very similar to internal-special-forms, refactor:
-;;       pass transformation function and callback
 (define-function transform-statements! (exp env)
   (select exp instance?
     ((<array>)
      (bind ((name (symbol-name (first exp))))
        (select name ==
-         (("%bind")
-          (destructuring-bind (_ (identifier value) body) exp
-            (bind ((value* (transform-statements! value env)))
-              (bind-locally! identifier env)
-              (bind ((body* (transform-statements! body env)))
-                (unbind-locally! identifier env)
-                (if (statement? value)
-                    `(%begin
-                       (%var ,identifier #f)
-                       ,(wrap-value! value* `(%set ,identifier))
-                       ,body*)
-                    `(%begin
-                       (%var ,identifier ,value*)
-                       ,body*))))))
-         (("%method")
-          (destructuring-bind (_ name parameters form) exp
-            (bind ((identifiers (cons name parameters)))
-              ;; bind identifiers
-              (do (rcurry bind-locally! env)
-                  identifiers)
-              ;; expand form
-              (bind ((form* (transform-statements! form env)))
-                ;; unbind identifiers
-                (do (rcurry unbind-locally! env)
-                    identifiers)
-                ;; result
-                `(%method ,name ,parameters
-                          ,(add-explicit-return form*))))))
          (("%set")
           (destructuring-bind (_ place value) exp
             (wrap-export place
@@ -119,39 +91,8 @@
                                 ,(transform-statements!
                                   value env))
                          env)))
-         (("%define")
-          (destructuring-bind (_ identifier value) exp
-            (bind ((exp* (transform-statements!
-                           `(%var ,identifier ,value)
-                           env)))
-              (bind-globally! identifier env)
-              exp*)))
-         (("%if")
-          (destructuring-bind (_ test then else) exp
-            `(%if
-              ;; TODO: only if not boolean
-              ,(add-explicit-true
-                ;; might contain nested method
-                (transform-statements! test env))
-              ,(transform-statements! then env)
-              ,(transform-statements! else env))))
-         (("%while")
-          (set! (second exp)
-                ;; TODO: only if not boolean
-                (add-explicit-true
-                 (transform-statements! (second exp) env)))
-          (set! (third exp)
-                (transform-statements! (third exp) env))
-          exp)
-         ;; TODO: bind-locally!
-         (("%try")
-          (set! (second exp)
-                (transform-statements! (second exp) exp))
-          (set! (last exp)
-                (transform-statements! (last exp) env))
-          exp)
          ;; TODO: bind-globally!
-         (("%var")
+         (("%var" "%define")
           (destructuring-bind (_ identifier value) exp
             (wrap-export identifier
                          `(%var ,identifier
@@ -172,6 +113,48 @@
 (set! (get *transformers* "%quote")
       (make-quote-transformer `%quote))
 
+(set! (get *transformers* "%bind")
+      (make-bind-transformer transform-statements!
+                             (method (identifier value* body*)
+                               (if (generates-statement? value*)
+                                   `(%begin
+                                      (%var ,identifier #f)
+                                      ,(wrap-value! value*
+                                                    `(%set ,identifier))
+                                      ,body*)
+                                   `(%begin
+                                      (%var ,identifier ,value*)
+                                      ,body*)))))
+
+(set! (get *transformers* "%method")
+      (make-method-transformer transform-statements!
+                               (method (name parameters form*)
+                                 `(%method ,name ,parameters
+                                    ,(wrap-return form*)))))
+
+(set! (get *transformers* "%if")
+      (make-rest-transformer
+        transform-statements!
+        count: 3
+        k: (method (predicate* consequent* alternate*)
+             `(%if ,(wrap-true predicate*)
+                   ,consequent*
+                   ,alternate*))))
+
+(set! (get *transformers* "%while")
+      (make-rest-transformer
+        transform-statements!
+        count: 2
+        k: (method (predicate* form*)
+             `(%while ,(wrap-true predicate*)
+                ,form*))))
+
+(set! (get *transformers* "%try")
+      (make-try-transformer transform-statements!))
+
+(set! (get *transformers* "%object")
+      (make-object-transformer transform-statements!))
+
 (for-each ((symbol `(%native-call %infix)))
           ()
   (set! (get *transformers* (symbol-name symbol))
@@ -180,4 +163,5 @@
 (for-each ((symbol `(%begin %native %array %get-property)))
           ()
   (set! (get *transformers* (symbol-name symbol))
-        (make-rest-transformer symbol transform-statements!)))
+        (make-rest-transformer transform-statements!
+                               symbol: symbol)))

@@ -163,16 +163,21 @@
 
 ;; TODO: expansion of place correct ?
 (set! (get $core-special-forms "set!")
-      (make-rest-transformer `set! macroexpand-all))
+      (make-rest-transformer macroexpand-all
+                             symbol: `set!))
 
 (set! (get $core-special-forms "if")
-      (make-rest-transformer `if macroexpand-all count: 3))
+      (make-rest-transformer macroexpand-all
+                             symbol: `if
+                             count: 3))
 
 (set! (get $core-special-forms "begin")
-      (make-rest-transformer `begin macroexpand-all))
+      (make-rest-transformer macroexpand-all
+                             symbol: `begin))
 
 (set! (get $core-special-forms "while")
-      (make-rest-transformer `while macroexpand-all))
+      (make-rest-transformer macroexpand-all
+                             symbol: `while))
 
 (set! (get $core-special-forms "define-module")
       (method (_ #rest arguments)
@@ -188,10 +193,16 @@
       (make-quote-transformer `%quote check?: #t))
 
 (set! (get $internal-special-forms "%bind")
-      (make-bind-transformer macroexpand-all))
+      (make-bind-transformer macroexpand-all
+                             (method (identifier value* form*)
+                               `(%bind (,identifier ,value*)
+                                   ,form*))))
 
 (set! (get $internal-special-forms "%method")
-      (make-method-transformer macroexpand-all))
+      (make-method-transformer macroexpand-all
+                               (method (name parameters form*)
+                                 `(%method ,name ,parameters
+                                    ,form*))))
 
 (set! (get $internal-special-forms "%set")
       (make-set-transformer macroexpand-all))
@@ -200,10 +211,14 @@
       (make-define-transformer macroexpand-all))
 
 (set! (get $internal-special-forms "%if")
-      (make-rest-transformer `%if macroexpand-all count: 3))
+      (make-rest-transformer macroexpand-all
+                             symbol: `%if
+                             count: 3))
 
 (set! (get $internal-special-forms "%while")
-      (make-rest-transformer `%while macroexpand-all count: 2))
+      (make-rest-transformer macroexpand-all
+                             symbol: `%while
+                             count: 2))
 
 (set! (get $internal-special-forms "%try")
       (make-try-transformer macroexpand-all))
@@ -211,6 +226,9 @@
 ;; like %define, but allows defining external identifiers
 (set! (get $internal-special-forms "%var")
       (make-var-transformer macroexpand-all))
+
+(set! (get $internal-special-forms "%object")
+      (make-object-transformer macroexpand-all))
 
 (for-each ((symbol `(%native-call %infix)))
           ()
@@ -220,4 +238,4 @@
 (for-each ((symbol `(%begin %native %array %get-property)))
           ()
   (set! (get $internal-special-forms (symbol-name symbol))
-        (make-rest-transformer symbol macroexpand-all)))
+        (make-rest-transformer macroexpand-all symbol: symbol)))
