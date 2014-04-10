@@ -194,18 +194,20 @@
 
 (set! (get $internal-special-forms "%bind")
       (make-bind-transformer macroexpand-all
-                             (method (identifier value* form*)
+                             (method (env identifier value* form*)
                                `(%bind (,identifier ,value*)
                                    ,form*))))
 
 (set! (get $internal-special-forms "%method")
       (make-method-transformer macroexpand-all
-                               (method (name parameters form*)
+                               (method (env name parameters form*)
                                  `(%method ,name ,parameters
                                     ,form*))))
 
 (set! (get $internal-special-forms "%set")
-      (make-set-transformer macroexpand-all))
+      (make-set-transformer macroexpand-all
+                            (method (env place* value*)
+                              `(%set ,place* ,value*))))
 
 (set! (get $internal-special-forms "%define")
       (make-define-transformer macroexpand-all))

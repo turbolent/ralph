@@ -30,7 +30,7 @@
                             (copy-sequence forms end: count)
                             forms))))
       (cond
-        (k (apply k forms*))
+        (k (apply k env forms*))
         (symbol `(,symbol ,@forms*))
         (else: (signal "rest transformer without symbol or continuation"))))))
 
@@ -47,7 +47,7 @@
         (bind-locally! identifier env)
         (bind ((form* (transformer form env)))
           (unbind-locally! identifier env)
-          (k identifier value* form*))))))
+          (k env identifier value* form*))))))
 
 (define-function make-method-transformer (transformer k)
   (method (env name parameters form #rest superfluous)
@@ -67,22 +67,21 @@
       (bind ((form* (transformer form env)))
         (do (rcurry unbind-locally! env)
             identifiers)
-        (k name parameters form*)))))
+        (k env name parameters form*)))))
 
-(define-function make-set-transformer (transformer)
+(define-function make-set-transformer (transformer k)
   (method (env place value #rest superflous)
     ;; TODO [#B]: (unless (empty? superflous) (warn ...))
     (cond
      ((instance? place <symbol>)
       ;; TODO [#A]: check if identifier is local
-      `(%set ,place
-             ,(transformer value env)))
+      (k env place (transformer value env)))
      ((op? "%get-property" place)
-      `(%set ,(transformer place env)
-             ,(transformer value env)))
+      (k env (transformer place env)
+             (transformer value env)))
      (else:
       (signal (format-to-string
-               "Non-symbol identifier or %get-property in %%set: %="
+               "Non-symbol identifier or %%get-property in %%set: %="
                place))))))
 
 (define-function make-define-transformer (transformer)

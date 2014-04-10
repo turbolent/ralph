@@ -84,13 +84,6 @@
     ((<array>)
      (bind ((name (symbol-name (first exp))))
        (select name ==
-         (("%set")
-          (destructuring-bind (_ place value) exp
-            (wrap-export place
-                         `(%set ,place
-                                ,(transform-statements!
-                                  value env))
-                         env)))
          ;; TODO: bind-globally!
          (("%var" "%define")
           (destructuring-bind (_ identifier value) exp
@@ -115,7 +108,7 @@
 
 (set! (get *transformers* "%bind")
       (make-bind-transformer transform-statements!
-                             (method (identifier value* body*)
+                             (method (env identifier value* body*)
                                (if (generates-statement? value*)
                                    `(%begin
                                       (%var ,identifier #f)
@@ -128,15 +121,22 @@
 
 (set! (get *transformers* "%method")
       (make-method-transformer transform-statements!
-                               (method (name parameters form*)
+                               (method (env name parameters form*)
                                  `(%method ,name ,parameters
                                     ,(wrap-return form*)))))
+
+(set! (get *transformers* "%set")
+      (make-set-transformer transform-statements!
+                            (method (env place* value*)
+                              (wrap-export place*
+                                           `(%set ,place* ,value*)
+                                           env))))
 
 (set! (get *transformers* "%if")
       (make-rest-transformer
         transform-statements!
         count: 3
-        k: (method (predicate* consequent* alternate*)
+        k: (method (env predicate* consequent* alternate*)
              `(%if ,(wrap-true predicate*)
                    ,consequent*
                    ,alternate*))))
@@ -145,7 +145,7 @@
       (make-rest-transformer
         transform-statements!
         count: 2
-        k: (method (predicate* form*)
+        k: (method (env predicate* form*)
              `(%while ,(wrap-true predicate*)
                 ,form*))))
 
