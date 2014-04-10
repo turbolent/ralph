@@ -227,7 +227,9 @@
 
 ;; like %define, but allows defining external identifiers
 (set! (get $internal-special-forms "%var")
-      (make-var-transformer macroexpand-all))
+      (make-var-transformer macroexpand-all
+                            (method (env identifier value*)
+                              `(%var ,identifier ,value*))))
 
 (set! (get $internal-special-forms "%object")
       (make-object-transformer macroexpand-all))

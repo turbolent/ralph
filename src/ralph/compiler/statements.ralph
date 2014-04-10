@@ -83,19 +83,9 @@
   (select exp instance?
     ((<array>)
      (bind ((name (symbol-name (first exp))))
-       (select name ==
-         ;; TODO: bind-globally!
-         (("%var" "%define")
-          (destructuring-bind (_ identifier value) exp
-            (wrap-export identifier
-                         `(%var ,identifier
-                                ,(transform-statements!
-                                  value env))
-                         env)))
-         (else:
-          (if-bind (transformer (get *transformers* name))
-            (apply transformer env (rest exp))
-            (map (rcurry transform-statements! env) exp))))))
+       (if-bind (transformer (get *transformers* name))
+         (apply transformer env (rest exp))
+         (map (rcurry transform-statements! env) exp))))
     ((<symbol>)
       (when (and (. (symbol-name exp) (match "_\\d+$"))
                  (not (locally-bound? exp env)))
@@ -131,6 +121,15 @@
                               (wrap-export place*
                                            `(%set ,place* ,value*)
                                            env))))
+
+(for-each ((name ["%var" "%define"]))
+          ()
+  (set! (get *transformers* name)
+        (make-var-transformer transform-statements!
+                              (method (env identifier value*)
+                                (wrap-export identifier
+                                             `(%var ,identifier ,value*)
+                                             env)))))
 
 (set! (get *transformers* "%if")
       (make-rest-transformer

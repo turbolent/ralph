@@ -108,7 +108,7 @@
                 ,identifier
                 ,handling-form*)))))
 
-(define-function make-var-transformer (transformer)
+(define-function make-var-transformer (transformer k)
   (method (env identifier value #rest superflous)
     ;; TODO [#B]: (unless (empty? superflous) (warn ...))
     (check-type identifier <symbol>
@@ -121,7 +121,7 @@
                     (get env "module" "name")))
         (bind-globally! identifier env))
       ;; result
-      `(%var ,identifier ,value*))))
+      (k env identifier value*))))
 
 (define-function make-operator-transformer (symbol transformer)
   (method (env operator-name #rest arguments)
