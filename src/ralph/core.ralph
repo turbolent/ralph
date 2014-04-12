@@ -33,7 +33,7 @@
            as-hex-string description min max abs
            round floor ceil sin cos atan2 expt sqrt
            mod $pi as-radiant even? odd?
-           signal starts-with?
+           signal starts-with? ends-with?
            as-property-list as-association-list
            extend! update-with group-by
            chain-object unchain-object
@@ -901,7 +901,13 @@
     result))
 
 (define-function starts-with? ((string <string>) (prefix <string>))
-  (binary== (. string ("indexOf" prefix)) 0))
+  (binary== (. string ("indexOf" prefix 0)) 0))
+
+(define-function ends-with? (string suffix)
+  (bind ((start-index (%infix "-" (%get-property string "length")
+                                  (%get-property suffix "length")))
+         (result-index (. string ("indexOf" suffix start-index))))
+    (%binary== result-index start-index)))
 
 (define-function even? (number)
   (binary== (%infix "%" number 2) 0))
