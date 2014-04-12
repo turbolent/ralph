@@ -1,264 +1,257 @@
 {
-    var B1662 = require('ralph/core');
+    var $module = Object.create(null);
+    var Mexport = function B1771(name__1772, value__1773) {
+        var B1774 = (exports);
+        return(B1774[name__1772] = value__1773);
+    };
 }
+var B1775 = require('ralph/core');
+var B1776 = require('ralph/compiler/module');
 {
-    var B1664 = require('ralph/compiler/module');
-}
-{
-    {
-        var ralphScoreCCMvar = B1662['%var'];
-        var ralphScoreCCMmake_class = B1662['%make-class'];
-        var ralphScoreCCLobjectG = B1662['<object>'];
-        var ralphScoreCCmake_plain_object = B1662['make-plain-object'];
-        var LenvironmentG__1676 = ralphScoreCCMmake_class(ralphScoreCCLobjectG, {
-                'module': false,
-                'macros': function B1670() {
-                    return(ralphScoreCCmake_plain_object());
-                },
-                'symbol-macros': function B1671() {
-                    return(ralphScoreCCmake_plain_object());
-                },
-                'special-forms': function B1672() {
-                    return(ralphScoreCCmake_plain_object());
-                },
-                'binding-count': function B1673() {
-                    return(ralphScoreCCmake_plain_object());
-                },
-                'global-bindings': function B1674() {
-                    return(ralphScoreCCmake_plain_object());
-                }
-            }, function LenvironmentG__1675() {
-                {
-                    var B1677 = (this);
-                }
-                B1677['module'] = (undefined);
-                {
-                    var B1678 = (this);
-                }
-                B1678['macros'] = (undefined);
-                {
-                    var B1679 = (this);
-                }
-                B1679['symbol-macros'] = (undefined);
-                {
-                    var B1680 = (this);
-                }
-                B1680['special-forms'] = (undefined);
-                {
-                    var B1681 = (this);
-                }
-                B1681['binding-count'] = (undefined);
-                {
-                    var B1682 = (this);
-                }
-                return(B1682['global-bindings'] = (undefined));
-            });
-    }
-    (exports)['<environment>'] = LenvironmentG__1676;
-}
-{
-    {
-        var ralphScoreCCnot = B1662['not'];
-        var ralphScoreCCsymbol_name = B1662['symbol-name'];
-        var ralphScoreCCMannotate_function = B1662['%annotate-function'];
-        var find_expander__1690 = function B1684(namespace__1685, check_boundQ__1686, identifier__1687, env__1688) {
-            {
-                var B1691 = false;
+    var LenvironmentG = B1775['%make-class'](B1775['<object>'], {
+            'module': false,
+            'macros': function B1782() {
+                return(B1775['make-plain-object']());
+            },
+            'symbol-macros': function B1783() {
+                return(B1775['make-plain-object']());
+            },
+            'special-forms': function B1784() {
+                return(B1775['make-plain-object']());
+            },
+            'binding-count': function B1785() {
+                return(B1775['make-plain-object']());
+            },
+            'global-bindings': function B1786() {
+                return(B1775['make-plain-object']());
             }
-            if (($T)(check_boundQ__1686))
-                B1691 = boundQ__1689(identifier__1687, env__1688);
-            else
-                B1691 = false;
+        }, function LenvironmentG__1787() {
+            var B1788 = (this);
             {
-                var B1692 = ralphScoreCCnot(B1691);
-            }
-            if (($T)(B1692))
-                return(env__1688[namespace__1685][ralphScoreCCsymbol_name(identifier__1687)]);
-            else
-                return(false);
-        };
-    }
-    ralphScoreCCMannotate_function(find_expander__1690, 'find_expander', false);
-}
-{
-    {
-        var ralphScoreCCcurry = B1662['curry'];
-        var find_macro__1693 = ralphScoreCCcurry(find_expander__1690, 'macros', true);
-    }
-    (exports)['find-macro'] = find_macro__1693;
-}
-{
-    {
-        var find_symbol_macro__1694 = ralphScoreCCcurry(find_expander__1690, 'symbol-macros', true);
-    }
-    (exports)['find-symbol-macro'] = find_symbol_macro__1694;
-}
-{
-    {
-        var find_special_form__1695 = ralphScoreCCcurry(find_expander__1690, 'special-forms', false);
-    }
-    (exports)['find-special-form'] = find_special_form__1695;
-}
-{
-    {
-        var ralphScoreCCtrueQ = B1662['true?'];
-        var ralphScoreCCget = B1662['get'];
-        var special_operatorQ__1700 = function B1697(identifier__1698, env__1699) {
-            return(ralphScoreCCtrueQ(ralphScoreCCget(env__1699, 'special-forms')[ralphScoreCCsymbol_name(identifier__1698)]));
-        };
-    }
-    (exports)['special-operator?'] = special_operatorQ__1700;
-    ralphScoreCCMannotate_function(special_operatorQ__1700, 'special_operatorQ', false);
-}
-{
-    {
-        var ralphScoreCCget_setter = B1662['get-setter'];
-        var bind_globallyN__1705 = function B1702(identifier__1703, env__1704) {
-            return(ralphScoreCCget_setter(env__1704, 'global-bindings', ralphScoreCCsymbol_name(identifier__1703), true));
-        };
-    }
-    (exports)['bind-globally!'] = bind_globallyN__1705;
-    ralphScoreCCMannotate_function(bind_globallyN__1705, 'bind_globallyN', false);
-}
-{
-    {
-        var globally_boundQ__1710 = function B1707(identifier__1708, env__1709) {
-            return(ralphScoreCCget(env__1709, 'global-bindings', ralphScoreCCsymbol_name(identifier__1708)));
-        };
-    }
-    (exports)['globally-bound?'] = globally_boundQ__1710;
-    ralphScoreCCMannotate_function(globally_boundQ__1710, 'globally_boundQ', false);
-}
-{
-    {
-        var ralphScoreCCP = B1662['+'];
-        var bindN__1715 = function B1712(identifier__1713, env__1714) {
-            return(ralphScoreCCget_setter(env__1714, 'binding-count', ralphScoreCCsymbol_name(identifier__1713), ralphScoreCCP(ralphScoreCCget(env__1714, 'binding-count', ralphScoreCCsymbol_name(identifier__1713)), 1)));
-        };
-    }
-    (exports)['bind!'] = bindN__1715;
-    ralphScoreCCMannotate_function(bindN__1715, 'bindN', false);
-}
-{
-    {
-        var ralphScoreCCG = B1662['>'];
-        var boundQ__1689 = function B1719(identifier__1720, env__1721) {
-            {
-                var B1722 = globally_boundQ__1710(identifier__1720, env__1721);
-            }
-            if (($T)(B1722))
-                return(B1722);
-            else {
+                B1788['module'] = (undefined);
                 {
-                    var B1723 = ralphScoreCCget(env__1721, 'binding-count', ralphScoreCCsymbol_name(identifier__1720));
-                }
-                if (($T)(B1723)) {
+                    var B1789 = (this);
                     {
-                        var count__1724 = B1723;
+                        B1789['macros'] = (undefined);
+                        {
+                            var B1790 = (this);
+                            {
+                                B1790['symbol-macros'] = (undefined);
+                                {
+                                    var B1791 = (this);
+                                    {
+                                        B1791['special-forms'] = (undefined);
+                                        {
+                                            var B1792 = (this);
+                                            {
+                                                B1792['binding-count'] = (undefined);
+                                                {
+                                                    var B1793 = (this);
+                                                    return(B1793['global-bindings'] = (undefined));
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     }
-                    return(ralphScoreCCG(count__1724, 0));
+                }
+            }
+        });
+    Mexport('<environment>', LenvironmentG);
+}
+{
+    var find_expander = function B1795(namespace__1796, check_boundQ__1797, identifier__1798, env__1799) {
+        var B1800 = B1775['not'];
+        {
+            var B1801 = false;
+            if (($T)(check_boundQ__1797))
+                B1801 = boundQ(identifier__1798, env__1799);
+            else
+                B1801 = false;
+            {
+                var B1802 = B1800(B1801);
+                if (($T)(B1802))
+                    return(env__1799[namespace__1796][B1775['symbol-name'](identifier__1798)]);
+                else
+                    return(false);
+            }
+        }
+    };
+    B1775['%annotate-function'](find_expander, 'find-expander', false);
+}
+{
+    var find_macro = B1775['curry'](find_expander, 'macros', true);
+    Mexport('find-macro', find_macro);
+}
+{
+    var find_symbol_macro = B1775['curry'](find_expander, 'symbol-macros', true);
+    Mexport('find-symbol-macro', find_symbol_macro);
+}
+{
+    var find_special_form = B1775['curry'](find_expander, 'special-forms', false);
+    Mexport('find-special-form', find_special_form);
+}
+{
+    {
+        var special_operatorQ = function B1804(identifier__1805, env__1806) {
+            return(B1775['true?'](B1775['get'](env__1806, 'special-forms')[B1775['symbol-name'](identifier__1805)]));
+        };
+        Mexport('special-operator?', special_operatorQ);
+    }
+    B1775['%annotate-function'](special_operatorQ, 'special-operator?', false);
+}
+{
+    {
+        var bind_globallyN = function B1808(identifier__1809, env__1810) {
+            return(B1775['get-setter'](env__1810, 'global-bindings', B1775['symbol-name'](identifier__1809), true));
+        };
+        Mexport('bind-globally!', bind_globallyN);
+    }
+    B1775['%annotate-function'](bind_globallyN, 'bind-globally!', false);
+}
+{
+    {
+        var globally_boundQ = function B1812(identifier__1813, env__1814) {
+            return(B1775['get'](env__1814, 'global-bindings', B1775['symbol-name'](identifier__1813)));
+        };
+        Mexport('globally-bound?', globally_boundQ);
+    }
+    B1775['%annotate-function'](globally_boundQ, 'globally-bound?', false);
+}
+{
+    {
+        var bind_locallyN = function B1816(identifier__1817, env__1818) {
+            var name__1819 = B1775['symbol-name'](identifier__1817);
+            return(B1775['get-setter'](env__1818, 'binding-count', name__1819, B1775['+'](B1775['get'](env__1818, 'binding-count', name__1819), 1)));
+        };
+        Mexport('bind-locally!', bind_locallyN);
+    }
+    B1775['%annotate-function'](bind_locallyN, 'bind-locally!', false);
+}
+{
+    {
+        var boundQ = function B1822(identifier__1823, env__1824) {
+            var B1825 = globally_boundQ(identifier__1823, env__1824);
+            if (($T)(B1825))
+                return(B1825);
+            else
+                return(locally_boundQ(identifier__1823, env__1824));
+        };
+        Mexport('bound?', boundQ);
+    }
+    B1775['%annotate-function'](boundQ, 'bound?', false);
+}
+{
+    {
+        var locally_boundQ = function B1828(identifier__1829, env__1830) {
+            var name__1831 = B1775['symbol-name'](identifier__1829);
+            {
+                var B1832 = B1775['get'](env__1830, 'binding-count', name__1831);
+                if (($T)(B1832)) {
+                    var count__1833 = B1832;
+                    return(B1775['>'](count__1833, 0));
                 } else
                     return(false);
             }
         };
+        Mexport('locally-bound?', locally_boundQ);
     }
-    (exports)['bound?'] = boundQ__1689;
-    ralphScoreCCMannotate_function(boundQ__1689, 'boundQ', false);
+    B1775['%annotate-function'](locally_boundQ, 'locally-bound?', false);
 }
 {
     {
-        var ralphScoreCC_ = B1662['-'];
-        var unbindN__1729 = function B1726(identifier__1727, env__1728) {
-            return(ralphScoreCCget_setter(env__1728, 'binding-count', ralphScoreCCsymbol_name(identifier__1727), ralphScoreCC_(ralphScoreCCget(env__1728, 'binding-count', ralphScoreCCsymbol_name(identifier__1727)), 1)));
+        var unbind_locallyN = function B1835(identifier__1836, env__1837) {
+            var name__1838 = B1775['symbol-name'](identifier__1836);
+            return(B1775['get-setter'](env__1837, 'binding-count', name__1838, B1775['-'](B1775['get'](env__1837, 'binding-count', name__1838), 1)));
         };
+        Mexport('unbind-locally!', unbind_locallyN);
     }
-    (exports)['unbind!'] = unbindN__1729;
-    ralphScoreCCMannotate_function(unbindN__1729, 'unbindN', false);
+    B1775['%annotate-function'](unbind_locallyN, 'unbind-locally!', false);
 }
 {
     {
-        var ralphScoreCCMkeys = B1662['%keys'];
-        var ralphScompilerSmoduleCCfind_moduleSimport_name = B1664['find-module/import-name'];
-        var ralphScoreCCMMsymbol = B1662['%%symbol'];
-        var resolve_symbol__1747 = function B1735(symbol__1736, env__1737) {
-            {
-                var B1738 = $SL.call(arguments, 2);
-                var B1739 = ralphScoreCCMkeys(B1738, { 'import-guard': false });
-                var import_guard__1740 = B1739['import-guard'];
-            }
-            if (($T)(ralphScoreCCget(symbol__1736, 'module')))
-                return(symbol__1736);
+        var resolve_symbol = function B1841(symbol__1842, env__1843) {
+            if (($T)(B1775['get'](symbol__1842, 'module')))
+                return(symbol__1842);
             else {
+                var name__1844 = B1775['symbol-name'](symbol__1842);
                 {
-                    var name__1741 = ralphScoreCCsymbol_name(symbol__1736);
-                    var B1742 = ralphScoreCCnot(import_guard__1740);
-                    var B1748 = false;
+                    var B1845 = false;
+                    if (($T)(B1775['not'](globally_boundQ(symbol__1842, env__1843))))
+                        B1845 = B1776['find-module/import-name'](name__1844, B1775['get'](env__1843, 'module'));
+                    else
+                        B1845 = false;
+                    if (($T)(B1845)) {
+                        var moduleSimport_name__1846 = B1845;
+                        {
+                            var module__1847 = moduleSimport_name__1846[0];
+                            {
+                                var import_name__1848 = moduleSimport_name__1846[1];
+                                return(B1775['%%symbol'](import_name__1848, B1775['get'](module__1847, 'name')));
+                            }
+                        }
+                    } else
+                        return(B1775['%%symbol'](name__1844, B1775['get'](env__1843, 'module', 'name')));
                 }
-                if (($T)(B1742))
-                    B1748 = B1742;
-                else
-                    B1748 = import_guard__1740(symbol__1736, env__1737);
-                {
-                    var B1743 = false;
-                }
-                if (($T)(B1748))
-                    B1743 = ralphScompilerSmoduleCCfind_moduleSimport_name(name__1741, ralphScoreCCget(env__1737, 'module'));
-                else
-                    B1743 = false;
-                if (($T)(B1743)) {
-                    {
-                        var moduleSimport_name__1744 = B1743;
-                        var module__1745 = moduleSimport_name__1744[0];
-                        var import_name__1746 = moduleSimport_name__1744[1];
-                    }
-                    return(ralphScoreCCMMsymbol(import_name__1746, ralphScoreCCget(module__1745, 'name')));
-                } else
-                    return(ralphScoreCCMMsymbol(name__1741, ralphScoreCCget(env__1737, 'module', 'name')));
             }
         };
+        Mexport('resolve-symbol', resolve_symbol);
     }
-    (exports)['resolve-symbol'] = resolve_symbol__1747;
-    ralphScoreCCMannotate_function(resolve_symbol__1747, 'resolve_symbol', false);
+    B1775['%annotate-function'](resolve_symbol, 'resolve-symbol', false);
 }
 {
     {
-        var find_import_identifier__1753 = function B1750(module_name__1751, env__1752) {
-            return(ralphScoreCCget(env__1752, 'import-identifiers', module_name__1751));
+        var qualify_symbol = function B1850(symbol__1851, env__1852) {
+            return(B1775['%%symbol'](B1775['get'](symbol__1851, 'name'), B1775['get'](env__1852, 'module', 'name')));
         };
+        Mexport('qualify-symbol', qualify_symbol);
     }
-    (exports)['find-import-identifier'] = find_import_identifier__1753;
-    ralphScoreCCMannotate_function(find_import_identifier__1753, 'find_import_identifier', false);
+    B1775['%annotate-function'](qualify_symbol, 'qualify-symbol', false);
 }
 {
     {
-        var ralphScoreCCgenerate_symbol = B1662['generate-symbol'];
-        var make_import_identifier__1759 = function B1755(module_name__1756, env__1757) {
+        var find_import_identifier = function B1854(module_name__1855, env__1856) {
+            return(B1775['get'](env__1856, 'import-identifiers', module_name__1855));
+        };
+        Mexport('find-import-identifier', find_import_identifier);
+    }
+    B1775['%annotate-function'](find_import_identifier, 'find-import-identifier', false);
+}
+{
+    {
+        var make_import_identifier = function B1858(module_name__1859, env__1860) {
+            var identifier__1861 = B1775['generate-symbol']();
             {
-                var identifier__1758 = ralphScoreCCgenerate_symbol(env__1757);
+                B1775['get-setter'](env__1860, 'import-identifiers', module_name__1859, identifier__1861);
+                return(identifier__1861);
             }
-            ralphScoreCCget_setter(env__1757, 'import-identifiers', module_name__1756, identifier__1758);
-            return(identifier__1758);
         };
+        Mexport('make-import-identifier', make_import_identifier);
     }
-    (exports)['make-import-identifier'] = make_import_identifier__1759;
-    ralphScoreCCMannotate_function(make_import_identifier__1759, 'make_import_identifier', false);
+    B1775['%annotate-function'](make_import_identifier, 'make-import-identifier', false);
 }
 {
+    var B1863 = $S('%define', 'ralph/core');
     {
-        var B1763 = $S('%define', 'ralph/core');
-        var B1764 = $S('%native-call', 'ralph/core');
-        var make_import_definition__1768 = function B1765(module_name__1766, env__1767) {
-            return([
-                B1763,
-                make_import_identifier__1759(module_name__1766, env__1767),
-                [
-                    B1764,
-                    'require',
-                    module_name__1766
-                ]
-            ]);
-        };
+        var B1864 = $S('%native-call', 'ralph/core');
+        {
+            {
+                var make_import_definition = function B1865(module_name__1866, env__1867) {
+                    return([
+                        B1863,
+                        make_import_identifier(module_name__1866, env__1867),
+                        [
+                            B1864,
+                            'require',
+                            module_name__1866
+                        ]
+                    ]);
+                };
+                Mexport('make-import-definition', make_import_definition);
+            }
+            B1775['%annotate-function'](make_import_definition, 'make-import-definition', false);
+        }
     }
-    (exports)['make-import-definition'] = make_import_definition__1768;
-    ralphScoreCCMannotate_function(make_import_definition__1768, 'make_import_definition', false);
 }

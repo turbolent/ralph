@@ -1,118 +1,92 @@
 {
-    var B2588 = require('ralph/core');
+    var $module = Object.create(null);
+    var Mexport = function B2759(name__2760, value__2761) {
+        var B2762 = (exports);
+        return(B2762[name__2760] = value__2761);
+    };
 }
+var B2763 = require('ralph/core');
 {
-    var B2591 = require('ralph/compiler/environment');
-    var B2592 = require('ralph/compiler/utilities');
+    var B2764 = require('ralph/compiler/environment');
+    var B2765 = require('ralph/compiler/utilities');
 }
 {
     {
-        var ralphScoreCCMvar = B2588['%var'];
-        var ralphScompilerSutilitiesCCexpressionQ = B2592['expression?'];
-        var ralphScoreCCfirst = B2588['first'];
-        var ralphScompilerSenvironmentCCspecial_operatorQ = B2591['special-operator?'];
-        var ralphScoreCCinstanceQ = B2588['instance?'];
-        var ralphScoreCCLsymbolG = B2588['<symbol>'];
-        var ralphScompilerSenvironmentCCfind_macro = B2591['find-macro'];
-        var ralphScoreCCapply = B2588['apply'];
-        var ralphScoreCCrest = B2588['rest'];
-        var ralphScompilerSenvironmentCCfind_symbol_macro = B2591['find-symbol-macro'];
-        var ralphScoreCCMannotate_function = B2588['%annotate-function'];
-        var macroexpand_1__2606 = function B2596(form__2597, env__2598) {
-            if (($T)(ralphScompilerSutilitiesCCexpressionQ(form__2597))) {
-                {
-                    var identifier__2599 = ralphScoreCCfirst(form__2597);
-                }
-                if (($T)(ralphScompilerSenvironmentCCspecial_operatorQ(identifier__2599, env__2598)))
-                    return(form__2597);
+        var macroexpand_1 = function B2769(form__2770, env__2771) {
+            if (($T)(B2763['expression?'](form__2770))) {
+                var identifier__2772 = B2763['first'](form__2770);
+                if (($T)(B2764['special-operator?'](identifier__2772, env__2771)))
+                    return(form__2770);
                 else {
+                    var identifierT__2773 = macroexpand(identifier__2772, env__2771);
                     {
-                        var identifierT__2601 = macroexpand__2600(identifier__2599, env__2598);
-                        var B2602 = false;
+                        var B2774 = false;
+                        if (($T)(B2763['instance?'](identifierT__2773, B2763['<symbol>'])))
+                            B2774 = B2764['find-macro'](identifierT__2773, env__2771);
+                        else
+                            B2774 = false;
+                        if (($T)(B2774)) {
+                            var macro__2775 = B2774;
+                            return(B2763['apply'](macro__2775, env__2771, B2763['rest'](form__2770)));
+                        } else
+                            return(form__2770);
                     }
-                    if (($T)(ralphScoreCCinstanceQ(identifierT__2601, ralphScoreCCLsymbolG)))
-                        B2602 = ralphScompilerSenvironmentCCfind_macro(identifierT__2601, env__2598);
-                    else
-                        B2602 = false;
-                    if (($T)(B2602)) {
-                        {
-                            var macro__2603 = B2602;
-                        }
-                        return(ralphScoreCCapply(macro__2603, env__2598, ralphScoreCCrest(form__2597)));
-                    } else
-                        return(form__2597);
                 }
             } else {
-                {
-                    var B2604 = false;
-                }
-                if (($T)(ralphScoreCCinstanceQ(form__2597, ralphScoreCCLsymbolG)))
-                    B2604 = ralphScompilerSenvironmentCCfind_symbol_macro(form__2597, env__2598);
+                var B2776 = false;
+                if (($T)(B2763['instance?'](form__2770, B2763['<symbol>'])))
+                    B2776 = B2764['find-symbol-macro'](form__2770, env__2771);
                 else
-                    B2604 = false;
-                if (($T)(B2604)) {
-                    {
-                        var symbol_macro__2605 = B2604;
-                    }
-                    return(symbol_macro__2605(env__2598));
+                    B2776 = false;
+                if (($T)(B2776)) {
+                    var symbol_macro__2777 = B2776;
+                    return(symbol_macro__2777(env__2771));
                 } else
-                    return(form__2597);
+                    return(form__2770);
             }
         };
+        Mexport('macroexpand-1', macroexpand_1);
     }
-    (exports)['macroexpand-1'] = macroexpand_1__2606;
-    ralphScoreCCMannotate_function(macroexpand_1__2606, 'macroexpand_1', false);
+    B2763['%annotate-function'](macroexpand_1, 'macroexpand-1', false);
 }
 {
     {
-        var ralphScoreCCnot = B2588['not'];
-        var ralphScoreCCEE = B2588['=='];
-        var macroexpand__2600 = function B2608(form__2609, env__2610) {
+        var macroexpand = function B2779(form__2780, env__2781) {
+            var doneQ__2782 = false;
             {
-                var doneQ__2611 = false;
-            }
-            while (($T)(ralphScoreCCnot(doneQ__2611))) {
-                {
-                    var expanded__2612 = macroexpand_1__2606(form__2609, env__2610);
+                while (($T)(B2763['not'](doneQ__2782))) {
+                    var expanded__2783 = macroexpand_1(form__2780, env__2781);
+                    {
+                        doneQ__2782 = B2763['=='](expanded__2783, form__2780);
+                        form__2780 = expanded__2783;
+                    }
                 }
-                doneQ__2611 = ralphScoreCCEE(expanded__2612, form__2609);
-                form__2609 = expanded__2612;
+                return(form__2780);
             }
-            return(form__2609);
         };
+        Mexport('macroexpand', macroexpand);
     }
-    (exports)['macroexpand'] = macroexpand__2600;
-    ralphScoreCCMannotate_function(macroexpand__2600, 'macroexpand', false);
+    B2763['%annotate-function'](macroexpand, 'macroexpand', false);
 }
 {
     {
-        var ralphScoreCCLarrayG = B2588['<array>'];
-        var ralphScompilerSenvironmentCCfind_special_form = B2591['find-special-form'];
-        var ralphScoreCCmap = B2588['map'];
-        var ralphScoreCCrcurry = B2588['rcurry'];
-        var macroexpand_all__2621 = function B2615(form__2616, env__2617) {
-            {
-                var formT__2618 = macroexpand__2600(form__2616, env__2617);
-            }
-            if (($T)(ralphScoreCCinstanceQ(formT__2618, ralphScoreCCLarrayG))) {
-                {
-                    var B2619 = false;
-                }
-                if (($T)(ralphScompilerSutilitiesCCexpressionQ(formT__2618)))
-                    B2619 = ralphScompilerSenvironmentCCfind_special_form(ralphScoreCCfirst(formT__2618), env__2617);
+        var macroexpand_all = function B2786(form__2787, env__2788) {
+            var formT__2789 = macroexpand(form__2787, env__2788);
+            if (($T)(B2763['instance?'](formT__2789, B2763['<array>']))) {
+                var B2790 = false;
+                if (($T)(B2763['expression?'](formT__2789)))
+                    B2790 = B2764['find-special-form'](B2763['first'](formT__2789), env__2788);
                 else
-                    B2619 = false;
-                if (($T)(B2619)) {
-                    {
-                        var special_form__2620 = B2619;
-                    }
-                    return(ralphScoreCCapply(special_form__2620, env__2617, ralphScoreCCrest(formT__2618)));
+                    B2790 = false;
+                if (($T)(B2790)) {
+                    var special_form__2791 = B2790;
+                    return(B2763['apply'](special_form__2791, env__2788, B2763['rest'](formT__2789)));
                 } else
-                    return(ralphScoreCCmap(ralphScoreCCrcurry(macroexpand_all__2621, env__2617), formT__2618));
+                    return(B2763['map'](B2763['rcurry'](macroexpand_all, env__2788), formT__2789));
             } else
-                return(formT__2618);
+                return(formT__2789);
         };
+        Mexport('macroexpand-all', macroexpand_all);
     }
-    (exports)['macroexpand-all'] = macroexpand_all__2621;
-    ralphScoreCCMannotate_function(macroexpand_all__2621, 'macroexpand_all', false);
+    B2763['%annotate-function'](macroexpand_all, 'macroexpand-all', false);
 }

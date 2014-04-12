@@ -1,366 +1,356 @@
 {
-    var B3258 = require('ralph/core');
+    var $module = Object.create(null);
+    var Mexport = function B3292(name__3293, value__3294) {
+        var B3295 = (exports);
+        return(B3295[name__3293] = value__3294);
+    };
+}
+var B3296 = require('ralph/core');
+var B3297 = require('ralph/compiler/utilities');
+{
+    var atomicQ = function B3299(expression__3300) {
+        return(B3296['any?'](B3296['curry'](B3296['instance?'], expression__3300), [
+            B3296['<number>'],
+            B3296['<boolean>'],
+            B3296['<string>'],
+            B3296['<symbol>'],
+            B3296['<keyword>']
+        ]));
+    };
+    B3296['%annotate-function'](atomicQ, 'atomic?', false);
 }
 {
-    var B3260 = require('ralph/compiler/utilities');
-}
-{
-    {
-        var ralphScoreCCMvar = B3258['%var'];
-        var ralphScoreCCanyQ = B3258['any?'];
-        var ralphScoreCCcurry = B3258['curry'];
-        var ralphScoreCCinstanceQ = B3258['instance?'];
-        var ralphScoreCCLnumberG = B3258['<number>'];
-        var ralphScoreCCLbooleanG = B3258['<boolean>'];
-        var ralphScoreCCLstringG = B3258['<string>'];
-        var ralphScoreCCLsymbolG = B3258['<symbol>'];
-        var ralphScoreCCLkeywordG = B3258['<keyword>'];
-        var ralphScoreCCMannotate_function = B3258['%annotate-function'];
-        var atomicQ__3264 = function B3262(expression__3263) {
-            return(ralphScoreCCanyQ(ralphScoreCCcurry(ralphScoreCCinstanceQ, expression__3263), [
-                ralphScoreCCLnumberG,
-                ralphScoreCCLbooleanG,
-                ralphScoreCCLstringG,
-                ralphScoreCCLsymbolG,
-                ralphScoreCCLkeywordG
-            ]));
-        };
-    }
-    ralphScoreCCMannotate_function(atomicQ__3264, 'atomicQ', false);
-}
-{
-    {
-        var ralphScoreCCLarrayG = B3258['<array>'];
-        var ralphScoreCCnot = B3258['not'];
-        var ralphScoreCCemptyQ = B3258['empty?'];
-        var ralphScoreCCsymbol_name = B3258['symbol-name'];
-        var ralphScoreCCfirst = B3258['first'];
-        var ralphScoreCCEE = B3258['=='];
-        var ralphScoreCClast = B3258['last'];
-        var generates_statementsQ__3278 = function B3271(exp__3272) {
+    var generates_statementsQ = function B3307(exp__3308) {
+        var B3314 = false;
+        if (($T)(B3296['instance?'](exp__3308, B3296['<array>'])))
+            B3314 = B3296['not'](B3296['empty?'](exp__3308));
+        else
+            B3314 = false;
+        if (($T)(B3314)) {
+            var B3309 = B3296['symbol-name'](B3296['first'](exp__3308));
             {
-                var B3279 = false;
-            }
-            if (($T)(ralphScoreCCinstanceQ(exp__3272, ralphScoreCCLarrayG)))
-                B3279 = ralphScoreCCnot(ralphScoreCCemptyQ(exp__3272));
-            else
-                B3279 = false;
-            if (($T)(B3279)) {
+                var B3310 = B3296['=='](B3309, '%begin');
                 {
-                    var B3273 = ralphScoreCCsymbol_name(ralphScoreCCfirst(exp__3272));
-                    var B3274 = ralphScoreCCEE(B3273, '%begin');
-                    var B3280 = false;
-                }
-                if (($T)(B3274))
-                    B3280 = B3274;
-                else {
-                    {
-                        var B3275 = ralphScoreCCEE(B3273, '%if');
-                    }
-                    if (($T)(B3275))
-                        B3280 = B3275;
+                    var B3315 = false;
+                    if (($T)(B3310))
+                        B3315 = B3310;
                     else {
-                        {
-                            var B3276 = ralphScoreCCEE(B3273, '%while');
-                        }
-                        if (($T)(B3276))
-                            B3280 = B3276;
+                        var B3311 = B3296['=='](B3309, '%if');
+                        if (($T)(B3311))
+                            B3315 = B3311;
                         else {
-                            {
-                                var B3277 = ralphScoreCCEE(B3273, '%bind');
+                            var B3312 = B3296['=='](B3309, '%while');
+                            if (($T)(B3312))
+                                B3315 = B3312;
+                            else {
+                                var B3313 = B3296['=='](B3309, '%bind');
+                                if (($T)(B3313))
+                                    B3315 = B3313;
+                                else
+                                    B3315 = B3296['=='](B3309, '%try');
                             }
-                            if (($T)(B3277))
-                                B3280 = B3277;
-                            else
-                                B3280 = ralphScoreCCEE(B3273, '%try');
                         }
                     }
+                    if (($T)(B3315))
+                        return(true);
+                    else if (($T)(B3296['=='](B3309, '%set')))
+                        return(generates_statementsQ(B3296['last'](exp__3308)));
+                    else if (($T)(B3296['=='](B3309, '%method')))
+                        return(false);
+                    else
+                        return(B3296['any?'](generates_statementsQ, exp__3308));
                 }
-                if (($T)(B3280))
-                    return(true);
-                else if (($T)(ralphScoreCCEE(B3273, '%set')))
-                    return(generates_statementsQ__3278(ralphScoreCClast(exp__3272)));
-                else if (($T)(ralphScoreCCEE(B3273, '%method')))
-                    return(false);
-                else
-                    return(ralphScoreCCanyQ(generates_statementsQ__3278, exp__3272));
-            } else
-                return(false);
-        };
-    }
-    ralphScoreCCMannotate_function(generates_statementsQ__3278, 'generates_statementsQ', false);
+            }
+        } else
+            return(false);
+    };
+    B3296['%annotate-function'](generates_statementsQ, 'generates-statements?', false);
 }
 {
     {
-        var ralphScoreCCidentity = B3258['identity'];
-        var normalize_term__3286 = function B3282(expression__3283, env__3284) {
-            return(normalize__3285(expression__3283, env__3284, ralphScoreCCidentity));
+        var normalize_term = function B3317(expression__3318, env__3319) {
+            return(normalize(expression__3318, env__3319, B3296['identity']));
         };
+        Mexport('normalize-term', normalize_term);
     }
-    (exports)['normalize-term'] = normalize_term__3286;
-    ralphScoreCCMannotate_function(normalize_term__3286, 'normalize_term', false);
+    B3296['%annotate-function'](normalize_term, 'normalize-term', false);
 }
 {
+    var B3331 = $S('%bind', 'ralph/core');
     {
-        var ralphScompilerSutilitiesCCopQ = B3260['op?'];
-        var ralphScoreCCrest = B3258['rest'];
-        var ralphScoreCCMconcat = B3258['%concat'];
-        var ralphScoreCCmap = B3258['map'];
-        var ralphScoreCCrcurry = B3258['rcurry'];
-        var B3308 = $S('%bind', 'ralph/core');
-        var B3309 = $S('%method', 'ralph/core');
-        var B3310 = $S('%set', 'ralph/core');
-        var B3311 = $S('%get-property', 'ralph/core');
-        var B3312 = $S('%if', 'ralph/core');
-        var B3313 = $S('%begin', 'ralph/core');
-        var B3314 = $S('%while', 'ralph/core');
-        var B3315 = $S('%native', 'ralph/core');
-        var B3316 = $S('%try', 'ralph/core');
-        var normalize__3285 = function B3317(exp__3318, env__3319, k__3320) {
+        var B3332 = $S('%method', 'ralph/core');
+        {
+            var B3333 = $S('%set', 'ralph/core');
             {
-                var B3370 = false;
-            }
-            if (($T)(ralphScoreCCinstanceQ(exp__3318, ralphScoreCCLarrayG)))
-                B3370 = ralphScoreCCnot(ralphScoreCCemptyQ(exp__3318));
-            else
-                B3370 = false;
-            if (($T)(B3370)) {
+                var B3334 = $S('%get-property', 'ralph/core');
                 {
-                    var B3321 = ralphScoreCCsymbol_name(ralphScoreCCfirst(exp__3318));
-                    var B3322 = ralphScoreCCEE(B3321, '%quote');
-                    var B3371 = false;
+                    var B3335 = $S('%if', 'ralph/core');
+                    {
+                        var B3336 = $S('%begin', 'ralph/core');
+                        {
+                            var B3337 = $S('%while', 'ralph/core');
+                            {
+                                var B3338 = $S('%native', 'ralph/core');
+                                {
+                                    var B3339 = $S('%try', 'ralph/core');
+                                    {
+                                        var normalize = function B3340(exp__3341, env__3342, k__3343) {
+                                            var B3389 = false;
+                                            if (($T)(B3296['instance?'](exp__3341, B3296['<array>'])))
+                                                B3389 = B3296['not'](B3296['empty?'](exp__3341));
+                                            else
+                                                B3389 = false;
+                                            if (($T)(B3389)) {
+                                                var B3344 = B3296['symbol-name'](B3296['first'](exp__3341));
+                                                if (($T)(B3296['=='](B3344, '%quote')))
+                                                    return(k__3343(exp__3341));
+                                                else if (($T)(B3296['=='](B3344, '%bind'))) {
+                                                    var ____3345 = exp__3341[0];
+                                                    {
+                                                        var B3346 = exp__3341[1];
+                                                        {
+                                                            var identifier__3347 = B3346[0];
+                                                            {
+                                                                var value__3348 = B3346[1];
+                                                                {
+                                                                    var form__3349 = exp__3341[2];
+                                                                    return(normalize(value__3348, env__3342, function B3350(valueT__3351) {
+                                                                        return([
+                                                                            B3331,
+                                                                            [
+                                                                                identifier__3347,
+                                                                                valueT__3351
+                                                                            ],
+                                                                            normalize(form__3349, env__3342, k__3343)
+                                                                        ]);
+                                                                    }));
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                } else if (($T)(B3296['=='](B3344, '%method'))) {
+                                                    var ____3352 = exp__3341[0];
+                                                    {
+                                                        var name__3353 = exp__3341[1];
+                                                        {
+                                                            var parameters__3354 = exp__3341[2];
+                                                            {
+                                                                var form__3355 = exp__3341[3];
+                                                                return(k__3343([
+                                                                    B3332,
+                                                                    name__3353,
+                                                                    parameters__3354,
+                                                                    normalize_term(form__3355, env__3342)
+                                                                ]));
+                                                            }
+                                                        }
+                                                    }
+                                                } else if (($T)(B3296['=='](B3344, '%set'))) {
+                                                    var ____3356 = exp__3341[0];
+                                                    {
+                                                        var place__3357 = exp__3341[1];
+                                                        {
+                                                            var value__3358 = exp__3341[2];
+                                                            if (($T)(B3297['op?']('%get-property', place__3357)))
+                                                                return(normalizeTT(B3296['rest'](place__3357), env__3342, function B3359(argumentsT__3360) {
+                                                                    return(normalize_value(value__3358, env__3342, function B3361(valueT__3362) {
+                                                                        return(k__3343([
+                                                                            B3333,
+                                                                            B3296['%concat']([B3334], argumentsT__3360),
+                                                                            valueT__3362
+                                                                        ]));
+                                                                    }));
+                                                                }));
+                                                            else
+                                                                return(normalize_value(value__3358, env__3342, function B3363(valueT__3364) {
+                                                                    return(k__3343([
+                                                                        B3333,
+                                                                        place__3357,
+                                                                        valueT__3364
+                                                                    ]));
+                                                                }));
+                                                        }
+                                                    }
+                                                } else {
+                                                    var B3365 = B3296['=='](B3344, '%define');
+                                                    {
+                                                        var B3390 = false;
+                                                        if (($T)(B3365))
+                                                            B3390 = B3365;
+                                                        else
+                                                            B3390 = B3296['=='](B3344, '%var');
+                                                        if (($T)(B3390)) {
+                                                            var op__3366 = exp__3341[0];
+                                                            {
+                                                                var identifier__3367 = exp__3341[1];
+                                                                {
+                                                                    var value__3368 = exp__3341[2];
+                                                                    return(normalize_value(value__3368, env__3342, function B3369(valueT__3370) {
+                                                                        return(k__3343([
+                                                                            op__3366,
+                                                                            identifier__3367,
+                                                                            valueT__3370
+                                                                        ]));
+                                                                    }));
+                                                                }
+                                                            }
+                                                        } else if (($T)(B3296['=='](B3344, '%if'))) {
+                                                            var ____3371 = exp__3341[0];
+                                                            {
+                                                                var test__3372 = exp__3341[1];
+                                                                {
+                                                                    var consequent__3373 = exp__3341[2];
+                                                                    {
+                                                                        var alternate__3374 = exp__3341[3];
+                                                                        return(normalize_value(test__3372, env__3342, function B3375(testT__3376) {
+                                                                            return(k__3343([
+                                                                                B3335,
+                                                                                testT__3376,
+                                                                                normalize_term(consequent__3373, env__3342),
+                                                                                normalize_term(alternate__3374, env__3342)
+                                                                            ]));
+                                                                        }));
+                                                                    }
+                                                                }
+                                                            }
+                                                        } else if (($T)(B3296['=='](B3344, '%begin'))) {
+                                                            var ____3377 = exp__3341[0];
+                                                            {
+                                                                var form__3378 = exp__3341[1];
+                                                                {
+                                                                    var forms__3379 = $SL.call(exp__3341, 2);
+                                                                    if (($T)(B3296['empty?'](forms__3379)))
+                                                                        return(normalize(form__3378, env__3342, k__3343));
+                                                                    else
+                                                                        return(normalize(form__3378, env__3342, function B3380(formT__3381) {
+                                                                            return([
+                                                                                B3336,
+                                                                                formT__3381,
+                                                                                normalize(B3296['%concat']([B3336], forms__3379), env__3342, k__3343)
+                                                                            ]);
+                                                                        }));
+                                                                }
+                                                            }
+                                                        } else if (($T)(B3296['=='](B3344, '%while'))) {
+                                                            var ____3382 = exp__3341[0];
+                                                            {
+                                                                var test__3383 = exp__3341[1];
+                                                                {
+                                                                    var form__3384 = exp__3341[2];
+                                                                    {
+                                                                        var B3391 = false;
+                                                                        if (($T)(generates_statementsQ(test__3383)))
+                                                                            B3391 = [
+                                                                                B3337,
+                                                                                true,
+                                                                                normalize_term([
+                                                                                    B3335,
+                                                                                    test__3383,
+                                                                                    normalize_term(form__3384),
+                                                                                    [
+                                                                                        B3338,
+                                                                                        'break'
+                                                                                    ]
+                                                                                ], env__3342)
+                                                                            ];
+                                                                        else
+                                                                            B3391 = [
+                                                                                B3337,
+                                                                                normalize_term(test__3383, env__3342),
+                                                                                normalize_term(form__3384, env__3342)
+                                                                            ];
+                                                                        return(k__3343(B3391));
+                                                                    }
+                                                                }
+                                                            }
+                                                        } else if (($T)(B3296['=='](B3344, '%try'))) {
+                                                            var ____3385 = exp__3341[0];
+                                                            {
+                                                                var protected_form__3386 = exp__3341[1];
+                                                                {
+                                                                    var identifier__3387 = exp__3341[2];
+                                                                    {
+                                                                        var handling_form__3388 = exp__3341[3];
+                                                                        return(k__3343([
+                                                                            B3339,
+                                                                            normalize_term(protected_form__3386, env__3342),
+                                                                            identifier__3387,
+                                                                            normalize_term(handling_form__3388, env__3342)
+                                                                        ]));
+                                                                    }
+                                                                }
+                                                            }
+                                                        } else if (($T)(generates_statementsQ(exp__3341)))
+                                                            return(normalize_all(exp__3341, env__3342, k__3343));
+                                                        else
+                                                            return(k__3343(B3296['map'](B3296['rcurry'](normalize_term, env__3342), exp__3341)));
+                                                    }
+                                                }
+                                            } else
+                                                return(k__3343(exp__3341));
+                                        };
+                                        B3296['%annotate-function'](normalize, 'normalize', false);
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
-                if (($T)(B3322))
-                    B3371 = B3322;
-                else
-                    B3371 = ralphScoreCCEE(B3321, '%native-name');
-                if (($T)(B3371))
-                    return(k__3320(exp__3318));
-                else if (($T)(ralphScoreCCEE(B3321, '%bind'))) {
-                    {
-                        var ____3323 = exp__3318[0];
-                        var B3324 = exp__3318[1];
-                        var identifier__3325 = B3324[0];
-                        var value__3326 = B3324[1];
-                        var form__3327 = exp__3318[2];
-                    }
-                    return(normalize__3285(value__3326, env__3319, function B3328(valueT__3329) {
-                        return([
-                            B3308,
-                            [
-                                identifier__3325,
-                                valueT__3329
-                            ],
-                            normalize__3285(form__3327, env__3319, k__3320)
-                        ]);
-                    }));
-                } else if (($T)(ralphScoreCCEE(B3321, '%method'))) {
-                    {
-                        var ____3330 = exp__3318[0];
-                        var name__3331 = exp__3318[1];
-                        var parameters__3332 = exp__3318[2];
-                        var form__3333 = exp__3318[3];
-                    }
-                    return(k__3320([
-                        B3309,
-                        name__3331,
-                        parameters__3332,
-                        normalize_term__3286(form__3333, env__3319)
-                    ]));
-                } else if (($T)(ralphScoreCCEE(B3321, '%set'))) {
-                    {
-                        var ____3334 = exp__3318[0];
-                        var place__3335 = exp__3318[1];
-                        var value__3336 = exp__3318[2];
-                    }
-                    if (($T)(ralphScompilerSutilitiesCCopQ('%get-property', place__3335)))
-                        return(normalizeTT__3337(ralphScoreCCrest(place__3335), env__3319, function B3338(argumentsT__3339) {
-                            return(normalize_value__3340(value__3336, env__3319, function B3341(valueT__3342) {
-                                return(k__3320([
-                                    B3310,
-                                    ralphScoreCCMconcat([B3311], argumentsT__3339),
-                                    valueT__3342
-                                ]));
-                            }));
-                        }));
-                    else
-                        return(normalize_value__3340(value__3336, env__3319, function B3343(valueT__3344) {
-                            return(k__3320([
-                                B3310,
-                                place__3335,
-                                valueT__3344
-                            ]));
-                        }));
-                } else {
-                    {
-                        var B3345 = ralphScoreCCEE(B3321, '%define');
-                        var B3372 = false;
-                    }
-                    if (($T)(B3345))
-                        B3372 = B3345;
-                    else
-                        B3372 = ralphScoreCCEE(B3321, '%var');
-                    if (($T)(B3372)) {
-                        {
-                            var op__3346 = exp__3318[0];
-                            var identifier__3347 = exp__3318[1];
-                            var value__3348 = exp__3318[2];
-                        }
-                        return(normalize_value__3340(value__3348, env__3319, function B3349(valueT__3350) {
-                            return(k__3320([
-                                op__3346,
-                                identifier__3347,
-                                valueT__3350
-                            ]));
-                        }));
-                    } else if (($T)(ralphScoreCCEE(B3321, '%if'))) {
-                        {
-                            var ____3351 = exp__3318[0];
-                            var test__3352 = exp__3318[1];
-                            var consequent__3353 = exp__3318[2];
-                            var alternate__3354 = exp__3318[3];
-                        }
-                        return(normalize_value__3340(test__3352, env__3319, function B3355(testT__3356) {
-                            return(k__3320([
-                                B3312,
-                                testT__3356,
-                                normalize_term__3286(consequent__3353, env__3319),
-                                normalize_term__3286(alternate__3354, env__3319)
-                            ]));
-                        }));
-                    } else if (($T)(ralphScoreCCEE(B3321, '%begin'))) {
-                        {
-                            var ____3357 = exp__3318[0];
-                            var form__3358 = exp__3318[1];
-                            var forms__3359 = $SL.call(exp__3318, 2);
-                        }
-                        if (($T)(ralphScoreCCemptyQ(forms__3359)))
-                            return(normalize__3285(form__3358, env__3319, k__3320));
-                        else
-                            return(normalize__3285(form__3358, env__3319, function B3360(formT__3361) {
-                                return([
-                                    B3313,
-                                    formT__3361,
-                                    normalize__3285(ralphScoreCCMconcat([B3313], forms__3359), env__3319, k__3320)
-                                ]);
-                            }));
-                    } else if (($T)(ralphScoreCCEE(B3321, '%while'))) {
-                        {
-                            var ____3362 = exp__3318[0];
-                            var test__3363 = exp__3318[1];
-                            var form__3364 = exp__3318[2];
-                            var B3373 = false;
-                        }
-                        if (($T)(generates_statementsQ__3278(test__3363)))
-                            B3373 = [
-                                B3314,
-                                true,
-                                normalize_term__3286([
-                                    B3312,
-                                    test__3363,
-                                    normalize_term__3286(form__3364),
-                                    [
-                                        B3315,
-                                        'break'
-                                    ]
-                                ], env__3319)
-                            ];
-                        else
-                            B3373 = [
-                                B3314,
-                                normalize_term__3286(test__3363, env__3319),
-                                normalize_term__3286(form__3364, env__3319)
-                            ];
-                        return(k__3320(B3373));
-                    } else if (($T)(ralphScoreCCEE(B3321, '%try'))) {
-                        {
-                            var ____3365 = exp__3318[0];
-                            var protected_form__3366 = exp__3318[1];
-                            var identifier__3367 = exp__3318[2];
-                            var handling_form__3368 = exp__3318[3];
-                        }
-                        return(k__3320([
-                            B3316,
-                            normalize_term__3286(protected_form__3366, env__3319),
-                            identifier__3367,
-                            normalize_term__3286(handling_form__3368, env__3319)
-                        ]));
-                    } else if (($T)(generates_statementsQ__3278(exp__3318)))
-                        return(normalize_all__3369(exp__3318, env__3319, k__3320));
-                    else
-                        return(k__3320(ralphScoreCCmap(ralphScoreCCrcurry(normalize_term__3286, env__3319), exp__3318)));
-                }
-            } else
-                return(k__3320(exp__3318));
-        };
+            }
+        }
     }
-    ralphScoreCCMannotate_function(normalize__3285, 'normalize', false);
 }
 {
-    {
-        var normalize_value__3340 = function B3375(exp__3376, env__3377, k__3378) {
-            if (($T)(generates_statementsQ__3278(exp__3376)))
-                return(normalizeT__3379(exp__3376, env__3377, k__3378));
+    var normalize_value = function B3393(exp__3394, env__3395, k__3396) {
+        if (($T)(generates_statementsQ(exp__3394)))
+            return(normalizeT(exp__3394, env__3395, k__3396));
+        else {
+            var B3397 = false;
+            if (($T)(B3296['instance?'](exp__3394, B3296['<array>'])))
+                B3397 = B3296['map'](B3296['rcurry'](normalize_term, env__3395), exp__3394);
+            else
+                B3397 = exp__3394;
+            return(k__3396(B3397));
+        }
+    };
+    B3296['%annotate-function'](normalize_value, 'normalize-value', false);
+}
+{
+    var normalizeT = function B3400(exp__3401, env__3402, k__3403) {
+        return(normalize(exp__3401, env__3402, function B3404(expT__3405) {
+            if (($T)(atomicQ(expT__3405)))
+                return(k__3403(expT__3405));
             else {
-                {
-                    var B3380 = false;
-                }
-                if (($T)(ralphScoreCCinstanceQ(exp__3376, ralphScoreCCLarrayG)))
-                    B3380 = ralphScoreCCmap(ralphScoreCCrcurry(normalize_term__3286, env__3377), exp__3376);
-                else
-                    B3380 = exp__3376;
-                return(k__3378(B3380));
+                var t__3406 = B3296['generate-symbol']();
+                return([
+                    B3331,
+                    [
+                        t__3406,
+                        expT__3405
+                    ],
+                    k__3403(t__3406)
+                ]);
             }
-        };
-    }
-    ralphScoreCCMannotate_function(normalize_value__3340, 'normalize_value', false);
+        }));
+    };
+    B3296['%annotate-function'](normalizeT, 'normalize*', false);
 }
 {
-    {
-        var ralphScoreCCgenerate_symbol = B3258['generate-symbol'];
-        var normalizeT__3379 = function B3383(exp__3384, env__3385, k__3386) {
-            return(normalize__3285(exp__3384, env__3385, function B3387(expT__3388) {
-                if (($T)(atomicQ__3264(expT__3388)))
-                    return(k__3386(expT__3388));
-                else {
-                    {
-                        var t__3389 = ralphScoreCCgenerate_symbol(env__3385);
-                    }
-                    return([
-                        B3308,
-                        [
-                            t__3389,
-                            expT__3388
-                        ],
-                        k__3386(t__3389)
-                    ]);
-                }
+    var normalizeTT = function B3408(expT__3409, env__3410, k__3411) {
+        if (($T)(B3296['empty?'](expT__3409)))
+            return(k__3411([]));
+        else
+            return(normalize_all(expT__3409, env__3410, k__3411));
+    };
+    B3296['%annotate-function'](normalizeTT, 'normalize**', false);
+}
+{
+    var normalize_all = function B3415(exp__3416, env__3417, k__3418) {
+        return(normalizeT(B3296['first'](exp__3416), env__3417, function B3419(t__3420) {
+            return(normalizeTT(B3296['rest'](exp__3416), env__3417, function B3421(tT__3422) {
+                return(k__3418(B3296['cons'](t__3420, tT__3422)));
             }));
-        };
-    }
-    ralphScoreCCMannotate_function(normalizeT__3379, 'normalizeT', false);
-}
-{
-    {
-        var normalizeTT__3337 = function B3391(expT__3392, env__3393, k__3394) {
-            if (($T)(ralphScoreCCemptyQ(expT__3392)))
-                return(k__3394([]));
-            else
-                return(normalize_all__3369(expT__3392, env__3393, k__3394));
-        };
-    }
-    ralphScoreCCMannotate_function(normalizeTT__3337, 'normalizeTT', false);
-}
-{
-    {
-        var ralphScoreCCcons = B3258['cons'];
-        var normalize_all__3369 = function B3398(exp__3399, env__3400, k__3401) {
-            return(normalizeT__3379(ralphScoreCCfirst(exp__3399), env__3400, function B3402(t__3403) {
-                return(normalizeTT__3337(ralphScoreCCrest(exp__3399), env__3400, function B3404(tT__3405) {
-                    return(k__3401(ralphScoreCCcons(t__3403, tT__3405)));
-                }));
-            }));
-        };
-    }
-    ralphScoreCCMannotate_function(normalize_all__3369, 'normalize_all', false);
+        }));
+    };
+    B3296['%annotate-function'](normalize_all, 'normalize-all', false);
 }

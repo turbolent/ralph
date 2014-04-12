@@ -1,218 +1,277 @@
 {
-    var B1541 = require('ralph/core');
+    var $module = Object.create(null);
+    var Mexport = function B1636(name__1637, value__1638) {
+        var B1639 = (exports);
+        return(B1639[name__1637] = value__1638);
+    };
 }
+var B1640 = require('ralph/core');
+var B1641 = require('ralph/format');
+var Bspecial_symbol_names = [
+        '%all-arguments',
+        '%this-method'
+    ];
 {
-    var B1543 = require('ralph/format');
+    {
+        var special_symbolQ = function B1643(symbol__1644) {
+            return(B1640['member?'](B1640['symbol-name'](symbol__1644), Bspecial_symbol_names));
+        };
+        Mexport('special-symbol?', special_symbolQ);
+    }
+    B1640['%annotate-function'](special_symbolQ, 'special-symbol?', false);
 }
 {
     {
-        var ralphScoreCCMvar = B1541['%var'];
-        var ralphScoreCCinstanceQ = B1541['instance?'];
-        var ralphScoreCCLarrayG = B1541['<array>'];
-        var ralphScoreCCfirst = B1541['first'];
-        var ralphScoreCCLsymbolG = B1541['<symbol>'];
-        var ralphScoreCCMannotate_function = B1541['%annotate-function'];
-        var expressionQ__1547 = function B1545(form__1546) {
-            if (($T)(ralphScoreCCinstanceQ(form__1546, ralphScoreCCLarrayG)))
-                return(ralphScoreCCinstanceQ(ralphScoreCCfirst(form__1546), ralphScoreCCLsymbolG));
+        var check_type = function B1646(value__1647, type__1648, format_string__1649) {
+            if (($T)(B1640['not'](B1640['instance?'](value__1647, type__1648))))
+                return(B1640['signal'](B1641['format-to-string'](format_string__1649, value__1647)));
             else
                 return(false);
         };
+        Mexport('check-type', check_type);
     }
-    (exports)['expression?'] = expressionQ__1547;
-    ralphScoreCCMannotate_function(expressionQ__1547, 'expressionQ', false);
+    B1640['%annotate-function'](check_type, 'check-type', false);
 }
 {
     {
-        var ralphScoreCCnot = B1541['not'];
-        var ralphScoreCCsignal = B1541['signal'];
-        var ralphSformatCCformat_to_string = B1543['format-to-string'];
-        var check_type__1553 = function B1549(value__1550, type__1551, format_string__1552) {
-            if (($T)(ralphScoreCCnot(ralphScoreCCinstanceQ(value__1550, type__1551))))
-                return(ralphScoreCCsignal(ralphSformatCCformat_to_string(format_string__1552, value__1550)));
-            else
-                return(false);
-        };
-    }
-    (exports)['check-type'] = check_type__1553;
-    ralphScoreCCMannotate_function(check_type__1553, 'check_type', false);
-}
-{
-    {
-        var ralphScoreCCfind_key = B1541['find-key'];
-        var ralphScoreCCcurry = B1541['curry'];
-        var ralphScoreCCE = B1541['='];
-        var ralphScoreCCcopy_sequence = B1541['copy-sequence'];
-        var ralphScoreCCsize = B1541['size'];
-        var ralphScoreCCelement = B1541['element'];
-        var ralphScoreCCinc = B1541['inc'];
-        var B1562 = $REST;
-        var B1563 = $KEY;
-        var B1564 = $K('end');
-        var B1565 = $K('start');
-        var destructure_parameter_list__1575 = function B1566(list__1567) {
+        var check_identifier = function B1653(identifier__1654, env__1655, format_string__1656) {
+            var B1659 = B1640['not'];
             {
-                var position__1568 = false;
-            }
-            position__1568 = function B1569(symbol__1570) {
-                return(ralphScoreCCfind_key(list__1567, ralphScoreCCcurry(ralphScoreCCE, symbol__1570)));
-            };
-            {
-                var rest__1571 = position__1568(B1562);
-                var key__1572 = position__1568(B1563);
-                var B1573 = rest__1571;
-                var B1576 = false;
-            }
-            if (($T)(B1573))
-                B1576 = B1573;
-            else {
+                var B1657 = B1640['not'](B1640['get'](identifier__1654, 'module'));
                 {
-                    var B1574 = key__1572;
+                    var B1660 = false;
+                    if (($T)(B1657))
+                        B1660 = B1657;
+                    else
+                        B1660 = B1640['=='](B1640['get'](identifier__1654, 'module'), B1640['get'](env__1655, 'module', 'name'));
+                    {
+                        var B1661 = B1659(B1660);
+                        if (($T)(B1661)) {
+                            var B1662 = B1640['signal'];
+                            {
+                                var B1663 = B1641['format-to-string'];
+                                {
+                                    var B1658 = format_string__1656;
+                                    {
+                                        var B1664 = false;
+                                        if (($T)(B1658))
+                                            B1664 = B1658;
+                                        else
+                                            B1664 = 'External identifier: %=';
+                                        {
+                                            var B1665 = B1663(B1664, identifier__1654);
+                                            return(B1662(B1665));
+                                        }
+                                    }
+                                }
+                            }
+                        } else
+                            return(false);
+                    }
                 }
-                if (($T)(B1574))
-                    B1576 = B1574;
-                else
-                    B1576 = ralphScoreCCsize(list__1567);
             }
-            {
-                var B1577 = ralphScoreCCcopy_sequence(list__1567, B1564, B1576);
-                var B1578 = false;
-            }
-            if (($T)(rest__1571))
-                B1578 = ralphScoreCCelement(list__1567, ralphScoreCCinc(rest__1571));
-            else
-                B1578 = false;
-            {
-                var B1579 = false;
-            }
-            if (($T)(key__1572))
-                B1579 = ralphScoreCCcopy_sequence(list__1567, B1565, ralphScoreCCinc(key__1572));
-            else
-                B1579 = false;
-            return([
-                B1577,
-                B1578,
-                B1579
-            ]);
         };
+        Mexport('check-identifier', check_identifier);
     }
-    (exports)['destructure-parameter-list'] = destructure_parameter_list__1575;
-    ralphScoreCCMannotate_function(destructure_parameter_list__1575, 'destructure_parameter_list', false);
+    B1640['%annotate-function'](check_identifier, 'check-identifier', false);
+}
+{
+    var B1670 = $REST;
+    {
+        var B1671 = $KEY;
+        {
+            var B1672 = $K('end');
+            {
+                var B1673 = $K('start');
+                {
+                    {
+                        var destructure_parameter_list = function B1674(list__1675) {
+                            var position__1676 = false;
+                            {
+                                position__1676 = function B1677(symbol__1678) {
+                                    return(B1640['find-key'](list__1675, B1640['curry'](B1640['='], symbol__1678)));
+                                };
+                                {
+                                    var rest__1679 = position__1676(B1670);
+                                    {
+                                        var key__1680 = position__1676(B1671);
+                                        {
+                                            var B1683 = B1640['copy-sequence'];
+                                            {
+                                                var B1681 = rest__1679;
+                                                {
+                                                    var B1684 = false;
+                                                    if (($T)(B1681))
+                                                        B1684 = B1681;
+                                                    else {
+                                                        var B1682 = key__1680;
+                                                        if (($T)(B1682))
+                                                            B1684 = B1682;
+                                                        else
+                                                            B1684 = B1640['size'](list__1675);
+                                                    }
+                                                    {
+                                                        var B1685 = B1683(list__1675, B1672, B1684);
+                                                        {
+                                                            var B1686 = false;
+                                                            if (($T)(rest__1679))
+                                                                B1686 = B1640['element'](list__1675, B1640['inc'](rest__1679));
+                                                            else
+                                                                B1686 = false;
+                                                            {
+                                                                var B1687 = false;
+                                                                if (($T)(key__1680))
+                                                                    B1687 = B1640['copy-sequence'](list__1675, B1673, B1640['inc'](key__1680));
+                                                                else
+                                                                    B1687 = false;
+                                                                return([
+                                                                    B1685,
+                                                                    B1686,
+                                                                    B1687
+                                                                ]);
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        };
+                        Mexport('destructure-parameter-list', destructure_parameter_list);
+                    }
+                    B1640['%annotate-function'](destructure_parameter_list, 'destructure-parameter-list', false);
+                }
+            }
+        }
+    }
 }
 {
     {
-        var ralphScoreCCEE = B1541['=='];
-        var ralphScoreCCsymbol_name = B1541['symbol-name'];
-        var opQ__1584 = function B1581(op__1582, exp__1583) {
-            if (($T)(expressionQ__1547(exp__1583)))
-                return(ralphScoreCCEE(ralphScoreCCsymbol_name(ralphScoreCCfirst(exp__1583)), op__1582));
+        var opQ = function B1689(op__1690, exp__1691) {
+            if (($T)(B1640['expression?'](exp__1691)))
+                return(B1640['=='](B1640['symbol-name'](B1640['first'](exp__1691)), op__1690));
             else
                 return(false);
         };
+        Mexport('op?', opQ);
     }
-    (exports)['op?'] = opQ__1584;
-    ralphScoreCCMannotate_function(opQ__1584, 'opQ', false);
+    B1640['%annotate-function'](opQ, 'op?', false);
 }
 {
     {
-        var ralphScoreCCMkeys = B1541['%keys'];
-        var ralphScoreCCLstringG = B1541['<string>'];
-        var ralphScoreCCas_set = B1541['as-set'];
-        var ralphScoreCCmap = B1541['map'];
-        var ralphScoreCCas_object = B1541['as-object'];
-        var ralphScoreCCdo = B1541['do'];
-        var ralphScoreCCremoveN = B1541['remove!'];
-        var ralphScoreCCset_unionN = B1541['set-union!'];
-        var ralphScoreCCobject_properties = B1541['object-properties'];
-        var ralphScoreCCget = B1541['get'];
-        var ralphScoreCCconcatenate = B1541['concatenate'];
-        var process_import_names__1611 = function B1592(all__1593) {
+        var process_import_names = function B1699(all__1700) {
+            var B1701 = $SL.call(arguments, 1);
             {
-                var B1594 = $SL.call(arguments, 1);
-                var B1595 = ralphScoreCCMkeys(B1594, {
+                var B1702 = B1640['%keys'](B1701, {
                         'only': false,
                         'exclude': false,
                         'prefix': false,
                         'rename': false
                     });
-                var only__1596 = B1595['only'];
-                var exclude__1597 = B1595['exclude'];
-                var prefix__1598 = B1595['prefix'];
-                var rename__1599 = B1595['rename'];
-                var resolve__1600 = false;
-            }
-            resolve__1600 = function B1601(exp__1602) {
-                if (($T)(ralphScoreCCinstanceQ(exp__1602, ralphScoreCCLstringG)))
-                    return(exp__1602);
-                else
-                    return(identifier_name__1603(exp__1602));
-            };
-            {
-                var B1612 = false;
-            }
-            if (($T)(ralphScoreCCinstanceQ(only__1596, ralphScoreCCLarrayG)))
-                B1612 = ralphScoreCCmap(resolve__1600, only__1596);
-            else
-                B1612 = all__1593;
-            {
-                var names__1604 = ralphScoreCCas_set(B1612);
-                var B1605 = rename__1599;
-                var B1613 = false;
-            }
-            if (($T)(B1605))
-                B1613 = B1605;
-            else
-                B1613 = [];
-            {
-                var B1614 = ralphScoreCCmap(resolve__1600, B1613);
-                var renamings__1606 = ralphScoreCCas_object(B1614);
-            }
-            ralphScoreCCdo(ralphScoreCCcurry(ralphScoreCCremoveN, names__1604), ralphScoreCCmap(resolve__1600, exclude__1597));
-            ralphScoreCCset_unionN(names__1604, ralphScoreCCobject_properties(renamings__1606));
-            return(ralphScoreCCmap(function B1607(name__1608) {
                 {
-                    var B1609 = ralphScoreCCget(renamings__1606, name__1608);
-                }
-                if (($T)(B1609)) {
+                    var only__1703 = B1702['only'];
                     {
-                        var renaming__1610 = B1609;
+                        var exclude__1704 = B1702['exclude'];
+                        {
+                            var prefix__1705 = B1702['prefix'];
+                            {
+                                var rename__1706 = B1702['rename'];
+                                {
+                                    var resolve__1707 = false;
+                                    {
+                                        resolve__1707 = function B1708(exp__1709) {
+                                            if (($T)(B1640['instance?'](exp__1709, B1640['<string>'])))
+                                                return(exp__1709);
+                                            else
+                                                return(identifier_name(exp__1709));
+                                        };
+                                        {
+                                            var B1717 = B1640['as-set'];
+                                            {
+                                                var B1718 = false;
+                                                if (($T)(B1640['instance?'](only__1703, B1640['<array>'])))
+                                                    B1718 = B1640['map'](resolve__1707, only__1703);
+                                                else
+                                                    B1718 = all__1700;
+                                                {
+                                                    var names__1710 = B1717(B1718);
+                                                    {
+                                                        var B1719 = B1640['as-object'];
+                                                        {
+                                                            var B1720 = B1640['map'];
+                                                            {
+                                                                var B1711 = rename__1706;
+                                                                {
+                                                                    var B1721 = false;
+                                                                    if (($T)(B1711))
+                                                                        B1721 = B1711;
+                                                                    else
+                                                                        B1721 = [];
+                                                                    {
+                                                                        var B1722 = B1720(resolve__1707, B1721);
+                                                                        {
+                                                                            var renamings__1712 = B1719(B1722);
+                                                                            {
+                                                                                B1640['do'](B1640['curry'](B1640['remove!'], names__1710), B1640['map'](resolve__1707, exclude__1704));
+                                                                                {
+                                                                                    B1640['set-union!'](names__1710, B1640['object-properties'](renamings__1712));
+                                                                                    return(B1640['map'](function B1713(name__1714) {
+                                                                                        var B1715 = B1640['get'](renamings__1712, name__1714);
+                                                                                        if (($T)(B1715)) {
+                                                                                            var renaming__1716 = B1715;
+                                                                                            return([
+                                                                                                name__1714,
+                                                                                                renaming__1716
+                                                                                            ]);
+                                                                                        } else if (($T)(B1640['instance?'](prefix__1705, B1640['<string>'])))
+                                                                                            return([
+                                                                                                name__1714,
+                                                                                                B1640['concatenate'](prefix__1705, name__1714)
+                                                                                            ]);
+                                                                                        else
+                                                                                            return(name__1714);
+                                                                                    }, names__1710));
+                                                                                }
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     }
-                    return([
-                        name__1608,
-                        renaming__1610
-                    ]);
-                } else if (($T)(ralphScoreCCinstanceQ(prefix__1598, ralphScoreCCLstringG)))
-                    return([
-                        name__1608,
-                        ralphScoreCCconcatenate(prefix__1598, name__1608)
-                    ]);
-                else
-                    return(name__1608);
-            }, names__1604));
+                }
+            }
         };
+        Mexport('process-import-names', process_import_names);
     }
-    (exports)['process-import-names'] = process_import_names__1611;
-    ralphScoreCCMannotate_function(process_import_names__1611, 'process_import_names', false);
+    B1640['%annotate-function'](process_import_names, 'process-import-names', false);
 }
 {
     {
-        var ralphScoreCCsymbol = B1541['symbol'];
-        var transform_setter_identifier__1618 = function B1616(identifier__1617) {
-            return(ralphScoreCCsymbol(ralphScoreCCconcatenate(ralphScoreCCsymbol_name(identifier__1617), '-setter')));
+        var transform_setter_identifier = function B1724(identifier__1725) {
+            return(B1640['symbol'](B1640['concatenate'](B1640['symbol-name'](identifier__1725), '-setter')));
         };
+        Mexport('transform-setter-identifier', transform_setter_identifier);
     }
-    (exports)['transform-setter-identifier'] = transform_setter_identifier__1618;
-    ralphScoreCCMannotate_function(transform_setter_identifier__1618, 'transform_setter_identifier', false);
+    B1640['%annotate-function'](transform_setter_identifier, 'transform-setter-identifier', false);
 }
 {
     {
-        var ralphScoreCCeveryQ = B1541['every?'];
-        var ralphScoreCCrcurry = B1541['rcurry'];
-        var setter_identifierQ__1622 = function B1620(form__1621) {
-            if (($T)(ralphScoreCCinstanceQ(form__1621, ralphScoreCCLarrayG)))
-                if (($T)(ralphScoreCCEE(ralphScoreCCsize(form__1621), 2)))
-                    if (($T)(ralphScoreCCeveryQ(ralphScoreCCrcurry(ralphScoreCCinstanceQ, ralphScoreCCLsymbolG), form__1621)))
-                        return(ralphScoreCCEE(ralphScoreCCsymbol_name(ralphScoreCCfirst(form__1621)), 'setter'));
+        var setter_identifierQ = function B1727(form__1728) {
+            if (($T)(B1640['instance?'](form__1728, B1640['<array>'])))
+                if (($T)(B1640['=='](B1640['size'](form__1728), 2)))
+                    if (($T)(B1640['every?'](B1640['rcurry'](B1640['instance?'], B1640['<symbol>']), form__1728)))
+                        return(B1640['=='](B1640['symbol-name'](B1640['first'](form__1728)), 'setter'));
                     else
                         return(false);
                 else
@@ -220,24 +279,24 @@
             else
                 return(false);
         };
+        Mexport('setter-identifier?', setter_identifierQ);
     }
-    (exports)['setter-identifier?'] = setter_identifierQ__1622;
-    ralphScoreCCMannotate_function(setter_identifierQ__1622, 'setter_identifierQ', false);
+    B1640['%annotate-function'](setter_identifierQ, 'setter-identifier?', false);
 }
 {
     {
-        var ralphScoreCCsecond = B1541['second'];
-        var identifier_name__1603 = function B1624(identifier__1625) {
+        var identifier_name = function B1730(identifier__1731) {
+            var B1732 = B1640['symbol-name'];
             {
-                var B1626 = false;
+                var B1733 = false;
+                if (($T)(setter_identifierQ(identifier__1731)))
+                    B1733 = transform_setter_identifier(B1640['second'](identifier__1731));
+                else
+                    B1733 = identifier__1731;
+                return(B1732(B1733));
             }
-            if (($T)(setter_identifierQ__1622(identifier__1625)))
-                B1626 = transform_setter_identifier__1618(ralphScoreCCsecond(identifier__1625));
-            else
-                B1626 = identifier__1625;
-            return(ralphScoreCCsymbol_name(B1626));
         };
+        Mexport('identifier-name', identifier_name);
     }
-    (exports)['identifier-name'] = identifier_name__1603;
-    ralphScoreCCMannotate_function(identifier_name__1603, 'identifier_name', false);
+    B1640['%annotate-function'](identifier_name, 'identifier-name', false);
 }

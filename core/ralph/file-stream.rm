@@ -1,0 +1,1 @@
+("ralph/file-stream" exports: ("<file-stream>" "*standard-output*" "*standard-error*") inline: () dependencies: ("fs" "ralph/file-system" "ralph/stream" "ralph/core"))
