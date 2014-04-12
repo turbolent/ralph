@@ -60,10 +60,6 @@
                    (as-array name))))
         (join chars ""))))
 
-(define-function valid-js-name? (identifier)
-  (and (not (member? identifier *reserved*))
-       (match "^\\w+$" identifier)))
-
 
 (define-function compile-js (exp env)
   (compile-tree (as-statement
