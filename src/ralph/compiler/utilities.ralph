@@ -7,7 +7,15 @@
            process-import-names
            transform-setter-identifier
            setter-identifier?
-           identifier-name))
+           identifier-name
+           special-symbol?))
+
+(define $special-symbol-names 
+        ["%all-arguments" "%this-method"])
+
+(define-function special-symbol? (symbol)
+  (member? (symbol-name symbol)
+           $special-symbol-names))
 
 (define-function check-type (value type format-string)
   (unless (instance? value type)

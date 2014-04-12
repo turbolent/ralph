@@ -61,20 +61,16 @@
       `((%native "$T") ,exp)))
 
 
-(define-function wrap-export (identifier exp env)
-  (bind ((definition-name (symbol-name identifier))
-         (exported? (member? definition-name
-                             (get env "module" "exports"))))
-    ;; defined and exported?
-    (if exported?
-        `(%begin
-          ,exp
-          (%set (%get-property (%native "exports")
-                               ,definition-name)
-                ,identifier))
-        exp)))
+(define-function wrap-export (identifier value exp env)
+  (if (and (not (locally-bound? exp env))
+           (member? (symbol-name identifier)
+                    (get env "module" "exports")))
+      `(%begin
+        ,exp
+        (,'%export ,(symbol-name identifier) ,value))
+      exp))
 
-
+;;;;
 
 (define *transformers*
   (make-plain-object))
@@ -87,10 +83,12 @@
          (apply transformer env (rest exp))
          (map (rcurry transform-statements! env) exp))))
     ((<symbol>)
-      (when (and (. (symbol-name exp) (match "_\\d+$"))
-                 (not (locally-bound? exp env)))
-        (format-out "LOCAL SYMBOL NOT LOCALLY BOUND: %=\n" exp))
-      exp)
+     (if (special-symbol? exp)
+         exp
+         (begin
+           ; (unless (locally-bound? exp env)
+           ;   (format-out "NON-LOCAL SYMBOL: %=\n" exp))
+           exp)))
     (else: exp)))
 
 (set! (get *transformers* "%quote")
@@ -118,7 +116,7 @@
 (set! (get *transformers* "%set")
       (make-set-transformer transform-statements!
                             (method (env place* value*)
-                              (wrap-export place*
+                              (wrap-export place* place*
                                            `(%set ,place* ,value*)
                                            env))))
 
@@ -127,7 +125,7 @@
   (set! (get *transformers* name)
         (make-var-transformer transform-statements!
                               (method (env identifier value*)
-                                (wrap-export identifier
+                                (wrap-export identifier identifier
                                              `(%var ,identifier ,value*)
                                              env)))))
 

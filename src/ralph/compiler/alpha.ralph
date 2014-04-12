@@ -17,7 +17,6 @@
             [])))
   env)
 
-(define $special-symbols '(%all-arguments %this-method))
 
 (define-function rename-definition (identifier env)
   (bind ((new-identifier
@@ -30,7 +29,7 @@
 
 (define-function rename-identifiers (identifiers env)
   (map (method (identifier)
-         (if (member? identifier $special-symbols)
+         (if (special-symbol? identifier)
              identifier
              (destructuring-bind (name module-name)
                  (destructure-symbol identifier)
@@ -50,7 +49,7 @@
 (define-function restore-identifiers (identifiers env)
   (for-each ((identifier identifiers))
             ()
-    (unless (member? identifier $special-symbols)
+    (unless (special-symbol? identifier)
       (destructuring-bind (name module-name)
           (destructure-symbol identifier)
         (unless module-name
@@ -58,7 +57,7 @@
         (pop (get env "identifiers" module-name name))))))
 
 (define-function find-identifier (identifier env)
-  (if (member? identifier $special-symbols)
+  (if (special-symbol? identifier)
       identifier
       (destructuring-bind (name module-name)
           (destructure-symbol identifier)
