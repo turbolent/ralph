@@ -112,8 +112,8 @@
            arguments env
            (method (arguments*)
              (k (cons op arguments*))))))
-       (("%define")
-        (destructuring-bind (_ identifier value) exp
+       (("%define" "%var")
+        (destructuring-bind (op identifier value) exp
           ;; convert value, before renaming
           (alpha-convert
            value env
@@ -121,7 +121,7 @@
              (bind ((identifier*
                      (or (find-identifier identifier env)
                          (qualify-symbol identifier env))))
-               (k `(%define ,identifier* ,value*)))))))
+               (k `(,op ,identifier* ,value*)))))))
        (("%try")
         (destructuring-bind (_ protected-form identifier handling-form) exp
           ;; convert protected-form, before renaming
