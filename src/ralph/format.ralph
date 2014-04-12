@@ -12,7 +12,7 @@
   (bind-methods ((dispatch (char arg)
                    (select (as-lowercase char) ==
                      (("s" "c")
-                      arg)
+                      (as-string arg))
                      (("=")
                       (or (description arg) ""))
                      (("b")
