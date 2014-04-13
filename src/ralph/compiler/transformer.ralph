@@ -72,17 +72,13 @@
 (define-function make-set-transformer (transformer k)
   (method (env place value #rest superflous)
     ;; TODO [#B]: (unless (empty? superflous) (warn ...))
-    (cond
-     ((instance? place <symbol>)
-      ;; TODO [#A]: check if identifier is local
-      (k env place (transformer value env)))
-     ((op? "%get-property" place)
-      (k env (transformer place env)
-             (transformer value env)))
-     (else:
-      (signal (format-to-string
-               "Non-symbol identifier or %%get-property in %%set: %="
-               place))))))
+    (if (or (instance? place <symbol>)
+            (op? "%get-property" place))
+        (k env (transformer place env)
+               (transformer value env))
+        (signal (format-to-string
+                 "Non-symbol identifier or %%get-property in %%set: %="
+                 place)))))
 
 (define-function make-define-transformer (transformer)
   (method (env identifier value #rest superflous)
