@@ -1,69 +1,69 @@
 {
     var $module = Object.create(null);
-    var Mexport = function B3088(name__3089, value__3090) {
-        var B3091 = (exports);
-        return(B3091[name__3089] = value__3090);
+    ($module)['%export'] = function B2934(name__2935, value__2936) {
+        var B2937 = (exports);
+        return(B2937[name__2935] = value__2936);
     };
 }
-var B3092 = require('ralph/core');
+var B2938 = require('ralph/core');
 {
-    var B3093 = require('ralph/compiler/environment');
-    var B3094 = require('ralph/compiler/utilities');
+    var B2939 = require('ralph/compiler/environment');
+    var B2940 = require('ralph/compiler/utilities');
 }
 {
-    var ensure_naming_structure = function B3096(env__3097, module_name__3098, name__3099) {
-        if (($T)(B3092['not'](B3092['get'](env__3097, 'identifiers', module_name__3098))))
-            B3092['get-setter'](env__3097, 'identifiers', module_name__3098, B3092['make-object']());
+    ($module)['ensure-naming-structure'] = function B2942(env__2943, module_name__2944, name__2945) {
+        if (($T)(B2938['not'](B2938['get'](env__2943, 'identifiers', module_name__2944))))
+            B2938['get-setter'](env__2943, 'identifiers', module_name__2944, B2938['make-object']());
         {
-            var module_renamings__3100 = B3092['get'](env__3097, 'identifiers', module_name__3098);
+            var module_renamings__2946 = B2938['get'](env__2943, 'identifiers', module_name__2944);
             {
-                if (($T)(B3092['not'](B3092['get'](module_renamings__3100, name__3099))))
-                    B3092['get-setter'](module_renamings__3100, name__3099, []);
-                return(env__3097);
+                if (($T)(B2938['not'](B2938['get'](module_renamings__2946, name__2945))))
+                    B2938['get-setter'](module_renamings__2946, name__2945, []);
+                return(env__2943);
             }
         }
     };
-    B3092['%annotate-function'](ensure_naming_structure, 'ensure-naming-structure', false);
+    B2938['%annotate-function'](($module)['ensure-naming-structure'], 'ensure-naming-structure', false);
 }
 {
-    var rename_definition = function B3102(identifier__3103, env__3104) {
-        var new_identifier__3105 = B3092['first'](rename_identifiers([identifier__3103], env__3104));
+    ($module)['rename-definition'] = function B2948(identifier__2949, env__2950) {
+        var new_identifier__2951 = B2938['first'](($module)['rename-identifiers']([identifier__2949], env__2950));
         {
-            B3092['get-setter'](env__3104, 'original-identifier', B3092['symbol-name'](new_identifier__3105), identifier__3103);
-            return(new_identifier__3105);
+            B2938['get-setter'](env__2950, 'original-identifier', B2938['symbol-name'](new_identifier__2951), identifier__2949);
+            return(new_identifier__2951);
         }
     };
-    B3092['%annotate-function'](rename_definition, 'rename-definition', false);
+    B2938['%annotate-function'](($module)['rename-definition'], 'rename-definition', false);
 }
 {
-    var rename_identifiers = function B3109(identifiers__3110, env__3111) {
-        return(B3092['map'](function B3112(identifier__3113) {
-            if (($T)(B3094['special-symbol?'](identifier__3113)))
-                return(identifier__3113);
+    ($module)['rename-identifiers'] = function B2955(identifiers__2956, env__2957) {
+        return(B2938['map'](function B2958(identifier__2959) {
+            if (($T)(B2940['special-symbol?'](identifier__2959)))
+                return(identifier__2959);
             else {
-                var B3114 = B3092['destructure-symbol'](identifier__3113);
+                var B2960 = B2938['destructure-symbol'](identifier__2959);
                 {
-                    var name__3115 = B3114[0];
+                    var name__2961 = B2960[0];
                     {
-                        var module_name__3116 = B3114[1];
+                        var module_name__2962 = B2960[1];
                         {
-                            if (($T)(B3092['not'](module_name__3116)))
-                                module_name__3116 = B3092['get'](env__3111, 'module', 'name');
+                            if (($T)(B2938['not'](module_name__2962)))
+                                module_name__2962 = B2938['get'](env__2957, 'module', 'name');
                             {
-                                var B3118 = B3092['generate-symbol'];
+                                var B2964 = B2938['generate-symbol'];
                                 {
-                                    var B3119 = false;
-                                    if (($T)(B3092['not'](B3092['get'](identifier__3113, 'generated?'))))
-                                        B3119 = name__3115;
+                                    var B2965 = false;
+                                    if (($T)(B2938['not'](B2938['get'](identifier__2959, 'generated?'))))
+                                        B2965 = name__2961;
                                     else
-                                        B3119 = false;
+                                        B2965 = false;
                                     {
-                                        var identifierT__3117 = B3118(env__3111, B3119);
+                                        var identifierT__2963 = B2964(env__2957, B2965);
                                         {
-                                            ensure_naming_structure(env__3111, module_name__3116, name__3115);
+                                            ($module)['ensure-naming-structure'](env__2957, module_name__2962, name__2961);
                                             {
-                                                B3092['push'](B3092['get'](env__3111, 'identifiers', module_name__3116, name__3115), identifierT__3117);
-                                                return(identifierT__3117);
+                                                B2938['push'](B2938['get'](env__2957, 'identifiers', module_name__2962, name__2961), identifierT__2963);
+                                                return(identifierT__2963);
                                             }
                                         }
                                     }
@@ -73,55 +73,55 @@ var B3092 = require('ralph/core');
                     }
                 }
             }
-        }, identifiers__3110));
+        }, identifiers__2956));
     };
-    B3092['%annotate-function'](rename_identifiers, 'rename-identifiers', false);
+    B2938['%annotate-function'](($module)['rename-identifiers'], 'rename-identifiers', false);
 }
 {
-    var restore_identifiers = function B3128(identifiers__3129, env__3130) {
-        var B3131 = identifiers__3129;
+    ($module)['restore-identifiers'] = function B2974(identifiers__2975, env__2976) {
+        var B2977 = identifiers__2975;
         {
-            var B3132 = false;
+            var B2978 = false;
             {
-                var B3133 = false;
+                var B2979 = false;
                 {
-                    var B3134 = [B3131];
+                    var B2980 = [B2977];
                     {
                         while (true) {
-                            var B3142 = B3092['not'];
+                            var B2988 = B2938['not'];
                             {
-                                var B3135 = B3132;
+                                var B2981 = B2978;
                                 {
-                                    var B3143 = false;
-                                    if (($T)(B3135))
-                                        B3143 = B3135;
+                                    var B2989 = false;
+                                    if (($T)(B2981))
+                                        B2989 = B2981;
                                     else
-                                        B3143 = B3092['any?'](B3092['empty?'], B3134);
+                                        B2989 = B2938['any?'](B2938['empty?'], B2980);
                                     {
-                                        var B3144 = B3142(B3143);
-                                        if (($T)(B3144)) {
-                                            var identifier__3136 = B3092['first'](B3131);
+                                        var B2990 = B2988(B2989);
+                                        if (($T)(B2990)) {
+                                            var identifier__2982 = B2938['first'](B2977);
                                             {
-                                                (function B3137(identifier__3138) {
-                                                    if (($T)(B3092['not'](B3094['special-symbol?'](identifier__3138)))) {
-                                                        var B3139 = B3092['destructure-symbol'](identifier__3138);
+                                                (function B2983(identifier__2984) {
+                                                    if (($T)(B2938['not'](B2940['special-symbol?'](identifier__2984)))) {
+                                                        var B2985 = B2938['destructure-symbol'](identifier__2984);
                                                         {
-                                                            var name__3140 = B3139[0];
+                                                            var name__2986 = B2985[0];
                                                             {
-                                                                var module_name__3141 = B3139[1];
+                                                                var module_name__2987 = B2985[1];
                                                                 {
-                                                                    if (($T)(B3092['not'](module_name__3141)))
-                                                                        module_name__3141 = B3092['get'](env__3130, 'module', 'name');
-                                                                    return(B3092['pop'](B3092['get'](env__3130, 'identifiers', module_name__3141, name__3140)));
+                                                                    if (($T)(B2938['not'](module_name__2987)))
+                                                                        module_name__2987 = B2938['get'](env__2976, 'module', 'name');
+                                                                    return(B2938['pop'](B2938['get'](env__2976, 'identifiers', module_name__2987, name__2986)));
                                                                 }
                                                             }
                                                         }
                                                     } else
                                                         return(false);
-                                                }(identifier__3136));
+                                                }(identifier__2982));
                                                 {
-                                                    B3131 = B3092['rest'](B3131);
-                                                    B3134 = [B3131];
+                                                    B2977 = B2938['rest'](B2977);
+                                                    B2980 = [B2977];
                                                 }
                                             }
                                         } else
@@ -130,37 +130,37 @@ var B3092 = require('ralph/core');
                                 }
                             }
                         }
-                        return(B3133);
+                        return(B2979);
                     }
                 }
             }
         }
     };
-    B3092['%annotate-function'](restore_identifiers, 'restore-identifiers', false);
+    B2938['%annotate-function'](($module)['restore-identifiers'], 'restore-identifiers', false);
 }
 {
-    var find_identifier = function B3147(identifier__3148, env__3149) {
-        if (($T)(B3094['special-symbol?'](identifier__3148)))
-            return(identifier__3148);
+    ($module)['find-identifier'] = function B2993(identifier__2994, env__2995) {
+        if (($T)(B2940['special-symbol?'](identifier__2994)))
+            return(identifier__2994);
         else {
-            var B3150 = B3092['destructure-symbol'](identifier__3148);
+            var B2996 = B2938['destructure-symbol'](identifier__2994);
             {
-                var name__3151 = B3150[0];
+                var name__2997 = B2996[0];
                 {
-                    var module_name__3152 = B3150[1];
+                    var module_name__2998 = B2996[1];
                     {
-                        if (($T)(B3092['not'](module_name__3152)))
-                            module_name__3152 = B3092['get'](env__3149, 'module', 'name');
+                        if (($T)(B2938['not'](module_name__2998)))
+                            module_name__2998 = B2938['get'](env__2995, 'module', 'name');
                         {
-                            var renamings__3153 = B3092['get'](env__3149, 'identifiers', module_name__3152, name__3151);
+                            var renamings__2999 = B2938['get'](env__2995, 'identifiers', module_name__2998, name__2997);
                             {
-                                var B3154 = false;
-                                if (($T)(renamings__3153))
-                                    B3154 = B3092['not'](B3092['empty?'](renamings__3153));
+                                var B3000 = false;
+                                if (($T)(renamings__2999))
+                                    B3000 = B2938['not'](B2938['empty?'](renamings__2999));
                                 else
-                                    B3154 = false;
-                                if (($T)(B3154))
-                                    return(B3092['first'](renamings__3153));
+                                    B3000 = false;
+                                if (($T)(B3000))
+                                    return(B2938['first'](renamings__2999));
                                 else
                                     return(false);
                             }
@@ -170,136 +170,133 @@ var B3092 = require('ralph/core');
             }
         }
     };
-    B3092['%annotate-function'](find_identifier, 'find-identifier', false);
+    B2938['%annotate-function'](($module)['find-identifier'], 'find-identifier', false);
 }
 {
     {
-        var alpha_convert_form = function B3156(exp__3157, env__3158) {
-            return(alpha_convert(exp__3157, env__3158, B3092['identity']));
+        ($module)['alpha-convert-form'] = function B3002(exp__3003, env__3004) {
+            return(($module)['alpha-convert'](exp__3003, env__3004, B2938['identity']));
         };
-        Mexport('alpha-convert-form', alpha_convert_form);
+        ($module)['%export']('alpha-convert-form', ($module)['alpha-convert-form']);
     }
-    B3092['%annotate-function'](alpha_convert_form, 'alpha-convert-form', false);
+    B2938['%annotate-function'](($module)['alpha-convert-form'], 'alpha-convert-form', false);
 }
 {
-    var B3184 = $S('%bind', 'ralph/core');
+    var B3031 = $S('%bind', 'ralph/core');
     {
-        var B3185 = $S('%method', 'ralph/core');
+        var B3032 = $S('%method', 'ralph/core');
         {
-            var B3186 = $S('%define', 'ralph/core');
+            var B3033 = $S('%try', 'ralph/core');
             {
-                var B3187 = $S('%try', 'ralph/core');
-                {
-                    var alpha_convert = function B3188(exp__3189, env__3190, k__3191) {
-                        var B3192 = exp__3189;
-                        if (($T)(B3092['instance?'](B3192, B3092['<array>']))) {
-                            var B3193 = B3092['symbol-name'](B3092['first'](exp__3189));
-                            if (($T)(B3092['=='](B3193, '%quote')))
-                                return(k__3191(exp__3189));
-                            else if (($T)(B3092['=='](B3193, '%bind'))) {
-                                var ____3194 = exp__3189[0];
+                ($module)['alpha-convert'] = function B3034(exp__3035, env__3036, k__3037) {
+                    var B3038 = exp__3035;
+                    if (($T)(B2938['instance?'](B3038, B2938['<array>']))) {
+                        var B3039 = B2938['symbol-name'](B2938['first'](exp__3035));
+                        if (($T)(B2938['=='](B3039, '%quote')))
+                            return(k__3037(exp__3035));
+                        else if (($T)(B2938['=='](B3039, '%bind'))) {
+                            var ____3040 = exp__3035[0];
+                            {
+                                var B3041 = exp__3035[1];
                                 {
-                                    var B3195 = exp__3189[1];
+                                    var identifier__3042 = B3041[0];
                                     {
-                                        var identifier__3196 = B3195[0];
+                                        var value__3043 = B3041[1];
                                         {
-                                            var value__3197 = B3195[1];
-                                            {
-                                                var form__3198 = exp__3189[2];
-                                                return(alpha_convert(value__3197, env__3190, function B3199(valueT__3200) {
-                                                    var B3201 = rename_identifiers([identifier__3196], env__3190);
-                                                    {
-                                                        var identifierT__3202 = B3201[0];
-                                                        return(alpha_convert(form__3198, env__3190, function B3203(formT__3204) {
-                                                            restore_identifiers([identifier__3196], env__3190);
-                                                            return(k__3191([
-                                                                B3184,
-                                                                [
-                                                                    identifierT__3202,
-                                                                    valueT__3200
-                                                                ],
-                                                                formT__3204
-                                                            ]));
-                                                        }));
-                                                    }
-                                                }));
-                                            }
+                                            var form__3044 = exp__3035[2];
+                                            return(($module)['alpha-convert'](value__3043, env__3036, function B3045(valueT__3046) {
+                                                var B3047 = ($module)['rename-identifiers']([identifier__3042], env__3036);
+                                                {
+                                                    var identifierT__3048 = B3047[0];
+                                                    return(($module)['alpha-convert'](form__3044, env__3036, function B3049(formT__3050) {
+                                                        ($module)['restore-identifiers']([identifier__3042], env__3036);
+                                                        return(k__3037([
+                                                            B3031,
+                                                            [
+                                                                identifierT__3048,
+                                                                valueT__3046
+                                                            ],
+                                                            formT__3050
+                                                        ]));
+                                                    }));
+                                                }
+                                            }));
                                         }
                                     }
                                 }
-                            } else if (($T)(B3092['=='](B3193, '%method'))) {
-                                var ____3205 = exp__3189[0];
+                            }
+                        } else if (($T)(B2938['=='](B3039, '%method'))) {
+                            var ____3051 = exp__3035[0];
+                            {
+                                var name__3052 = exp__3035[1];
                                 {
-                                    var name__3206 = exp__3189[1];
+                                    var parameters__3053 = exp__3035[2];
                                     {
-                                        var parameters__3207 = exp__3189[2];
+                                        var form__3054 = exp__3035[3];
                                         {
-                                            var form__3208 = exp__3189[3];
+                                            var identifiers__3055 = B2938['cons'](name__3052, parameters__3053);
                                             {
-                                                var identifiers__3209 = B3092['cons'](name__3206, parameters__3207);
+                                                var B3056 = ($module)['rename-identifiers'](identifiers__3055, env__3036);
                                                 {
-                                                    var B3210 = rename_identifiers(identifiers__3209, env__3190);
+                                                    var nameT__3057 = B3056[0];
                                                     {
-                                                        var nameT__3211 = B3210[0];
-                                                        {
-                                                            var parametersT__3212 = $SL.call(B3210, 1);
-                                                            return(alpha_convert(form__3208, env__3190, function B3213(formT__3214) {
-                                                                restore_identifiers(identifiers__3209, env__3190);
-                                                                return(k__3191([
-                                                                    B3185,
-                                                                    nameT__3211,
-                                                                    parametersT__3212,
-                                                                    formT__3214
-                                                                ]));
-                                                            }));
-                                                        }
+                                                        var parametersT__3058 = $SL.call(B3056, 1);
+                                                        return(($module)['alpha-convert'](form__3054, env__3036, function B3059(formT__3060) {
+                                                            ($module)['restore-identifiers'](identifiers__3055, env__3036);
+                                                            return(k__3037([
+                                                                B3032,
+                                                                nameT__3057,
+                                                                parametersT__3058,
+                                                                formT__3060
+                                                            ]));
+                                                        }));
                                                     }
                                                 }
                                             }
                                         }
                                     }
                                 }
-                            } else {
-                                var B3215 = B3092['=='](B3193, '%set');
-                                {
-                                    var B3248 = false;
-                                    if (($T)(B3215))
-                                        B3248 = B3215;
+                            }
+                        } else {
+                            var B3061 = B2938['=='](B3039, '%set');
+                            {
+                                var B3095 = false;
+                                if (($T)(B3061))
+                                    B3095 = B3061;
+                                else {
+                                    var B3062 = B2938['=='](B3039, '%if');
+                                    if (($T)(B3062))
+                                        B3095 = B3062;
                                     else {
-                                        var B3216 = B3092['=='](B3193, '%if');
-                                        if (($T)(B3216))
-                                            B3248 = B3216;
+                                        var B3063 = B2938['=='](B3039, '%begin');
+                                        if (($T)(B3063))
+                                            B3095 = B3063;
                                         else {
-                                            var B3217 = B3092['=='](B3193, '%begin');
-                                            if (($T)(B3217))
-                                                B3248 = B3217;
+                                            var B3064 = B2938['=='](B3039, '%while');
+                                            if (($T)(B3064))
+                                                B3095 = B3064;
                                             else {
-                                                var B3218 = B3092['=='](B3193, '%while');
-                                                if (($T)(B3218))
-                                                    B3248 = B3218;
+                                                var B3065 = B2938['=='](B3039, '%native');
+                                                if (($T)(B3065))
+                                                    B3095 = B3065;
                                                 else {
-                                                    var B3219 = B3092['=='](B3193, '%native');
-                                                    if (($T)(B3219))
-                                                        B3248 = B3219;
+                                                    var B3066 = B2938['=='](B3039, '%native-call');
+                                                    if (($T)(B3066))
+                                                        B3095 = B3066;
                                                     else {
-                                                        var B3220 = B3092['=='](B3193, '%native-call');
-                                                        if (($T)(B3220))
-                                                            B3248 = B3220;
+                                                        var B3067 = B2938['=='](B3039, '%infix');
+                                                        if (($T)(B3067))
+                                                            B3095 = B3067;
                                                         else {
-                                                            var B3221 = B3092['=='](B3193, '%infix');
-                                                            if (($T)(B3221))
-                                                                B3248 = B3221;
+                                                            var B3068 = B2938['=='](B3039, '%object');
+                                                            if (($T)(B3068))
+                                                                B3095 = B3068;
                                                             else {
-                                                                var B3222 = B3092['=='](B3193, '%object');
-                                                                if (($T)(B3222))
-                                                                    B3248 = B3222;
-                                                                else {
-                                                                    var B3223 = B3092['=='](B3193, '%array');
-                                                                    if (($T)(B3223))
-                                                                        B3248 = B3223;
-                                                                    else
-                                                                        B3248 = B3092['=='](B3193, '%get-property');
-                                                                }
+                                                                var B3069 = B2938['=='](B3039, '%array');
+                                                                if (($T)(B3069))
+                                                                    B3095 = B3069;
+                                                                else
+                                                                    B3095 = B2938['=='](B3039, '%get-property');
                                                             }
                                                         }
                                                     }
@@ -307,130 +304,140 @@ var B3092 = require('ralph/core');
                                             }
                                         }
                                     }
-                                    if (($T)(B3248)) {
-                                        var op__3224 = exp__3189[0];
-                                        {
-                                            var arguments__3225 = $SL.call(exp__3189, 1);
-                                            return(alpha_convertT(arguments__3225, env__3190, function B3226(argumentsT__3227) {
-                                                return(k__3191(B3092['cons'](op__3224, argumentsT__3227)));
-                                            }));
-                                        }
-                                    } else if (($T)(B3092['=='](B3193, '%define'))) {
-                                        var ____3228 = exp__3189[0];
-                                        {
-                                            var identifier__3229 = exp__3189[1];
+                                }
+                                if (($T)(B3095)) {
+                                    var op__3070 = exp__3035[0];
+                                    {
+                                        var arguments__3071 = $SL.call(exp__3035, 1);
+                                        return(($module)['alpha-convert*'](arguments__3071, env__3036, function B3072(argumentsT__3073) {
+                                            return(k__3037(B2938['cons'](op__3070, argumentsT__3073)));
+                                        }));
+                                    }
+                                } else {
+                                    var B3074 = B2938['=='](B3039, '%define');
+                                    {
+                                        var B3096 = false;
+                                        if (($T)(B3074))
+                                            B3096 = B3074;
+                                        else
+                                            B3096 = B2938['=='](B3039, '%var');
+                                        if (($T)(B3096)) {
+                                            var op__3075 = exp__3035[0];
                                             {
-                                                var value__3230 = exp__3189[2];
-                                                return(alpha_convert(value__3230, env__3190, function B3231(valueT__3232) {
-                                                    var B3233 = find_identifier(identifier__3229, env__3190);
-                                                    {
-                                                        var identifierT__3234 = false;
-                                                        if (($T)(B3233))
-                                                            identifierT__3234 = B3233;
-                                                        else
-                                                            identifierT__3234 = B3093['qualify-symbol'](identifier__3229, env__3190);
-                                                        return(k__3191([
-                                                            B3186,
-                                                            identifierT__3234,
-                                                            valueT__3232
-                                                        ]));
-                                                    }
-                                                }));
-                                            }
-                                        }
-                                    } else if (($T)(B3092['=='](B3193, '%try'))) {
-                                        var ____3235 = exp__3189[0];
-                                        {
-                                            var protected_form__3236 = exp__3189[1];
-                                            {
-                                                var identifier__3237 = exp__3189[2];
+                                                var identifier__3076 = exp__3035[1];
                                                 {
-                                                    var handling_form__3238 = exp__3189[3];
-                                                    return(alpha_convert(protected_form__3236, env__3190, function B3239(protected_formT__3240) {
-                                                        var B3241 = rename_identifiers([identifier__3237], env__3190);
+                                                    var value__3077 = exp__3035[2];
+                                                    return(($module)['alpha-convert'](value__3077, env__3036, function B3078(valueT__3079) {
+                                                        var B3080 = ($module)['find-identifier'](identifier__3076, env__3036);
                                                         {
-                                                            var identifierT__3242 = B3241[0];
-                                                            return(alpha_convert(handling_form__3238, env__3190, function B3243(handling_formT__3244) {
-                                                                restore_identifiers([identifier__3237], env__3190);
-                                                                return(k__3191([
-                                                                    B3187,
-                                                                    protected_formT__3240,
-                                                                    identifierT__3242,
-                                                                    handling_formT__3244
-                                                                ]));
-                                                            }));
+                                                            var identifierT__3081 = false;
+                                                            if (($T)(B3080))
+                                                                identifierT__3081 = B3080;
+                                                            else
+                                                                identifierT__3081 = B2939['qualify-symbol'](identifier__3076, env__3036);
+                                                            return(k__3037([
+                                                                op__3075,
+                                                                identifierT__3081,
+                                                                valueT__3079
+                                                            ]));
                                                         }
                                                     }));
                                                 }
                                             }
-                                        }
-                                    } else
-                                        return(alpha_convertTT(exp__3189, env__3190, k__3191));
+                                        } else if (($T)(B2938['=='](B3039, '%try'))) {
+                                            var ____3082 = exp__3035[0];
+                                            {
+                                                var protected_form__3083 = exp__3035[1];
+                                                {
+                                                    var identifier__3084 = exp__3035[2];
+                                                    {
+                                                        var handling_form__3085 = exp__3035[3];
+                                                        return(($module)['alpha-convert'](protected_form__3083, env__3036, function B3086(protected_formT__3087) {
+                                                            var B3088 = ($module)['rename-identifiers']([identifier__3084], env__3036);
+                                                            {
+                                                                var identifierT__3089 = B3088[0];
+                                                                return(($module)['alpha-convert'](handling_form__3085, env__3036, function B3090(handling_formT__3091) {
+                                                                    ($module)['restore-identifiers']([identifier__3084], env__3036);
+                                                                    return(k__3037([
+                                                                        B3033,
+                                                                        protected_formT__3087,
+                                                                        identifierT__3089,
+                                                                        handling_formT__3091
+                                                                    ]));
+                                                                }));
+                                                            }
+                                                        }));
+                                                    }
+                                                }
+                                            }
+                                        } else
+                                            return(($module)['alpha-convert**'](exp__3035, env__3036, k__3037));
+                                    }
                                 }
                             }
-                        } else if (($T)(B3092['instance?'](B3192, B3092['<symbol>']))) {
-                            var B3245 = find_identifier(exp__3189, env__3190);
-                            if (($T)(B3245)) {
-                                var identifier__3246 = B3245;
-                                return(k__3191(identifier__3246));
-                            } else {
-                                var symbol__3247 = B3093['resolve-symbol'](exp__3189, env__3190);
-                                if (($T)(B3092['=='](B3092['get'](symbol__3247, 'module'), B3092['get'](env__3190, 'module', 'name'))))
-                                    return(k__3191(symbol__3247));
-                                else
-                                    return(convert_free_variable(symbol__3247, env__3190, k__3191));
-                            }
-                        } else
-                            return(k__3191(exp__3189));
-                    };
-                    B3092['%annotate-function'](alpha_convert, 'alpha-convert', false);
-                }
+                        }
+                    } else if (($T)(B2938['instance?'](B3038, B2938['<symbol>']))) {
+                        var B3092 = ($module)['find-identifier'](exp__3035, env__3036);
+                        if (($T)(B3092)) {
+                            var identifier__3093 = B3092;
+                            return(k__3037(identifier__3093));
+                        } else {
+                            var symbol__3094 = B2939['resolve-symbol'](exp__3035, env__3036);
+                            if (($T)(B2938['=='](B2938['get'](symbol__3094, 'module'), B2938['get'](env__3036, 'module', 'name'))))
+                                return(k__3037(symbol__3094));
+                            else
+                                return(($module)['convert-free-variable'](symbol__3094, env__3036, k__3037));
+                        }
+                    } else
+                        return(k__3037(exp__3035));
+                };
+                B2938['%annotate-function'](($module)['alpha-convert'], 'alpha-convert', false);
             }
         }
     }
 }
 {
-    var B3250 = $S('%get-property', 'ralph/core');
+    var B3098 = $S('%get-property', 'ralph/core');
     {
-        var make_external_reference = function B3251(name__3252, module_name__3253, env__3254) {
+        ($module)['make-external-reference'] = function B3099(name__3100, module_name__3101, env__3102) {
             return([
-                B3250,
-                B3093['find-import-identifier'](module_name__3253, env__3254),
-                name__3252
+                B3098,
+                B2939['find-import-identifier'](module_name__3101, env__3102),
+                name__3100
             ]);
         };
-        B3092['%annotate-function'](make_external_reference, 'make-external-reference', false);
+        B2938['%annotate-function'](($module)['make-external-reference'], 'make-external-reference', false);
     }
 }
 {
-    var B3259 = $S('%begin', 'ralph/core');
+    var B3107 = $S('%begin', 'ralph/core');
     {
-        var convert_free_variable = function B3260(symbol__3261, env__3262, k__3263) {
-            var B3264 = B3092['destructure-symbol'](symbol__3261);
+        ($module)['convert-free-variable'] = function B3108(symbol__3109, env__3110, k__3111) {
+            var B3112 = B2938['destructure-symbol'](symbol__3109);
             {
-                var name__3265 = B3264[0];
+                var name__3113 = B3112[0];
                 {
-                    var module_name__3266 = B3264[1];
+                    var module_name__3114 = B3112[1];
                     {
-                        var B3267 = B3093['find-import-identifier'](module_name__3266, env__3262);
-                        if (($T)(B3267)) {
-                            var import_identifier__3268 = B3267;
+                        var B3115 = B2939['find-import-identifier'](module_name__3114, env__3110);
+                        if (($T)(B3115)) {
+                            var import_identifier__3116 = B3115;
                             {
-                                var reference__3269 = make_external_reference(name__3265, module_name__3266, env__3262);
-                                return(alpha_convert(reference__3269, env__3262, k__3263));
+                                var reference__3117 = ($module)['make-external-reference'](name__3113, module_name__3114, env__3110);
+                                return(($module)['alpha-convert'](reference__3117, env__3110, k__3111));
                             }
                         } else
-                            return(alpha_convertT([
-                                B3093['make-import-definition'](module_name__3266, env__3262),
-                                make_external_reference(name__3265, module_name__3266, env__3262)
-                            ], env__3262, function B3270(formsT__3271) {
-                                var importT__3272 = formsT__3271[0];
+                            return(($module)['alpha-convert*']([
+                                B2939['make-import-definition'](module_name__3114, env__3110),
+                                ($module)['make-external-reference'](name__3113, module_name__3114, env__3110)
+                            ], env__3110, function B3118(formsT__3119) {
+                                var importT__3120 = formsT__3119[0];
                                 {
-                                    var referenceT__3273 = formsT__3271[1];
+                                    var referenceT__3121 = formsT__3119[1];
                                     return([
-                                        B3259,
-                                        importT__3272,
-                                        k__3263(referenceT__3273)
+                                        B3107,
+                                        importT__3120,
+                                        k__3111(referenceT__3121)
                                     ]);
                                 }
                             }));
@@ -438,25 +445,34 @@ var B3092 = require('ralph/core');
                 }
             }
         };
-        B3092['%annotate-function'](convert_free_variable, 'convert-free-variable', false);
+        B2938['%annotate-function'](($module)['convert-free-variable'], 'convert-free-variable', false);
     }
 }
 {
-    var alpha_convertT = function B3275(expT__3276, env__3277, k__3278) {
-        if (($T)(B3092['empty?'](expT__3276)))
-            return(k__3278([]));
+    ($module)['alpha-convert*'] = function B3123(expT__3124, env__3125, k__3126) {
+        if (($T)(B2938['empty?'](expT__3124)))
+            return(k__3126([]));
         else
-            return(alpha_convertTT(expT__3276, env__3277, k__3278));
+            return(($module)['alpha-convert**'](expT__3124, env__3125, k__3126));
     };
-    B3092['%annotate-function'](alpha_convertT, 'alpha-convert*', false);
+    B2938['%annotate-function'](($module)['alpha-convert*'], 'alpha-convert*', false);
 }
 {
-    var alpha_convertTT = function B3282(exp__3283, env__3284, k__3285) {
-        return(alpha_convert(B3092['first'](exp__3283), env__3284, function B3286(t__3287) {
-            return(alpha_convertT(B3092['rest'](exp__3283), env__3284, function B3288(tT__3289) {
-                return(k__3285(B3092['cons'](t__3287, tT__3289)));
+    ($module)['alpha-convert**'] = function B3130(exp__3131, env__3132, k__3133) {
+        return(($module)['alpha-convert'](B2938['first'](exp__3131), env__3132, function B3134(t__3135) {
+            return(($module)['alpha-convert*'](B2938['rest'](exp__3131), env__3132, function B3136(tT__3137) {
+                return(k__3133(B2938['cons'](t__3135, tT__3137)));
             }));
         }));
     };
-    B3092['%annotate-function'](alpha_convertTT, 'alpha-convert**', false);
+    B2938['%annotate-function'](($module)['alpha-convert**'], 'alpha-convert**', false);
+}
+{
+    ($module)['%eval'] = function B3139() {
+        return(eval((arguments[0])));
+    };
+    {
+        B2938['%annotate-function'](($module)['%eval'], '%eval', false);
+        ($module)['%export']('%eval', ($module)['%eval']);
+    }
 }

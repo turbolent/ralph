@@ -1,112 +1,121 @@
 {
     var $module = Object.create(null);
-    var Mexport = function B1924(name__1925, value__1926) {
-        var B1927 = (exports);
-        return(B1927[name__1925] = value__1926);
+    ($module)['%export'] = function B1756(name__1757, value__1758) {
+        var B1759 = (exports);
+        return(B1759[name__1757] = value__1758);
     };
 }
-var B1928 = require('ralph/core');
+var B1760 = require('ralph/core');
 {
-    var B1929 = require('ralph/compiler/module');
+    var B1761 = require('ralph/compiler/module');
     {
-        var B1930 = require('ralph/compiler/environment');
-        var B1931 = require('ralph/compiler/utilities');
+        var B1762 = require('ralph/compiler/environment');
+        var B1763 = require('ralph/compiler/utilities');
     }
 }
 {
-    var B1933 = $S('unquote', 'ralph/core');
+    var B1765 = $S('unquote', 'ralph/core');
     {
-        var unquotedQ = function B1934(form__1935, env__1936) {
-            if (($T)(B1928['expression?'](form__1935)))
-                return(B1928['=='](B1930['resolve-symbol'](B1928['first'](form__1935), env__1936), B1933));
+        ($module)['unquoted?'] = function B1766(form__1767, env__1768) {
+            if (($T)(B1760['expression?'](form__1767)))
+                return(B1760['=='](B1762['resolve-symbol'](B1760['first'](form__1767), env__1768), B1765));
             else
                 return(false);
         };
-        B1928['%annotate-function'](unquotedQ, 'unquoted?', false);
+        B1760['%annotate-function'](($module)['unquoted?'], 'unquoted?', false);
     }
 }
 {
-    var B1938 = $S('unquote-splicing', 'ralph/core');
+    var B1770 = $S('unquote-splicing', 'ralph/core');
     {
-        var unquote_splicedQ = function B1939(form__1940, env__1941) {
-            if (($T)(B1928['expression?'](form__1940)))
-                return(B1928['=='](B1930['resolve-symbol'](B1928['first'](form__1940), env__1941), B1938));
+        ($module)['unquote-spliced?'] = function B1771(form__1772, env__1773) {
+            if (($T)(B1760['expression?'](form__1772)))
+                return(B1760['=='](B1762['resolve-symbol'](B1760['first'](form__1772), env__1773), B1770));
             else
                 return(false);
         };
-        B1928['%annotate-function'](unquote_splicedQ, 'unquote-spliced?', false);
+        B1760['%annotate-function'](($module)['unquote-spliced?'], 'unquote-spliced?', false);
     }
 }
 {
-    var B1943 = $S('quote', 'ralph/core');
+    var B1775 = $S('quote', 'ralph/core');
     {
-        var syntax_quote_symbol = function B1944(symbol__1945, env__1946) {
+        ($module)['syntax-quote-symbol'] = function B1776(symbol__1777, env__1778) {
             return([
-                B1943,
-                B1930['resolve-symbol'](symbol__1945, env__1946)
+                B1775,
+                B1762['resolve-symbol'](symbol__1777, env__1778)
             ]);
         };
-        B1928['%annotate-function'](syntax_quote_symbol, 'syntax-quote-symbol', false);
+        B1760['%annotate-function'](($module)['syntax-quote-symbol'], 'syntax-quote-symbol', false);
     }
 }
 {
-    var B1949 = $S('%array', 'ralph/core');
+    var B1781 = $S('%array', 'ralph/core');
     {
-        var B1950 = $S('%concat', 'ralph/core');
+        var B1782 = $S('%concat', 'ralph/core');
         {
-            var syntax_quote_array = function B1951(array__1952, env__1953) {
-                if (($T)(unquotedQ(array__1952, env__1953)))
-                    return(B1928['second'](array__1952));
+            ($module)['syntax-quote-array'] = function B1783(array__1784, env__1785) {
+                if (($T)(($module)['unquoted?'](array__1784, env__1785)))
+                    return(B1760['second'](array__1784));
                 else {
-                    var part__1954 = [B1949];
-                    return(B1928['reduce'](function B1955(result__1956, form__1957) {
-                        if (($T)(unquote_splicedQ(form__1957, env__1953))) {
-                            part__1954 = false;
+                    var part__1786 = [B1781];
+                    return(B1760['reduce'](function B1787(result__1788, form__1789) {
+                        if (($T)(($module)['unquote-spliced?'](form__1789, env__1785))) {
+                            part__1786 = false;
                             return([
-                                B1950,
-                                result__1956,
-                                B1928['second'](form__1957)
+                                B1782,
+                                result__1788,
+                                B1760['second'](form__1789)
                             ]);
                         } else {
-                            var formT__1958 = false;
-                            if (($T)(unquotedQ(form__1957, env__1953)))
-                                formT__1958 = B1928['second'](form__1957);
+                            var formT__1790 = false;
+                            if (($T)(($module)['unquoted?'](form__1789, env__1785)))
+                                formT__1790 = B1760['second'](form__1789);
                             else
-                                formT__1958 = syntax_quote_form(form__1957, env__1953);
-                            if (($T)(part__1954)) {
-                                B1928['push-last'](part__1954, formT__1958);
-                                return(result__1956);
+                                formT__1790 = ($module)['syntax-quote-form'](form__1789, env__1785);
+                            if (($T)(part__1786)) {
+                                B1760['push-last'](part__1786, formT__1790);
+                                return(result__1788);
                             } else {
-                                part__1954 = [
-                                    B1949,
-                                    formT__1958
+                                part__1786 = [
+                                    B1781,
+                                    formT__1790
                                 ];
                                 return([
-                                    B1950,
-                                    result__1956,
-                                    part__1954
+                                    B1782,
+                                    result__1788,
+                                    part__1786
                                 ]);
                             }
                         }
-                    }, part__1954, array__1952));
+                    }, part__1786, array__1784));
                 }
             };
-            B1928['%annotate-function'](syntax_quote_array, 'syntax-quote-array', false);
+            B1760['%annotate-function'](($module)['syntax-quote-array'], 'syntax-quote-array', false);
         }
     }
 }
 {
     {
-        var syntax_quote_form = function B1961(form__1962, env__1963) {
-            var B1964 = form__1962;
-            if (($T)(B1928['instance?'](B1964, B1928['<array>'])))
-                return(syntax_quote_array(form__1962, env__1963));
-            else if (($T)(B1928['instance?'](B1964, B1928['<symbol>'])))
-                return(syntax_quote_symbol(form__1962, env__1963));
+        ($module)['syntax-quote-form'] = function B1793(form__1794, env__1795) {
+            var B1796 = form__1794;
+            if (($T)(B1760['instance?'](B1796, B1760['<array>'])))
+                return(($module)['syntax-quote-array'](form__1794, env__1795));
+            else if (($T)(B1760['instance?'](B1796, B1760['<symbol>'])))
+                return(($module)['syntax-quote-symbol'](form__1794, env__1795));
             else
-                return(form__1962);
+                return(form__1794);
         };
-        Mexport('syntax-quote-form', syntax_quote_form);
+        ($module)['%export']('syntax-quote-form', ($module)['syntax-quote-form']);
     }
-    B1928['%annotate-function'](syntax_quote_form, 'syntax-quote-form', false);
+    B1760['%annotate-function'](($module)['syntax-quote-form'], 'syntax-quote-form', false);
+}
+{
+    ($module)['%eval'] = function B1798() {
+        return(eval((arguments[0])));
+    };
+    {
+        B1760['%annotate-function'](($module)['%eval'], '%eval', false);
+        ($module)['%export']('%eval', ($module)['%eval']);
+    }
 }

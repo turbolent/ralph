@@ -1,103 +1,112 @@
 {
     var $module = Object.create(null);
-    var Mexport = function B1878(name__1879, value__1880) {
-        var B1881 = (exports);
-        return(B1881[name__1879] = value__1880);
+    ($module)['%export'] = function B1708(name__1709, value__1710) {
+        var B1711 = (exports);
+        return(B1711[name__1709] = value__1710);
     };
 }
-var B1882 = require('ralph/core');
+var B1712 = require('ralph/core');
 false;
 {
-    var LregexpG = (RegExp);
-    Mexport('<regexp>', LregexpG);
+    ($module)['<regexp>'] = (RegExp);
+    ($module)['%export']('<regexp>', ($module)['<regexp>']);
 }
-var initialize = B1882['%make-method']('initialize', function B1889(regexp__1890) {
-        var B1891 = $SL.call(arguments, 1);
+($module)['initialize'] = B1712['%make-method']('initialize', function B1719(regexp__1720) {
+    var B1721 = $SL.call(arguments, 1);
+    {
+        var B1722 = B1712['%keys'](B1721, {
+                'pattern': false,
+                'global?': false,
+                'ignore-case?': false,
+                'multiline?': false
+            });
         {
-            var B1892 = B1882['%keys'](B1891, {
-                    'pattern': false,
-                    'global?': false,
-                    'ignore-case?': false,
-                    'multiline?': false
-                });
+            var pattern__1723 = B1722['pattern'];
             {
-                var pattern__1893 = B1892['pattern'];
+                var globalQ__1724 = B1722['global?'];
                 {
-                    var globalQ__1894 = B1892['global?'];
+                    var ignore_caseQ__1725 = B1722['ignore-case?'];
                     {
-                        var ignore_caseQ__1895 = B1892['ignore-case?'];
-                        {
-                            var multilineQ__1896 = B1892['multiline?'];
-                            if (($T)(pattern__1893)) {
-                                var B1901 = B1882['concatenate'];
+                        var multilineQ__1726 = B1722['multiline?'];
+                        if (($T)(pattern__1723)) {
+                            var B1731 = B1712['concatenate'];
+                            {
+                                var B1732 = false;
+                                if (($T)(globalQ__1724))
+                                    B1732 = 'g';
+                                else
+                                    B1732 = '';
                                 {
-                                    var B1902 = false;
-                                    if (($T)(globalQ__1894))
-                                        B1902 = 'g';
+                                    var B1733 = false;
+                                    if (($T)(ignore_caseQ__1725))
+                                        B1733 = 'i';
                                     else
-                                        B1902 = '';
+                                        B1733 = '';
                                     {
-                                        var B1903 = false;
-                                        if (($T)(ignore_caseQ__1895))
-                                            B1903 = 'i';
+                                        var B1734 = false;
+                                        if (($T)(multilineQ__1726))
+                                            B1734 = 'm';
                                         else
-                                            B1903 = '';
+                                            B1734 = '';
                                         {
-                                            var B1904 = false;
-                                            if (($T)(multilineQ__1896))
-                                                B1904 = 'm';
-                                            else
-                                                B1904 = '';
+                                            var flags__1727 = B1731(B1732, B1733, B1734);
                                             {
-                                                var flags__1897 = B1901(B1902, B1903, B1904);
+                                                var B1728 = regexp__1720;
                                                 {
-                                                    var B1898 = regexp__1890;
+                                                    var B1729 = pattern__1723;
                                                     {
-                                                        var B1899 = pattern__1893;
-                                                        {
-                                                            var B1900 = flags__1897;
-                                                            return(B1898['compile'](B1899, B1900));
-                                                        }
+                                                        var B1730 = flags__1727;
+                                                        return(B1728['compile'](B1729, B1730));
                                                     }
                                                 }
                                             }
                                         }
                                     }
                                 }
-                            } else
-                                return(false);
-                        }
+                            }
+                        } else
+                            return(false);
                     }
                 }
             }
         }
-    }, false, LregexpG, initialize);
+    }
+}, false, ($module)['<regexp>'], ($module)['initialize']);
 {
-    var find = function B1908(regexp__1909, string__1910) {
-        var B1911 = string__1910;
+    ($module)['find'] = function B1738(regexp__1739, string__1740) {
+        var B1741 = string__1740;
         {
-            var B1912 = regexp__1909;
+            var B1742 = regexp__1739;
             {
-                var position__1913 = B1911['search'](B1912);
-                if (($T)(B1882['>'](position__1913, -1)))
-                    return(position__1913);
+                var position__1743 = B1741['search'](B1742);
+                if (($T)(B1712['>'](position__1743, -1)))
+                    return(position__1743);
                 else
                     return(false);
             }
         }
     };
-    B1882['%annotate-function'](find, 'find', false);
+    B1712['%annotate-function'](($module)['find'], 'find', false);
 }
 {
     {
-        var match = function B1917(regexp__1918, string__1919) {
-            var B1920 = string__1919;
+        ($module)['match'] = function B1747(regexp__1748, string__1749) {
+            var B1750 = string__1749;
             {
-                var B1921 = regexp__1918;
-                return(B1920['match'](B1921));
+                var B1751 = regexp__1748;
+                return(B1750['match'](B1751));
             }
         };
-        Mexport('match', match);
+        ($module)['%export']('match', ($module)['match']);
     }
-    B1882['%annotate-function'](match, 'match', false);
+    B1712['%annotate-function'](($module)['match'], 'match', false);
+}
+{
+    ($module)['%eval'] = function B1753() {
+        return(eval((arguments[0])));
+    };
+    {
+        B1712['%annotate-function'](($module)['%eval'], '%eval', false);
+        ($module)['%export']('%eval', ($module)['%eval']);
+    }
 }

@@ -1,75 +1,75 @@
 {
     var $module = Object.create(null);
-    var Mexport = function B2955(name__2956, value__2957) {
-        var B2958 = (exports);
-        return(B2958[name__2956] = value__2957);
+    ($module)['%export'] = function B2799(name__2800, value__2801) {
+        var B2802 = (exports);
+        return(B2802[name__2800] = value__2801);
     };
 }
-var B2959 = require('ralph/core');
-var B2960 = require('ralph/compiler/utilities');
+var B2803 = require('ralph/core');
+var B2804 = require('ralph/compiler/utilities');
 {
     {
-        var lift_symbols = function B2962(exp__2963, env__2964) {
-            return(lift_symbol(exp__2963, env__2964, B2959['identity']));
+        ($module)['lift-symbols'] = function B2806(exp__2807, env__2808) {
+            return(($module)['lift-symbol'](exp__2807, env__2808, B2803['identity']));
         };
-        Mexport('lift-symbols', lift_symbols);
+        ($module)['%export']('lift-symbols', ($module)['lift-symbols']);
     }
-    B2959['%annotate-function'](lift_symbols, 'lift-symbols', false);
+    B2803['%annotate-function'](($module)['lift-symbols'], 'lift-symbols', false);
 }
 {
-    var B2986 = $K('module');
+    var B2830 = $K('module');
     {
-        var B2987 = $S('%bind', 'ralph/core');
+        var B2831 = $S('%bind', 'ralph/core');
         {
-            var B2988 = $S('%method', 'ralph/core');
+            var B2832 = $S('%method', 'ralph/core');
             {
-                var B2989 = $S('%set', 'ralph/core');
+                var B2833 = $S('%set', 'ralph/core');
                 {
-                    var B2990 = $S('%get-property', 'ralph/core');
+                    var B2834 = $S('%get-property', 'ralph/core');
                     {
-                        var B2991 = $S('%try', 'ralph/core');
+                        var B2835 = $S('%try', 'ralph/core');
                         {
-                            var lift_symbol = function B2992(exp__2993, env__2994, k__2995) {
-                                var B3049 = false;
-                                if (($T)(B2959['instance?'](exp__2993, B2959['<array>'])))
-                                    B3049 = B2959['not'](B2959['empty?'](exp__2993));
+                            ($module)['lift-symbol'] = function B2836(exp__2837, env__2838, k__2839) {
+                                var B2893 = false;
+                                if (($T)(B2803['instance?'](exp__2837, B2803['<array>'])))
+                                    B2893 = B2803['not'](B2803['empty?'](exp__2837));
                                 else
-                                    B3049 = false;
-                                if (($T)(B3049)) {
-                                    var B2996 = B2959['symbol-name'](B2959['first'](exp__2993));
-                                    if (($T)(B2959['=='](B2996, '%quote'))) {
-                                        var B2997 = B2959['destructure-symbol'](B2959['second'](exp__2993));
+                                    B2893 = false;
+                                if (($T)(B2893)) {
+                                    var B2840 = B2803['symbol-name'](B2803['first'](exp__2837));
+                                    if (($T)(B2803['=='](B2840, '%quote'))) {
+                                        var B2841 = B2803['destructure-symbol'](B2803['second'](exp__2837));
                                         {
-                                            var name__2998 = B2997[0];
+                                            var name__2842 = B2841[0];
                                             {
-                                                var module_name__2999 = B2997[1];
-                                                return(lift_value(name__2998, exp__2993, 'symbol', env__2994, k__2995, B2986, module_name__2999));
+                                                var module_name__2843 = B2841[1];
+                                                return(($module)['lift-value'](name__2842, exp__2837, 'symbol', env__2838, k__2839, B2830, module_name__2843));
                                             }
                                         }
-                                    } else if (($T)(B2959['=='](B2996, '%bind'))) {
-                                        var ____3000 = exp__2993[0];
+                                    } else if (($T)(B2803['=='](B2840, '%bind'))) {
+                                        var ____2844 = exp__2837[0];
                                         {
-                                            var B3001 = exp__2993[1];
+                                            var B2845 = exp__2837[1];
                                             {
-                                                var identifier__3002 = B3001[0];
+                                                var identifier__2846 = B2845[0];
                                                 {
-                                                    var value__3003 = B3001[1];
+                                                    var value__2847 = B2845[1];
                                                     {
-                                                        var form__3004 = exp__2993[2];
-                                                        return(lift_symbolT([
-                                                            value__3003,
-                                                            form__3004
-                                                        ], env__2994, function B3005(formsT__3006) {
-                                                            var valueT__3007 = formsT__3006[0];
+                                                        var form__2848 = exp__2837[2];
+                                                        return(($module)['lift-symbol*']([
+                                                            value__2847,
+                                                            form__2848
+                                                        ], env__2838, function B2849(formsT__2850) {
+                                                            var valueT__2851 = formsT__2850[0];
                                                             {
-                                                                var formT__3008 = formsT__3006[1];
-                                                                return(k__2995([
-                                                                    B2987,
+                                                                var formT__2852 = formsT__2850[1];
+                                                                return(k__2839([
+                                                                    B2831,
                                                                     [
-                                                                        identifier__3002,
-                                                                        valueT__3007
+                                                                        identifier__2846,
+                                                                        valueT__2851
                                                                     ],
-                                                                    formT__3008
+                                                                    formT__2852
                                                                 ]));
                                                             }
                                                         }));
@@ -77,108 +77,108 @@ var B2960 = require('ralph/compiler/utilities');
                                                 }
                                             }
                                         }
-                                    } else if (($T)(B2959['=='](B2996, '%method'))) {
-                                        var ____3009 = exp__2993[0];
+                                    } else if (($T)(B2803['=='](B2840, '%method'))) {
+                                        var ____2853 = exp__2837[0];
                                         {
-                                            var name__3010 = exp__2993[1];
+                                            var name__2854 = exp__2837[1];
                                             {
-                                                var parameters__3011 = exp__2993[2];
+                                                var parameters__2855 = exp__2837[2];
                                                 {
-                                                    var form__3012 = exp__2993[3];
-                                                    return(lift_symbol(form__3012, env__2994, function B3013(formT__3014) {
-                                                        return(k__2995([
-                                                            B2988,
-                                                            name__3010,
-                                                            parameters__3011,
-                                                            formT__3014
+                                                    var form__2856 = exp__2837[3];
+                                                    return(($module)['lift-symbol'](form__2856, env__2838, function B2857(formT__2858) {
+                                                        return(k__2839([
+                                                            B2832,
+                                                            name__2854,
+                                                            parameters__2855,
+                                                            formT__2858
                                                         ]));
                                                     }));
                                                 }
                                             }
                                         }
-                                    } else if (($T)(B2959['=='](B2996, '%set'))) {
-                                        var ____3015 = exp__2993[0];
+                                    } else if (($T)(B2803['=='](B2840, '%set'))) {
+                                        var ____2859 = exp__2837[0];
                                         {
-                                            var place__3016 = exp__2993[1];
+                                            var place__2860 = exp__2837[1];
                                             {
-                                                var value__3017 = exp__2993[2];
-                                                return(lift_symbol(value__3017, env__2994, function B3018(valueT__3019) {
-                                                    if (($T)(B2960['op?']('%get-property', place__3016)))
-                                                        return(lift_symbolTT(B2959['rest'](place__3016), env__2994, function B3020(argumentsT__3021) {
-                                                            return(k__2995([
-                                                                B2989,
-                                                                B2959['%concat']([B2990], argumentsT__3021),
-                                                                valueT__3019
+                                                var value__2861 = exp__2837[2];
+                                                return(($module)['lift-symbol'](value__2861, env__2838, function B2862(valueT__2863) {
+                                                    if (($T)(B2804['op?']('%get-property', place__2860)))
+                                                        return(($module)['lift-symbol**'](B2803['rest'](place__2860), env__2838, function B2864(argumentsT__2865) {
+                                                            return(k__2839([
+                                                                B2833,
+                                                                B2803['%concat']([B2834], argumentsT__2865),
+                                                                valueT__2863
                                                             ]));
                                                         }));
                                                     else
-                                                        return(k__2995([
-                                                            B2989,
-                                                            place__3016,
-                                                            valueT__3019
+                                                        return(k__2839([
+                                                            B2833,
+                                                            place__2860,
+                                                            valueT__2863
                                                         ]));
                                                 }));
                                             }
                                         }
                                     } else {
-                                        var B3022 = B2959['=='](B2996, '%define');
+                                        var B2866 = B2803['=='](B2840, '%define');
                                         {
-                                            var B3050 = false;
-                                            if (($T)(B3022))
-                                                B3050 = B3022;
+                                            var B2894 = false;
+                                            if (($T)(B2866))
+                                                B2894 = B2866;
                                             else
-                                                B3050 = B2959['=='](B2996, '%var');
-                                            if (($T)(B3050)) {
-                                                var op__3023 = exp__2993[0];
+                                                B2894 = B2803['=='](B2840, '%var');
+                                            if (($T)(B2894)) {
+                                                var op__2867 = exp__2837[0];
                                                 {
-                                                    var identifier__3024 = exp__2993[1];
+                                                    var identifier__2868 = exp__2837[1];
                                                     {
-                                                        var value__3025 = exp__2993[2];
-                                                        return(lift_symbol(value__3025, env__2994, function B3026(valueT__3027) {
-                                                            return(k__2995([
-                                                                op__3023,
-                                                                identifier__3024,
-                                                                valueT__3027
+                                                        var value__2869 = exp__2837[2];
+                                                        return(($module)['lift-symbol'](value__2869, env__2838, function B2870(valueT__2871) {
+                                                            return(k__2839([
+                                                                op__2867,
+                                                                identifier__2868,
+                                                                valueT__2871
                                                             ]));
                                                         }));
                                                     }
                                                 }
                                             } else {
-                                                var B3028 = B2959['=='](B2996, '%if');
+                                                var B2872 = B2803['=='](B2840, '%if');
                                                 {
-                                                    var B3051 = false;
-                                                    if (($T)(B3028))
-                                                        B3051 = B3028;
+                                                    var B2895 = false;
+                                                    if (($T)(B2872))
+                                                        B2895 = B2872;
                                                     else {
-                                                        var B3029 = B2959['=='](B2996, '%begin');
-                                                        if (($T)(B3029))
-                                                            B3051 = B3029;
+                                                        var B2873 = B2803['=='](B2840, '%begin');
+                                                        if (($T)(B2873))
+                                                            B2895 = B2873;
                                                         else {
-                                                            var B3030 = B2959['=='](B2996, '%while');
-                                                            if (($T)(B3030))
-                                                                B3051 = B3030;
+                                                            var B2874 = B2803['=='](B2840, '%while');
+                                                            if (($T)(B2874))
+                                                                B2895 = B2874;
                                                             else {
-                                                                var B3031 = B2959['=='](B2996, '%infix');
-                                                                if (($T)(B3031))
-                                                                    B3051 = B3031;
+                                                                var B2875 = B2803['=='](B2840, '%infix');
+                                                                if (($T)(B2875))
+                                                                    B2895 = B2875;
                                                                 else {
-                                                                    var B3032 = B2959['=='](B2996, '%native');
-                                                                    if (($T)(B3032))
-                                                                        B3051 = B3032;
+                                                                    var B2876 = B2803['=='](B2840, '%native');
+                                                                    if (($T)(B2876))
+                                                                        B2895 = B2876;
                                                                     else {
-                                                                        var B3033 = B2959['=='](B2996, '%native-call');
-                                                                        if (($T)(B3033))
-                                                                            B3051 = B3033;
+                                                                        var B2877 = B2803['=='](B2840, '%native-call');
+                                                                        if (($T)(B2877))
+                                                                            B2895 = B2877;
                                                                         else {
-                                                                            var B3034 = B2959['=='](B2996, '%object');
-                                                                            if (($T)(B3034))
-                                                                                B3051 = B3034;
+                                                                            var B2878 = B2803['=='](B2840, '%object');
+                                                                            if (($T)(B2878))
+                                                                                B2895 = B2878;
                                                                             else {
-                                                                                var B3035 = B2959['=='](B2996, '%array');
-                                                                                if (($T)(B3035))
-                                                                                    B3051 = B3035;
+                                                                                var B2879 = B2803['=='](B2840, '%array');
+                                                                                if (($T)(B2879))
+                                                                                    B2895 = B2879;
                                                                                 else
-                                                                                    B3051 = B2959['=='](B2996, '%get-property');
+                                                                                    B2895 = B2803['=='](B2840, '%get-property');
                                                                             }
                                                                         }
                                                                     }
@@ -186,34 +186,34 @@ var B2960 = require('ralph/compiler/utilities');
                                                             }
                                                         }
                                                     }
-                                                    if (($T)(B3051)) {
-                                                        var op__3036 = exp__2993[0];
+                                                    if (($T)(B2895)) {
+                                                        var op__2880 = exp__2837[0];
                                                         {
-                                                            var forms__3037 = $SL.call(exp__2993, 1);
-                                                            return(lift_symbolT(forms__3037, env__2994, function B3038(formsT__3039) {
-                                                                return(k__2995(B2959['%concat']([op__3036], formsT__3039)));
+                                                            var forms__2881 = $SL.call(exp__2837, 1);
+                                                            return(($module)['lift-symbol*'](forms__2881, env__2838, function B2882(formsT__2883) {
+                                                                return(k__2839(B2803['%concat']([op__2880], formsT__2883)));
                                                             }));
                                                         }
-                                                    } else if (($T)(B2959['=='](B2996, '%try'))) {
-                                                        var ____3040 = exp__2993[0];
+                                                    } else if (($T)(B2803['=='](B2840, '%try'))) {
+                                                        var ____2884 = exp__2837[0];
                                                         {
-                                                            var protected_form__3041 = exp__2993[1];
+                                                            var protected_form__2885 = exp__2837[1];
                                                             {
-                                                                var identifier__3042 = exp__2993[2];
+                                                                var identifier__2886 = exp__2837[2];
                                                                 {
-                                                                    var handling_form__3043 = exp__2993[3];
-                                                                    return(lift_symbolT([
-                                                                        protected_form__3041,
-                                                                        handling_form__3043
-                                                                    ], env__2994, function B3044(formsT__3045) {
-                                                                        var protected_formT__3046 = formsT__3045[0];
+                                                                    var handling_form__2887 = exp__2837[3];
+                                                                    return(($module)['lift-symbol*']([
+                                                                        protected_form__2885,
+                                                                        handling_form__2887
+                                                                    ], env__2838, function B2888(formsT__2889) {
+                                                                        var protected_formT__2890 = formsT__2889[0];
                                                                         {
-                                                                            var handling_formT__3047 = formsT__3045[1];
-                                                                            return(k__2995([
-                                                                                B2991,
-                                                                                protected_formT__3046,
-                                                                                identifier__3042,
-                                                                                handling_formT__3047
+                                                                            var handling_formT__2891 = formsT__2889[1];
+                                                                            return(k__2839([
+                                                                                B2835,
+                                                                                protected_formT__2890,
+                                                                                identifier__2886,
+                                                                                handling_formT__2891
                                                                             ]));
                                                                         }
                                                                     }));
@@ -221,22 +221,22 @@ var B2960 = require('ralph/compiler/utilities');
                                                             }
                                                         }
                                                     } else
-                                                        return(lift_symbolTT(exp__2993, env__2994, k__2995));
+                                                        return(($module)['lift-symbol**'](exp__2837, env__2838, k__2839));
                                                 }
                                             }
                                         }
                                     }
                                 } else {
-                                    var B3048 = exp__2993;
-                                    if (($T)(B2959['instance?'](B3048, B2959['<keyword>'])))
-                                        return(lift_value(B2959['symbol-name'](exp__2993), exp__2993, 'keyword', env__2994, k__2995));
-                                    else if (($T)(B2959['instance?'](B3048, B2959['<hash-symbol>'])))
-                                        return(lift_value(B2959['symbol-name'](exp__2993), exp__2993, 'hash', env__2994, k__2995));
+                                    var B2892 = exp__2837;
+                                    if (($T)(B2803['instance?'](B2892, B2803['<keyword>'])))
+                                        return(($module)['lift-value'](B2803['symbol-name'](exp__2837), exp__2837, 'keyword', env__2838, k__2839));
+                                    else if (($T)(B2803['instance?'](B2892, B2803['<hash-symbol>'])))
+                                        return(($module)['lift-value'](B2803['symbol-name'](exp__2837), exp__2837, 'hash', env__2838, k__2839));
                                     else
-                                        return(k__2995(exp__2993));
+                                        return(k__2839(exp__2837));
                                 }
                             };
-                            B2959['%annotate-function'](lift_symbol, 'lift-symbol', false);
+                            B2803['%annotate-function'](($module)['lift-symbol'], 'lift-symbol', false);
                         }
                     }
                 }
@@ -245,57 +245,66 @@ var B2960 = require('ralph/compiler/utilities');
     }
 }
 {
-    var B3056 = $S('%begin', 'ralph/core');
+    var B2900 = $S('%begin', 'ralph/core');
     {
-        var B3057 = $S('%define', 'ralph/core');
+        var B2901 = $S('%define', 'ralph/core');
         {
-            var lift_value = function B3058(name__3059, value__3060, type__3061, env__3062, k__3063) {
-                var B3064 = $SL.call(arguments, 5);
+            ($module)['lift-value'] = function B2902(name__2903, value__2904, type__2905, env__2906, k__2907) {
+                var B2908 = $SL.call(arguments, 5);
                 {
-                    var B3065 = B2959['%keys'](B3064, { 'module': '' });
+                    var B2909 = B2803['%keys'](B2908, { 'module': '' });
                     {
-                        var module__3066 = B3065['module'];
+                        var module__2910 = B2909['module'];
                         {
-                            var B3067 = B2959['get'](env__3062, 'lifted', type__3061, module__3066, name__3059);
-                            if (($T)(B3067)) {
-                                var t__3068 = B3067;
-                                return(k__3063(t__3068));
+                            var B2911 = B2803['get'](env__2906, 'lifted', type__2905, module__2910, name__2903);
+                            if (($T)(B2911)) {
+                                var t__2912 = B2911;
+                                return(k__2907(t__2912));
                             } else {
-                                var t__3069 = B2959['get-setter'](env__3062, 'lifted', type__3061, module__3066, name__3059, B2959['generate-symbol']());
+                                var t__2913 = B2803['get-setter'](env__2906, 'lifted', type__2905, module__2910, name__2903, B2803['generate-symbol']());
                                 return([
-                                    B3056,
+                                    B2900,
                                     [
-                                        B3057,
-                                        t__3069,
-                                        value__3060
+                                        B2901,
+                                        t__2913,
+                                        value__2904
                                     ],
-                                    k__3063(t__3069)
+                                    k__2907(t__2913)
                                 ]);
                             }
                         }
                     }
                 }
             };
-            B2959['%annotate-function'](lift_value, 'lift-value', false);
+            B2803['%annotate-function'](($module)['lift-value'], 'lift-value', false);
         }
     }
 }
 {
-    var lift_symbolT = function B3071(expT__3072, env__3073, k__3074) {
-        if (($T)(B2959['empty?'](expT__3072)))
-            return(k__3074([]));
+    ($module)['lift-symbol*'] = function B2915(expT__2916, env__2917, k__2918) {
+        if (($T)(B2803['empty?'](expT__2916)))
+            return(k__2918([]));
         else
-            return(lift_symbolTT(expT__3072, env__3073, k__3074));
+            return(($module)['lift-symbol**'](expT__2916, env__2917, k__2918));
     };
-    B2959['%annotate-function'](lift_symbolT, 'lift-symbol*', false);
+    B2803['%annotate-function'](($module)['lift-symbol*'], 'lift-symbol*', false);
 }
 {
-    var lift_symbolTT = function B3078(exp__3079, env__3080, k__3081) {
-        return(lift_symbol(B2959['first'](exp__3079), env__3080, function B3082(t__3083) {
-            return(lift_symbolT(B2959['rest'](exp__3079), env__3080, function B3084(tT__3085) {
-                return(k__3081(B2959['cons'](t__3083, tT__3085)));
+    ($module)['lift-symbol**'] = function B2922(exp__2923, env__2924, k__2925) {
+        return(($module)['lift-symbol'](B2803['first'](exp__2923), env__2924, function B2926(t__2927) {
+            return(($module)['lift-symbol*'](B2803['rest'](exp__2923), env__2924, function B2928(tT__2929) {
+                return(k__2925(B2803['cons'](t__2927, tT__2929)));
             }));
         }));
     };
-    B2959['%annotate-function'](lift_symbolTT, 'lift-symbol**', false);
+    B2803['%annotate-function'](($module)['lift-symbol**'], 'lift-symbol**', false);
+}
+{
+    ($module)['%eval'] = function B2931() {
+        return(eval((arguments[0])));
+    };
+    {
+        B2803['%annotate-function'](($module)['%eval'], '%eval', false);
+        ($module)['%export']('%eval', ($module)['%eval']);
+    }
 }

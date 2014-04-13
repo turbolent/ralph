@@ -1,1 +1,0 @@
-("ralph/pretty2" exports: ("pretty-print" "*printers*") inline: () dependencies: ("ralph/format" "ralph/file-stream" "ralph/stream" "ralph/core"))

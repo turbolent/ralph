@@ -1,295 +1,295 @@
 {
     var $module = Object.create(null);
-    var Mexport = function B3292(name__3293, value__3294) {
-        var B3295 = (exports);
-        return(B3295[name__3293] = value__3294);
+    ($module)['%export'] = function B3142(name__3143, value__3144) {
+        var B3145 = (exports);
+        return(B3145[name__3143] = value__3144);
     };
 }
-var B3296 = require('ralph/core');
-var B3297 = require('ralph/compiler/utilities');
+var B3146 = require('ralph/core');
+var B3147 = require('ralph/compiler/utilities');
 {
-    var atomicQ = function B3299(expression__3300) {
-        return(B3296['any?'](B3296['curry'](B3296['instance?'], expression__3300), [
-            B3296['<number>'],
-            B3296['<boolean>'],
-            B3296['<string>'],
-            B3296['<symbol>'],
-            B3296['<keyword>']
+    ($module)['atomic?'] = function B3149(expression__3150) {
+        return(B3146['any?'](B3146['curry'](B3146['instance?'], expression__3150), [
+            B3146['<number>'],
+            B3146['<boolean>'],
+            B3146['<string>'],
+            B3146['<symbol>'],
+            B3146['<keyword>']
         ]));
     };
-    B3296['%annotate-function'](atomicQ, 'atomic?', false);
+    B3146['%annotate-function'](($module)['atomic?'], 'atomic?', false);
 }
 {
-    var generates_statementsQ = function B3307(exp__3308) {
-        var B3314 = false;
-        if (($T)(B3296['instance?'](exp__3308, B3296['<array>'])))
-            B3314 = B3296['not'](B3296['empty?'](exp__3308));
+    ($module)['generates-statements?'] = function B3157(exp__3158) {
+        var B3164 = false;
+        if (($T)(B3146['instance?'](exp__3158, B3146['<array>'])))
+            B3164 = B3146['not'](B3146['empty?'](exp__3158));
         else
-            B3314 = false;
-        if (($T)(B3314)) {
-            var B3309 = B3296['symbol-name'](B3296['first'](exp__3308));
+            B3164 = false;
+        if (($T)(B3164)) {
+            var B3159 = B3146['symbol-name'](B3146['first'](exp__3158));
             {
-                var B3310 = B3296['=='](B3309, '%begin');
+                var B3160 = B3146['=='](B3159, '%begin');
                 {
-                    var B3315 = false;
-                    if (($T)(B3310))
-                        B3315 = B3310;
+                    var B3165 = false;
+                    if (($T)(B3160))
+                        B3165 = B3160;
                     else {
-                        var B3311 = B3296['=='](B3309, '%if');
-                        if (($T)(B3311))
-                            B3315 = B3311;
+                        var B3161 = B3146['=='](B3159, '%if');
+                        if (($T)(B3161))
+                            B3165 = B3161;
                         else {
-                            var B3312 = B3296['=='](B3309, '%while');
-                            if (($T)(B3312))
-                                B3315 = B3312;
+                            var B3162 = B3146['=='](B3159, '%while');
+                            if (($T)(B3162))
+                                B3165 = B3162;
                             else {
-                                var B3313 = B3296['=='](B3309, '%bind');
-                                if (($T)(B3313))
-                                    B3315 = B3313;
+                                var B3163 = B3146['=='](B3159, '%bind');
+                                if (($T)(B3163))
+                                    B3165 = B3163;
                                 else
-                                    B3315 = B3296['=='](B3309, '%try');
+                                    B3165 = B3146['=='](B3159, '%try');
                             }
                         }
                     }
-                    if (($T)(B3315))
+                    if (($T)(B3165))
                         return(true);
-                    else if (($T)(B3296['=='](B3309, '%set')))
-                        return(generates_statementsQ(B3296['last'](exp__3308)));
-                    else if (($T)(B3296['=='](B3309, '%method')))
+                    else if (($T)(B3146['=='](B3159, '%set')))
+                        return(($module)['generates-statements?'](B3146['last'](exp__3158)));
+                    else if (($T)(B3146['=='](B3159, '%method')))
                         return(false);
                     else
-                        return(B3296['any?'](generates_statementsQ, exp__3308));
+                        return(B3146['any?'](($module)['generates-statements?'], exp__3158));
                 }
             }
         } else
             return(false);
     };
-    B3296['%annotate-function'](generates_statementsQ, 'generates-statements?', false);
+    B3146['%annotate-function'](($module)['generates-statements?'], 'generates-statements?', false);
 }
 {
     {
-        var normalize_term = function B3317(expression__3318, env__3319) {
-            return(normalize(expression__3318, env__3319, B3296['identity']));
+        ($module)['normalize-term'] = function B3167(expression__3168, env__3169) {
+            return(($module)['normalize'](expression__3168, env__3169, B3146['identity']));
         };
-        Mexport('normalize-term', normalize_term);
+        ($module)['%export']('normalize-term', ($module)['normalize-term']);
     }
-    B3296['%annotate-function'](normalize_term, 'normalize-term', false);
+    B3146['%annotate-function'](($module)['normalize-term'], 'normalize-term', false);
 }
 {
-    var B3331 = $S('%bind', 'ralph/core');
+    var B3181 = $S('%bind', 'ralph/core');
     {
-        var B3332 = $S('%method', 'ralph/core');
+        var B3182 = $S('%method', 'ralph/core');
         {
-            var B3333 = $S('%set', 'ralph/core');
+            var B3183 = $S('%set', 'ralph/core');
             {
-                var B3334 = $S('%get-property', 'ralph/core');
+                var B3184 = $S('%get-property', 'ralph/core');
                 {
-                    var B3335 = $S('%if', 'ralph/core');
+                    var B3185 = $S('%if', 'ralph/core');
                     {
-                        var B3336 = $S('%begin', 'ralph/core');
+                        var B3186 = $S('%begin', 'ralph/core');
                         {
-                            var B3337 = $S('%while', 'ralph/core');
+                            var B3187 = $S('%while', 'ralph/core');
                             {
-                                var B3338 = $S('%native', 'ralph/core');
+                                var B3188 = $S('%native', 'ralph/core');
                                 {
-                                    var B3339 = $S('%try', 'ralph/core');
+                                    var B3189 = $S('%try', 'ralph/core');
                                     {
-                                        var normalize = function B3340(exp__3341, env__3342, k__3343) {
-                                            var B3389 = false;
-                                            if (($T)(B3296['instance?'](exp__3341, B3296['<array>'])))
-                                                B3389 = B3296['not'](B3296['empty?'](exp__3341));
+                                        ($module)['normalize'] = function B3190(exp__3191, env__3192, k__3193) {
+                                            var B3239 = false;
+                                            if (($T)(B3146['instance?'](exp__3191, B3146['<array>'])))
+                                                B3239 = B3146['not'](B3146['empty?'](exp__3191));
                                             else
-                                                B3389 = false;
-                                            if (($T)(B3389)) {
-                                                var B3344 = B3296['symbol-name'](B3296['first'](exp__3341));
-                                                if (($T)(B3296['=='](B3344, '%quote')))
-                                                    return(k__3343(exp__3341));
-                                                else if (($T)(B3296['=='](B3344, '%bind'))) {
-                                                    var ____3345 = exp__3341[0];
+                                                B3239 = false;
+                                            if (($T)(B3239)) {
+                                                var B3194 = B3146['symbol-name'](B3146['first'](exp__3191));
+                                                if (($T)(B3146['=='](B3194, '%quote')))
+                                                    return(k__3193(exp__3191));
+                                                else if (($T)(B3146['=='](B3194, '%bind'))) {
+                                                    var ____3195 = exp__3191[0];
                                                     {
-                                                        var B3346 = exp__3341[1];
+                                                        var B3196 = exp__3191[1];
                                                         {
-                                                            var identifier__3347 = B3346[0];
+                                                            var identifier__3197 = B3196[0];
                                                             {
-                                                                var value__3348 = B3346[1];
+                                                                var value__3198 = B3196[1];
                                                                 {
-                                                                    var form__3349 = exp__3341[2];
-                                                                    return(normalize(value__3348, env__3342, function B3350(valueT__3351) {
+                                                                    var form__3199 = exp__3191[2];
+                                                                    return(($module)['normalize'](value__3198, env__3192, function B3200(valueT__3201) {
                                                                         return([
-                                                                            B3331,
+                                                                            B3181,
                                                                             [
-                                                                                identifier__3347,
-                                                                                valueT__3351
+                                                                                identifier__3197,
+                                                                                valueT__3201
                                                                             ],
-                                                                            normalize(form__3349, env__3342, k__3343)
+                                                                            ($module)['normalize'](form__3199, env__3192, k__3193)
                                                                         ]);
                                                                     }));
                                                                 }
                                                             }
                                                         }
                                                     }
-                                                } else if (($T)(B3296['=='](B3344, '%method'))) {
-                                                    var ____3352 = exp__3341[0];
+                                                } else if (($T)(B3146['=='](B3194, '%method'))) {
+                                                    var ____3202 = exp__3191[0];
                                                     {
-                                                        var name__3353 = exp__3341[1];
+                                                        var name__3203 = exp__3191[1];
                                                         {
-                                                            var parameters__3354 = exp__3341[2];
+                                                            var parameters__3204 = exp__3191[2];
                                                             {
-                                                                var form__3355 = exp__3341[3];
-                                                                return(k__3343([
-                                                                    B3332,
-                                                                    name__3353,
-                                                                    parameters__3354,
-                                                                    normalize_term(form__3355, env__3342)
+                                                                var form__3205 = exp__3191[3];
+                                                                return(k__3193([
+                                                                    B3182,
+                                                                    name__3203,
+                                                                    parameters__3204,
+                                                                    ($module)['normalize-term'](form__3205, env__3192)
                                                                 ]));
                                                             }
                                                         }
                                                     }
-                                                } else if (($T)(B3296['=='](B3344, '%set'))) {
-                                                    var ____3356 = exp__3341[0];
+                                                } else if (($T)(B3146['=='](B3194, '%set'))) {
+                                                    var ____3206 = exp__3191[0];
                                                     {
-                                                        var place__3357 = exp__3341[1];
+                                                        var place__3207 = exp__3191[1];
                                                         {
-                                                            var value__3358 = exp__3341[2];
-                                                            if (($T)(B3297['op?']('%get-property', place__3357)))
-                                                                return(normalizeTT(B3296['rest'](place__3357), env__3342, function B3359(argumentsT__3360) {
-                                                                    return(normalize_value(value__3358, env__3342, function B3361(valueT__3362) {
-                                                                        return(k__3343([
-                                                                            B3333,
-                                                                            B3296['%concat']([B3334], argumentsT__3360),
-                                                                            valueT__3362
+                                                            var value__3208 = exp__3191[2];
+                                                            if (($T)(B3147['op?']('%get-property', place__3207)))
+                                                                return(($module)['normalize**'](B3146['rest'](place__3207), env__3192, function B3209(argumentsT__3210) {
+                                                                    return(($module)['normalize-value'](value__3208, env__3192, function B3211(valueT__3212) {
+                                                                        return(k__3193([
+                                                                            B3183,
+                                                                            B3146['%concat']([B3184], argumentsT__3210),
+                                                                            valueT__3212
                                                                         ]));
                                                                     }));
                                                                 }));
                                                             else
-                                                                return(normalize_value(value__3358, env__3342, function B3363(valueT__3364) {
-                                                                    return(k__3343([
-                                                                        B3333,
-                                                                        place__3357,
-                                                                        valueT__3364
+                                                                return(($module)['normalize-value'](value__3208, env__3192, function B3213(valueT__3214) {
+                                                                    return(k__3193([
+                                                                        B3183,
+                                                                        place__3207,
+                                                                        valueT__3214
                                                                     ]));
                                                                 }));
                                                         }
                                                     }
                                                 } else {
-                                                    var B3365 = B3296['=='](B3344, '%define');
+                                                    var B3215 = B3146['=='](B3194, '%define');
                                                     {
-                                                        var B3390 = false;
-                                                        if (($T)(B3365))
-                                                            B3390 = B3365;
+                                                        var B3240 = false;
+                                                        if (($T)(B3215))
+                                                            B3240 = B3215;
                                                         else
-                                                            B3390 = B3296['=='](B3344, '%var');
-                                                        if (($T)(B3390)) {
-                                                            var op__3366 = exp__3341[0];
+                                                            B3240 = B3146['=='](B3194, '%var');
+                                                        if (($T)(B3240)) {
+                                                            var op__3216 = exp__3191[0];
                                                             {
-                                                                var identifier__3367 = exp__3341[1];
+                                                                var identifier__3217 = exp__3191[1];
                                                                 {
-                                                                    var value__3368 = exp__3341[2];
-                                                                    return(normalize_value(value__3368, env__3342, function B3369(valueT__3370) {
-                                                                        return(k__3343([
-                                                                            op__3366,
-                                                                            identifier__3367,
-                                                                            valueT__3370
+                                                                    var value__3218 = exp__3191[2];
+                                                                    return(($module)['normalize-value'](value__3218, env__3192, function B3219(valueT__3220) {
+                                                                        return(k__3193([
+                                                                            op__3216,
+                                                                            identifier__3217,
+                                                                            valueT__3220
                                                                         ]));
                                                                     }));
                                                                 }
                                                             }
-                                                        } else if (($T)(B3296['=='](B3344, '%if'))) {
-                                                            var ____3371 = exp__3341[0];
+                                                        } else if (($T)(B3146['=='](B3194, '%if'))) {
+                                                            var ____3221 = exp__3191[0];
                                                             {
-                                                                var test__3372 = exp__3341[1];
+                                                                var test__3222 = exp__3191[1];
                                                                 {
-                                                                    var consequent__3373 = exp__3341[2];
+                                                                    var consequent__3223 = exp__3191[2];
                                                                     {
-                                                                        var alternate__3374 = exp__3341[3];
-                                                                        return(normalize_value(test__3372, env__3342, function B3375(testT__3376) {
-                                                                            return(k__3343([
-                                                                                B3335,
-                                                                                testT__3376,
-                                                                                normalize_term(consequent__3373, env__3342),
-                                                                                normalize_term(alternate__3374, env__3342)
+                                                                        var alternate__3224 = exp__3191[3];
+                                                                        return(($module)['normalize-value'](test__3222, env__3192, function B3225(testT__3226) {
+                                                                            return(k__3193([
+                                                                                B3185,
+                                                                                testT__3226,
+                                                                                ($module)['normalize-term'](consequent__3223, env__3192),
+                                                                                ($module)['normalize-term'](alternate__3224, env__3192)
                                                                             ]));
                                                                         }));
                                                                     }
                                                                 }
                                                             }
-                                                        } else if (($T)(B3296['=='](B3344, '%begin'))) {
-                                                            var ____3377 = exp__3341[0];
+                                                        } else if (($T)(B3146['=='](B3194, '%begin'))) {
+                                                            var ____3227 = exp__3191[0];
                                                             {
-                                                                var form__3378 = exp__3341[1];
+                                                                var form__3228 = exp__3191[1];
                                                                 {
-                                                                    var forms__3379 = $SL.call(exp__3341, 2);
-                                                                    if (($T)(B3296['empty?'](forms__3379)))
-                                                                        return(normalize(form__3378, env__3342, k__3343));
+                                                                    var forms__3229 = $SL.call(exp__3191, 2);
+                                                                    if (($T)(B3146['empty?'](forms__3229)))
+                                                                        return(($module)['normalize'](form__3228, env__3192, k__3193));
                                                                     else
-                                                                        return(normalize(form__3378, env__3342, function B3380(formT__3381) {
+                                                                        return(($module)['normalize'](form__3228, env__3192, function B3230(formT__3231) {
                                                                             return([
-                                                                                B3336,
-                                                                                formT__3381,
-                                                                                normalize(B3296['%concat']([B3336], forms__3379), env__3342, k__3343)
+                                                                                B3186,
+                                                                                formT__3231,
+                                                                                ($module)['normalize'](B3146['%concat']([B3186], forms__3229), env__3192, k__3193)
                                                                             ]);
                                                                         }));
                                                                 }
                                                             }
-                                                        } else if (($T)(B3296['=='](B3344, '%while'))) {
-                                                            var ____3382 = exp__3341[0];
+                                                        } else if (($T)(B3146['=='](B3194, '%while'))) {
+                                                            var ____3232 = exp__3191[0];
                                                             {
-                                                                var test__3383 = exp__3341[1];
+                                                                var test__3233 = exp__3191[1];
                                                                 {
-                                                                    var form__3384 = exp__3341[2];
+                                                                    var form__3234 = exp__3191[2];
                                                                     {
-                                                                        var B3391 = false;
-                                                                        if (($T)(generates_statementsQ(test__3383)))
-                                                                            B3391 = [
-                                                                                B3337,
+                                                                        var B3241 = false;
+                                                                        if (($T)(($module)['generates-statements?'](test__3233)))
+                                                                            B3241 = [
+                                                                                B3187,
                                                                                 true,
-                                                                                normalize_term([
-                                                                                    B3335,
-                                                                                    test__3383,
-                                                                                    normalize_term(form__3384),
+                                                                                ($module)['normalize-term']([
+                                                                                    B3185,
+                                                                                    test__3233,
+                                                                                    ($module)['normalize-term'](form__3234),
                                                                                     [
-                                                                                        B3338,
+                                                                                        B3188,
                                                                                         'break'
                                                                                     ]
-                                                                                ], env__3342)
+                                                                                ], env__3192)
                                                                             ];
                                                                         else
-                                                                            B3391 = [
-                                                                                B3337,
-                                                                                normalize_term(test__3383, env__3342),
-                                                                                normalize_term(form__3384, env__3342)
+                                                                            B3241 = [
+                                                                                B3187,
+                                                                                ($module)['normalize-term'](test__3233, env__3192),
+                                                                                ($module)['normalize-term'](form__3234, env__3192)
                                                                             ];
-                                                                        return(k__3343(B3391));
+                                                                        return(k__3193(B3241));
                                                                     }
                                                                 }
                                                             }
-                                                        } else if (($T)(B3296['=='](B3344, '%try'))) {
-                                                            var ____3385 = exp__3341[0];
+                                                        } else if (($T)(B3146['=='](B3194, '%try'))) {
+                                                            var ____3235 = exp__3191[0];
                                                             {
-                                                                var protected_form__3386 = exp__3341[1];
+                                                                var protected_form__3236 = exp__3191[1];
                                                                 {
-                                                                    var identifier__3387 = exp__3341[2];
+                                                                    var identifier__3237 = exp__3191[2];
                                                                     {
-                                                                        var handling_form__3388 = exp__3341[3];
-                                                                        return(k__3343([
-                                                                            B3339,
-                                                                            normalize_term(protected_form__3386, env__3342),
-                                                                            identifier__3387,
-                                                                            normalize_term(handling_form__3388, env__3342)
+                                                                        var handling_form__3238 = exp__3191[3];
+                                                                        return(k__3193([
+                                                                            B3189,
+                                                                            ($module)['normalize-term'](protected_form__3236, env__3192),
+                                                                            identifier__3237,
+                                                                            ($module)['normalize-term'](handling_form__3238, env__3192)
                                                                         ]));
                                                                     }
                                                                 }
                                                             }
-                                                        } else if (($T)(generates_statementsQ(exp__3341)))
-                                                            return(normalize_all(exp__3341, env__3342, k__3343));
+                                                        } else if (($T)(($module)['generates-statements?'](exp__3191)))
+                                                            return(($module)['normalize-all'](exp__3191, env__3192, k__3193));
                                                         else
-                                                            return(k__3343(B3296['map'](B3296['rcurry'](normalize_term, env__3342), exp__3341)));
+                                                            return(k__3193(B3146['map'](B3146['rcurry'](($module)['normalize-term'], env__3192), exp__3191)));
                                                     }
                                                 }
                                             } else
-                                                return(k__3343(exp__3341));
+                                                return(k__3193(exp__3191));
                                         };
-                                        B3296['%annotate-function'](normalize, 'normalize', false);
+                                        B3146['%annotate-function'](($module)['normalize'], 'normalize', false);
                                     }
                                 }
                             }
@@ -301,56 +301,65 @@ var B3297 = require('ralph/compiler/utilities');
     }
 }
 {
-    var normalize_value = function B3393(exp__3394, env__3395, k__3396) {
-        if (($T)(generates_statementsQ(exp__3394)))
-            return(normalizeT(exp__3394, env__3395, k__3396));
+    ($module)['normalize-value'] = function B3243(exp__3244, env__3245, k__3246) {
+        if (($T)(($module)['generates-statements?'](exp__3244)))
+            return(($module)['normalize*'](exp__3244, env__3245, k__3246));
         else {
-            var B3397 = false;
-            if (($T)(B3296['instance?'](exp__3394, B3296['<array>'])))
-                B3397 = B3296['map'](B3296['rcurry'](normalize_term, env__3395), exp__3394);
+            var B3247 = false;
+            if (($T)(B3146['instance?'](exp__3244, B3146['<array>'])))
+                B3247 = B3146['map'](B3146['rcurry'](($module)['normalize-term'], env__3245), exp__3244);
             else
-                B3397 = exp__3394;
-            return(k__3396(B3397));
+                B3247 = exp__3244;
+            return(k__3246(B3247));
         }
     };
-    B3296['%annotate-function'](normalize_value, 'normalize-value', false);
+    B3146['%annotate-function'](($module)['normalize-value'], 'normalize-value', false);
 }
 {
-    var normalizeT = function B3400(exp__3401, env__3402, k__3403) {
-        return(normalize(exp__3401, env__3402, function B3404(expT__3405) {
-            if (($T)(atomicQ(expT__3405)))
-                return(k__3403(expT__3405));
+    ($module)['normalize*'] = function B3250(exp__3251, env__3252, k__3253) {
+        return(($module)['normalize'](exp__3251, env__3252, function B3254(expT__3255) {
+            if (($T)(($module)['atomic?'](expT__3255)))
+                return(k__3253(expT__3255));
             else {
-                var t__3406 = B3296['generate-symbol']();
+                var t__3256 = B3146['generate-symbol']();
                 return([
-                    B3331,
+                    B3181,
                     [
-                        t__3406,
-                        expT__3405
+                        t__3256,
+                        expT__3255
                     ],
-                    k__3403(t__3406)
+                    k__3253(t__3256)
                 ]);
             }
         }));
     };
-    B3296['%annotate-function'](normalizeT, 'normalize*', false);
+    B3146['%annotate-function'](($module)['normalize*'], 'normalize*', false);
 }
 {
-    var normalizeTT = function B3408(expT__3409, env__3410, k__3411) {
-        if (($T)(B3296['empty?'](expT__3409)))
-            return(k__3411([]));
+    ($module)['normalize**'] = function B3258(expT__3259, env__3260, k__3261) {
+        if (($T)(B3146['empty?'](expT__3259)))
+            return(k__3261([]));
         else
-            return(normalize_all(expT__3409, env__3410, k__3411));
+            return(($module)['normalize-all'](expT__3259, env__3260, k__3261));
     };
-    B3296['%annotate-function'](normalizeTT, 'normalize**', false);
+    B3146['%annotate-function'](($module)['normalize**'], 'normalize**', false);
 }
 {
-    var normalize_all = function B3415(exp__3416, env__3417, k__3418) {
-        return(normalizeT(B3296['first'](exp__3416), env__3417, function B3419(t__3420) {
-            return(normalizeTT(B3296['rest'](exp__3416), env__3417, function B3421(tT__3422) {
-                return(k__3418(B3296['cons'](t__3420, tT__3422)));
+    ($module)['normalize-all'] = function B3265(exp__3266, env__3267, k__3268) {
+        return(($module)['normalize*'](B3146['first'](exp__3266), env__3267, function B3269(t__3270) {
+            return(($module)['normalize**'](B3146['rest'](exp__3266), env__3267, function B3271(tT__3272) {
+                return(k__3268(B3146['cons'](t__3270, tT__3272)));
             }));
         }));
     };
-    B3296['%annotate-function'](normalize_all, 'normalize-all', false);
+    B3146['%annotate-function'](($module)['normalize-all'], 'normalize-all', false);
+}
+{
+    ($module)['%eval'] = function B3274() {
+        return(eval((arguments[0])));
+    };
+    {
+        B3146['%annotate-function'](($module)['%eval'], '%eval', false);
+        ($module)['%export']('%eval', ($module)['%eval']);
+    }
 }

@@ -1,82 +1,82 @@
 {
     var $module = Object.create(null);
-    var Mexport = function B2616(name__2617, value__2618) {
-        var B2619 = (exports);
-        return(B2619[name__2617] = value__2618);
+    ($module)['%export'] = function B2456(name__2457, value__2458) {
+        var B2459 = (exports);
+        return(B2459[name__2457] = value__2458);
     };
 }
-var B2620 = require('ralph/core');
+var B2460 = require('ralph/core');
 {
-    var B2621 = require('ralph/format');
+    var B2461 = require('ralph/format');
     {
-        var B2622 = require('ralph/compiler/utilities');
-        var B2623 = require('ralph/compiler/environment');
+        var B2462 = require('ralph/compiler/utilities');
+        var B2463 = require('ralph/compiler/environment');
     }
 }
 {
     {
-        var make_quote_transformer = function B2628(symbol__2629) {
-            var B2630 = $SL.call(arguments, 1);
+        ($module)['make-quote-transformer'] = function B2468(symbol__2469) {
+            var B2470 = $SL.call(arguments, 1);
             {
-                var B2631 = B2620['%keys'](B2630, { 'check?': false });
+                var B2471 = B2460['%keys'](B2470, { 'check?': false });
                 {
-                    var checkQ__2632 = B2631['check?'];
-                    return(function B2633(env__2634, value__2635) {
-                        var superfluous__2636 = $SL.call(arguments, 2);
+                    var checkQ__2472 = B2471['check?'];
+                    return(function B2473(env__2474, value__2475) {
+                        var superfluous__2476 = $SL.call(arguments, 2);
                         {
-                            if (($T)(checkQ__2632))
-                                B2622['check-type'](value__2635, B2620['<symbol>'], B2621['format-to-string']('Non-symbol value in %= %%=', symbol__2629));
+                            if (($T)(checkQ__2472))
+                                B2462['check-type'](value__2475, B2460['<symbol>'], B2461['format-to-string']('Non-symbol value in %= %%=', symbol__2469));
                             return([
-                                symbol__2629,
-                                value__2635
+                                symbol__2469,
+                                value__2475
                             ]);
                         }
                     });
                 }
             }
         };
-        Mexport('make-quote-transformer', make_quote_transformer);
+        ($module)['%export']('make-quote-transformer', ($module)['make-quote-transformer']);
     }
-    B2620['%annotate-function'](make_quote_transformer, 'make-quote-transformer', false);
+    B2460['%annotate-function'](($module)['make-quote-transformer'], 'make-quote-transformer', false);
 }
 {
-    var B2641 = $K('end');
+    var B2481 = $K('end');
     {
         {
-            var make_rest_transformer = function B2642(transformer__2643) {
-                var B2644 = $SL.call(arguments, 1);
+            ($module)['make-rest-transformer'] = function B2482(transformer__2483) {
+                var B2484 = $SL.call(arguments, 1);
                 {
-                    var B2645 = B2620['%keys'](B2644, {
+                    var B2485 = B2460['%keys'](B2484, {
                             'count': false,
                             'symbol': false,
                             'k': false
                         });
                     {
-                        var count__2646 = B2645['count'];
+                        var count__2486 = B2485['count'];
                         {
-                            var symbol__2647 = B2645['symbol'];
+                            var symbol__2487 = B2485['symbol'];
                             {
-                                var k__2648 = B2645['k'];
-                                return(function B2649(env__2650) {
-                                    var forms__2651 = $SL.call(arguments, 1);
+                                var k__2488 = B2485['k'];
+                                return(function B2489(env__2490) {
+                                    var forms__2491 = $SL.call(arguments, 1);
                                     {
-                                        var B2653 = B2620['map'];
+                                        var B2493 = B2460['map'];
                                         {
-                                            var B2654 = B2620['rcurry'](transformer__2643, env__2650);
+                                            var B2494 = B2460['rcurry'](transformer__2483, env__2490);
                                             {
-                                                var B2655 = false;
-                                                if (($T)(count__2646))
-                                                    B2655 = B2620['copy-sequence'](forms__2651, B2641, count__2646);
+                                                var B2495 = false;
+                                                if (($T)(count__2486))
+                                                    B2495 = B2460['copy-sequence'](forms__2491, B2481, count__2486);
                                                 else
-                                                    B2655 = forms__2651;
+                                                    B2495 = forms__2491;
                                                 {
-                                                    var formsT__2652 = B2653(B2654, B2655);
-                                                    if (($T)(k__2648))
-                                                        return(B2620['apply'](k__2648, env__2650, formsT__2652));
-                                                    else if (($T)(symbol__2647))
-                                                        return(B2620['%concat']([symbol__2647], formsT__2652));
+                                                    var formsT__2492 = B2493(B2494, B2495);
+                                                    if (($T)(k__2488))
+                                                        return(B2460['apply'](k__2488, env__2490, formsT__2492));
+                                                    else if (($T)(symbol__2487))
+                                                        return(B2460['%concat']([symbol__2487], formsT__2492));
                                                     else
-                                                        return(B2620['signal']('rest transformer without symbol or continuation'));
+                                                        return(B2460['signal']('rest transformer without symbol or continuation'));
                                                 }
                                             }
                                         }
@@ -87,33 +87,33 @@ var B2620 = require('ralph/core');
                     }
                 }
             };
-            Mexport('make-rest-transformer', make_rest_transformer);
+            ($module)['%export']('make-rest-transformer', ($module)['make-rest-transformer']);
         }
-        B2620['%annotate-function'](make_rest_transformer, 'make-rest-transformer', false);
+        B2460['%annotate-function'](($module)['make-rest-transformer'], 'make-rest-transformer', false);
     }
 }
 {
     {
-        var make_bind_transformer = function B2658(transformer__2659, k__2660) {
-            return(function B2661(env__2662, binding__2663, form__2664) {
-                var superflous__2665 = $SL.call(arguments, 3);
+        ($module)['make-bind-transformer'] = function B2498(transformer__2499, k__2500) {
+            return(function B2501(env__2502, binding__2503, form__2504) {
+                var superflous__2505 = $SL.call(arguments, 3);
                 {
-                    B2622['check-type'](binding__2663, B2620['<array>'], 'Non-array binding in %%bind: %=');
+                    B2462['check-type'](binding__2503, B2460['<array>'], 'Non-array binding in %%bind: %=');
                     {
-                        var identifier__2666 = binding__2663[0];
+                        var identifier__2506 = binding__2503[0];
                         {
-                            var value__2667 = binding__2663[1];
+                            var value__2507 = binding__2503[1];
                             {
-                                B2622['check-identifier'](identifier__2666, env__2662, 'External identifier in %%bind: %=');
+                                B2462['check-identifier'](identifier__2506, env__2502, 'External identifier in %%bind: %=');
                                 {
-                                    var valueT__2668 = transformer__2659(value__2667, env__2662);
+                                    var valueT__2508 = transformer__2499(value__2507, env__2502);
                                     {
-                                        B2623['bind-locally!'](identifier__2666, env__2662);
+                                        B2463['bind-locally!'](identifier__2506, env__2502);
                                         {
-                                            var formT__2669 = transformer__2659(form__2664, env__2662);
+                                            var formT__2509 = transformer__2499(form__2504, env__2502);
                                             {
-                                                B2623['unbind-locally!'](identifier__2666, env__2662);
-                                                return(k__2660(env__2662, identifier__2666, valueT__2668, formT__2669));
+                                                B2463['unbind-locally!'](identifier__2506, env__2502);
+                                                return(k__2500(env__2502, identifier__2506, valueT__2508, formT__2509));
                                             }
                                         }
                                     }
@@ -124,32 +124,32 @@ var B2620 = require('ralph/core');
                 }
             });
         };
-        Mexport('make-bind-transformer', make_bind_transformer);
+        ($module)['%export']('make-bind-transformer', ($module)['make-bind-transformer']);
     }
-    B2620['%annotate-function'](make_bind_transformer, 'make-bind-transformer', false);
+    B2460['%annotate-function'](($module)['make-bind-transformer'], 'make-bind-transformer', false);
 }
 {
     {
-        var make_method_transformer = function B2673(transformer__2674, k__2675) {
-            return(function B2676(env__2677, name__2678, parameters__2679, form__2680) {
-                var superfluous__2681 = $SL.call(arguments, 4);
+        ($module)['make-method-transformer'] = function B2513(transformer__2514, k__2515) {
+            return(function B2516(env__2517, name__2518, parameters__2519, form__2520) {
+                var superfluous__2521 = $SL.call(arguments, 4);
                 {
-                    B2622['check-type'](name__2678, B2620['<symbol>'], 'Non-symbol name in %%method: %=');
+                    B2462['check-type'](name__2518, B2460['<symbol>'], 'Non-symbol name in %%method: %=');
                     {
-                        var identifiers__2682 = B2620['cons'](name__2678, parameters__2679);
+                        var identifiers__2522 = B2460['cons'](name__2518, parameters__2519);
                         {
-                            B2620['do'](function B2683(parameter__2684) {
-                                return(B2622['check-type'](parameter__2684, B2620['<symbol>'], 'Non-symbol parameter in %%method: %='));
-                            }, parameters__2679);
+                            B2460['do'](function B2523(parameter__2524) {
+                                return(B2462['check-type'](parameter__2524, B2460['<symbol>'], 'Non-symbol parameter in %%method: %='));
+                            }, parameters__2519);
                             {
-                                B2620['do'](B2620['rcurry'](B2622['check-identifier'], env__2677, 'External identifier in parameter list of %%method: %='), identifiers__2682);
+                                B2460['do'](B2460['rcurry'](B2462['check-identifier'], env__2517, 'External identifier in parameter list of %%method: %='), identifiers__2522);
                                 {
-                                    B2620['do'](B2620['rcurry'](B2623['bind-locally!'], env__2677), identifiers__2682);
+                                    B2460['do'](B2460['rcurry'](B2463['bind-locally!'], env__2517), identifiers__2522);
                                     {
-                                        var formT__2685 = transformer__2674(form__2680, env__2677);
+                                        var formT__2525 = transformer__2514(form__2520, env__2517);
                                         {
-                                            B2620['do'](B2620['rcurry'](B2623['unbind-locally!'], env__2677), identifiers__2682);
-                                            return(k__2675(env__2677, name__2678, parameters__2679, formT__2685));
+                                            B2460['do'](B2460['rcurry'](B2463['unbind-locally!'], env__2517), identifiers__2522);
+                                            return(k__2515(env__2517, name__2518, parameters__2519, formT__2525));
                                         }
                                     }
                                 }
@@ -159,79 +159,87 @@ var B2620 = require('ralph/core');
                 }
             });
         };
-        Mexport('make-method-transformer', make_method_transformer);
+        ($module)['%export']('make-method-transformer', ($module)['make-method-transformer']);
     }
-    B2620['%annotate-function'](make_method_transformer, 'make-method-transformer', false);
+    B2460['%annotate-function'](($module)['make-method-transformer'], 'make-method-transformer', false);
 }
 {
     {
-        var make_set_transformer = function B2688(transformer__2689, k__2690) {
-            return(function B2691(env__2692, place__2693, value__2694) {
-                var superflous__2695 = $SL.call(arguments, 3);
-                if (($T)(B2620['instance?'](place__2693, B2620['<symbol>'])))
-                    return(k__2690(env__2692, place__2693, transformer__2689(value__2694, env__2692)));
-                else if (($T)(B2622['op?']('%get-property', place__2693)))
-                    return(k__2690(env__2692, transformer__2689(place__2693, env__2692), transformer__2689(value__2694, env__2692)));
-                else
-                    return(B2620['signal'](B2621['format-to-string']('Non-symbol identifier or %%get-property in %%set: %=', place__2693)));
+        ($module)['make-set-transformer'] = function B2529(transformer__2530, k__2531) {
+            return(function B2532(env__2533, place__2534, value__2535) {
+                var superflous__2536 = $SL.call(arguments, 3);
+                {
+                    var B2537 = B2460['instance?'](place__2534, B2460['<symbol>']);
+                    {
+                        var B2538 = false;
+                        if (($T)(B2537))
+                            B2538 = B2537;
+                        else
+                            B2538 = B2462['op?']('%get-property', place__2534);
+                        if (($T)(B2538))
+                            return(k__2531(env__2533, transformer__2530(place__2534, env__2533), transformer__2530(value__2535, env__2533)));
+                        else
+                            return(B2460['signal'](B2461['format-to-string']('Non-symbol identifier or %%get-property in %%set: %=', place__2534)));
+                    }
+                }
             });
         };
-        Mexport('make-set-transformer', make_set_transformer);
+        ($module)['%export']('make-set-transformer', ($module)['make-set-transformer']);
     }
-    B2620['%annotate-function'](make_set_transformer, 'make-set-transformer', false);
+    B2460['%annotate-function'](($module)['make-set-transformer'], 'make-set-transformer', false);
 }
 {
-    var B2698 = $S('%define', 'ralph/core');
+    var B2541 = $S('%define', 'ralph/core');
     {
         {
-            var make_define_transformer = function B2699(transformer__2700) {
-                return(function B2701(env__2702, identifier__2703, value__2704) {
-                    var superflous__2705 = $SL.call(arguments, 3);
+            ($module)['make-define-transformer'] = function B2542(transformer__2543) {
+                return(function B2544(env__2545, identifier__2546, value__2547) {
+                    var superflous__2548 = $SL.call(arguments, 3);
                     {
-                        B2622['check-type'](identifier__2703, B2620['<symbol>'], 'Non-symbol identifier in %%define: %=');
+                        B2462['check-type'](identifier__2546, B2460['<symbol>'], 'Non-symbol identifier in %%define: %=');
                         {
-                            var valueT__2706 = transformer__2700(value__2704, env__2702);
+                            var valueT__2549 = transformer__2543(value__2547, env__2545);
                             {
-                                B2623['bind-globally!'](identifier__2703, env__2702);
+                                B2463['bind-globally!'](identifier__2546, env__2545);
                                 return([
-                                    B2698,
-                                    identifier__2703,
-                                    valueT__2706
+                                    B2541,
+                                    identifier__2546,
+                                    valueT__2549
                                 ]);
                             }
                         }
                     }
                 });
             };
-            Mexport('make-define-transformer', make_define_transformer);
+            ($module)['%export']('make-define-transformer', ($module)['make-define-transformer']);
         }
-        B2620['%annotate-function'](make_define_transformer, 'make-define-transformer', false);
+        B2460['%annotate-function'](($module)['make-define-transformer'], 'make-define-transformer', false);
     }
 }
 {
-    var B2709 = $S('%try', 'ralph/core');
+    var B2552 = $S('%try', 'ralph/core');
     {
         {
-            var make_try_transformer = function B2710(transformer__2711) {
-                return(function B2712(env__2713, protected_form__2714, identifier__2715, handling_form__2716) {
-                    var superfluous__2717 = $SL.call(arguments, 4);
+            ($module)['make-try-transformer'] = function B2553(transformer__2554) {
+                return(function B2555(env__2556, protected_form__2557, identifier__2558, handling_form__2559) {
+                    var superfluous__2560 = $SL.call(arguments, 4);
                     {
-                        B2622['check-type'](identifier__2715, B2620['<symbol>'], 'Non-symbol identifier in %%try: %=');
+                        B2462['check-type'](identifier__2558, B2460['<symbol>'], 'Non-symbol identifier in %%try: %=');
                         {
-                            B2622['check-identifier'](identifier__2715, env__2713, 'External identifier in %%try: %=');
+                            B2462['check-identifier'](identifier__2558, env__2556, 'External identifier in %%try: %=');
                             {
-                                var protected_formT__2718 = transformer__2711(protected_form__2714, env__2713);
+                                var protected_formT__2561 = transformer__2554(protected_form__2557, env__2556);
                                 {
-                                    B2623['bind-locally!'](identifier__2715, env__2713);
+                                    B2463['bind-locally!'](identifier__2558, env__2556);
                                     {
-                                        var handling_formT__2719 = transformer__2711(handling_form__2716, env__2713);
+                                        var handling_formT__2562 = transformer__2554(handling_form__2559, env__2556);
                                         {
-                                            B2623['unbind-locally!'](identifier__2715, env__2713);
+                                            B2463['unbind-locally!'](identifier__2558, env__2556);
                                             return([
-                                                B2709,
-                                                protected_formT__2718,
-                                                identifier__2715,
-                                                handling_formT__2719
+                                                B2552,
+                                                protected_formT__2561,
+                                                identifier__2558,
+                                                handling_formT__2562
                                             ]);
                                         }
                                     }
@@ -241,34 +249,34 @@ var B2620 = require('ralph/core');
                     }
                 });
             };
-            Mexport('make-try-transformer', make_try_transformer);
+            ($module)['%export']('make-try-transformer', ($module)['make-try-transformer']);
         }
-        B2620['%annotate-function'](make_try_transformer, 'make-try-transformer', false);
+        B2460['%annotate-function'](($module)['make-try-transformer'], 'make-try-transformer', false);
     }
 }
 {
     {
-        var make_var_transformer = function B2723(transformer__2724, k__2725) {
-            return(function B2726(env__2727, identifier__2728, value__2729) {
-                var superflous__2730 = $SL.call(arguments, 3);
+        ($module)['make-var-transformer'] = function B2566(transformer__2567, k__2568) {
+            return(function B2569(env__2570, identifier__2571, value__2572) {
+                var superflous__2573 = $SL.call(arguments, 3);
                 {
-                    B2622['check-type'](identifier__2728, B2620['<symbol>'], 'Non-symbol identifier in %%var: %=');
+                    B2462['check-type'](identifier__2571, B2460['<symbol>'], 'Non-symbol identifier in %%var: %=');
                     {
-                        var valueT__2731 = transformer__2724(value__2729, env__2727);
+                        var valueT__2574 = transformer__2567(value__2572, env__2570);
                         {
-                            var module_name__2732 = B2620['get'](identifier__2728, 'module');
+                            var module_name__2575 = B2460['get'](identifier__2571, 'module');
                             {
-                                var B2733 = B2620['not'](module_name__2732);
+                                var B2576 = B2460['not'](module_name__2575);
                                 {
-                                    var B2734 = false;
-                                    if (($T)(B2733))
-                                        B2734 = B2733;
+                                    var B2577 = false;
+                                    if (($T)(B2576))
+                                        B2577 = B2576;
                                     else
-                                        B2734 = B2620['=='](module_name__2732, B2620['get'](env__2727, 'module', 'name'));
+                                        B2577 = B2460['=='](module_name__2575, B2460['get'](env__2570, 'module', 'name'));
                                     {
-                                        if (($T)(B2734))
-                                            B2623['bind-globally!'](identifier__2728, env__2727);
-                                        return(k__2725(env__2727, identifier__2728, valueT__2731));
+                                        if (($T)(B2577))
+                                            B2463['bind-globally!'](identifier__2571, env__2570);
+                                        return(k__2568(env__2570, identifier__2571, valueT__2574));
                                     }
                                 }
                             }
@@ -277,52 +285,61 @@ var B2620 = require('ralph/core');
                 }
             });
         };
-        Mexport('make-var-transformer', make_var_transformer);
+        ($module)['%export']('make-var-transformer', ($module)['make-var-transformer']);
     }
-    B2620['%annotate-function'](make_var_transformer, 'make-var-transformer', false);
+    B2460['%annotate-function'](($module)['make-var-transformer'], 'make-var-transformer', false);
 }
 {
     {
-        var make_operator_transformer = function B2737(symbol__2738, transformer__2739) {
-            return(function B2740(env__2741, operator_name__2742) {
-                var arguments__2743 = $SL.call(arguments, 2);
+        ($module)['make-operator-transformer'] = function B2580(symbol__2581, transformer__2582) {
+            return(function B2583(env__2584, operator_name__2585) {
+                var arguments__2586 = $SL.call(arguments, 2);
                 {
-                    B2622['check-type'](operator_name__2742, B2620['<string>'], 'Non-string operator-name in %%native-call: %=');
-                    return(B2620['%concat']([
-                        symbol__2738,
-                        operator_name__2742
-                    ], B2620['map'](B2620['rcurry'](transformer__2739, env__2741), arguments__2743)));
+                    B2462['check-type'](operator_name__2585, B2460['<string>'], 'Non-string operator-name in %%native-call: %=');
+                    return(B2460['%concat']([
+                        symbol__2581,
+                        operator_name__2585
+                    ], B2460['map'](B2460['rcurry'](transformer__2582, env__2584), arguments__2586)));
                 }
             });
         };
-        Mexport('make-operator-transformer', make_operator_transformer);
+        ($module)['%export']('make-operator-transformer', ($module)['make-operator-transformer']);
     }
-    B2620['%annotate-function'](make_operator_transformer, 'make-operator-transformer', false);
+    B2460['%annotate-function'](($module)['make-operator-transformer'], 'make-operator-transformer', false);
 }
 {
-    var B2747 = $S('%object', 'ralph/core');
+    var B2590 = $S('%object', 'ralph/core');
     {
         {
-            var make_object_transformer = function B2748(transformer__2749) {
-                return(function B2750(env__2751) {
-                    var property_nameSvalues__2752 = $SL.call(arguments, 1);
-                    return(B2620['%concat']([B2747], B2620['reduce1'](B2620['concatenate'], B2620['map'](function B2753(property_nameSvalue__2754) {
-                        var property_name__2755 = property_nameSvalue__2754[0];
+            ($module)['make-object-transformer'] = function B2591(transformer__2592) {
+                return(function B2593(env__2594) {
+                    var property_nameSvalues__2595 = $SL.call(arguments, 1);
+                    return(B2460['%concat']([B2590], B2460['reduce1'](B2460['concatenate'], B2460['map'](function B2596(property_nameSvalue__2597) {
+                        var property_name__2598 = property_nameSvalue__2597[0];
                         {
-                            var value__2756 = property_nameSvalue__2754[1];
+                            var value__2599 = property_nameSvalue__2597[1];
                             {
-                                B2622['check-type'](property_name__2755, B2620['<string>'], 'Non-string property-name in %%object: %=');
+                                B2462['check-type'](property_name__2598, B2460['<string>'], 'Non-string property-name in %%object: %=');
                                 return([
-                                    property_name__2755,
-                                    transformer__2749(value__2756, env__2751)
+                                    property_name__2598,
+                                    transformer__2592(value__2599, env__2594)
                                 ]);
                             }
                         }
-                    }, B2620['partition'](2, property_nameSvalues__2752)))));
+                    }, B2460['partition'](2, property_nameSvalues__2595)))));
                 });
             };
-            Mexport('make-object-transformer', make_object_transformer);
+            ($module)['%export']('make-object-transformer', ($module)['make-object-transformer']);
         }
-        B2620['%annotate-function'](make_object_transformer, 'make-object-transformer', false);
+        B2460['%annotate-function'](($module)['make-object-transformer'], 'make-object-transformer', false);
+    }
+}
+{
+    ($module)['%eval'] = function B2601() {
+        return(eval((arguments[0])));
+    };
+    {
+        B2460['%annotate-function'](($module)['%eval'], '%eval', false);
+        ($module)['%export']('%eval', ($module)['%eval']);
     }
 }

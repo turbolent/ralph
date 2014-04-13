@@ -1,45 +1,44 @@
 {
     var $module = Object.create(null);
-    var Mexport = function B1736(name__1737, value__1738) {
-        var B1739 = (exports);
-        return(B1739[name__1737] = value__1738);
+    ($module)['%export'] = function B1560(name__1561, value__1562) {
+        var B1563 = (exports);
+        return(B1563[name__1561] = value__1562);
     };
 }
-var B1740 = require('ralph/core');
+var B1564 = require('ralph/core');
 false;
 {
-    var LmoduleG = B1740['%make-class'](B1740['<object>'], {
-            'name': false,
-            'native?': false,
-            'imports': function B1744() {
-                return([]);
-            },
-            'exports': function B1745() {
-                return([]);
-            },
-            'dependencies': function B1746() {
-                return([]);
-            }
-        }, function LmoduleG__1747() {
-            var B1748 = (this);
+    ($module)['<module>'] = B1564['%make-class'](B1564['<object>'], {
+        'name': false,
+        'native?': false,
+        'imports': function B1568() {
+            return([]);
+        },
+        'exports': function B1569() {
+            return([]);
+        },
+        'dependencies': function B1570() {
+            return([]);
+        }
+    }, function LmoduleG__1571() {
+        var B1572 = (this);
+        {
+            B1572['name'] = (undefined);
             {
-                B1748['name'] = (undefined);
+                var B1573 = (this);
                 {
-                    var B1749 = (this);
+                    B1573['native?'] = (undefined);
                     {
-                        B1749['native?'] = (undefined);
+                        var B1574 = (this);
                         {
-                            var B1750 = (this);
+                            B1574['imports'] = (undefined);
                             {
-                                B1750['imports'] = (undefined);
+                                var B1575 = (this);
                                 {
-                                    var B1751 = (this);
+                                    B1575['exports'] = (undefined);
                                     {
-                                        B1751['exports'] = (undefined);
-                                        {
-                                            var B1752 = (this);
-                                            return(B1752['dependencies'] = (undefined));
-                                        }
+                                        var B1576 = (this);
+                                        return(B1576['dependencies'] = (undefined));
                                     }
                                 }
                             }
@@ -47,43 +46,53 @@ false;
                     }
                 }
             }
-        });
-    Mexport('<module>', LmoduleG);
+        }
+    });
+    ($module)['%export']('<module>', ($module)['<module>']);
 }
 {
     {
-        var find_moduleSimport_name = function B1757(definition_name__1758, module__1759) {
-            return(B1740['any?'](function B1760(import__1761) {
-                var module__1762 = import__1761[0];
+        ($module)['find-module/import-name'] = function B1581(definition_name__1582, module__1583) {
+            return(B1564['any?'](function B1584(import__1585) {
+                var module__1586 = import__1585[0];
                 {
-                    var names__1763 = import__1761[1];
-                    return(B1740['any?'](function B1764(name__1765) {
-                        var B1766 = false;
-                        if (($T)(B1740['instance?'](name__1765, B1740['<array>'])))
-                            B1766 = name__1765;
+                    var names__1587 = import__1585[1];
+                    return(B1564['any?'](function B1588(name__1589) {
+                        var B1590 = false;
+                        if (($T)(B1564['instance?'](name__1589, B1564['<array>'])))
+                            B1590 = name__1589;
                         else
-                            B1766 = [
-                                name__1765,
-                                name__1765
+                            B1590 = [
+                                name__1589,
+                                name__1589
                             ];
                         {
-                            var import_name__1767 = B1766[0];
+                            var import_name__1591 = B1590[0];
                             {
-                                var new_name__1768 = B1766[1];
-                                if (($T)(B1740['=='](definition_name__1758, new_name__1768)))
+                                var new_name__1592 = B1590[1];
+                                if (($T)(B1564['=='](definition_name__1582, new_name__1592)))
                                     return([
-                                        module__1762,
-                                        import_name__1767
+                                        module__1586,
+                                        import_name__1591
                                     ]);
                                 else
                                     return(false);
                             }
                         }
-                    }, names__1763));
+                    }, names__1587));
                 }
-            }, B1740['get'](module__1759, 'imports')));
+            }, B1564['get'](module__1583, 'imports')));
         };
-        Mexport('find-module/import-name', find_moduleSimport_name);
+        ($module)['%export']('find-module/import-name', ($module)['find-module/import-name']);
     }
-    B1740['%annotate-function'](find_moduleSimport_name, 'find-module/import-name', false);
+    B1564['%annotate-function'](($module)['find-module/import-name'], 'find-module/import-name', false);
+}
+{
+    ($module)['%eval'] = function B1594() {
+        return(eval((arguments[0])));
+    };
+    {
+        B1564['%annotate-function'](($module)['%eval'], '%eval', false);
+        ($module)['%export']('%eval', ($module)['%eval']);
+    }
 }
