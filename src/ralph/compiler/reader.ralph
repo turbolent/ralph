@@ -92,8 +92,10 @@
 (define $end-of-file
   (make-object))
 
-(define-function read ((stream <stream>) env #key (eof-error? #t)
-                                                  (eof-value $end-of-file))
+(define-function read ((stream <stream>) env
+                       #key (eof-error? #t)
+                            (eof-value $end-of-file)
+                            (if-incomplete 'signal))
   (bind ((stack [[]])
          (ends [])
          (read? #t)
@@ -123,7 +125,9 @@
                  (if eof-error?
                      (signal "EOF before finished")
                      (set! result eof-value))
-                 (signal (format-to-string "missing closings: %=" ends))))
+                 (if (== if-incomplete 'signal)
+                     (signal (format-to-string "missing closings: %=" ends))
+                     (set! result if-incomplete))))
             (bind ((char (stream-read-element stream)))
               (select char ==
                 ((";")
