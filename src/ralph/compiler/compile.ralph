@@ -1,0 +1,64 @@
+(define-module ralph/compiler/forms
+  import: (ralph/format
+           ;;
+           ralph/compiler/module
+           ralph/compiler/environment
+           ;;
+           ralph/compiler/macros
+           ralph/compiler/special-forms
+           ;; passes
+           ralph/compiler/macroexpansion
+           ralph/compiler/symbol-lifting
+           ralph/compiler/alpha
+           ralph/compiler/anf
+           ralph/compiler/statements
+           ralph/compiler/javascript)
+  export: (compile-to-string
+           make-module-environment))
+
+;; NOTE: ensure an internal macro exists for each core special form
+
+(do (method (name)
+      (unless (has? $internal-macros name)
+        (signal (format-to-string
+                 "No internal macro for special form: %s" name))))
+    (object-properties $core-special-forms))
+
+(define-function make-module-environment (module-name)
+  (bind ((all-symbol-macros (make-plain-object))
+         (all-macros (make-plain-object)))
+    (extend! all-symbol-macros $internal-symbol-macros)
+    (extend! all-symbol-macros $core-symbol-macros)
+    (extend! all-macros $internal-macros)
+    (extend! all-macros $core-macros)
+    (make <environment>
+          module: (make <module> name: module-name)
+          special-forms: $internal-special-forms
+          macros: all-macros
+          symbol-macros: all-symbol-macros)))
+
+
+(define-class <compilation-pass> (<object>)
+  name
+  function)
+
+(define *passes*
+  (map (method (name/function)
+         (destructuring-bind (name function)
+             name/function
+           (make <compilation-pass>
+                 name: name
+                 function: function)))
+       [["macroexpansion" macroexpand-all]
+        ["symbol lifting" lift-symbols]
+        ["alpha conversion" alpha-convert-form]
+        ["ANF transformation" normalize-term]
+        ["statement transfomation" transform-statements!]
+        ["code generation" compile-js]]))
+
+(define-function compile-to-string (form env)
+  (reduce (method (result pass)
+            (bind-properties (function) pass
+              (function result env)))
+          form
+          *passes*))

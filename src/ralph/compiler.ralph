@@ -15,7 +15,8 @@
            ralph/compiler/alpha
            ralph/compiler/anf
            ralph/compiler/statements
-           ralph/compiler/javascript)
+           ralph/compiler/javascript
+           ralph/compiler/compile)
   export: (compile-module))
 
 
@@ -84,27 +85,6 @@
                          string: (read-file path)))))))
 
 
-(define-function compile-expression (exp env)
-  (reduce (method (result name/pass)
-            (destructuring-bind (name pass) name/pass
-              ;; (format-out "\n### %s:\n" name)
-              (bind ((result (pass result)))
-                ;; (format-out "%=\n" result)
-                result)))
-          exp
-          [["macroexpansion"
-            (rcurry macroexpand-all env)]
-           ["symbol lifting"
-            (rcurry lift-symbols env)]
-           ["alpha conversion"
-            (rcurry alpha-convert-form env)]
-           ["ANF transformation"
-            (rcurry normalize-term env)]
-           ["statement transfomation"
-            (rcurry transform-statements! env)]
-           ["code generation"
-            (rcurry compile-js env)]]))
-
 (define-function executable-path (module-name)
   (resolve-path "build" (concatenate module-name ".js")))
 
@@ -126,8 +106,8 @@
 
 (define-function compile-form (form stream env)
   (stream-write stream
-                (compile-expression form env)))
-
+                (compile-to-string form env))
+  (stream-write stream "\n"))
 
 (define-function compile-stream (input-stream output-stream env)
   (bind ((read? #t))
@@ -150,12 +130,8 @@
       (signal (format-to-string
               "Unable to compile non-existing module '%s'"
               module-name)))
-    (bind ((module (make <module> name: module-name))
-           (env (make <environment>
-                      module: module
-                      special-forms: $internal-special-forms
-                      macros: $all-macros
-                      symbol-macros: $all-symbol-macros))
+    (bind ((env (make-module-environment module-name))
+           (module (get env "module"))
            (target-path (executable-path module-name))
            (output-stream
             (begin
@@ -194,12 +170,11 @@
       module)))
 
 (define *prologue*
- `(begin
-    (%native "var $module = Object.create(null)")
-    (%define ,'%export (method (,'name ,'value)
-                         (set! (%get-property (%native "exports") ,'name)
-                               ,'value)))))
-
+  `(begin
+     (%native "var $module = Object.create(null)")
+     (%define ,'%export (method (,'name ,'value)
+                          (set! (%get-property (%native "exports") ,'name)
+                                ,'value)))))
 (define *epilogue*
   `(begin
      (define-function ,'%eval ()
@@ -215,6 +190,12 @@
    (if (instance? import <array>)
        (rest import)
        [])])
+
+
+(set! (get $core-special-forms "define-module")
+      (method (_ #rest arguments)
+        ;; leave as-is, handled by internal macro
+        `(define-module ,@arguments)))
 
 (set! (get $internal-macros "define-module")
       (method (env _ #key (import [])
@@ -245,28 +226,4 @@
                               module module-name options)
                        (make-import-definition module-name env)))
                    import)))))
-
-
-;;;; macros
-
-(define $all-symbol-macros
-  (make-plain-object))
-
-(extend! $all-symbol-macros $internal-symbol-macros)
-(extend! $all-symbol-macros $core-symbol-macros)
-
-(define $all-macros
-  (make-plain-object))
-
-(extend! $all-macros $internal-macros)
-(extend! $all-macros $core-macros)
-
-
-;; NOTE: ensure an internal macro exists for each core special form
-
-(do (method (name)
-      (unless (has? $internal-macros name)
-        (signal (format-to-string
-                 "No internal macro for special form: %s" name))))
-    (object-properties $core-special-forms))
 

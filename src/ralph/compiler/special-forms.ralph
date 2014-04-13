@@ -179,11 +179,6 @@
       (make-rest-transformer macroexpand-all
                              symbol: `while))
 
-(set! (get $core-special-forms "define-module")
-      (method (_ #rest arguments)
-        ;; leave as-is, handled by internal macro
-        `(define-module ,@arguments)))
-
 ;;;; internal special forms
 
 (define $internal-special-forms
