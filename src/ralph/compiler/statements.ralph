@@ -6,6 +6,12 @@
   export: (transform-statements!))
 
 
+(define-function make-module-reference (identifier)
+  `(%get-property (%native "$module") ,(symbol-name identifier)))
+
+;; after ANF: if value of binding is control-flow (%if, %while, etc.):
+;; turn into statement form, then "sink" assignment
+
 ;; "sink"/wrap return value with expression
 ;; e.g. to assign or explicitly return
 
@@ -40,12 +46,8 @@
          (concatenate wrapper [exp])))
       (concatenate wrapper [exp])))
 
-
 (define-function wrap-return (exp)
   (wrap-value! exp `(%native-call "return")))
-
-;; after ANF: if value of binding is control-flow (%if, %while, etc.):
-;; turn into statement form, then "sink" assignment
 
 (define $statement-symbols `(%if %while %begin %bind %try))
 
@@ -67,7 +69,8 @@
                     (get env "module" "exports")))
       `(%begin
         ,exp
-        (,'%export ,(symbol-name identifier) ,value))
+        (,(make-module-reference '%export)
+         ,(symbol-name identifier) ,value))
       exp))
 
 ;;;;
@@ -83,12 +86,11 @@
          (apply transformer env (rest exp))
          (map (rcurry transform-statements! env) exp))))
     ((<symbol>)
-     (if (special-symbol? exp)
+     (if (or (special-symbol? exp)
+             (locally-bound? exp env)
+             (get exp "generated?"))
          exp
-         (begin
-           ; (unless (locally-bound? exp env)
-           ;   (format-out "NON-LOCAL SYMBOL: %=\n" exp))
-           exp)))
+         (make-module-reference exp)))
     (else: exp)))
 
 (set! (get *transformers* "%quote")
@@ -123,11 +125,17 @@
 (for-each ((name ["%var" "%define"]))
           ()
   (set! (get *transformers* name)
-        (make-var-transformer transform-statements!
-                              (method (env identifier value*)
-                                (wrap-export identifier identifier
-                                             `(%var ,identifier ,value*)
-                                             env)))))
+        (make-var-transformer
+          transform-statements!
+          (method (env identifier value*)
+            (if (get identifier "generated?")
+                (wrap-export identifier identifier
+                             `(%var ,identifier ,value*)
+                             env)
+                (bind ((place (make-module-reference identifier)))
+                  (wrap-export identifier place
+                              `(%set ,place ,value*)
+                               env)))))))
 
 (set! (get *transformers* "%if")
       (make-rest-transformer
