@@ -88,18 +88,25 @@
 (define-function resolve-symbol (symbol env)
   (if (get symbol "module")
       symbol
-      (bind ((name (symbol-name symbol)))
-        (if-bind (module/import-name
-                  (unless (globally-bound? symbol env)
-                    (find-module/import-name name (get env "module"))))
-          (destructuring-bind (module import-name)
-              module/import-name
-            (%%symbol import-name (get module "name")))
-          (%%symbol name (get env "module" "name"))))))
+      (bind ((name (symbol-name symbol))
+             (symbol* 
+              (if-bind (module/import-name
+                        (unless (globally-bound? symbol env)
+                          (find-module/import-name name (get env "module"))))
+                (destructuring-bind (module import-name)
+                    module/import-name
+                  (%%symbol import-name (get module "name")))
+                (%%symbol name (get env "module" "name")))))
+        (when (get symbol "generated?")
+          (set! (get symbol* "generated?") #t))
+        symbol*)))
 
 (define-function qualify-symbol (symbol env)
-  (%%symbol (get symbol "name")
-            (get env "module" "name")))
+  (bind ((symbol* (%%symbol (get symbol "name")
+                    (get env "module" "name"))))
+    (when (get symbol "generated?")
+      (set! (get symbol* "generated?") #t))
+    symbol*))
 
 
 ;;;; import identifiers
