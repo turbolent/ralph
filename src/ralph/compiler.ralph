@@ -171,6 +171,7 @@
                          string: source)))
       (set! (get *modules* module-name)
             module)
+      (compile-form *prologue* output-stream env)
       ;; special case core?
       (unless (== module-name "ralph/core")
         ;; implicitly import and load core
@@ -190,6 +191,13 @@
                                 dependencies: (get module "dependencies")]))
       (format-out "Finished: %s\n" module-name)
       module)))
+
+(define *prologue*
+ `(begin
+    (%native "var $module = Object.create(null)")
+    (%define ,'%export (method (,'name ,'value)
+                         (set! (%get-property (%native "exports") ,'name)
+                               ,'value)))))
 
 
 ;; => [module-name options])
