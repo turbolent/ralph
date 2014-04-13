@@ -1,6 +1,7 @@
 (define-module ralph/compiler/module
   export: (<module>
-           find-module/import-name))
+           find-module/import-name
+           *module-prologue*))
 
 ;;;; <module>
 
@@ -27,3 +28,13 @@
                         [module import-name])))
                   names)))
         (get module "imports")))
+
+(define *module-prologue*
+  `(begin
+     (%native "var $module = Object.create(null)")
+     (%define ,'%export (method (,'name ,'value)
+                          (set! (%get-property (%native "exports") ,'name)
+                                ,'value)))
+     (define ,'%eval (method ()
+                       (%native-call "eval" (%native "arguments[0]"))))
+     (,'%export "%eval" ,'%eval)))
