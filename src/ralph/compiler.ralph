@@ -181,6 +181,7 @@
                       env))
       ;; write executable
       (compile-stream input-stream output-stream env)
+      (compile-form *epilogue* output-stream env)
       (stream-close output-stream)
       ;; write module
       (write-file (module-path "build" module-name)
@@ -199,6 +200,11 @@
                          (set! (%get-property (%native "exports") ,'name)
                                ,'value)))))
 
+(define *epilogue*
+  `(begin
+     (define-function ,'%eval ()
+       (%native-call "eval" (%native "arguments[0]")))
+     (,'%export "%eval" ,'%eval)))
 
 ;; => [module-name options])
 (define-function destructure-import (import)
