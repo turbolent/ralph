@@ -18,6 +18,7 @@ var currentEnvironment;
 
 function makeEnvironment(name) {
 	var env = compile['make-module-environment'](name);
+	env['persistent?'] = false;
 	// TODO: actually use module description, maybe compile,
 	//       so it is available at runtime
 	if (name !== 'ralph/core') {
