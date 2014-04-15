@@ -1,121 +1,120 @@
 {
     var $module = Object.create(null);
-    ($module)['%export'] = function B1756(name__1757, value__1758) {
-        var B1759 = (exports);
-        return(B1759[name__1757] = value__1758);
-    };
-}
-var B1760 = require('ralph/core');
-{
-    var B1761 = require('ralph/compiler/module');
     {
-        var B1762 = require('ralph/compiler/environment');
-        var B1763 = require('ralph/compiler/utilities');
+        ($module)['%export'] = function B1773(name__1774, value__1775) {
+            var B1777 = (exports);
+            return(B1777[name__1774] = value__1775);
+        };
+        {
+            ($module)['%eval'] = function B1776() {
+                return(eval((arguments[0])));
+            };
+            ($module)['%export']('%eval', ($module)['%eval']);
+        }
+    }
+}
+var B1778 = require('ralph/core');
+{
+    var B1779 = require('ralph/compiler/module');
+    {
+        var B1780 = require('ralph/compiler/environment');
+        var B1781 = require('ralph/compiler/utilities');
     }
 }
 {
-    var B1765 = $S('unquote', 'ralph/core');
+    var B1783 = $S('unquote', 'ralph/core');
     {
-        ($module)['unquoted?'] = function B1766(form__1767, env__1768) {
-            if (($T)(B1760['expression?'](form__1767)))
-                return(B1760['=='](B1762['resolve-symbol'](B1760['first'](form__1767), env__1768), B1765));
+        ($module)['unquoted?'] = function B1784(form__1785, env__1786) {
+            if (($T)(B1778['expression?'](form__1785)))
+                return(B1778['=='](B1780['resolve-symbol'](B1778['first'](form__1785), env__1786), B1783));
             else
                 return(false);
         };
-        B1760['%annotate-function'](($module)['unquoted?'], 'unquoted?', false);
+        B1778['%annotate-function'](($module)['unquoted?'], 'unquoted?', false);
     }
 }
 {
-    var B1770 = $S('unquote-splicing', 'ralph/core');
+    var B1788 = $S('unquote-splicing', 'ralph/core');
     {
-        ($module)['unquote-spliced?'] = function B1771(form__1772, env__1773) {
-            if (($T)(B1760['expression?'](form__1772)))
-                return(B1760['=='](B1762['resolve-symbol'](B1760['first'](form__1772), env__1773), B1770));
+        ($module)['unquote-spliced?'] = function B1789(form__1790, env__1791) {
+            if (($T)(B1778['expression?'](form__1790)))
+                return(B1778['=='](B1780['resolve-symbol'](B1778['first'](form__1790), env__1791), B1788));
             else
                 return(false);
         };
-        B1760['%annotate-function'](($module)['unquote-spliced?'], 'unquote-spliced?', false);
+        B1778['%annotate-function'](($module)['unquote-spliced?'], 'unquote-spliced?', false);
     }
 }
 {
-    var B1775 = $S('quote', 'ralph/core');
+    var B1793 = $S('quote', 'ralph/core');
     {
-        ($module)['syntax-quote-symbol'] = function B1776(symbol__1777, env__1778) {
+        ($module)['syntax-quote-symbol'] = function B1794(symbol__1795, env__1796) {
             return([
-                B1775,
-                B1762['resolve-symbol'](symbol__1777, env__1778)
+                B1793,
+                B1780['resolve-symbol'](symbol__1795, env__1796)
             ]);
         };
-        B1760['%annotate-function'](($module)['syntax-quote-symbol'], 'syntax-quote-symbol', false);
+        B1778['%annotate-function'](($module)['syntax-quote-symbol'], 'syntax-quote-symbol', false);
     }
 }
 {
-    var B1781 = $S('%array', 'ralph/core');
+    var B1799 = $S('%array', 'ralph/core');
     {
-        var B1782 = $S('%concat', 'ralph/core');
+        var B1800 = $S('%concat', 'ralph/core');
         {
-            ($module)['syntax-quote-array'] = function B1783(array__1784, env__1785) {
-                if (($T)(($module)['unquoted?'](array__1784, env__1785)))
-                    return(B1760['second'](array__1784));
+            ($module)['syntax-quote-array'] = function B1801(array__1802, env__1803) {
+                if (($T)(($module)['unquoted?'](array__1802, env__1803)))
+                    return(B1778['second'](array__1802));
                 else {
-                    var part__1786 = [B1781];
-                    return(B1760['reduce'](function B1787(result__1788, form__1789) {
-                        if (($T)(($module)['unquote-spliced?'](form__1789, env__1785))) {
-                            part__1786 = false;
+                    var part__1804 = [B1799];
+                    return(B1778['reduce'](function B1805(result__1806, form__1807) {
+                        if (($T)(($module)['unquote-spliced?'](form__1807, env__1803))) {
+                            part__1804 = false;
                             return([
-                                B1782,
-                                result__1788,
-                                B1760['second'](form__1789)
+                                B1800,
+                                result__1806,
+                                B1778['second'](form__1807)
                             ]);
                         } else {
-                            var formT__1790 = false;
-                            if (($T)(($module)['unquoted?'](form__1789, env__1785)))
-                                formT__1790 = B1760['second'](form__1789);
+                            var formT__1808 = false;
+                            if (($T)(($module)['unquoted?'](form__1807, env__1803)))
+                                formT__1808 = B1778['second'](form__1807);
                             else
-                                formT__1790 = ($module)['syntax-quote-form'](form__1789, env__1785);
-                            if (($T)(part__1786)) {
-                                B1760['push-last'](part__1786, formT__1790);
-                                return(result__1788);
+                                formT__1808 = ($module)['syntax-quote-form'](form__1807, env__1803);
+                            if (($T)(part__1804)) {
+                                B1778['push-last'](part__1804, formT__1808);
+                                return(result__1806);
                             } else {
-                                part__1786 = [
-                                    B1781,
-                                    formT__1790
+                                part__1804 = [
+                                    B1799,
+                                    formT__1808
                                 ];
                                 return([
-                                    B1782,
-                                    result__1788,
-                                    part__1786
+                                    B1800,
+                                    result__1806,
+                                    part__1804
                                 ]);
                             }
                         }
-                    }, part__1786, array__1784));
+                    }, part__1804, array__1802));
                 }
             };
-            B1760['%annotate-function'](($module)['syntax-quote-array'], 'syntax-quote-array', false);
+            B1778['%annotate-function'](($module)['syntax-quote-array'], 'syntax-quote-array', false);
         }
     }
 }
 {
     {
-        ($module)['syntax-quote-form'] = function B1793(form__1794, env__1795) {
-            var B1796 = form__1794;
-            if (($T)(B1760['instance?'](B1796, B1760['<array>'])))
-                return(($module)['syntax-quote-array'](form__1794, env__1795));
-            else if (($T)(B1760['instance?'](B1796, B1760['<symbol>'])))
-                return(($module)['syntax-quote-symbol'](form__1794, env__1795));
+        ($module)['syntax-quote-form'] = function B1811(form__1812, env__1813) {
+            var B1814 = form__1812;
+            if (($T)(B1778['instance?'](B1814, B1778['<array>'])))
+                return(($module)['syntax-quote-array'](form__1812, env__1813));
+            else if (($T)(B1778['instance?'](B1814, B1778['<symbol>'])))
+                return(($module)['syntax-quote-symbol'](form__1812, env__1813));
             else
-                return(form__1794);
+                return(form__1812);
         };
         ($module)['%export']('syntax-quote-form', ($module)['syntax-quote-form']);
     }
-    B1760['%annotate-function'](($module)['syntax-quote-form'], 'syntax-quote-form', false);
-}
-{
-    ($module)['%eval'] = function B1798() {
-        return(eval((arguments[0])));
-    };
-    {
-        B1760['%annotate-function'](($module)['%eval'], '%eval', false);
-        ($module)['%export']('%eval', ($module)['%eval']);
-    }
+    B1778['%annotate-function'](($module)['syntax-quote-form'], 'syntax-quote-form', false);
 }

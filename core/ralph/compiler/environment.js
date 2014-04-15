@@ -1,53 +1,61 @@
 {
     var $module = Object.create(null);
-    ($module)['%export'] = function B1597(name__1598, value__1599) {
-        var B1600 = (exports);
-        return(B1600[name__1598] = value__1599);
-    };
-}
-var B1601 = require('ralph/core');
-var B1602 = require('ralph/compiler/module');
-{
-    ($module)['<environment>'] = B1601['%make-class'](B1601['<object>'], {
-        'module': false,
-        'macros': function B1608() {
-            return(B1601['make-plain-object']());
-        },
-        'symbol-macros': function B1609() {
-            return(B1601['make-plain-object']());
-        },
-        'special-forms': function B1610() {
-            return(B1601['make-plain-object']());
-        },
-        'binding-count': function B1611() {
-            return(B1601['make-plain-object']());
-        },
-        'global-bindings': function B1612() {
-            return(B1601['make-plain-object']());
-        }
-    }, function LenvironmentG__1613() {
-        var B1614 = (this);
+    {
+        ($module)['%export'] = function B1612(name__1613, value__1614) {
+            var B1616 = (exports);
+            return(B1616[name__1613] = value__1614);
+        };
         {
-            B1614['module'] = (undefined);
+            ($module)['%eval'] = function B1615() {
+                return(eval((arguments[0])));
+            };
+            ($module)['%export']('%eval', ($module)['%eval']);
+        }
+    }
+}
+var B1617 = require('ralph/core');
+var B1618 = require('ralph/compiler/module');
+{
+    ($module)['<environment>'] = B1617['%make-class'](B1617['<object>'], {
+        'module': false,
+        'macros': function B1624() {
+            return(B1617['make-plain-object']());
+        },
+        'symbol-macros': function B1625() {
+            return(B1617['make-plain-object']());
+        },
+        'special-forms': function B1626() {
+            return(B1617['make-plain-object']());
+        },
+        'binding-count': function B1627() {
+            return(B1617['make-plain-object']());
+        },
+        'global-bindings': function B1628() {
+            return(B1617['make-plain-object']());
+        }
+    }, function LenvironmentG__1629() {
+        var B1630 = (this);
+        {
+            B1630['module'] = (undefined);
             {
-                var B1615 = (this);
+                var B1631 = (this);
                 {
-                    B1615['macros'] = (undefined);
+                    B1631['macros'] = (undefined);
                     {
-                        var B1616 = (this);
+                        var B1632 = (this);
                         {
-                            B1616['symbol-macros'] = (undefined);
+                            B1632['symbol-macros'] = (undefined);
                             {
-                                var B1617 = (this);
+                                var B1633 = (this);
                                 {
-                                    B1617['special-forms'] = (undefined);
+                                    B1633['special-forms'] = (undefined);
                                     {
-                                        var B1618 = (this);
+                                        var B1634 = (this);
                                         {
-                                            B1618['binding-count'] = (undefined);
+                                            B1634['binding-count'] = (undefined);
                                             {
-                                                var B1619 = (this);
-                                                return(B1619['global-bindings'] = (undefined));
+                                                var B1635 = (this);
+                                                return(B1635['global-bindings'] = (undefined));
                                             }
                                         }
                                     }
@@ -62,144 +70,144 @@ var B1602 = require('ralph/compiler/module');
     ($module)['%export']('<environment>', ($module)['<environment>']);
 }
 {
-    ($module)['find-expander'] = function B1621(namespace__1622, check_boundQ__1623, identifier__1624, env__1625) {
-        var B1626 = B1601['not'];
+    ($module)['find-expander'] = function B1637(namespace__1638, check_boundQ__1639, identifier__1640, env__1641) {
+        var B1642 = B1617['not'];
         {
-            var B1627 = false;
-            if (($T)(check_boundQ__1623))
-                B1627 = ($module)['bound?'](identifier__1624, env__1625);
+            var B1643 = false;
+            if (($T)(check_boundQ__1639))
+                B1643 = ($module)['bound?'](identifier__1640, env__1641);
             else
-                B1627 = false;
+                B1643 = false;
             {
-                var B1628 = B1626(B1627);
-                if (($T)(B1628))
-                    return(env__1625[namespace__1622][B1601['symbol-name'](identifier__1624)]);
+                var B1644 = B1642(B1643);
+                if (($T)(B1644))
+                    return(env__1641[namespace__1638][B1617['symbol-name'](identifier__1640)]);
                 else
                     return(false);
             }
         }
     };
-    B1601['%annotate-function'](($module)['find-expander'], 'find-expander', false);
+    B1617['%annotate-function'](($module)['find-expander'], 'find-expander', false);
 }
 {
-    ($module)['find-macro'] = B1601['curry'](($module)['find-expander'], 'macros', true);
+    ($module)['find-macro'] = B1617['curry'](($module)['find-expander'], 'macros', true);
     ($module)['%export']('find-macro', ($module)['find-macro']);
 }
 {
-    ($module)['find-symbol-macro'] = B1601['curry'](($module)['find-expander'], 'symbol-macros', true);
+    ($module)['find-symbol-macro'] = B1617['curry'](($module)['find-expander'], 'symbol-macros', true);
     ($module)['%export']('find-symbol-macro', ($module)['find-symbol-macro']);
 }
 {
-    ($module)['find-special-form'] = B1601['curry'](($module)['find-expander'], 'special-forms', false);
+    ($module)['find-special-form'] = B1617['curry'](($module)['find-expander'], 'special-forms', false);
     ($module)['%export']('find-special-form', ($module)['find-special-form']);
 }
 {
     {
-        ($module)['special-operator?'] = function B1630(identifier__1631, env__1632) {
-            return(B1601['true?'](B1601['get'](env__1632, 'special-forms')[B1601['symbol-name'](identifier__1631)]));
+        ($module)['special-operator?'] = function B1646(identifier__1647, env__1648) {
+            return(B1617['true?'](B1617['get'](env__1648, 'special-forms')[B1617['symbol-name'](identifier__1647)]));
         };
         ($module)['%export']('special-operator?', ($module)['special-operator?']);
     }
-    B1601['%annotate-function'](($module)['special-operator?'], 'special-operator?', false);
+    B1617['%annotate-function'](($module)['special-operator?'], 'special-operator?', false);
 }
 {
     {
-        ($module)['bind-globally!'] = function B1634(identifier__1635, env__1636) {
-            return(B1601['get-setter'](env__1636, 'global-bindings', B1601['symbol-name'](identifier__1635), true));
+        ($module)['bind-globally!'] = function B1650(identifier__1651, env__1652) {
+            return(B1617['get-setter'](env__1652, 'global-bindings', B1617['symbol-name'](identifier__1651), true));
         };
         ($module)['%export']('bind-globally!', ($module)['bind-globally!']);
     }
-    B1601['%annotate-function'](($module)['bind-globally!'], 'bind-globally!', false);
+    B1617['%annotate-function'](($module)['bind-globally!'], 'bind-globally!', false);
 }
 {
     {
-        ($module)['globally-bound?'] = function B1638(identifier__1639, env__1640) {
-            return(B1601['get'](env__1640, 'global-bindings', B1601['symbol-name'](identifier__1639)));
+        ($module)['globally-bound?'] = function B1654(identifier__1655, env__1656) {
+            return(B1617['get'](env__1656, 'global-bindings', B1617['symbol-name'](identifier__1655)));
         };
         ($module)['%export']('globally-bound?', ($module)['globally-bound?']);
     }
-    B1601['%annotate-function'](($module)['globally-bound?'], 'globally-bound?', false);
+    B1617['%annotate-function'](($module)['globally-bound?'], 'globally-bound?', false);
 }
 {
     {
-        ($module)['bind-locally!'] = function B1642(identifier__1643, env__1644) {
-            var name__1645 = B1601['symbol-name'](identifier__1643);
-            return(B1601['get-setter'](env__1644, 'binding-count', name__1645, B1601['+'](B1601['get'](env__1644, 'binding-count', name__1645), 1)));
+        ($module)['bind-locally!'] = function B1658(identifier__1659, env__1660) {
+            var name__1661 = B1617['symbol-name'](identifier__1659);
+            return(B1617['get-setter'](env__1660, 'binding-count', name__1661, B1617['+'](B1617['get'](env__1660, 'binding-count', name__1661), 1)));
         };
         ($module)['%export']('bind-locally!', ($module)['bind-locally!']);
     }
-    B1601['%annotate-function'](($module)['bind-locally!'], 'bind-locally!', false);
+    B1617['%annotate-function'](($module)['bind-locally!'], 'bind-locally!', false);
 }
 {
     {
-        ($module)['bound?'] = function B1648(identifier__1649, env__1650) {
-            var B1651 = ($module)['globally-bound?'](identifier__1649, env__1650);
-            if (($T)(B1651))
-                return(B1651);
+        ($module)['bound?'] = function B1664(identifier__1665, env__1666) {
+            var B1667 = ($module)['globally-bound?'](identifier__1665, env__1666);
+            if (($T)(B1667))
+                return(B1667);
             else
-                return(($module)['locally-bound?'](identifier__1649, env__1650));
+                return(($module)['locally-bound?'](identifier__1665, env__1666));
         };
         ($module)['%export']('bound?', ($module)['bound?']);
     }
-    B1601['%annotate-function'](($module)['bound?'], 'bound?', false);
+    B1617['%annotate-function'](($module)['bound?'], 'bound?', false);
 }
 {
     {
-        ($module)['locally-bound?'] = function B1654(identifier__1655, env__1656) {
-            var name__1657 = B1601['symbol-name'](identifier__1655);
+        ($module)['locally-bound?'] = function B1670(identifier__1671, env__1672) {
+            var name__1673 = B1617['symbol-name'](identifier__1671);
             {
-                var B1658 = B1601['get'](env__1656, 'binding-count', name__1657);
-                if (($T)(B1658)) {
-                    var count__1659 = B1658;
-                    return(B1601['>'](count__1659, 0));
+                var B1674 = B1617['get'](env__1672, 'binding-count', name__1673);
+                if (($T)(B1674)) {
+                    var count__1675 = B1674;
+                    return(B1617['>'](count__1675, 0));
                 } else
                     return(false);
             }
         };
         ($module)['%export']('locally-bound?', ($module)['locally-bound?']);
     }
-    B1601['%annotate-function'](($module)['locally-bound?'], 'locally-bound?', false);
+    B1617['%annotate-function'](($module)['locally-bound?'], 'locally-bound?', false);
 }
 {
     {
-        ($module)['unbind-locally!'] = function B1661(identifier__1662, env__1663) {
-            var name__1664 = B1601['symbol-name'](identifier__1662);
-            return(B1601['get-setter'](env__1663, 'binding-count', name__1664, B1601['-'](B1601['get'](env__1663, 'binding-count', name__1664), 1)));
+        ($module)['unbind-locally!'] = function B1677(identifier__1678, env__1679) {
+            var name__1680 = B1617['symbol-name'](identifier__1678);
+            return(B1617['get-setter'](env__1679, 'binding-count', name__1680, B1617['-'](B1617['get'](env__1679, 'binding-count', name__1680), 1)));
         };
         ($module)['%export']('unbind-locally!', ($module)['unbind-locally!']);
     }
-    B1601['%annotate-function'](($module)['unbind-locally!'], 'unbind-locally!', false);
+    B1617['%annotate-function'](($module)['unbind-locally!'], 'unbind-locally!', false);
 }
 {
     {
-        ($module)['resolve-symbol'] = function B1667(symbol__1668, env__1669) {
-            if (($T)(B1601['get'](symbol__1668, 'module')))
-                return(symbol__1668);
+        ($module)['resolve-symbol'] = function B1683(symbol__1684, env__1685) {
+            if (($T)(B1617['get'](symbol__1684, 'module')))
+                return(symbol__1684);
             else {
-                var name__1670 = B1601['symbol-name'](symbol__1668);
+                var name__1686 = B1617['symbol-name'](symbol__1684);
                 {
-                    var B1671 = false;
-                    if (($T)(B1601['not'](($module)['globally-bound?'](symbol__1668, env__1669))))
-                        B1671 = B1602['find-module/import-name'](name__1670, B1601['get'](env__1669, 'module'));
+                    var B1687 = false;
+                    if (($T)(B1617['not'](($module)['globally-bound?'](symbol__1684, env__1685))))
+                        B1687 = B1618['find-module/import-name'](name__1686, B1617['get'](env__1685, 'module'));
                     else
-                        B1671 = false;
+                        B1687 = false;
                     {
-                        var symbolT__1675 = false;
-                        if (($T)(B1671)) {
-                            var moduleSimport_name__1672 = B1671;
+                        var symbolT__1691 = false;
+                        if (($T)(B1687)) {
+                            var moduleSimport_name__1688 = B1687;
                             {
-                                var module__1673 = moduleSimport_name__1672[0];
+                                var module__1689 = moduleSimport_name__1688[0];
                                 {
-                                    var import_name__1674 = moduleSimport_name__1672[1];
-                                    symbolT__1675 = B1601['%%symbol'](import_name__1674, B1601['get'](module__1673, 'name'));
+                                    var import_name__1690 = moduleSimport_name__1688[1];
+                                    symbolT__1691 = B1617['%%symbol'](import_name__1690, B1617['get'](module__1689, 'name'));
                                 }
                             }
                         } else
-                            symbolT__1675 = B1601['%%symbol'](name__1670, B1601['get'](env__1669, 'module', 'name'));
+                            symbolT__1691 = B1617['%%symbol'](name__1686, B1617['get'](env__1685, 'module', 'name'));
                         {
-                            if (($T)(B1601['get'](symbol__1668, 'generated?')))
-                                B1601['get-setter'](symbolT__1675, 'generated?', true);
-                            return(symbolT__1675);
+                            if (($T)(B1617['get'](symbol__1684, 'generated?')))
+                                B1617['get-setter'](symbolT__1691, 'generated?', true);
+                            return(symbolT__1691);
                         }
                     }
                 }
@@ -207,73 +215,64 @@ var B1602 = require('ralph/compiler/module');
         };
         ($module)['%export']('resolve-symbol', ($module)['resolve-symbol']);
     }
-    B1601['%annotate-function'](($module)['resolve-symbol'], 'resolve-symbol', false);
+    B1617['%annotate-function'](($module)['resolve-symbol'], 'resolve-symbol', false);
 }
 {
     {
-        ($module)['qualify-symbol'] = function B1677(symbol__1678, env__1679) {
-            var symbolT__1680 = B1601['%%symbol'](B1601['get'](symbol__1678, 'name'), B1601['get'](env__1679, 'module', 'name'));
+        ($module)['qualify-symbol'] = function B1693(symbol__1694, env__1695) {
+            var symbolT__1696 = B1617['%%symbol'](B1617['get'](symbol__1694, 'name'), B1617['get'](env__1695, 'module', 'name'));
             {
-                if (($T)(B1601['get'](symbol__1678, 'generated?')))
-                    B1601['get-setter'](symbolT__1680, 'generated?', true);
-                return(symbolT__1680);
+                if (($T)(B1617['get'](symbol__1694, 'generated?')))
+                    B1617['get-setter'](symbolT__1696, 'generated?', true);
+                return(symbolT__1696);
             }
         };
         ($module)['%export']('qualify-symbol', ($module)['qualify-symbol']);
     }
-    B1601['%annotate-function'](($module)['qualify-symbol'], 'qualify-symbol', false);
+    B1617['%annotate-function'](($module)['qualify-symbol'], 'qualify-symbol', false);
 }
 {
     {
-        ($module)['find-import-identifier'] = function B1682(module_name__1683, env__1684) {
-            return(B1601['get'](env__1684, 'import-identifiers', module_name__1683));
+        ($module)['find-import-identifier'] = function B1698(module_name__1699, env__1700) {
+            return(B1617['get'](env__1700, 'import-identifiers', module_name__1699));
         };
         ($module)['%export']('find-import-identifier', ($module)['find-import-identifier']);
     }
-    B1601['%annotate-function'](($module)['find-import-identifier'], 'find-import-identifier', false);
+    B1617['%annotate-function'](($module)['find-import-identifier'], 'find-import-identifier', false);
 }
 {
     {
-        ($module)['make-import-identifier'] = function B1686(module_name__1687, env__1688) {
-            var identifier__1689 = B1601['generate-symbol']();
+        ($module)['make-import-identifier'] = function B1702(module_name__1703, env__1704) {
+            var identifier__1705 = B1617['generate-symbol']();
             {
-                B1601['get-setter'](env__1688, 'import-identifiers', module_name__1687, identifier__1689);
-                return(identifier__1689);
+                B1617['get-setter'](env__1704, 'import-identifiers', module_name__1703, identifier__1705);
+                return(identifier__1705);
             }
         };
         ($module)['%export']('make-import-identifier', ($module)['make-import-identifier']);
     }
-    B1601['%annotate-function'](($module)['make-import-identifier'], 'make-import-identifier', false);
+    B1617['%annotate-function'](($module)['make-import-identifier'], 'make-import-identifier', false);
 }
 {
-    var B1691 = $S('%define', 'ralph/core');
+    var B1707 = $S('%define', 'ralph/core');
     {
-        var B1692 = $S('%native-call', 'ralph/core');
+        var B1708 = $S('%native-call', 'ralph/core');
         {
             {
-                ($module)['make-import-definition'] = function B1693(module_name__1694, env__1695) {
+                ($module)['make-import-definition'] = function B1709(module_name__1710, env__1711) {
                     return([
-                        B1691,
-                        ($module)['make-import-identifier'](module_name__1694, env__1695),
+                        B1707,
+                        ($module)['make-import-identifier'](module_name__1710, env__1711),
                         [
-                            B1692,
+                            B1708,
                             'require',
-                            module_name__1694
+                            module_name__1710
                         ]
                     ]);
                 };
                 ($module)['%export']('make-import-definition', ($module)['make-import-definition']);
             }
-            B1601['%annotate-function'](($module)['make-import-definition'], 'make-import-definition', false);
+            B1617['%annotate-function'](($module)['make-import-definition'], 'make-import-definition', false);
         }
-    }
-}
-{
-    ($module)['%eval'] = function B1697() {
-        return(eval((arguments[0])));
-    };
-    {
-        B1601['%annotate-function'](($module)['%eval'], '%eval', false);
-        ($module)['%export']('%eval', ($module)['%eval']);
     }
 }

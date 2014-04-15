@@ -1,211 +1,219 @@
 {
     var $module = Object.create(null);
-    ($module)['%export'] = function B1880(name__1881, value__1882) {
-        var B1883 = (exports);
-        return(B1883[name__1881] = value__1882);
-    };
-}
-var B1884 = require('ralph/core');
-{
-    var B1885 = require('ralph/format');
-    var B1886 = require('ralph/compiler/utilities');
-}
-{
-    var B1890 = $S('bind-properties', 'ralph/core');
     {
-        var B1891 = $S('%keys', 'ralph/core');
+        ($module)['%export'] = function B1895(name__1896, value__1897) {
+            var B1899 = (exports);
+            return(B1899[name__1896] = value__1897);
+        };
         {
-            var B1892 = $S('%object', 'ralph/core');
+            ($module)['%eval'] = function B1898() {
+                return(eval((arguments[0])));
+            };
+            ($module)['%export']('%eval', ($module)['%eval']);
+        }
+    }
+}
+var B1900 = require('ralph/core');
+{
+    var B1901 = require('ralph/format');
+    var B1902 = require('ralph/compiler/utilities');
+}
+{
+    var B1906 = $S('bind-properties', 'ralph/core');
+    {
+        var B1907 = $S('%keys', 'ralph/core');
+        {
+            var B1908 = $S('%object', 'ralph/core');
             {
-                ($module)['wrap-keys'] = function B1893(form__1894, rest_parameter__1895, keyword_parameters__1896) {
-                    var keyword_parametersT__1899 = B1884['map'](function B1897(parameter__1898) {
-                            if (($T)(B1884['instance?'](parameter__1898, B1884['<array>'])))
-                                return(parameter__1898);
+                ($module)['wrap-keys'] = function B1909(form__1910, rest_parameter__1911, keyword_parameters__1912) {
+                    var keyword_parametersT__1915 = B1900['map'](function B1913(parameter__1914) {
+                            if (($T)(B1900['instance?'](parameter__1914, B1900['<array>'])))
+                                return(parameter__1914);
                             else
                                 return([
-                                    parameter__1898,
+                                    parameter__1914,
                                     false
                                 ]);
-                        }, keyword_parameters__1896);
+                        }, keyword_parameters__1912);
                     return([
-                        B1890,
-                        B1884['map'](B1884['first'], keyword_parametersT__1899),
+                        B1906,
+                        B1900['map'](B1900['first'], keyword_parametersT__1915),
                         [
-                            B1891,
-                            rest_parameter__1895,
-                            B1884['%concat']([B1892], B1884['reduce1'](B1884['concatenate'], B1884['map'](function B1900(parameter__1901) {
-                                var key__1902 = parameter__1901[0];
+                            B1907,
+                            rest_parameter__1911,
+                            B1900['%concat']([B1908], B1900['reduce1'](B1900['concatenate'], B1900['map'](function B1916(parameter__1917) {
+                                var key__1918 = parameter__1917[0];
                                 {
-                                    var value__1903 = parameter__1901[1];
+                                    var value__1919 = parameter__1917[1];
                                     return([
-                                        B1884['symbol-name'](key__1902),
-                                        value__1903
+                                        B1900['symbol-name'](key__1918),
+                                        value__1919
                                     ]);
                                 }
-                            }, keyword_parametersT__1899)))
+                            }, keyword_parametersT__1915)))
                         ],
-                        form__1894
+                        form__1910
                     ]);
                 };
-                B1884['%annotate-function'](($module)['wrap-keys'], 'wrap-keys', false);
+                B1900['%annotate-function'](($module)['wrap-keys'], 'wrap-keys', false);
             }
         }
     }
 }
 {
-    var B1907 = $S('bind', 'ralph/core');
+    var B1923 = $S('bind', 'ralph/core');
     {
-        var B1908 = $S('%native-call', 'ralph/core');
+        var B1924 = $S('%native-call', 'ralph/core');
         {
-            ($module)['wrap-rest/keys'] = function B1909(form__1910, all_parameters__1911, normal_parameters__1912, rest_parameter__1913, keyword_parameters__1914) {
-                var restQ__1915 = rest_parameter__1913;
+            ($module)['wrap-rest/keys'] = function B1925(form__1926, all_parameters__1927, normal_parameters__1928, rest_parameter__1929, keyword_parameters__1930) {
+                var restQ__1931 = rest_parameter__1929;
                 {
-                    var B1916 = rest_parameter__1913;
+                    var B1932 = rest_parameter__1929;
                     {
-                        var rest_parameter__1917 = false;
-                        if (($T)(B1916))
-                            rest_parameter__1917 = B1916;
-                        else if (($T)(B1884['not'](B1884['empty?'](keyword_parameters__1914))))
-                            rest_parameter__1917 = B1884['generate-symbol']();
+                        var rest_parameter__1933 = false;
+                        if (($T)(B1932))
+                            rest_parameter__1933 = B1932;
+                        else if (($T)(B1900['not'](B1900['empty?'](keyword_parameters__1930))))
+                            rest_parameter__1933 = B1900['generate-symbol']();
                         else
-                            rest_parameter__1917 = false;
+                            rest_parameter__1933 = false;
                         {
-                            var formT__1918 = false;
-                            if (($T)(B1884['empty?'](keyword_parameters__1914)))
-                                formT__1918 = form__1910;
+                            var formT__1934 = false;
+                            if (($T)(B1900['empty?'](keyword_parameters__1930)))
+                                formT__1934 = form__1926;
                             else
-                                formT__1918 = ($module)['wrap-keys'](form__1910, rest_parameter__1917, keyword_parameters__1914);
+                                formT__1934 = ($module)['wrap-keys'](form__1926, rest_parameter__1933, keyword_parameters__1930);
                             {
-                                var B1919 = restQ__1915;
+                                var B1935 = restQ__1931;
                                 {
-                                    var B1920 = false;
-                                    if (($T)(B1919))
-                                        B1920 = B1919;
+                                    var B1936 = false;
+                                    if (($T)(B1935))
+                                        B1936 = B1935;
                                     else
-                                        B1920 = B1884['not'](B1884['empty?'](keyword_parameters__1914));
-                                    if (($T)(B1920))
+                                        B1936 = B1900['not'](B1900['empty?'](keyword_parameters__1930));
+                                    if (($T)(B1936))
                                         return([
-                                            B1907,
+                                            B1923,
                                             [[
-                                                    rest_parameter__1917,
+                                                    rest_parameter__1933,
                                                     [
-                                                        B1908,
+                                                        B1924,
                                                         '$SL.call',
-                                                        all_parameters__1911,
-                                                        B1884['size'](normal_parameters__1912)
+                                                        all_parameters__1927,
+                                                        B1900['size'](normal_parameters__1928)
                                                     ]
                                                 ]],
-                                            formT__1918
+                                            formT__1934
                                         ]);
                                     else
-                                        return(formT__1918);
+                                        return(formT__1934);
                                 }
                             }
                         }
                     }
                 }
             };
-            B1884['%annotate-function'](($module)['wrap-rest/keys'], 'wrap-rest/keys', false);
+            B1900['%annotate-function'](($module)['wrap-rest/keys'], 'wrap-rest/keys', false);
         }
     }
 }
 {
-    ($module)['strip-types'] = function B1923(parameters__1924) {
-        return(B1884['map'](function B1925(parameter__1926) {
-            if (($T)(B1884['instance?'](parameter__1926, B1884['<array>'])))
-                return(B1884['first'](parameter__1926));
+    ($module)['strip-types'] = function B1939(parameters__1940) {
+        return(B1900['map'](function B1941(parameter__1942) {
+            if (($T)(B1900['instance?'](parameter__1942, B1900['<array>'])))
+                return(B1900['first'](parameter__1942));
             else
-                return(parameter__1926);
-        }, parameters__1924));
+                return(parameter__1942);
+        }, parameters__1940));
     };
-    B1884['%annotate-function'](($module)['strip-types'], 'strip-types', false);
+    B1900['%annotate-function'](($module)['strip-types'], 'strip-types', false);
 }
 {
-    var B1929 = $S('%method', 'ralph/core');
+    var B1945 = $S('%method', 'ralph/core');
     {
-        var B1930 = $S('%all-arguments');
+        var B1946 = $S('%all-arguments');
         {
-            ($module)['named-method'] = function B1931(name__1932, parameter_list__1933, form__1934) {
-                var B1935 = B1886['destructure-parameter-list'](parameter_list__1933);
+            ($module)['named-method'] = function B1947(name__1948, parameter_list__1949, form__1950) {
+                var B1951 = B1902['destructure-parameter-list'](parameter_list__1949);
                 {
-                    var normal_parameters__1936 = B1935[0];
+                    var normal_parameters__1952 = B1951[0];
                     {
-                        var rest_parameter__1937 = B1935[1];
+                        var rest_parameter__1953 = B1951[1];
                         {
-                            var keyword_parameters__1938 = B1935[2];
+                            var keyword_parameters__1954 = B1951[2];
                             return([
-                                B1929,
-                                name__1932,
-                                ($module)['strip-types'](normal_parameters__1936),
-                                ($module)['wrap-rest/keys'](form__1934, B1930, normal_parameters__1936, rest_parameter__1937, keyword_parameters__1938)
+                                B1945,
+                                name__1948,
+                                ($module)['strip-types'](normal_parameters__1952),
+                                ($module)['wrap-rest/keys'](form__1950, B1946, normal_parameters__1952, rest_parameter__1953, keyword_parameters__1954)
                             ]);
                         }
                     }
                 }
             };
-            B1884['%annotate-function'](($module)['named-method'], 'named-method', false);
+            B1900['%annotate-function'](($module)['named-method'], 'named-method', false);
         }
     }
 }
 {
-    ($module)['$core-macros'] = B1884['make-plain-object']();
+    ($module)['$core-macros'] = B1900['make-plain-object']();
     ($module)['%export']('$core-macros', ($module)['$core-macros']);
 }
 {
-    var B1940 = $S('if', 'ralph/core');
+    var B1956 = $S('if', 'ralph/core');
     {
-        var B1941 = $S('begin', 'ralph/core');
-        B1884['get-setter'](($module)['$core-macros'], 'when', function B1942(____1943, test__1944) {
-            var forms__1945 = $SL.call(arguments, 2);
+        var B1957 = $S('begin', 'ralph/core');
+        B1900['get-setter'](($module)['$core-macros'], 'when', function B1958(____1959, test__1960) {
+            var forms__1961 = $SL.call(arguments, 2);
             return([
-                B1940,
-                test__1944,
-                B1884['%concat']([B1941], forms__1945),
+                B1956,
+                test__1960,
+                B1900['%concat']([B1957], forms__1961),
                 false
             ]);
         });
     }
 }
 {
-    var B1947 = $S('not', 'ralph/core');
-    B1884['get-setter'](($module)['$core-macros'], 'unless', function B1948(____1949, test__1950) {
-        var forms__1951 = $SL.call(arguments, 2);
+    var B1963 = $S('not', 'ralph/core');
+    B1900['get-setter'](($module)['$core-macros'], 'unless', function B1964(____1965, test__1966) {
+        var forms__1967 = $SL.call(arguments, 2);
         return([
-            B1940,
+            B1956,
             [
-                B1947,
-                test__1950
+                B1963,
+                test__1966
             ],
-            B1884['%concat']([B1941], forms__1951),
+            B1900['%concat']([B1957], forms__1967),
             false
         ]);
     });
 }
 {
-    var B1953 = $S('set!', 'ralph/core');
+    var B1969 = $S('set!', 'ralph/core');
     {
-        var B1954 = $S('parallel-set!', 'ralph/core');
-        B1884['get-setter'](($module)['$core-macros'], 'parallel-set!', function B1955(____1956, identifier__1957, new_value__1958) {
-            var clauses__1959 = $SL.call(arguments, 3);
-            if (($T)(B1884['empty?'](clauses__1959)))
+        var B1970 = $S('parallel-set!', 'ralph/core');
+        B1900['get-setter'](($module)['$core-macros'], 'parallel-set!', function B1971(____1972, identifier__1973, new_value__1974) {
+            var clauses__1975 = $SL.call(arguments, 3);
+            if (($T)(B1900['empty?'](clauses__1975)))
                 return([
-                    B1953,
-                    identifier__1957,
-                    new_value__1958
+                    B1969,
+                    identifier__1973,
+                    new_value__1974
                 ]);
             else {
-                var value__1960 = B1884['generate-symbol']();
+                var value__1976 = B1900['generate-symbol']();
                 return([
-                    B1907,
+                    B1923,
                     [[
-                            value__1960,
-                            new_value__1958
+                            value__1976,
+                            new_value__1974
                         ]],
-                    B1884['%concat']([B1954], clauses__1959),
+                    B1900['%concat']([B1970], clauses__1975),
                     [
-                        B1953,
-                        identifier__1957,
-                        value__1960
+                        B1969,
+                        identifier__1973,
+                        value__1976
                     ]
                 ]);
             }
@@ -213,29 +221,29 @@ var B1884 = require('ralph/core');
     }
 }
 {
-    var B1962 = $K('else');
+    var B1978 = $K('else');
     {
-        var B1963 = $S('cond', 'ralph/core');
-        B1884['get-setter'](($module)['$core-macros'], 'cond', function B1964(____1965) {
-            var cases__1966 = $SL.call(arguments, 1);
-            if (($T)(B1884['not'](B1884['empty?'](cases__1966)))) {
-                var case__1967 = B1884['first'](cases__1966);
+        var B1979 = $S('cond', 'ralph/core');
+        B1900['get-setter'](($module)['$core-macros'], 'cond', function B1980(____1981) {
+            var cases__1982 = $SL.call(arguments, 1);
+            if (($T)(B1900['not'](B1900['empty?'](cases__1982)))) {
+                var case__1983 = B1900['first'](cases__1982);
                 {
-                    B1886['check-type'](case__1967, B1884['<array>'], 'Non-array case in cond: %=');
+                    B1902['check-type'](case__1983, B1900['<array>'], 'Non-array case in cond: %=');
                     {
-                        var test__1968 = case__1967[0];
+                        var test__1984 = case__1983[0];
                         {
-                            var forms__1969 = $SL.call(case__1967, 1);
+                            var forms__1985 = $SL.call(case__1983, 1);
                             {
-                                var form__1970 = B1884['%concat']([B1941], forms__1969);
-                                if (($T)(B1884['=='](test__1968, B1962)))
-                                    return(form__1970);
+                                var form__1986 = B1900['%concat']([B1957], forms__1985);
+                                if (($T)(B1900['=='](test__1984, B1978)))
+                                    return(form__1986);
                                 else
                                     return([
-                                        B1940,
-                                        test__1968,
-                                        form__1970,
-                                        B1884['%concat']([B1963], B1884['rest'](cases__1966))
+                                        B1956,
+                                        test__1984,
+                                        form__1986,
+                                        B1900['%concat']([B1979], B1900['rest'](cases__1982))
                                     ]);
                             }
                         }
@@ -247,84 +255,84 @@ var B1884 = require('ralph/core');
     }
 }
 {
-    var B1973 = $S('when', 'ralph/core');
+    var B1989 = $S('when', 'ralph/core');
     {
-        var B1974 = $S('and', 'ralph/core');
-        B1884['get-setter'](($module)['$core-macros'], 'and', function B1975(____1976) {
-            var forms__1977 = $SL.call(arguments, 1);
+        var B1990 = $S('and', 'ralph/core');
+        B1900['get-setter'](($module)['$core-macros'], 'and', function B1991(____1992) {
+            var forms__1993 = $SL.call(arguments, 1);
             {
-                var B1978 = B1884['size'](forms__1977);
-                if (($T)(B1884['=='](B1978, 0)))
+                var B1994 = B1900['size'](forms__1993);
+                if (($T)(B1900['=='](B1994, 0)))
                     return(true);
-                else if (($T)(B1884['=='](B1978, 1)))
-                    return(B1884['first'](forms__1977));
+                else if (($T)(B1900['=='](B1994, 1)))
+                    return(B1900['first'](forms__1993));
                 else
                     return([
-                        B1973,
-                        B1884['first'](forms__1977),
-                        B1884['%concat']([B1974], B1884['rest'](forms__1977))
+                        B1989,
+                        B1900['first'](forms__1993),
+                        B1900['%concat']([B1990], B1900['rest'](forms__1993))
                     ]);
             }
         });
     }
 }
 {
-    var B1981 = $S('or', 'ralph/core');
-    B1884['get-setter'](($module)['$core-macros'], 'or', function B1982(____1983) {
-        var forms__1984 = $SL.call(arguments, 1);
+    var B1997 = $S('or', 'ralph/core');
+    B1900['get-setter'](($module)['$core-macros'], 'or', function B1998(____1999) {
+        var forms__2000 = $SL.call(arguments, 1);
         {
-            var B1985 = B1884['size'](forms__1984);
-            if (($T)(B1884['=='](B1985, 0)))
+            var B2001 = B1900['size'](forms__2000);
+            if (($T)(B1900['=='](B2001, 0)))
                 return(false);
-            else if (($T)(B1884['=='](B1985, 1)))
-                return(B1884['first'](forms__1984));
+            else if (($T)(B1900['=='](B2001, 1)))
+                return(B1900['first'](forms__2000));
             else {
-                var value__1986 = B1884['generate-symbol']();
+                var value__2002 = B1900['generate-symbol']();
                 return([
-                    B1907,
+                    B1923,
                     [[
-                            value__1986,
-                            B1884['first'](forms__1984)
+                            value__2002,
+                            B1900['first'](forms__2000)
                         ]],
                     [
-                        B1940,
-                        value__1986,
-                        value__1986,
-                        B1884['%concat']([B1981], B1884['rest'](forms__1984))
+                        B1956,
+                        value__2002,
+                        value__2002,
+                        B1900['%concat']([B1997], B1900['rest'](forms__2000))
                     ]
                 ]);
             }
         }
     });
 }
-B1884['get-setter'](($module)['$core-macros'], 'if-bind', function B1988(____1989, binding__1990, consequent__1991, alternate__1992) {
-    var superflous__1993 = $SL.call(arguments, 4);
+B1900['get-setter'](($module)['$core-macros'], 'if-bind', function B2004(____2005, binding__2006, consequent__2007, alternate__2008) {
+    var superflous__2009 = $SL.call(arguments, 4);
     {
-        B1886['check-type'](binding__1990, B1884['<array>'], 'Non-array binding in if-bind: %=');
+        B1902['check-type'](binding__2006, B1900['<array>'], 'Non-array binding in if-bind: %=');
         {
-            var var__1994 = binding__1990[0];
+            var var__2010 = binding__2006[0];
             {
-                var value__1995 = binding__1990[1];
+                var value__2011 = binding__2006[1];
                 {
-                    var temp__1996 = B1884['generate-symbol']();
+                    var temp__2012 = B1900['generate-symbol']();
                     return([
-                        B1907,
+                        B1923,
                         [[
-                                temp__1996,
-                                value__1995
+                                temp__2012,
+                                value__2011
                             ]],
                         [
-                            B1940,
-                            temp__1996,
+                            B1956,
+                            temp__2012,
                             [
-                                B1907,
+                                B1923,
                                 [[
-                                        var__1994,
-                                        temp__1996
+                                        var__2010,
+                                        temp__2012
                                     ]],
-                                consequent__1991
+                                consequent__2007
                             ],
-                            alternate__1992
+                            alternate__2008
                         ]
                     ]);
                 }
@@ -333,85 +341,85 @@ B1884['get-setter'](($module)['$core-macros'], 'if-bind', function B1988(____198
     }
 });
 {
-    var B1998 = $S('while', 'ralph/core');
-    B1884['get-setter'](($module)['$core-macros'], 'until', function B1999(____2000, test__2001) {
-        var forms__2002 = $SL.call(arguments, 2);
-        return(B1884['%concat']([
-            B1998,
+    var B2014 = $S('while', 'ralph/core');
+    B1900['get-setter'](($module)['$core-macros'], 'until', function B2015(____2016, test__2017) {
+        var forms__2018 = $SL.call(arguments, 2);
+        return(B1900['%concat']([
+            B2014,
             [
-                B1947,
-                test__2001
+                B1963,
+                test__2017
             ]
-        ], forms__2002));
+        ], forms__2018));
     });
 }
 {
-    var B2005 = $S('for', 'ralph/core');
+    var B2021 = $S('for', 'ralph/core');
     {
-        var B2006 = $S('inc', 'ralph/core');
+        var B2022 = $S('inc', 'ralph/core');
         {
-            var B2007 = $S('binary>=', 'ralph/core');
-            B1884['get-setter'](($module)['$core-macros'], 'dotimes', function B2008(____2009, binding__2010) {
-                var forms__2011 = $SL.call(arguments, 2);
+            var B2023 = $S('binary>=', 'ralph/core');
+            B1900['get-setter'](($module)['$core-macros'], 'dotimes', function B2024(____2025, binding__2026) {
+                var forms__2027 = $SL.call(arguments, 2);
                 {
-                    B1886['check-type'](binding__2010, B1884['<array>'], 'Non-array binding in dotimes: %=');
+                    B1902['check-type'](binding__2026, B1900['<array>'], 'Non-array binding in dotimes: %=');
                     {
-                        var temp__2012 = B1884['generate-symbol']();
+                        var temp__2028 = B1900['generate-symbol']();
                         {
-                            var var__2013 = binding__2010[0];
+                            var var__2029 = binding__2026[0];
                             {
-                                var count__2014 = binding__2010[1];
+                                var count__2030 = binding__2026[1];
                                 {
-                                    var result__2015 = binding__2010[2];
+                                    var result__2031 = binding__2026[2];
                                     {
-                                        B1886['check-type'](var__2013, B1884['<symbol>'], 'Non-symbol var in dotimes: %=');
+                                        B1902['check-type'](var__2029, B1900['<symbol>'], 'Non-symbol var in dotimes: %=');
                                         {
-                                            var B2017 = [[
-                                                        temp__2012,
-                                                        count__2014
+                                            var B2033 = [[
+                                                        temp__2028,
+                                                        count__2030
                                                     ]];
                                             {
-                                                var B2018 = B1884['%concat'];
+                                                var B2034 = B1900['%concat'];
                                                 {
-                                                    var B2019 = [[
-                                                                var__2013,
+                                                    var B2035 = [[
+                                                                var__2029,
                                                                 0,
                                                                 [
-                                                                    B2006,
-                                                                    var__2013
+                                                                    B2022,
+                                                                    var__2029
                                                                 ]
                                                             ]];
                                                     {
-                                                        var B2020 = [
-                                                                B2007,
-                                                                var__2013,
-                                                                temp__2012
+                                                        var B2036 = [
+                                                                B2023,
+                                                                var__2029,
+                                                                temp__2028
                                                             ];
                                                         {
-                                                            var B2016 = result__2015;
+                                                            var B2032 = result__2031;
                                                             {
-                                                                var B2021 = false;
-                                                                if (($T)(B2016))
-                                                                    B2021 = B2016;
+                                                                var B2037 = false;
+                                                                if (($T)(B2032))
+                                                                    B2037 = B2032;
                                                                 else
-                                                                    B2021 = false;
+                                                                    B2037 = false;
                                                                 {
-                                                                    var B2022 = [
-                                                                            B2020,
-                                                                            B2021
+                                                                    var B2038 = [
+                                                                            B2036,
+                                                                            B2037
                                                                         ];
                                                                     {
-                                                                        var B2023 = [
-                                                                                B2005,
-                                                                                B2019,
-                                                                                B2022
+                                                                        var B2039 = [
+                                                                                B2021,
+                                                                                B2035,
+                                                                                B2038
                                                                             ];
                                                                         {
-                                                                            var B2024 = B2018(B2023, forms__2011);
+                                                                            var B2040 = B2034(B2039, forms__2027);
                                                                             return([
-                                                                                B1907,
-                                                                                B2017,
-                                                                                B2024
+                                                                                B1923,
+                                                                                B2033,
+                                                                                B2040
                                                                             ]);
                                                                         }
                                                                     }
@@ -433,56 +441,56 @@ B1884['get-setter'](($module)['$core-macros'], 'if-bind', function B1988(____198
     }
 }
 {
-    var B2033 = $S('method', 'ralph/core');
-    B1884['get-setter'](($module)['$core-macros'], 'for', function B2034(____2035, clauses__2036, end_clause__2037) {
-        var forms__2038 = $SL.call(arguments, 3);
+    var B2049 = $S('method', 'ralph/core');
+    B1900['get-setter'](($module)['$core-macros'], 'for', function B2050(____2051, clauses__2052, end_clause__2053) {
+        var forms__2054 = $SL.call(arguments, 3);
         {
-            B1886['check-type'](clauses__2036, B1884['<array>'], 'Non-array set of clauses in for: %=');
+            B1902['check-type'](clauses__2052, B1900['<array>'], 'Non-array set of clauses in for: %=');
             {
-                B1886['check-type'](end_clause__2037, B1884['<array>'], 'Non-array end-clause in for: %=');
+                B1902['check-type'](end_clause__2053, B1900['<array>'], 'Non-array end-clause in for: %=');
                 {
-                    var init_clauses__2039 = [];
+                    var init_clauses__2055 = [];
                     {
-                        var next_clauses__2040 = [];
+                        var next_clauses__2056 = [];
                         {
-                            var vars__2041 = B1884['map'](B1884['first'], clauses__2036);
+                            var vars__2057 = B1900['map'](B1900['first'], clauses__2052);
                             {
-                                var B2042 = clauses__2036;
+                                var B2058 = clauses__2052;
                                 {
-                                    var B2043 = false;
+                                    var B2059 = false;
                                     {
-                                        var B2044 = false;
+                                        var B2060 = false;
                                         {
-                                            var B2045 = [B2042];
+                                            var B2061 = [B2058];
                                             {
                                                 while (true) {
-                                                    var B2051 = B1884['not'];
+                                                    var B2067 = B1900['not'];
                                                     {
-                                                        var B2046 = B2043;
+                                                        var B2062 = B2059;
                                                         {
-                                                            var B2052 = false;
-                                                            if (($T)(B2046))
-                                                                B2052 = B2046;
+                                                            var B2068 = false;
+                                                            if (($T)(B2062))
+                                                                B2068 = B2062;
                                                             else
-                                                                B2052 = B1884['any?'](B1884['empty?'], B2045);
+                                                                B2068 = B1900['any?'](B1900['empty?'], B2061);
                                                             {
-                                                                var B2053 = B2051(B2052);
-                                                                if (($T)(B2053)) {
-                                                                    var clause__2047 = B1884['first'](B2042);
+                                                                var B2069 = B2067(B2068);
+                                                                if (($T)(B2069)) {
+                                                                    var clause__2063 = B1900['first'](B2058);
                                                                     {
-                                                                        (function B2048(clause__2049) {
-                                                                            B1886['check-type'](clause__2049, B1884['<array>'], 'Non-array clause in for: %=');
+                                                                        (function B2064(clause__2065) {
+                                                                            B1902['check-type'](clause__2065, B1900['<array>'], 'Non-array clause in for: %=');
                                                                             {
-                                                                                B1884['push-last'](init_clauses__2039, B1884['slice'](clause__2049, 0, 2));
+                                                                                B1900['push-last'](init_clauses__2055, B1900['slice'](clause__2065, 0, 2));
                                                                                 {
-                                                                                    B1884['push-last'](next_clauses__2040, B1884['first'](clause__2049));
-                                                                                    return(B1884['push-last'](next_clauses__2040, B1884['third'](clause__2049)));
+                                                                                    B1900['push-last'](next_clauses__2056, B1900['first'](clause__2065));
+                                                                                    return(B1900['push-last'](next_clauses__2056, B1900['third'](clause__2065)));
                                                                                 }
                                                                             }
-                                                                        }(clause__2047));
+                                                                        }(clause__2063));
                                                                         {
-                                                                            B2042 = B1884['rest'](B2042);
-                                                                            B2045 = [B2042];
+                                                                            B2058 = B1900['rest'](B2058);
+                                                                            B2061 = [B2058];
                                                                         }
                                                                     }
                                                                 } else
@@ -492,39 +500,39 @@ B1884['get-setter'](($module)['$core-macros'], 'if-bind', function B1988(____198
                                                     }
                                                 }
                                                 {
-                                                    B2044;
+                                                    B2060;
                                                     {
-                                                        var B2050 = B1884['empty?'](end_clause__2037);
+                                                        var B2066 = B1900['empty?'](end_clause__2053);
                                                         {
-                                                            var B2054 = false;
-                                                            if (($T)(B2050))
-                                                                B2054 = B2050;
+                                                            var B2070 = false;
+                                                            if (($T)(B2066))
+                                                                B2070 = B2066;
                                                             else
-                                                                B2054 = [
-                                                                    B1947,
-                                                                    B1884['first'](end_clause__2037)
+                                                                B2070 = [
+                                                                    B1963,
+                                                                    B1900['first'](end_clause__2053)
                                                                 ];
                                                             {
-                                                                var B2055 = B1884['%concat']([B1884['%concat']([
-                                                                            B2033,
-                                                                            vars__2041
-                                                                        ], forms__2038)], vars__2041);
+                                                                var B2071 = B1900['%concat']([B1900['%concat']([
+                                                                            B2049,
+                                                                            vars__2057
+                                                                        ], forms__2054)], vars__2057);
                                                                 {
-                                                                    var B2056 = B1884['%concat']([B1954], next_clauses__2040);
+                                                                    var B2072 = B1900['%concat']([B1970], next_clauses__2056);
                                                                     {
-                                                                        var B2057 = [
-                                                                                B1998,
-                                                                                B2054,
-                                                                                B2055,
-                                                                                B2056
+                                                                        var B2073 = [
+                                                                                B2014,
+                                                                                B2070,
+                                                                                B2071,
+                                                                                B2072
                                                                             ];
                                                                         {
-                                                                            var B2058 = B1884['%concat']([B1941], B1884['rest'](end_clause__2037));
+                                                                            var B2074 = B1900['%concat']([B1957], B1900['rest'](end_clause__2053));
                                                                             return([
-                                                                                B1907,
-                                                                                init_clauses__2039,
-                                                                                B2057,
-                                                                                B2058
+                                                                                B1923,
+                                                                                init_clauses__2055,
+                                                                                B2073,
+                                                                                B2074
                                                                             ]);
                                                                         }
                                                                     }
@@ -546,168 +554,168 @@ B1884['get-setter'](($module)['$core-macros'], 'if-bind', function B1988(____198
     });
 }
 {
-    var B2065 = $S('rest', 'ralph/core');
+    var B2081 = $S('rest', 'ralph/core');
     {
-        var B2066 = $S('%array', 'ralph/core');
+        var B2082 = $S('%array', 'ralph/core');
         {
-            var B2067 = $S('until', 'ralph/core');
+            var B2083 = $S('until', 'ralph/core');
             {
-                var B2068 = $S('any?', 'ralph/core');
+                var B2084 = $S('any?', 'ralph/core');
                 {
-                    var B2069 = $S('empty?', 'ralph/core');
+                    var B2085 = $S('empty?', 'ralph/core');
                     {
-                        var B2070 = $S('first', 'ralph/core');
-                        B1884['get-setter'](($module)['$core-macros'], 'for-each', function B2071(____2072, clauses__2073, end_clause__2074) {
-                            var forms__2075 = $SL.call(arguments, 3);
+                        var B2086 = $S('first', 'ralph/core');
+                        B1900['get-setter'](($module)['$core-macros'], 'for-each', function B2087(____2088, clauses__2089, end_clause__2090) {
+                            var forms__2091 = $SL.call(arguments, 3);
                             {
-                                B1886['check-type'](clauses__2073, B1884['<array>'], 'Non-array set of clauses in for: %=');
+                                B1902['check-type'](clauses__2089, B1900['<array>'], 'Non-array set of clauses in for: %=');
                                 {
-                                    B1886['check-type'](end_clause__2074, B1884['<array>'], 'Non-array end-clause in for: %=');
+                                    B1902['check-type'](end_clause__2090, B1900['<array>'], 'Non-array end-clause in for: %=');
                                     {
-                                        var clauses__2078 = B1884['map'](function B2076(clause__2077) {
-                                                B1886['check-type'](clause__2077, B1884['<array>'], 'Non-array clause in for-each: %=');
-                                                return(B1884['cons'](B1884['generate-symbol'](), clause__2077));
-                                            }, clauses__2073);
+                                        var clauses__2094 = B1900['map'](function B2092(clause__2093) {
+                                                B1902['check-type'](clause__2093, B1900['<array>'], 'Non-array clause in for-each: %=');
+                                                return(B1900['cons'](B1900['generate-symbol'](), clause__2093));
+                                            }, clauses__2089);
                                         {
-                                            var endQ__2079 = B1884['generate-symbol']();
+                                            var endQ__2095 = B1900['generate-symbol']();
                                             {
-                                                var values__2080 = B1884['generate-symbol']();
+                                                var values__2096 = B1900['generate-symbol']();
                                                 {
-                                                    var result__2081 = B1884['generate-symbol']();
+                                                    var result__2097 = B1900['generate-symbol']();
                                                     {
-                                                        var B2098 = B1884['%concat'];
+                                                        var B2114 = B1900['%concat'];
                                                         {
-                                                            var B2099 = B1884['%concat'];
+                                                            var B2115 = B1900['%concat'];
                                                             {
-                                                                var vars__2082 = B1884['map'](B1884['second'], clauses__2078);
+                                                                var vars__2098 = B1900['map'](B1900['second'], clauses__2094);
                                                                 {
-                                                                    var B2100 = B1884['%concat']([B1884['%concat']([
-                                                                                B2033,
-                                                                                vars__2082
-                                                                            ], forms__2075)], vars__2082);
+                                                                    var B2116 = B1900['%concat']([B1900['%concat']([
+                                                                                B2049,
+                                                                                vars__2098
+                                                                            ], forms__2091)], vars__2098);
                                                                     {
-                                                                        var B2101 = [
-                                                                                B1941,
-                                                                                B2100
+                                                                        var B2117 = [
+                                                                                B1957,
+                                                                                B2116
                                                                             ];
                                                                         {
-                                                                            var B2102 = B1884['map'](function B2083(clause__2084) {
+                                                                            var B2118 = B1900['map'](function B2099(clause__2100) {
                                                                                     return([
-                                                                                        B1953,
-                                                                                        B1884['first'](clause__2084),
+                                                                                        B1969,
+                                                                                        B1900['first'](clause__2100),
                                                                                         [
-                                                                                            B2065,
-                                                                                            B1884['first'](clause__2084)
+                                                                                            B2081,
+                                                                                            B1900['first'](clause__2100)
                                                                                         ]
                                                                                     ]);
-                                                                                }, clauses__2078);
+                                                                                }, clauses__2094);
                                                                             {
-                                                                                var B2103 = B2099(B2101, B2102);
+                                                                                var B2119 = B2115(B2117, B2118);
                                                                                 {
-                                                                                    var B2104 = [[
-                                                                                                B1953,
-                                                                                                values__2080,
-                                                                                                B1884['%concat']([B2066], B1884['map'](B1884['first'], clauses__2078))
+                                                                                    var B2120 = [[
+                                                                                                B1969,
+                                                                                                values__2096,
+                                                                                                B1900['%concat']([B2082], B1900['map'](B1900['first'], clauses__2094))
                                                                                             ]];
                                                                                     {
-                                                                                        var form__2085 = B2098(B2103, B2104);
+                                                                                        var form__2101 = B2114(B2119, B2120);
                                                                                         {
-                                                                                            var B2105 = B1884['%concat'](B1884['%concat']([], B1884['map'](function B2086(clause__2087) {
-                                                                                                    var temp__2088 = clause__2087[0];
+                                                                                            var B2121 = B1900['%concat'](B1900['%concat']([], B1900['map'](function B2102(clause__2103) {
+                                                                                                    var temp__2104 = clause__2103[0];
                                                                                                     {
-                                                                                                        var var__2089 = clause__2087[1];
+                                                                                                        var var__2105 = clause__2103[1];
                                                                                                         {
-                                                                                                            var values__2090 = clause__2087[2];
+                                                                                                            var values__2106 = clause__2103[2];
                                                                                                             return([
-                                                                                                                temp__2088,
-                                                                                                                values__2090
+                                                                                                                temp__2104,
+                                                                                                                values__2106
                                                                                                             ]);
                                                                                                         }
                                                                                                     }
-                                                                                                }, clauses__2078)), [
+                                                                                                }, clauses__2094)), [
                                                                                                     [
-                                                                                                        endQ__2079,
+                                                                                                        endQ__2095,
                                                                                                         false
                                                                                                     ],
                                                                                                     [
-                                                                                                        result__2081,
+                                                                                                        result__2097,
                                                                                                         false
                                                                                                     ],
                                                                                                     [
-                                                                                                        values__2080,
-                                                                                                        B1884['%concat']([B2066], B1884['map'](B1884['first'], clauses__2078))
+                                                                                                        values__2096,
+                                                                                                        B1900['%concat']([B2082], B1900['map'](B1900['first'], clauses__2094))
                                                                                                     ]
                                                                                                 ]);
                                                                                             {
-                                                                                                var B2106 = [
-                                                                                                        B1981,
-                                                                                                        endQ__2079,
+                                                                                                var B2122 = [
+                                                                                                        B1997,
+                                                                                                        endQ__2095,
                                                                                                         [
-                                                                                                            B2068,
-                                                                                                            B2069,
-                                                                                                            values__2080
+                                                                                                            B2084,
+                                                                                                            B2085,
+                                                                                                            values__2096
                                                                                                         ]
                                                                                                     ];
                                                                                                 {
-                                                                                                    var B2107 = B1884['map'](function B2091(clause__2092) {
-                                                                                                            var temp__2093 = clause__2092[0];
+                                                                                                    var B2123 = B1900['map'](function B2107(clause__2108) {
+                                                                                                            var temp__2109 = clause__2108[0];
                                                                                                             {
-                                                                                                                var var__2094 = clause__2092[1];
+                                                                                                                var var__2110 = clause__2108[1];
                                                                                                                 {
-                                                                                                                    var values__2095 = clause__2092[2];
+                                                                                                                    var values__2111 = clause__2108[2];
                                                                                                                     return([
-                                                                                                                        var__2094,
+                                                                                                                        var__2110,
                                                                                                                         [
-                                                                                                                            B2070,
-                                                                                                                            temp__2093
+                                                                                                                            B2086,
+                                                                                                                            temp__2109
                                                                                                                         ]
                                                                                                                     ]);
                                                                                                                 }
                                                                                                             }
-                                                                                                        }, clauses__2078);
+                                                                                                        }, clauses__2094);
                                                                                                     {
-                                                                                                        var B2096 = B1884['first'](end_clause__2074);
+                                                                                                        var B2112 = B1900['first'](end_clause__2090);
                                                                                                         {
-                                                                                                            var B2108 = false;
-                                                                                                            if (($T)(B2096)) {
-                                                                                                                var end_test__2097 = B2096;
-                                                                                                                B2108 = [
-                                                                                                                    B1940,
-                                                                                                                    end_test__2097,
+                                                                                                            var B2124 = false;
+                                                                                                            if (($T)(B2112)) {
+                                                                                                                var end_test__2113 = B2112;
+                                                                                                                B2124 = [
+                                                                                                                    B1956,
+                                                                                                                    end_test__2113,
                                                                                                                     [
-                                                                                                                        B1941,
+                                                                                                                        B1957,
                                                                                                                         [
-                                                                                                                            B1953,
-                                                                                                                            result__2081,
-                                                                                                                            B1884['%concat']([B1941], B1884['rest'](end_clause__2074))
+                                                                                                                            B1969,
+                                                                                                                            result__2097,
+                                                                                                                            B1900['%concat']([B1957], B1900['rest'](end_clause__2090))
                                                                                                                         ],
                                                                                                                         [
-                                                                                                                            B1953,
-                                                                                                                            endQ__2079,
+                                                                                                                            B1969,
+                                                                                                                            endQ__2095,
                                                                                                                             true
                                                                                                                         ]
                                                                                                                     ],
-                                                                                                                    form__2085
+                                                                                                                    form__2101
                                                                                                                 ];
                                                                                                             } else
-                                                                                                                B2108 = form__2085;
+                                                                                                                B2124 = form__2101;
                                                                                                             {
-                                                                                                                var B2109 = [
-                                                                                                                        B1907,
-                                                                                                                        B2107,
-                                                                                                                        B2108
+                                                                                                                var B2125 = [
+                                                                                                                        B1923,
+                                                                                                                        B2123,
+                                                                                                                        B2124
                                                                                                                     ];
                                                                                                                 {
-                                                                                                                    var B2110 = [
-                                                                                                                            B2067,
-                                                                                                                            B2106,
-                                                                                                                            B2109
+                                                                                                                    var B2126 = [
+                                                                                                                            B2083,
+                                                                                                                            B2122,
+                                                                                                                            B2125
                                                                                                                         ];
                                                                                                                     return([
-                                                                                                                        B1907,
-                                                                                                                        B2105,
-                                                                                                                        B2110,
-                                                                                                                        result__2081
+                                                                                                                        B1923,
+                                                                                                                        B2121,
+                                                                                                                        B2126,
+                                                                                                                        result__2097
                                                                                                                     ]);
                                                                                                                 }
                                                                                                             }
@@ -738,64 +746,64 @@ B1884['get-setter'](($module)['$core-macros'], 'if-bind', function B1988(____198
         }
     }
 }
-B1884['get-setter'](($module)['$core-macros'], 'select', function B2114(____2115, value__2116, test__2117) {
-    var cases__2118 = $SL.call(arguments, 3);
+B1900['get-setter'](($module)['$core-macros'], 'select', function B2130(____2131, value__2132, test__2133) {
+    var cases__2134 = $SL.call(arguments, 3);
     {
-        var valueT__2119 = B1884['generate-symbol']();
+        var valueT__2135 = B1900['generate-symbol']();
         {
-            var testT__2120 = false;
-            if (($T)(B1884['instance?'](test__2117, B1884['<symbol>'])))
-                testT__2120 = test__2117;
+            var testT__2136 = false;
+            if (($T)(B1900['instance?'](test__2133, B1900['<symbol>'])))
+                testT__2136 = test__2133;
             else
-                testT__2120 = B1884['generate-symbol']();
+                testT__2136 = B1900['generate-symbol']();
             {
-                var test_expression__2121 = false;
+                var test_expression__2137 = false;
                 {
-                    test_expression__2121 = function B2122(test_value__2123) {
+                    test_expression__2137 = function B2138(test_value__2139) {
                         return([
-                            testT__2120,
-                            valueT__2119,
-                            test_value__2123
+                            testT__2136,
+                            valueT__2135,
+                            test_value__2139
                         ]);
                     };
                     {
-                        var B2128 = B1884['concatenate'];
+                        var B2144 = B1900['concatenate'];
                         {
-                            var B2129 = [[
-                                        valueT__2119,
-                                        value__2116
+                            var B2145 = [[
+                                        valueT__2135,
+                                        value__2132
                                     ]];
                             {
-                                var B2130 = false;
-                                if (($T)(B1884['instance?'](test__2117, B1884['<symbol>'])))
-                                    B2130 = [];
+                                var B2146 = false;
+                                if (($T)(B1900['instance?'](test__2133, B1900['<symbol>'])))
+                                    B2146 = [];
                                 else
-                                    B2130 = [[
-                                            testT__2120,
-                                            test__2117
+                                    B2146 = [[
+                                            testT__2136,
+                                            test__2133
                                         ]];
                                 {
-                                    var B2131 = B2128(B2129, B2130);
+                                    var B2147 = B2144(B2145, B2146);
                                     {
-                                        var B2132 = B1884['%concat']([B1963], B1884['map'](function B2124(case__2125) {
-                                                B1886['check-type'](case__2125, B1884['<array>'], 'Non-array case in select: %=');
+                                        var B2148 = B1900['%concat']([B1979], B1900['map'](function B2140(case__2141) {
+                                                B1902['check-type'](case__2141, B1900['<array>'], 'Non-array case in select: %=');
                                                 {
-                                                    var test_forms__2126 = case__2125[0];
+                                                    var test_forms__2142 = case__2141[0];
                                                     {
-                                                        var forms__2127 = $SL.call(case__2125, 1);
-                                                        if (($T)(B1884['=='](test_forms__2126, B1962)))
-                                                            return(case__2125);
+                                                        var forms__2143 = $SL.call(case__2141, 1);
+                                                        if (($T)(B1900['=='](test_forms__2142, B1978)))
+                                                            return(case__2141);
                                                         else {
-                                                            B1886['check-type'](test_forms__2126, B1884['<array>'], 'Non-array set of test forms in select: %=');
-                                                            return(B1884['%concat']([B1884['%concat']([B1981], B1884['map'](test_expression__2121, test_forms__2126))], forms__2127));
+                                                            B1902['check-type'](test_forms__2142, B1900['<array>'], 'Non-array set of test forms in select: %=');
+                                                            return(B1900['%concat']([B1900['%concat']([B1997], B1900['map'](test_expression__2137, test_forms__2142))], forms__2143));
                                                         }
                                                     }
                                                 }
-                                            }, cases__2118));
+                                            }, cases__2134));
                                         return([
-                                            B1907,
-                                            B2131,
-                                            B2132
+                                            B1923,
+                                            B2147,
+                                            B2148
                                         ]);
                                     }
                                 }
@@ -808,158 +816,158 @@ B1884['get-setter'](($module)['$core-macros'], 'select', function B2114(____2115
     }
 });
 {
-    var B2136 = $S('%get-property', 'ralph/core');
+    var B2152 = $S('%get-property', 'ralph/core');
     {
-        ($module)['destructure'] = function B2137(bindings__2138, values__2139, form__2140) {
-            if (($T)(B1884['instance?'](values__2139, B1884['<symbol>']))) {
-                B1886['check-type'](bindings__2138, B1884['<array>'], 'Non-array set of bindings while destructuring: %=');
+        ($module)['destructure'] = function B2153(bindings__2154, values__2155, form__2156) {
+            if (($T)(B1900['instance?'](values__2155, B1900['<symbol>']))) {
+                B1902['check-type'](bindings__2154, B1900['<array>'], 'Non-array set of bindings while destructuring: %=');
                 {
-                    var B2141 = B1886['destructure-parameter-list'](bindings__2138);
+                    var B2157 = B1902['destructure-parameter-list'](bindings__2154);
                     {
-                        var normal_parameters__2142 = B2141[0];
+                        var normal_parameters__2158 = B2157[0];
                         {
-                            var rest_parameter__2143 = B2141[1];
+                            var rest_parameter__2159 = B2157[1];
                             {
-                                var keyword_parameters__2144 = B2141[2];
+                                var keyword_parameters__2160 = B2157[2];
                                 {
-                                    var i__2145 = B1884['size'](normal_parameters__2142);
-                                    return(B1884['reduce'](function B2146(form__2147, binding__2148) {
-                                        i__2145 = B1884['-'](i__2145, 1);
-                                        if (($T)(B1884['instance?'](binding__2148, B1884['<symbol>'])))
+                                    var i__2161 = B1900['size'](normal_parameters__2158);
+                                    return(B1900['reduce'](function B2162(form__2163, binding__2164) {
+                                        i__2161 = B1900['-'](i__2161, 1);
+                                        if (($T)(B1900['instance?'](binding__2164, B1900['<symbol>'])))
                                             return([
-                                                B1907,
+                                                B1923,
                                                 [[
-                                                        binding__2148,
+                                                        binding__2164,
                                                         [
-                                                            B2136,
-                                                            values__2139,
-                                                            i__2145
+                                                            B2152,
+                                                            values__2155,
+                                                            i__2161
                                                         ]
                                                     ]],
-                                                form__2147
+                                                form__2163
                                             ]);
                                         else
-                                            return(($module)['destructure'](binding__2148, [
-                                                B2136,
-                                                values__2139,
-                                                i__2145
-                                            ], form__2147));
-                                    }, ($module)['wrap-rest/keys'](form__2140, values__2139, normal_parameters__2142, rest_parameter__2143, keyword_parameters__2144), B1884['reverse'](normal_parameters__2142)));
+                                            return(($module)['destructure'](binding__2164, [
+                                                B2152,
+                                                values__2155,
+                                                i__2161
+                                            ], form__2163));
+                                    }, ($module)['wrap-rest/keys'](form__2156, values__2155, normal_parameters__2158, rest_parameter__2159, keyword_parameters__2160), B1900['reverse'](normal_parameters__2158)));
                                 }
                             }
                         }
                     }
                 }
             } else {
-                var var__2149 = B1884['generate-symbol']();
+                var var__2165 = B1900['generate-symbol']();
                 return([
-                    B1907,
+                    B1923,
                     [[
-                            var__2149,
-                            values__2139
+                            var__2165,
+                            values__2155
                         ]],
-                    ($module)['destructure'](bindings__2138, var__2149, form__2140)
+                    ($module)['destructure'](bindings__2154, var__2165, form__2156)
                 ]);
             }
         };
-        B1884['%annotate-function'](($module)['destructure'], 'destructure', false);
+        B1900['%annotate-function'](($module)['destructure'], 'destructure', false);
     }
 }
-B1884['get-setter'](($module)['$core-macros'], 'destructuring-bind', function B2151(____2152, bindings__2153, values__2154) {
-    var forms__2155 = $SL.call(arguments, 3);
-    return(($module)['destructure'](bindings__2153, values__2154, B1884['%concat']([B1941], forms__2155)));
+B1900['get-setter'](($module)['$core-macros'], 'destructuring-bind', function B2167(____2168, bindings__2169, values__2170) {
+    var forms__2171 = $SL.call(arguments, 3);
+    return(($module)['destructure'](bindings__2169, values__2170, B1900['%concat']([B1957], forms__2171)));
 });
-B1884['get-setter'](($module)['$core-macros'], 'bind-properties', function B2158(____2159, properties__2160, object__2161) {
-    var forms__2162 = $SL.call(arguments, 3);
+B1900['get-setter'](($module)['$core-macros'], 'bind-properties', function B2174(____2175, properties__2176, object__2177) {
+    var forms__2178 = $SL.call(arguments, 3);
     {
-        var objectT__2163 = B1884['generate-symbol']();
-        return(B1884['%concat']([
-            B1907,
-            B1884['%concat']([[
-                    objectT__2163,
-                    object__2161
-                ]], B1884['map'](function B2164(property__2165) {
+        var objectT__2179 = B1900['generate-symbol']();
+        return(B1900['%concat']([
+            B1923,
+            B1900['%concat']([[
+                    objectT__2179,
+                    object__2177
+                ]], B1900['map'](function B2180(property__2181) {
                 return([
-                    property__2165,
+                    property__2181,
                     [
-                        B2136,
-                        objectT__2163,
-                        B1884['symbol-name'](property__2165)
+                        B2152,
+                        objectT__2179,
+                        B1900['symbol-name'](property__2181)
                     ]
                 ]);
-            }, properties__2160))
-        ], forms__2162));
+            }, properties__2176))
+        ], forms__2178));
     }
 });
-B1884['get-setter'](($module)['$core-macros'], 'bind-methods', function B2168(____2169, bindings__2170) {
-    var forms__2171 = $SL.call(arguments, 2);
+B1900['get-setter'](($module)['$core-macros'], 'bind-methods', function B2184(____2185, bindings__2186) {
+    var forms__2187 = $SL.call(arguments, 2);
     {
-        B1886['check-type'](bindings__2170, B1884['<array>'], 'Non-array set of bindings in bind-methods: %=');
-        return(B1884['%concat'](B1884['%concat']([
-            B1907,
-            B1884['map'](B1884['first'], bindings__2170)
-        ], B1884['map'](function B2172(binding__2173) {
-            B1886['check-type'](bindings__2170, B1884['<array>'], 'Non-array binding in bind-methods: %=');
+        B1902['check-type'](bindings__2186, B1900['<array>'], 'Non-array set of bindings in bind-methods: %=');
+        return(B1900['%concat'](B1900['%concat']([
+            B1923,
+            B1900['map'](B1900['first'], bindings__2186)
+        ], B1900['map'](function B2188(binding__2189) {
+            B1902['check-type'](bindings__2186, B1900['<array>'], 'Non-array binding in bind-methods: %=');
             {
-                var identifier__2174 = binding__2173[0];
+                var identifier__2190 = binding__2189[0];
                 {
-                    var parameter_list__2175 = binding__2173[1];
+                    var parameter_list__2191 = binding__2189[1];
                     {
-                        var forms__2176 = $SL.call(binding__2173, 2);
+                        var forms__2192 = $SL.call(binding__2189, 2);
                         return([
-                            B1953,
-                            identifier__2174,
-                            B1884['%concat']([
-                                B2033,
-                                parameter_list__2175
-                            ], forms__2176)
+                            B1969,
+                            identifier__2190,
+                            B1900['%concat']([
+                                B2049,
+                                parameter_list__2191
+                            ], forms__2192)
                         ]);
                     }
                 }
             }
-        }, bindings__2170)), forms__2171));
+        }, bindings__2186)), forms__2187));
     }
 });
 {
-    var B2182 = $S('generate-symbol', 'ralph/core');
+    var B2198 = $S('generate-symbol', 'ralph/core');
     {
-        var B2183 = $S('quote', 'ralph/core');
-        B1884['get-setter'](($module)['$core-macros'], 'once-only', function B2184(____2185, names__2186) {
-            var forms__2187 = $SL.call(arguments, 2);
+        var B2199 = $S('quote', 'ralph/core');
+        B1900['get-setter'](($module)['$core-macros'], 'once-only', function B2200(____2201, names__2202) {
+            var forms__2203 = $SL.call(arguments, 2);
             {
-                var symbols__2190 = B1884['map'](function B2188(name__2189) {
-                        return(B1884['generate-symbol']());
-                    }, names__2186);
+                var symbols__2206 = B1900['map'](function B2204(name__2205) {
+                        return(B1900['generate-symbol']());
+                    }, names__2202);
                 return([
-                    B1907,
-                    B1884['%concat']([], B1884['map'](function B2191(symbol__2192) {
+                    B1923,
+                    B1900['%concat']([], B1900['map'](function B2207(symbol__2208) {
                         return([
-                            symbol__2192,
-                            [B2182]
+                            symbol__2208,
+                            [B2198]
                         ]);
-                    }, symbols__2190)),
+                    }, symbols__2206)),
                     [
-                        B2066,
+                        B2082,
                         [
-                            B2183,
-                            B1907
+                            B2199,
+                            B1923
                         ],
-                        B1884['%concat']([B2066], B1884['map'](function B2193(symbol__2194, name__2195) {
+                        B1900['%concat']([B2082], B1900['map'](function B2209(symbol__2210, name__2211) {
                             return([
-                                B2066,
-                                symbol__2194,
-                                name__2195
+                                B2082,
+                                symbol__2210,
+                                name__2211
                             ]);
-                        }, symbols__2190, names__2186)),
-                        B1884['%concat']([
-                            B1907,
-                            B1884['%concat']([], B1884['map'](function B2196(name__2197, symbol__2198) {
+                        }, symbols__2206, names__2202)),
+                        B1900['%concat']([
+                            B1923,
+                            B1900['%concat']([], B1900['map'](function B2212(name__2213, symbol__2214) {
                                 return([
-                                    name__2197,
-                                    symbol__2198
+                                    name__2213,
+                                    symbol__2214
                                 ]);
-                            }, names__2186, symbols__2190))
-                        ], forms__2187)
+                            }, names__2202, symbols__2206))
+                        ], forms__2203)
                     ]
                 ]);
             }
@@ -967,117 +975,117 @@ B1884['get-setter'](($module)['$core-macros'], 'bind-methods', function B2168(__
     }
 }
 {
-    var B2201 = $S('+', 'ralph/core');
-    B1884['get-setter'](($module)['$core-macros'], 'inc!', function B2202(____2203, object__2204, value__2205) {
-        var B2206 = value__2205;
+    var B2217 = $S('+', 'ralph/core');
+    B1900['get-setter'](($module)['$core-macros'], 'inc!', function B2218(____2219, object__2220, value__2221) {
+        var B2222 = value__2221;
         {
-            var B2207 = false;
-            if (($T)(B2206))
-                B2207 = B2206;
+            var B2223 = false;
+            if (($T)(B2222))
+                B2223 = B2222;
             else
-                B2207 = 1;
+                B2223 = 1;
             {
-                var B2208 = [
-                        B2201,
-                        object__2204,
-                        B2207
+                var B2224 = [
+                        B2217,
+                        object__2220,
+                        B2223
                     ];
                 return([
-                    B1953,
-                    object__2204,
-                    B2208
+                    B1969,
+                    object__2220,
+                    B2224
                 ]);
             }
         }
     });
 }
 {
-    var B2211 = $S('-', 'ralph/core');
-    B1884['get-setter'](($module)['$core-macros'], 'dec!', function B2212(____2213, object__2214, value__2215) {
-        var B2216 = value__2215;
+    var B2227 = $S('-', 'ralph/core');
+    B1900['get-setter'](($module)['$core-macros'], 'dec!', function B2228(____2229, object__2230, value__2231) {
+        var B2232 = value__2231;
         {
-            var B2217 = false;
-            if (($T)(B2216))
-                B2217 = B2216;
+            var B2233 = false;
+            if (($T)(B2232))
+                B2233 = B2232;
             else
-                B2217 = 1;
+                B2233 = 1;
             {
-                var B2218 = [
-                        B2211,
-                        object__2214,
-                        B2217
+                var B2234 = [
+                        B2227,
+                        object__2230,
+                        B2233
                     ];
                 return([
-                    B1953,
-                    object__2214,
-                    B2218
+                    B1969,
+                    object__2230,
+                    B2234
                 ]);
             }
         }
     });
 }
 {
-    ($module)['signal-unsupported-dot-name'] = function B2220(property__2221) {
-        return(B1884['signal'](B1885['format-to-string']('Unsupported name for call in dot: %=', property__2221)));
+    ($module)['signal-unsupported-dot-name'] = function B2236(property__2237) {
+        return(B1900['signal'](B1901['format-to-string']('Unsupported name for call in dot: %=', property__2237)));
     };
-    B1884['%annotate-function'](($module)['signal-unsupported-dot-name'], 'signal-unsupported-dot-name', false);
+    B1900['%annotate-function'](($module)['signal-unsupported-dot-name'], 'signal-unsupported-dot-name', false);
 }
-B1884['get-setter'](($module)['$core-macros'], '.', function B2226(____2227, form__2228) {
-    var calls__2229 = $SL.call(arguments, 2);
-    return(B1884['reduce'](function B2230(form__2231, call__2232) {
-        B1886['check-type'](call__2232, B1884['<array>'], 'Non-array call in dot: %=');
+B1900['get-setter'](($module)['$core-macros'], '.', function B2242(____2243, form__2244) {
+    var calls__2245 = $SL.call(arguments, 2);
+    return(B1900['reduce'](function B2246(form__2247, call__2248) {
+        B1902['check-type'](call__2248, B1900['<array>'], 'Non-array call in dot: %=');
         {
-            var property__2233 = call__2232[0];
+            var property__2249 = call__2248[0];
             {
-                var arguments__2234 = $SL.call(call__2232, 1);
+                var arguments__2250 = $SL.call(call__2248, 1);
                 {
-                    var bindings__2237 = B1884['map'](function B2235(argument__2236) {
+                    var bindings__2253 = B1900['map'](function B2251(argument__2252) {
                             return([
-                                B1884['generate-symbol'](),
-                                argument__2236
+                                B1900['generate-symbol'](),
+                                argument__2252
                             ]);
-                        }, arguments__2234);
+                        }, arguments__2250);
                     {
-                        var formT__2238 = B1884['generate-symbol']();
+                        var formT__2254 = B1900['generate-symbol']();
                         {
-                            var B2240 = [[
-                                        formT__2238,
-                                        form__2231
+                            var B2256 = [[
+                                        formT__2254,
+                                        form__2247
                                     ]];
                             {
-                                var B2241 = B1884['%concat'];
+                                var B2257 = B1900['%concat'];
                                 {
-                                    var B2239 = property__2233;
+                                    var B2255 = property__2249;
                                     {
-                                        var B2242 = false;
-                                        if (($T)(B1884['instance?'](B2239, B1884['<string>'])))
-                                            B2242 = property__2233;
-                                        else if (($T)(B1884['instance?'](B2239, B1884['<symbol>'])))
-                                            B2242 = B1884['symbol-name'](property__2233);
+                                        var B2258 = false;
+                                        if (($T)(B1900['instance?'](B2255, B1900['<string>'])))
+                                            B2258 = property__2249;
+                                        else if (($T)(B1900['instance?'](B2255, B1900['<symbol>'])))
+                                            B2258 = B1900['symbol-name'](property__2249);
                                         else
-                                            B2242 = ($module)['signal-unsupported-dot-name'](property__2233);
+                                            B2258 = ($module)['signal-unsupported-dot-name'](property__2249);
                                         {
-                                            var B2243 = [
-                                                    B2136,
-                                                    formT__2238,
-                                                    B2242
+                                            var B2259 = [
+                                                    B2152,
+                                                    formT__2254,
+                                                    B2258
                                                 ];
                                             {
-                                                var B2244 = [B2243];
+                                                var B2260 = [B2259];
                                                 {
-                                                    var B2245 = B1884['map'](B1884['first'], bindings__2237);
+                                                    var B2261 = B1900['map'](B1900['first'], bindings__2253);
                                                     {
-                                                        var B2246 = B2241(B2244, B2245);
+                                                        var B2262 = B2257(B2260, B2261);
                                                         {
-                                                            var B2247 = [
-                                                                    B1907,
-                                                                    bindings__2237,
-                                                                    B2246
+                                                            var B2263 = [
+                                                                    B1923,
+                                                                    bindings__2253,
+                                                                    B2262
                                                                 ];
                                                             return([
-                                                                B1907,
-                                                                B2240,
-                                                                B2247
+                                                                B1923,
+                                                                B2256,
+                                                                B2263
                                                             ]);
                                                         }
                                                     }
@@ -1092,84 +1100,84 @@ B1884['get-setter'](($module)['$core-macros'], '.', function B2226(____2227, for
                 }
             }
         }
-    }, form__2228, calls__2229));
+    }, form__2244, calls__2245));
 });
 {
-    var B2251 = $S('define', 'ralph/core');
+    var B2267 = $S('define', 'ralph/core');
     {
-        var B2252 = $S('%make-method', 'ralph/core');
+        var B2268 = $S('%make-method', 'ralph/core');
         {
-            var B2253 = $S('<object>', 'ralph/core');
-            B1884['get-setter'](($module)['$core-macros'], 'define-method', function B2254(env__2255, identifier__2256, parameter_list__2257) {
-                var forms__2258 = $SL.call(arguments, 3);
+            var B2269 = $S('<object>', 'ralph/core');
+            B1900['get-setter'](($module)['$core-macros'], 'define-method', function B2270(env__2271, identifier__2272, parameter_list__2273) {
+                var forms__2274 = $SL.call(arguments, 3);
                 {
-                    var B2259 = false;
-                    if (($T)(B1886['setter-identifier?'](identifier__2256)))
-                        B2259 = [
+                    var B2275 = false;
+                    if (($T)(B1902['setter-identifier?'](identifier__2272)))
+                        B2275 = [
                             true,
-                            B1886['transform-setter-identifier'](B1884['second'](identifier__2256))
+                            B1902['transform-setter-identifier'](B1900['second'](identifier__2272))
                         ];
                     else
-                        B2259 = [
+                        B2275 = [
                             false,
-                            identifier__2256
+                            identifier__2272
                         ];
                     {
-                        var setterQ__2260 = B2259[0];
+                        var setterQ__2276 = B2275[0];
                         {
-                            var identifier__2261 = B2259[1];
+                            var identifier__2277 = B2275[1];
                             {
-                                var B2266 = B1884['not'];
+                                var B2282 = B1900['not'];
                                 {
-                                    var B2262 = B1884['instance?'](identifier__2261, B1884['<symbol>']);
+                                    var B2278 = B1900['instance?'](identifier__2277, B1900['<symbol>']);
                                     {
-                                        var B2267 = false;
-                                        if (($T)(B2262))
-                                            B2267 = B2262;
+                                        var B2283 = false;
+                                        if (($T)(B2278))
+                                            B2283 = B2278;
                                         else
-                                            B2267 = setterQ__2260;
+                                            B2283 = setterQ__2276;
                                         {
-                                            var B2268 = B2266(B2267);
+                                            var B2284 = B2282(B2283);
                                             {
-                                                if (($T)(B2268))
-                                                    B1884['signal'](B1885['format-to-string']('Identifier not symbol or setter in define-method: %=', identifier__2261));
+                                                if (($T)(B2284))
+                                                    B1900['signal'](B1901['format-to-string']('Identifier not symbol or setter in define-method: %=', identifier__2277));
                                                 {
-                                                    if (($T)(B1884['empty?'](parameter_list__2257)))
-                                                        B1884['signal'](B1885['format-to-string']('Empty parameter-list in define-method: %=', identifier__2261));
+                                                    if (($T)(B1900['empty?'](parameter_list__2273)))
+                                                        B1900['signal'](B1901['format-to-string']('Empty parameter-list in define-method: %=', identifier__2277));
                                                     {
-                                                        var name__2263 = B1884['symbol-name'](identifier__2261);
+                                                        var name__2279 = B1900['symbol-name'](identifier__2277);
                                                         {
-                                                            var definition__2264 = B1884['%concat']([
-                                                                    B2033,
-                                                                    parameter_list__2257
-                                                                ], forms__2258);
+                                                            var definition__2280 = B1900['%concat']([
+                                                                    B2049,
+                                                                    parameter_list__2273
+                                                                ], forms__2274);
                                                             {
-                                                                var head__2265 = B1884['first'](parameter_list__2257);
+                                                                var head__2281 = B1900['first'](parameter_list__2273);
                                                                 {
-                                                                    var B2269 = false;
-                                                                    if (($T)(B1884['instance?'](head__2265, B1884['<array>'])))
-                                                                        B2269 = B1884['>'](B1884['size'](head__2265), 1);
+                                                                    var B2285 = false;
+                                                                    if (($T)(B1900['instance?'](head__2281, B1900['<array>'])))
+                                                                        B2285 = B1900['>'](B1900['size'](head__2281), 1);
                                                                     else
-                                                                        B2269 = false;
+                                                                        B2285 = false;
                                                                     {
-                                                                        var B2270 = false;
-                                                                        if (($T)(B2269))
-                                                                            B2270 = B1884['second'](head__2265);
+                                                                        var B2286 = false;
+                                                                        if (($T)(B2285))
+                                                                            B2286 = B1900['second'](head__2281);
                                                                         else
-                                                                            B2270 = B2253;
+                                                                            B2286 = B2269;
                                                                         {
-                                                                            var B2271 = [
-                                                                                    B2252,
-                                                                                    name__2263,
-                                                                                    definition__2264,
-                                                                                    setterQ__2260,
-                                                                                    B2270,
-                                                                                    identifier__2261
+                                                                            var B2287 = [
+                                                                                    B2268,
+                                                                                    name__2279,
+                                                                                    definition__2280,
+                                                                                    setterQ__2276,
+                                                                                    B2286,
+                                                                                    identifier__2277
                                                                                 ];
                                                                             return([
-                                                                                B2251,
-                                                                                identifier__2261,
-                                                                                B2271
+                                                                                B2267,
+                                                                                identifier__2277,
+                                                                                B2287
                                                                             ]);
                                                                         }
                                                                     }
@@ -1191,63 +1199,63 @@ B1884['get-setter'](($module)['$core-macros'], '.', function B2226(____2227, for
     }
 }
 {
-    var B2275 = $S('%begin', 'ralph/core');
+    var B2291 = $S('%begin', 'ralph/core');
     {
-        var B2276 = $S('%annotate-function', 'ralph/core');
-        B1884['get-setter'](($module)['$core-macros'], 'define-function', function B2277(env__2278, identifier__2279, parameter_list__2280) {
-            var forms__2281 = $SL.call(arguments, 3);
+        var B2292 = $S('%annotate-function', 'ralph/core');
+        B1900['get-setter'](($module)['$core-macros'], 'define-function', function B2293(env__2294, identifier__2295, parameter_list__2296) {
+            var forms__2297 = $SL.call(arguments, 3);
             {
-                var B2282 = false;
-                if (($T)(B1886['setter-identifier?'](identifier__2279)))
-                    B2282 = [
+                var B2298 = false;
+                if (($T)(B1902['setter-identifier?'](identifier__2295)))
+                    B2298 = [
                         true,
-                        B1886['transform-setter-identifier'](B1884['second'](identifier__2279))
+                        B1902['transform-setter-identifier'](B1900['second'](identifier__2295))
                     ];
                 else
-                    B2282 = [
+                    B2298 = [
                         false,
-                        identifier__2279
+                        identifier__2295
                     ];
                 {
-                    var setterQ__2283 = B2282[0];
+                    var setterQ__2299 = B2298[0];
                     {
-                        var identifier__2284 = B2282[1];
+                        var identifier__2300 = B2298[1];
                         {
-                            var B2288 = B1884['not'];
+                            var B2304 = B1900['not'];
                             {
-                                var B2285 = B1884['instance?'](identifier__2284, B1884['<symbol>']);
+                                var B2301 = B1900['instance?'](identifier__2300, B1900['<symbol>']);
                                 {
-                                    var B2289 = false;
-                                    if (($T)(B2285))
-                                        B2289 = B2285;
+                                    var B2305 = false;
+                                    if (($T)(B2301))
+                                        B2305 = B2301;
                                     else
-                                        B2289 = setterQ__2283;
+                                        B2305 = setterQ__2299;
                                     {
-                                        var B2290 = B2288(B2289);
+                                        var B2306 = B2304(B2305);
                                         {
-                                            if (($T)(B2290))
-                                                B1884['signal'](B1885['format-to-string']('Identifier not symbol or setter in define-function: %=', identifier__2284));
+                                            if (($T)(B2306))
+                                                B1900['signal'](B1901['format-to-string']('Identifier not symbol or setter in define-function: %=', identifier__2300));
                                             {
-                                                var name__2286 = B1884['symbol-name'](identifier__2284);
+                                                var name__2302 = B1900['symbol-name'](identifier__2300);
                                                 {
-                                                    var definition__2287 = B1884['%concat']([
-                                                            B2033,
-                                                            parameter_list__2280
-                                                        ], forms__2281);
+                                                    var definition__2303 = B1900['%concat']([
+                                                            B2049,
+                                                            parameter_list__2296
+                                                        ], forms__2297);
                                                     {
-                                                        B1884['get-setter'](env__2278, 'module', 'functions', name__2286, definition__2287);
+                                                        B1900['get-setter'](env__2294, 'module', 'functions', name__2302, definition__2303);
                                                         return([
-                                                            B2275,
+                                                            B2291,
                                                             [
-                                                                B2251,
-                                                                identifier__2284,
-                                                                definition__2287
+                                                                B2267,
+                                                                identifier__2300,
+                                                                definition__2303
                                                             ],
                                                             [
-                                                                B2276,
-                                                                identifier__2284,
-                                                                name__2286,
-                                                                setterQ__2283
+                                                                B2292,
+                                                                identifier__2300,
+                                                                name__2302,
+                                                                setterQ__2299
                                                             ]
                                                         ]);
                                                     }
@@ -1265,98 +1273,98 @@ B1884['get-setter'](($module)['$core-macros'], '.', function B2226(____2227, for
     }
 }
 {
-    var B2292 = $S('%make-generic', 'ralph/core');
-    B1884['get-setter'](($module)['$core-macros'], 'define-generic', function B2293(____2294, identifier__2295, arguments__2296) {
-        var superflous__2297 = $SL.call(arguments, 3);
+    var B2308 = $S('%make-generic', 'ralph/core');
+    B1900['get-setter'](($module)['$core-macros'], 'define-generic', function B2309(____2310, identifier__2311, arguments__2312) {
+        var superflous__2313 = $SL.call(arguments, 3);
         return([
-            B2251,
-            identifier__2295,
+            B2267,
+            identifier__2311,
             [
-                B2292,
-                B1884['symbol-name'](identifier__2295)
+                B2308,
+                B1900['symbol-name'](identifier__2311)
             ]
         ]);
     });
 }
 {
-    var B2301 = $S('%make-class', 'ralph/core');
+    var B2317 = $S('%make-class', 'ralph/core');
     {
-        var B2302 = $S('%set', 'ralph/core');
+        var B2318 = $S('%set', 'ralph/core');
         {
-            var B2303 = $S('%native', 'ralph/core');
-            B1884['get-setter'](($module)['$core-macros'], 'define-class', function B2304(____2305, identifier__2306, superclass__2307) {
-                var properties__2308 = $SL.call(arguments, 3);
+            var B2319 = $S('%native', 'ralph/core');
+            B1900['get-setter'](($module)['$core-macros'], 'define-class', function B2320(____2321, identifier__2322, superclass__2323) {
+                var properties__2324 = $SL.call(arguments, 3);
                 {
-                    var B2313 = false;
-                    if (($T)(B1884['not'](B1884['empty?'](superclass__2307))))
-                        B2313 = B1884['first'](superclass__2307);
+                    var B2329 = false;
+                    if (($T)(B1900['not'](B1900['empty?'](superclass__2323))))
+                        B2329 = B1900['first'](superclass__2323);
                     else
-                        B2313 = false;
+                        B2329 = false;
                     {
-                        var B2314 = B1884['%concat']([B1892], B1884['reduce1'](B1884['concatenate'], B1884['map'](function B2309(property__2310) {
-                                if (($T)(B1884['instance?'](property__2310, B1884['<array>'])))
+                        var B2330 = B1900['%concat']([B1908], B1900['reduce1'](B1900['concatenate'], B1900['map'](function B2325(property__2326) {
+                                if (($T)(B1900['instance?'](property__2326, B1900['<array>'])))
                                     return([
-                                        B1884['symbol-name'](B1884['first'](property__2310)),
+                                        B1900['symbol-name'](B1900['first'](property__2326)),
                                         [
-                                            B2033,
+                                            B2049,
                                             [],
-                                            B1884['second'](property__2310)
+                                            B1900['second'](property__2326)
                                         ]
                                     ]);
                                 else
                                     return([
-                                        B1884['symbol-name'](property__2310),
+                                        B1900['symbol-name'](property__2326),
                                         false
                                     ]);
-                            }, properties__2308)));
+                            }, properties__2324)));
                         {
-                            var B2319 = [
-                                    B1929,
-                                    identifier__2306,
+                            var B2335 = [
+                                    B1945,
+                                    identifier__2322,
                                     [],
-                                    B1884['%concat']([B2275], B1884['map'](function B2311(property__2312) {
-                                        var B2315 = [
-                                                B2303,
+                                    B1900['%concat']([B2291], B1900['map'](function B2327(property__2328) {
+                                        var B2331 = [
+                                                B2319,
                                                 'this'
                                             ];
                                         {
-                                            var B2316 = false;
-                                            if (($T)(B1884['instance?'](property__2312, B1884['<array>'])))
-                                                B2316 = B1884['symbol-name'](B1884['first'](property__2312));
+                                            var B2332 = false;
+                                            if (($T)(B1900['instance?'](property__2328, B1900['<array>'])))
+                                                B2332 = B1900['symbol-name'](B1900['first'](property__2328));
                                             else
-                                                B2316 = B1884['symbol-name'](property__2312);
+                                                B2332 = B1900['symbol-name'](property__2328);
                                             {
-                                                var B2317 = [
-                                                        B2136,
-                                                        B2315,
-                                                        B2316
+                                                var B2333 = [
+                                                        B2152,
+                                                        B2331,
+                                                        B2332
                                                     ];
                                                 {
-                                                    var B2318 = [
-                                                            B2303,
+                                                    var B2334 = [
+                                                            B2319,
                                                             'undefined'
                                                         ];
                                                     return([
-                                                        B2302,
-                                                        B2317,
-                                                        B2318
+                                                        B2318,
+                                                        B2333,
+                                                        B2334
                                                     ]);
                                                 }
                                             }
                                         }
-                                    }, properties__2308))
+                                    }, properties__2324))
                                 ];
                             {
-                                var B2320 = [
-                                        B2301,
-                                        B2313,
-                                        B2314,
-                                        B2319
+                                var B2336 = [
+                                        B2317,
+                                        B2329,
+                                        B2330,
+                                        B2335
                                     ];
                                 return([
-                                    B2251,
-                                    identifier__2306,
-                                    B2320
+                                    B2267,
+                                    identifier__2322,
+                                    B2336
                                 ]);
                             }
                         }
@@ -1367,25 +1375,25 @@ B1884['get-setter'](($module)['$core-macros'], '.', function B2226(____2227, for
     }
 }
 {
-    var B2322 = $S('define-function', 'ralph/core');
-    B1884['get-setter'](($module)['$core-macros'], 'define-macro', function B2323(____2324, identifier__2325, parameter_list__2326) {
-        var forms__2327 = $SL.call(arguments, 3);
+    var B2338 = $S('define-function', 'ralph/core');
+    B1900['get-setter'](($module)['$core-macros'], 'define-macro', function B2339(____2340, identifier__2341, parameter_list__2342) {
+        var forms__2343 = $SL.call(arguments, 3);
         {
-            B1886['check-type'](identifier__2325, B1884['<symbol>'], 'Non-symbol identifier in define-macro: %=');
+            B1902['check-type'](identifier__2341, B1900['<symbol>'], 'Non-symbol identifier in define-macro: %=');
             {
-                B1886['check-type'](parameter_list__2326, B1884['<array>'], 'Non-array parameter-list in define-macro: %=');
+                B1902['check-type'](parameter_list__2342, B1900['<array>'], 'Non-array parameter-list in define-macro: %=');
                 return([
-                    B1941,
-                    B1884['%concat']([
-                        B2322,
-                        identifier__2325,
-                        B1884['%concat']([B1884['generate-symbol']()], parameter_list__2326)
-                    ], forms__2327),
+                    B1957,
+                    B1900['%concat']([
+                        B2338,
+                        identifier__2341,
+                        B1900['%concat']([B1900['generate-symbol']()], parameter_list__2342)
+                    ], forms__2343),
                     [
-                        B1953,
+                        B1969,
                         [
-                            B2136,
-                            identifier__2325,
+                            B2152,
+                            identifier__2341,
                             '%macro?'
                         ],
                         true
@@ -1395,24 +1403,24 @@ B1884['get-setter'](($module)['$core-macros'], '.', function B2226(____2227, for
         }
     });
 }
-B1884['get-setter'](($module)['$core-macros'], 'define-symbol-macro', function B2329(____2330, identifier__2331, parameter_list__2332) {
-    var forms__2333 = $SL.call(arguments, 3);
+B1900['get-setter'](($module)['$core-macros'], 'define-symbol-macro', function B2345(____2346, identifier__2347, parameter_list__2348) {
+    var forms__2349 = $SL.call(arguments, 3);
     {
-        B1886['check-type'](identifier__2331, B1884['<symbol>'], 'Non-symbol identifier in define-symbol-macro: %=');
+        B1902['check-type'](identifier__2347, B1900['<symbol>'], 'Non-symbol identifier in define-symbol-macro: %=');
         {
-            B1886['check-type'](parameter_list__2332, B1884['<array>'], 'Non-array parameter-list in define-symbol-macro: %=');
+            B1902['check-type'](parameter_list__2348, B1900['<array>'], 'Non-array parameter-list in define-symbol-macro: %=');
             return([
-                B1941,
-                B1884['%concat']([
-                    B2322,
-                    identifier__2331,
+                B1957,
+                B1900['%concat']([
+                    B2338,
+                    identifier__2347,
                     []
-                ], forms__2333),
+                ], forms__2349),
                 [
-                    B1953,
+                    B1969,
                     [
-                        B2136,
-                        identifier__2331,
+                        B2152,
+                        identifier__2347,
                         '%symbol-macro?'
                     ],
                     true
@@ -1422,100 +1430,100 @@ B1884['get-setter'](($module)['$core-macros'], 'define-symbol-macro', function B
     }
 });
 {
-    var B2335 = $S('next-method', 'ralph/core');
-    B1884['get-setter'](($module)['$core-macros'], 'call-next-method', function B2336(____2337) {
-        var superflous__2338 = $SL.call(arguments, 1);
+    var B2351 = $S('next-method', 'ralph/core');
+    B1900['get-setter'](($module)['$core-macros'], 'call-next-method', function B2352(____2353) {
+        var superflous__2354 = $SL.call(arguments, 1);
         return([
             [
-                B2136,
-                B2335,
+                B2152,
+                B2351,
                 'apply'
             ],
             [
-                B2303,
+                B2319,
                 'null'
             ],
-            B1930
+            B1946
         ]);
     });
 }
 {
-    var B2341 = $S('%make-exit-function', 'ralph/core');
+    var B2357 = $S('%make-exit-function', 'ralph/core');
     {
-        var B2342 = $S('%try', 'ralph/core');
+        var B2358 = $S('%try', 'ralph/core');
         {
-            var B2343 = $S('instance?', 'ralph/core');
+            var B2359 = $S('instance?', 'ralph/core');
             {
-                var B2344 = $S('<non-local-exit>', 'ralph/core');
+                var B2360 = $S('<non-local-exit>', 'ralph/core');
                 {
-                    var B2345 = $S('%infix', 'ralph/core');
+                    var B2361 = $S('%infix', 'ralph/core');
                     {
-                        var B2346 = $S('signal', 'ralph/core');
-                        B1884['get-setter'](($module)['$core-macros'], 'block', function B2347(____2348, name__2349) {
-                            var body__2350 = $SL.call(arguments, 2);
+                        var B2362 = $S('signal', 'ralph/core');
+                        B1900['get-setter'](($module)['$core-macros'], 'block', function B2363(____2364, name__2365) {
+                            var body__2366 = $SL.call(arguments, 2);
                             {
-                                var B2351 = false;
-                                if (($T)(B1884['not'](B1884['empty?'](name__2349))))
-                                    B2351 = B1884['first'](name__2349);
+                                var B2367 = false;
+                                if (($T)(B1900['not'](B1900['empty?'](name__2365))))
+                                    B2367 = B1900['first'](name__2365);
                                 else
-                                    B2351 = false;
-                                if (($T)(B2351)) {
-                                    var name__2352 = B2351;
+                                    B2367 = false;
+                                if (($T)(B2367)) {
+                                    var name__2368 = B2367;
                                     {
-                                        var block_var__2353 = B1884['generate-symbol']();
+                                        var block_var__2369 = B1900['generate-symbol']();
                                         {
-                                            var condition_var__2354 = B1884['generate-symbol']();
+                                            var condition_var__2370 = B1900['generate-symbol']();
                                             return([
-                                                B1907,
+                                                B1923,
                                                 [
                                                     [
-                                                        name__2352,
-                                                        [B2341]
+                                                        name__2368,
+                                                        [B2357]
                                                     ],
                                                     [
-                                                        block_var__2353,
-                                                        B1884['%concat']([
-                                                            B2033,
+                                                        block_var__2369,
+                                                        B1900['%concat']([
+                                                            B2049,
                                                             []
-                                                        ], body__2350)
+                                                        ], body__2366)
                                                     ]
                                                 ],
                                                 [
-                                                    B2342,
-                                                    [block_var__2353],
-                                                    condition_var__2354,
+                                                    B2358,
+                                                    [block_var__2369],
+                                                    condition_var__2370,
                                                     [
-                                                        B1940,
+                                                        B1956,
                                                         [
-                                                            B1974,
+                                                            B1990,
                                                             [
-                                                                B2343,
-                                                                condition_var__2354,
-                                                                B2344
+                                                                B2359,
+                                                                condition_var__2370,
+                                                                B2360
                                                             ],
                                                             [
-                                                                B2345,
+                                                                B2361,
                                                                 '===',
                                                                 [
-                                                                    B2136,
-                                                                    condition_var__2354,
+                                                                    B2152,
+                                                                    condition_var__2370,
                                                                     'identifier'
                                                                 ],
                                                                 [
-                                                                    B2136,
-                                                                    name__2352,
+                                                                    B2152,
+                                                                    name__2368,
                                                                     'identifier'
                                                                 ]
                                                             ]
                                                         ],
                                                         [
-                                                            B2136,
-                                                            condition_var__2354,
+                                                            B2152,
+                                                            condition_var__2370,
                                                             'return-value'
                                                         ],
                                                         [
-                                                            B2346,
-                                                            condition_var__2354
+                                                            B2362,
+                                                            condition_var__2370
                                                         ]
                                                     ]
                                                 ]
@@ -1523,7 +1531,7 @@ B1884['get-setter'](($module)['$core-macros'], 'define-symbol-macro', function B
                                         }
                                     }
                                 } else
-                                    return(B1884['%concat']([B1941], body__2350));
+                                    return(B1900['%concat']([B1957], body__2366));
                             }
                         });
                     }
@@ -1533,185 +1541,185 @@ B1884['get-setter'](($module)['$core-macros'], 'define-symbol-macro', function B
     }
 }
 {
-    ($module)['$core-symbol-macros'] = B1884['make-plain-object']();
+    ($module)['$core-symbol-macros'] = B1900['make-plain-object']();
     ($module)['%export']('$core-symbol-macros', ($module)['$core-symbol-macros']);
 }
 {
-    var B2356 = $S('%next-method', 'ralph/core');
+    var B2372 = $S('%next-method', 'ralph/core');
     {
-        var B2357 = $S('%this-method');
-        B1884['get-setter'](($module)['$core-symbol-macros'], 'next-method', function B2358(____2359) {
-            var superflous__2360 = $SL.call(arguments, 1);
+        var B2373 = $S('%this-method');
+        B1900['get-setter'](($module)['$core-symbol-macros'], 'next-method', function B2374(____2375) {
+            var superflous__2376 = $SL.call(arguments, 1);
             return([
-                B2356,
-                B2357
+                B2372,
+                B2373
             ]);
         });
     }
 }
 {
-    ($module)['$internal-macros'] = B1884['make-plain-object']();
+    ($module)['$internal-macros'] = B1900['make-plain-object']();
     ($module)['%export']('$internal-macros', ($module)['$internal-macros']);
 }
 {
-    var B2363 = $S('%quote', 'ralph/core');
+    var B2379 = $S('%quote', 'ralph/core');
     {
-        ($module)['transform-quoted'] = function B2364(form__2365) {
-            var B2366 = form__2365;
-            if (($T)(B1884['instance?'](B2366, B1884['<array>'])))
-                return(B1884['%concat']([B2066], B1884['map'](($module)['transform-quoted'], form__2365)));
-            else if (($T)(B1884['instance?'](B2366, B1884['<symbol>'])))
+        ($module)['transform-quoted'] = function B2380(form__2381) {
+            var B2382 = form__2381;
+            if (($T)(B1900['instance?'](B2382, B1900['<array>'])))
+                return(B1900['%concat']([B2082], B1900['map'](($module)['transform-quoted'], form__2381)));
+            else if (($T)(B1900['instance?'](B2382, B1900['<symbol>'])))
                 return([
-                    B2363,
-                    form__2365
+                    B2379,
+                    form__2381
                 ]);
             else
-                return(form__2365);
+                return(form__2381);
         };
-        B1884['%annotate-function'](($module)['transform-quoted'], 'transform-quoted', false);
+        B1900['%annotate-function'](($module)['transform-quoted'], 'transform-quoted', false);
     }
 }
-B1884['get-setter'](($module)['$internal-macros'], 'quote', function B2368(____2369, form__2370) {
-    var superflous__2371 = $SL.call(arguments, 2);
-    return(($module)['transform-quoted'](form__2370));
+B1900['get-setter'](($module)['$internal-macros'], 'quote', function B2384(____2385, form__2386) {
+    var superflous__2387 = $SL.call(arguments, 2);
+    return(($module)['transform-quoted'](form__2386));
 });
-B1884['get-setter'](($module)['$internal-macros'], 'begin', function B2374(____2375) {
-    var forms__2376 = $SL.call(arguments, 1);
+B1900['get-setter'](($module)['$internal-macros'], 'begin', function B2390(____2391) {
+    var forms__2392 = $SL.call(arguments, 1);
     {
-        var B2377 = B1884['size'](forms__2376);
-        if (($T)(B1884['=='](B2377, 0)))
+        var B2393 = B1900['size'](forms__2392);
+        if (($T)(B1900['=='](B2393, 0)))
             return(false);
-        else if (($T)(B1884['=='](B2377, 1)))
-            return(B1884['first'](forms__2376));
+        else if (($T)(B1900['=='](B2393, 1)))
+            return(B1900['first'](forms__2392));
         else
-            return(B1884['%concat']([B2275], forms__2376));
+            return(B1900['%concat']([B2291], forms__2392));
     }
 });
 {
-    var B2380 = $S('%bind', 'ralph/core');
-    B1884['get-setter'](($module)['$internal-macros'], 'bind', function B2381(____2382, bindings__2383) {
-        var forms__2384 = $SL.call(arguments, 2);
-        return(B1884['reduce'](function B2385(form__2386, binding__2387) {
-            var B2388 = false;
-            if (($T)(B1884['instance?'](binding__2387, B1884['<symbol>'])))
-                B2388 = [
-                    binding__2387,
+    var B2396 = $S('%bind', 'ralph/core');
+    B1900['get-setter'](($module)['$internal-macros'], 'bind', function B2397(____2398, bindings__2399) {
+        var forms__2400 = $SL.call(arguments, 2);
+        return(B1900['reduce'](function B2401(form__2402, binding__2403) {
+            var B2404 = false;
+            if (($T)(B1900['instance?'](binding__2403, B1900['<symbol>'])))
+                B2404 = [
+                    binding__2403,
                     false
                 ];
             else
-                B2388 = binding__2387;
+                B2404 = binding__2403;
             return([
-                B2380,
-                B2388,
-                form__2386
+                B2396,
+                B2404,
+                form__2402
             ]);
-        }, B1884['%concat']([B1941], forms__2384), B1884['reverse'](bindings__2383)));
+        }, B1900['%concat']([B1957], forms__2400), B1900['reverse'](bindings__2399)));
     });
 }
-B1884['get-setter'](($module)['$internal-macros'], 'method', function B2390(____2391, parameter_list__2392) {
-    var forms__2393 = $SL.call(arguments, 2);
-    return(($module)['named-method'](B1884['generate-symbol'](), parameter_list__2392, B1884['%concat']([B1941], forms__2393)));
+B1900['get-setter'](($module)['$internal-macros'], 'method', function B2406(____2407, parameter_list__2408) {
+    var forms__2409 = $SL.call(arguments, 2);
+    return(($module)['named-method'](B1900['generate-symbol'](), parameter_list__2408, B1900['%concat']([B1957], forms__2409)));
 });
 {
-    var B2395 = $S('%while', 'ralph/core');
-    B1884['get-setter'](($module)['$internal-macros'], 'while', function B2396(____2397, test__2398) {
-        var forms__2399 = $SL.call(arguments, 2);
+    var B2411 = $S('%while', 'ralph/core');
+    B1900['get-setter'](($module)['$internal-macros'], 'while', function B2412(____2413, test__2414) {
+        var forms__2415 = $SL.call(arguments, 2);
         return([
-            B2395,
-            test__2398,
-            B1884['%concat']([B1941], forms__2399)
+            B2411,
+            test__2414,
+            B1900['%concat']([B1957], forms__2415)
         ]);
     });
 }
 {
-    var B2401 = $S('%if', 'ralph/core');
-    B1884['get-setter'](($module)['$internal-macros'], 'if', function B2402(____2403, test__2404, then__2405, else__2406) {
-        var superflous__2407 = $SL.call(arguments, 4);
+    var B2417 = $S('%if', 'ralph/core');
+    B1900['get-setter'](($module)['$internal-macros'], 'if', function B2418(____2419, test__2420, then__2421, else__2422) {
+        var superflous__2423 = $SL.call(arguments, 4);
         return([
-            B2401,
-            test__2404,
-            then__2405,
-            else__2406
+            B2417,
+            test__2420,
+            then__2421,
+            else__2422
         ]);
     });
 }
-B1884['get-setter'](($module)['$internal-macros'], 'set!', function B2409(____2410, place__2411) {
-    var new_values__2412 = $SL.call(arguments, 2);
+B1900['get-setter'](($module)['$internal-macros'], 'set!', function B2425(____2426, place__2427) {
+    var new_values__2428 = $SL.call(arguments, 2);
     {
-        var B2413 = false;
-        if (($T)(B1884['instance?'](place__2411, B1884['<array>'])))
-            B2413 = B1884['not'](B1884['=='](B1884['symbol-name'](B1884['first'](place__2411)), '%get-property'));
+        var B2429 = false;
+        if (($T)(B1900['instance?'](place__2427, B1900['<array>'])))
+            B2429 = B1900['not'](B1900['=='](B1900['symbol-name'](B1900['first'](place__2427)), '%get-property'));
         else
-            B2413 = false;
-        if (($T)(B2413))
-            return(B1884['%concat'](B1884['%concat']([B1886['transform-setter-identifier'](B1884['first'](place__2411))], B1884['rest'](place__2411)), new_values__2412));
+            B2429 = false;
+        if (($T)(B2429))
+            return(B1900['%concat'](B1900['%concat']([B1902['transform-setter-identifier'](B1900['first'](place__2427))], B1900['rest'](place__2427)), new_values__2428));
         else
             return([
-                B2302,
-                place__2411,
-                B1884['first'](new_values__2412)
+                B2318,
+                place__2427,
+                B1900['first'](new_values__2428)
             ]);
     }
 });
 {
-    var B2416 = $S('%define', 'ralph/core');
-    B1884['get-setter'](($module)['$internal-macros'], 'define', function B2417(env__2418, identifier__2419, value__2420) {
-        var B2421 = value__2420;
+    var B2432 = $S('%define', 'ralph/core');
+    B1900['get-setter'](($module)['$internal-macros'], 'define', function B2433(env__2434, identifier__2435, value__2436) {
+        var B2437 = value__2436;
         {
-            var B2422 = false;
-            if (($T)(B2421))
-                B2422 = B2421;
+            var B2438 = false;
+            if (($T)(B2437))
+                B2438 = B2437;
             else
-                B2422 = false;
+                B2438 = false;
             return([
-                B2416,
-                identifier__2419,
-                B2422
+                B2432,
+                identifier__2435,
+                B2438
             ]);
         }
     });
 }
-B1884['get-setter'](($module)['$internal-macros'], 'handler-case', function B2428(____2429, protected_form__2430) {
-    var cases__2431 = $SL.call(arguments, 2);
+B1900['get-setter'](($module)['$internal-macros'], 'handler-case', function B2444(____2445, protected_form__2446) {
+    var cases__2447 = $SL.call(arguments, 2);
     {
-        var condition_var__2432 = B1884['generate-symbol']();
+        var condition_var__2448 = B1900['generate-symbol']();
         return([
-            B2342,
-            protected_form__2430,
-            condition_var__2432,
-            B1884['%concat']([B1963], B1884['map'](function B2433(case__2434) {
-                var B2435 = case__2434[0];
+            B2358,
+            protected_form__2446,
+            condition_var__2448,
+            B1900['%concat']([B1979], B1900['map'](function B2449(case__2450) {
+                var B2451 = case__2450[0];
                 {
-                    var type__2436 = B2435[0];
+                    var type__2452 = B2451[0];
                     {
-                        var B2437 = $SL.call(B2435, 1);
+                        var B2453 = $SL.call(B2451, 1);
                         {
-                            var B2438 = B1884['%keys'](B2437, { 'condition': false });
+                            var B2454 = B1900['%keys'](B2453, { 'condition': false });
                             {
-                                var condition__2439 = B2438['condition'];
+                                var condition__2455 = B2454['condition'];
                                 {
-                                    var body__2440 = $SL.call(case__2434, 1);
+                                    var body__2456 = $SL.call(case__2450, 1);
                                     {
-                                        var B2441 = B1884['concatenate'];
+                                        var B2457 = B1900['concatenate'];
                                         {
-                                            var B2442 = [[
-                                                        B2343,
-                                                        condition_var__2432,
-                                                        type__2436
+                                            var B2458 = [[
+                                                        B2359,
+                                                        condition_var__2448,
+                                                        type__2452
                                                     ]];
                                             {
-                                                var B2443 = false;
-                                                if (($T)(condition__2439))
-                                                    B2443 = [B1884['%concat']([
-                                                            B1907,
+                                                var B2459 = false;
+                                                if (($T)(condition__2455))
+                                                    B2459 = [B1900['%concat']([
+                                                            B1923,
                                                             [[
-                                                                    condition__2439,
-                                                                    condition_var__2432
+                                                                    condition__2455,
+                                                                    condition_var__2448
                                                                 ]]
-                                                        ], body__2440)];
+                                                        ], body__2456)];
                                                 else
-                                                    B2443 = body__2440;
-                                                return(B2441(B2442, B2443));
+                                                    B2459 = body__2456;
+                                                return(B2457(B2458, B2459));
                                             }
                                         }
                                     }
@@ -1720,20 +1728,11 @@ B1884['get-setter'](($module)['$internal-macros'], 'handler-case', function B242
                         }
                     }
                 }
-            }, cases__2431))
+            }, cases__2447))
         ]);
     }
 });
 {
-    ($module)['$internal-symbol-macros'] = B1884['make-plain-object']();
+    ($module)['$internal-symbol-macros'] = B1900['make-plain-object']();
     ($module)['%export']('$internal-symbol-macros', ($module)['$internal-symbol-macros']);
-}
-{
-    ($module)['%eval'] = function B2445() {
-        return(eval((arguments[0])));
-    };
-    {
-        B1884['%annotate-function'](($module)['%eval'], '%eval', false);
-        ($module)['%export']('%eval', ($module)['%eval']);
-    }
 }

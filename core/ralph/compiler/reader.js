@@ -1,304 +1,312 @@
 {
     var $module = Object.create(null);
-    ($module)['%export'] = function B1700(name__1701, value__1702) {
-        var B1703 = (exports);
-        return(B1703[name__1701] = value__1702);
-    };
-}
-var B1704 = require('ralph/core');
-{
-    var B1705 = require('ralph/stream');
     {
-        var B1706 = require('ralph/format');
+        ($module)['%export'] = function B1715(name__1716, value__1717) {
+            var B1719 = (exports);
+            return(B1719[name__1716] = value__1717);
+        };
         {
-            var B1754 = require('ralph/regexp');
-            var B1799 = require('ralph/compiler/syntax-quote');
+            ($module)['%eval'] = function B1718() {
+                return(eval((arguments[0])));
+            };
+            ($module)['%export']('%eval', ($module)['%eval']);
+        }
+    }
+}
+var B1720 = require('ralph/core');
+{
+    var B1721 = require('ralph/stream');
+    {
+        var B1722 = require('ralph/format');
+        {
+            var B1770 = require('ralph/regexp');
+            var B1815 = require('ralph/compiler/syntax-quote');
         }
     }
 }
 {
-    var B1800 = $K('ignore-case?');
+    var B1816 = $K('ignore-case?');
     {
-        var B1801 = $K('pattern');
-        ($module)['*number-patterns*'] = B1704['map'](B1704['curry'](B1704['make'], B1754['<regexp>'], B1800, true, B1801), [
+        var B1817 = $K('pattern');
+        ($module)['*number-patterns*'] = B1720['map'](B1720['curry'](B1720['make'], B1770['<regexp>'], B1816, true, B1817), [
             '^[+-]?0x[0-9a-f]+',
             '^[+-]?0[0-7]+',
             '^[+-]?\\d+\\.?\\d*(?:e-?\\d*(?:\\d\\.?|\\.?\\d)\\d*)?'
         ]);
     }
 }
-($module)['*line-pattern*'] = B1704['make'](B1754['<regexp>'], B1801, '(.*)[\n\r]?');
+($module)['*line-pattern*'] = B1720['make'](B1770['<regexp>'], B1817, '(.*)[\n\r]?');
 ($module)['*whitespace-subpattern*'] = '\t\n\r\x0B\f\xA0\uFEFF ';
-($module)['*whitespace-pattern*'] = B1704['make'](B1754['<regexp>'], B1801, B1704['concatenate']('[', ($module)['*whitespace-subpattern*'], ']*'));
-($module)['*atom-pattern*'] = B1704['make'](B1754['<regexp>'], B1801, B1704['concatenate']('[^\\[\\]();`,', ($module)['*whitespace-subpattern*'], ']+'));
+($module)['*whitespace-pattern*'] = B1720['make'](B1770['<regexp>'], B1817, B1720['concatenate']('[', ($module)['*whitespace-subpattern*'], ']*'));
+($module)['*atom-pattern*'] = B1720['make'](B1770['<regexp>'], B1817, B1720['concatenate']('[^\\[\\]();`,', ($module)['*whitespace-subpattern*'], ']+'));
 {
-    ($module)['match-stream'] = function B1804(regexp__1805, stream__1806) {
-        var B1807 = B1754['match'](regexp__1805, B1705['stream-remaining-contents'](stream__1806));
-        if (($T)(B1807)) {
-            var result__1808 = B1807;
+    ($module)['match-stream'] = function B1820(regexp__1821, stream__1822) {
+        var B1823 = B1770['match'](regexp__1821, B1721['stream-remaining-contents'](stream__1822));
+        if (($T)(B1823)) {
+            var result__1824 = B1823;
             {
-                B1705['stream-read'](stream__1806, B1704['size'](B1704['first'](result__1808)));
-                return(result__1808);
+                B1721['stream-read'](stream__1822, B1720['size'](B1720['first'](result__1824)));
+                return(result__1824);
             }
         } else
             return(false);
     };
-    B1704['%annotate-function'](($module)['match-stream'], 'match-stream', false);
+    B1720['%annotate-function'](($module)['match-stream'], 'match-stream', false);
 }
 {
-    ($module)['read-line'] = function B1810(stream__1811) {
-        return(($module)['match-stream'](($module)['*line-pattern*'], stream__1811));
+    ($module)['read-line'] = function B1826(stream__1827) {
+        return(($module)['match-stream'](($module)['*line-pattern*'], stream__1827));
     };
-    B1704['%annotate-function'](($module)['read-line'], 'read-line', false);
+    B1720['%annotate-function'](($module)['read-line'], 'read-line', false);
 }
 {
-    ($module)['read-whitespace'] = function B1813(stream__1814) {
-        return(($module)['match-stream'](($module)['*whitespace-pattern*'], stream__1814));
+    ($module)['read-whitespace'] = function B1829(stream__1830) {
+        return(($module)['match-stream'](($module)['*whitespace-pattern*'], stream__1830));
     };
-    B1704['%annotate-function'](($module)['read-whitespace'], 'read-whitespace', false);
+    B1720['%annotate-function'](($module)['read-whitespace'], 'read-whitespace', false);
 }
 {
-    var B1819 = $KEY;
+    var B1835 = $KEY;
     {
-        var B1820 = $REST;
+        var B1836 = $REST;
         {
-            ($module)['make-atom'] = function B1821(value__1822) {
-                var B1823 = value__1822;
-                if (($T)(B1704['=='](B1823, '#t')))
+            ($module)['make-atom'] = function B1837(value__1838) {
+                var B1839 = value__1838;
+                if (($T)(B1720['=='](B1839, '#t')))
                     return(true);
-                else if (($T)(B1704['=='](B1823, '#f')))
+                else if (($T)(B1720['=='](B1839, '#f')))
                     return(false);
-                else if (($T)(B1704['=='](B1823, '#key')))
-                    return(B1819);
-                else if (($T)(B1704['=='](B1823, '#rest')))
-                    return(B1820);
+                else if (($T)(B1720['=='](B1839, '#key')))
+                    return(B1835);
+                else if (($T)(B1720['=='](B1839, '#rest')))
+                    return(B1836);
                 else {
-                    var B1824 = B1704['any?'](B1704['rcurry'](B1754['match'], value__1822), ($module)['*number-patterns*']);
-                    if (($T)(B1824)) {
-                        var number__1825 = B1824;
-                        return(B1704['as-number'](B1704['first'](number__1825)));
-                    } else if (($T)(B1704['=='](B1704['last'](value__1822), ':')))
-                        return(B1704['keyword'](B1704['but-last'](value__1822)));
+                    var B1840 = B1720['any?'](B1720['rcurry'](B1770['match'], value__1838), ($module)['*number-patterns*']);
+                    if (($T)(B1840)) {
+                        var number__1841 = B1840;
+                        return(B1720['as-number'](B1720['first'](number__1841)));
+                    } else if (($T)(B1720['=='](B1720['last'](value__1838), ':')))
+                        return(B1720['keyword'](B1720['but-last'](value__1838)));
                     else {
-                        var B1826 = B1704['split'](value__1822, '::');
+                        var B1842 = B1720['split'](value__1838, '::');
                         {
-                            var head__1827 = B1826[0];
+                            var head__1843 = B1842[0];
                             {
-                                var tail__1828 = $SL.call(B1826, 1);
-                                if (($T)(B1704['empty?'](tail__1828)))
-                                    return(B1704['symbol'](head__1827));
+                                var tail__1844 = $SL.call(B1842, 1);
+                                if (($T)(B1720['empty?'](tail__1844)))
+                                    return(B1720['symbol'](head__1843));
                                 else
-                                    return(B1704['symbol'](B1704['reduce1'](B1704['concatenate'], tail__1828), head__1827));
+                                    return(B1720['symbol'](B1720['reduce1'](B1720['concatenate'], tail__1844), head__1843));
                             }
                         }
                     }
                 }
             };
-            B1704['%annotate-function'](($module)['make-atom'], 'make-atom', false);
+            B1720['%annotate-function'](($module)['make-atom'], 'make-atom', false);
         }
     }
 }
 {
-    var B1831 = $K('radix');
+    var B1847 = $K('radix');
     {
-        ($module)['read-string'] = function B1832(stream__1833) {
-            var result__1834 = B1704['make'](B1705['<string-stream>']);
+        ($module)['read-string'] = function B1848(stream__1849) {
+            var result__1850 = B1720['make'](B1721['<string-stream>']);
             {
-                var char__1835 = B1705['stream-read-element'](stream__1833);
+                var char__1851 = B1721['stream-read-element'](stream__1849);
                 {
-                    while (($T)(B1704['not'](B1704['=='](char__1835, '"')))) {
-                        if (($T)(B1705['stream-at-end?'](stream__1833)))
-                            B1704['signal']('missing end of string');
+                    while (($T)(B1720['not'](B1720['=='](char__1851, '"')))) {
+                        if (($T)(B1721['stream-at-end?'](stream__1849)))
+                            B1720['signal']('missing end of string');
                         {
-                            var B1837 = B1705['stream-write'];
+                            var B1853 = B1721['stream-write'];
                             {
-                                var B1838 = false;
-                                if (($T)(B1704['=='](char__1835, '\\'))) {
-                                    var B1836 = B1705['stream-read-element'](stream__1833);
-                                    if (($T)(B1704['=='](B1836, '"')))
-                                        B1838 = '"';
-                                    else if (($T)(B1704['=='](B1836, '\\')))
-                                        B1838 = '\\';
-                                    else if (($T)(B1704['=='](B1836, 'b')))
-                                        B1838 = '\b';
-                                    else if (($T)(B1704['=='](B1836, 'f')))
-                                        B1838 = '\f';
-                                    else if (($T)(B1704['=='](B1836, 'n')))
-                                        B1838 = '\n';
-                                    else if (($T)(B1704['=='](B1836, 'r')))
-                                        B1838 = '\r';
-                                    else if (($T)(B1704['=='](B1836, 't')))
-                                        B1838 = '\t';
-                                    else if (($T)(B1704['=='](B1836, 'v')))
-                                        B1838 = '\x0B';
-                                    else if (($T)(B1704['=='](B1836, 'u')))
-                                        B1838 = B1704['code-char'](B1704['parse-integer'](B1705['stream-read'](stream__1833, 4), B1831, 16));
+                                var B1854 = false;
+                                if (($T)(B1720['=='](char__1851, '\\'))) {
+                                    var B1852 = B1721['stream-read-element'](stream__1849);
+                                    if (($T)(B1720['=='](B1852, '"')))
+                                        B1854 = '"';
+                                    else if (($T)(B1720['=='](B1852, '\\')))
+                                        B1854 = '\\';
+                                    else if (($T)(B1720['=='](B1852, 'b')))
+                                        B1854 = '\b';
+                                    else if (($T)(B1720['=='](B1852, 'f')))
+                                        B1854 = '\f';
+                                    else if (($T)(B1720['=='](B1852, 'n')))
+                                        B1854 = '\n';
+                                    else if (($T)(B1720['=='](B1852, 'r')))
+                                        B1854 = '\r';
+                                    else if (($T)(B1720['=='](B1852, 't')))
+                                        B1854 = '\t';
+                                    else if (($T)(B1720['=='](B1852, 'v')))
+                                        B1854 = '\x0B';
+                                    else if (($T)(B1720['=='](B1852, 'u')))
+                                        B1854 = B1720['code-char'](B1720['parse-integer'](B1721['stream-read'](stream__1849, 4), B1847, 16));
                                     else
-                                        B1838 = B1704['signal']('bad escape sequence');
+                                        B1854 = B1720['signal']('bad escape sequence');
                                 } else
-                                    B1838 = char__1835;
+                                    B1854 = char__1851;
                                 {
-                                    B1837(result__1834, B1838);
-                                    char__1835 = B1705['stream-read-element'](stream__1833);
+                                    B1853(result__1850, B1854);
+                                    char__1851 = B1721['stream-read-element'](stream__1849);
                                 }
                             }
                         }
                     }
-                    return(B1705['stream-contents'](result__1834));
+                    return(B1721['stream-contents'](result__1850));
                 }
             }
         };
-        B1704['%annotate-function'](($module)['read-string'], 'read-string', false);
+        B1720['%annotate-function'](($module)['read-string'], 'read-string', false);
     }
 }
 {
-    var B1839 = $S('quote', 'ralph/core');
+    var B1855 = $S('quote', 'ralph/core');
     {
-        var B1840 = $S('unquote', 'ralph/core');
+        var B1856 = $S('unquote', 'ralph/core');
         {
-            var B1841 = $S('unquote-splicing', 'ralph/core');
+            var B1857 = $S('unquote-splicing', 'ralph/core');
             ($module)['*wrapper-symbols*'] = [
-                B1839,
-                B1840,
-                B1841
+                B1855,
+                B1856,
+                B1857
             ];
         }
     }
 }
 {
-    ($module)['$end-of-file'] = B1704['make-object']();
+    ($module)['$end-of-file'] = B1720['make-object']();
     ($module)['%export']('$end-of-file', ($module)['$end-of-file']);
 }
 {
-    var B1849 = $S('signal');
+    var B1865 = $S('signal');
     {
-        var B1850 = $S('syntax-quote', 'ralph/core');
+        var B1866 = $S('syntax-quote', 'ralph/core');
         {
-            var B1851 = $S('%array', 'ralph/core');
+            var B1867 = $S('%array', 'ralph/core');
             {
                 {
-                    ($module)['read'] = function B1852(stream__1853, env__1854) {
-                        var B1855 = $SL.call(arguments, 2);
+                    ($module)['read'] = function B1868(stream__1869, env__1870) {
+                        var B1871 = $SL.call(arguments, 2);
                         {
-                            var B1856 = B1704['%keys'](B1855, {
+                            var B1872 = B1720['%keys'](B1871, {
                                     'eof-error?': true,
                                     'eof-value': ($module)['$end-of-file'],
-                                    'if-incomplete': B1849
+                                    'if-incomplete': B1865
                                 });
                             {
-                                var eof_errorQ__1857 = B1856['eof-error?'];
+                                var eof_errorQ__1873 = B1872['eof-error?'];
                                 {
-                                    var eof_value__1858 = B1856['eof-value'];
+                                    var eof_value__1874 = B1872['eof-value'];
                                     {
-                                        var if_incomplete__1859 = B1856['if-incomplete'];
+                                        var if_incomplete__1875 = B1872['if-incomplete'];
                                         {
-                                            var stack__1860 = [[]];
+                                            var stack__1876 = [[]];
                                             {
-                                                var ends__1861 = [];
+                                                var ends__1877 = [];
                                                 {
-                                                    var readQ__1862 = true;
+                                                    var readQ__1878 = true;
                                                     {
-                                                        var result__1863 = false;
+                                                        var result__1879 = false;
                                                         {
-                                                            var add_to_stackN__1864 = false;
+                                                            var add_to_stackN__1880 = false;
                                                             {
-                                                                var add_lastN__1865 = false;
+                                                                var add_lastN__1881 = false;
                                                                 {
-                                                                    add_to_stackN__1864 = function B1866(value__1867) {
-                                                                        B1704['push-last'](stack__1860, value__1867);
-                                                                        return(add_lastN__1865());
+                                                                    add_to_stackN__1880 = function B1882(value__1883) {
+                                                                        B1720['push-last'](stack__1876, value__1883);
+                                                                        return(add_lastN__1881());
                                                                     };
                                                                     {
-                                                                        add_lastN__1865 = function B1868() {
-                                                                            var value__1869 = B1704['pop-last'](stack__1860);
+                                                                        add_lastN__1881 = function B1884() {
+                                                                            var value__1885 = B1720['pop-last'](stack__1876);
                                                                             {
-                                                                                var l__1870 = B1704['last'](stack__1860);
-                                                                                if (($T)(B1704['=='](l__1870, B1850))) {
-                                                                                    B1704['pop-last'](stack__1860);
-                                                                                    return(add_to_stackN__1864(B1799['syntax-quote-form'](value__1869, env__1854)));
-                                                                                } else if (($T)(B1704['member?'](l__1870, ($module)['*wrapper-symbols*'])))
-                                                                                    return(add_to_stackN__1864([
-                                                                                        B1704['pop-last'](stack__1860),
-                                                                                        value__1869
+                                                                                var l__1886 = B1720['last'](stack__1876);
+                                                                                if (($T)(B1720['=='](l__1886, B1866))) {
+                                                                                    B1720['pop-last'](stack__1876);
+                                                                                    return(add_to_stackN__1880(B1815['syntax-quote-form'](value__1885, env__1870)));
+                                                                                } else if (($T)(B1720['member?'](l__1886, ($module)['*wrapper-symbols*'])))
+                                                                                    return(add_to_stackN__1880([
+                                                                                        B1720['pop-last'](stack__1876),
+                                                                                        value__1885
                                                                                     ]));
                                                                                 else
-                                                                                    return(B1704['push-last'](l__1870, value__1869));
+                                                                                    return(B1720['push-last'](l__1886, value__1885));
                                                                             }
                                                                         };
                                                                         {
-                                                                            while (($T)(readQ__1862)) {
-                                                                                ($module)['read-whitespace'](stream__1853);
-                                                                                if (($T)(B1705['stream-at-end?'](stream__1853))) {
-                                                                                    readQ__1862 = false;
-                                                                                    if (($T)(B1704['empty?'](ends__1861)))
-                                                                                        if (($T)(eof_errorQ__1857))
-                                                                                            B1704['signal']('EOF before finished');
+                                                                            while (($T)(readQ__1878)) {
+                                                                                ($module)['read-whitespace'](stream__1869);
+                                                                                if (($T)(B1721['stream-at-end?'](stream__1869))) {
+                                                                                    readQ__1878 = false;
+                                                                                    if (($T)(B1720['empty?'](ends__1877)))
+                                                                                        if (($T)(eof_errorQ__1873))
+                                                                                            B1720['signal']('EOF before finished');
                                                                                         else
-                                                                                            result__1863 = eof_value__1858;
-                                                                                    else if (($T)(B1704['=='](if_incomplete__1859, B1849)))
-                                                                                        B1704['signal'](B1706['format-to-string']('missing closings: %=', ends__1861));
+                                                                                            result__1879 = eof_value__1874;
+                                                                                    else if (($T)(B1720['=='](if_incomplete__1875, B1865)))
+                                                                                        B1720['signal'](B1722['format-to-string']('missing closings: %=', ends__1877));
                                                                                     else
-                                                                                        result__1863 = if_incomplete__1859;
+                                                                                        result__1879 = if_incomplete__1875;
                                                                                 } else {
-                                                                                    var char__1871 = B1705['stream-read-element'](stream__1853);
+                                                                                    var char__1887 = B1721['stream-read-element'](stream__1869);
                                                                                     {
-                                                                                        var B1872 = char__1871;
+                                                                                        var B1888 = char__1887;
                                                                                         {
-                                                                                            if (($T)(B1704['=='](B1872, ';')))
-                                                                                                ($module)['read-line'](stream__1853);
-                                                                                            else if (($T)(B1704['=='](B1872, '\'')))
-                                                                                                B1704['push-last'](stack__1860, B1839);
-                                                                                            else if (($T)(B1704['=='](B1872, '`')))
-                                                                                                B1704['push-last'](stack__1860, B1850);
-                                                                                            else if (($T)(B1704['=='](B1872, ',')))
-                                                                                                if (($T)(B1704['=='](B1705['stream-peek'](stream__1853), '@'))) {
-                                                                                                    B1705['stream-read-element'](stream__1853);
-                                                                                                    B1704['push-last'](stack__1860, B1841);
+                                                                                            if (($T)(B1720['=='](B1888, ';')))
+                                                                                                ($module)['read-line'](stream__1869);
+                                                                                            else if (($T)(B1720['=='](B1888, '\'')))
+                                                                                                B1720['push-last'](stack__1876, B1855);
+                                                                                            else if (($T)(B1720['=='](B1888, '`')))
+                                                                                                B1720['push-last'](stack__1876, B1866);
+                                                                                            else if (($T)(B1720['=='](B1888, ',')))
+                                                                                                if (($T)(B1720['=='](B1721['stream-peek'](stream__1869), '@'))) {
+                                                                                                    B1721['stream-read-element'](stream__1869);
+                                                                                                    B1720['push-last'](stack__1876, B1857);
                                                                                                 } else
-                                                                                                    B1704['push-last'](stack__1860, B1840);
-                                                                                            else if (($T)(B1704['=='](B1872, '('))) {
-                                                                                                B1704['push-last'](ends__1861, ')');
-                                                                                                B1704['push-last'](stack__1860, []);
-                                                                                            } else if (($T)(B1704['=='](B1872, '['))) {
-                                                                                                B1704['push-last'](ends__1861, ']');
-                                                                                                B1704['push-last'](stack__1860, [B1851]);
-                                                                                            } else if (($T)(B1704['=='](B1872, B1704['last'](ends__1861)))) {
-                                                                                                B1704['pop-last'](ends__1861);
-                                                                                                add_lastN__1865();
+                                                                                                    B1720['push-last'](stack__1876, B1856);
+                                                                                            else if (($T)(B1720['=='](B1888, '('))) {
+                                                                                                B1720['push-last'](ends__1877, ')');
+                                                                                                B1720['push-last'](stack__1876, []);
+                                                                                            } else if (($T)(B1720['=='](B1888, '['))) {
+                                                                                                B1720['push-last'](ends__1877, ']');
+                                                                                                B1720['push-last'](stack__1876, [B1867]);
+                                                                                            } else if (($T)(B1720['=='](B1888, B1720['last'](ends__1877)))) {
+                                                                                                B1720['pop-last'](ends__1877);
+                                                                                                add_lastN__1881();
                                                                                             } else {
-                                                                                                var B1873 = B1704['=='](B1872, ')');
+                                                                                                var B1889 = B1720['=='](B1888, ')');
                                                                                                 {
-                                                                                                    var B1874 = false;
-                                                                                                    if (($T)(B1873))
-                                                                                                        B1874 = B1873;
+                                                                                                    var B1890 = false;
+                                                                                                    if (($T)(B1889))
+                                                                                                        B1890 = B1889;
                                                                                                     else
-                                                                                                        B1874 = B1704['=='](B1872, ']');
-                                                                                                    if (($T)(B1874))
-                                                                                                        B1704['signal'](B1706['format-to-string']('too many closings: %=', char__1871));
-                                                                                                    else if (($T)(B1704['=='](B1872, '"')))
-                                                                                                        add_to_stackN__1864(($module)['read-string'](stream__1853));
+                                                                                                        B1890 = B1720['=='](B1888, ']');
+                                                                                                    if (($T)(B1890))
+                                                                                                        B1720['signal'](B1722['format-to-string']('too many closings: %=', char__1887));
+                                                                                                    else if (($T)(B1720['=='](B1888, '"')))
+                                                                                                        add_to_stackN__1880(($module)['read-string'](stream__1869));
                                                                                                     else {
-                                                                                                        B1705['stream-unread-element'](stream__1853);
-                                                                                                        add_to_stackN__1864(($module)['make-atom'](B1704['first'](($module)['match-stream'](($module)['*atom-pattern*'], stream__1853))));
+                                                                                                        B1721['stream-unread-element'](stream__1869);
+                                                                                                        add_to_stackN__1880(($module)['make-atom'](B1720['first'](($module)['match-stream'](($module)['*atom-pattern*'], stream__1869))));
                                                                                                     }
                                                                                                 }
                                                                                             }
                                                                                             {
-                                                                                                var B1875 = false;
-                                                                                                if (($T)(B1704['=='](B1704['size'](stack__1860), 1)))
-                                                                                                    B1875 = B1704['not'](B1704['empty?'](B1704['first'](stack__1860)));
+                                                                                                var B1891 = false;
+                                                                                                if (($T)(B1720['=='](B1720['size'](stack__1876), 1)))
+                                                                                                    B1891 = B1720['not'](B1720['empty?'](B1720['first'](stack__1876)));
                                                                                                 else
-                                                                                                    B1875 = false;
-                                                                                                if (($T)(B1875)) {
-                                                                                                    readQ__1862 = false;
-                                                                                                    result__1863 = B1704['first'](B1704['first'](stack__1860));
+                                                                                                    B1891 = false;
+                                                                                                if (($T)(B1891)) {
+                                                                                                    readQ__1878 = false;
+                                                                                                    result__1879 = B1720['first'](B1720['first'](stack__1876));
                                                                                                 }
                                                                                             }
                                                                                         }
                                                                                     }
                                                                                 }
                                                                             }
-                                                                            return(result__1863);
+                                                                            return(result__1879);
                                                                         }
                                                                     }
                                                                 }
@@ -315,17 +323,8 @@ var B1704 = require('ralph/core');
                     };
                     ($module)['%export']('read', ($module)['read']);
                 }
-                B1704['%annotate-function'](($module)['read'], 'read', false);
+                B1720['%annotate-function'](($module)['read'], 'read', false);
             }
         }
-    }
-}
-{
-    ($module)['%eval'] = function B1877() {
-        return(eval((arguments[0])));
-    };
-    {
-        B1704['%annotate-function'](($module)['%eval'], '%eval', false);
-        ($module)['%export']('%eval', ($module)['%eval']);
     }
 }

@@ -1,89 +1,97 @@
 {
     var $module = Object.create(null);
-    ($module)['%export'] = function B2448(name__2449, value__2450) {
-        var B2451 = (exports);
-        return(B2451[name__2449] = value__2450);
-    };
-}
-var B2452 = require('ralph/core');
-{
-    var B2453 = require('ralph/format');
     {
-        var B2454 = require('ralph/compiler/utilities');
+        ($module)['%export'] = function B2463(name__2464, value__2465) {
+            var B2467 = (exports);
+            return(B2467[name__2464] = value__2465);
+        };
         {
-            var B2602 = require('ralph/compiler/transformer');
+            ($module)['%eval'] = function B2466() {
+                return(eval((arguments[0])));
+            };
+            ($module)['%export']('%eval', ($module)['%eval']);
+        }
+    }
+}
+var B2468 = require('ralph/core');
+{
+    var B2469 = require('ralph/format');
+    {
+        var B2470 = require('ralph/compiler/utilities');
+        {
+            var B2618 = require('ralph/compiler/transformer');
             {
-                var B2639 = require('ralph/compiler/macroexpansion');
-                var B2640 = require('ralph/compiler/environment');
+                var B2655 = require('ralph/compiler/macroexpansion');
+                var B2656 = require('ralph/compiler/environment');
             }
         }
     }
 }
 {
-    var B2641 = $KEY;
+    var B2657 = $KEY;
     {
-        var B2642 = $REST;
+        var B2658 = $REST;
         ($module)['$hash-symbols'] = [
-            B2641,
-            B2642
+            B2657,
+            B2658
         ];
     }
 }
 {
-    ($module)['parameter-list-identifiers'] = function B2646(parameter_list__2647) {
-        return(B2452['map'](function B2648(parameter__2649) {
-            if (($T)(B2452['instance?'](parameter__2649, B2452['<array>'])))
-                return(B2452['first'](parameter__2649));
+    ($module)['parameter-list-identifiers'] = function B2662(parameter_list__2663) {
+        return(B2468['map'](function B2664(parameter__2665) {
+            if (($T)(B2468['instance?'](parameter__2665, B2468['<array>'])))
+                return(B2468['first'](parameter__2665));
             else
-                return(parameter__2649);
-        }, B2452['choose'](function B2650(parameter__2651) {
-            return(B2452['not'](B2452['member?'](parameter__2651, ($module)['$hash-symbols'])));
-        }, parameter_list__2647)));
+                return(parameter__2665);
+        }, B2468['choose'](function B2666(parameter__2667) {
+            return(B2468['not'](B2468['member?'](parameter__2667, ($module)['$hash-symbols'])));
+        }, parameter_list__2663)));
     };
-    B2452['%annotate-function'](($module)['parameter-list-identifiers'], 'parameter-list-identifiers', false);
+    B2468['%annotate-function'](($module)['parameter-list-identifiers'], 'parameter-list-identifiers', false);
 }
 {
-    ($module)['$core-special-forms'] = B2452['make-plain-object']();
+    ($module)['$core-special-forms'] = B2468['make-plain-object']();
     ($module)['%export']('$core-special-forms', ($module)['$core-special-forms']);
 }
 {
-    var B2655 = $S('bind', 'ralph/core');
-    B2452['get-setter'](($module)['$core-special-forms'], 'bind', function B2656(env__2657, bindings__2658) {
-        var forms__2659 = $SL.call(arguments, 2);
+    var B2671 = $S('bind', 'ralph/core');
+    B2468['get-setter'](($module)['$core-special-forms'], 'bind', function B2672(env__2673, bindings__2674) {
+        var forms__2675 = $SL.call(arguments, 2);
         {
-            var identifiers__2660 = [];
+            var identifiers__2676 = [];
             {
-                var bindingsT__2669 = B2452['map'](function B2661(binding__2662) {
-                        var arrayQ__2663 = B2452['instance?'](bindings__2658, B2452['<array>']);
+                var bindingsT__2685 = B2468['map'](function B2677(binding__2678) {
+                        var arrayQ__2679 = B2468['instance?'](bindings__2674, B2468['<array>']);
                         {
-                            var B2664 = false;
-                            if (($T)(arrayQ__2663))
-                                B2664 = binding__2662;
+                            var B2680 = false;
+                            if (($T)(arrayQ__2679))
+                                B2680 = binding__2678;
                             else
-                                B2664 = [binding__2662];
+                                B2680 = [binding__2678];
                             {
-                                var identifier__2665 = B2664[0];
+                                var identifier__2681 = B2680[0];
                                 {
-                                    var value__2666 = B2664[1];
+                                    var value__2682 = B2680[1];
                                     {
-                                        var superflous__2667 = $SL.call(B2664, 2);
+                                        var superflous__2683 = $SL.call(B2680, 2);
                                         {
-                                            B2454['check-type'](identifier__2665, B2452['<symbol>'], 'Non-symbol identifier in bind: %=');
+                                            B2470['check-type'](identifier__2681, B2468['<symbol>'], 'Non-symbol identifier in bind: %=');
                                             {
-                                                B2454['check-identifier'](identifier__2665, env__2657, 'External identifier in bind: %=');
+                                                B2470['check-identifier'](identifier__2681, env__2673, 'External identifier in bind: %=');
                                                 {
-                                                    var valueT__2668 = B2639['macroexpand-all'](value__2666, env__2657);
+                                                    var valueT__2684 = B2655['macroexpand-all'](value__2682, env__2673);
                                                     {
-                                                        B2640['bind-locally!'](identifier__2665, env__2657);
+                                                        B2656['bind-locally!'](identifier__2681, env__2673);
                                                         {
-                                                            B2452['push-last'](identifiers__2660, identifier__2665);
-                                                            if (($T)(arrayQ__2663))
+                                                            B2468['push-last'](identifiers__2676, identifier__2681);
+                                                            if (($T)(arrayQ__2679))
                                                                 return([
-                                                                    identifier__2665,
-                                                                    valueT__2668
+                                                                    identifier__2681,
+                                                                    valueT__2684
                                                                 ]);
                                                             else
-                                                                return(identifier__2665);
+                                                                return(identifier__2681);
                                                         }
                                                     }
                                                 }
@@ -93,15 +101,15 @@ var B2452 = require('ralph/core');
                                 }
                             }
                         }
-                    }, bindings__2658);
+                    }, bindings__2674);
                 {
-                    var formsT__2670 = B2452['map'](B2452['rcurry'](B2639['macroexpand-all'], env__2657), forms__2659);
+                    var formsT__2686 = B2468['map'](B2468['rcurry'](B2655['macroexpand-all'], env__2673), forms__2675);
                     {
-                        B2452['do'](B2452['rcurry'](B2640['unbind-locally!'], env__2657), identifiers__2660);
-                        return(B2452['%concat']([
-                            B2655,
-                            B2452['%concat']([], bindingsT__2669)
-                        ], formsT__2670));
+                        B2468['do'](B2468['rcurry'](B2656['unbind-locally!'], env__2673), identifiers__2676);
+                        return(B2468['%concat']([
+                            B2671,
+                            B2468['%concat']([], bindingsT__2685)
+                        ], formsT__2686));
                     }
                 }
             }
@@ -109,58 +117,58 @@ var B2452 = require('ralph/core');
     });
 }
 {
-    var B2674 = $S('method', 'ralph/core');
-    B2452['get-setter'](($module)['$core-special-forms'], 'method', function B2675(env__2676, parameter_list__2677) {
-        var forms__2678 = $SL.call(arguments, 2);
+    var B2690 = $S('method', 'ralph/core');
+    B2468['get-setter'](($module)['$core-special-forms'], 'method', function B2691(env__2692, parameter_list__2693) {
+        var forms__2694 = $SL.call(arguments, 2);
         {
-            var identifiers__2679 = ($module)['parameter-list-identifiers'](parameter_list__2677);
+            var identifiers__2695 = ($module)['parameter-list-identifiers'](parameter_list__2693);
             {
-                B2452['do'](B2452['rcurry'](B2454['check-identifier'], env__2676, 'External identifier in parameter list of method: %='), identifiers__2679);
+                B2468['do'](B2468['rcurry'](B2470['check-identifier'], env__2692, 'External identifier in parameter list of method: %='), identifiers__2695);
                 {
-                    var B2680 = B2454['destructure-parameter-list'](parameter_list__2677);
+                    var B2696 = B2470['destructure-parameter-list'](parameter_list__2693);
                     {
-                        var normal_parameters__2681 = B2680[0];
+                        var normal_parameters__2697 = B2696[0];
                         {
-                            var rest_parameter__2682 = B2680[1];
+                            var rest_parameter__2698 = B2696[1];
                             {
-                                var keyword_parameters__2683 = B2680[2];
+                                var keyword_parameters__2699 = B2696[2];
                                 {
-                                    var B2688 = B2452['concatenate'];
+                                    var B2704 = B2468['concatenate'];
                                     {
-                                        var B2689 = false;
-                                        if (($T)(rest_parameter__2682))
-                                            B2689 = [
-                                                B2642,
-                                                rest_parameter__2682
+                                        var B2705 = false;
+                                        if (($T)(rest_parameter__2698))
+                                            B2705 = [
+                                                B2658,
+                                                rest_parameter__2698
                                             ];
                                         else
-                                            B2689 = [];
+                                            B2705 = [];
                                         {
-                                            var B2690 = false;
-                                            if (($T)(keyword_parameters__2683))
-                                                B2690 = B2452['%concat']([B2641], B2452['map'](function B2684(parameter__2685) {
-                                                    if (($T)(B2452['instance?'](parameter__2685, B2452['<array>'])))
+                                            var B2706 = false;
+                                            if (($T)(keyword_parameters__2699))
+                                                B2706 = B2468['%concat']([B2657], B2468['map'](function B2700(parameter__2701) {
+                                                    if (($T)(B2468['instance?'](parameter__2701, B2468['<array>'])))
                                                         return([
-                                                            B2452['first'](parameter__2685),
-                                                            B2639['macroexpand-all'](B2452['second'](parameter__2685), env__2676)
+                                                            B2468['first'](parameter__2701),
+                                                            B2655['macroexpand-all'](B2468['second'](parameter__2701), env__2692)
                                                         ]);
                                                     else
-                                                        return(parameter__2685);
-                                                }, keyword_parameters__2683));
+                                                        return(parameter__2701);
+                                                }, keyword_parameters__2699));
                                             else
-                                                B2690 = [];
+                                                B2706 = [];
                                             {
-                                                var parameter_listT__2686 = B2688(normal_parameters__2681, B2689, B2690);
+                                                var parameter_listT__2702 = B2704(normal_parameters__2697, B2705, B2706);
                                                 {
-                                                    B2452['do'](B2452['rcurry'](B2640['bind-locally!'], env__2676), identifiers__2679);
+                                                    B2468['do'](B2468['rcurry'](B2656['bind-locally!'], env__2692), identifiers__2695);
                                                     {
-                                                        var formsT__2687 = B2452['map'](B2452['rcurry'](B2639['macroexpand-all'], env__2676), forms__2678);
+                                                        var formsT__2703 = B2468['map'](B2468['rcurry'](B2655['macroexpand-all'], env__2692), forms__2694);
                                                         {
-                                                            B2452['do'](B2452['rcurry'](B2640['unbind-locally!'], env__2676), identifiers__2679);
-                                                            return(B2452['%concat']([
-                                                                B2674,
-                                                                parameter_listT__2686
-                                                            ], formsT__2687));
+                                                            B2468['do'](B2468['rcurry'](B2656['unbind-locally!'], env__2692), identifiers__2695);
+                                                            return(B2468['%concat']([
+                                                                B2690,
+                                                                parameter_listT__2702
+                                                            ], formsT__2703));
                                                         }
                                                     }
                                                 }
@@ -177,25 +185,25 @@ var B2452 = require('ralph/core');
     });
 }
 {
-    var B2692 = $S('define', 'ralph/core');
-    B2452['get-setter'](($module)['$core-special-forms'], 'define', function B2693(env__2694, identifier__2695, initial_value__2696) {
-        var superfluous__2697 = $SL.call(arguments, 3);
+    var B2708 = $S('define', 'ralph/core');
+    B2468['get-setter'](($module)['$core-special-forms'], 'define', function B2709(env__2710, identifier__2711, initial_value__2712) {
+        var superfluous__2713 = $SL.call(arguments, 3);
         {
-            B2454['check-type'](identifier__2695, B2452['<symbol>'], 'Non-symbol identifier in define: %=');
+            B2470['check-type'](identifier__2711, B2468['<symbol>'], 'Non-symbol identifier in define: %=');
             {
-                B2454['check-identifier'](identifier__2695, env__2694, 'External identifier in define: %=');
+                B2470['check-identifier'](identifier__2711, env__2710, 'External identifier in define: %=');
                 {
-                    B2640['bind-globally!'](identifier__2695, env__2694);
-                    if (($T)(initial_value__2696))
+                    B2656['bind-globally!'](identifier__2711, env__2710);
+                    if (($T)(initial_value__2712))
                         return([
-                            B2692,
-                            identifier__2695,
-                            B2639['macroexpand-all'](initial_value__2696, env__2694)
+                            B2708,
+                            identifier__2711,
+                            B2655['macroexpand-all'](initial_value__2712, env__2710)
                         ]);
                     else
                         return([
-                            B2692,
-                            identifier__2695
+                            B2708,
+                            identifier__2711
                         ]);
                 }
             }
@@ -203,44 +211,44 @@ var B2452 = require('ralph/core');
     });
 }
 {
-    var B2702 = $S('handler-case', 'ralph/core');
-    B2452['get-setter'](($module)['$core-special-forms'], 'handler-case', function B2703(env__2704, protected_form__2705) {
-        var cases__2706 = $SL.call(arguments, 2);
-        return(B2452['%concat']([
-            B2702,
-            B2639['macroexpand-all'](protected_form__2705, env__2704)
-        ], B2452['map'](function B2707(case__2708) {
-            B2454['check-type'](case__2708, B2452['<array>'], 'Non-array case in handler-case: %=');
+    var B2718 = $S('handler-case', 'ralph/core');
+    B2468['get-setter'](($module)['$core-special-forms'], 'handler-case', function B2719(env__2720, protected_form__2721) {
+        var cases__2722 = $SL.call(arguments, 2);
+        return(B2468['%concat']([
+            B2718,
+            B2655['macroexpand-all'](protected_form__2721, env__2720)
+        ], B2468['map'](function B2723(case__2724) {
+            B2470['check-type'](case__2724, B2468['<array>'], 'Non-array case in handler-case: %=');
             {
-                var binding__2709 = case__2708[0];
+                var binding__2725 = case__2724[0];
                 {
-                    var forms__2710 = $SL.call(case__2708, 1);
+                    var forms__2726 = $SL.call(case__2724, 1);
                     {
-                        B2454['check-type'](binding__2709, B2452['<array>'], 'Non-array case-binding in handler-case: %=');
+                        B2470['check-type'](binding__2725, B2468['<array>'], 'Non-array case-binding in handler-case: %=');
                         {
-                            var type__2711 = binding__2709[0];
+                            var type__2727 = binding__2725[0];
                             {
-                                var B2712 = $SL.call(binding__2709, 1);
+                                var B2728 = $SL.call(binding__2725, 1);
                                 {
-                                    var B2713 = B2452['%keys'](B2712, { 'condition': false });
+                                    var B2729 = B2468['%keys'](B2728, { 'condition': false });
                                     {
-                                        var condition__2714 = B2713['condition'];
+                                        var condition__2730 = B2729['condition'];
                                         {
-                                            if (($T)(condition__2714)) {
-                                                B2454['check-type'](condition__2714, B2452['<symbol>'], 'Non-symbol condition variable in handler-case: %=');
+                                            if (($T)(condition__2730)) {
+                                                B2470['check-type'](condition__2730, B2468['<symbol>'], 'Non-symbol condition variable in handler-case: %=');
                                                 {
-                                                    B2454['check-identifier'](condition__2714, env__2704, 'External identifier in handler-case: %=');
-                                                    B2640['bind-locally!'](condition__2714, env__2704);
+                                                    B2470['check-identifier'](condition__2730, env__2720, 'External identifier in handler-case: %=');
+                                                    B2656['bind-locally!'](condition__2730, env__2720);
                                                 }
                                             }
                                             {
-                                                var typeT__2715 = B2639['macroexpand-all'](type__2711, env__2704);
+                                                var typeT__2731 = B2655['macroexpand-all'](type__2727, env__2720);
                                                 {
-                                                    var formsT__2716 = B2452['map'](B2452['rcurry'](B2639['macroexpand-all'], env__2704), forms__2710);
+                                                    var formsT__2732 = B2468['map'](B2468['rcurry'](B2655['macroexpand-all'], env__2720), forms__2726);
                                                     {
-                                                        if (($T)(condition__2714))
-                                                            B2640['unbind-locally!'](condition__2714, env__2704);
-                                                        return(B2452['%concat']([B2452['%concat']([typeT__2715], B2452['rest'](binding__2709))], formsT__2716));
+                                                        if (($T)(condition__2730))
+                                                            B2656['unbind-locally!'](condition__2730, env__2720);
+                                                        return(B2468['%concat']([B2468['%concat']([typeT__2731], B2468['rest'](binding__2725))], formsT__2732));
                                                     }
                                                 }
                                             }
@@ -252,138 +260,138 @@ var B2452 = require('ralph/core');
                     }
                 }
             }
-        }, cases__2706)));
+        }, cases__2722)));
     });
 }
 {
-    var B2717 = $S('quote', 'ralph/core');
-    B2452['get-setter'](($module)['$core-special-forms'], 'quote', B2602['make-quote-transformer'](B2717));
+    var B2733 = $S('quote', 'ralph/core');
+    B2468['get-setter'](($module)['$core-special-forms'], 'quote', B2618['make-quote-transformer'](B2733));
 }
 {
-    var B2718 = $K('symbol');
+    var B2734 = $K('symbol');
     {
-        var B2719 = $S('set!', 'ralph/core');
-        B2452['get-setter'](($module)['$core-special-forms'], 'set!', B2602['make-rest-transformer'](B2639['macroexpand-all'], B2718, B2719));
+        var B2735 = $S('set!', 'ralph/core');
+        B2468['get-setter'](($module)['$core-special-forms'], 'set!', B2618['make-rest-transformer'](B2655['macroexpand-all'], B2734, B2735));
     }
 }
 {
-    var B2720 = $S('if', 'ralph/core');
+    var B2736 = $S('if', 'ralph/core');
     {
-        var B2721 = $K('count');
-        B2452['get-setter'](($module)['$core-special-forms'], 'if', B2602['make-rest-transformer'](B2639['macroexpand-all'], B2718, B2720, B2721, 3));
+        var B2737 = $K('count');
+        B2468['get-setter'](($module)['$core-special-forms'], 'if', B2618['make-rest-transformer'](B2655['macroexpand-all'], B2734, B2736, B2737, 3));
     }
 }
 {
-    var B2722 = $S('begin', 'ralph/core');
-    B2452['get-setter'](($module)['$core-special-forms'], 'begin', B2602['make-rest-transformer'](B2639['macroexpand-all'], B2718, B2722));
+    var B2738 = $S('begin', 'ralph/core');
+    B2468['get-setter'](($module)['$core-special-forms'], 'begin', B2618['make-rest-transformer'](B2655['macroexpand-all'], B2734, B2738));
 }
 {
-    var B2723 = $S('while', 'ralph/core');
-    B2452['get-setter'](($module)['$core-special-forms'], 'while', B2602['make-rest-transformer'](B2639['macroexpand-all'], B2718, B2723));
+    var B2739 = $S('while', 'ralph/core');
+    B2468['get-setter'](($module)['$core-special-forms'], 'while', B2618['make-rest-transformer'](B2655['macroexpand-all'], B2734, B2739));
 }
 {
-    ($module)['$internal-special-forms'] = B2452['make-plain-object']();
+    ($module)['$internal-special-forms'] = B2468['make-plain-object']();
     ($module)['%export']('$internal-special-forms', ($module)['$internal-special-forms']);
 }
 {
-    var B2724 = $S('%quote', 'ralph/core');
+    var B2740 = $S('%quote', 'ralph/core');
     {
-        var B2725 = $K('check?');
-        B2452['get-setter'](($module)['$internal-special-forms'], '%quote', B2602['make-quote-transformer'](B2724, B2725, true));
+        var B2741 = $K('check?');
+        B2468['get-setter'](($module)['$internal-special-forms'], '%quote', B2618['make-quote-transformer'](B2740, B2741, true));
     }
 }
 {
-    var B2727 = $S('%bind', 'ralph/core');
-    B2452['get-setter'](($module)['$internal-special-forms'], '%bind', B2602['make-bind-transformer'](B2639['macroexpand-all'], function B2728(env__2729, identifier__2730, valueT__2731, formT__2732) {
+    var B2743 = $S('%bind', 'ralph/core');
+    B2468['get-setter'](($module)['$internal-special-forms'], '%bind', B2618['make-bind-transformer'](B2655['macroexpand-all'], function B2744(env__2745, identifier__2746, valueT__2747, formT__2748) {
         return([
-            B2727,
+            B2743,
             [
-                identifier__2730,
-                valueT__2731
+                identifier__2746,
+                valueT__2747
             ],
-            formT__2732
+            formT__2748
         ]);
     }));
 }
 {
-    var B2734 = $S('%method', 'ralph/core');
-    B2452['get-setter'](($module)['$internal-special-forms'], '%method', B2602['make-method-transformer'](B2639['macroexpand-all'], function B2735(env__2736, name__2737, parameters__2738, formT__2739) {
+    var B2750 = $S('%method', 'ralph/core');
+    B2468['get-setter'](($module)['$internal-special-forms'], '%method', B2618['make-method-transformer'](B2655['macroexpand-all'], function B2751(env__2752, name__2753, parameters__2754, formT__2755) {
         return([
-            B2734,
-            name__2737,
-            parameters__2738,
-            formT__2739
+            B2750,
+            name__2753,
+            parameters__2754,
+            formT__2755
         ]);
     }));
 }
 {
-    var B2741 = $S('%set', 'ralph/core');
-    B2452['get-setter'](($module)['$internal-special-forms'], '%set', B2602['make-set-transformer'](B2639['macroexpand-all'], function B2742(env__2743, placeT__2744, valueT__2745) {
+    var B2757 = $S('%set', 'ralph/core');
+    B2468['get-setter'](($module)['$internal-special-forms'], '%set', B2618['make-set-transformer'](B2655['macroexpand-all'], function B2758(env__2759, placeT__2760, valueT__2761) {
         return([
-            B2741,
-            placeT__2744,
-            valueT__2745
+            B2757,
+            placeT__2760,
+            valueT__2761
         ]);
     }));
 }
-B2452['get-setter'](($module)['$internal-special-forms'], '%define', B2602['make-define-transformer'](B2639['macroexpand-all']));
+B2468['get-setter'](($module)['$internal-special-forms'], '%define', B2618['make-define-transformer'](B2655['macroexpand-all']));
 {
-    var B2746 = $S('%if', 'ralph/core');
-    B2452['get-setter'](($module)['$internal-special-forms'], '%if', B2602['make-rest-transformer'](B2639['macroexpand-all'], B2718, B2746, B2721, 3));
+    var B2762 = $S('%if', 'ralph/core');
+    B2468['get-setter'](($module)['$internal-special-forms'], '%if', B2618['make-rest-transformer'](B2655['macroexpand-all'], B2734, B2762, B2737, 3));
 }
 {
-    var B2747 = $S('%while', 'ralph/core');
-    B2452['get-setter'](($module)['$internal-special-forms'], '%while', B2602['make-rest-transformer'](B2639['macroexpand-all'], B2718, B2747, B2721, 2));
+    var B2763 = $S('%while', 'ralph/core');
+    B2468['get-setter'](($module)['$internal-special-forms'], '%while', B2618['make-rest-transformer'](B2655['macroexpand-all'], B2734, B2763, B2737, 2));
 }
-B2452['get-setter'](($module)['$internal-special-forms'], '%try', B2602['make-try-transformer'](B2639['macroexpand-all']));
+B2468['get-setter'](($module)['$internal-special-forms'], '%try', B2618['make-try-transformer'](B2655['macroexpand-all']));
 {
-    var B2749 = $S('%var', 'ralph/core');
-    B2452['get-setter'](($module)['$internal-special-forms'], '%var', B2602['make-var-transformer'](B2639['macroexpand-all'], function B2750(env__2751, identifier__2752, valueT__2753) {
+    var B2765 = $S('%var', 'ralph/core');
+    B2468['get-setter'](($module)['$internal-special-forms'], '%var', B2618['make-var-transformer'](B2655['macroexpand-all'], function B2766(env__2767, identifier__2768, valueT__2769) {
         return([
-            B2749,
-            identifier__2752,
-            valueT__2753
+            B2765,
+            identifier__2768,
+            valueT__2769
         ]);
     }));
 }
-B2452['get-setter'](($module)['$internal-special-forms'], '%object', B2602['make-object-transformer'](B2639['macroexpand-all']));
+B2468['get-setter'](($module)['$internal-special-forms'], '%object', B2618['make-object-transformer'](B2655['macroexpand-all']));
 {
-    var B2760 = $S('%native-call', 'ralph/core');
+    var B2776 = $S('%native-call', 'ralph/core');
     {
-        var B2761 = $S('%infix', 'ralph/core');
+        var B2777 = $S('%infix', 'ralph/core');
         {
-            var B2762 = [
-                    B2760,
-                    B2761
+            var B2778 = [
+                    B2776,
+                    B2777
                 ];
             {
-                var B2763 = false;
+                var B2779 = false;
                 {
-                    var B2764 = false;
+                    var B2780 = false;
                     {
-                        var B2765 = [B2762];
+                        var B2781 = [B2778];
                         {
                             while (true) {
-                                var B2770 = B2452['not'];
+                                var B2786 = B2468['not'];
                                 {
-                                    var B2766 = B2763;
+                                    var B2782 = B2779;
                                     {
-                                        var B2771 = false;
-                                        if (($T)(B2766))
-                                            B2771 = B2766;
+                                        var B2787 = false;
+                                        if (($T)(B2782))
+                                            B2787 = B2782;
                                         else
-                                            B2771 = B2452['any?'](B2452['empty?'], B2765);
+                                            B2787 = B2468['any?'](B2468['empty?'], B2781);
                                         {
-                                            var B2772 = B2770(B2771);
-                                            if (($T)(B2772)) {
-                                                var symbol__2767 = B2452['first'](B2762);
+                                            var B2788 = B2786(B2787);
+                                            if (($T)(B2788)) {
+                                                var symbol__2783 = B2468['first'](B2778);
                                                 {
-                                                    (function B2768(symbol__2769) {
-                                                        return(B2452['get-setter'](($module)['$internal-special-forms'], B2452['symbol-name'](symbol__2769), B2602['make-operator-transformer'](symbol__2769, B2639['macroexpand-all'])));
-                                                    }(symbol__2767));
+                                                    (function B2784(symbol__2785) {
+                                                        return(B2468['get-setter'](($module)['$internal-special-forms'], B2468['symbol-name'](symbol__2785), B2618['make-operator-transformer'](symbol__2785, B2655['macroexpand-all'])));
+                                                    }(symbol__2783));
                                                     {
-                                                        B2762 = B2452['rest'](B2762);
-                                                        B2765 = [B2762];
+                                                        B2778 = B2468['rest'](B2778);
+                                                        B2781 = [B2778];
                                                     }
                                                 }
                                             } else
@@ -392,7 +400,7 @@ B2452['get-setter'](($module)['$internal-special-forms'], '%object', B2602['make
                                     }
                                 }
                             }
-                            B2764;
+                            B2780;
                         }
                     }
                 }
@@ -401,48 +409,48 @@ B2452['get-setter'](($module)['$internal-special-forms'], '%object', B2602['make
     }
 }
 {
-    var B2779 = $S('%begin', 'ralph/core');
+    var B2795 = $S('%begin', 'ralph/core');
     {
-        var B2780 = $S('%native', 'ralph/core');
+        var B2796 = $S('%native', 'ralph/core');
         {
-            var B2781 = $S('%array', 'ralph/core');
+            var B2797 = $S('%array', 'ralph/core');
             {
-                var B2782 = $S('%get-property', 'ralph/core');
+                var B2798 = $S('%get-property', 'ralph/core');
                 {
-                    var B2783 = [
-                            B2779,
-                            B2780,
-                            B2781,
-                            B2782
+                    var B2799 = [
+                            B2795,
+                            B2796,
+                            B2797,
+                            B2798
                         ];
                     {
-                        var B2784 = false;
+                        var B2800 = false;
                         {
-                            var B2785 = false;
+                            var B2801 = false;
                             {
-                                var B2786 = [B2783];
+                                var B2802 = [B2799];
                                 {
                                     while (true) {
-                                        var B2791 = B2452['not'];
+                                        var B2807 = B2468['not'];
                                         {
-                                            var B2787 = B2784;
+                                            var B2803 = B2800;
                                             {
-                                                var B2792 = false;
-                                                if (($T)(B2787))
-                                                    B2792 = B2787;
+                                                var B2808 = false;
+                                                if (($T)(B2803))
+                                                    B2808 = B2803;
                                                 else
-                                                    B2792 = B2452['any?'](B2452['empty?'], B2786);
+                                                    B2808 = B2468['any?'](B2468['empty?'], B2802);
                                                 {
-                                                    var B2793 = B2791(B2792);
-                                                    if (($T)(B2793)) {
-                                                        var symbol__2788 = B2452['first'](B2783);
+                                                    var B2809 = B2807(B2808);
+                                                    if (($T)(B2809)) {
+                                                        var symbol__2804 = B2468['first'](B2799);
                                                         {
-                                                            (function B2789(symbol__2790) {
-                                                                return(B2452['get-setter'](($module)['$internal-special-forms'], B2452['symbol-name'](symbol__2790), B2602['make-rest-transformer'](B2639['macroexpand-all'], B2718, symbol__2790)));
-                                                            }(symbol__2788));
+                                                            (function B2805(symbol__2806) {
+                                                                return(B2468['get-setter'](($module)['$internal-special-forms'], B2468['symbol-name'](symbol__2806), B2618['make-rest-transformer'](B2655['macroexpand-all'], B2734, symbol__2806)));
+                                                            }(symbol__2804));
                                                             {
-                                                                B2783 = B2452['rest'](B2783);
-                                                                B2786 = [B2783];
+                                                                B2799 = B2468['rest'](B2799);
+                                                                B2802 = [B2799];
                                                             }
                                                         }
                                                     } else
@@ -451,7 +459,7 @@ B2452['get-setter'](($module)['$internal-special-forms'], '%object', B2602['make
                                             }
                                         }
                                     }
-                                    B2785;
+                                    B2801;
                                 }
                             }
                         }
@@ -459,14 +467,5 @@ B2452['get-setter'](($module)['$internal-special-forms'], '%object', B2602['make
                 }
             }
         }
-    }
-}
-{
-    ($module)['%eval'] = function B2795() {
-        return(eval((arguments[0])));
-    };
-    {
-        B2452['%annotate-function'](($module)['%eval'], '%eval', false);
-        ($module)['%export']('%eval', ($module)['%eval']);
     }
 }

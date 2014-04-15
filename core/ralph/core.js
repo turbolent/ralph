@@ -1,9 +1,17 @@
 {
     var $module = Object.create(null);
-    ($module)['%export'] = function B7(name__8, value__9) {
-        var B10 = (exports);
-        return(B10[name__8] = value__9);
-    };
+    {
+        ($module)['%export'] = function B10(name__11, value__12) {
+            var B14 = (exports);
+            return(B14[name__11] = value__12);
+        };
+        {
+            ($module)['%eval'] = function B13() {
+                return(eval((arguments[0])));
+            };
+            ($module)['%export']('%eval', ($module)['%eval']);
+        }
+    }
 }
 false;
 {
@@ -36,19 +44,19 @@ false;
 }
 ($module)['<error>']['%properties'] = { 'message': false };
 {
-    ($module)['%annotate-function'] = function B12(function__13, name__14, setterQ__15) {
-        function__13['%name'] = name__14;
+    ($module)['%annotate-function'] = function B16(function__17, name__18, setterQ__19) {
+        function__17['%name'] = name__18;
         {
-            function__13['%setter?'] = setterQ__15;
-            return(function__13);
+            function__17['%setter?'] = setterQ__19;
+            return(function__17);
         }
     };
     ($module)['%export']('%annotate-function', ($module)['%annotate-function']);
 }
 {
     {
-        ($module)['true?'] = function B17(value__18) {
-            return(value__18 != (null) && value__18 !== false);
+        ($module)['true?'] = function B21(value__22) {
+            return(value__22 != (null) && value__22 !== false);
         };
         ($module)['%export']('true?', ($module)['true?']);
     }
@@ -57,8 +65,8 @@ false;
 $T = ($module)['true?'];
 {
     {
-        ($module)['not'] = function B20(value__21) {
-            return(!(($module)['true?'](value__21)));
+        ($module)['not'] = function B24(value__25) {
+            return(!(($module)['true?'](value__25)));
         };
         ($module)['%export']('not', ($module)['not']);
     }
@@ -66,8 +74,8 @@ $T = ($module)['true?'];
 }
 {
     {
-        ($module)['size'] = function B23(object__24) {
-            return((object__24 || false)['length'] || 0);
+        ($module)['size'] = function B27(object__28) {
+            return((object__28 || false)['length'] || 0);
         };
         ($module)['%export']('size', ($module)['size']);
     }
@@ -76,8 +84,8 @@ $T = ($module)['true?'];
 $SL = [].slice;
 {
     {
-        ($module)['inc'] = function B26(number__27) {
-            return(number__27 + 1);
+        ($module)['inc'] = function B30(number__31) {
+            return(number__31 + 1);
         };
         ($module)['%export']('inc', ($module)['inc']);
     }
@@ -85,8 +93,8 @@ $SL = [].slice;
 }
 {
     {
-        ($module)['dec'] = function B29(number__30) {
-            return(number__30 - 1);
+        ($module)['dec'] = function B33(number__34) {
+            return(number__34 - 1);
         };
         ($module)['%export']('dec', ($module)['dec']);
     }
@@ -94,8 +102,8 @@ $SL = [].slice;
 }
 {
     {
-        ($module)['binary=='] = function B32(object1__33, object2__34) {
-            return(object1__33 === object2__34);
+        ($module)['binary=='] = function B36(object1__37, object2__38) {
+            return(object1__37 === object2__38);
         };
         ($module)['%export']('binary==', ($module)['binary==']);
     }
@@ -103,16 +111,16 @@ $SL = [].slice;
 }
 {
     {
-        ($module)['%inherit'] = function B36(class__37, superclass__38) {
-            class__37['%superclass'] = superclass__38;
+        ($module)['%inherit'] = function B40(class__41, superclass__42) {
+            class__41['%superclass'] = superclass__42;
             {
-                class__37['prototype']['__proto__'] = superclass__38['prototype'];
+                class__41['prototype']['__proto__'] = superclass__42['prototype'];
                 {
-                    var super_properties__39 = superclass__38['%properties'];
+                    var super_properties__43 = superclass__42['%properties'];
                     {
-                        if (($T)(super_properties__39 instanceof ($module)['<object>']))
-                            class__37['%properties']['__proto__'] = super_properties__39;
-                        return(class__37);
+                        if (($T)(super_properties__43 instanceof ($module)['<object>']))
+                            class__41['%properties']['__proto__'] = super_properties__43;
+                        return(class__41);
                     }
                 }
             }
@@ -123,19 +131,19 @@ $SL = [].slice;
 }
 {
     {
-        ($module)['%make-class'] = function B42(superclass__43, properties__44, constructor__45) {
-            if (($T)(($module)['not'](constructor__45)))
-                constructor__45 = function B46() {
+        ($module)['%make-class'] = function B46(superclass__47, properties__48, constructor__49) {
+            if (($T)(($module)['not'](constructor__49)))
+                constructor__49 = function B50() {
                     return(false);
                 };
             {
-                constructor__45['%properties'] = properties__44;
+                constructor__49['%properties'] = properties__48;
                 {
-                    constructor__45['%class?'] = true;
+                    constructor__49['%class?'] = true;
                     {
-                        if (($T)(superclass__43))
-                            ($module)['%inherit'](constructor__45, superclass__43);
-                        return(constructor__45);
+                        if (($T)(superclass__47))
+                            ($module)['%inherit'](constructor__49, superclass__47);
+                        return(constructor__49);
                     }
                 }
             }
@@ -149,29 +157,29 @@ $SL = [].slice;
     ($module)['%export']('%keywords', ($module)['%keywords']);
 }
 {
-    ($module)['<keyword>'] = ($module)['%make-class'](($module)['<object>'], { 'name': false }, function LkeywordG__47() {
-        var B48 = (this);
-        return(B48['name'] = (undefined));
+    ($module)['<keyword>'] = ($module)['%make-class'](($module)['<object>'], { 'name': false }, function LkeywordG__51() {
+        var B52 = (this);
+        return(B52['name'] = (undefined));
     });
     ($module)['%export']('<keyword>', ($module)['<keyword>']);
 }
 {
     {
-        ($module)['keyword'] = function B52(name__53) {
-            var B54 = name__53;
+        ($module)['keyword'] = function B56(name__57) {
+            var B58 = name__57;
             {
-                var nameT__55 = B54['toLowerCase']();
+                var nameT__59 = B58['toLowerCase']();
                 {
-                    var B56 = ($module)['%keywords'][nameT__55];
-                    if (($T)(B56))
-                        return(B56);
+                    var B60 = ($module)['%keywords'][nameT__59];
+                    if (($T)(B60))
+                        return(B60);
                     else {
-                        var keyword__57 = new(($module)['<keyword>']);
+                        var keyword__61 = new(($module)['<keyword>']);
                         {
-                            keyword__57['name'] = name__53;
+                            keyword__61['name'] = name__57;
                             {
-                                ($module)['%keywords'][name__53] = keyword__57;
-                                return(keyword__57);
+                                ($module)['%keywords'][name__57] = keyword__61;
+                                return(keyword__61);
                             }
                         }
                     }
@@ -185,29 +193,29 @@ $SL = [].slice;
 $K = ($module)['keyword'];
 ($module)['*exit-function-counter*'] = 0;
 {
-    ($module)['<non-local-exit>'] = ($module)['%make-class'](($module)['<object>'], {}, function Lnon_local_exitG__58() {
+    ($module)['<non-local-exit>'] = ($module)['%make-class'](($module)['<object>'], {}, function Lnon_local_exitG__62() {
         return(false);
     });
     ($module)['%export']('<non-local-exit>', ($module)['<non-local-exit>']);
 }
 {
     {
-        ($module)['%make-exit-function'] = function B61() {
-            var identifier__62 = ($module)['*exit-function-counter*'] = ($module)['+'](($module)['*exit-function-counter*'], 1);
+        ($module)['%make-exit-function'] = function B65() {
+            var identifier__66 = ($module)['*exit-function-counter*'] = ($module)['+'](($module)['*exit-function-counter*'], 1);
             {
-                var exit_function__66 = function B63(return_value__64) {
-                    var condition__65 = new(($module)['<non-local-exit>']);
+                var exit_function__70 = function B67(return_value__68) {
+                    var condition__69 = new(($module)['<non-local-exit>']);
                     {
-                        condition__65['identifier'] = identifier__62;
+                        condition__69['identifier'] = identifier__66;
                         {
-                            condition__65['return-value'] = return_value__64;
-                            return(($module)['signal'](condition__65));
+                            condition__69['return-value'] = return_value__68;
+                            return(($module)['signal'](condition__69));
                         }
                     }
                 };
                 {
-                    exit_function__66['identifier'] = identifier__62;
-                    return(exit_function__66);
+                    exit_function__70['identifier'] = identifier__66;
+                    return(exit_function__70);
                 }
             }
         };
@@ -217,11 +225,11 @@ $K = ($module)['keyword'];
 }
 {
     {
-        ($module)['%concat'] = function B70(array1__71, array2__72) {
-            var B73 = array1__71;
+        ($module)['%concat'] = function B74(array1__75, array2__76) {
+            var B77 = array1__75;
             {
-                var B74 = array2__72;
-                return(B73['concat'](B74));
+                var B78 = array2__76;
+                return(B77['concat'](B78));
             }
         };
         ($module)['%export']('%concat', ($module)['%concat']);
@@ -230,8 +238,8 @@ $K = ($module)['keyword'];
 }
 {
     {
-        ($module)['cons'] = function B76(value__77, rest__78) {
-            return(($module)['%concat']([value__77], rest__78));
+        ($module)['cons'] = function B80(value__81, rest__82) {
+            return(($module)['%concat']([value__81], rest__82));
         };
         ($module)['%export']('cons', ($module)['cons']);
     }
@@ -247,8 +255,8 @@ $K = ($module)['keyword'];
 }
 {
     {
-        ($module)['as-array'] = function B80(arguments__81, skip__82) {
-            return($SL.call(arguments__81, skip__82 || 0));
+        ($module)['as-array'] = function B84(arguments__85, skip__86) {
+            return($SL.call(arguments__85, skip__86 || 0));
         };
         ($module)['%export']('as-array', ($module)['as-array']);
     }
@@ -256,18 +264,18 @@ $K = ($module)['keyword'];
 }
 {
     {
-        ($module)['as-json'] = function B86(value__87) {
-            var B88 = $SL.call(arguments, 1);
+        ($module)['as-json'] = function B90(value__91) {
+            var B92 = $SL.call(arguments, 1);
             {
-                var B89 = ($module)['%keys'](B88, {
+                var B93 = ($module)['%keys'](B92, {
                         'replacer': (null),
                         'indent': false
                     });
                 {
-                    var replacer__90 = B89['replacer'];
+                    var replacer__94 = B93['replacer'];
                     {
-                        var indent__91 = B89['indent'];
-                        return(JSON.stringify(value__87, replacer__90, indent__91));
+                        var indent__95 = B93['indent'];
+                        return(JSON.stringify(value__91, replacer__94, indent__95));
                     }
                 }
             }
@@ -286,11 +294,11 @@ $K = ($module)['keyword'];
 }
 {
     {
-        ($module)['char-code'] = function B95(char__96) {
-            var B97 = char__96;
+        ($module)['char-code'] = function B99(char__100) {
+            var B101 = char__100;
             {
-                var B98 = 0;
-                return(B97['charCodeAt'](B98));
+                var B102 = 0;
+                return(B101['charCodeAt'](B102));
             }
         };
         ($module)['%export']('char-code', ($module)['char-code']);
@@ -303,8 +311,8 @@ $K = ($module)['keyword'];
 }
 {
     {
-        ($module)['empty?'] = function B100(sequence__101) {
-            return(($module)['binary=='](($module)['size'](sequence__101), 0));
+        ($module)['empty?'] = function B104(sequence__105) {
+            return(($module)['binary=='](($module)['size'](sequence__105), 0));
         };
         ($module)['%export']('empty?', ($module)['empty?']);
     }
@@ -312,11 +320,11 @@ $K = ($module)['keyword'];
 }
 {
     {
-        ($module)['rest'] = function B105(sequence__106) {
-            var B107 = sequence__106;
+        ($module)['rest'] = function B109(sequence__110) {
+            var B111 = sequence__110;
             {
-                var B108 = 1;
-                return(B107['slice'](B108));
+                var B112 = 1;
+                return(B111['slice'](B112));
             }
         };
         ($module)['%export']('rest', ($module)['rest']);
@@ -325,8 +333,8 @@ $K = ($module)['keyword'];
 }
 {
     {
-        ($module)['last'] = function B110(array__111) {
-            return(array__111[($module)['dec'](($module)['size'](array__111), 1)]);
+        ($module)['last'] = function B114(array__115) {
+            return(array__115[($module)['dec'](($module)['size'](array__115), 1)]);
         };
         ($module)['%export']('last', ($module)['last']);
     }
@@ -334,9 +342,9 @@ $K = ($module)['keyword'];
 }
 {
     {
-        ($module)['last-setter'] = function B113(array__114, value__115) {
-            var B116 = ($module)['dec'](($module)['size'](array__114), 1);
-            return(array__114[B116] = value__115);
+        ($module)['last-setter'] = function B117(array__118, value__119) {
+            var B120 = ($module)['dec'](($module)['size'](array__118), 1);
+            return(array__118[B120] = value__119);
         };
         ($module)['%export']('last-setter', ($module)['last-setter']);
     }
@@ -344,8 +352,8 @@ $K = ($module)['keyword'];
 }
 {
     {
-        ($module)['first'] = function B118(sequence__119) {
-            return(sequence__119[0]);
+        ($module)['first'] = function B122(sequence__123) {
+            return(sequence__123[0]);
         };
         ($module)['%export']('first', ($module)['first']);
     }
@@ -353,8 +361,8 @@ $K = ($module)['keyword'];
 }
 {
     {
-        ($module)['first-setter'] = function B121(array__122, value__123) {
-            return(array__122[0] = value__123);
+        ($module)['first-setter'] = function B125(array__126, value__127) {
+            return(array__126[0] = value__127);
         };
         ($module)['%export']('first-setter', ($module)['first-setter']);
     }
@@ -362,8 +370,8 @@ $K = ($module)['keyword'];
 }
 {
     {
-        ($module)['second'] = function B125(sequence__126) {
-            return(sequence__126[1]);
+        ($module)['second'] = function B129(sequence__130) {
+            return(sequence__130[1]);
         };
         ($module)['%export']('second', ($module)['second']);
     }
@@ -371,8 +379,8 @@ $K = ($module)['keyword'];
 }
 {
     {
-        ($module)['second-setter'] = function B128(array__129, value__130) {
-            return(array__129[1] = value__130);
+        ($module)['second-setter'] = function B132(array__133, value__134) {
+            return(array__133[1] = value__134);
         };
         ($module)['%export']('second-setter', ($module)['second-setter']);
     }
@@ -380,8 +388,8 @@ $K = ($module)['keyword'];
 }
 {
     {
-        ($module)['third'] = function B132(sequence__133) {
-            return(sequence__133[2]);
+        ($module)['third'] = function B136(sequence__137) {
+            return(sequence__137[2]);
         };
         ($module)['%export']('third', ($module)['third']);
     }
@@ -389,8 +397,8 @@ $K = ($module)['keyword'];
 }
 {
     {
-        ($module)['third-setter'] = function B135(array__136, value__137) {
-            return(array__136[2] = value__137);
+        ($module)['third-setter'] = function B139(array__140, value__141) {
+            return(array__140[2] = value__141);
         };
         ($module)['%export']('third-setter', ($module)['third-setter']);
     }
@@ -398,9 +406,9 @@ $K = ($module)['keyword'];
 }
 {
     {
-        ($module)['make-array'] = function B139() {
-            var elements__140 = $SL.call(arguments, 0);
-            return(elements__140);
+        ($module)['make-array'] = function B143() {
+            var elements__144 = $SL.call(arguments, 0);
+            return(elements__144);
         };
         ($module)['%export']('make-array', ($module)['make-array']);
     }
@@ -408,13 +416,13 @@ $K = ($module)['keyword'];
 }
 {
     {
-        ($module)['push'] = function B144(array__145, value__146) {
-            var B147 = array__145;
+        ($module)['push'] = function B148(array__149, value__150) {
+            var B151 = array__149;
             {
-                var B148 = value__146;
+                var B152 = value__150;
                 {
-                    B147['unshift'](B148);
-                    return(value__146);
+                    B151['unshift'](B152);
+                    return(value__150);
                 }
             }
         };
@@ -424,13 +432,13 @@ $K = ($module)['keyword'];
 }
 {
     {
-        ($module)['push-last'] = function B152(array__153, value__154) {
-            var B155 = array__153;
+        ($module)['push-last'] = function B156(array__157, value__158) {
+            var B159 = array__157;
             {
-                var B156 = value__154;
+                var B160 = value__158;
                 {
-                    B155['push'](B156);
-                    return(value__154);
+                    B159['push'](B160);
+                    return(value__158);
                 }
             }
         };
@@ -440,9 +448,9 @@ $K = ($module)['keyword'];
 }
 {
     {
-        ($module)['pop'] = function B159(array__160) {
-            var B161 = array__160;
-            return(B161['shift']());
+        ($module)['pop'] = function B163(array__164) {
+            var B165 = array__164;
+            return(B165['shift']());
         };
         ($module)['%export']('pop', ($module)['pop']);
     }
@@ -450,9 +458,9 @@ $K = ($module)['keyword'];
 }
 {
     {
-        ($module)['pop-last'] = function B164(array__165) {
-            var B166 = array__165;
-            return(B166['pop']());
+        ($module)['pop-last'] = function B168(array__169) {
+            var B170 = array__169;
+            return(B170['pop']());
         };
         ($module)['%export']('pop-last', ($module)['pop-last']);
     }
@@ -460,13 +468,13 @@ $K = ($module)['keyword'];
 }
 {
     {
-        ($module)['but-last'] = function B171(array__172, n__173) {
-            var B174 = array__172;
+        ($module)['but-last'] = function B175(array__176, n__177) {
+            var B178 = array__176;
             {
-                var B175 = 0;
+                var B179 = 0;
                 {
-                    var B176 = (n__173 || 1) * -1;
-                    return(B174['slice'](B175, B176));
+                    var B180 = (n__177 || 1) * -1;
+                    return(B178['slice'](B179, B180));
                 }
             }
         };
@@ -476,13 +484,13 @@ $K = ($module)['keyword'];
 }
 {
     {
-        ($module)['slice'] = function B181(array__182, start__183, end__184) {
-            var B185 = array__182;
+        ($module)['slice'] = function B185(array__186, start__187, end__188) {
+            var B189 = array__186;
             {
-                var B186 = start__183;
+                var B190 = start__187;
                 {
-                    var B187 = end__184;
-                    return(B185['slice'](B186, B187));
+                    var B191 = end__188;
+                    return(B189['slice'](B190, B191));
                 }
             }
         };
@@ -491,37 +499,37 @@ $K = ($module)['keyword'];
     ($module)['%annotate-function'](($module)['slice'], 'slice', false);
 }
 {
-    var B191 = $K('from-end?');
+    var B195 = $K('from-end?');
     {
         {
-            ($module)['reduce1'] = function B192(function__193, values__194) {
-                var B195 = $SL.call(arguments, 2);
+            ($module)['reduce1'] = function B196(function__197, values__198) {
+                var B199 = $SL.call(arguments, 2);
                 {
-                    var B196 = ($module)['%keys'](B195, { 'from-end?': false });
+                    var B200 = ($module)['%keys'](B199, { 'from-end?': false });
                     {
-                        var from_endQ__197 = B196['from-end?'];
-                        if (($T)(($module)['empty?'](values__194)))
-                            return(function__193());
+                        var from_endQ__201 = B200['from-end?'];
+                        if (($T)(($module)['empty?'](values__198)))
+                            return(function__197());
                         else {
-                            var B198 = false;
-                            if (($T)(from_endQ__197))
-                                B198 = [
-                                    ($module)['last'](values__194),
-                                    ($module)['but-last'](values__194)
+                            var B202 = false;
+                            if (($T)(from_endQ__201))
+                                B202 = [
+                                    ($module)['last'](values__198),
+                                    ($module)['but-last'](values__198)
                                 ];
                             else
-                                B198 = [
-                                    ($module)['first'](values__194),
-                                    ($module)['rest'](values__194)
+                                B202 = [
+                                    ($module)['first'](values__198),
+                                    ($module)['rest'](values__198)
                                 ];
                             {
-                                var B199 = [
-                                        B191,
-                                        from_endQ__197
+                                var B203 = [
+                                        B195,
+                                        from_endQ__201
                                     ];
                                 {
-                                    var B200 = ($module)['%concat'](B198, B199);
-                                    return(($module)['apply'](($module)['reduce'], function__193, B200));
+                                    var B204 = ($module)['%concat'](B202, B203);
+                                    return(($module)['apply'](($module)['reduce'], function__197, B204));
                                 }
                             }
                         }
@@ -535,48 +543,48 @@ $K = ($module)['keyword'];
 }
 {
     {
-        ($module)['reduce'] = function B208(function__209, initial_value__210, values__211) {
-            var B212 = $SL.call(arguments, 3);
+        ($module)['reduce'] = function B212(function__213, initial_value__214, values__215) {
+            var B216 = $SL.call(arguments, 3);
             {
-                var B213 = ($module)['%keys'](B212, { 'from-end?': false });
+                var B217 = ($module)['%keys'](B216, { 'from-end?': false });
                 {
-                    var from_endQ__214 = B213['from-end?'];
+                    var from_endQ__218 = B217['from-end?'];
                     {
-                        var result__215 = initial_value__210;
+                        var result__219 = initial_value__214;
                         {
-                            if (($T)(from_endQ__214)) {
-                                var values__216 = ($module)['reverse'](values__211);
+                            if (($T)(from_endQ__218)) {
+                                var values__220 = ($module)['reverse'](values__215);
                                 {
-                                    var B217 = ($module)['size'](values__216);
+                                    var B221 = ($module)['size'](values__220);
                                     {
-                                        var i__218 = 0;
+                                        var i__222 = 0;
                                         {
-                                            while (($T)(($module)['not'](($module)['binary>='](i__218, B217)))) {
-                                                (function B219(i__220) {
-                                                    return(result__215 = function__209(values__216[i__220], result__215));
-                                                }(i__218));
-                                                i__218 = ($module)['inc'](i__218);
+                                            while (($T)(($module)['not'](($module)['binary>='](i__222, B221)))) {
+                                                (function B223(i__224) {
+                                                    return(result__219 = function__213(values__220[i__224], result__219));
+                                                }(i__222));
+                                                i__222 = ($module)['inc'](i__222);
                                             }
                                             false;
                                         }
                                     }
                                 }
                             } else {
-                                var B221 = ($module)['size'](values__211);
+                                var B225 = ($module)['size'](values__215);
                                 {
-                                    var i__222 = 0;
+                                    var i__226 = 0;
                                     {
-                                        while (($T)(($module)['not'](($module)['binary>='](i__222, B221)))) {
-                                            (function B223(i__224) {
-                                                return(result__215 = function__209(result__215, values__211[i__224]));
-                                            }(i__222));
-                                            i__222 = ($module)['inc'](i__222);
+                                        while (($T)(($module)['not'](($module)['binary>='](i__226, B225)))) {
+                                            (function B227(i__228) {
+                                                return(result__219 = function__213(result__219, values__215[i__228]));
+                                            }(i__226));
+                                            i__226 = ($module)['inc'](i__226);
                                         }
                                         false;
                                     }
                                 }
                             }
-                            return(result__215);
+                            return(result__219);
                         }
                     }
                 }
@@ -588,9 +596,9 @@ $K = ($module)['keyword'];
 }
 {
     {
-        ($module)['reverse!'] = function B227(array__228) {
-            var B229 = array__228;
-            return(B229['reverse']());
+        ($module)['reverse!'] = function B231(array__232) {
+            var B233 = array__232;
+            return(B233['reverse']());
         };
         ($module)['%export']('reverse!', ($module)['reverse!']);
     }
@@ -598,8 +606,8 @@ $K = ($module)['keyword'];
 }
 {
     {
-        ($module)['reverse'] = function B231(array__232) {
-            return(($module)['reverse!'](($module)['slice'](array__232)));
+        ($module)['reverse'] = function B235(array__236) {
+            return(($module)['reverse!'](($module)['slice'](array__236)));
         };
         ($module)['%export']('reverse', ($module)['reverse']);
     }
@@ -607,27 +615,27 @@ $K = ($module)['keyword'];
 }
 {
     {
-        ($module)['sort!'] = function B239(array__240) {
-            var B241 = $SL.call(arguments, 1);
+        ($module)['sort!'] = function B243(array__244) {
+            var B245 = $SL.call(arguments, 1);
             {
-                var B242 = ($module)['%keys'](B241, {
+                var B246 = ($module)['%keys'](B245, {
                         'test': ($module)['<'],
                         'key': ($module)['identity']
                     });
                 {
-                    var test__243 = B242['test'];
+                    var test__247 = B246['test'];
                     {
-                        var key__244 = B242['key'];
+                        var key__248 = B246['key'];
                         {
-                            var B245 = array__240;
+                            var B249 = array__244;
                             {
-                                var B249 = function B246(a__247, b__248) {
-                                    if (($T)(test__243(key__244(a__247), key__244(b__248))))
+                                var B253 = function B250(a__251, b__252) {
+                                    if (($T)(test__247(key__248(a__251), key__248(b__252))))
                                         return(-1);
                                     else
                                         return(1);
                                 };
-                                return(B245['sort'](B249));
+                                return(B249['sort'](B253));
                             }
                         }
                     }
@@ -639,23 +647,23 @@ $K = ($module)['keyword'];
     ($module)['%annotate-function'](($module)['sort!'], 'sort!', false);
 }
 {
-    var B253 = $K('test');
+    var B257 = $K('test');
     {
-        var B254 = $K('key');
+        var B258 = $K('key');
         {
             {
-                ($module)['sort'] = function B255(array__256) {
-                    var B257 = $SL.call(arguments, 1);
+                ($module)['sort'] = function B259(array__260) {
+                    var B261 = $SL.call(arguments, 1);
                     {
-                        var B258 = ($module)['%keys'](B257, {
+                        var B262 = ($module)['%keys'](B261, {
                                 'test': ($module)['<'],
                                 'key': ($module)['identity']
                             });
                         {
-                            var test__259 = B258['test'];
+                            var test__263 = B262['test'];
                             {
-                                var key__260 = B258['key'];
-                                return(($module)['sort!'](($module)['slice'](array__256), B253, test__259, B254, key__260));
+                                var key__264 = B262['key'];
+                                return(($module)['sort!'](($module)['slice'](array__260), B257, test__263, B258, key__264));
                             }
                         }
                     }
@@ -668,17 +676,17 @@ $K = ($module)['keyword'];
 }
 {
     {
-        ($module)['apply'] = function B262(function__263) {
-            var actual__264 = $SL.call(arguments, 1, -1);
+        ($module)['apply'] = function B266(function__267) {
+            var actual__268 = $SL.call(arguments, 1, -1);
             {
-                var last__265 = arguments[($module)['size'](arguments) - 1];
+                var last__269 = arguments[($module)['size'](arguments) - 1];
                 {
-                    var arguments__266 = false;
-                    if (($T)(($module)['binary=='](last__265, function__263)))
-                        arguments__266 = actual__264;
+                    var arguments__270 = false;
+                    if (($T)(($module)['binary=='](last__269, function__267)))
+                        arguments__270 = actual__268;
                     else
-                        arguments__266 = ($module)['%concat'](actual__264, last__265);
-                    return(function__263['apply']((null), arguments__266));
+                        arguments__270 = ($module)['%concat'](actual__268, last__269);
+                    return(function__267['apply']((null), arguments__270));
                 }
             }
         };
@@ -688,11 +696,11 @@ $K = ($module)['keyword'];
 }
 {
     {
-        ($module)['curry'] = function B269(function__270) {
-            var curried_args__271 = $SL.call(arguments, 1);
-            return(function B272() {
-                var args__273 = $SL.call(arguments, 0);
-                return(($module)['apply'](function__270, ($module)['%concat'](curried_args__271, args__273)));
+        ($module)['curry'] = function B273(function__274) {
+            var curried_args__275 = $SL.call(arguments, 1);
+            return(function B276() {
+                var args__277 = $SL.call(arguments, 0);
+                return(($module)['apply'](function__274, ($module)['%concat'](curried_args__275, args__277)));
             });
         };
         ($module)['%export']('curry', ($module)['curry']);
@@ -701,11 +709,11 @@ $K = ($module)['keyword'];
 }
 {
     {
-        ($module)['rcurry'] = function B276(function__277) {
-            var curried_args__278 = $SL.call(arguments, 1);
-            return(function B279() {
-                var args__280 = $SL.call(arguments, 0);
-                return(($module)['apply'](function__277, ($module)['%concat'](args__280, curried_args__278)));
+        ($module)['rcurry'] = function B280(function__281) {
+            var curried_args__282 = $SL.call(arguments, 1);
+            return(function B283() {
+                var args__284 = $SL.call(arguments, 0);
+                return(($module)['apply'](function__281, ($module)['%concat'](args__284, curried_args__282)));
             });
         };
         ($module)['%export']('rcurry', ($module)['rcurry']);
@@ -714,9 +722,9 @@ $K = ($module)['keyword'];
 }
 {
     {
-        ($module)['always'] = function B283(value__284) {
-            return(function B285() {
-                return(value__284);
+        ($module)['always'] = function B287(value__288) {
+            return(function B289() {
+                return(value__288);
             });
         };
         ($module)['%export']('always', ($module)['always']);
@@ -725,20 +733,20 @@ $K = ($module)['keyword'];
 }
 {
     {
-        ($module)['repeatedly'] = function B289(function__290, count__291) {
-            var result__292 = [];
+        ($module)['repeatedly'] = function B293(function__294, count__295) {
+            var result__296 = [];
             {
-                var B293 = count__291;
+                var B297 = count__295;
                 {
-                    var i__294 = 0;
+                    var i__298 = 0;
                     {
-                        while (($T)(($module)['not'](($module)['binary>='](i__294, B293)))) {
-                            (function B295(i__296) {
-                                return(($module)['push-last'](result__292, function__290()));
-                            }(i__294));
-                            i__294 = ($module)['inc'](i__294);
+                        while (($T)(($module)['not'](($module)['binary>='](i__298, B297)))) {
+                            (function B299(i__300) {
+                                return(($module)['push-last'](result__296, function__294()));
+                            }(i__298));
+                            i__298 = ($module)['inc'](i__298);
                         }
-                        return(result__292);
+                        return(result__296);
                     }
                 }
             }
@@ -749,8 +757,8 @@ $K = ($module)['keyword'];
 }
 {
     {
-        ($module)['identity'] = function B298(value__299) {
-            return(value__299);
+        ($module)['identity'] = function B302(value__303) {
+            return(value__303);
         };
         ($module)['%export']('identity', ($module)['identity']);
     }
@@ -758,10 +766,10 @@ $K = ($module)['keyword'];
 }
 {
     {
-        ($module)['complement'] = function B302(function__303) {
-            return(function B304() {
-                var arguments__305 = $SL.call(arguments, 0);
-                return(($module)['not'](($module)['apply'](function__303, arguments__305)));
+        ($module)['complement'] = function B306(function__307) {
+            return(function B308() {
+                var arguments__309 = $SL.call(arguments, 0);
+                return(($module)['not'](($module)['apply'](function__307, arguments__309)));
             });
         };
         ($module)['%export']('complement', ($module)['complement']);
@@ -770,16 +778,16 @@ $K = ($module)['keyword'];
 }
 {
     {
-        ($module)['compose'] = function B309() {
-            var functions__310 = $SL.call(arguments, 0);
-            if (($T)(($module)['empty?'](functions__310)))
+        ($module)['compose'] = function B313() {
+            var functions__314 = $SL.call(arguments, 0);
+            if (($T)(($module)['empty?'](functions__314)))
                 return(($module)['identity']);
             else
-                return(function B311() {
-                    var arguments__312 = $SL.call(arguments, 0);
-                    return(($module)['reduce'](function B313(function__314, value__315) {
-                        return(function__314(value__315));
-                    }, ($module)['apply'](($module)['last'](functions__310), arguments__312), ($module)['but-last'](functions__310), B191, true));
+                return(function B315() {
+                    var arguments__316 = $SL.call(arguments, 0);
+                    return(($module)['reduce'](function B317(function__318, value__319) {
+                        return(function__318(value__319));
+                    }, ($module)['apply'](($module)['last'](functions__314), arguments__316), ($module)['but-last'](functions__314), B195, true));
                 });
         };
         ($module)['%export']('compose', ($module)['compose']);
@@ -787,34 +795,34 @@ $K = ($module)['keyword'];
     ($module)['%annotate-function'](($module)['compose'], 'compose', false);
 }
 {
-    ($module)['binary+'] = function B317(number1__318, number2__319) {
-        return(number1__318 + number2__319);
+    ($module)['binary+'] = function B321(number1__322, number2__323) {
+        return(number1__322 + number2__323);
     };
     ($module)['%annotate-function'](($module)['binary+'], 'binary+', false);
 }
 {
-    ($module)['binary-'] = function B321(number1__322, number2__323) {
-        return(number1__322 - number2__323);
+    ($module)['binary-'] = function B325(number1__326, number2__327) {
+        return(number1__326 - number2__327);
     };
     ($module)['%annotate-function'](($module)['binary-'], 'binary-', false);
 }
 {
-    ($module)['binary*'] = function B325(number1__326, number2__327) {
-        return(number1__326 * number2__327);
+    ($module)['binary*'] = function B329(number1__330, number2__331) {
+        return(number1__330 * number2__331);
     };
     ($module)['%annotate-function'](($module)['binary*'], 'binary*', false);
 }
 {
-    ($module)['binary/'] = function B329(number1__330, number2__331) {
-        return(number1__330 / number2__331);
+    ($module)['binary/'] = function B333(number1__334, number2__335) {
+        return(number1__334 / number2__335);
     };
     ($module)['%annotate-function'](($module)['binary/'], 'binary/', false);
 }
 {
     {
-        ($module)['type'] = function B333(object__334) {
-            if (($T)(object__334))
-                return(object__334['constructor']);
+        ($module)['type'] = function B337(object__338) {
+            if (($T)(object__338))
+                return(object__338['constructor']);
             else
                 return(($module)['<boolean>']);
         };
@@ -824,11 +832,11 @@ $K = ($module)['keyword'];
 }
 {
     {
-        ($module)['instance?'] = function B336(object__337, type__338) {
-            if (($T)(object__337))
-                return(object__337 instanceof type__338 || ($module)['binary=='](object__337['constructor'], type__338));
+        ($module)['instance?'] = function B340(object__341, type__342) {
+            if (($T)(object__341))
+                return(object__341 instanceof type__342 || ($module)['binary=='](object__341['constructor'], type__342));
             else
-                return(($module)['binary=='](type__338, ($module)['<boolean>']));
+                return(($module)['binary=='](type__342, ($module)['<boolean>']));
         };
         ($module)['%export']('instance?', ($module)['instance?']);
     }
@@ -837,8 +845,8 @@ $K = ($module)['keyword'];
 $HP = Object.hasOwnProperty;
 {
     {
-        ($module)['has?'] = function B340(object__341, property__342) {
-            return(($HP.call(object__341,property__342)));
+        ($module)['has?'] = function B344(object__345, property__346) {
+            return(($HP.call(object__345,property__346)));
         };
         ($module)['%export']('has?', ($module)['has?']);
     }
@@ -846,24 +854,24 @@ $HP = Object.hasOwnProperty;
 }
 {
     {
-        ($module)['%make-method'] = function B344(name__345, function__346, setterQ__347, type__348, existing__349) {
-            function__346['%name'] = name__345;
+        ($module)['%make-method'] = function B348(name__349, function__350, setterQ__351, type__352, existing__353) {
+            function__350['%name'] = name__349;
             {
-                function__346['%setter?'] = setterQ__347;
+                function__350['%setter?'] = setterQ__351;
                 {
-                    function__346['%type'] = type__348;
+                    function__350['%type'] = type__352;
                     {
-                        type__348['prototype'][name__345] = function__346;
+                        type__352['prototype'][name__349] = function__350;
                         {
-                            var B350 = false;
-                            if (($T)(existing__349))
-                                B350 = existing__349['%generic?'];
+                            var B354 = false;
+                            if (($T)(existing__353))
+                                B354 = existing__353['%generic?'];
                             else
-                                B350 = false;
-                            if (($T)(B350))
-                                return(existing__349);
+                                B354 = false;
+                            if (($T)(B354))
+                                return(existing__353);
                             else
-                                return(($module)['%make-generic'](name__345));
+                                return(($module)['%make-generic'](name__349));
                         }
                     }
                 }
@@ -875,16 +883,16 @@ $HP = Object.hasOwnProperty;
 }
 {
     {
-        ($module)['%make-generic'] = function B353(name__354) {
-            var dispatcher__358 = function B355(object__356) {
-                var function__357 = ((object__356== null ? false : object__356))[name__354];
-                return(function__357 && function__357['apply'](object__356, arguments));
+        ($module)['%make-generic'] = function B357(name__358) {
+            var dispatcher__362 = function B359(object__360) {
+                var function__361 = ((object__360== null ? false : object__360))[name__358];
+                return(function__361 && function__361['apply'](object__360, arguments));
             };
             {
-                dispatcher__358['%generic?'] = true;
+                dispatcher__362['%generic?'] = true;
                 {
-                    dispatcher__358['%name'] = name__354;
-                    return(dispatcher__358);
+                    dispatcher__362['%name'] = name__358;
+                    return(dispatcher__362);
                 }
             }
         };
@@ -894,11 +902,11 @@ $HP = Object.hasOwnProperty;
 }
 {
     {
-        ($module)['%next-method'] = function B360(function__361) {
-            var name__362 = function__361['%name'];
+        ($module)['%next-method'] = function B364(function__365) {
+            var name__366 = function__365['%name'];
             {
-                var proto__363 = function__361['%type']['prototype']['__proto__'];
-                return(proto__363[name__362]);
+                var proto__367 = function__365['%type']['prototype']['__proto__'];
+                return(proto__367[name__366]);
             }
         };
         ($module)['%export']('%next-method', ($module)['%next-method']);
@@ -907,12 +915,12 @@ $HP = Object.hasOwnProperty;
 }
 {
     {
-        ($module)['concatenate'] = function B365() {
-            var values__366 = $SL.call(arguments, 0);
-            if (($T)(($module)['empty?'](values__366)))
+        ($module)['concatenate'] = function B369() {
+            var values__370 = $SL.call(arguments, 0);
+            if (($T)(($module)['empty?'](values__370)))
                 return([]);
             else
-                return(($module)['reduce1'](($module)['%concat'], values__366));
+                return(($module)['reduce1'](($module)['%concat'], values__370));
         };
         ($module)['%export']('concatenate', ($module)['concatenate']);
     }
@@ -920,26 +928,26 @@ $HP = Object.hasOwnProperty;
 }
 {
     {
-        ($module)['compare'] = function B369(function__370, object__371, objects__372) {
-            var failedQ__373 = false;
+        ($module)['compare'] = function B373(function__374, object__375, objects__376) {
+            var failedQ__377 = false;
             {
                 while (true) {
-                    var B374 = failedQ__373;
+                    var B378 = failedQ__377;
                     {
-                        var B376 = false;
-                        if (($T)(B374))
-                            B376 = B374;
+                        var B380 = false;
+                        if (($T)(B378))
+                            B380 = B378;
                         else
-                            B376 = ($module)['empty?'](objects__372);
+                            B380 = ($module)['empty?'](objects__376);
                         {
-                            var B377 = ($module)['not'](B376);
-                            if (($T)(B377)) {
-                                var other__375 = ($module)['first'](objects__372);
+                            var B381 = ($module)['not'](B380);
+                            if (($T)(B381)) {
+                                var other__379 = ($module)['first'](objects__376);
                                 {
-                                    failedQ__373 = ($module)['not'](function__370(object__371, other__375));
+                                    failedQ__377 = ($module)['not'](function__374(object__375, other__379));
                                     {
-                                        objects__372 = ($module)['rest'](objects__372);
-                                        object__371 = other__375;
+                                        objects__376 = ($module)['rest'](objects__376);
+                                        object__375 = other__379;
                                     }
                                 }
                             } else
@@ -947,7 +955,7 @@ $HP = Object.hasOwnProperty;
                         }
                     }
                 }
-                return(($module)['not'](failedQ__373));
+                return(($module)['not'](failedQ__377));
             }
         };
         ($module)['%export']('compare', ($module)['compare']);
@@ -956,9 +964,9 @@ $HP = Object.hasOwnProperty;
 }
 {
     {
-        ($module)['=='] = function B379(object__380) {
-            var objects__381 = $SL.call(arguments, 1);
-            return(($module)['compare'](($module)['binary=='], object__380, objects__381));
+        ($module)['=='] = function B383(object__384) {
+            var objects__385 = $SL.call(arguments, 1);
+            return(($module)['compare'](($module)['binary=='], object__384, objects__385));
         };
         ($module)['%export']('==', ($module)['==']);
     }
@@ -973,58 +981,58 @@ $HP = Object.hasOwnProperty;
     ($module)['%export']('binary<', ($module)['binary<']);
 }
 {
-    ($module)['binary='] = ($module)['%make-method']('binary=', function B383(object1__384, object2__385) {
-        if (($T)(($module)['binary=='](($module)['type'](object1__384), ($module)['type'](object2__385))))
-            return(($module)['binary=='](object1__384, object2__385));
+    ($module)['binary='] = ($module)['%make-method']('binary=', function B387(object1__388, object2__389) {
+        if (($T)(($module)['binary=='](($module)['type'](object1__388), ($module)['type'](object2__389))))
+            return(($module)['binary=='](object1__388, object2__389));
         else
             return(false);
     }, false, ($module)['<object>'], ($module)['binary=']);
     ($module)['%export']('binary=', ($module)['binary=']);
 }
 {
-    ($module)['binary='] = ($module)['%make-method']('binary=', function B394(array1__395, array2__396) {
-        if (($T)(($module)['binary=='](($module)['size'](array1__395), ($module)['size'](array2__396)))) {
-            var B397 = array1__395;
+    ($module)['binary='] = ($module)['%make-method']('binary=', function B398(array1__399, array2__400) {
+        if (($T)(($module)['binary=='](($module)['size'](array1__399), ($module)['size'](array2__400)))) {
+            var B401 = array1__399;
             {
-                var B398 = array2__396;
+                var B402 = array2__400;
                 {
-                    var B399 = false;
+                    var B403 = false;
                     {
-                        var B400 = false;
+                        var B404 = false;
                         {
-                            var B401 = [
-                                    B397,
-                                    B398
+                            var B405 = [
+                                    B401,
+                                    B402
                                 ];
                             {
                                 while (true) {
-                                    var B402 = B399;
+                                    var B406 = B403;
                                     {
-                                        var B408 = false;
-                                        if (($T)(B402))
-                                            B408 = B402;
+                                        var B412 = false;
+                                        if (($T)(B406))
+                                            B412 = B406;
                                         else
-                                            B408 = ($module)['any?'](($module)['empty?'], B401);
+                                            B412 = ($module)['any?'](($module)['empty?'], B405);
                                         {
-                                            var B409 = ($module)['not'](B408);
-                                            if (($T)(B409)) {
-                                                var item1__403 = ($module)['first'](B397);
+                                            var B413 = ($module)['not'](B412);
+                                            if (($T)(B413)) {
+                                                var item1__407 = ($module)['first'](B401);
                                                 {
-                                                    var item2__404 = ($module)['first'](B398);
-                                                    if (($T)(($module)['not'](($module)['binary='](item1__403, item2__404)))) {
-                                                        B400 = true;
-                                                        B399 = true;
+                                                    var item2__408 = ($module)['first'](B402);
+                                                    if (($T)(($module)['not'](($module)['binary='](item1__407, item2__408)))) {
+                                                        B404 = true;
+                                                        B403 = true;
                                                     } else {
-                                                        (function B405(item1__406, item2__407) {
+                                                        (function B409(item1__410, item2__411) {
                                                             return(false);
-                                                        }(item1__403, item2__404));
+                                                        }(item1__407, item2__408));
                                                         {
-                                                            B397 = ($module)['rest'](B397);
+                                                            B401 = ($module)['rest'](B401);
                                                             {
-                                                                B398 = ($module)['rest'](B398);
-                                                                B401 = [
-                                                                    B397,
-                                                                    B398
+                                                                B402 = ($module)['rest'](B402);
+                                                                B405 = [
+                                                                    B401,
+                                                                    B402
                                                                 ];
                                                             }
                                                         }
@@ -1035,7 +1043,7 @@ $HP = Object.hasOwnProperty;
                                         }
                                     }
                                 }
-                                return(($module)['not'](B400));
+                                return(($module)['not'](B404));
                             }
                         }
                     }
@@ -1049,16 +1057,16 @@ $HP = Object.hasOwnProperty;
 ($module)['binary=-dispatcher'] = ($module)['binary='];
 {
     {
-        ($module)['binary='] = function B412(object1__413, object2__414) {
-            var B415 = false;
-            if (($T)(($module)['not'](object1__413)))
-                B415 = ($module)['not'](object2__414);
+        ($module)['binary='] = function B416(object1__417, object2__418) {
+            var B419 = false;
+            if (($T)(($module)['not'](object1__417)))
+                B419 = ($module)['not'](object2__418);
             else
-                B415 = false;
-            if (($T)(B415))
-                return(B415);
+                B419 = false;
+            if (($T)(B419))
+                return(B419);
             else
-                return(($module)['binary=-dispatcher'](object1__413, object2__414));
+                return(($module)['binary=-dispatcher'](object1__417, object2__418));
         };
         ($module)['%export']('binary=', ($module)['binary=']);
     }
@@ -1066,18 +1074,18 @@ $HP = Object.hasOwnProperty;
 }
 {
     {
-        ($module)['='] = function B417(object__418) {
-            var objects__419 = $SL.call(arguments, 1);
-            return(($module)['compare'](($module)['binary='], object__418, objects__419));
+        ($module)['='] = function B421(object__422) {
+            var objects__423 = $SL.call(arguments, 1);
+            return(($module)['compare'](($module)['binary='], object__422, objects__423));
         };
         ($module)['%export']('=', ($module)['=']);
     }
     ($module)['%annotate-function'](($module)['='], '=', false);
 }
 {
-    ($module)['binary<'] = ($module)['%make-method']('binary<', function B421(object1__422, object2__423) {
-        if (($T)(($module)['binary=='](($module)['type'](object1__422), ($module)['type'](object2__423))))
-            return(object1__422 < object2__423);
+    ($module)['binary<'] = ($module)['%make-method']('binary<', function B425(object1__426, object2__427) {
+        if (($T)(($module)['binary=='](($module)['type'](object1__426), ($module)['type'](object2__427))))
+            return(object1__426 < object2__427);
         else
             return(false);
     }, false, ($module)['<object>'], ($module)['binary<']);
@@ -1085,9 +1093,9 @@ $HP = Object.hasOwnProperty;
 }
 {
     {
-        ($module)['<'] = function B425(object__426) {
-            var objects__427 = $SL.call(arguments, 1);
-            return(($module)['compare'](($module)['binary<'], object__426, objects__427));
+        ($module)['<'] = function B429(object__430) {
+            var objects__431 = $SL.call(arguments, 1);
+            return(($module)['compare'](($module)['binary<'], object__430, objects__431));
         };
         ($module)['%export']('<', ($module)['<']);
     }
@@ -1095,14 +1103,14 @@ $HP = Object.hasOwnProperty;
 }
 {
     {
-        ($module)['binary<='] = function B430(object1__431, object2__432) {
-            if (($T)(object1__431))
-                if (($T)(object2__432)) {
-                    var B433 = ($module)['binary<'](object1__431, object2__432);
-                    if (($T)(B433))
-                        return(B433);
+        ($module)['binary<='] = function B434(object1__435, object2__436) {
+            if (($T)(object1__435))
+                if (($T)(object2__436)) {
+                    var B437 = ($module)['binary<'](object1__435, object2__436);
+                    if (($T)(B437))
+                        return(B437);
                     else
-                        return(($module)['binary='](object1__431, object2__432));
+                        return(($module)['binary='](object1__435, object2__436));
                 } else
                     return(false);
             else
@@ -1114,9 +1122,9 @@ $HP = Object.hasOwnProperty;
 }
 {
     {
-        ($module)['<='] = function B435(object__436) {
-            var objects__437 = $SL.call(arguments, 1);
-            return(($module)['compare'](($module)['binary<='], object__436, objects__437));
+        ($module)['<='] = function B439(object__440) {
+            var objects__441 = $SL.call(arguments, 1);
+            return(($module)['compare'](($module)['binary<='], object__440, objects__441));
         };
         ($module)['%export']('<=', ($module)['<=']);
     }
@@ -1124,11 +1132,11 @@ $HP = Object.hasOwnProperty;
 }
 {
     {
-        ($module)['binary>'] = function B439(object1__440, object2__441) {
-            if (($T)(object1__440))
-                if (($T)(object2__441))
-                    if (($T)(($module)['not'](($module)['binary<'](object1__440, object2__441))))
-                        return(($module)['not'](($module)['binary='](object1__440, object2__441)));
+        ($module)['binary>'] = function B443(object1__444, object2__445) {
+            if (($T)(object1__444))
+                if (($T)(object2__445))
+                    if (($T)(($module)['not'](($module)['binary<'](object1__444, object2__445))))
+                        return(($module)['not'](($module)['binary='](object1__444, object2__445)));
                     else
                         return(false);
                 else
@@ -1142,9 +1150,9 @@ $HP = Object.hasOwnProperty;
 }
 {
     {
-        ($module)['>'] = function B443(object__444) {
-            var objects__445 = $SL.call(arguments, 1);
-            return(($module)['compare'](($module)['binary>'], object__444, objects__445));
+        ($module)['>'] = function B447(object__448) {
+            var objects__449 = $SL.call(arguments, 1);
+            return(($module)['compare'](($module)['binary>'], object__448, objects__449));
         };
         ($module)['%export']('>', ($module)['>']);
     }
@@ -1152,12 +1160,12 @@ $HP = Object.hasOwnProperty;
 }
 {
     {
-        ($module)['binary>='] = function B448(object1__449, object2__450) {
-            var B451 = ($module)['not'](($module)['binary<'](object1__449, object2__450));
-            if (($T)(B451))
-                return(B451);
+        ($module)['binary>='] = function B452(object1__453, object2__454) {
+            var B455 = ($module)['not'](($module)['binary<'](object1__453, object2__454));
+            if (($T)(B455))
+                return(B455);
             else
-                return(($module)['binary='](object1__449, object2__450));
+                return(($module)['binary='](object1__453, object2__454));
         };
         ($module)['%export']('binary>=', ($module)['binary>=']);
     }
@@ -1165,9 +1173,9 @@ $HP = Object.hasOwnProperty;
 }
 {
     {
-        ($module)['>='] = function B453(object__454) {
-            var objects__455 = $SL.call(arguments, 1);
-            return(($module)['compare'](($module)['binary>='], object__454, objects__455));
+        ($module)['>='] = function B457(object__458) {
+            var objects__459 = $SL.call(arguments, 1);
+            return(($module)['compare'](($module)['binary>='], object__458, objects__459));
         };
         ($module)['%export']('>=', ($module)['>=']);
     }
@@ -1175,29 +1183,29 @@ $HP = Object.hasOwnProperty;
 }
 {
     {
-        ($module)['as-object'] = function B457(property_list__458) {
-            var list__459 = ($module)['slice'](property_list__458);
+        ($module)['as-object'] = function B461(property_list__462) {
+            var list__463 = ($module)['slice'](property_list__462);
             {
-                var result__460 = {};
+                var result__464 = {};
                 {
-                    while (($T)(($module)['>'](($module)['size'](list__459), 0))) {
-                        var key__461 = ($module)['pop'](list__459);
+                    while (($T)(($module)['>'](($module)['size'](list__463), 0))) {
+                        var key__465 = ($module)['pop'](list__463);
                         {
-                            var value__462 = ($module)['pop'](list__459);
+                            var value__466 = ($module)['pop'](list__463);
                             {
-                                var B463 = false;
-                                if (($T)(($module)['instance?'](key__461, ($module)['<keyword>'])))
-                                    B463 = key__461['name'];
+                                var B467 = false;
+                                if (($T)(($module)['instance?'](key__465, ($module)['<keyword>'])))
+                                    B467 = key__465['name'];
                                 else
-                                    B463 = ($module)['as-string'](key__461);
+                                    B467 = ($module)['as-string'](key__465);
                                 {
-                                    key__461 = B463;
-                                    result__460[key__461] = value__462;
+                                    key__465 = B467;
+                                    result__464[key__465] = value__466;
                                 }
                             }
                         }
                     }
-                    return(result__460);
+                    return(result__464);
                 }
             }
         };
@@ -1207,22 +1215,22 @@ $HP = Object.hasOwnProperty;
 }
 {
     {
-        ($module)['position'] = function B470(array__471, element__472) {
-            var B473 = $SL.call(arguments, 2);
+        ($module)['position'] = function B474(array__475, element__476) {
+            var B477 = $SL.call(arguments, 2);
             {
-                var B474 = ($module)['%keys'](B473, { 'start': 0 });
+                var B478 = ($module)['%keys'](B477, { 'start': 0 });
                 {
-                    var start__475 = B474['start'];
+                    var start__479 = B478['start'];
                     {
-                        var B476 = array__471;
+                        var B480 = array__475;
                         {
-                            var B477 = element__472;
+                            var B481 = element__476;
                             {
-                                var B478 = start__475;
+                                var B482 = start__479;
                                 {
-                                    var position__479 = B476['indexOf'](B477, B478);
-                                    if (($T)(($module)['>'](position__479, -1)))
-                                        return(position__479);
+                                    var position__483 = B480['indexOf'](B481, B482);
+                                    if (($T)(($module)['>'](position__483, -1)))
+                                        return(position__483);
                                     else
                                         return(false);
                                 }
@@ -1238,14 +1246,14 @@ $HP = Object.hasOwnProperty;
 }
 {
     {
-        ($module)['last-position'] = function B483(array__484, element__485) {
-            var B486 = array__484;
+        ($module)['last-position'] = function B487(array__488, element__489) {
+            var B490 = array__488;
             {
-                var B487 = element__485;
+                var B491 = element__489;
                 {
-                    var position__488 = B486['lastIndexOf'](B487);
-                    if (($T)(($module)['>'](position__488, -1)))
-                        return(position__488);
+                    var position__492 = B490['lastIndexOf'](B491);
+                    if (($T)(($module)['>'](position__492, -1)))
+                        return(position__492);
                     else
                         return(false);
                 }
@@ -1256,27 +1264,27 @@ $HP = Object.hasOwnProperty;
     ($module)['%annotate-function'](($module)['last-position'], 'last-position', false);
 }
 {
-    var B492 = $K('start');
+    var B496 = $K('start');
     {
         {
-            ($module)['count'] = function B493(item__494, array__495) {
-                var result__496 = -1;
+            ($module)['count'] = function B497(item__498, array__499) {
+                var result__500 = -1;
                 {
-                    var pos__497 = 0;
+                    var pos__501 = 0;
                     {
-                        while (($T)(($module)['not'](($module)['not'](pos__497)))) {
-                            (function B498(result__499, pos__500) {
+                        while (($T)(($module)['not'](($module)['not'](pos__501)))) {
+                            (function B502(result__503, pos__504) {
                                 return(false);
-                            }(result__496, pos__497));
+                            }(result__500, pos__501));
                             {
-                                var B501 = ($module)['inc'](result__496);
+                                var B505 = ($module)['inc'](result__500);
                                 {
-                                    pos__497 = ($module)['position'](array__495, item__494, B492, ($module)['inc'](pos__497));
-                                    result__496 = B501;
+                                    pos__501 = ($module)['position'](array__499, item__498, B496, ($module)['inc'](pos__501));
+                                    result__500 = B505;
                                 }
                             }
                         }
-                        return(result__496);
+                        return(result__500);
                     }
                 }
             };
@@ -1287,9 +1295,9 @@ $HP = Object.hasOwnProperty;
 }
 {
     {
-        ($module)['as-uppercase'] = function B504(string__505) {
-            var B506 = string__505;
-            return(B506['toUpperCase']());
+        ($module)['as-uppercase'] = function B508(string__509) {
+            var B510 = string__509;
+            return(B510['toUpperCase']());
         };
         ($module)['%export']('as-uppercase', ($module)['as-uppercase']);
     }
@@ -1297,9 +1305,9 @@ $HP = Object.hasOwnProperty;
 }
 {
     {
-        ($module)['as-lowercase'] = function B509(string__510) {
-            var B511 = string__510;
-            return(B511['toLowerCase']());
+        ($module)['as-lowercase'] = function B513(string__514) {
+            var B515 = string__514;
+            return(B515['toLowerCase']());
         };
         ($module)['%export']('as-lowercase', ($module)['as-lowercase']);
     }
@@ -1307,11 +1315,11 @@ $HP = Object.hasOwnProperty;
 }
 {
     {
-        ($module)['join'] = function B515(array__516, string__517) {
-            var B518 = array__516;
+        ($module)['join'] = function B519(array__520, string__521) {
+            var B522 = array__520;
             {
-                var B519 = string__517;
-                return(B518['join'](B519));
+                var B523 = string__521;
+                return(B522['join'](B523));
             }
         };
         ($module)['%export']('join', ($module)['join']);
@@ -1320,9 +1328,9 @@ $HP = Object.hasOwnProperty;
 }
 {
     {
-        ($module)['trim'] = function B522(string__523) {
-            var B524 = string__523;
-            return(B524['trim']());
+        ($module)['trim'] = function B526(string__527) {
+            var B528 = string__527;
+            return(B528['trim']());
         };
         ($module)['%export']('trim', ($module)['trim']);
     }
@@ -1330,13 +1338,13 @@ $HP = Object.hasOwnProperty;
 }
 {
     {
-        ($module)['replace'] = function B529(string__530, pattern__531, replacement__532) {
-            var B533 = string__530;
+        ($module)['replace'] = function B533(string__534, pattern__535, replacement__536) {
+            var B537 = string__534;
             {
-                var B534 = pattern__531;
+                var B538 = pattern__535;
                 {
-                    var B535 = replacement__532;
-                    return(B533['replace'](B534, B535));
+                    var B539 = replacement__536;
+                    return(B537['replace'](B538, B539));
                 }
             }
         };
@@ -1346,9 +1354,9 @@ $HP = Object.hasOwnProperty;
 }
 {
     {
-        ($module)['make-object'] = function B537() {
-            var key_values__538 = $SL.call(arguments, 0);
-            return(($module)['as-object'](key_values__538));
+        ($module)['make-object'] = function B541() {
+            var key_values__542 = $SL.call(arguments, 0);
+            return(($module)['as-object'](key_values__542));
         };
         ($module)['%export']('make-object', ($module)['make-object']);
     }
@@ -1358,13 +1366,13 @@ $HP = Object.hasOwnProperty;
     ($module)['<symbol>'] = ($module)['%make-class'](($module)['<object>'], {
         'name': false,
         'module': false
-    }, function LsymbolG__539() {
-        var B540 = (this);
+    }, function LsymbolG__543() {
+        var B544 = (this);
         {
-            B540['name'] = (undefined);
+            B544['name'] = (undefined);
             {
-                var B541 = (this);
-                return(B541['module'] = (undefined));
+                var B545 = (this);
+                return(B545['module'] = (undefined));
             }
         }
     });
@@ -1373,15 +1381,15 @@ $HP = Object.hasOwnProperty;
 ($module)['%symbols'] = {};
 {
     {
-        ($module)['symbol'] = function B543(name__544, module__545) {
-            var B546 = ($module)['as-lowercase'](name__544);
+        ($module)['symbol'] = function B547(name__548, module__549) {
+            var B550 = ($module)['as-lowercase'](name__548);
             {
-                var B547 = false;
-                if (($T)(module__545))
-                    B547 = ($module)['as-lowercase'](module__545);
+                var B551 = false;
+                if (($T)(module__549))
+                    B551 = ($module)['as-lowercase'](module__549);
                 else
-                    B547 = false;
-                return(($module)['%%symbol'](B546, B547));
+                    B551 = false;
+                return(($module)['%%symbol'](B550, B551));
             }
         };
         ($module)['%export']('symbol', ($module)['symbol']);
@@ -1390,8 +1398,8 @@ $HP = Object.hasOwnProperty;
 }
 {
     {
-        ($module)['symbol-name'] = function B549(symbol__550) {
-            return(($module)['get'](symbol__550, 'name'));
+        ($module)['symbol-name'] = function B553(symbol__554) {
+            return(($module)['get'](symbol__554, 'name'));
         };
         ($module)['%export']('symbol-name', ($module)['symbol-name']);
     }
@@ -1399,10 +1407,10 @@ $HP = Object.hasOwnProperty;
 }
 {
     {
-        ($module)['destructure-symbol'] = function B552(symbol__553) {
+        ($module)['destructure-symbol'] = function B556(symbol__557) {
             return([
-                ($module)['get'](symbol__553, 'name'),
-                ($module)['get'](symbol__553, 'module')
+                ($module)['get'](symbol__557, 'name'),
+                ($module)['get'](symbol__557, 'module')
             ]);
         };
         ($module)['%export']('destructure-symbol', ($module)['destructure-symbol']);
@@ -1410,25 +1418,25 @@ $HP = Object.hasOwnProperty;
     ($module)['%annotate-function'](($module)['destructure-symbol'], 'destructure-symbol', false);
 }
 {
-    var B557 = $K('name');
+    var B561 = $K('name');
     {
-        var B558 = $K('module');
+        var B562 = $K('module');
         {
             {
-                ($module)['%%symbol'] = function B559(name__560, module__561) {
-                    var B562 = module__561;
+                ($module)['%%symbol'] = function B563(name__564, module__565) {
+                    var B566 = module__565;
                     {
-                        var moduleT__563 = false;
-                        if (($T)(B562))
-                            moduleT__563 = B562;
+                        var moduleT__567 = false;
+                        if (($T)(B566))
+                            moduleT__567 = B566;
                         else
-                            moduleT__563 = '';
+                            moduleT__567 = '';
                         {
-                            var B564 = ($module)['get'](($module)['%symbols'], moduleT__563, name__560);
-                            if (($T)(B564))
-                                return(B564);
+                            var B568 = ($module)['get'](($module)['%symbols'], moduleT__567, name__564);
+                            if (($T)(B568))
+                                return(B568);
                             else
-                                return(($module)['get-setter'](($module)['%symbols'], moduleT__563, name__560, ($module)['make'](($module)['<symbol>'], B557, name__560, B558, module__561)));
+                                return(($module)['get-setter'](($module)['%symbols'], moduleT__567, name__564, ($module)['make'](($module)['<symbol>'], B561, name__564, B562, module__565)));
                         }
                     }
                 };
@@ -1442,7 +1450,7 @@ $S = ($module)['%%symbol'];
 ($module)['*symbol-count*'] = 0;
 {
     {
-        ($module)['reset-symbol-counter!'] = function B566() {
+        ($module)['reset-symbol-counter!'] = function B570() {
             return(($module)['*symbol-count*'] = 0);
         };
         ($module)['%export']('reset-symbol-counter!', ($module)['reset-symbol-counter!']);
@@ -1451,27 +1459,27 @@ $S = ($module)['%%symbol'];
 }
 {
     {
-        ($module)['generate-symbol'] = function B568(env__569, prefix__570) {
-            var B573 = false;
-            if (($T)(prefix__570))
-                B573 = ($module)['concatenate'](prefix__570, '_');
+        ($module)['generate-symbol'] = function B572(env__573, prefix__574) {
+            var B577 = false;
+            if (($T)(prefix__574))
+                B577 = ($module)['concatenate'](prefix__574, '_');
             else
-                B573 = '$';
+                B577 = '$';
             {
-                var B574 = ($module)['as-string'](($module)['*symbol-count*'] = ($module)['+'](($module)['*symbol-count*'], 1));
+                var B578 = ($module)['as-string'](($module)['*symbol-count*'] = ($module)['+'](($module)['*symbol-count*'], 1));
                 {
-                    var name__571 = ($module)['concatenate'](B573, B574);
+                    var name__575 = ($module)['concatenate'](B577, B578);
                     {
-                        var B575 = false;
-                        if (($T)(env__569))
-                            B575 = ($module)['get'](env__569, 'module', 'name');
+                        var B579 = false;
+                        if (($T)(env__573))
+                            B579 = ($module)['get'](env__573, 'module', 'name');
                         else
-                            B575 = false;
+                            B579 = false;
                         {
-                            var result__572 = ($module)['symbol'](name__571, B575);
+                            var result__576 = ($module)['symbol'](name__575, B579);
                             {
-                                ($module)['get-setter'](result__572, 'generated?', true);
-                                return(result__572);
+                                ($module)['get-setter'](result__576, 'generated?', true);
+                                return(result__576);
                             }
                         }
                     }
@@ -1484,26 +1492,26 @@ $S = ($module)['%%symbol'];
 }
 {
     {
-        ($module)['%keys'] = function B578(key_values__579, defaults__580) {
-            var i__581 = 0;
+        ($module)['%keys'] = function B582(key_values__583, defaults__584) {
+            var i__585 = 0;
             {
-                while (($T)(($module)['not'](i__581 >= ($module)['size'](key_values__579)))) {
-                    (function B582(i__583) {
-                        var key__584 = key_values__579[i__583];
+                while (($T)(($module)['not'](i__585 >= ($module)['size'](key_values__583)))) {
+                    (function B586(i__587) {
+                        var key__588 = key_values__583[i__587];
                         {
-                            var value__585 = key_values__579[($module)['inc'](i__583, 1)];
-                            if (($T)(($module)['instance?'](key__584, ($module)['<keyword>']))) {
-                                var B586 = key__584['name'];
-                                return(defaults__580[B586] = value__585);
+                            var value__589 = key_values__583[($module)['inc'](i__587, 1)];
+                            if (($T)(($module)['instance?'](key__588, ($module)['<keyword>']))) {
+                                var B590 = key__588['name'];
+                                return(defaults__584[B590] = value__589);
                             } else
                                 return(false);
                         }
-                    }(i__581));
-                    i__581 = ($module)['inc'](i__581, 2);
+                    }(i__585));
+                    i__585 = ($module)['inc'](i__585, 2);
                 }
                 {
                     false;
-                    return(defaults__580);
+                    return(defaults__584);
                 }
             }
         };
@@ -1513,40 +1521,40 @@ $S = ($module)['%%symbol'];
 }
 {
     {
-        ($module)['find-key'] = function B592(array__593, predicate__594) {
-            var B595 = $SL.call(arguments, 2);
+        ($module)['find-key'] = function B596(array__597, predicate__598) {
+            var B599 = $SL.call(arguments, 2);
             {
-                var B596 = ($module)['%keys'](B595, {
+                var B600 = ($module)['%keys'](B599, {
                         'skip': 0,
                         'failure': false,
                         'from-end?': false
                     });
                 {
-                    var skip__597 = B596['skip'];
+                    var skip__601 = B600['skip'];
                     {
-                        var failure__598 = B596['failure'];
+                        var failure__602 = B600['failure'];
                         {
-                            var from_endQ__599 = B596['from-end?'];
+                            var from_endQ__603 = B600['from-end?'];
                             {
-                                var keys__600 = ($module)['object-properties'](array__593);
+                                var keys__604 = ($module)['object-properties'](array__597);
                                 {
-                                    var B605 = function B601(index__602) {
-                                        return(predicate__594(($module)['element'](array__593, index__602)));
+                                    var B609 = function B605(index__606) {
+                                        return(predicate__598(($module)['element'](array__597, index__606)));
                                     };
                                     {
-                                        var B606 = false;
-                                        if (($T)(from_endQ__599))
-                                            B606 = ($module)['reverse'](keys__600);
+                                        var B610 = false;
+                                        if (($T)(from_endQ__603))
+                                            B610 = ($module)['reverse'](keys__604);
                                         else
-                                            B606 = keys__600;
+                                            B610 = keys__604;
                                         {
-                                            var satisfying_keys__603 = ($module)['choose'](B605, B606);
+                                            var satisfying_keys__607 = ($module)['choose'](B609, B610);
                                             {
-                                                var B604 = ($module)['element'](satisfying_keys__603, skip__597);
-                                                if (($T)(B604))
-                                                    return(B604);
+                                                var B608 = ($module)['element'](satisfying_keys__607, skip__601);
+                                                if (($T)(B608))
+                                                    return(B608);
                                                 else
-                                                    return(failure__598);
+                                                    return(failure__602);
                                             }
                                         }
                                     }
@@ -1563,13 +1571,13 @@ $S = ($module)['%%symbol'];
 }
 {
     {
-        ($module)['parse-integer'] = function B610(value__611) {
-            var B612 = $SL.call(arguments, 1);
+        ($module)['parse-integer'] = function B614(value__615) {
+            var B616 = $SL.call(arguments, 1);
             {
-                var B613 = ($module)['%keys'](B612, { 'radix': 10 });
+                var B617 = ($module)['%keys'](B616, { 'radix': 10 });
                 {
-                    var radix__614 = B613['radix'];
-                    return(parseInt(value__611, radix__614));
+                    var radix__618 = B617['radix'];
+                    return(parseInt(value__615, radix__618));
                 }
             }
         };
@@ -1579,18 +1587,18 @@ $S = ($module)['%%symbol'];
 }
 {
     {
-        ($module)['element'] = function B619(array__620, index__621) {
-            var B622 = $SL.call(arguments, 2);
+        ($module)['element'] = function B623(array__624, index__625) {
+            var B626 = $SL.call(arguments, 2);
             {
-                var B623 = ($module)['%keys'](B622, { 'default': false });
+                var B627 = ($module)['%keys'](B626, { 'default': false });
                 {
-                    var default__624 = B623['default'];
+                    var default__628 = B627['default'];
                     {
-                        var B625 = array__620[index__621];
-                        if (($T)(B625))
-                            return(B625);
+                        var B629 = array__624[index__625];
+                        if (($T)(B629))
+                            return(B629);
                         else
-                            return(default__624);
+                            return(default__628);
                     }
                 }
             }
@@ -1601,8 +1609,8 @@ $S = ($module)['%%symbol'];
 }
 {
     {
-        ($module)['element-setter'] = function B627(array__628, key__629, value__630) {
-            return(array__628[key__629] = value__630);
+        ($module)['element-setter'] = function B631(array__632, key__633, value__634) {
+            return(array__632[key__633] = value__634);
         };
         ($module)['%export']('element-setter', ($module)['element-setter']);
     }
@@ -1610,18 +1618,18 @@ $S = ($module)['%%symbol'];
 }
 {
     {
-        ($module)['replace-subsequence'] = function B634(target_array__635, insert_array__636) {
-            var B637 = $SL.call(arguments, 2);
+        ($module)['replace-subsequence'] = function B638(target_array__639, insert_array__640) {
+            var B641 = $SL.call(arguments, 2);
             {
-                var B638 = ($module)['%keys'](B637, {
+                var B642 = ($module)['%keys'](B641, {
                         'start': 0,
-                        'end': ($module)['size'](target_array__635)
+                        'end': ($module)['size'](target_array__639)
                     });
                 {
-                    var start__639 = B638['start'];
+                    var start__643 = B642['start'];
                     {
-                        var end__640 = B638['end'];
-                        return(($module)['concatenate'](($module)['slice'](target_array__635, 0, start__639), insert_array__636, ($module)['slice'](target_array__635, end__640)));
+                        var end__644 = B642['end'];
+                        return(($module)['concatenate'](($module)['slice'](target_array__639, 0, start__643), insert_array__640, ($module)['slice'](target_array__639, end__644)));
                     }
                 }
             }
@@ -1632,25 +1640,25 @@ $S = ($module)['%%symbol'];
 }
 {
     {
-        ($module)['replace-subsequence!'] = function B644(target_array__645, insert_array__646) {
-            var B647 = $SL.call(arguments, 2);
+        ($module)['replace-subsequence!'] = function B648(target_array__649, insert_array__650) {
+            var B651 = $SL.call(arguments, 2);
             {
-                var B648 = ($module)['%keys'](B647, {
+                var B652 = ($module)['%keys'](B651, {
                         'start': 0,
-                        'end': ($module)['size'](target_array__645)
+                        'end': ($module)['size'](target_array__649)
                     });
                 {
-                    var start__649 = B648['start'];
+                    var start__653 = B652['start'];
                     {
-                        var end__650 = B648['end'];
+                        var end__654 = B652['end'];
                         {
-                            var rest__651 = ($module)['%concat']([
-                                    start__649,
-                                    ($module)['-'](end__650, start__649)
-                                ], insert_array__646);
+                            var rest__655 = ($module)['%concat']([
+                                    start__653,
+                                    ($module)['-'](end__654, start__653)
+                                ], insert_array__650);
                             {
-                                []['splice']['apply'](target_array__645, rest__651);
-                                return(target_array__645);
+                                []['splice']['apply'](target_array__649, rest__655);
+                                return(target_array__649);
                             }
                         }
                     }
@@ -1663,29 +1671,29 @@ $S = ($module)['%%symbol'];
 }
 {
     {
-        ($module)['remove!'] = function B659(array__660, value__661) {
-            var B662 = $SL.call(arguments, 2);
+        ($module)['remove!'] = function B663(array__664, value__665) {
+            var B666 = $SL.call(arguments, 2);
             {
-                var B663 = ($module)['%keys'](B662, { 'test': ($module)['=='] });
+                var B667 = ($module)['%keys'](B666, { 'test': ($module)['=='] });
                 {
-                    var test__664 = B663['test'];
+                    var test__668 = B667['test'];
                     {
-                        var B665 = ($module)['find-key'](array__660, ($module)['curry'](test__664, value__661));
+                        var B669 = ($module)['find-key'](array__664, ($module)['curry'](test__668, value__665));
                         {
-                            if (($T)(B665)) {
-                                var key__666 = B665;
+                            if (($T)(B669)) {
+                                var key__670 = B669;
                                 {
-                                    var B667 = array__660;
+                                    var B671 = array__664;
                                     {
-                                        var B668 = key__666;
+                                        var B672 = key__670;
                                         {
-                                            var B669 = 1;
-                                            B667['splice'](B668, B669);
+                                            var B673 = 1;
+                                            B671['splice'](B672, B673);
                                         }
                                     }
                                 }
                             }
-                            return(array__660);
+                            return(array__664);
                         }
                     }
                 }
@@ -1697,13 +1705,13 @@ $S = ($module)['%%symbol'];
 }
 {
     {
-        ($module)['remove'] = function B673(array__674, value__675) {
-            var B676 = $SL.call(arguments, 2);
+        ($module)['remove'] = function B677(array__678, value__679) {
+            var B680 = $SL.call(arguments, 2);
             {
-                var B677 = ($module)['%keys'](B676, { 'test': ($module)['=='] });
+                var B681 = ($module)['%keys'](B680, { 'test': ($module)['=='] });
                 {
-                    var test__678 = B677['test'];
-                    return(($module)['remove!'](($module)['slice'](array__674), value__675, B253, test__678));
+                    var test__682 = B681['test'];
+                    return(($module)['remove!'](($module)['slice'](array__678), value__679, B257, test__682));
                 }
             }
         };
@@ -1713,13 +1721,13 @@ $S = ($module)['%%symbol'];
 }
 {
     {
-        ($module)['interpose'] = function B681(separator__682, array__683) {
-            return(($module)['reduce1'](function B684(a__685, b__686) {
+        ($module)['interpose'] = function B685(separator__686, array__687) {
+            return(($module)['reduce1'](function B688(a__689, b__690) {
                 return(($module)['concatenate']([
-                    a__685,
-                    separator__682
-                ], b__686));
-            }, array__683));
+                    a__689,
+                    separator__686
+                ], b__690));
+            }, array__687));
         };
         ($module)['%export']('interpose', ($module)['interpose']);
     }
@@ -1727,34 +1735,34 @@ $S = ($module)['%%symbol'];
 }
 {
     {
-        ($module)['any?'] = function B690(function__691, values__692) {
-            var value__693 = false;
+        ($module)['any?'] = function B694(function__695, values__696) {
+            var value__697 = false;
             {
-                var n__694 = ($module)['size'](values__692);
+                var n__698 = ($module)['size'](values__696);
                 {
-                    var i__695 = 0;
+                    var i__699 = 0;
                     {
                         while (true) {
-                            var B696 = value__693;
+                            var B700 = value__697;
                             {
-                                var B699 = false;
-                                if (($T)(B696))
-                                    B699 = B696;
+                                var B703 = false;
+                                if (($T)(B700))
+                                    B703 = B700;
                                 else
-                                    B699 = ($module)['>='](i__695, n__694);
+                                    B703 = ($module)['>='](i__699, n__698);
                                 {
-                                    var B700 = ($module)['not'](B699);
-                                    if (($T)(B700)) {
-                                        (function B697(i__698) {
-                                            return(value__693 = function__691(values__692[i__698]));
-                                        }(i__695));
-                                        i__695 = ($module)['inc'](i__695);
+                                    var B704 = ($module)['not'](B703);
+                                    if (($T)(B704)) {
+                                        (function B701(i__702) {
+                                            return(value__697 = function__695(values__696[i__702]));
+                                        }(i__699));
+                                        i__699 = ($module)['inc'](i__699);
                                     } else
                                         break;
                                 }
                             }
                         }
-                        return(value__693);
+                        return(value__697);
                     }
                 }
             }
@@ -1765,15 +1773,15 @@ $S = ($module)['%%symbol'];
 }
 {
     {
-        ($module)['member?'] = function B705(value__706, array__707) {
-            var B708 = $SL.call(arguments, 2);
+        ($module)['member?'] = function B709(value__710, array__711) {
+            var B712 = $SL.call(arguments, 2);
             {
-                var B709 = ($module)['%keys'](B708, { 'test': ($module)['binary=='] });
+                var B713 = ($module)['%keys'](B712, { 'test': ($module)['binary=='] });
                 {
-                    var test__710 = B709['test'];
-                    return(($module)['any?'](function B711(other_value__712) {
-                        return(test__710(value__706, other_value__712));
-                    }, array__707));
+                    var test__714 = B713['test'];
+                    return(($module)['any?'](function B715(other_value__716) {
+                        return(test__714(value__710, other_value__716));
+                    }, array__711));
                 }
             }
         };
@@ -1783,8 +1791,8 @@ $S = ($module)['%%symbol'];
 }
 {
     {
-        ($module)['every?'] = function B714(function__715, array__716) {
-            return(($module)['not'](($module)['any?'](($module)['complement'](function__715), array__716)));
+        ($module)['every?'] = function B718(function__719, array__720) {
+            return(($module)['not'](($module)['any?'](($module)['complement'](function__719), array__720)));
         };
         ($module)['%export']('every?', ($module)['every?']);
     }
@@ -1792,39 +1800,39 @@ $S = ($module)['%%symbol'];
 }
 {
     {
-        ($module)['map'] = function B724(function__725) {
-            var arrays__726 = $SL.call(arguments, 1);
+        ($module)['map'] = function B728(function__729) {
+            var arrays__730 = $SL.call(arguments, 1);
             {
-                var result__727 = [];
+                var result__731 = [];
                 {
-                    if (($T)(($module)['empty?'](($module)['rest'](arrays__726)))) {
-                        var B728 = ($module)['first'](arrays__726);
+                    if (($T)(($module)['empty?'](($module)['rest'](arrays__730)))) {
+                        var B732 = ($module)['first'](arrays__730);
                         {
-                            var B729 = false;
+                            var B733 = false;
                             {
-                                var B730 = false;
+                                var B734 = false;
                                 {
-                                    var B731 = [B728];
+                                    var B735 = [B732];
                                     {
                                         while (true) {
-                                            var B732 = B729;
+                                            var B736 = B733;
                                             {
-                                                var B736 = false;
-                                                if (($T)(B732))
-                                                    B736 = B732;
+                                                var B740 = false;
+                                                if (($T)(B736))
+                                                    B740 = B736;
                                                 else
-                                                    B736 = ($module)['any?'](($module)['empty?'], B731);
+                                                    B740 = ($module)['any?'](($module)['empty?'], B735);
                                                 {
-                                                    var B737 = ($module)['not'](B736);
-                                                    if (($T)(B737)) {
-                                                        var item__733 = ($module)['first'](B728);
+                                                    var B741 = ($module)['not'](B740);
+                                                    if (($T)(B741)) {
+                                                        var item__737 = ($module)['first'](B732);
                                                         {
-                                                            (function B734(item__735) {
-                                                                return(($module)['push-last'](result__727, function__725(item__735)));
-                                                            }(item__733));
+                                                            (function B738(item__739) {
+                                                                return(($module)['push-last'](result__731, function__729(item__739)));
+                                                            }(item__737));
                                                             {
-                                                                B728 = ($module)['rest'](B728);
-                                                                B731 = [B728];
+                                                                B732 = ($module)['rest'](B732);
+                                                                B735 = [B732];
                                                             }
                                                         }
                                                     } else
@@ -1832,17 +1840,17 @@ $S = ($module)['%%symbol'];
                                                 }
                                             }
                                         }
-                                        B730;
+                                        B734;
                                     }
                                 }
                             }
                         }
                     } else
-                        while (($T)(($module)['not'](($module)['any?'](($module)['empty?'], arrays__726)))) {
-                            ($module)['push-last'](result__727, ($module)['apply'](function__725, ($module)['map'](($module)['first'], arrays__726)));
-                            arrays__726 = ($module)['map'](($module)['rest'], arrays__726);
+                        while (($T)(($module)['not'](($module)['any?'](($module)['empty?'], arrays__730)))) {
+                            ($module)['push-last'](result__731, ($module)['apply'](function__729, ($module)['map'](($module)['first'], arrays__730)));
+                            arrays__730 = ($module)['map'](($module)['rest'], arrays__730);
                         }
-                    return(result__727);
+                    return(result__731);
                 }
             }
         };
@@ -1852,37 +1860,37 @@ $S = ($module)['%%symbol'];
 }
 {
     {
-        ($module)['do'] = function B745(function__746) {
-            var arrays__747 = $SL.call(arguments, 1);
+        ($module)['do'] = function B749(function__750) {
+            var arrays__751 = $SL.call(arguments, 1);
             {
-                if (($T)(($module)['empty?'](($module)['rest'](arrays__747)))) {
-                    var B748 = ($module)['first'](arrays__747);
+                if (($T)(($module)['empty?'](($module)['rest'](arrays__751)))) {
+                    var B752 = ($module)['first'](arrays__751);
                     {
-                        var B749 = false;
+                        var B753 = false;
                         {
-                            var B750 = false;
+                            var B754 = false;
                             {
-                                var B751 = [B748];
+                                var B755 = [B752];
                                 {
                                     while (true) {
-                                        var B752 = B749;
+                                        var B756 = B753;
                                         {
-                                            var B756 = false;
-                                            if (($T)(B752))
-                                                B756 = B752;
+                                            var B760 = false;
+                                            if (($T)(B756))
+                                                B760 = B756;
                                             else
-                                                B756 = ($module)['any?'](($module)['empty?'], B751);
+                                                B760 = ($module)['any?'](($module)['empty?'], B755);
                                             {
-                                                var B757 = ($module)['not'](B756);
-                                                if (($T)(B757)) {
-                                                    var item__753 = ($module)['first'](B748);
+                                                var B761 = ($module)['not'](B760);
+                                                if (($T)(B761)) {
+                                                    var item__757 = ($module)['first'](B752);
                                                     {
-                                                        (function B754(item__755) {
-                                                            return(function__746(item__755));
-                                                        }(item__753));
+                                                        (function B758(item__759) {
+                                                            return(function__750(item__759));
+                                                        }(item__757));
                                                         {
-                                                            B748 = ($module)['rest'](B748);
-                                                            B751 = [B748];
+                                                            B752 = ($module)['rest'](B752);
+                                                            B755 = [B752];
                                                         }
                                                     }
                                                 } else
@@ -1890,15 +1898,15 @@ $S = ($module)['%%symbol'];
                                             }
                                         }
                                     }
-                                    B750;
+                                    B754;
                                 }
                             }
                         }
                     }
                 } else
-                    while (($T)(($module)['not'](($module)['any?'](($module)['empty?'], arrays__747)))) {
-                        ($module)['apply'](function__746, ($module)['map'](($module)['first'], arrays__747));
-                        arrays__747 = ($module)['map'](($module)['rest'], arrays__747);
+                    while (($T)(($module)['not'](($module)['any?'](($module)['empty?'], arrays__751)))) {
+                        ($module)['apply'](function__750, ($module)['map'](($module)['first'], arrays__751));
+                        arrays__751 = ($module)['map'](($module)['rest'], arrays__751);
                     }
                 return(false);
             }
@@ -1909,39 +1917,39 @@ $S = ($module)['%%symbol'];
 }
 {
     {
-        ($module)['choose'] = function B765(function__766, array__767) {
-            var result__768 = [];
+        ($module)['choose'] = function B769(function__770, array__771) {
+            var result__772 = [];
             {
-                var B769 = array__767;
+                var B773 = array__771;
                 {
-                    var B770 = false;
+                    var B774 = false;
                     {
-                        var B771 = false;
+                        var B775 = false;
                         {
-                            var B772 = [B769];
+                            var B776 = [B773];
                             {
                                 while (true) {
-                                    var B773 = B770;
+                                    var B777 = B774;
                                     {
-                                        var B777 = false;
-                                        if (($T)(B773))
-                                            B777 = B773;
+                                        var B781 = false;
+                                        if (($T)(B777))
+                                            B781 = B777;
                                         else
-                                            B777 = ($module)['any?'](($module)['empty?'], B772);
+                                            B781 = ($module)['any?'](($module)['empty?'], B776);
                                         {
-                                            var B778 = ($module)['not'](B777);
-                                            if (($T)(B778)) {
-                                                var element__774 = ($module)['first'](B769);
+                                            var B782 = ($module)['not'](B781);
+                                            if (($T)(B782)) {
+                                                var element__778 = ($module)['first'](B773);
                                                 {
-                                                    (function B775(element__776) {
-                                                        if (($T)(function__766(element__776)))
-                                                            return(($module)['push-last'](result__768, element__776));
+                                                    (function B779(element__780) {
+                                                        if (($T)(function__770(element__780)))
+                                                            return(($module)['push-last'](result__772, element__780));
                                                         else
                                                             return(false);
-                                                    }(element__774));
+                                                    }(element__778));
                                                     {
-                                                        B769 = ($module)['rest'](B769);
-                                                        B772 = [B769];
+                                                        B773 = ($module)['rest'](B773);
+                                                        B776 = [B773];
                                                     }
                                                 }
                                             } else
@@ -1950,8 +1958,8 @@ $S = ($module)['%%symbol'];
                                     }
                                 }
                                 {
-                                    B771;
-                                    return(result__768);
+                                    B775;
+                                    return(result__772);
                                 }
                             }
                         }
@@ -1965,26 +1973,26 @@ $S = ($module)['%%symbol'];
 }
 {
     {
-        ($module)['copy-sequence'] = function B783(array__784) {
-            var B785 = $SL.call(arguments, 1);
+        ($module)['copy-sequence'] = function B787(array__788) {
+            var B789 = $SL.call(arguments, 1);
             {
-                var B786 = ($module)['%keys'](B785, {
+                var B790 = ($module)['%keys'](B789, {
                         'start': 0,
                         'end': false
                     });
                 {
-                    var start__787 = B786['start'];
+                    var start__791 = B790['start'];
                     {
-                        var end__788 = B786['end'];
+                        var end__792 = B790['end'];
                         {
-                            var B789 = end__788;
+                            var B793 = end__792;
                             {
-                                var end__790 = false;
-                                if (($T)(B789))
-                                    end__790 = B789;
+                                var end__794 = false;
+                                if (($T)(B793))
+                                    end__794 = B793;
                                 else
-                                    end__790 = (undefined);
-                                return(($module)['slice'](array__784, start__787, end__790));
+                                    end__794 = (undefined);
+                                return(($module)['slice'](array__788, start__791, end__794));
                             }
                         }
                     }
@@ -1997,13 +2005,13 @@ $S = ($module)['%%symbol'];
 }
 {
     {
-        ($module)['make'] = function B792(type__793) {
-            var arguments__794 = $SL.call(arguments, 1);
+        ($module)['make'] = function B796(type__797) {
+            var arguments__798 = $SL.call(arguments, 1);
             {
-                var object__795 = new(type__793);
+                var object__799 = new(type__797);
                 {
-                    ($module)['apply'](($module)['initialize'], object__795, arguments__794);
-                    return(object__795);
+                    ($module)['apply'](($module)['initialize'], object__799, arguments__798);
+                    return(object__799);
                 }
             }
         };
@@ -2013,51 +2021,51 @@ $S = ($module)['%%symbol'];
 }
 {
     {
-        ($module)['object-properties'] = function B802(object__803) {
-            var B804 = $SL.call(arguments, 1);
+        ($module)['object-properties'] = function B806(object__807) {
+            var B808 = $SL.call(arguments, 1);
             {
-                var B805 = ($module)['%keys'](B804, { 'inherited?': false });
+                var B809 = ($module)['%keys'](B808, { 'inherited?': false });
                 {
-                    var inheritedQ__806 = B805['inherited?'];
-                    if (($T)(($module)['instance?'](object__803, ($module)['<array>']))) {
-                        var result__807 = [];
+                    var inheritedQ__810 = B809['inherited?'];
+                    if (($T)(($module)['instance?'](object__807, ($module)['<array>']))) {
+                        var result__811 = [];
                         {
-                            var B808 = ($module)['size'](object__803);
+                            var B812 = ($module)['size'](object__807);
                             {
-                                var i__809 = 0;
+                                var i__813 = 0;
                                 {
-                                    while (($T)(($module)['not'](($module)['binary>='](i__809, B808)))) {
-                                        (function B810(i__811) {
-                                            return(($module)['push-last'](result__807, i__811));
-                                        }(i__809));
-                                        i__809 = ($module)['inc'](i__809);
+                                    while (($T)(($module)['not'](($module)['binary>='](i__813, B812)))) {
+                                        (function B814(i__815) {
+                                            return(($module)['push-last'](result__811, i__815));
+                                        }(i__813));
+                                        i__813 = ($module)['inc'](i__813);
                                     }
                                     {
                                         false;
-                                        return(result__807);
+                                        return(result__811);
                                     }
                                 }
                             }
                         }
                     } else {
-                        var B812 = inheritedQ__806;
+                        var B816 = inheritedQ__810;
                         {
-                            var B815 = false;
-                            if (($T)(B812))
-                                B815 = B812;
+                            var B819 = false;
+                            if (($T)(B816))
+                                B819 = B816;
                             else
-                                B815 = typeof(object__803) !== 'object';
-                            if (($T)(B815)) {
-                                var i__813 = false;
+                                B819 = typeof(object__807) !== 'object';
+                            if (($T)(B819)) {
+                                var i__817 = false;
                                 {
-                                    var result__814 = [];
+                                    var result__818 = [];
                                     {
-                                        for (i__813 in object__803) (inheritedQ__806||$HP.call(object__803, i__813)) &&result__814.push(i__813);
-                                        return(result__814);
+                                        for (i__817 in object__807) (inheritedQ__810||$HP.call(object__807, i__817)) &&result__818.push(i__817);
+                                        return(result__818);
                                     }
                                 }
                             } else
-                                return(Object.keys(object__803));
+                                return(Object.keys(object__807));
                         }
                     }
                 }
@@ -2069,10 +2077,10 @@ $S = ($module)['%%symbol'];
 }
 {
     {
-        ($module)['object-values'] = function B818(object__819) {
-            return(($module)['map'](function B820(property__821) {
-                return(($module)['get'](object__819, property__821));
-            }, ($module)['object-properties'](object__819)));
+        ($module)['object-values'] = function B822(object__823) {
+            return(($module)['map'](function B824(property__825) {
+                return(($module)['get'](object__823, property__825));
+            }, ($module)['object-properties'](object__823)));
         };
         ($module)['%export']('object-values', ($module)['object-values']);
     }
@@ -2083,43 +2091,43 @@ $S = ($module)['%%symbol'];
     ($module)['%export']('initialize', ($module)['initialize']);
 }
 {
-    var B826 = $K('inherited?');
+    var B830 = $K('inherited?');
     {
-        ($module)['initialize'] = ($module)['%make-method']('initialize', function B827(object__828) {
-            var rest__829 = $SL.call(arguments, 1);
+        ($module)['initialize'] = ($module)['%make-method']('initialize', function B831(object__832) {
+            var rest__833 = $SL.call(arguments, 1);
             {
-                var arguments__830 = ($module)['as-object'](rest__829);
+                var arguments__834 = ($module)['as-object'](rest__833);
                 {
-                    var B831 = ($module)['type'](object__828)['%properties'];
+                    var B835 = ($module)['type'](object__832)['%properties'];
                     {
-                        if (($T)(B831)) {
-                            var properties__832 = B831;
-                            ($module)['do'](function B833(property__834) {
-                                var B838 = false;
-                                if (($T)(($module)['not'](($module)['has?'](($module)['<object>']['prototype'], property__834))))
-                                    B838 = typeof(object__828[property__834]) === 'undefined';
+                        if (($T)(B835)) {
+                            var properties__836 = B835;
+                            ($module)['do'](function B837(property__838) {
+                                var B842 = false;
+                                if (($T)(($module)['not'](($module)['has?'](($module)['<object>']['prototype'], property__838))))
+                                    B842 = typeof(object__832[property__838]) === 'undefined';
                                 else
-                                    B838 = false;
-                                if (($T)(B838)) {
-                                    var B835 = arguments__830[property__834];
+                                    B842 = false;
+                                if (($T)(B842)) {
+                                    var B839 = arguments__834[property__838];
                                     {
-                                        var value__837 = false;
-                                        if (($T)(B835))
-                                            value__837 = B835;
+                                        var value__841 = false;
+                                        if (($T)(B839))
+                                            value__841 = B839;
                                         else {
-                                            var value__836 = properties__832[property__834];
-                                            if (($T)(value__836))
-                                                value__837 = value__836();
+                                            var value__840 = properties__836[property__838];
+                                            if (($T)(value__840))
+                                                value__841 = value__840();
                                             else
-                                                value__837 = false;
+                                                value__841 = false;
                                         }
-                                        return(object__828[property__834] = value__837);
+                                        return(object__832[property__838] = value__841);
                                     }
                                 } else
                                     return(false);
-                            }, ($module)['object-properties'](properties__832, B826, true));
+                            }, ($module)['object-properties'](properties__836, B830, true));
                         }
-                        return(object__828);
+                        return(object__832);
                     }
                 }
             }
@@ -2128,58 +2136,58 @@ $S = ($module)['%%symbol'];
     }
 }
 {
-    ($module)['<hash-symbol>'] = ($module)['%make-class'](($module)['<object>'], { 'name': false }, function Lhash_symbolG__839() {
-        var B840 = (this);
-        return(B840['name'] = (undefined));
+    ($module)['<hash-symbol>'] = ($module)['%make-class'](($module)['<object>'], { 'name': false }, function Lhash_symbolG__843() {
+        var B844 = (this);
+        return(B844['name'] = (undefined));
     });
     ($module)['%export']('<hash-symbol>', ($module)['<hash-symbol>']);
 }
 {
-    var key__841 = ($module)['make'](($module)['<hash-symbol>'], B557, 'key');
-    $KEY = key__841;
+    var key__845 = ($module)['make'](($module)['<hash-symbol>'], B561, 'key');
+    $KEY = key__845;
 }
 {
-    var rest__842 = ($module)['make'](($module)['<hash-symbol>'], B557, 'rest');
-    $REST = rest__842;
+    var rest__846 = ($module)['make'](($module)['<hash-symbol>'], B561, 'rest');
+    $REST = rest__846;
 }
 {
     {
-        ($module)['get'] = function B850(object__851) {
-            var properties__852 = $SL.call(arguments, 1);
+        ($module)['get'] = function B854(object__855) {
+            var properties__856 = $SL.call(arguments, 1);
             {
-                var result__853 = false;
+                var result__857 = false;
                 {
-                    var B854 = properties__852;
+                    var B858 = properties__856;
                     {
-                        var B855 = false;
+                        var B859 = false;
                         {
-                            var B856 = false;
+                            var B860 = false;
                             {
-                                var B857 = [B854];
+                                var B861 = [B858];
                                 {
                                     while (true) {
-                                        var B858 = B855;
+                                        var B862 = B859;
                                         {
-                                            var B862 = false;
-                                            if (($T)(B858))
-                                                B862 = B858;
+                                            var B866 = false;
+                                            if (($T)(B862))
+                                                B866 = B862;
                                             else
-                                                B862 = ($module)['any?'](($module)['empty?'], B857);
+                                                B866 = ($module)['any?'](($module)['empty?'], B861);
                                             {
-                                                var B863 = ($module)['not'](B862);
-                                                if (($T)(B863)) {
-                                                    var property__859 = ($module)['first'](B854);
-                                                    if (($T)(($module)['not'](($module)['has?'](object__851, property__859)))) {
-                                                        B856 = result__853 = false;
-                                                        B855 = true;
+                                                var B867 = ($module)['not'](B866);
+                                                if (($T)(B867)) {
+                                                    var property__863 = ($module)['first'](B858);
+                                                    if (($T)(($module)['not'](($module)['has?'](object__855, property__863)))) {
+                                                        B860 = result__857 = false;
+                                                        B859 = true;
                                                     } else {
-                                                        (function B860(property__861) {
-                                                            result__853 = object__851[property__861];
-                                                            return(object__851 = result__853);
-                                                        }(property__859));
+                                                        (function B864(property__865) {
+                                                            result__857 = object__855[property__865];
+                                                            return(object__855 = result__857);
+                                                        }(property__863));
                                                         {
-                                                            B854 = ($module)['rest'](B854);
-                                                            B857 = [B854];
+                                                            B858 = ($module)['rest'](B858);
+                                                            B861 = [B858];
                                                         }
                                                     }
                                                 } else
@@ -2188,8 +2196,8 @@ $S = ($module)['%%symbol'];
                                         }
                                     }
                                     {
-                                        B856;
-                                        return(result__853);
+                                        B860;
+                                        return(result__857);
                                     }
                                 }
                             }
@@ -2204,20 +2212,20 @@ $S = ($module)['%%symbol'];
 }
 {
     {
-        ($module)['get-setter'] = function B865(object__866) {
-            var propertiesSvalue__867 = $SL.call(arguments, 1);
-            if (($T)(($module)['<='](($module)['size'](propertiesSvalue__867), 2))) {
-                var B870 = ($module)['first'](propertiesSvalue__867);
-                return(object__866[B870] = ($module)['second'](propertiesSvalue__867));
+        ($module)['get-setter'] = function B869(object__870) {
+            var propertiesSvalue__871 = $SL.call(arguments, 1);
+            if (($T)(($module)['<='](($module)['size'](propertiesSvalue__871), 2))) {
+                var B874 = ($module)['first'](propertiesSvalue__871);
+                return(object__870[B874] = ($module)['second'](propertiesSvalue__871));
             } else {
-                var property__868 = ($module)['first'](propertiesSvalue__867);
+                var property__872 = ($module)['first'](propertiesSvalue__871);
                 {
-                    var object2__869 = false;
-                    if (($T)(($module)['has?'](object__866, property__868)))
-                        object2__869 = object__866[property__868];
+                    var object2__873 = false;
+                    if (($T)(($module)['has?'](object__870, property__872)))
+                        object2__873 = object__870[property__872];
                     else
-                        object2__869 = object__866[property__868] = ($module)['make-object']();
-                    return(($module)['apply'](B865, object2__869, ($module)['rest'](propertiesSvalue__867)));
+                        object2__873 = object__870[property__872] = ($module)['make-object']();
+                    return(($module)['apply'](B869, object2__873, ($module)['rest'](propertiesSvalue__871)));
                 }
             }
         };
@@ -2227,11 +2235,11 @@ $S = ($module)['%%symbol'];
 }
 {
     {
-        ($module)['split'] = function B874(string__875, separator__876) {
-            var B877 = string__875;
+        ($module)['split'] = function B878(string__879, separator__880) {
+            var B881 = string__879;
             {
-                var B878 = separator__876;
-                return(B877['split'](B878));
+                var B882 = separator__880;
+                return(B881['split'](B882));
             }
         };
         ($module)['%export']('split', ($module)['split']);
@@ -2240,22 +2248,22 @@ $S = ($module)['%%symbol'];
 }
 {
     {
-        ($module)['split-with'] = function B881(function__882, array__883) {
-            var a__884 = [];
+        ($module)['split-with'] = function B885(function__886, array__887) {
+            var a__888 = [];
             {
-                var b__885 = [];
+                var b__889 = [];
                 {
-                    ($module)['do'](function B886(item__887) {
-                        var B888 = false;
-                        if (($T)(function__882(item__887)))
-                            B888 = a__884;
+                    ($module)['do'](function B890(item__891) {
+                        var B892 = false;
+                        if (($T)(function__886(item__891)))
+                            B892 = a__888;
                         else
-                            B888 = b__885;
-                        return(($module)['push-last'](B888, item__887));
-                    }, array__883);
+                            B892 = b__889;
+                        return(($module)['push-last'](B892, item__891));
+                    }, array__887);
                     return([
-                        a__884,
-                        b__885
+                        a__888,
+                        b__889
                     ]);
                 }
             }
@@ -2266,11 +2274,11 @@ $S = ($module)['%%symbol'];
 }
 {
     {
-        ($module)['as-hex-string'] = function B892(number__893) {
-            var B894 = number__893;
+        ($module)['as-hex-string'] = function B896(number__897) {
+            var B898 = number__897;
             {
-                var B895 = 16;
-                return(B894['toString'](B895));
+                var B899 = 16;
+                return(B898['toString'](B899));
             }
         };
         ($module)['%export']('as-hex-string', ($module)['as-hex-string']);
@@ -2282,23 +2290,23 @@ $S = ($module)['%%symbol'];
     ($module)['%export']('description', ($module)['description']);
 }
 {
-    ($module)['description'] = ($module)['%make-method']('description', function B897(number__898) {
-        return('' + number__898);
+    ($module)['description'] = ($module)['%make-method']('description', function B901(number__902) {
+        return('' + number__902);
     }, false, ($module)['<number>'], ($module)['description']);
     ($module)['%export']('description', ($module)['description']);
 }
 {
-    ($module)['description'] = ($module)['%make-method']('description', function B904(string__905) {
-        var B906 = string__905;
+    ($module)['description'] = ($module)['%make-method']('description', function B908(string__909) {
+        var B910 = string__909;
         {
-            var B907 = '"';
+            var B911 = '"';
             {
-                var B908 = '\\"';
+                var B912 = '\\"';
                 {
-                    var B909 = 'g';
+                    var B913 = 'g';
                     {
-                        var escaped__910 = B906['replace'](B907, B908, B909);
-                        return('"' + escaped__910 + '"');
+                        var escaped__914 = B910['replace'](B911, B912, B913);
+                        return('"' + escaped__914 + '"');
                     }
                 }
             }
@@ -2307,14 +2315,14 @@ $S = ($module)['%%symbol'];
     ($module)['%export']('description', ($module)['description']);
 }
 {
-    ($module)['description'] = ($module)['%make-method']('description', function B912(array__913) {
-        return('(' + ($module)['join'](($module)['map'](($module)['description'], array__913), ' ') + ')');
+    ($module)['description'] = ($module)['%make-method']('description', function B916(array__917) {
+        return('(' + ($module)['join'](($module)['map'](($module)['description'], array__917), ' ') + ')');
     }, false, ($module)['<array>'], ($module)['description']);
     ($module)['%export']('description', ($module)['description']);
 }
 {
-    ($module)['description'] = ($module)['%make-method']('description', function B915(value__916) {
-        if (($T)(value__916))
+    ($module)['description'] = ($module)['%make-method']('description', function B919(value__920) {
+        if (($T)(value__920))
             return('#t');
         else
             return('#f');
@@ -2322,38 +2330,38 @@ $S = ($module)['%%symbol'];
     ($module)['%export']('description', ($module)['description']);
 }
 {
-    ($module)['description'] = ($module)['%make-method']('description', function B919(symbol__920) {
-        var B921 = ($module)['get'](symbol__920, 'module');
+    ($module)['description'] = ($module)['%make-method']('description', function B923(symbol__924) {
+        var B925 = ($module)['get'](symbol__924, 'module');
         {
-            var B923 = false;
-            if (($T)(B921)) {
-                var module__922 = B921;
-                B923 = ($module)['concatenate'](module__922, '::');
+            var B927 = false;
+            if (($T)(B925)) {
+                var module__926 = B925;
+                B927 = ($module)['concatenate'](module__926, '::');
             } else
-                B923 = '';
+                B927 = '';
             {
-                var B924 = ($module)['symbol-name'](symbol__920);
-                return(B923 + B924);
+                var B928 = ($module)['symbol-name'](symbol__924);
+                return(B927 + B928);
             }
         }
     }, false, ($module)['<symbol>'], ($module)['description']);
     ($module)['%export']('description', ($module)['description']);
 }
 {
-    ($module)['description'] = ($module)['%make-method']('description', function B926(keyword__927) {
-        return(($module)['symbol-name'](keyword__927) + ':');
+    ($module)['description'] = ($module)['%make-method']('description', function B930(keyword__931) {
+        return(($module)['symbol-name'](keyword__931) + ':');
     }, false, ($module)['<keyword>'], ($module)['description']);
     ($module)['%export']('description', ($module)['description']);
 }
 {
-    ($module)['description'] = ($module)['%make-method']('description', function B929(symbol__930) {
-        return('#' + ($module)['symbol-name'](symbol__930));
+    ($module)['description'] = ($module)['%make-method']('description', function B933(symbol__934) {
+        return('#' + ($module)['symbol-name'](symbol__934));
     }, false, ($module)['<hash-symbol>'], ($module)['description']);
     ($module)['%export']('description', ($module)['description']);
 }
 {
-    ($module)['description'] = ($module)['%make-method']('description', function B932(function__933) {
-        if (($T)(($module)['get'](function__933, '%class?')))
+    ($module)['description'] = ($module)['%make-method']('description', function B936(function__937) {
+        if (($T)(($module)['get'](function__937, '%class?')))
             return('#{class}');
         else
             return('#{function}');
@@ -2406,8 +2414,8 @@ $S = ($module)['%%symbol'];
 }
 {
     {
-        ($module)['mod'] = function B935(number1__936, number2__937) {
-            return(number1__936 % number2__937);
+        ($module)['mod'] = function B939(number1__940, number2__941) {
+            return(number1__940 % number2__941);
         };
         ($module)['%export']('mod', ($module)['mod']);
     }
@@ -2420,8 +2428,8 @@ $S = ($module)['%%symbol'];
 ($module)['$radiant'] = ($module)['$pi'] / 180;
 {
     {
-        ($module)['as-radiant'] = function B939(number__940) {
-            return(($module)['*'](number__940, ($module)['$radiant']));
+        ($module)['as-radiant'] = function B943(number__944) {
+            return(($module)['*'](number__944, ($module)['$radiant']));
         };
         ($module)['%export']('as-radiant', ($module)['as-radiant']);
     }
@@ -2429,8 +2437,8 @@ $S = ($module)['%%symbol'];
 }
 {
     {
-        ($module)['signal'] = function B942(error__943) {
-            throw(error__943);
+        ($module)['signal'] = function B946(error__947) {
+            throw(error__947);
             return(false);
         };
         ($module)['%export']('signal', ($module)['signal']);
@@ -2439,34 +2447,34 @@ $S = ($module)['%%symbol'];
 }
 {
     {
-        ($module)['extend!'] = function B951(object1__952, object2__953) {
-            var B954 = ($module)['object-properties'](object2__953);
+        ($module)['extend!'] = function B955(object1__956, object2__957) {
+            var B958 = ($module)['object-properties'](object2__957);
             {
-                var B955 = false;
+                var B959 = false;
                 {
-                    var B956 = false;
+                    var B960 = false;
                     {
-                        var B957 = [B954];
+                        var B961 = [B958];
                         {
                             while (true) {
-                                var B958 = B955;
+                                var B962 = B959;
                                 {
-                                    var B962 = false;
-                                    if (($T)(B958))
-                                        B962 = B958;
+                                    var B966 = false;
+                                    if (($T)(B962))
+                                        B966 = B962;
                                     else
-                                        B962 = ($module)['any?'](($module)['empty?'], B957);
+                                        B966 = ($module)['any?'](($module)['empty?'], B961);
                                     {
-                                        var B963 = ($module)['not'](B962);
-                                        if (($T)(B963)) {
-                                            var key__959 = ($module)['first'](B954);
+                                        var B967 = ($module)['not'](B966);
+                                        if (($T)(B967)) {
+                                            var key__963 = ($module)['first'](B958);
                                             {
-                                                (function B960(key__961) {
-                                                    return(($module)['get-setter'](object1__952, key__961, ($module)['get'](object2__953, key__961)));
-                                                }(key__959));
+                                                (function B964(key__965) {
+                                                    return(($module)['get-setter'](object1__956, key__965, ($module)['get'](object2__957, key__965)));
+                                                }(key__963));
                                                 {
-                                                    B954 = ($module)['rest'](B954);
-                                                    B957 = [B954];
+                                                    B958 = ($module)['rest'](B958);
+                                                    B961 = [B958];
                                                 }
                                             }
                                         } else
@@ -2475,8 +2483,8 @@ $S = ($module)['%%symbol'];
                                 }
                             }
                             {
-                                B956;
-                                return(object1__952);
+                                B960;
+                                return(object1__956);
                             }
                         }
                     }
@@ -2489,50 +2497,50 @@ $S = ($module)['%%symbol'];
 }
 {
     {
-        ($module)['as-property-list'] = function B973(object__974) {
-            var B975 = $SL.call(arguments, 1);
+        ($module)['as-property-list'] = function B977(object__978) {
+            var B979 = $SL.call(arguments, 1);
             {
-                var B976 = ($module)['%keys'](B975, { 'keywords?': false });
+                var B980 = ($module)['%keys'](B979, { 'keywords?': false });
                 {
-                    var keywordsQ__977 = B976['keywords?'];
+                    var keywordsQ__981 = B980['keywords?'];
                     {
-                        var result__978 = [];
+                        var result__982 = [];
                         {
-                            var B979 = ($module)['object-properties'](object__974);
+                            var B983 = ($module)['object-properties'](object__978);
                             {
-                                var B980 = false;
+                                var B984 = false;
                                 {
-                                    var B981 = false;
+                                    var B985 = false;
                                     {
-                                        var B982 = [B979];
+                                        var B986 = [B983];
                                         {
                                             while (true) {
-                                                var B983 = B980;
+                                                var B987 = B984;
                                                 {
-                                                    var B988 = false;
-                                                    if (($T)(B983))
-                                                        B988 = B983;
+                                                    var B992 = false;
+                                                    if (($T)(B987))
+                                                        B992 = B987;
                                                     else
-                                                        B988 = ($module)['any?'](($module)['empty?'], B982);
+                                                        B992 = ($module)['any?'](($module)['empty?'], B986);
                                                     {
-                                                        var B989 = ($module)['not'](B988);
-                                                        if (($T)(B989)) {
-                                                            var key__984 = ($module)['first'](B979);
+                                                        var B993 = ($module)['not'](B992);
+                                                        if (($T)(B993)) {
+                                                            var key__988 = ($module)['first'](B983);
                                                             {
-                                                                (function B985(key__986) {
-                                                                    var B987 = false;
-                                                                    if (($T)(keywordsQ__977))
-                                                                        B987 = ($module)['keyword'](($module)['as-string'](key__986));
+                                                                (function B989(key__990) {
+                                                                    var B991 = false;
+                                                                    if (($T)(keywordsQ__981))
+                                                                        B991 = ($module)['keyword'](($module)['as-string'](key__990));
                                                                     else
-                                                                        B987 = key__986;
+                                                                        B991 = key__990;
                                                                     {
-                                                                        ($module)['push-last'](result__978, B987);
-                                                                        return(($module)['push-last'](result__978, ($module)['get'](object__974, key__986)));
+                                                                        ($module)['push-last'](result__982, B991);
+                                                                        return(($module)['push-last'](result__982, ($module)['get'](object__978, key__990)));
                                                                     }
-                                                                }(key__984));
+                                                                }(key__988));
                                                                 {
-                                                                    B979 = ($module)['rest'](B979);
-                                                                    B982 = [B979];
+                                                                    B983 = ($module)['rest'](B983);
+                                                                    B986 = [B983];
                                                                 }
                                                             }
                                                         } else
@@ -2541,8 +2549,8 @@ $S = ($module)['%%symbol'];
                                                 }
                                             }
                                             {
-                                                B981;
-                                                return(result__978);
+                                                B985;
+                                                return(result__982);
                                             }
                                         }
                                     }
@@ -2559,56 +2567,56 @@ $S = ($module)['%%symbol'];
 }
 {
     {
-        ($module)['as-association-list'] = function B999(object__1000) {
-            var B1001 = $SL.call(arguments, 1);
+        ($module)['as-association-list'] = function B1003(object__1004) {
+            var B1005 = $SL.call(arguments, 1);
             {
-                var B1002 = ($module)['%keys'](B1001, { 'keywords?': false });
+                var B1006 = ($module)['%keys'](B1005, { 'keywords?': false });
                 {
-                    var keywordsQ__1003 = B1002['keywords?'];
+                    var keywordsQ__1007 = B1006['keywords?'];
                     {
-                        var result__1004 = [];
+                        var result__1008 = [];
                         {
-                            var B1005 = ($module)['object-properties'](object__1000);
+                            var B1009 = ($module)['object-properties'](object__1004);
                             {
-                                var B1006 = false;
+                                var B1010 = false;
                                 {
-                                    var B1007 = false;
+                                    var B1011 = false;
                                     {
-                                        var B1008 = [B1005];
+                                        var B1012 = [B1009];
                                         {
                                             while (true) {
-                                                var B1009 = B1006;
+                                                var B1013 = B1010;
                                                 {
-                                                    var B1016 = false;
-                                                    if (($T)(B1009))
-                                                        B1016 = B1009;
+                                                    var B1020 = false;
+                                                    if (($T)(B1013))
+                                                        B1020 = B1013;
                                                     else
-                                                        B1016 = ($module)['any?'](($module)['empty?'], B1008);
+                                                        B1020 = ($module)['any?'](($module)['empty?'], B1012);
                                                     {
-                                                        var B1017 = ($module)['not'](B1016);
-                                                        if (($T)(B1017)) {
-                                                            var key__1010 = ($module)['first'](B1005);
+                                                        var B1021 = ($module)['not'](B1020);
+                                                        if (($T)(B1021)) {
+                                                            var key__1014 = ($module)['first'](B1009);
                                                             {
-                                                                (function B1011(key__1012) {
-                                                                    var B1013 = false;
-                                                                    if (($T)(keywordsQ__1003))
-                                                                        B1013 = ($module)['keyword'](($module)['as-string'](key__1012));
+                                                                (function B1015(key__1016) {
+                                                                    var B1017 = false;
+                                                                    if (($T)(keywordsQ__1007))
+                                                                        B1017 = ($module)['keyword'](($module)['as-string'](key__1016));
                                                                     else
-                                                                        B1013 = key__1012;
+                                                                        B1017 = key__1016;
                                                                     {
-                                                                        var B1014 = ($module)['get'](object__1000, key__1012);
+                                                                        var B1018 = ($module)['get'](object__1004, key__1016);
                                                                         {
-                                                                            var B1015 = [
-                                                                                    B1013,
-                                                                                    B1014
+                                                                            var B1019 = [
+                                                                                    B1017,
+                                                                                    B1018
                                                                                 ];
-                                                                            return(($module)['push-last'](result__1004, B1015));
+                                                                            return(($module)['push-last'](result__1008, B1019));
                                                                         }
                                                                     }
-                                                                }(key__1010));
+                                                                }(key__1014));
                                                                 {
-                                                                    B1005 = ($module)['rest'](B1005);
-                                                                    B1008 = [B1005];
+                                                                    B1009 = ($module)['rest'](B1009);
+                                                                    B1012 = [B1009];
                                                                 }
                                                             }
                                                         } else
@@ -2617,8 +2625,8 @@ $S = ($module)['%%symbol'];
                                                 }
                                             }
                                             {
-                                                B1007;
-                                                return(result__1004);
+                                                B1011;
+                                                return(result__1008);
                                             }
                                         }
                                     }
@@ -2635,15 +2643,15 @@ $S = ($module)['%%symbol'];
 }
 {
     {
-        ($module)['starts-with?'] = function B1022(string__1023, prefix__1024) {
-            var B1025 = string__1023;
+        ($module)['starts-with?'] = function B1026(string__1027, prefix__1028) {
+            var B1029 = string__1027;
             {
-                var B1026 = prefix__1024;
+                var B1030 = prefix__1028;
                 {
-                    var B1027 = 0;
+                    var B1031 = 0;
                     {
-                        var B1028 = B1025['indexOf'](B1026, B1027);
-                        return(($module)['binary=='](B1028, 0));
+                        var B1032 = B1029['indexOf'](B1030, B1031);
+                        return(($module)['binary=='](B1032, 0));
                     }
                 }
             }
@@ -2654,17 +2662,17 @@ $S = ($module)['%%symbol'];
 }
 {
     {
-        ($module)['ends-with?'] = function B1033(string__1034, suffix__1035) {
-            var start_index__1036 = string__1034['length'] - suffix__1035['length'];
+        ($module)['ends-with?'] = function B1037(string__1038, suffix__1039) {
+            var start_index__1040 = string__1038['length'] - suffix__1039['length'];
             {
-                var B1037 = string__1034;
+                var B1041 = string__1038;
                 {
-                    var B1038 = suffix__1035;
+                    var B1042 = suffix__1039;
                     {
-                        var B1039 = start_index__1036;
+                        var B1043 = start_index__1040;
                         {
-                            var result_index__1040 = B1037['indexOf'](B1038, B1039);
-                            return(($module)['%binary=='](result_index__1040, start_index__1036));
+                            var result_index__1044 = B1041['indexOf'](B1042, B1043);
+                            return(($module)['%binary=='](result_index__1044, start_index__1040));
                         }
                     }
                 }
@@ -2676,8 +2684,8 @@ $S = ($module)['%%symbol'];
 }
 {
     {
-        ($module)['even?'] = function B1042(number__1043) {
-            return(($module)['binary=='](number__1043 % 2, 0));
+        ($module)['even?'] = function B1046(number__1047) {
+            return(($module)['binary=='](number__1047 % 2, 0));
         };
         ($module)['%export']('even?', ($module)['even?']);
     }
@@ -2685,8 +2693,8 @@ $S = ($module)['%%symbol'];
 }
 {
     {
-        ($module)['odd?'] = function B1045(number__1046) {
-            return(($module)['binary=='](number__1046 % 2, 1));
+        ($module)['odd?'] = function B1049(number__1050) {
+            return(($module)['binary=='](number__1050 % 2, 1));
         };
         ($module)['%export']('odd?', ($module)['odd?']);
     }
@@ -2694,58 +2702,58 @@ $S = ($module)['%%symbol'];
 }
 {
     {
-        ($module)['group-by'] = function B1049(predicate__1050, items__1051) {
-            return(($module)['reduce'](function B1052(result__1053, item__1054) {
-                var key__1055 = predicate__1050(item__1054);
+        ($module)['group-by'] = function B1053(predicate__1054, items__1055) {
+            return(($module)['reduce'](function B1056(result__1057, item__1058) {
+                var key__1059 = predicate__1054(item__1058);
                 {
-                    if (($T)(($module)['has?'](result__1053, key__1055)))
-                        ($module)['push-last'](($module)['get'](result__1053, key__1055), item__1054);
+                    if (($T)(($module)['has?'](result__1057, key__1059)))
+                        ($module)['push-last'](($module)['get'](result__1057, key__1059), item__1058);
                     else
-                        ($module)['get-setter'](result__1053, key__1055, [item__1054]);
-                    return(result__1053);
+                        ($module)['get-setter'](result__1057, key__1059, [item__1058]);
+                    return(result__1057);
                 }
-            }, ($module)['make-object'](), items__1051));
+            }, ($module)['make-object'](), items__1055));
         };
         ($module)['%export']('group-by', ($module)['group-by']);
     }
     ($module)['%annotate-function'](($module)['group-by'], 'group-by', false);
 }
 {
-    ($module)['wrap-object'] = function B1057(object__1058) {
-        var rest__1059 = $SL.call(arguments, 1);
+    ($module)['wrap-object'] = function B1061(object__1062) {
+        var rest__1063 = $SL.call(arguments, 1);
         {
-            var result__1060 = Object.create(object__1058);
+            var result__1064 = Object.create(object__1062);
             {
-                ($module)['extend!'](result__1060, ($module)['as-object'](rest__1059));
-                return(result__1060);
+                ($module)['extend!'](result__1064, ($module)['as-object'](rest__1063));
+                return(result__1064);
             }
         }
     };
     ($module)['%annotate-function'](($module)['wrap-object'], 'wrap-object', false);
 }
 {
-    ($module)['unwrap-object'] = function B1062(object__1063) {
-        return(object__1063['__proto__']);
+    ($module)['unwrap-object'] = function B1066(object__1067) {
+        return(object__1067['__proto__']);
     };
     ($module)['%annotate-function'](($module)['unwrap-object'], 'unwrap-object', false);
 }
 {
     {
-        ($module)['update-with'] = function B1067(fn__1068, obj__1069) {
-            var objs__1070 = $SL.call(arguments, 2);
-            return(($module)['do'](function B1071(obj2__1072) {
-                return(($module)['do'](function B1073(property__1074) {
-                    var value__1075 = ($module)['get'](obj2__1072, property__1074);
+        ($module)['update-with'] = function B1071(fn__1072, obj__1073) {
+            var objs__1074 = $SL.call(arguments, 2);
+            return(($module)['do'](function B1075(obj2__1076) {
+                return(($module)['do'](function B1077(property__1078) {
+                    var value__1079 = ($module)['get'](obj2__1076, property__1078);
                     {
-                        var B1076 = false;
-                        if (($T)(($module)['has?'](obj__1069, property__1074)))
-                            B1076 = fn__1068(($module)['get'](obj__1069, property__1074), value__1075);
+                        var B1080 = false;
+                        if (($T)(($module)['has?'](obj__1073, property__1078)))
+                            B1080 = fn__1072(($module)['get'](obj__1073, property__1078), value__1079);
                         else
-                            B1076 = value__1075;
-                        return(($module)['get-setter'](obj__1069, property__1074, B1076));
+                            B1080 = value__1079;
+                        return(($module)['get-setter'](obj__1073, property__1078, B1080));
                     }
-                }, ($module)['object-properties'](obj2__1072)));
-            }, objs__1070));
+                }, ($module)['object-properties'](obj2__1076)));
+            }, objs__1074));
         };
         ($module)['%export']('update-with', ($module)['update-with']);
     }
@@ -2753,9 +2761,9 @@ $S = ($module)['%%symbol'];
 }
 {
     {
-        ($module)['as-set'] = function B1078(values__1079) {
-            var set__1080 = [];
-            return(($module)['set-union!'](set__1080, values__1079));
+        ($module)['as-set'] = function B1082(values__1083) {
+            var set__1084 = [];
+            return(($module)['set-union!'](set__1084, values__1083));
         };
         ($module)['%export']('as-set', ($module)['as-set']);
     }
@@ -2763,9 +2771,9 @@ $S = ($module)['%%symbol'];
 }
 {
     {
-        ($module)['set-add!'] = function B1082(set__1083, object__1084) {
-            if (($T)(($module)['not'](($module)['member?'](object__1084, set__1083))))
-                return(($module)['push-last'](set__1083, object__1084));
+        ($module)['set-add!'] = function B1086(set__1087, object__1088) {
+            if (($T)(($module)['not'](($module)['member?'](object__1088, set__1087))))
+                return(($module)['push-last'](set__1087, object__1088));
             else
                 return(false);
         };
@@ -2779,9 +2787,9 @@ $S = ($module)['%%symbol'];
 }
 {
     {
-        ($module)['set-union!'] = function B1086(set1__1087, set2__1088) {
-            ($module)['do'](($module)['curry'](($module)['set-add!'], set1__1087), set2__1088);
-            return(set1__1087);
+        ($module)['set-union!'] = function B1090(set1__1091, set2__1092) {
+            ($module)['do'](($module)['curry'](($module)['set-add!'], set1__1091), set2__1092);
+            return(set1__1091);
         };
         ($module)['%export']('set-union!', ($module)['set-union!']);
     }
@@ -2789,9 +2797,9 @@ $S = ($module)['%%symbol'];
 }
 {
     {
-        ($module)['set-subtract!'] = function B1090(set1__1091, set2__1092) {
-            ($module)['do'](($module)['curry'](($module)['set-remove!'], set1__1091), set2__1092);
-            return(set1__1091);
+        ($module)['set-subtract!'] = function B1094(set1__1095, set2__1096) {
+            ($module)['do'](($module)['curry'](($module)['set-remove!'], set1__1095), set2__1096);
+            return(set1__1095);
         };
         ($module)['%export']('set-subtract!', ($module)['set-subtract!']);
     }
@@ -2799,11 +2807,11 @@ $S = ($module)['%%symbol'];
 }
 {
     {
-        ($module)['chain-object'] = function B1094(object1__1095, object2__1096) {
-            object2__1096['__proto__'] = object1__1095['__proto__'];
+        ($module)['chain-object'] = function B1098(object1__1099, object2__1100) {
+            object2__1100['__proto__'] = object1__1099['__proto__'];
             {
-                object1__1095['__proto__'] = object2__1096;
-                return(object1__1095);
+                object1__1099['__proto__'] = object2__1100;
+                return(object1__1099);
             }
         };
         ($module)['%export']('chain-object', ($module)['chain-object']);
@@ -2812,15 +2820,15 @@ $S = ($module)['%%symbol'];
 }
 {
     {
-        ($module)['unchain-object'] = function B1098(object__1099) {
-            var B1100 = false;
-            if (($T)(object__1099['__proto__']))
-                B1100 = object__1099['__proto__']['__proto__'];
+        ($module)['unchain-object'] = function B1102(object__1103) {
+            var B1104 = false;
+            if (($T)(object__1103['__proto__']))
+                B1104 = object__1103['__proto__']['__proto__'];
             else
-                B1100 = false;
+                B1104 = false;
             {
-                object__1099['__proto__'] = B1100;
-                return(object__1099);
+                object__1103['__proto__'] = B1104;
+                return(object__1103);
             }
         };
         ($module)['%export']('unchain-object', ($module)['unchain-object']);
@@ -2829,11 +2837,11 @@ $S = ($module)['%%symbol'];
 }
 {
     {
-        ($module)['as-hex-string'] = function B1104(number__1105) {
-            var B1106 = number__1105;
+        ($module)['as-hex-string'] = function B1108(number__1109) {
+            var B1110 = number__1109;
             {
-                var B1107 = 16;
-                return(B1106['toString'](B1107));
+                var B1111 = 16;
+                return(B1110['toString'](B1111));
             }
         };
         ($module)['%export']('as-hex-string', ($module)['as-hex-string']);
@@ -2842,7 +2850,7 @@ $S = ($module)['%%symbol'];
 }
 {
     {
-        ($module)['make-plain-object'] = function B1109() {
+        ($module)['make-plain-object'] = function B1113() {
             return((Object.create(null)));
         };
         ($module)['%export']('make-plain-object', ($module)['make-plain-object']);
@@ -2851,12 +2859,12 @@ $S = ($module)['%%symbol'];
 }
 {
     {
-        ($module)['-'] = function B1111(minuend__1112) {
-            var subtrahends__1113 = $SL.call(arguments, 1);
-            if (($T)(($module)['empty?'](subtrahends__1113)))
-                return(-(minuend__1112));
+        ($module)['-'] = function B1115(minuend__1116) {
+            var subtrahends__1117 = $SL.call(arguments, 1);
+            if (($T)(($module)['empty?'](subtrahends__1117)))
+                return(-(minuend__1116));
             else
-                return(($module)['reduce'](($module)['binary-'], minuend__1112, subtrahends__1113));
+                return(($module)['reduce'](($module)['binary-'], minuend__1116, subtrahends__1117));
         };
         ($module)['%export']('-', ($module)['-']);
     }
@@ -2864,12 +2872,12 @@ $S = ($module)['%%symbol'];
 }
 {
     {
-        ($module)['+'] = function B1115() {
-            var numbers__1116 = $SL.call(arguments, 0);
-            if (($T)(($module)['empty?'](numbers__1116)))
+        ($module)['+'] = function B1119() {
+            var numbers__1120 = $SL.call(arguments, 0);
+            if (($T)(($module)['empty?'](numbers__1120)))
                 return(0);
             else
-                return(($module)['reduce1'](($module)['binary+'], numbers__1116));
+                return(($module)['reduce1'](($module)['binary+'], numbers__1120));
         };
         ($module)['%export']('+', ($module)['+']);
     }
@@ -2877,12 +2885,12 @@ $S = ($module)['%%symbol'];
 }
 {
     {
-        ($module)['*'] = function B1118() {
-            var numbers__1119 = $SL.call(arguments, 0);
-            if (($T)(($module)['empty?'](numbers__1119)))
+        ($module)['*'] = function B1122() {
+            var numbers__1123 = $SL.call(arguments, 0);
+            if (($T)(($module)['empty?'](numbers__1123)))
                 return(1);
             else
-                return(($module)['reduce1'](($module)['binary*'], numbers__1119));
+                return(($module)['reduce1'](($module)['binary*'], numbers__1123));
         };
         ($module)['%export']('*', ($module)['*']);
     }
@@ -2890,12 +2898,12 @@ $S = ($module)['%%symbol'];
 }
 {
     {
-        ($module)['/'] = function B1121(numerator__1122) {
-            var denominators__1123 = $SL.call(arguments, 1);
-            if (($T)(($module)['empty?'](denominators__1123)))
-                return(($module)['%divide'](1, numerator__1122));
+        ($module)['/'] = function B1125(numerator__1126) {
+            var denominators__1127 = $SL.call(arguments, 1);
+            if (($T)(($module)['empty?'](denominators__1127)))
+                return(($module)['%divide'](1, numerator__1126));
             else
-                return(($module)['reduce'](($module)['binary/'], numerator__1122, denominators__1123));
+                return(($module)['reduce'](($module)['binary/'], numerator__1126, denominators__1127));
         };
         ($module)['%export']('/', ($module)['/']);
     }
@@ -2903,13 +2911,13 @@ $S = ($module)['%%symbol'];
 }
 {
     {
-        ($module)['disjoin'] = function B1127(predicate1__1128) {
-            var predicates__1129 = $SL.call(arguments, 1);
-            return(function B1130() {
-                var arguments__1131 = $SL.call(arguments, 0);
-                return(($module)['any?'](function B1132(predicate__1133) {
-                    return(($module)['apply'](predicate__1133, arguments__1131));
-                }, ($module)['cons'](predicate1__1128, predicates__1129)));
+        ($module)['disjoin'] = function B1131(predicate1__1132) {
+            var predicates__1133 = $SL.call(arguments, 1);
+            return(function B1134() {
+                var arguments__1135 = $SL.call(arguments, 0);
+                return(($module)['any?'](function B1136(predicate__1137) {
+                    return(($module)['apply'](predicate__1137, arguments__1135));
+                }, ($module)['cons'](predicate1__1132, predicates__1133)));
             });
         };
         ($module)['%export']('disjoin', ($module)['disjoin']);
@@ -2918,16 +2926,16 @@ $S = ($module)['%%symbol'];
 }
 {
     {
-        ($module)['conjoin'] = function B1137(predicate1__1138) {
-            var predicates__1139 = $SL.call(arguments, 1);
-            return(function B1140() {
-                var arguments__1141 = $SL.call(arguments, 0);
+        ($module)['conjoin'] = function B1141(predicate1__1142) {
+            var predicates__1143 = $SL.call(arguments, 1);
+            return(function B1144() {
+                var arguments__1145 = $SL.call(arguments, 0);
                 {
-                    var value__1142 = false;
-                    if (($T)(($module)['every?'](function B1143(predicate__1144) {
-                            return(value__1142 = ($module)['apply'](predicate__1144, arguments__1141));
-                        }, ($module)['cons'](predicate1__1138, predicates__1139))))
-                        return(value__1142);
+                    var value__1146 = false;
+                    if (($T)(($module)['every?'](function B1147(predicate__1148) {
+                            return(value__1146 = ($module)['apply'](predicate__1148, arguments__1145));
+                        }, ($module)['cons'](predicate1__1142, predicates__1143))))
+                        return(value__1146);
                     else
                         return(false);
                 }
@@ -2939,7 +2947,7 @@ $S = ($module)['%%symbol'];
 }
 {
     {
-        ($module)['ignore'] = function B1146() {
+        ($module)['ignore'] = function B1150() {
             return(false);
         };
         ($module)['%export']('ignore', ($module)['ignore']);
@@ -2963,30 +2971,30 @@ $S = ($module)['%%symbol'];
     ($module)['%export']('clear-interval', ($module)['clear-interval']);
 }
 {
-    var B1150 = $K('end');
+    var B1154 = $K('end');
     {
         {
-            ($module)['partition'] = function B1151(count__1152, elements__1153) {
-                var B1154 = $SL.call(arguments, 2);
+            ($module)['partition'] = function B1155(count__1156, elements__1157) {
+                var B1158 = $SL.call(arguments, 2);
                 {
-                    var B1155 = ($module)['%keys'](B1154, { 'step': count__1152 });
+                    var B1159 = ($module)['%keys'](B1158, { 'step': count__1156 });
                     {
-                        var step__1156 = B1155['step'];
+                        var step__1160 = B1159['step'];
                         {
-                            var result__1157 = [];
+                            var result__1161 = [];
                             {
-                                var total__1158 = ($module)['size'](elements__1153);
+                                var total__1162 = ($module)['size'](elements__1157);
                                 {
-                                    var last_index__1159 = 0;
+                                    var last_index__1163 = 0;
                                     {
-                                        while (($T)(($module)['<'](last_index__1159, total__1158))) {
-                                            var new_index__1160 = ($module)['+'](last_index__1159, count__1152);
+                                        while (($T)(($module)['<'](last_index__1163, total__1162))) {
+                                            var new_index__1164 = ($module)['+'](last_index__1163, count__1156);
                                             {
-                                                ($module)['push-last'](result__1157, ($module)['copy-sequence'](elements__1153, B492, last_index__1159, B1150, new_index__1160));
-                                                last_index__1159 = new_index__1160;
+                                                ($module)['push-last'](result__1161, ($module)['copy-sequence'](elements__1157, B496, last_index__1163, B1154, new_index__1164));
+                                                last_index__1163 = new_index__1164;
                                             }
                                         }
-                                        return(result__1157);
+                                        return(result__1161);
                                     }
                                 }
                             }
@@ -3001,18 +3009,18 @@ $S = ($module)['%%symbol'];
 }
 {
     {
-        ($module)['repeat-string'] = function B1162(string__1163, count__1164) {
-            var result__1165 = '';
+        ($module)['repeat-string'] = function B1166(string__1167, count__1168) {
+            var result__1169 = '';
             {
-                while (($T)(($module)['>'](count__1164, 0))) {
-                    if (($T)(($module)['odd?'](count__1164)))
-                        result__1165 = ($module)['%concat'](result__1165, string__1163);
+                while (($T)(($module)['>'](count__1168, 0))) {
+                    if (($T)(($module)['odd?'](count__1168)))
+                        result__1169 = ($module)['%concat'](result__1169, string__1167);
                     {
-                        count__1164 >>= 1;
-                        string__1163 = ($module)['%concat'](string__1163, string__1163);
+                        count__1168 >>= 1;
+                        string__1167 = ($module)['%concat'](string__1167, string__1167);
                     }
                 }
-                return(result__1165);
+                return(result__1169);
             }
         };
         ($module)['%export']('repeat-string', ($module)['repeat-string']);
@@ -3021,48 +3029,48 @@ $S = ($module)['%%symbol'];
 }
 {
     {
-        ($module)['substring'] = function B1177(string__1178, start__1179) {
-            var B1180 = $SL.call(arguments, 2);
+        ($module)['substring'] = function B1181(string__1182, start__1183) {
+            var B1184 = $SL.call(arguments, 2);
             {
-                var B1181 = ($module)['%keys'](B1180, {
+                var B1185 = ($module)['%keys'](B1184, {
                         'end': false,
                         'length': false
                     });
                 {
-                    var end__1182 = B1181['end'];
+                    var end__1186 = B1185['end'];
                     {
-                        var length__1183 = B1181['length'];
+                        var length__1187 = B1185['length'];
                         {
-                            var B1192 = false;
-                            if (($T)(end__1182))
-                                B1192 = length__1183;
+                            var B1196 = false;
+                            if (($T)(end__1186))
+                                B1196 = length__1187;
                             else
-                                B1192 = false;
-                            if (($T)(B1192))
-                                return(($module)['substring'](string__1178, start__1179, B1150, ($module)['min'](end__1182, ($module)['+'](start__1179, length__1183))));
-                            else if (($T)(end__1182)) {
-                                var B1184 = string__1178;
+                                B1196 = false;
+                            if (($T)(B1196))
+                                return(($module)['substring'](string__1182, start__1183, B1154, ($module)['min'](end__1186, ($module)['+'](start__1183, length__1187))));
+                            else if (($T)(end__1186)) {
+                                var B1188 = string__1182;
                                 {
-                                    var B1185 = start__1179;
+                                    var B1189 = start__1183;
                                     {
-                                        var B1186 = end__1182;
-                                        return(B1184['substring'](B1185, B1186));
+                                        var B1190 = end__1186;
+                                        return(B1188['substring'](B1189, B1190));
                                     }
                                 }
-                            } else if (($T)(length__1183)) {
-                                var B1187 = string__1178;
+                            } else if (($T)(length__1187)) {
+                                var B1191 = string__1182;
                                 {
-                                    var B1188 = start__1179;
+                                    var B1192 = start__1183;
                                     {
-                                        var B1189 = length__1183;
-                                        return(B1187['substr'](B1188, B1189));
+                                        var B1193 = length__1187;
+                                        return(B1191['substr'](B1192, B1193));
                                     }
                                 }
                             } else {
-                                var B1190 = string__1178;
+                                var B1194 = string__1182;
                                 {
-                                    var B1191 = start__1179;
-                                    return(B1190['substring'](B1191));
+                                    var B1195 = start__1183;
+                                    return(B1194['substring'](B1195));
                                 }
                             }
                         }
@@ -3076,22 +3084,13 @@ $S = ($module)['%%symbol'];
 }
 {
     {
-        ($module)['expression?'] = function B1194(form__1195) {
-            if (($T)(($module)['instance?'](form__1195, ($module)['<array>'])))
-                return(($module)['instance?'](($module)['first'](form__1195), ($module)['<symbol>']));
+        ($module)['expression?'] = function B1198(form__1199) {
+            if (($T)(($module)['instance?'](form__1199, ($module)['<array>'])))
+                return(($module)['instance?'](($module)['first'](form__1199), ($module)['<symbol>']));
             else
                 return(false);
         };
         ($module)['%export']('expression?', ($module)['expression?']);
     }
     ($module)['%annotate-function'](($module)['expression?'], 'expression?', false);
-}
-{
-    ($module)['%eval'] = function B1197() {
-        return(eval((arguments[0])));
-    };
-    {
-        ($module)['%annotate-function'](($module)['%eval'], '%eval', false);
-        ($module)['%export']('%eval', ($module)['%eval']);
-    }
 }

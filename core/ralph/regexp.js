@@ -1,62 +1,70 @@
 {
     var $module = Object.create(null);
-    ($module)['%export'] = function B1708(name__1709, value__1710) {
-        var B1711 = (exports);
-        return(B1711[name__1709] = value__1710);
-    };
+    {
+        ($module)['%export'] = function B1725(name__1726, value__1727) {
+            var B1729 = (exports);
+            return(B1729[name__1726] = value__1727);
+        };
+        {
+            ($module)['%eval'] = function B1728() {
+                return(eval((arguments[0])));
+            };
+            ($module)['%export']('%eval', ($module)['%eval']);
+        }
+    }
 }
-var B1712 = require('ralph/core');
+var B1730 = require('ralph/core');
 false;
 {
     ($module)['<regexp>'] = (RegExp);
     ($module)['%export']('<regexp>', ($module)['<regexp>']);
 }
-($module)['initialize'] = B1712['%make-method']('initialize', function B1719(regexp__1720) {
-    var B1721 = $SL.call(arguments, 1);
+($module)['initialize'] = B1730['%make-method']('initialize', function B1737(regexp__1738) {
+    var B1739 = $SL.call(arguments, 1);
     {
-        var B1722 = B1712['%keys'](B1721, {
+        var B1740 = B1730['%keys'](B1739, {
                 'pattern': false,
                 'global?': false,
                 'ignore-case?': false,
                 'multiline?': false
             });
         {
-            var pattern__1723 = B1722['pattern'];
+            var pattern__1741 = B1740['pattern'];
             {
-                var globalQ__1724 = B1722['global?'];
+                var globalQ__1742 = B1740['global?'];
                 {
-                    var ignore_caseQ__1725 = B1722['ignore-case?'];
+                    var ignore_caseQ__1743 = B1740['ignore-case?'];
                     {
-                        var multilineQ__1726 = B1722['multiline?'];
-                        if (($T)(pattern__1723)) {
-                            var B1731 = B1712['concatenate'];
+                        var multilineQ__1744 = B1740['multiline?'];
+                        if (($T)(pattern__1741)) {
+                            var B1749 = B1730['concatenate'];
                             {
-                                var B1732 = false;
-                                if (($T)(globalQ__1724))
-                                    B1732 = 'g';
+                                var B1750 = false;
+                                if (($T)(globalQ__1742))
+                                    B1750 = 'g';
                                 else
-                                    B1732 = '';
+                                    B1750 = '';
                                 {
-                                    var B1733 = false;
-                                    if (($T)(ignore_caseQ__1725))
-                                        B1733 = 'i';
+                                    var B1751 = false;
+                                    if (($T)(ignore_caseQ__1743))
+                                        B1751 = 'i';
                                     else
-                                        B1733 = '';
+                                        B1751 = '';
                                     {
-                                        var B1734 = false;
-                                        if (($T)(multilineQ__1726))
-                                            B1734 = 'm';
+                                        var B1752 = false;
+                                        if (($T)(multilineQ__1744))
+                                            B1752 = 'm';
                                         else
-                                            B1734 = '';
+                                            B1752 = '';
                                         {
-                                            var flags__1727 = B1731(B1732, B1733, B1734);
+                                            var flags__1745 = B1749(B1750, B1751, B1752);
                                             {
-                                                var B1728 = regexp__1720;
+                                                var B1746 = regexp__1738;
                                                 {
-                                                    var B1729 = pattern__1723;
+                                                    var B1747 = pattern__1741;
                                                     {
-                                                        var B1730 = flags__1727;
-                                                        return(B1728['compile'](B1729, B1730));
+                                                        var B1748 = flags__1745;
+                                                        return(B1746['compile'](B1747, B1748));
                                                     }
                                                 }
                                             }
@@ -73,40 +81,31 @@ false;
     }
 }, false, ($module)['<regexp>'], ($module)['initialize']);
 {
-    ($module)['find'] = function B1738(regexp__1739, string__1740) {
-        var B1741 = string__1740;
+    ($module)['find'] = function B1756(regexp__1757, string__1758) {
+        var B1759 = string__1758;
         {
-            var B1742 = regexp__1739;
+            var B1760 = regexp__1757;
             {
-                var position__1743 = B1741['search'](B1742);
-                if (($T)(B1712['>'](position__1743, -1)))
-                    return(position__1743);
+                var position__1761 = B1759['search'](B1760);
+                if (($T)(B1730['>'](position__1761, -1)))
+                    return(position__1761);
                 else
                     return(false);
             }
         }
     };
-    B1712['%annotate-function'](($module)['find'], 'find', false);
+    B1730['%annotate-function'](($module)['find'], 'find', false);
 }
 {
     {
-        ($module)['match'] = function B1747(regexp__1748, string__1749) {
-            var B1750 = string__1749;
+        ($module)['match'] = function B1765(regexp__1766, string__1767) {
+            var B1768 = string__1767;
             {
-                var B1751 = regexp__1748;
-                return(B1750['match'](B1751));
+                var B1769 = regexp__1766;
+                return(B1768['match'](B1769));
             }
         };
         ($module)['%export']('match', ($module)['match']);
     }
-    B1712['%annotate-function'](($module)['match'], 'match', false);
-}
-{
-    ($module)['%eval'] = function B1753() {
-        return(eval((arguments[0])));
-    };
-    {
-        B1712['%annotate-function'](($module)['%eval'], '%eval', false);
-        ($module)['%export']('%eval', ($module)['%eval']);
-    }
+    B1730['%annotate-function'](($module)['match'], 'match', false);
 }

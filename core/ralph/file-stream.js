@@ -1,46 +1,54 @@
 {
     var $module = Object.create(null);
-    ($module)['%export'] = function B1284(name__1285, value__1286) {
-        var B1287 = (exports);
-        return(B1287[name__1285] = value__1286);
-    };
-}
-var B1288 = require('ralph/core');
-{
-    var B1289 = require('ralph/stream');
     {
-        var B1384 = require('ralph/file-system');
-        var B1385 = require('fs');
+        ($module)['%export'] = function B1289(name__1290, value__1291) {
+            var B1293 = (exports);
+            return(B1293[name__1290] = value__1291);
+        };
+        {
+            ($module)['%eval'] = function B1292() {
+                return(eval((arguments[0])));
+            };
+            ($module)['%export']('%eval', ($module)['%eval']);
+        }
+    }
+}
+var B1294 = require('ralph/core');
+{
+    var B1295 = require('ralph/stream');
+    {
+        var B1390 = require('ralph/file-system');
+        var B1391 = require('fs');
     }
 }
 {
-    ($module)['<file-stream>'] = B1288['%make-class'](B1289['<stream>'], { 'file': false }, function Lfile_streamG__1386() {
-        var B1387 = (this);
-        return(B1387['file'] = (undefined));
+    ($module)['<file-stream>'] = B1294['%make-class'](B1295['<stream>'], { 'file': false }, function Lfile_streamG__1392() {
+        var B1393 = (this);
+        return(B1393['file'] = (undefined));
     });
     ($module)['%export']('<file-stream>', ($module)['<file-stream>']);
 }
-($module)['initialize'] = B1288['%make-method']('initialize', function B1390(stream__1391) {
-    var rest__1392 = $SL.call(arguments, 1);
+($module)['initialize'] = B1294['%make-method']('initialize', function B1396(stream__1397) {
+    var rest__1398 = $SL.call(arguments, 1);
     {
-        var B1393 = B1288['%keys'](rest__1392, {
+        var B1399 = B1294['%keys'](rest__1398, {
                 'path': false,
                 'file': false
             });
         {
-            var path__1394 = B1393['path'];
+            var path__1400 = B1399['path'];
             {
-                var file__1395 = B1393['file'];
+                var file__1401 = B1399['file'];
                 {
-                    B1288['apply'](B1288['%next-method'](B1390), stream__1391, rest__1392);
+                    B1294['apply'](B1294['%next-method'](B1396), stream__1397, rest__1398);
                     {
-                        var B1396 = false;
-                        if (($T)(B1288['not'](file__1395)))
-                            B1396 = path__1394;
+                        var B1402 = false;
+                        if (($T)(B1294['not'](file__1401)))
+                            B1402 = path__1400;
                         else
-                            B1396 = false;
-                        if (($T)(B1396))
-                            return(B1288['get-setter'](stream__1391, 'file', B1385['createWriteStream'](path__1394)));
+                            B1402 = false;
+                        if (($T)(B1402))
+                            return(B1294['get-setter'](stream__1397, 'file', B1391['createWriteStream'](path__1400)));
                         else
                             return(false);
                     }
@@ -49,34 +57,25 @@ var B1288 = require('ralph/core');
         }
     }
 }, false, ($module)['<file-stream>'], ($module)['initialize']);
-($module)['stream-write'] = B1288['%make-method']('stream-write', function B1400(stream__1401, string__1402) {
-    var B1403 = B1288['get'](stream__1401, 'file');
+($module)['stream-write'] = B1294['%make-method']('stream-write', function B1406(stream__1407, string__1408) {
+    var B1409 = B1294['get'](stream__1407, 'file');
     {
-        var B1404 = string__1402;
-        return(B1403['write'](B1404));
+        var B1410 = string__1408;
+        return(B1409['write'](B1410));
     }
 }, false, ($module)['<file-stream>'], ($module)['stream-write']);
-($module)['stream-close'] = B1288['%make-method']('stream-close', function B1407(stream__1408) {
-    var B1409 = B1288['get'](stream__1408, 'file');
-    return(B1409['end']());
+($module)['stream-close'] = B1294['%make-method']('stream-close', function B1413(stream__1414) {
+    var B1415 = B1294['get'](stream__1414, 'file');
+    return(B1415['end']());
 }, false, ($module)['<file-stream>'], ($module)['stream-close']);
 {
-    var B1410 = $K('file');
+    var B1416 = $K('file');
     {
-        ($module)['*standard-output*'] = B1288['make'](($module)['<file-stream>'], B1410, (process)['stdout']);
+        ($module)['*standard-output*'] = B1294['make'](($module)['<file-stream>'], B1416, (process)['stdout']);
         ($module)['%export']('*standard-output*', ($module)['*standard-output*']);
     }
 }
 {
-    ($module)['*standard-error*'] = B1288['make'](($module)['<file-stream>'], B1410, (process)['stderr']);
+    ($module)['*standard-error*'] = B1294['make'](($module)['<file-stream>'], B1416, (process)['stderr']);
     ($module)['%export']('*standard-error*', ($module)['*standard-error*']);
-}
-{
-    ($module)['%eval'] = function B1412() {
-        return(eval((arguments[0])));
-    };
-    {
-        B1288['%annotate-function'](($module)['%eval'], '%eval', false);
-        ($module)['%export']('%eval', ($module)['%eval']);
-    }
 }

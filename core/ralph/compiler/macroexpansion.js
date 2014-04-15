@@ -1,101 +1,100 @@
 {
     var $module = Object.create(null);
-    ($module)['%export'] = function B2604(name__2605, value__2606) {
-        var B2607 = (exports);
-        return(B2607[name__2605] = value__2606);
-    };
+    {
+        ($module)['%export'] = function B2621(name__2622, value__2623) {
+            var B2625 = (exports);
+            return(B2625[name__2622] = value__2623);
+        };
+        {
+            ($module)['%eval'] = function B2624() {
+                return(eval((arguments[0])));
+            };
+            ($module)['%export']('%eval', ($module)['%eval']);
+        }
+    }
 }
-var B2608 = require('ralph/core');
+var B2626 = require('ralph/core');
 {
-    var B2609 = require('ralph/compiler/environment');
-    var B2610 = require('ralph/compiler/utilities');
+    var B2627 = require('ralph/compiler/environment');
+    var B2628 = require('ralph/compiler/utilities');
 }
 {
     {
-        ($module)['macroexpand-1'] = function B2614(form__2615, env__2616) {
-            if (($T)(B2608['expression?'](form__2615))) {
-                var identifier__2617 = B2608['first'](form__2615);
-                if (($T)(B2609['special-operator?'](identifier__2617, env__2616)))
-                    return(form__2615);
+        ($module)['macroexpand-1'] = function B2632(form__2633, env__2634) {
+            if (($T)(B2626['expression?'](form__2633))) {
+                var identifier__2635 = B2626['first'](form__2633);
+                if (($T)(B2627['special-operator?'](identifier__2635, env__2634)))
+                    return(form__2633);
                 else {
-                    var identifierT__2618 = ($module)['macroexpand'](identifier__2617, env__2616);
+                    var identifierT__2636 = ($module)['macroexpand'](identifier__2635, env__2634);
                     {
-                        var B2619 = false;
-                        if (($T)(B2608['instance?'](identifierT__2618, B2608['<symbol>'])))
-                            B2619 = B2609['find-macro'](identifierT__2618, env__2616);
+                        var B2637 = false;
+                        if (($T)(B2626['instance?'](identifierT__2636, B2626['<symbol>'])))
+                            B2637 = B2627['find-macro'](identifierT__2636, env__2634);
                         else
-                            B2619 = false;
-                        if (($T)(B2619)) {
-                            var macro__2620 = B2619;
-                            return(B2608['apply'](macro__2620, env__2616, B2608['rest'](form__2615)));
+                            B2637 = false;
+                        if (($T)(B2637)) {
+                            var macro__2638 = B2637;
+                            return(B2626['apply'](macro__2638, env__2634, B2626['rest'](form__2633)));
                         } else
-                            return(form__2615);
+                            return(form__2633);
                     }
                 }
             } else {
-                var B2621 = false;
-                if (($T)(B2608['instance?'](form__2615, B2608['<symbol>'])))
-                    B2621 = B2609['find-symbol-macro'](form__2615, env__2616);
+                var B2639 = false;
+                if (($T)(B2626['instance?'](form__2633, B2626['<symbol>'])))
+                    B2639 = B2627['find-symbol-macro'](form__2633, env__2634);
                 else
-                    B2621 = false;
-                if (($T)(B2621)) {
-                    var symbol_macro__2622 = B2621;
-                    return(symbol_macro__2622(env__2616));
+                    B2639 = false;
+                if (($T)(B2639)) {
+                    var symbol_macro__2640 = B2639;
+                    return(symbol_macro__2640(env__2634));
                 } else
-                    return(form__2615);
+                    return(form__2633);
             }
         };
         ($module)['%export']('macroexpand-1', ($module)['macroexpand-1']);
     }
-    B2608['%annotate-function'](($module)['macroexpand-1'], 'macroexpand-1', false);
+    B2626['%annotate-function'](($module)['macroexpand-1'], 'macroexpand-1', false);
 }
 {
     {
-        ($module)['macroexpand'] = function B2624(form__2625, env__2626) {
-            var doneQ__2627 = false;
+        ($module)['macroexpand'] = function B2642(form__2643, env__2644) {
+            var doneQ__2645 = false;
             {
-                while (($T)(B2608['not'](doneQ__2627))) {
-                    var expanded__2628 = ($module)['macroexpand-1'](form__2625, env__2626);
+                while (($T)(B2626['not'](doneQ__2645))) {
+                    var expanded__2646 = ($module)['macroexpand-1'](form__2643, env__2644);
                     {
-                        doneQ__2627 = B2608['=='](expanded__2628, form__2625);
-                        form__2625 = expanded__2628;
+                        doneQ__2645 = B2626['=='](expanded__2646, form__2643);
+                        form__2643 = expanded__2646;
                     }
                 }
-                return(form__2625);
+                return(form__2643);
             }
         };
         ($module)['%export']('macroexpand', ($module)['macroexpand']);
     }
-    B2608['%annotate-function'](($module)['macroexpand'], 'macroexpand', false);
+    B2626['%annotate-function'](($module)['macroexpand'], 'macroexpand', false);
 }
 {
     {
-        ($module)['macroexpand-all'] = function B2631(form__2632, env__2633) {
-            var formT__2634 = ($module)['macroexpand'](form__2632, env__2633);
-            if (($T)(B2608['instance?'](formT__2634, B2608['<array>']))) {
-                var B2635 = false;
-                if (($T)(B2608['expression?'](formT__2634)))
-                    B2635 = B2609['find-special-form'](B2608['first'](formT__2634), env__2633);
+        ($module)['macroexpand-all'] = function B2649(form__2650, env__2651) {
+            var formT__2652 = ($module)['macroexpand'](form__2650, env__2651);
+            if (($T)(B2626['instance?'](formT__2652, B2626['<array>']))) {
+                var B2653 = false;
+                if (($T)(B2626['expression?'](formT__2652)))
+                    B2653 = B2627['find-special-form'](B2626['first'](formT__2652), env__2651);
                 else
-                    B2635 = false;
-                if (($T)(B2635)) {
-                    var special_form__2636 = B2635;
-                    return(B2608['apply'](special_form__2636, env__2633, B2608['rest'](formT__2634)));
+                    B2653 = false;
+                if (($T)(B2653)) {
+                    var special_form__2654 = B2653;
+                    return(B2626['apply'](special_form__2654, env__2651, B2626['rest'](formT__2652)));
                 } else
-                    return(B2608['map'](B2608['rcurry'](($module)['macroexpand-all'], env__2633), formT__2634));
+                    return(B2626['map'](B2626['rcurry'](($module)['macroexpand-all'], env__2651), formT__2652));
             } else
-                return(formT__2634);
+                return(formT__2652);
         };
         ($module)['%export']('macroexpand-all', ($module)['macroexpand-all']);
     }
-    B2608['%annotate-function'](($module)['macroexpand-all'], 'macroexpand-all', false);
-}
-{
-    ($module)['%eval'] = function B2638() {
-        return(eval((arguments[0])));
-    };
-    {
-        B2608['%annotate-function'](($module)['%eval'], '%eval', false);
-        ($module)['%export']('%eval', ($module)['%eval']);
-    }
+    B2626['%annotate-function'](($module)['macroexpand-all'], 'macroexpand-all', false);
 }

@@ -1,88 +1,96 @@
 {
     var $module = Object.create(null);
-    ($module)['%export'] = function B1206(name__1207, value__1208) {
-        var B1209 = (exports);
-        return(B1209[name__1207] = value__1208);
-    };
+    {
+        ($module)['%export'] = function B1211(name__1212, value__1213) {
+            var B1215 = (exports);
+            return(B1215[name__1212] = value__1213);
+        };
+        {
+            ($module)['%eval'] = function B1214() {
+                return(eval((arguments[0])));
+            };
+            ($module)['%export']('%eval', ($module)['%eval']);
+        }
+    }
 }
-var B1210 = require('ralph/core');
+var B1216 = require('ralph/core');
 false;
 {
-    ($module)['<stream>'] = B1210['%make-class'](B1210['<object>'], {}, function LstreamG__1211() {
+    ($module)['<stream>'] = B1216['%make-class'](B1216['<object>'], {}, function LstreamG__1217() {
         return(false);
     });
     ($module)['%export']('<stream>', ($module)['<stream>']);
 }
 {
-    ($module)['stream-close'] = B1210['%make-generic']('stream-close');
+    ($module)['stream-close'] = B1216['%make-generic']('stream-close');
     ($module)['%export']('stream-close', ($module)['stream-close']);
 }
 {
-    ($module)['stream-open?'] = B1210['%make-generic']('stream-open?');
+    ($module)['stream-open?'] = B1216['%make-generic']('stream-open?');
     ($module)['%export']('stream-open?', ($module)['stream-open?']);
 }
 {
-    ($module)['stream-at-end?'] = B1210['%make-generic']('stream-at-end?');
+    ($module)['stream-at-end?'] = B1216['%make-generic']('stream-at-end?');
     ($module)['%export']('stream-at-end?', ($module)['stream-at-end?']);
 }
 {
-    ($module)['stream-peek'] = B1210['%make-generic']('stream-peek');
+    ($module)['stream-peek'] = B1216['%make-generic']('stream-peek');
     ($module)['%export']('stream-peek', ($module)['stream-peek']);
 }
 {
-    ($module)['stream-read'] = B1210['%make-generic']('stream-read');
+    ($module)['stream-read'] = B1216['%make-generic']('stream-read');
     ($module)['%export']('stream-read', ($module)['stream-read']);
 }
 {
-    ($module)['stream-read-element'] = B1210['%make-generic']('stream-read-element');
+    ($module)['stream-read-element'] = B1216['%make-generic']('stream-read-element');
     ($module)['%export']('stream-read-element', ($module)['stream-read-element']);
 }
 {
-    ($module)['stream-read-to-end'] = B1210['%make-generic']('stream-read-to-end');
+    ($module)['stream-read-to-end'] = B1216['%make-generic']('stream-read-to-end');
     ($module)['%export']('stream-read-to-end', ($module)['stream-read-to-end']);
 }
 {
-    ($module)['stream-read-through'] = B1210['%make-generic']('stream-read-through');
+    ($module)['stream-read-through'] = B1216['%make-generic']('stream-read-through');
     ($module)['%export']('stream-read-through', ($module)['stream-read-through']);
 }
 {
-    ($module)['stream-unread-element'] = B1210['%make-generic']('stream-unread-element');
+    ($module)['stream-unread-element'] = B1216['%make-generic']('stream-unread-element');
     ($module)['%export']('stream-unread-element', ($module)['stream-unread-element']);
 }
 {
-    ($module)['stream-write'] = B1210['%make-generic']('stream-write');
+    ($module)['stream-write'] = B1216['%make-generic']('stream-write');
     ($module)['%export']('stream-write', ($module)['stream-write']);
 }
 {
-    ($module)['stream-contents'] = B1210['%make-generic']('stream-contents');
+    ($module)['stream-contents'] = B1216['%make-generic']('stream-contents');
     ($module)['%export']('stream-contents', ($module)['stream-contents']);
 }
 {
-    ($module)['stream-remaining-contents'] = B1210['%make-generic']('stream-remaining-contents');
+    ($module)['stream-remaining-contents'] = B1216['%make-generic']('stream-remaining-contents');
     ($module)['%export']('stream-remaining-contents', ($module)['stream-remaining-contents']);
 }
 {
-    ($module)['<string-stream>'] = B1210['%make-class'](($module)['<stream>'], {
-        'string': function B1215() {
+    ($module)['<string-stream>'] = B1216['%make-class'](($module)['<stream>'], {
+        'string': function B1221() {
             return('');
         },
-        'index': function B1216() {
+        'index': function B1222() {
             return(0);
         },
-        'length': function B1217() {
+        'length': function B1223() {
             return(0);
         }
-    }, function Lstring_streamG__1218() {
-        var B1219 = (this);
+    }, function Lstring_streamG__1224() {
+        var B1225 = (this);
         {
-            B1219['string'] = (undefined);
+            B1225['string'] = (undefined);
             {
-                var B1220 = (this);
+                var B1226 = (this);
                 {
-                    B1220['index'] = (undefined);
+                    B1226['index'] = (undefined);
                     {
-                        var B1221 = (this);
-                        return(B1221['length'] = (undefined));
+                        var B1227 = (this);
+                        return(B1227['length'] = (undefined));
                     }
                 }
             }
@@ -90,32 +98,32 @@ false;
     });
     ($module)['%export']('<string-stream>', ($module)['<string-stream>']);
 }
-($module)['initialize'] = B1210['%make-method']('initialize', function B1223(stream__1224) {
-    var rest__1225 = $SL.call(arguments, 1);
+($module)['initialize'] = B1216['%make-method']('initialize', function B1229(stream__1230) {
+    var rest__1231 = $SL.call(arguments, 1);
     {
-        B1210['apply'](B1210['%next-method'](B1223), stream__1224, rest__1225);
-        return(B1210['get-setter'](stream__1224, 'length', B1210['size'](B1210['get'](stream__1224, 'string'))));
+        B1216['apply'](B1216['%next-method'](B1229), stream__1230, rest__1231);
+        return(B1216['get-setter'](stream__1230, 'length', B1216['size'](B1216['get'](stream__1230, 'string'))));
     }
 }, false, ($module)['<string-stream>'], ($module)['initialize']);
 {
-    ($module)['stream-at-end?'] = B1210['%make-method']('stream-at-end?', function B1227(stream__1228) {
-        return(B1210['=='](B1210['get'](stream__1228, 'index'), B1210['get'](stream__1228, 'length')));
+    ($module)['stream-at-end?'] = B1216['%make-method']('stream-at-end?', function B1233(stream__1234) {
+        return(B1216['=='](B1216['get'](stream__1234, 'index'), B1216['get'](stream__1234, 'length')));
     }, false, ($module)['<string-stream>'], ($module)['stream-at-end?']);
     ($module)['%export']('stream-at-end?', ($module)['stream-at-end?']);
 }
 {
-    ($module)['stream-peek'] = B1210['%make-method']('stream-peek', function B1230(stream__1231) {
-        return(B1210['element'](B1210['get'](stream__1231, 'string'), B1210['get'](stream__1231, 'index')));
+    ($module)['stream-peek'] = B1216['%make-method']('stream-peek', function B1236(stream__1237) {
+        return(B1216['element'](B1216['get'](stream__1237, 'string'), B1216['get'](stream__1237, 'index')));
     }, false, ($module)['<string-stream>'], ($module)['stream-peek']);
     ($module)['%export']('stream-peek', ($module)['stream-peek']);
 }
 {
-    ($module)['stream-read-element'] = B1210['%make-method']('stream-read-element', function B1233(stream__1234) {
-        if (($T)(B1210['not'](($module)['stream-at-end?'](stream__1234)))) {
-            var element__1235 = ($module)['stream-peek'](stream__1234);
+    ($module)['stream-read-element'] = B1216['%make-method']('stream-read-element', function B1239(stream__1240) {
+        if (($T)(B1216['not'](($module)['stream-at-end?'](stream__1240)))) {
+            var element__1241 = ($module)['stream-peek'](stream__1240);
             {
-                B1210['get-setter'](stream__1234, 'index', B1210['+'](B1210['get'](stream__1234, 'index'), 1));
-                return(element__1235);
+                B1216['get-setter'](stream__1240, 'index', B1216['+'](B1216['get'](stream__1240, 'index'), 1));
+                return(element__1241);
             }
         } else
             return(false);
@@ -123,58 +131,58 @@ false;
     ($module)['%export']('stream-read-element', ($module)['stream-read-element']);
 }
 {
-    ($module)['stream-read'] = B1210['%make-method']('stream-read', function B1239(stream__1240, n__1241) {
-        var result__1242 = '';
+    ($module)['stream-read'] = B1216['%make-method']('stream-read', function B1245(stream__1246, n__1247) {
+        var result__1248 = '';
         {
-            var i__1243 = 0;
+            var i__1249 = 0;
             {
                 while (true) {
-                    var B1247 = B1210['not'];
+                    var B1253 = B1216['not'];
                     {
-                        var B1244 = ($module)['stream-at-end?'](stream__1240);
+                        var B1250 = ($module)['stream-at-end?'](stream__1246);
                         {
-                            var B1248 = false;
-                            if (($T)(B1244))
-                                B1248 = B1244;
+                            var B1254 = false;
+                            if (($T)(B1250))
+                                B1254 = B1250;
                             else
-                                B1248 = B1210['>='](i__1243, n__1241);
+                                B1254 = B1216['>='](i__1249, n__1247);
                             {
-                                var B1249 = B1247(B1248);
-                                if (($T)(B1249)) {
-                                    (function B1245(i__1246) {
-                                        return(result__1242 = B1210['concatenate'](result__1242, ($module)['stream-read-element'](stream__1240)));
-                                    }(i__1243));
-                                    i__1243 = B1210['inc'](i__1243);
+                                var B1255 = B1253(B1254);
+                                if (($T)(B1255)) {
+                                    (function B1251(i__1252) {
+                                        return(result__1248 = B1216['concatenate'](result__1248, ($module)['stream-read-element'](stream__1246)));
+                                    }(i__1249));
+                                    i__1249 = B1216['inc'](i__1249);
                                 } else
                                     break;
                             }
                         }
                     }
                 }
-                return(result__1242);
+                return(result__1248);
             }
         }
     }, false, ($module)['<string-stream>'], ($module)['stream-read']);
     ($module)['%export']('stream-read', ($module)['stream-read']);
 }
 {
-    ($module)['stream-read-through'] = B1210['%make-method']('stream-read-through', function B1252(stream__1253, element__1254) {
-        var foundQ__1255 = false;
+    ($module)['stream-read-through'] = B1216['%make-method']('stream-read-through', function B1258(stream__1259, element__1260) {
+        var foundQ__1261 = false;
         {
             while (true) {
-                var B1257 = B1210['not'];
+                var B1263 = B1216['not'];
                 {
-                    var B1256 = ($module)['stream-at-end?'](stream__1253);
+                    var B1262 = ($module)['stream-at-end?'](stream__1259);
                     {
-                        var B1258 = false;
-                        if (($T)(B1256))
-                            B1258 = B1256;
+                        var B1264 = false;
+                        if (($T)(B1262))
+                            B1264 = B1262;
                         else
-                            B1258 = foundQ__1255;
+                            B1264 = foundQ__1261;
                         {
-                            var B1259 = B1257(B1258);
-                            if (($T)(B1259))
-                                foundQ__1255 = B1210['=='](($module)['stream-read-element'](stream__1253), element__1254);
+                            var B1265 = B1263(B1264);
+                            if (($T)(B1265))
+                                foundQ__1261 = B1216['=='](($module)['stream-read-element'](stream__1259), element__1260);
                             else
                                 break;
                         }
@@ -187,31 +195,31 @@ false;
     ($module)['%export']('stream-read-through', ($module)['stream-read-through']);
 }
 {
-    ($module)['stream-unread-element'] = B1210['%make-method']('stream-unread-element', function B1261(stream__1262) {
-        return(B1210['get-setter'](stream__1262, 'index', B1210['max'](0, B1210['dec'](B1210['get'](stream__1262, 'index')))));
+    ($module)['stream-unread-element'] = B1216['%make-method']('stream-unread-element', function B1267(stream__1268) {
+        return(B1216['get-setter'](stream__1268, 'index', B1216['max'](0, B1216['dec'](B1216['get'](stream__1268, 'index')))));
     }, false, ($module)['<string-stream>'], ($module)['stream-unread-element']);
     ($module)['%export']('stream-unread-element', ($module)['stream-unread-element']);
 }
 {
-    var B1265 = $K('start');
+    var B1271 = $K('start');
     {
-        var B1266 = $K('end');
+        var B1272 = $K('end');
         {
-            ($module)['stream-write'] = B1210['%make-method']('stream-write', function B1267(stream__1268, string__1269) {
-                var B1270 = stream__1268;
+            ($module)['stream-write'] = B1216['%make-method']('stream-write', function B1273(stream__1274, string__1275) {
+                var B1276 = stream__1274;
                 {
-                    var index__1271 = B1270['index'];
+                    var index__1277 = B1276['index'];
                     {
-                        var length__1272 = B1210['size'](string__1269);
+                        var length__1278 = B1216['size'](string__1275);
                         {
-                            var end__1273 = B1210['+'](index__1271, length__1272);
+                            var end__1279 = B1216['+'](index__1277, length__1278);
                             {
-                                B1210['get-setter'](stream__1268, 'string', B1210['replace-subsequence'](B1210['get'](stream__1268, 'string'), string__1269, B1265, index__1271, B1266, end__1273));
+                                B1216['get-setter'](stream__1274, 'string', B1216['replace-subsequence'](B1216['get'](stream__1274, 'string'), string__1275, B1271, index__1277, B1272, end__1279));
                                 {
-                                    B1210['get-setter'](stream__1268, 'index', end__1273);
+                                    B1216['get-setter'](stream__1274, 'index', end__1279);
                                     {
-                                        B1210['get-setter'](stream__1268, 'length', B1210['max'](end__1273, B1210['get'](stream__1268, 'length')));
-                                        return(string__1269);
+                                        B1216['get-setter'](stream__1274, 'length', B1216['max'](end__1279, B1216['get'](stream__1274, 'length')));
+                                        return(string__1275);
                                     }
                                 }
                             }
@@ -224,23 +232,14 @@ false;
     }
 }
 {
-    ($module)['stream-contents'] = B1210['%make-method']('stream-contents', function B1275(stream__1276) {
-        return(B1210['get'](stream__1276, 'string'));
+    ($module)['stream-contents'] = B1216['%make-method']('stream-contents', function B1281(stream__1282) {
+        return(B1216['get'](stream__1282, 'string'));
     }, false, ($module)['<string-stream>'], ($module)['stream-contents']);
     ($module)['%export']('stream-contents', ($module)['stream-contents']);
 }
 {
-    ($module)['stream-remaining-contents'] = B1210['%make-method']('stream-remaining-contents', function B1278(stream__1279) {
-        return(B1210['slice'](B1210['get'](stream__1279, 'string'), B1210['get'](stream__1279, 'index')));
+    ($module)['stream-remaining-contents'] = B1216['%make-method']('stream-remaining-contents', function B1284(stream__1285) {
+        return(B1216['slice'](B1216['get'](stream__1285, 'string'), B1216['get'](stream__1285, 'index')));
     }, false, ($module)['<string-stream>'], ($module)['stream-remaining-contents']);
     ($module)['%export']('stream-remaining-contents', ($module)['stream-remaining-contents']);
-}
-{
-    ($module)['%eval'] = function B1281() {
-        return(eval((arguments[0])));
-    };
-    {
-        B1210['%annotate-function'](($module)['%eval'], '%eval', false);
-        ($module)['%export']('%eval', ($module)['%eval']);
-    }
 }
