@@ -12,6 +12,44 @@ var stream = require('ralph/stream');
 var format = require('ralph/format');
 var fileStream = require('ralph/file-stream');
 
+var environments = {};
+
+var currentEnvironment;
+
+function makeEnvironment(name) {
+	var env = compile['make-module-environment'](name);
+	// TODO: actually use module description, maybe compile,
+	//       so it is available at runtime
+	if (name !== 'ralph/core') {
+		var coreExports = [];
+		for (var exp in core) {
+			if (exp !== '%eval') {
+				coreExports.push(exp);
+			}
+		}
+		env.module.imports.unshift([$S('ralph/core'), coreExports]);
+	}
+	return env;
+}
+
+function inModule(name) {
+	var environment = environments[name];
+	if (!environment) {
+		environment = makeEnvironment(name);
+		try {
+			// exisiting module
+			var exports = require(name);
+			environment.eval = exports['%eval'];
+		} catch (e) {
+			// new module
+			var prologue = compile['compile-to-string'](module['*module-prologue*'],
+				environment);
+			environment.eval = evalInContext("(function () { " + prologue
+				+ "; return ($module)['%eval']; })()");
+		}
+	}
+	currentEnvironment = environment;
+}
 
 var builtinLibs = ['assert', 'buffer', 'child_process', 'cluster',
   'crypto', 'dgram', 'dns', 'domain', 'events', 'fs', 'http', 'https', 'net',
@@ -19,12 +57,12 @@ var builtinLibs = ['assert', 'buffer', 'child_process', 'cluster',
   'string_decoder', 'tls', 'tty', 'url', 'util', 'vm', 'zlib', 'smalloc',
   'tracing'];
 
-function createContext(outputStream) {
-  	var context = vm.createContext();
+function createContext() {
+  	var context = vm.createContext({'$inModule': inModule});
 	for (var i in global) {
 		context[i] = global[i];
 	}
-	context.console = new Console(outputStream);
+	context.console = new Console(output);
 	context.global = context;
 	context.global.global = context;
 
@@ -53,65 +91,56 @@ function createContext(outputStream) {
 	return context;
 }
 
-function evalInContext(context, code) {
-  var script = vm.createScript(code, {
-    displayErrors: false
-  });
-  return script.runInContext(context, {
-  	displayErrors: false
-  });
+function evalInContext(code) {
+	return vm.runInContext(code, context, {
+  		displayErrors: false
+	});
 }
 
-function makeEnvironment(name) {
-	var env = compile['make-module-environment'](name);
-	var coreExports = [];
-	for (var exp in core) {
-		if (exp !== '%eval') {
-			coreExports.push(exp);
-		}
-	}
-	env.module.imports.unshift([$S('ralph/core'), coreExports]);
-	return env;
+function setModulePrompt() {
+	rl.setPrompt(currentEnvironment.module.name + '> ');
 }
 
 var output = process.stdout;
 
-// prepare module
-var context = createContext(output);
-var env = makeEnvironment('user');
-var prologue = compile['compile-to-string'](module['*module-prologue*'], env)
-evalInContext(context, prologue);
+var context = createContext();
+evalInContext("require('ralph/core');"
+	+ "$moduleRoot['%in-module'] = $inModule");
 
+inModule('user');
 
-var rl = readline.createInterface({
-	input: process.stdin,
-	output: output
-});
 var currentLine = '';
 var incomplete = new Object();
 var outputStream = core['make'](fileStream['<file-stream>'],
 	   			 				$K('file'), output);
 
-rl.setPrompt('user> ');
+var rl = readline.createInterface({
+	input: process.stdin,
+	output: output
+});
+setModulePrompt();
 rl.prompt();
 rl.on('line', function (line) {
 	currentLine += " " + line;
 	var s = core['make'](stream['<string-stream>'],
 			 			 $K('string'), currentLine);
-	var exp = reader['read'](s, env, $K('if-incomplete'), incomplete);
+	var exp = reader['read'](s, currentEnvironment,
+							 $K('eof-error?'), false,
+							 $K('eof-value'), incomplete,
+							 $K('if-incomplete'), incomplete);
 	if (exp == incomplete) {
 		rl.setPrompt('... ');
 	} else {
-		// format['format'](outputStream, "READ: %=\n", result);
-		var code = compile['compile-to-string'](exp, env);
-		// format['format'](outputStream, "COMPILED: %=\n", code);
 		try {
-			var result = evalInContext(context, code);
+			// format['format'](outputStream, "READ: %=\n", result);
+			var code = compile['compile-to-string'](exp, currentEnvironment);
+			// format['format'](outputStream, "COMPILED: %=\n", code);
+			var result = currentEnvironment.eval(code);
 			format['format'](outputStream, "%=\n", result);
 		} catch (e) {
-			console.log('' + e);
+			console.log('' + e.stack);
 		}
-		rl.setPrompt('user> ');
+		setModulePrompt();
 		currentLine = '';
 	}
  	rl.prompt();
