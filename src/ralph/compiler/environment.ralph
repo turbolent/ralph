@@ -23,6 +23,7 @@
 
 (define-class <environment> (<object>)
   module
+  (persistent? #t)
   (macros (make-plain-object))
   (symbol-macros (make-plain-object))
   (special-forms (make-plain-object))

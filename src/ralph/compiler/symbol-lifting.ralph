@@ -3,7 +3,10 @@
   export: (lift-symbols))
 
 (define-function lift-symbols (exp env)
-  (lift-symbol exp env identity))
+  (bind ((result (lift-symbol exp env identity)))
+    (unless (get env "persistent?")
+      (remove-property! env "lifted"))
+    result))
 
 (define-function lift-symbol (exp env k)
   (if (and (instance? exp <array>)

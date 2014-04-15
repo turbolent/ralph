@@ -42,6 +42,11 @@
   name
   function)
 
+(define-function cleanup (result env)
+  (unless (get env "persistent?")
+    (remove-property! env "import-identifiers"))
+  result)
+
 (define *passes*
   (map (method (name/function)
          (destructuring-bind (name function)
@@ -54,7 +59,8 @@
         ["alpha conversion" alpha-convert-form]
         ["ANF transformation" normalize-term]
         ["statement transfomation" transform-statements!]
-        ["code generation" compile-js]]))
+        ["code generation" compile-js]
+        ["cleanup" cleanup]]))
 
 (define-function compile-to-string (form env)
   (reduce (method (result pass)
