@@ -28,8 +28,10 @@
            replace-subsequence replace-subsequence!
            remove remove!
            interpose any? map do copy-sequence slice
-           make object-properties object-values initialize
-           <hash-symbol> get (setter get) inc dec split split-with
+           object-properties object-values
+           make initialize
+           get (setter get) remove-property!
+           <hash-symbol> inc dec split split-with
            as-hex-string description min max abs
            round floor ceil sin cos atan2 expt sqrt
            mod $pi as-radiant even? odd?
@@ -783,6 +785,19 @@
         (apply %this-method
                object2
                (rest properties/value)))))
+
+
+(define-function remove-property! (object #rest properties)
+  (bind ((result #t))
+    (for-each ((property (but-last properties)))
+              ((not (has? object property))
+               (set! result #f))
+      (set! result (%get-property object property))
+      (set! object result))
+    (when (instance? object <object>)
+      (bind ((value (%get-property object (last properties))))
+        (%native-call "delete" (%get-property object (last properties)))
+        value))))
 
 
 (define-function split (string separator)

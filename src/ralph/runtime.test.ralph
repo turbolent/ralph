@@ -917,6 +917,29 @@
             (substring "123456789" 2 length: 8 end: 4))
 
 
+;; remove-property!
+(bind ((object (%object)))
+  (check-false "remove-property!: removing non-existing property returns false (one, non-existing property)"
+               (remove-property! object "x")))
+
+(bind ((object (%object "x" 1)))
+  (check-equal "remove-property!: removing returns value (one, existing property)"
+               1 (remove-property! object "x"))
+  (check-false "remove-property!: property doesn't exist after removing (one, existing property)"
+               (has? object "x")))
+
+(bind ((object (%object "x" (%object "y" 2))))
+  (check-false "remove-property!: removing non-existing property returns false (two, non-existing properties)"
+               (remove-property! object "z" "y"))
+  (check-equal "remove-property!: properties still exist after trying to remove non-existing properties"
+               2 (get object "x" "y"))
+  (check-equal "remove-property!: removing returns value (two, existing properties)"
+               2 (remove-property! object "x" "y"))
+  (check-true "remove-property!: property doesn't exist after removing (two, existing properties)"
+              (and (has? object "x")
+                   (not (has? (get object "x") "y")))))
+
+
 
 ;; NOTE: add tests ABOVE!
 
