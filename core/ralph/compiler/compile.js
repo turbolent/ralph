@@ -2,40 +2,40 @@ require('ralph/core');
 {
     var $module = Object.create($moduleRoot);
     {
-        ($module)['%export'] = function B3587(name__3588, value__3589) {
-            var B3591 = (exports);
-            return(B3591[name__3588] = value__3589);
+        ($module)['%export'] = function B3613(name__3614, value__3615) {
+            var B3617 = (exports);
+            return(B3617[name__3614] = value__3615);
         };
         {
-            ($module)['%eval'] = function B3590() {
+            ($module)['%eval'] = function B3616() {
                 return(eval((arguments[0])));
             };
             ($module)['%export']('%eval', ($module)['%eval']);
         }
     }
 }
-var B3592 = require('ralph/core');
+var B3618 = require('ralph/core');
 {
-    var B3593 = require('ralph/format');
+    var B3619 = require('ralph/format');
     {
-        var B3594 = require('ralph/compiler/module');
+        var B3620 = require('ralph/compiler/module');
         {
-            var B3595 = require('ralph/compiler/environment');
+            var B3621 = require('ralph/compiler/environment');
             {
-                var B3596 = require('ralph/compiler/macros');
+                var B3622 = require('ralph/compiler/macros');
                 {
-                    var B3597 = require('ralph/compiler/special-forms');
+                    var B3623 = require('ralph/compiler/special-forms');
                     {
-                        var B3598 = require('ralph/compiler/macroexpansion');
+                        var B3624 = require('ralph/compiler/macroexpansion');
                         {
-                            var B3599 = require('ralph/compiler/symbol-lifting');
+                            var B3625 = require('ralph/compiler/symbol-lifting');
                             {
-                                var B3600 = require('ralph/compiler/alpha');
+                                var B3626 = require('ralph/compiler/alpha');
                                 {
-                                    var B3601 = require('ralph/compiler/anf');
+                                    var B3627 = require('ralph/compiler/anf');
                                     {
-                                        var B3602 = require('ralph/compiler/statements');
-                                        var B3603 = require('ralph/compiler/javascript');
+                                        var B3628 = require('ralph/compiler/statements');
+                                        var B3629 = require('ralph/compiler/javascript');
                                     }
                                 }
                             }
@@ -46,37 +46,37 @@ var B3592 = require('ralph/core');
         }
     }
 }
-B3592['do'](function B3605(name__3606) {
-    if (($T)(B3592['not'](B3592['has?'](B3596['$internal-macros'], name__3606))))
-        return(B3592['signal'](B3593['format-to-string']('No internal macro for special form: %s', name__3606)));
+B3618['do'](function B3631(name__3632) {
+    if (($T)(B3618['not'](B3618['has?'](B3622['$internal-macros'], name__3632))))
+        return(B3618['signal'](B3619['format-to-string']('No internal macro for special form: %s', name__3632)));
     else
         return(false);
-}, B3592['object-properties'](B3597['$core-special-forms']));
+}, B3618['object-properties'](B3623['$core-special-forms']));
 {
-    var B3608 = $K('module');
+    var B3634 = $K('module');
     {
-        var B3609 = $K('name');
+        var B3635 = $K('name');
         {
-            var B3610 = $K('special-forms');
+            var B3636 = $K('special-forms');
             {
-                var B3611 = $K('macros');
+                var B3637 = $K('macros');
                 {
-                    var B3612 = $K('symbol-macros');
+                    var B3638 = $K('symbol-macros');
                     {
                         {
-                            ($module)['make-module-environment'] = function B3613(module_name__3614) {
-                                var all_symbol_macros__3615 = B3592['make-plain-object']();
+                            ($module)['make-module-environment'] = function B3639(module_name__3640) {
+                                var all_symbol_macros__3641 = B3618['make-plain-object']();
                                 {
-                                    var all_macros__3616 = B3592['make-plain-object']();
+                                    var all_macros__3642 = B3618['make-plain-object']();
                                     {
-                                        B3592['extend!'](all_symbol_macros__3615, B3596['$internal-symbol-macros']);
+                                        B3618['extend!'](all_symbol_macros__3641, B3622['$internal-symbol-macros']);
                                         {
-                                            B3592['extend!'](all_symbol_macros__3615, B3596['$core-symbol-macros']);
+                                            B3618['extend!'](all_symbol_macros__3641, B3622['$core-symbol-macros']);
                                             {
-                                                B3592['extend!'](all_macros__3616, B3596['$internal-macros']);
+                                                B3618['extend!'](all_macros__3642, B3622['$internal-macros']);
                                                 {
-                                                    B3592['extend!'](all_macros__3616, B3596['$core-macros']);
-                                                    return(B3592['make'](B3595['<environment>'], B3608, B3592['make'](B3594['<module>'], B3609, module_name__3614), B3610, B3597['$internal-special-forms'], B3611, all_macros__3616, B3612, all_symbol_macros__3615));
+                                                    B3618['extend!'](all_macros__3642, B3622['$core-macros']);
+                                                    return(B3618['make'](B3621['<environment>'], B3634, B3618['make'](B3620['<module>'], B3635, module_name__3640), B3636, B3623['$internal-special-forms'], B3637, all_macros__3642, B3638, all_symbol_macros__3641));
                                                 }
                                             }
                                         }
@@ -85,73 +85,85 @@ B3592['do'](function B3605(name__3606) {
                             };
                             ($module)['%export']('make-module-environment', ($module)['make-module-environment']);
                         }
-                        B3592['%annotate-function'](($module)['make-module-environment'], 'make-module-environment', false);
+                        B3618['%annotate-function'](($module)['make-module-environment'], 'make-module-environment', false);
                     }
                 }
             }
         }
     }
 }
-($module)['<compilation-pass>'] = B3592['%make-class'](B3592['<object>'], {
+($module)['<compilation-pass>'] = B3618['%make-class'](B3618['<object>'], {
     'name': false,
     'function': false
-}, function Lcompilation_passG__3617() {
-    var B3618 = (this);
+}, function Lcompilation_passG__3643() {
+    var B3644 = (this);
     {
-        B3618['name'] = (undefined);
+        B3644['name'] = (undefined);
         {
-            var B3619 = (this);
-            return(B3619['function'] = (undefined));
+            var B3645 = (this);
+            return(B3645['function'] = (undefined));
         }
     }
 });
 {
-    var B3621 = $K('function');
-    ($module)['*passes*'] = B3592['map'](function B3622(nameSfunction__3623) {
-        var name__3624 = nameSfunction__3623[0];
+    ($module)['cleanup'] = function B3647(result__3648, env__3649) {
+        if (($T)(B3618['not'](B3618['get'](env__3649, 'persistent?'))))
+            B3618['remove-property!'](env__3649, 'import-identifiers');
+        return(result__3648);
+    };
+    B3618['%annotate-function'](($module)['cleanup'], 'cleanup', false);
+}
+{
+    var B3651 = $K('function');
+    ($module)['*passes*'] = B3618['map'](function B3652(nameSfunction__3653) {
+        var name__3654 = nameSfunction__3653[0];
         {
-            var function__3625 = nameSfunction__3623[1];
-            return(B3592['make'](($module)['<compilation-pass>'], B3609, name__3624, B3621, function__3625));
+            var function__3655 = nameSfunction__3653[1];
+            return(B3618['make'](($module)['<compilation-pass>'], B3635, name__3654, B3651, function__3655));
         }
     }, [
         [
             'macroexpansion',
-            B3598['macroexpand-all']
+            B3624['macroexpand-all']
         ],
         [
             'symbol lifting',
-            B3599['lift-symbols']
+            B3625['lift-symbols']
         ],
         [
             'alpha conversion',
-            B3600['alpha-convert-form']
+            B3626['alpha-convert-form']
         ],
         [
             'ANF transformation',
-            B3601['normalize-term']
+            B3627['normalize-term']
         ],
         [
             'statement transfomation',
-            B3602['transform-statements!']
+            B3628['transform-statements!']
         ],
         [
             'code generation',
-            B3603['compile-js']
+            B3629['compile-js']
+        ],
+        [
+            'cleanup',
+            ($module)['cleanup']
         ]
     ]);
 }
 {
     {
-        ($module)['compile-to-string'] = function B3629(form__3630, env__3631) {
-            return(B3592['reduce'](function B3632(result__3633, pass__3634) {
-                var B3635 = pass__3634;
+        ($module)['compile-to-string'] = function B3659(form__3660, env__3661) {
+            return(B3618['reduce'](function B3662(result__3663, pass__3664) {
+                var B3665 = pass__3664;
                 {
-                    var function__3636 = B3635['function'];
-                    return(function__3636(result__3633, env__3631));
+                    var function__3666 = B3665['function'];
+                    return(function__3666(result__3663, env__3661));
                 }
-            }, form__3630, ($module)['*passes*']));
+            }, form__3660, ($module)['*passes*']));
         };
         ($module)['%export']('compile-to-string', ($module)['compile-to-string']);
     }
-    B3592['%annotate-function'](($module)['compile-to-string'], 'compile-to-string', false);
+    B3618['%annotate-function'](($module)['compile-to-string'], 'compile-to-string', false);
 }

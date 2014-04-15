@@ -2,100 +2,100 @@ require('ralph/core');
 {
     var $module = Object.create($moduleRoot);
     {
-        ($module)['%export'] = function B1203(name__1204, value__1205) {
-            var B1207 = (exports);
-            return(B1207[name__1204] = value__1205);
+        ($module)['%export'] = function B1225(name__1226, value__1227) {
+            var B1229 = (exports);
+            return(B1229[name__1226] = value__1227);
         };
         {
-            ($module)['%eval'] = function B1206() {
+            ($module)['%eval'] = function B1228() {
                 return(eval((arguments[0])));
             };
             ($module)['%export']('%eval', ($module)['%eval']);
         }
     }
 }
-var B1208 = require('ralph/core');
+var B1230 = require('ralph/core');
 {
-    var B1286 = require('ralph/stream');
-    var B1417 = require('ralph/file-stream');
+    var B1308 = require('ralph/stream');
+    var B1439 = require('ralph/file-stream');
 }
 {
-    ($module)['format-integer'] = function B1419(number__1420) {
-        return(B1208['as-string'](number__1420));
+    ($module)['format-integer'] = function B1441(number__1442) {
+        return(B1230['as-string'](number__1442));
     };
-    B1208['%annotate-function'](($module)['format-integer'], 'format-integer', false);
+    B1230['%annotate-function'](($module)['format-integer'], 'format-integer', false);
 }
 {
-    var B1426 = $K('message');
+    var B1448 = $K('message');
     {
         {
-            ($module)['format'] = function B1427(stream__1428, control_string__1429) {
-                var args__1430 = $SL.call(arguments, 2);
+            ($module)['format'] = function B1449(stream__1450, control_string__1451) {
+                var args__1452 = $SL.call(arguments, 2);
                 {
-                    var dispatch__1431 = false;
+                    var dispatch__1453 = false;
                     {
-                        dispatch__1431 = function B1432(char__1433, arg__1434) {
-                            var B1435 = B1208['as-lowercase'](char__1433);
+                        dispatch__1453 = function B1454(char__1455, arg__1456) {
+                            var B1457 = B1230['as-lowercase'](char__1455);
                             {
-                                var B1436 = B1208['=='](B1435, 's');
+                                var B1458 = B1230['=='](B1457, 's');
                                 {
-                                    var B1443 = false;
-                                    if (($T)(B1436))
-                                        B1443 = B1436;
+                                    var B1465 = false;
+                                    if (($T)(B1458))
+                                        B1465 = B1458;
                                     else
-                                        B1443 = B1208['=='](B1435, 'c');
-                                    if (($T)(B1443))
-                                        return(B1208['as-string'](arg__1434));
-                                    else if (($T)(B1208['=='](B1435, '='))) {
-                                        var B1437 = B1208['description'](arg__1434);
-                                        if (($T)(B1437))
-                                            return(B1437);
+                                        B1465 = B1230['=='](B1457, 'c');
+                                    if (($T)(B1465))
+                                        return(B1230['as-string'](arg__1456));
+                                    else if (($T)(B1230['=='](B1457, '='))) {
+                                        var B1459 = B1230['description'](arg__1456);
+                                        if (($T)(B1459))
+                                            return(B1459);
                                         else
                                             return('');
-                                    } else if (($T)(B1208['=='](B1435, 'b')))
-                                        return(($module)['format-integer'](arg__1434, 2));
-                                    else if (($T)(B1208['=='](B1435, 'o')))
-                                        return(($module)['format-integer'](arg__1434, 8));
-                                    else if (($T)(B1208['=='](B1435, 'd')))
-                                        return(($module)['format-integer'](arg__1434, 10));
-                                    else if (($T)(B1208['=='](B1435, 'x')))
-                                        return(($module)['format-integer'](arg__1434, 16));
-                                    else if (($T)(B1208['=='](B1435, 'm'))) {
-                                        arg__1434(stream__1428);
+                                    } else if (($T)(B1230['=='](B1457, 'b')))
+                                        return(($module)['format-integer'](arg__1456, 2));
+                                    else if (($T)(B1230['=='](B1457, 'o')))
+                                        return(($module)['format-integer'](arg__1456, 8));
+                                    else if (($T)(B1230['=='](B1457, 'd')))
+                                        return(($module)['format-integer'](arg__1456, 10));
+                                    else if (($T)(B1230['=='](B1457, 'x')))
+                                        return(($module)['format-integer'](arg__1456, 16));
+                                    else if (($T)(B1230['=='](B1457, 'm'))) {
+                                        arg__1456(stream__1450);
                                         return('');
                                     } else
-                                        return(B1208['signal'](B1208['make'](B1208['<error>'], B1426, B1208['concatenate']('Unknown format dispatch character ', char__1433))));
+                                        return(B1230['signal'](B1230['make'](B1230['<error>'], B1448, B1230['concatenate']('Unknown format dispatch character ', char__1455))));
                                 }
                             }
                         };
                         {
-                            var index__1438 = 0;
+                            var index__1460 = 0;
                             {
-                                while (($T)(B1208['not'](B1208['empty?'](control_string__1429)))) {
-                                    var next_dispatch__1439 = B1208['position'](control_string__1429, '%');
-                                    if (($T)(B1208['>'](next_dispatch__1439, 0))) {
-                                        B1286['stream-write'](stream__1428, B1208['slice'](control_string__1429, 0, next_dispatch__1439));
-                                        control_string__1429 = B1208['slice'](control_string__1429, next_dispatch__1439);
-                                    } else if (($T)(next_dispatch__1439)) {
-                                        var arg__1440 = B1208['element'](args__1430, index__1438);
+                                while (($T)(B1230['not'](B1230['empty?'](control_string__1451)))) {
+                                    var next_dispatch__1461 = B1230['position'](control_string__1451, '%');
+                                    if (($T)(B1230['>'](next_dispatch__1461, 0))) {
+                                        B1308['stream-write'](stream__1450, B1230['slice'](control_string__1451, 0, next_dispatch__1461));
+                                        control_string__1451 = B1230['slice'](control_string__1451, next_dispatch__1461);
+                                    } else if (($T)(next_dispatch__1461)) {
+                                        var arg__1462 = B1230['element'](args__1452, index__1460);
                                         {
-                                            var char__1441 = B1208['second'](control_string__1429);
+                                            var char__1463 = B1230['second'](control_string__1451);
                                             {
-                                                var percent__1442 = B1208['=='](char__1441, '%');
+                                                var percent__1464 = B1230['=='](char__1463, '%');
                                                 {
-                                                    var B1444 = B1286['stream-write'];
+                                                    var B1466 = B1308['stream-write'];
                                                     {
-                                                        var B1445 = false;
-                                                        if (($T)(percent__1442))
-                                                            B1445 = '%';
+                                                        var B1467 = false;
+                                                        if (($T)(percent__1464))
+                                                            B1467 = '%';
                                                         else
-                                                            B1445 = dispatch__1431(char__1441, arg__1440);
+                                                            B1467 = dispatch__1453(char__1463, arg__1462);
                                                         {
-                                                            B1444(stream__1428, B1445);
+                                                            B1466(stream__1450, B1467);
                                                             {
-                                                                control_string__1429 = B1208['slice'](control_string__1429, 2);
-                                                                if (($T)(B1208['not'](percent__1442)))
-                                                                    index__1438 = B1208['+'](index__1438, 1);
+                                                                control_string__1451 = B1230['slice'](control_string__1451, 2);
+                                                                if (($T)(B1230['not'](percent__1464)))
+                                                                    index__1460 = B1230['+'](index__1460, 1);
                                                             }
                                                         }
                                                     }
@@ -103,8 +103,8 @@ var B1208 = require('ralph/core');
                                             }
                                         }
                                     } else {
-                                        B1286['stream-write'](stream__1428, control_string__1429);
-                                        control_string__1429 = '';
+                                        B1308['stream-write'](stream__1450, control_string__1451);
+                                        control_string__1451 = '';
                                     }
                                 }
                                 return(false);
@@ -115,32 +115,32 @@ var B1208 = require('ralph/core');
             };
             ($module)['%export']('format', ($module)['format']);
         }
-        B1208['%annotate-function'](($module)['format'], 'format', false);
+        B1230['%annotate-function'](($module)['format'], 'format', false);
     }
 }
 {
     {
-        ($module)['format-out'] = function B1447(control_string__1448) {
-            var args__1449 = $SL.call(arguments, 1);
-            return(B1208['apply'](($module)['format'], B1417['*standard-output*'], control_string__1448, args__1449));
+        ($module)['format-out'] = function B1469(control_string__1470) {
+            var args__1471 = $SL.call(arguments, 1);
+            return(B1230['apply'](($module)['format'], B1439['*standard-output*'], control_string__1470, args__1471));
         };
         ($module)['%export']('format-out', ($module)['format-out']);
     }
-    B1208['%annotate-function'](($module)['format-out'], 'format-out', false);
+    B1230['%annotate-function'](($module)['format-out'], 'format-out', false);
 }
 {
     {
-        ($module)['format-to-string'] = function B1451(control_string__1452) {
-            var args__1453 = $SL.call(arguments, 1);
+        ($module)['format-to-string'] = function B1473(control_string__1474) {
+            var args__1475 = $SL.call(arguments, 1);
             {
-                var stream__1454 = B1208['make'](B1286['<string-stream>']);
+                var stream__1476 = B1230['make'](B1308['<string-stream>']);
                 {
-                    B1208['apply'](($module)['format'], stream__1454, control_string__1452, args__1453);
-                    return(B1286['stream-contents'](stream__1454));
+                    B1230['apply'](($module)['format'], stream__1476, control_string__1474, args__1475);
+                    return(B1308['stream-contents'](stream__1476));
                 }
             }
         };
         ($module)['%export']('format-to-string', ($module)['format-to-string']);
     }
-    B1208['%annotate-function'](($module)['format-to-string'], 'format-to-string', false);
+    B1230['%annotate-function'](($module)['format-to-string'], 'format-to-string', false);
 }

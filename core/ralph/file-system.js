@@ -2,105 +2,105 @@ require('ralph/core');
 {
     var $module = Object.create($moduleRoot);
     {
-        ($module)['%export'] = function B1298(name__1299, value__1300) {
-            var B1302 = (exports);
-            return(B1302[name__1299] = value__1300);
+        ($module)['%export'] = function B1320(name__1321, value__1322) {
+            var B1324 = (exports);
+            return(B1324[name__1321] = value__1322);
         };
         {
-            ($module)['%eval'] = function B1301() {
+            ($module)['%eval'] = function B1323() {
                 return(eval((arguments[0])));
             };
             ($module)['%export']('%eval', ($module)['%eval']);
         }
     }
 }
-var B1303 = require('ralph/core');
+var B1325 = require('ralph/core');
 {
-    var B1304 = require('path');
-    var B1305 = require('fs');
+    var B1326 = require('path');
+    var B1327 = require('fs');
 }
 {
-    ($module)['resolve-path'] = B1304['resolve'];
+    ($module)['resolve-path'] = B1326['resolve'];
     ($module)['%export']('resolve-path', ($module)['resolve-path']);
 }
 {
-    ($module)['file-exists?'] = B1305['existsSync'];
+    ($module)['file-exists?'] = B1327['existsSync'];
     ($module)['%export']('file-exists?', ($module)['file-exists?']);
 }
 {
     {
-        ($module)['path-directory'] = function B1307(path__1308) {
-            var B1309 = B1303['concatenate'];
+        ($module)['path-directory'] = function B1329(path__1330) {
+            var B1331 = B1325['concatenate'];
             {
-                var B1310 = B1304['dirname'];
+                var B1332 = B1326['dirname'];
                 {
-                    var B1311 = false;
-                    if (($T)(B1303['=='](B1303['last'](path__1308), '/')))
-                        B1311 = B1303['concatenate'](path__1308, '/');
+                    var B1333 = false;
+                    if (($T)(B1325['=='](B1325['last'](path__1330), '/')))
+                        B1333 = B1325['concatenate'](path__1330, '/');
                     else
-                        B1311 = path__1308;
+                        B1333 = path__1330;
                     {
-                        var B1312 = B1310(B1311);
-                        return(B1309(B1312, '/'));
+                        var B1334 = B1332(B1333);
+                        return(B1331(B1334, '/'));
                     }
                 }
             }
         };
         ($module)['%export']('path-directory', ($module)['path-directory']);
     }
-    B1303['%annotate-function'](($module)['path-directory'], 'path-directory', false);
+    B1325['%annotate-function'](($module)['path-directory'], 'path-directory', false);
 }
 {
-    ($module)['strip-trailing-slashes'] = function B1314(path__1315) {
-        while (($T)(B1303['=='](B1303['last'](path__1315), '/')))
-            path__1315 = B1303['but-last'](path__1315);
-        return(path__1315);
+    ($module)['strip-trailing-slashes'] = function B1336(path__1337) {
+        while (($T)(B1325['=='](B1325['last'](path__1337), '/')))
+            path__1337 = B1325['but-last'](path__1337);
+        return(path__1337);
     };
-    B1303['%annotate-function'](($module)['strip-trailing-slashes'], 'strip-trailing-slashes', false);
+    B1325['%annotate-function'](($module)['strip-trailing-slashes'], 'strip-trailing-slashes', false);
 }
 {
     {
-        ($module)['path-parent-directory'] = function B1317(path__1318) {
-            var B1319 = B1303['concatenate'];
+        ($module)['path-parent-directory'] = function B1339(path__1340) {
+            var B1341 = B1325['concatenate'];
             {
-                var B1320 = B1304['dirname'];
+                var B1342 = B1326['dirname'];
                 {
-                    var B1321 = false;
-                    if (($T)(B1303['=='](B1303['last'](path__1318, '/'))))
-                        B1321 = path__1318;
+                    var B1343 = false;
+                    if (($T)(B1325['=='](B1325['last'](path__1340, '/'))))
+                        B1343 = path__1340;
                     else
-                        B1321 = B1304['dirname'](path__1318);
+                        B1343 = B1326['dirname'](path__1340);
                     {
-                        var B1322 = B1320(B1321);
-                        return(B1319(B1322, '/'));
+                        var B1344 = B1342(B1343);
+                        return(B1341(B1344, '/'));
                     }
                 }
             }
         };
         ($module)['%export']('path-parent-directory', ($module)['path-parent-directory']);
     }
-    B1303['%annotate-function'](($module)['path-parent-directory'], 'path-parent-directory', false);
+    B1325['%annotate-function'](($module)['path-parent-directory'], 'path-parent-directory', false);
 }
 {
     {
-        ($module)['ensure-directories-exist'] = function B1324(path__1325) {
-            var directory__1326 = ($module)['path-directory'](path__1325);
+        ($module)['ensure-directories-exist'] = function B1346(path__1347) {
+            var directory__1348 = ($module)['path-directory'](path__1347);
             {
-                var parent__1327 = ($module)['path-parent-directory'](directory__1326);
+                var parent__1349 = ($module)['path-parent-directory'](directory__1348);
                 {
-                    if (($T)(B1303['not'](($module)['file-exists?'](parent__1327))))
-                        ($module)['ensure-directories-exist'](parent__1327);
+                    if (($T)(B1325['not'](($module)['file-exists?'](parent__1349))))
+                        ($module)['ensure-directories-exist'](parent__1349);
                     {
-                        if (($T)(B1303['not'](($module)['file-exists?'](directory__1326))))
-                            B1305['mkdirSync'](directory__1326);
-                        return(path__1325);
+                        if (($T)(B1325['not'](($module)['file-exists?'](directory__1348))))
+                            B1327['mkdirSync'](directory__1348);
+                        return(path__1347);
                     }
                 }
             }
         };
         ($module)['%export']('ensure-directories-exist', ($module)['ensure-directories-exist']);
     }
-    B1303['%annotate-function'](($module)['ensure-directories-exist'], 'ensure-directories-exist', false);
+    B1325['%annotate-function'](($module)['ensure-directories-exist'], 'ensure-directories-exist', false);
 }
 ($module)['*file-properties-mapping*'] = [
     [
@@ -118,45 +118,45 @@ var B1303 = require('ralph/core');
 ];
 {
     {
-        ($module)['file-properties'] = function B1335(path__1336) {
-            if (($T)(($module)['file-exists?'](path__1336))) {
-                var stats__1337 = B1305['statSync'](path__1336);
+        ($module)['file-properties'] = function B1357(path__1358) {
+            if (($T)(($module)['file-exists?'](path__1358))) {
+                var stats__1359 = B1327['statSync'](path__1358);
                 {
-                    var result__1338 = B1303['make-object']();
+                    var result__1360 = B1325['make-object']();
                     {
-                        var B1339 = ($module)['*file-properties-mapping*'];
+                        var B1361 = ($module)['*file-properties-mapping*'];
                         {
-                            var B1340 = false;
+                            var B1362 = false;
                             {
-                                var B1341 = false;
+                                var B1363 = false;
                                 {
-                                    var B1342 = [B1339];
+                                    var B1364 = [B1361];
                                     {
                                         while (true) {
-                                            var B1349 = B1303['not'];
+                                            var B1371 = B1325['not'];
                                             {
-                                                var B1343 = B1340;
+                                                var B1365 = B1362;
                                                 {
-                                                    var B1350 = false;
-                                                    if (($T)(B1343))
-                                                        B1350 = B1343;
+                                                    var B1372 = false;
+                                                    if (($T)(B1365))
+                                                        B1372 = B1365;
                                                     else
-                                                        B1350 = B1303['any?'](B1303['empty?'], B1342);
+                                                        B1372 = B1325['any?'](B1325['empty?'], B1364);
                                                     {
-                                                        var B1351 = B1349(B1350);
-                                                        if (($T)(B1351)) {
-                                                            var mapping__1344 = B1303['first'](B1339);
+                                                        var B1373 = B1371(B1372);
+                                                        if (($T)(B1373)) {
+                                                            var mapping__1366 = B1325['first'](B1361);
                                                             {
-                                                                (function B1345(mapping__1346) {
-                                                                    var setter__1347 = mapping__1346[0];
+                                                                (function B1367(mapping__1368) {
+                                                                    var setter__1369 = mapping__1368[0];
                                                                     {
-                                                                        var getter__1348 = mapping__1346[1];
-                                                                        return(B1303['get-setter'](result__1338, setter__1347, B1303['get'](stats__1337, getter__1348)));
+                                                                        var getter__1370 = mapping__1368[1];
+                                                                        return(B1325['get-setter'](result__1360, setter__1369, B1325['get'](stats__1359, getter__1370)));
                                                                     }
-                                                                }(mapping__1344));
+                                                                }(mapping__1366));
                                                                 {
-                                                                    B1339 = B1303['rest'](B1339);
-                                                                    B1342 = [B1339];
+                                                                    B1361 = B1325['rest'](B1361);
+                                                                    B1364 = [B1361];
                                                                 }
                                                             }
                                                         } else
@@ -166,8 +166,8 @@ var B1303 = require('ralph/core');
                                             }
                                         }
                                         {
-                                            B1341;
-                                            return(result__1338);
+                                            B1363;
+                                            return(result__1360);
                                         }
                                     }
                                 }
@@ -180,54 +180,54 @@ var B1303 = require('ralph/core');
         };
         ($module)['%export']('file-properties', ($module)['file-properties']);
     }
-    B1303['%annotate-function'](($module)['file-properties'], 'file-properties', false);
+    B1325['%annotate-function'](($module)['file-properties'], 'file-properties', false);
 }
 {
     {
-        ($module)['file-type'] = function B1360(path__1361) {
-            if (($T)(($module)['file-exists?'](path__1361))) {
-                var stat__1362 = B1305['lstatSync'](path__1361);
+        ($module)['file-type'] = function B1382(path__1383) {
+            if (($T)(($module)['file-exists?'](path__1383))) {
+                var stat__1384 = B1327['lstatSync'](path__1383);
                 {
-                    var B1363 = stat__1362;
+                    var B1385 = stat__1384;
                     {
-                        var B1370 = B1363['isFile']();
-                        if (($T)(B1370))
+                        var B1392 = B1385['isFile']();
+                        if (($T)(B1392))
                             return('file');
                         else {
-                            var B1364 = stat__1362;
+                            var B1386 = stat__1384;
                             {
-                                var B1371 = B1364['isDirectory']();
-                                if (($T)(B1371))
+                                var B1393 = B1386['isDirectory']();
+                                if (($T)(B1393))
                                     return('directory');
                                 else {
-                                    var B1365 = stat__1362;
+                                    var B1387 = stat__1384;
                                     {
-                                        var B1372 = B1365['isSymbolicLink']();
-                                        if (($T)(B1372))
+                                        var B1394 = B1387['isSymbolicLink']();
+                                        if (($T)(B1394))
                                             return('link');
                                         else {
-                                            var B1366 = stat__1362;
+                                            var B1388 = stat__1384;
                                             {
-                                                var B1373 = B1366['isBlockDevice']();
-                                                if (($T)(B1373))
+                                                var B1395 = B1388['isBlockDevice']();
+                                                if (($T)(B1395))
                                                     return('block-device');
                                                 else {
-                                                    var B1367 = stat__1362;
+                                                    var B1389 = stat__1384;
                                                     {
-                                                        var B1374 = B1367['isCharacterDevice']();
-                                                        if (($T)(B1374))
+                                                        var B1396 = B1389['isCharacterDevice']();
+                                                        if (($T)(B1396))
                                                             return('character-device');
                                                         else {
-                                                            var B1368 = stat__1362;
+                                                            var B1390 = stat__1384;
                                                             {
-                                                                var B1375 = B1368['isFIFO']();
-                                                                if (($T)(B1375))
+                                                                var B1397 = B1390['isFIFO']();
+                                                                if (($T)(B1397))
                                                                     return('fifo');
                                                                 else {
-                                                                    var B1369 = stat__1362;
+                                                                    var B1391 = stat__1384;
                                                                     {
-                                                                        var B1376 = B1369['isSocket']();
-                                                                        if (($T)(B1376))
+                                                                        var B1398 = B1391['isSocket']();
+                                                                        if (($T)(B1398))
                                                                             return('socket');
                                                                         else
                                                                             return(false);
@@ -250,37 +250,37 @@ var B1303 = require('ralph/core');
         };
         ($module)['%export']('file-type', ($module)['file-type']);
     }
-    B1303['%annotate-function'](($module)['file-type'], 'file-type', false);
+    B1325['%annotate-function'](($module)['file-type'], 'file-type', false);
 }
 {
     {
-        ($module)['read-file'] = function B1378(path__1379) {
-            if (($T)(($module)['file-exists?'](path__1379)))
-                return(B1303['as-string'](B1305['readFileSync'](path__1379)));
+        ($module)['read-file'] = function B1400(path__1401) {
+            if (($T)(($module)['file-exists?'](path__1401)))
+                return(B1325['as-string'](B1327['readFileSync'](path__1401)));
             else
                 return(false);
         };
         ($module)['%export']('read-file', ($module)['read-file']);
     }
-    B1303['%annotate-function'](($module)['read-file'], 'read-file', false);
+    B1325['%annotate-function'](($module)['read-file'], 'read-file', false);
 }
 {
     {
-        ($module)['write-file'] = function B1383(path__1384, content__1385) {
-            var B1386 = $SL.call(arguments, 2);
+        ($module)['write-file'] = function B1405(path__1406, content__1407) {
+            var B1408 = $SL.call(arguments, 2);
             {
-                var B1387 = B1303['%keys'](B1386, { 'append?': false });
+                var B1409 = B1325['%keys'](B1408, { 'append?': false });
                 {
-                    var appendQ__1388 = B1387['append?'];
+                    var appendQ__1410 = B1409['append?'];
                     {
-                        ($module)['ensure-directories-exist'](path__1384);
+                        ($module)['ensure-directories-exist'](path__1406);
                         {
-                            var B1389 = false;
-                            if (($T)(appendQ__1388))
-                                B1389 = B1305['appendFileSync'];
+                            var B1411 = false;
+                            if (($T)(appendQ__1410))
+                                B1411 = B1327['appendFileSync'];
                             else
-                                B1389 = B1305['writeFileSync'];
-                            return(B1389(path__1384, content__1385));
+                                B1411 = B1327['writeFileSync'];
+                            return(B1411(path__1406, content__1407));
                         }
                     }
                 }
@@ -288,5 +288,5 @@ var B1303 = require('ralph/core');
         };
         ($module)['%export']('write-file', ($module)['write-file']);
     }
-    B1303['%annotate-function'](($module)['write-file'], 'write-file', false);
+    B1325['%annotate-function'](($module)['write-file'], 'write-file', false);
 }
