@@ -31,7 +31,7 @@
 
 (define *module-prologue*
   `(begin
-     (%native "var $module = Object.create(null)")
+     (%native "var $module = Object.create($moduleRoot)")
      (%define ,'%export (method (,'name ,'value)
                           (set! (%get-property (%native "exports") ,'name)
                                 ,'value)))

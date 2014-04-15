@@ -147,14 +147,21 @@
                          string: source)))
       (set! (get *modules* module-name)
             module)
-      (compile-form *module-prologue* output-stream env)
       ;; special case core?
-      (unless (== module-name "ralph/core")
-        ;; implicitly import and load core
-        (import-module module "ralph/core")
-        (compile-form (make-import-definition "ralph/core" env)
-                      output-stream
-                      env))
+      (if (== module-name "ralph/core")
+          (begin
+            (compile-form '(%native "$moduleRoot = Object.create(null)")
+                          output-stream env)
+            (compile-form *module-prologue* output-stream env))
+          (begin
+            (compile-form '(%native "require('ralph/core')")
+                          output-stream env)
+            (compile-form *module-prologue* output-stream env)
+            ;; implicitly import and load core
+            (import-module module "ralph/core")
+            (compile-form (make-import-definition "ralph/core" env)
+                          output-stream
+                          env)))
       ;; write executable
       (compile-stream input-stream output-stream env)
       (stream-close output-stream)
