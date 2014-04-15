@@ -1,5 +1,6 @@
+require('ralph/core');
 {
-    var $module = Object.create(null);
+    var $module = Object.create($moduleRoot);
     {
         ($module)['%export'] = function B3(name__4, value__5) {
             var B7 = (exports);
@@ -239,66 +240,81 @@ var B1200 = require('ralph/core');
         {
             var B3712 = $S('output');
             {
-                var B3713 = $K('exports');
+                var B3713 = $S('%native');
                 {
-                    var B3714 = $K('inline');
+                    var B3714 = $K('exports');
                     {
-                        var B3715 = $K('dependencies');
+                        var B3715 = $K('inline');
                         {
+                            var B3716 = $K('dependencies');
                             {
-                                ($module)['compile-module'] = function B3716(module_name__3717) {
-                                    if (($T)(B1200['not'](B1200['has?'](($module)['*modules*'], module_name__3717)))) {
-                                        var B3718 = ($module)['read-module']('src', module_name__3717);
-                                        if (($T)(B3718)) {
-                                            var module__3719 = B3718;
-                                            B1200['get-setter'](($module)['*modules*'], module_name__3717, module__3719);
+                                {
+                                    ($module)['compile-module'] = function B3717(module_name__3718) {
+                                        if (($T)(B1200['not'](B1200['has?'](($module)['*modules*'], module_name__3718)))) {
+                                            var B3719 = ($module)['read-module']('src', module_name__3718);
+                                            if (($T)(B3719)) {
+                                                var module__3720 = B3719;
+                                                B1200['get-setter'](($module)['*modules*'], module_name__3718, module__3720);
+                                            }
                                         }
-                                    }
-                                    if (($T)(($module)['recompile?'](module_name__3717))) {
-                                        B1455['format-out']('Compiling: %s\n', module_name__3717);
-                                        {
-                                            if (($T)(B1200['not'](B1458['file-exists?'](($module)['source-path'](module_name__3717)))))
-                                                B1200['signal'](B1455['format-to-string']('Unable to compile non-existing module \'%s\'', module_name__3717));
+                                        if (($T)(($module)['recompile?'](module_name__3718))) {
+                                            B1455['format-out']('Compiling: %s\n', module_name__3718);
                                             {
-                                                var env__3720 = B3637['make-module-environment'](module_name__3717);
+                                                if (($T)(B1200['not'](B1458['file-exists?'](($module)['source-path'](module_name__3718)))))
+                                                    B1200['signal'](B1455['format-to-string']('Unable to compile non-existing module \'%s\'', module_name__3718));
                                                 {
-                                                    var module__3721 = B1200['get'](env__3720, 'module');
+                                                    var env__3721 = B3637['make-module-environment'](module_name__3718);
                                                     {
-                                                        var target_path__3722 = ($module)['executable-path'](module_name__3717);
+                                                        var module__3722 = B1200['get'](env__3721, 'module');
                                                         {
-                                                            B1458['ensure-directories-exist'](target_path__3722);
+                                                            var target_path__3723 = ($module)['executable-path'](module_name__3718);
                                                             {
-                                                                var output_stream__3723 = B1200['make'](B1457['<file-stream>'], B3710, target_path__3722, B3711, B3712);
+                                                                B1458['ensure-directories-exist'](target_path__3723);
                                                                 {
-                                                                    var source__3724 = B1458['read-file'](($module)['source-path'](module_name__3717));
+                                                                    var output_stream__3724 = B1200['make'](B1457['<file-stream>'], B3710, target_path__3723, B3711, B3712);
                                                                     {
-                                                                        var input_stream__3725 = B1200['make'](B1456['<string-stream>'], B3673, source__3724);
+                                                                        var source__3725 = B1458['read-file'](($module)['source-path'](module_name__3718));
                                                                         {
-                                                                            B1200['get-setter'](($module)['*modules*'], module_name__3717, module__3721);
+                                                                            var input_stream__3726 = B1200['make'](B1456['<string-stream>'], B3673, source__3725);
                                                                             {
-                                                                                ($module)['compile-form'](B1609['*module-prologue*'], output_stream__3723, env__3720);
+                                                                                B1200['get-setter'](($module)['*modules*'], module_name__3718, module__3722);
                                                                                 {
-                                                                                    if (($T)(B1200['not'](B1200['=='](module_name__3717, 'ralph/core')))) {
-                                                                                        ($module)['import-module'](module__3721, 'ralph/core');
-                                                                                        ($module)['compile-form'](B1712['make-import-definition']('ralph/core', env__3720), output_stream__3723, env__3720);
+                                                                                    if (($T)(B1200['=='](module_name__3718, 'ralph/core'))) {
+                                                                                        ($module)['compile-form']([
+                                                                                            B3713,
+                                                                                            '$moduleRoot = Object.create(null)'
+                                                                                        ], output_stream__3724, env__3721);
+                                                                                        ($module)['compile-form'](B1609['*module-prologue*'], output_stream__3724, env__3721);
+                                                                                    } else {
+                                                                                        ($module)['compile-form']([
+                                                                                            B3713,
+                                                                                            'require(\'ralph/core\')'
+                                                                                        ], output_stream__3724, env__3721);
+                                                                                        {
+                                                                                            ($module)['compile-form'](B1609['*module-prologue*'], output_stream__3724, env__3721);
+                                                                                            {
+                                                                                                ($module)['import-module'](module__3722, 'ralph/core');
+                                                                                                ($module)['compile-form'](B1712['make-import-definition']('ralph/core', env__3721), output_stream__3724, env__3721);
+                                                                                            }
+                                                                                        }
                                                                                     }
                                                                                     {
-                                                                                        ($module)['compile-stream'](input_stream__3725, output_stream__3723, env__3720);
+                                                                                        ($module)['compile-stream'](input_stream__3726, output_stream__3724, env__3721);
                                                                                         {
-                                                                                            B1456['stream-close'](output_stream__3723);
+                                                                                            B1456['stream-close'](output_stream__3724);
                                                                                             {
-                                                                                                B1458['write-file'](($module)['module-path']('build', module_name__3717), B1200['description']([
-                                                                                                    module_name__3717,
-                                                                                                    B3713,
-                                                                                                    B1200['get'](module__3721, 'exports'),
+                                                                                                B1458['write-file'](($module)['module-path']('build', module_name__3718), B1200['description']([
+                                                                                                    module_name__3718,
                                                                                                     B3714,
-                                                                                                    B1200['object-properties'](B1200['get'](module__3721, 'inline')),
+                                                                                                    B1200['get'](module__3722, 'exports'),
                                                                                                     B3715,
-                                                                                                    B1200['get'](module__3721, 'dependencies')
+                                                                                                    B1200['object-properties'](B1200['get'](module__3722, 'inline')),
+                                                                                                    B3716,
+                                                                                                    B1200['get'](module__3722, 'dependencies')
                                                                                                 ]));
                                                                                                 {
-                                                                                                    B1455['format-out']('Finished: %s\n', module_name__3717);
-                                                                                                    return(module__3721);
+                                                                                                    B1455['format-out']('Finished: %s\n', module_name__3718);
+                                                                                                    return(module__3722);
                                                                                                 }
                                                                                             }
                                                                                         }
@@ -313,13 +329,13 @@ var B1200 = require('ralph/core');
                                                     }
                                                 }
                                             }
-                                        }
-                                    } else
-                                        return(false);
-                                };
-                                ($module)['%export']('compile-module', ($module)['compile-module']);
+                                        } else
+                                            return(false);
+                                    };
+                                    ($module)['%export']('compile-module', ($module)['compile-module']);
+                                }
+                                B1200['%annotate-function'](($module)['compile-module'], 'compile-module', false);
                             }
-                            B1200['%annotate-function'](($module)['compile-module'], 'compile-module', false);
                         }
                     }
                 }
@@ -328,25 +344,25 @@ var B1200 = require('ralph/core');
     }
 }
 {
-    ($module)['destructure-import'] = function B3727(import__3728) {
-        var B3729 = B1200['symbol-name'];
+    ($module)['destructure-import'] = function B3728(import__3729) {
+        var B3730 = B1200['symbol-name'];
         {
-            var B3730 = false;
-            if (($T)(B1200['instance?'](import__3728, B1200['<array>'])))
-                B3730 = B1200['first'](import__3728);
+            var B3731 = false;
+            if (($T)(B1200['instance?'](import__3729, B1200['<array>'])))
+                B3731 = B1200['first'](import__3729);
             else
-                B3730 = import__3728;
+                B3731 = import__3729;
             {
-                var B3731 = B3729(B3730);
+                var B3732 = B3730(B3731);
                 {
-                    var B3732 = false;
-                    if (($T)(B1200['instance?'](import__3728, B1200['<array>'])))
-                        B3732 = B1200['rest'](import__3728);
+                    var B3733 = false;
+                    if (($T)(B1200['instance?'](import__3729, B1200['<array>'])))
+                        B3733 = B1200['rest'](import__3729);
                     else
-                        B3732 = [];
+                        B3733 = [];
                     return([
-                        B3731,
-                        B3732
+                        B3732,
+                        B3733
                     ]);
                 }
             }
@@ -355,67 +371,67 @@ var B1200 = require('ralph/core');
     B1200['%annotate-function'](($module)['destructure-import'], 'destructure-import', false);
 }
 {
-    var B3734 = $S('define-module', 'ralph/core');
-    B1200['get-setter'](B2810['$core-special-forms'], 'define-module', function B3735(____3736) {
-        var arguments__3737 = $SL.call(arguments, 1);
-        return(B1200['%concat']([B3734], arguments__3737));
+    var B3735 = $S('define-module', 'ralph/core');
+    B1200['get-setter'](B2810['$core-special-forms'], 'define-module', function B3736(____3737) {
+        var arguments__3738 = $SL.call(arguments, 1);
+        return(B1200['%concat']([B3735], arguments__3738));
     });
 }
 {
-    var B3747 = $S('begin', 'ralph/core');
-    B1200['get-setter'](B2460['$internal-macros'], 'define-module', function B3748(env__3749, ____3750) {
-        var B3751 = $SL.call(arguments, 2);
+    var B3748 = $S('begin', 'ralph/core');
+    B1200['get-setter'](B2460['$internal-macros'], 'define-module', function B3749(env__3750, ____3751) {
+        var B3752 = $SL.call(arguments, 2);
         {
-            var B3752 = B1200['%keys'](B3751, {
+            var B3753 = B1200['%keys'](B3752, {
                     'import': [],
                     'export': [],
                     'compile-time-import': [],
                     'inline': []
                 });
             {
-                var import__3753 = B3752['import'];
+                var import__3754 = B3753['import'];
                 {
-                    var export__3754 = B3752['export'];
+                    var export__3755 = B3753['export'];
                     {
-                        var compile_time_import__3755 = B3752['compile-time-import'];
+                        var compile_time_import__3756 = B3753['compile-time-import'];
                         {
-                            var inline__3756 = B3752['inline'];
+                            var inline__3757 = B3753['inline'];
                             {
-                                var B3757 = env__3749;
+                                var B3758 = env__3750;
                                 {
-                                    var module__3758 = B3757['module'];
+                                    var module__3759 = B3758['module'];
                                     {
-                                        var import_identifiers__3759 = B3757['import-identifiers'];
+                                        var import_identifiers__3760 = B3758['import-identifiers'];
                                         {
-                                            B1200['get-setter'](module__3758, 'exports', B1200['map'](B1560['identifier-name'], export__3754));
+                                            B1200['get-setter'](module__3759, 'exports', B1200['map'](B1560['identifier-name'], export__3755));
                                             {
-                                                B1200['do'](function B3760(import__3761) {
-                                                    var B3762 = ($module)['destructure-import'](import__3761);
+                                                B1200['do'](function B3761(import__3762) {
+                                                    var B3763 = ($module)['destructure-import'](import__3762);
                                                     {
-                                                        var module_name__3763 = B3762[0];
+                                                        var module_name__3764 = B3763[0];
                                                         {
-                                                            var options__3764 = B3762[1];
-                                                            return(B1200['apply'](($module)['compile-time-import-module'], env__3749, module_name__3763, options__3764));
+                                                            var options__3765 = B3763[1];
+                                                            return(B1200['apply'](($module)['compile-time-import-module'], env__3750, module_name__3764, options__3765));
                                                         }
                                                     }
-                                                }, compile_time_import__3755);
+                                                }, compile_time_import__3756);
                                                 {
-                                                    B1200['do'](function B3765(name__3766) {
-                                                        return(B1200['get-setter'](module__3758, 'inline', name__3766, true));
-                                                    }, B1200['map'](B1560['identifier-name'], inline__3756));
-                                                    return(B1200['%concat']([B3747], B1200['map'](function B3767(import__3768) {
-                                                        var B3769 = ($module)['destructure-import'](import__3768);
+                                                    B1200['do'](function B3766(name__3767) {
+                                                        return(B1200['get-setter'](module__3759, 'inline', name__3767, true));
+                                                    }, B1200['map'](B1560['identifier-name'], inline__3757));
+                                                    return(B1200['%concat']([B3748], B1200['map'](function B3768(import__3769) {
+                                                        var B3770 = ($module)['destructure-import'](import__3769);
                                                         {
-                                                            var module_name__3770 = B3769[0];
+                                                            var module_name__3771 = B3770[0];
                                                             {
-                                                                var options__3771 = B3769[1];
+                                                                var options__3772 = B3770[1];
                                                                 {
-                                                                    B1200['apply'](($module)['import-module'], module__3758, module_name__3770, options__3771);
-                                                                    return(B1712['make-import-definition'](module_name__3770, env__3749));
+                                                                    B1200['apply'](($module)['import-module'], module__3759, module_name__3771, options__3772);
+                                                                    return(B1712['make-import-definition'](module_name__3771, env__3750));
                                                                 }
                                                             }
                                                         }
-                                                    }, import__3753)));
+                                                    }, import__3754)));
                                                 }
                                             }
                                         }

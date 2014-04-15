@@ -1,5 +1,6 @@
+require('ralph/core');
 {
-    var $module = Object.create(null);
+    var $module = Object.create($moduleRoot);
     {
         ($module)['%export'] = function B1563(name__1564, value__1565) {
             var B1567 = (exports);
@@ -124,7 +125,7 @@ false;
                                                         B1597,
                                                         [
                                                             B1598,
-                                                            'var $module = Object.create(null)'
+                                                            'var $module = Object.create($moduleRoot)'
                                                         ],
                                                         [
                                                             B1599,

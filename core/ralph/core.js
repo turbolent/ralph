@@ -1,5 +1,6 @@
+$moduleRoot = Object.create(null);
 {
-    var $module = Object.create(null);
+    var $module = Object.create($moduleRoot);
     {
         ($module)['%export'] = function B10(name__11, value__12) {
             var B14 = (exports);
