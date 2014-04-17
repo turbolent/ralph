@@ -1,0 +1,8 @@
+(define-module ralph/format-out
+  import: (ralph/format
+           ralph/file-stream)
+  export: (format-out))
+
+;; Formats arguments to *standard-output*
+(define-function format-out ((control-string <string>) #rest args)
+  (apply format *standard-output* control-string args))

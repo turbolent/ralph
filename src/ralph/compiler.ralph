@@ -1,6 +1,7 @@
 
 (define-module ralph/compiler
   import: (ralph/format
+           ralph/format-out
            ralph/stream
            ralph/file-stream
            ralph/file-system

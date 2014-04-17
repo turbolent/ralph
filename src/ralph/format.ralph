@@ -1,7 +1,6 @@
 (define-module ralph/format
-  import: (ralph/stream
-           ralph/file-stream)
-  export: (format-out format-to-string format))
+  import: (ralph/stream)
+  export: (format-to-string format))
 
 ;; TODO:
 (define-function format-integer ((number <number>))
@@ -53,10 +52,6 @@
                   (begin
                    (stream-write stream control-string)
                    (set! control-string "")))))))))
-
-;; Formats arguments to *standard-output*"
-(define-function format-out ((control-string <string>) #rest args)
-  (apply format *standard-output* control-string args))
 
 ;; Process a format string and return the result as another string.
 ;; (Effectively calls format and returns the result as a string.)
