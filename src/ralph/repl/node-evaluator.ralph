@@ -1,0 +1,91 @@
+(define-module ralph/repl/node-evaluator
+  import: (ralph/format
+           (ws only: (connect))
+           (vm rename: ("createContext" create-context
+                        "runInContext" run-in-context)))
+  export: (<evaluator> start-evaluator))
+
+(define-class <evaluator> (<object>))
+
+(define $handlers (make-plain-object))
+
+(define-function eval-in-context ((evaluator <evaluator>) code)
+  (run-in-context code (get evaluator "context")))
+
+(set! (get $handlers "change-module")
+      (method (evaluator message)
+        (bind-properties (name) message
+          (perform-module-change evaluator name))))
+
+(define-function perform-module-change ((evaluator <evaluator>) name)
+  (bind ((eval (get evaluator "evals" name)))
+    (unless eval
+      (bind ((exports (eval-in-context
+                       evaluator
+                       (format-to-string "require('%s')" name))))
+        (set! eval (get exports "%eval"))
+        (set! (get evaluator "evals" name)
+              eval)))
+    (set! (get evaluator "current-eval")
+          eval)))
+
+(set! (get $handlers "eval-in-module")
+      (method (evaluator message)
+        (bind-properties (code) message
+          (bind-properties (current-eval) evaluator
+            (handler-case
+             (bind ((result (current-eval code)))
+               (send-command evaluator "result"
+                             "result" (description result)))
+             ((<error> condition: condition)
+              (send-command evaluator "exception"
+                            "stack" (get condition "stack"))))))))
+
+(define-function send-command ((evaluator <evaluator>) type #rest data)
+  (. (get evaluator "connection")
+     (send (as-json (apply make-object "type" type data)))))
+
+(define-function handle-message ((evaluator <evaluator>) serialized-message)
+  (bind ((message (parse-json serialized-message)))
+    (if-bind (handler (get $handlers (get message "type")))
+      (handler evaluator message))))
+
+(define-function inject-commands! ((evaluator <evaluator>))
+  (eval-in-context evaluator
+                   "$moduleRoot['%in-module'] = $changeModule"))
+
+(define-function change-module ((evaluator <evaluator>) name)
+  (perform-module-change evaluator name)
+  (send-command evaluator "change-module"
+                "name" name))
+
+(define-function start-evaluator ((evaluator <evaluator>) url)
+  (set! (get evaluator "context")
+        (make-context (%object "$changeModule"
+                               (curry change-module evaluator))))
+  (inject-commands! evaluator)
+  (bind ((connection (connect url)))
+    (set! (get evaluator "connection")
+          connection)
+    (. connection (on "message"
+                      (curry handle-message evaluator)))))
+
+(define-function make-context (sandbox)
+  (bind ((context (create-context sandbox)))
+    (extend! context (%native "global"))
+    ;; TODO: console should write output to connection
+    ; (set! (get context "console")
+    ;       (%native-call "new" <console> ...))
+    (set! (get context "global")
+          context)
+    (set! (get context "global" "global")
+          context)
+    (set! (get context "module")
+          module)
+    (set! (get context "module")
+          (%native "module"))
+    (set! (get context "require")
+          (%native "require"))
+    (set! (get context "exports")
+          (make-plain-object))
+    context))

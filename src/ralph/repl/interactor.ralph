@@ -1,0 +1,162 @@
+(define-module ralph/repl/interactor
+  import: (ralph/stream
+           ralph/format-out
+           ralph/compiler/environment
+           ralph/compiler/reader
+           ralph/compiler/compile
+           (ws rename: ("createServer" create-server))
+           (readline
+            rename: ("createInterface" create-interface)))
+  export: (<interactor> start-interactor change-module))
+
+(define-function make-interface ()
+  (create-interface
+   (%object "input" (%native "process.stdin")
+            "output" (%native "process.stdout"))))
+
+(define-class <interactor> (<object>)
+  (current-line ""))
+
+(define-method initialize ((interactor <interactor>))
+  (call-next-method)
+  (bind ((interface (make-interface)))
+    (set! (get interactor "interface")
+          interface)
+    (. interface
+       (on "close"
+           (method ()
+             (. (%native "process")
+                (exit 0)))))))
+
+(define-function active? ((interactor <interactor>))
+  (true? (get interactor "connection")))
+
+(define $incomplete (make-object))
+
+(define-function read-line ((interactor <interactor>) line)
+  (bind ((input-stream (make <string-stream> string: line)))
+    (read input-stream (get interactor "current-environment")
+          eof-error?: #f
+          eof-value: $incomplete
+          if-incomplete: $incomplete)))
+
+(define-function on-each-line ((interactor <interactor>) handler)
+  (. (get interactor "interface")
+     (on "line" handler)))
+
+(define-function make-environment (name)
+  (bind ((env (make-module-environment name)))
+    (set! (get env "persistent?") #f)
+    ;; TODO: use module description to specifiy imports
+    env))
+
+(define-function send-command ((interactor <interactor>) type #rest data)
+  (. (get interactor "connection")
+     (send (as-json (apply make-object "type" type data)))))
+
+(define-function perform-module-change ((interactor <interactor>) name)
+  (bind ((env (or (get interactor "environments" name)
+                  (make-environment name))))
+    (set! (get interactor "envrionments" name) env)
+    (set! (get interactor "current-environment") env)))
+
+(define-function change-module ((interactor <interactor>) name)
+  (perform-module-change interactor name)
+  (send-command interactor "change-module"
+                  "name" name))
+
+(define $handlers (make-plain-object))
+
+(define-function handle-message ((interactor <interactor>) serialized-message)
+  (bind ((message (parse-json serialized-message)))
+    (if-bind (handler (get $handlers (get message "type")))
+      (handler interactor message))))
+
+(define-function handle-connection ((interactor <interactor>) connection)
+  ;; TODO: close current connection
+  (. connection (on "message"
+                    (curry handle-message interactor)))
+  (set! (get interactor "connection")
+        connection)
+  (change-module interactor "ralph/core")
+  (update-prompt! interactor))
+
+(define-function start-interactor ((interactor <interactor>))
+  (set! (get interactor "server")
+        (create-server (%object "port" 8080)
+                       (curry handle-connection interactor)))
+  (on-each-line interactor
+                (method (line)
+                  (if (active? interactor)
+                      (handle-line interactor line)
+                      (begin
+                       (format-out "[inactive]\n")
+                       (update-prompt! interactor)))))
+  (update-prompt! interactor))
+
+(define-function append-line! ((interactor <interactor>) line)
+  (set! (get interactor "current-line")
+        (concatenate (get interactor "current-line")
+                     "\n" line)))
+
+(define-function eval-in-module ((interactor <interactor>) code)
+  (send-command interactor "eval-in-module"
+                "code" code))
+
+(set! (get $handlers "result")
+      (method (interactor message)
+        (bind-properties (result) message
+          (format-out "%s\n" result))
+        (update-prompt! interactor)))
+
+(set! (get $handlers "exception")
+      (method (interactor message)
+        (bind-properties (stack) message
+          (format-out "%s\n" stack))
+        (update-prompt! interactor)))
+
+(set! (get $handlers "change-module")
+      (method (interactor message)
+        (bind-properties (name) message
+          (perform-module-change interactor name))))
+
+
+(define-function handle-line ((interactor <interactor>) line)
+  (append-line! interactor line)
+  (bind-properties (current-line current-environment)
+      interactor
+    (handler-case
+     (bind ((expression (read-line interactor current-line))
+            (incomplete? (== expression $incomplete)))
+       (set! (get interactor "incomplete?")
+             incomplete?)
+       (if incomplete?
+           (update-prompt! interactor)
+           (bind ((code (compile-to-string expression
+                                           current-environment)))
+             (eval-in-module interactor code)
+             (set! (get interactor "current-line") ""))))
+     ((<error> condition: condition)
+      (format-out "%s\n" (get condition "stack"))
+      (set! current-line "")
+      (update-prompt! interactor)))))
+
+
+(define-function current-module-name ((interactor <interactor>))
+  (if-bind (env (get interactor "current-environment"))
+    (get env "module" "name")))
+
+(define-function set-prompt! ((interactor <interactor>) prompt)
+  (. (get interactor "interface")
+     ("setPrompt" prompt)))
+
+(define-function prompt! ((interactor <interactor>))
+  (. (get interactor "interface")
+     (prompt)))
+
+(define-function update-prompt! ((interactor <interactor>))
+  (if (get interactor "incomplete?")
+      (set-prompt! interactor "... ")
+      (bind ((name (or (current-module-name interactor) "")))
+        (set-prompt! interactor (concatenate name "> "))))
+  (prompt! interactor))
