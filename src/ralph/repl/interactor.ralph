@@ -155,8 +155,10 @@
      (prompt)))
 
 (define-function update-prompt! ((interactor <interactor>))
-  (if (get interactor "incomplete?")
-      (set-prompt! interactor "... ")
-      (bind ((name (or (current-module-name interactor) "")))
-        (set-prompt! interactor (concatenate name "> "))))
-  (prompt! interactor))
+  (bind ((name (or (current-module-name interactor) "")))
+    (set-prompt! interactor
+                 (if (get interactor "incomplete?")
+                     (concatenate (repeat-string " " (- (size name) 2))
+                                  "... ")
+                     (concatenate name "> ")))
+    (prompt! interactor)))
