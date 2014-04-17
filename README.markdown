@@ -1,11 +1,16 @@
 # Ralph
 
 Ralph is a Lisp-1 dialect that compiles to JavaScript. It is inspired by
-[Dylan - An object-oriented dynamic language](http://lispm.dyndns.org/documentation/prefix-dylan/book.annotated/annotated-manual.html), but doesn't feature multiple-inheritance and multi-methods.
+[Dylan - An object-oriented dynamic language](http://lispm.de/docs/prefix-dylan/book.annotated/contents.html).
 
 ## Getting started
 
-Install node, then:
+Install [node.js](http://nodejs.org/) and [ws](https://github.com/einaros/ws), then:
 
-* `$ ./scripts/build.sh`
-* `$ ./scripts/test-build.sh`
+* `$ NODE_PATH=core node repl.js`
+
+## Development
+
+Recompile the compiler and run all tests using:
+
+* `$ ./scripts/test-self.sh`
