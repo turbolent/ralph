@@ -2,88 +2,88 @@ require('ralph/core');
 {
     var $module = Object.create($moduleRoot);
     {
-        ($module)['%export'] = function B2839(name__2840, value__2841) {
-            var B2843 = (exports);
-            return(B2843[name__2840] = value__2841);
+        ($module)['%export'] = function B2849(name__2850, value__2851) {
+            var B2853 = (exports);
+            return(B2853[name__2850] = value__2851);
         };
         {
-            ($module)['%eval'] = function B2842() {
+            ($module)['%eval'] = function B2852() {
                 return(eval((arguments[0])));
             };
             ($module)['%export']('%eval', ($module)['%eval']);
         }
     }
 }
-var B2844 = require('ralph/core');
-var B2845 = require('ralph/compiler/utilities');
+var B2854 = require('ralph/core');
+var B2855 = require('ralph/compiler/utilities');
 {
     {
-        ($module)['lift-symbols'] = function B2847(exp__2848, env__2849) {
-            var result__2850 = ($module)['lift-symbol'](exp__2848, env__2849, B2844['identity']);
+        ($module)['lift-symbols'] = function B2857(exp__2858, env__2859) {
+            var result__2860 = ($module)['lift-symbol'](exp__2858, env__2859, B2854['identity']);
             {
-                if (($T)(B2844['not'](B2844['get'](env__2849, 'persistent?'))))
-                    B2844['remove-property!'](env__2849, 'lifted');
-                return(result__2850);
+                if (($T)(B2854['not'](B2854['get'](env__2859, 'persistent?'))))
+                    B2854['remove-property!'](env__2859, 'lifted');
+                return(result__2860);
             }
         };
         ($module)['%export']('lift-symbols', ($module)['lift-symbols']);
     }
-    B2844['%annotate-function'](($module)['lift-symbols'], 'lift-symbols', false);
+    B2854['%annotate-function'](($module)['lift-symbols'], 'lift-symbols', false);
 }
 {
-    var B2872 = $K('module');
+    var B2882 = $K('module');
     {
-        var B2873 = $S('%bind', 'ralph/core');
+        var B2883 = $S('%bind', 'ralph/core');
         {
-            var B2874 = $S('%method', 'ralph/core');
+            var B2884 = $S('%method', 'ralph/core');
             {
-                var B2875 = $S('%set', 'ralph/core');
+                var B2885 = $S('%set', 'ralph/core');
                 {
-                    var B2876 = $S('%get-property', 'ralph/core');
+                    var B2886 = $S('%get-property', 'ralph/core');
                     {
-                        var B2877 = $S('%try', 'ralph/core');
+                        var B2887 = $S('%try', 'ralph/core');
                         {
-                            ($module)['lift-symbol'] = function B2878(exp__2879, env__2880, k__2881) {
-                                var B2935 = false;
-                                if (($T)(B2844['instance?'](exp__2879, B2844['<array>'])))
-                                    B2935 = B2844['not'](B2844['empty?'](exp__2879));
+                            ($module)['lift-symbol'] = function B2888(exp__2889, env__2890, k__2891) {
+                                var B2945 = false;
+                                if (($T)(B2854['instance?'](exp__2889, B2854['<array>'])))
+                                    B2945 = B2854['not'](B2854['empty?'](exp__2889));
                                 else
-                                    B2935 = false;
-                                if (($T)(B2935)) {
-                                    var B2882 = B2844['symbol-name'](B2844['first'](exp__2879));
-                                    if (($T)(B2844['=='](B2882, '%quote'))) {
-                                        var B2883 = B2844['destructure-symbol'](B2844['second'](exp__2879));
+                                    B2945 = false;
+                                if (($T)(B2945)) {
+                                    var B2892 = B2854['symbol-name'](B2854['first'](exp__2889));
+                                    if (($T)(B2854['=='](B2892, '%quote'))) {
+                                        var B2893 = B2854['destructure-symbol'](B2854['second'](exp__2889));
                                         {
-                                            var name__2884 = B2883[0];
+                                            var name__2894 = B2893[0];
                                             {
-                                                var module_name__2885 = B2883[1];
-                                                return(($module)['lift-value'](name__2884, exp__2879, 'symbol', env__2880, k__2881, B2872, module_name__2885));
+                                                var module_name__2895 = B2893[1];
+                                                return(($module)['lift-value'](name__2894, exp__2889, 'symbol', env__2890, k__2891, B2882, module_name__2895));
                                             }
                                         }
-                                    } else if (($T)(B2844['=='](B2882, '%bind'))) {
-                                        var ____2886 = exp__2879[0];
+                                    } else if (($T)(B2854['=='](B2892, '%bind'))) {
+                                        var ____2896 = exp__2889[0];
                                         {
-                                            var B2887 = exp__2879[1];
+                                            var B2897 = exp__2889[1];
                                             {
-                                                var identifier__2888 = B2887[0];
+                                                var identifier__2898 = B2897[0];
                                                 {
-                                                    var value__2889 = B2887[1];
+                                                    var value__2899 = B2897[1];
                                                     {
-                                                        var form__2890 = exp__2879[2];
+                                                        var form__2900 = exp__2889[2];
                                                         return(($module)['lift-symbol*']([
-                                                            value__2889,
-                                                            form__2890
-                                                        ], env__2880, function B2891(formsT__2892) {
-                                                            var valueT__2893 = formsT__2892[0];
+                                                            value__2899,
+                                                            form__2900
+                                                        ], env__2890, function B2901(formsT__2902) {
+                                                            var valueT__2903 = formsT__2902[0];
                                                             {
-                                                                var formT__2894 = formsT__2892[1];
-                                                                return(k__2881([
-                                                                    B2873,
+                                                                var formT__2904 = formsT__2902[1];
+                                                                return(k__2891([
+                                                                    B2883,
                                                                     [
-                                                                        identifier__2888,
-                                                                        valueT__2893
+                                                                        identifier__2898,
+                                                                        valueT__2903
                                                                     ],
-                                                                    formT__2894
+                                                                    formT__2904
                                                                 ]));
                                                             }
                                                         }));
@@ -91,108 +91,108 @@ var B2845 = require('ralph/compiler/utilities');
                                                 }
                                             }
                                         }
-                                    } else if (($T)(B2844['=='](B2882, '%method'))) {
-                                        var ____2895 = exp__2879[0];
+                                    } else if (($T)(B2854['=='](B2892, '%method'))) {
+                                        var ____2905 = exp__2889[0];
                                         {
-                                            var name__2896 = exp__2879[1];
+                                            var name__2906 = exp__2889[1];
                                             {
-                                                var parameters__2897 = exp__2879[2];
+                                                var parameters__2907 = exp__2889[2];
                                                 {
-                                                    var form__2898 = exp__2879[3];
-                                                    return(($module)['lift-symbol'](form__2898, env__2880, function B2899(formT__2900) {
-                                                        return(k__2881([
-                                                            B2874,
-                                                            name__2896,
-                                                            parameters__2897,
-                                                            formT__2900
+                                                    var form__2908 = exp__2889[3];
+                                                    return(($module)['lift-symbol'](form__2908, env__2890, function B2909(formT__2910) {
+                                                        return(k__2891([
+                                                            B2884,
+                                                            name__2906,
+                                                            parameters__2907,
+                                                            formT__2910
                                                         ]));
                                                     }));
                                                 }
                                             }
                                         }
-                                    } else if (($T)(B2844['=='](B2882, '%set'))) {
-                                        var ____2901 = exp__2879[0];
+                                    } else if (($T)(B2854['=='](B2892, '%set'))) {
+                                        var ____2911 = exp__2889[0];
                                         {
-                                            var place__2902 = exp__2879[1];
+                                            var place__2912 = exp__2889[1];
                                             {
-                                                var value__2903 = exp__2879[2];
-                                                return(($module)['lift-symbol'](value__2903, env__2880, function B2904(valueT__2905) {
-                                                    if (($T)(B2845['op?']('%get-property', place__2902)))
-                                                        return(($module)['lift-symbol**'](B2844['rest'](place__2902), env__2880, function B2906(argumentsT__2907) {
-                                                            return(k__2881([
-                                                                B2875,
-                                                                B2844['%concat']([B2876], argumentsT__2907),
-                                                                valueT__2905
+                                                var value__2913 = exp__2889[2];
+                                                return(($module)['lift-symbol'](value__2913, env__2890, function B2914(valueT__2915) {
+                                                    if (($T)(B2855['op?']('%get-property', place__2912)))
+                                                        return(($module)['lift-symbol**'](B2854['rest'](place__2912), env__2890, function B2916(argumentsT__2917) {
+                                                            return(k__2891([
+                                                                B2885,
+                                                                B2854['%concat']([B2886], argumentsT__2917),
+                                                                valueT__2915
                                                             ]));
                                                         }));
                                                     else
-                                                        return(k__2881([
-                                                            B2875,
-                                                            place__2902,
-                                                            valueT__2905
+                                                        return(k__2891([
+                                                            B2885,
+                                                            place__2912,
+                                                            valueT__2915
                                                         ]));
                                                 }));
                                             }
                                         }
                                     } else {
-                                        var B2908 = B2844['=='](B2882, '%define');
+                                        var B2918 = B2854['=='](B2892, '%define');
                                         {
-                                            var B2936 = false;
-                                            if (($T)(B2908))
-                                                B2936 = B2908;
+                                            var B2946 = false;
+                                            if (($T)(B2918))
+                                                B2946 = B2918;
                                             else
-                                                B2936 = B2844['=='](B2882, '%var');
-                                            if (($T)(B2936)) {
-                                                var op__2909 = exp__2879[0];
+                                                B2946 = B2854['=='](B2892, '%var');
+                                            if (($T)(B2946)) {
+                                                var op__2919 = exp__2889[0];
                                                 {
-                                                    var identifier__2910 = exp__2879[1];
+                                                    var identifier__2920 = exp__2889[1];
                                                     {
-                                                        var value__2911 = exp__2879[2];
-                                                        return(($module)['lift-symbol'](value__2911, env__2880, function B2912(valueT__2913) {
-                                                            return(k__2881([
-                                                                op__2909,
-                                                                identifier__2910,
-                                                                valueT__2913
+                                                        var value__2921 = exp__2889[2];
+                                                        return(($module)['lift-symbol'](value__2921, env__2890, function B2922(valueT__2923) {
+                                                            return(k__2891([
+                                                                op__2919,
+                                                                identifier__2920,
+                                                                valueT__2923
                                                             ]));
                                                         }));
                                                     }
                                                 }
                                             } else {
-                                                var B2914 = B2844['=='](B2882, '%if');
+                                                var B2924 = B2854['=='](B2892, '%if');
                                                 {
-                                                    var B2937 = false;
-                                                    if (($T)(B2914))
-                                                        B2937 = B2914;
+                                                    var B2947 = false;
+                                                    if (($T)(B2924))
+                                                        B2947 = B2924;
                                                     else {
-                                                        var B2915 = B2844['=='](B2882, '%begin');
-                                                        if (($T)(B2915))
-                                                            B2937 = B2915;
+                                                        var B2925 = B2854['=='](B2892, '%begin');
+                                                        if (($T)(B2925))
+                                                            B2947 = B2925;
                                                         else {
-                                                            var B2916 = B2844['=='](B2882, '%while');
-                                                            if (($T)(B2916))
-                                                                B2937 = B2916;
+                                                            var B2926 = B2854['=='](B2892, '%while');
+                                                            if (($T)(B2926))
+                                                                B2947 = B2926;
                                                             else {
-                                                                var B2917 = B2844['=='](B2882, '%infix');
-                                                                if (($T)(B2917))
-                                                                    B2937 = B2917;
+                                                                var B2927 = B2854['=='](B2892, '%infix');
+                                                                if (($T)(B2927))
+                                                                    B2947 = B2927;
                                                                 else {
-                                                                    var B2918 = B2844['=='](B2882, '%native');
-                                                                    if (($T)(B2918))
-                                                                        B2937 = B2918;
+                                                                    var B2928 = B2854['=='](B2892, '%native');
+                                                                    if (($T)(B2928))
+                                                                        B2947 = B2928;
                                                                     else {
-                                                                        var B2919 = B2844['=='](B2882, '%native-call');
-                                                                        if (($T)(B2919))
-                                                                            B2937 = B2919;
+                                                                        var B2929 = B2854['=='](B2892, '%native-call');
+                                                                        if (($T)(B2929))
+                                                                            B2947 = B2929;
                                                                         else {
-                                                                            var B2920 = B2844['=='](B2882, '%object');
-                                                                            if (($T)(B2920))
-                                                                                B2937 = B2920;
+                                                                            var B2930 = B2854['=='](B2892, '%object');
+                                                                            if (($T)(B2930))
+                                                                                B2947 = B2930;
                                                                             else {
-                                                                                var B2921 = B2844['=='](B2882, '%array');
-                                                                                if (($T)(B2921))
-                                                                                    B2937 = B2921;
+                                                                                var B2931 = B2854['=='](B2892, '%array');
+                                                                                if (($T)(B2931))
+                                                                                    B2947 = B2931;
                                                                                 else
-                                                                                    B2937 = B2844['=='](B2882, '%get-property');
+                                                                                    B2947 = B2854['=='](B2892, '%get-property');
                                                                             }
                                                                         }
                                                                     }
@@ -200,34 +200,34 @@ var B2845 = require('ralph/compiler/utilities');
                                                             }
                                                         }
                                                     }
-                                                    if (($T)(B2937)) {
-                                                        var op__2922 = exp__2879[0];
+                                                    if (($T)(B2947)) {
+                                                        var op__2932 = exp__2889[0];
                                                         {
-                                                            var forms__2923 = $SL.call(exp__2879, 1);
-                                                            return(($module)['lift-symbol*'](forms__2923, env__2880, function B2924(formsT__2925) {
-                                                                return(k__2881(B2844['%concat']([op__2922], formsT__2925)));
+                                                            var forms__2933 = $SL.call(exp__2889, 1);
+                                                            return(($module)['lift-symbol*'](forms__2933, env__2890, function B2934(formsT__2935) {
+                                                                return(k__2891(B2854['%concat']([op__2932], formsT__2935)));
                                                             }));
                                                         }
-                                                    } else if (($T)(B2844['=='](B2882, '%try'))) {
-                                                        var ____2926 = exp__2879[0];
+                                                    } else if (($T)(B2854['=='](B2892, '%try'))) {
+                                                        var ____2936 = exp__2889[0];
                                                         {
-                                                            var protected_form__2927 = exp__2879[1];
+                                                            var protected_form__2937 = exp__2889[1];
                                                             {
-                                                                var identifier__2928 = exp__2879[2];
+                                                                var identifier__2938 = exp__2889[2];
                                                                 {
-                                                                    var handling_form__2929 = exp__2879[3];
+                                                                    var handling_form__2939 = exp__2889[3];
                                                                     return(($module)['lift-symbol*']([
-                                                                        protected_form__2927,
-                                                                        handling_form__2929
-                                                                    ], env__2880, function B2930(formsT__2931) {
-                                                                        var protected_formT__2932 = formsT__2931[0];
+                                                                        protected_form__2937,
+                                                                        handling_form__2939
+                                                                    ], env__2890, function B2940(formsT__2941) {
+                                                                        var protected_formT__2942 = formsT__2941[0];
                                                                         {
-                                                                            var handling_formT__2933 = formsT__2931[1];
-                                                                            return(k__2881([
-                                                                                B2877,
-                                                                                protected_formT__2932,
-                                                                                identifier__2928,
-                                                                                handling_formT__2933
+                                                                            var handling_formT__2943 = formsT__2941[1];
+                                                                            return(k__2891([
+                                                                                B2887,
+                                                                                protected_formT__2942,
+                                                                                identifier__2938,
+                                                                                handling_formT__2943
                                                                             ]));
                                                                         }
                                                                     }));
@@ -235,22 +235,22 @@ var B2845 = require('ralph/compiler/utilities');
                                                             }
                                                         }
                                                     } else
-                                                        return(($module)['lift-symbol**'](exp__2879, env__2880, k__2881));
+                                                        return(($module)['lift-symbol**'](exp__2889, env__2890, k__2891));
                                                 }
                                             }
                                         }
                                     }
                                 } else {
-                                    var B2934 = exp__2879;
-                                    if (($T)(B2844['instance?'](B2934, B2844['<keyword>'])))
-                                        return(($module)['lift-value'](B2844['symbol-name'](exp__2879), exp__2879, 'keyword', env__2880, k__2881));
-                                    else if (($T)(B2844['instance?'](B2934, B2844['<hash-symbol>'])))
-                                        return(($module)['lift-value'](B2844['symbol-name'](exp__2879), exp__2879, 'hash', env__2880, k__2881));
+                                    var B2944 = exp__2889;
+                                    if (($T)(B2854['instance?'](B2944, B2854['<keyword>'])))
+                                        return(($module)['lift-value'](B2854['symbol-name'](exp__2889), exp__2889, 'keyword', env__2890, k__2891));
+                                    else if (($T)(B2854['instance?'](B2944, B2854['<hash-symbol>'])))
+                                        return(($module)['lift-value'](B2854['symbol-name'](exp__2889), exp__2889, 'hash', env__2890, k__2891));
                                     else
-                                        return(k__2881(exp__2879));
+                                        return(k__2891(exp__2889));
                                 }
                             };
-                            B2844['%annotate-function'](($module)['lift-symbol'], 'lift-symbol', false);
+                            B2854['%annotate-function'](($module)['lift-symbol'], 'lift-symbol', false);
                         }
                     }
                 }
@@ -259,57 +259,57 @@ var B2845 = require('ralph/compiler/utilities');
     }
 }
 {
-    var B2942 = $S('%begin', 'ralph/core');
+    var B2952 = $S('%begin', 'ralph/core');
     {
-        var B2943 = $S('%define', 'ralph/core');
+        var B2953 = $S('%define', 'ralph/core');
         {
-            ($module)['lift-value'] = function B2944(name__2945, value__2946, type__2947, env__2948, k__2949) {
-                var B2950 = $SL.call(arguments, 5);
+            ($module)['lift-value'] = function B2954(name__2955, value__2956, type__2957, env__2958, k__2959) {
+                var B2960 = $SL.call(arguments, 5);
                 {
-                    var B2951 = B2844['%keys'](B2950, { 'module': '' });
+                    var B2961 = B2854['%keys'](B2960, { 'module': '' });
                     {
-                        var module__2952 = B2951['module'];
+                        var module__2962 = B2961['module'];
                         {
-                            var B2953 = B2844['get'](env__2948, 'lifted', type__2947, module__2952, name__2945);
-                            if (($T)(B2953)) {
-                                var t__2954 = B2953;
-                                return(k__2949(t__2954));
+                            var B2963 = B2854['get'](env__2958, 'lifted', type__2957, module__2962, name__2955);
+                            if (($T)(B2963)) {
+                                var t__2964 = B2963;
+                                return(k__2959(t__2964));
                             } else {
-                                var t__2955 = B2844['get-setter'](env__2948, 'lifted', type__2947, module__2952, name__2945, B2844['generate-symbol']());
+                                var t__2965 = B2854['get-setter'](env__2958, 'lifted', type__2957, module__2962, name__2955, B2854['generate-symbol']());
                                 return([
-                                    B2942,
+                                    B2952,
                                     [
-                                        B2943,
-                                        t__2955,
-                                        value__2946
+                                        B2953,
+                                        t__2965,
+                                        value__2956
                                     ],
-                                    k__2949(t__2955)
+                                    k__2959(t__2965)
                                 ]);
                             }
                         }
                     }
                 }
             };
-            B2844['%annotate-function'](($module)['lift-value'], 'lift-value', false);
+            B2854['%annotate-function'](($module)['lift-value'], 'lift-value', false);
         }
     }
 }
 {
-    ($module)['lift-symbol*'] = function B2957(expT__2958, env__2959, k__2960) {
-        if (($T)(B2844['empty?'](expT__2958)))
-            return(k__2960([]));
+    ($module)['lift-symbol*'] = function B2967(expT__2968, env__2969, k__2970) {
+        if (($T)(B2854['empty?'](expT__2968)))
+            return(k__2970([]));
         else
-            return(($module)['lift-symbol**'](expT__2958, env__2959, k__2960));
+            return(($module)['lift-symbol**'](expT__2968, env__2969, k__2970));
     };
-    B2844['%annotate-function'](($module)['lift-symbol*'], 'lift-symbol*', false);
+    B2854['%annotate-function'](($module)['lift-symbol*'], 'lift-symbol*', false);
 }
 {
-    ($module)['lift-symbol**'] = function B2964(exp__2965, env__2966, k__2967) {
-        return(($module)['lift-symbol'](B2844['first'](exp__2965), env__2966, function B2968(t__2969) {
-            return(($module)['lift-symbol*'](B2844['rest'](exp__2965), env__2966, function B2970(tT__2971) {
-                return(k__2967(B2844['cons'](t__2969, tT__2971)));
+    ($module)['lift-symbol**'] = function B2974(exp__2975, env__2976, k__2977) {
+        return(($module)['lift-symbol'](B2854['first'](exp__2975), env__2976, function B2978(t__2979) {
+            return(($module)['lift-symbol*'](B2854['rest'](exp__2975), env__2976, function B2980(tT__2981) {
+                return(k__2977(B2854['cons'](t__2979, tT__2981)));
             }));
         }));
     };
-    B2844['%annotate-function'](($module)['lift-symbol**'], 'lift-symbol**', false);
+    B2854['%annotate-function'](($module)['lift-symbol**'], 'lift-symbol**', false);
 }

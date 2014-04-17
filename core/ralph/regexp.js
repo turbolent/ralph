@@ -2,70 +2,70 @@ require('ralph/core');
 {
     var $module = Object.create($moduleRoot);
     {
-        ($module)['%export'] = function B1750(name__1751, value__1752) {
-            var B1754 = (exports);
-            return(B1754[name__1751] = value__1752);
+        ($module)['%export'] = function B1760(name__1761, value__1762) {
+            var B1764 = (exports);
+            return(B1764[name__1761] = value__1762);
         };
         {
-            ($module)['%eval'] = function B1753() {
+            ($module)['%eval'] = function B1763() {
                 return(eval((arguments[0])));
             };
             ($module)['%export']('%eval', ($module)['%eval']);
         }
     }
 }
-var B1755 = require('ralph/core');
+var B1765 = require('ralph/core');
 false;
 {
     ($module)['<regexp>'] = (RegExp);
     ($module)['%export']('<regexp>', ($module)['<regexp>']);
 }
-($module)['initialize'] = B1755['%make-method']('initialize', function B1762(regexp__1763) {
-    var B1764 = $SL.call(arguments, 1);
+($module)['initialize'] = B1765['%make-method']('initialize', function B1772(regexp__1773) {
+    var B1774 = $SL.call(arguments, 1);
     {
-        var B1765 = B1755['%keys'](B1764, {
+        var B1775 = B1765['%keys'](B1774, {
                 'pattern': false,
                 'global?': false,
                 'ignore-case?': false,
                 'multiline?': false
             });
         {
-            var pattern__1766 = B1765['pattern'];
+            var pattern__1776 = B1775['pattern'];
             {
-                var globalQ__1767 = B1765['global?'];
+                var globalQ__1777 = B1775['global?'];
                 {
-                    var ignore_caseQ__1768 = B1765['ignore-case?'];
+                    var ignore_caseQ__1778 = B1775['ignore-case?'];
                     {
-                        var multilineQ__1769 = B1765['multiline?'];
-                        if (($T)(pattern__1766)) {
-                            var B1774 = B1755['concatenate'];
+                        var multilineQ__1779 = B1775['multiline?'];
+                        if (($T)(pattern__1776)) {
+                            var B1784 = B1765['concatenate'];
                             {
-                                var B1775 = false;
-                                if (($T)(globalQ__1767))
-                                    B1775 = 'g';
+                                var B1785 = false;
+                                if (($T)(globalQ__1777))
+                                    B1785 = 'g';
                                 else
-                                    B1775 = '';
+                                    B1785 = '';
                                 {
-                                    var B1776 = false;
-                                    if (($T)(ignore_caseQ__1768))
-                                        B1776 = 'i';
+                                    var B1786 = false;
+                                    if (($T)(ignore_caseQ__1778))
+                                        B1786 = 'i';
                                     else
-                                        B1776 = '';
+                                        B1786 = '';
                                     {
-                                        var B1777 = false;
-                                        if (($T)(multilineQ__1769))
-                                            B1777 = 'm';
+                                        var B1787 = false;
+                                        if (($T)(multilineQ__1779))
+                                            B1787 = 'm';
                                         else
-                                            B1777 = '';
+                                            B1787 = '';
                                         {
-                                            var flags__1770 = B1774(B1775, B1776, B1777);
+                                            var flags__1780 = B1784(B1785, B1786, B1787);
                                             {
-                                                var B1771 = regexp__1763;
+                                                var B1781 = regexp__1773;
                                                 {
-                                                    var B1772 = pattern__1766;
+                                                    var B1782 = pattern__1776;
                                                     {
-                                                        var B1773 = flags__1770;
-                                                        return(B1771['compile'](B1772, B1773));
+                                                        var B1783 = flags__1780;
+                                                        return(B1781['compile'](B1782, B1783));
                                                     }
                                                 }
                                             }
@@ -82,31 +82,31 @@ false;
     }
 }, false, ($module)['<regexp>'], ($module)['initialize']);
 {
-    ($module)['find'] = function B1781(regexp__1782, string__1783) {
-        var B1784 = string__1783;
+    ($module)['find'] = function B1791(regexp__1792, string__1793) {
+        var B1794 = string__1793;
         {
-            var B1785 = regexp__1782;
+            var B1795 = regexp__1792;
             {
-                var position__1786 = B1784['search'](B1785);
-                if (($T)(B1755['>'](position__1786, -1)))
-                    return(position__1786);
+                var position__1796 = B1794['search'](B1795);
+                if (($T)(B1765['>'](position__1796, -1)))
+                    return(position__1796);
                 else
                     return(false);
             }
         }
     };
-    B1755['%annotate-function'](($module)['find'], 'find', false);
+    B1765['%annotate-function'](($module)['find'], 'find', false);
 }
 {
     {
-        ($module)['match'] = function B1790(regexp__1791, string__1792) {
-            var B1793 = string__1792;
+        ($module)['match'] = function B1800(regexp__1801, string__1802) {
+            var B1803 = string__1802;
             {
-                var B1794 = regexp__1791;
-                return(B1793['match'](B1794));
+                var B1804 = regexp__1801;
+                return(B1803['match'](B1804));
             }
         };
         ($module)['%export']('match', ($module)['match']);
     }
-    B1755['%annotate-function'](($module)['match'], 'match', false);
+    B1765['%annotate-function'](($module)['match'], 'match', false);
 }

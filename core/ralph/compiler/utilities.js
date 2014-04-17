@@ -2,74 +2,74 @@ require('ralph/core');
 {
     var $module = Object.create($moduleRoot);
     {
-        ($module)['%export'] = function B1483(name__1484, value__1485) {
-            var B1487 = (exports);
-            return(B1487[name__1484] = value__1485);
+        ($module)['%export'] = function B1493(name__1494, value__1495) {
+            var B1497 = (exports);
+            return(B1497[name__1494] = value__1495);
         };
         {
-            ($module)['%eval'] = function B1486() {
+            ($module)['%eval'] = function B1496() {
                 return(eval((arguments[0])));
             };
             ($module)['%export']('%eval', ($module)['%eval']);
         }
     }
 }
-var B1488 = require('ralph/core');
-var B1489 = require('ralph/format');
+var B1498 = require('ralph/core');
+var B1499 = require('ralph/format');
 ($module)['$special-symbol-names'] = [
     '%all-arguments',
     '%this-method'
 ];
 {
     {
-        ($module)['special-symbol?'] = function B1491(symbol__1492) {
-            return(B1488['member?'](B1488['symbol-name'](symbol__1492), ($module)['$special-symbol-names']));
+        ($module)['special-symbol?'] = function B1501(symbol__1502) {
+            return(B1498['member?'](B1498['symbol-name'](symbol__1502), ($module)['$special-symbol-names']));
         };
         ($module)['%export']('special-symbol?', ($module)['special-symbol?']);
     }
-    B1488['%annotate-function'](($module)['special-symbol?'], 'special-symbol?', false);
+    B1498['%annotate-function'](($module)['special-symbol?'], 'special-symbol?', false);
 }
 {
     {
-        ($module)['check-type'] = function B1494(value__1495, type__1496, format_string__1497) {
-            if (($T)(B1488['not'](B1488['instance?'](value__1495, type__1496))))
-                return(B1488['signal'](B1489['format-to-string'](format_string__1497, value__1495)));
+        ($module)['check-type'] = function B1504(value__1505, type__1506, format_string__1507) {
+            if (($T)(B1498['not'](B1498['instance?'](value__1505, type__1506))))
+                return(B1498['signal'](B1499['format-to-string'](format_string__1507, value__1505)));
             else
                 return(false);
         };
         ($module)['%export']('check-type', ($module)['check-type']);
     }
-    B1488['%annotate-function'](($module)['check-type'], 'check-type', false);
+    B1498['%annotate-function'](($module)['check-type'], 'check-type', false);
 }
 {
     {
-        ($module)['check-identifier'] = function B1501(identifier__1502, env__1503, format_string__1504) {
-            var B1507 = B1488['not'];
+        ($module)['check-identifier'] = function B1511(identifier__1512, env__1513, format_string__1514) {
+            var B1517 = B1498['not'];
             {
-                var B1505 = B1488['not'](B1488['get'](identifier__1502, 'module'));
+                var B1515 = B1498['not'](B1498['get'](identifier__1512, 'module'));
                 {
-                    var B1508 = false;
-                    if (($T)(B1505))
-                        B1508 = B1505;
+                    var B1518 = false;
+                    if (($T)(B1515))
+                        B1518 = B1515;
                     else
-                        B1508 = B1488['=='](B1488['get'](identifier__1502, 'module'), B1488['get'](env__1503, 'module', 'name'));
+                        B1518 = B1498['=='](B1498['get'](identifier__1512, 'module'), B1498['get'](env__1513, 'module', 'name'));
                     {
-                        var B1509 = B1507(B1508);
-                        if (($T)(B1509)) {
-                            var B1510 = B1488['signal'];
+                        var B1519 = B1517(B1518);
+                        if (($T)(B1519)) {
+                            var B1520 = B1498['signal'];
                             {
-                                var B1511 = B1489['format-to-string'];
+                                var B1521 = B1499['format-to-string'];
                                 {
-                                    var B1506 = format_string__1504;
+                                    var B1516 = format_string__1514;
                                     {
-                                        var B1512 = false;
-                                        if (($T)(B1506))
-                                            B1512 = B1506;
+                                        var B1522 = false;
+                                        if (($T)(B1516))
+                                            B1522 = B1516;
                                         else
-                                            B1512 = 'External identifier: %=';
+                                            B1522 = 'External identifier: %=';
                                         {
-                                            var B1513 = B1511(B1512, identifier__1502);
-                                            return(B1510(B1513));
+                                            var B1523 = B1521(B1522, identifier__1512);
+                                            return(B1520(B1523));
                                         }
                                     }
                                 }
@@ -82,61 +82,61 @@ var B1489 = require('ralph/format');
         };
         ($module)['%export']('check-identifier', ($module)['check-identifier']);
     }
-    B1488['%annotate-function'](($module)['check-identifier'], 'check-identifier', false);
+    B1498['%annotate-function'](($module)['check-identifier'], 'check-identifier', false);
 }
 {
-    var B1518 = $REST;
+    var B1528 = $REST;
     {
-        var B1519 = $KEY;
+        var B1529 = $KEY;
         {
-            var B1520 = $K('end');
+            var B1530 = $K('end');
             {
-                var B1521 = $K('start');
+                var B1531 = $K('start');
                 {
                     {
-                        ($module)['destructure-parameter-list'] = function B1522(list__1523) {
-                            var position__1524 = false;
+                        ($module)['destructure-parameter-list'] = function B1532(list__1533) {
+                            var position__1534 = false;
                             {
-                                position__1524 = function B1525(symbol__1526) {
-                                    return(B1488['find-key'](list__1523, B1488['curry'](B1488['='], symbol__1526)));
+                                position__1534 = function B1535(symbol__1536) {
+                                    return(B1498['find-key'](list__1533, B1498['curry'](B1498['='], symbol__1536)));
                                 };
                                 {
-                                    var rest__1527 = position__1524(B1518);
+                                    var rest__1537 = position__1534(B1528);
                                     {
-                                        var key__1528 = position__1524(B1519);
+                                        var key__1538 = position__1534(B1529);
                                         {
-                                            var B1531 = B1488['copy-sequence'];
+                                            var B1541 = B1498['copy-sequence'];
                                             {
-                                                var B1529 = rest__1527;
+                                                var B1539 = rest__1537;
                                                 {
-                                                    var B1532 = false;
-                                                    if (($T)(B1529))
-                                                        B1532 = B1529;
+                                                    var B1542 = false;
+                                                    if (($T)(B1539))
+                                                        B1542 = B1539;
                                                     else {
-                                                        var B1530 = key__1528;
-                                                        if (($T)(B1530))
-                                                            B1532 = B1530;
+                                                        var B1540 = key__1538;
+                                                        if (($T)(B1540))
+                                                            B1542 = B1540;
                                                         else
-                                                            B1532 = B1488['size'](list__1523);
+                                                            B1542 = B1498['size'](list__1533);
                                                     }
                                                     {
-                                                        var B1533 = B1531(list__1523, B1520, B1532);
+                                                        var B1543 = B1541(list__1533, B1530, B1542);
                                                         {
-                                                            var B1534 = false;
-                                                            if (($T)(rest__1527))
-                                                                B1534 = B1488['element'](list__1523, B1488['inc'](rest__1527));
+                                                            var B1544 = false;
+                                                            if (($T)(rest__1537))
+                                                                B1544 = B1498['element'](list__1533, B1498['inc'](rest__1537));
                                                             else
-                                                                B1534 = false;
+                                                                B1544 = false;
                                                             {
-                                                                var B1535 = false;
-                                                                if (($T)(key__1528))
-                                                                    B1535 = B1488['copy-sequence'](list__1523, B1521, B1488['inc'](key__1528));
+                                                                var B1545 = false;
+                                                                if (($T)(key__1538))
+                                                                    B1545 = B1498['copy-sequence'](list__1533, B1531, B1498['inc'](key__1538));
                                                                 else
-                                                                    B1535 = false;
+                                                                    B1545 = false;
                                                                 return([
-                                                                    B1533,
-                                                                    B1534,
-                                                                    B1535
+                                                                    B1543,
+                                                                    B1544,
+                                                                    B1545
                                                                 ]);
                                                             }
                                                         }
@@ -150,7 +150,7 @@ var B1489 = require('ralph/format');
                         };
                         ($module)['%export']('destructure-parameter-list', ($module)['destructure-parameter-list']);
                     }
-                    B1488['%annotate-function'](($module)['destructure-parameter-list'], 'destructure-parameter-list', false);
+                    B1498['%annotate-function'](($module)['destructure-parameter-list'], 'destructure-parameter-list', false);
                 }
             }
         }
@@ -158,90 +158,90 @@ var B1489 = require('ralph/format');
 }
 {
     {
-        ($module)['op?'] = function B1537(op__1538, exp__1539) {
-            if (($T)(B1488['expression?'](exp__1539)))
-                return(B1488['=='](B1488['symbol-name'](B1488['first'](exp__1539)), op__1538));
+        ($module)['op?'] = function B1547(op__1548, exp__1549) {
+            if (($T)(B1498['expression?'](exp__1549)))
+                return(B1498['=='](B1498['symbol-name'](B1498['first'](exp__1549)), op__1548));
             else
                 return(false);
         };
         ($module)['%export']('op?', ($module)['op?']);
     }
-    B1488['%annotate-function'](($module)['op?'], 'op?', false);
+    B1498['%annotate-function'](($module)['op?'], 'op?', false);
 }
 {
     {
-        ($module)['process-import-names'] = function B1547(all__1548) {
-            var B1549 = $SL.call(arguments, 1);
+        ($module)['process-import-names'] = function B1557(all__1558) {
+            var B1559 = $SL.call(arguments, 1);
             {
-                var B1550 = B1488['%keys'](B1549, {
+                var B1560 = B1498['%keys'](B1559, {
                         'only': false,
                         'exclude': false,
                         'prefix': false,
                         'rename': false
                     });
                 {
-                    var only__1551 = B1550['only'];
+                    var only__1561 = B1560['only'];
                     {
-                        var exclude__1552 = B1550['exclude'];
+                        var exclude__1562 = B1560['exclude'];
                         {
-                            var prefix__1553 = B1550['prefix'];
+                            var prefix__1563 = B1560['prefix'];
                             {
-                                var rename__1554 = B1550['rename'];
+                                var rename__1564 = B1560['rename'];
                                 {
-                                    var resolve__1555 = false;
+                                    var resolve__1565 = false;
                                     {
-                                        resolve__1555 = function B1556(exp__1557) {
-                                            if (($T)(B1488['instance?'](exp__1557, B1488['<string>'])))
-                                                return(exp__1557);
+                                        resolve__1565 = function B1566(exp__1567) {
+                                            if (($T)(B1498['instance?'](exp__1567, B1498['<string>'])))
+                                                return(exp__1567);
                                             else
-                                                return(($module)['identifier-name'](exp__1557));
+                                                return(($module)['identifier-name'](exp__1567));
                                         };
                                         {
-                                            var B1565 = B1488['as-set'];
+                                            var B1575 = B1498['as-set'];
                                             {
-                                                var B1566 = false;
-                                                if (($T)(B1488['instance?'](only__1551, B1488['<array>'])))
-                                                    B1566 = B1488['map'](resolve__1555, only__1551);
+                                                var B1576 = false;
+                                                if (($T)(B1498['instance?'](only__1561, B1498['<array>'])))
+                                                    B1576 = B1498['map'](resolve__1565, only__1561);
                                                 else
-                                                    B1566 = all__1548;
+                                                    B1576 = all__1558;
                                                 {
-                                                    var names__1558 = B1565(B1566);
+                                                    var names__1568 = B1575(B1576);
                                                     {
-                                                        var B1567 = B1488['as-object'];
+                                                        var B1577 = B1498['as-object'];
                                                         {
-                                                            var B1568 = B1488['map'];
+                                                            var B1578 = B1498['map'];
                                                             {
-                                                                var B1559 = rename__1554;
+                                                                var B1569 = rename__1564;
                                                                 {
-                                                                    var B1569 = false;
-                                                                    if (($T)(B1559))
-                                                                        B1569 = B1559;
+                                                                    var B1579 = false;
+                                                                    if (($T)(B1569))
+                                                                        B1579 = B1569;
                                                                     else
-                                                                        B1569 = [];
+                                                                        B1579 = [];
                                                                     {
-                                                                        var B1570 = B1568(resolve__1555, B1569);
+                                                                        var B1580 = B1578(resolve__1565, B1579);
                                                                         {
-                                                                            var renamings__1560 = B1567(B1570);
+                                                                            var renamings__1570 = B1577(B1580);
                                                                             {
-                                                                                B1488['do'](B1488['curry'](B1488['remove!'], names__1558), B1488['map'](resolve__1555, exclude__1552));
+                                                                                B1498['do'](B1498['curry'](B1498['remove!'], names__1568), B1498['map'](resolve__1565, exclude__1562));
                                                                                 {
-                                                                                    B1488['set-union!'](names__1558, B1488['object-properties'](renamings__1560));
-                                                                                    return(B1488['map'](function B1561(name__1562) {
-                                                                                        var B1563 = B1488['get'](renamings__1560, name__1562);
-                                                                                        if (($T)(B1563)) {
-                                                                                            var renaming__1564 = B1563;
+                                                                                    B1498['set-union!'](names__1568, B1498['object-properties'](renamings__1570));
+                                                                                    return(B1498['map'](function B1571(name__1572) {
+                                                                                        var B1573 = B1498['get'](renamings__1570, name__1572);
+                                                                                        if (($T)(B1573)) {
+                                                                                            var renaming__1574 = B1573;
                                                                                             return([
-                                                                                                name__1562,
-                                                                                                renaming__1564
+                                                                                                name__1572,
+                                                                                                renaming__1574
                                                                                             ]);
-                                                                                        } else if (($T)(B1488['instance?'](prefix__1553, B1488['<string>'])))
+                                                                                        } else if (($T)(B1498['instance?'](prefix__1563, B1498['<string>'])))
                                                                                             return([
-                                                                                                name__1562,
-                                                                                                B1488['concatenate'](prefix__1553, name__1562)
+                                                                                                name__1572,
+                                                                                                B1498['concatenate'](prefix__1563, name__1572)
                                                                                             ]);
                                                                                         else
-                                                                                            return(name__1562);
-                                                                                    }, names__1558));
+                                                                                            return(name__1572);
+                                                                                    }, names__1568));
                                                                                 }
                                                                             }
                                                                         }
@@ -263,24 +263,24 @@ var B1489 = require('ralph/format');
         };
         ($module)['%export']('process-import-names', ($module)['process-import-names']);
     }
-    B1488['%annotate-function'](($module)['process-import-names'], 'process-import-names', false);
+    B1498['%annotate-function'](($module)['process-import-names'], 'process-import-names', false);
 }
 {
     {
-        ($module)['transform-setter-identifier'] = function B1572(identifier__1573) {
-            return(B1488['symbol'](B1488['concatenate'](B1488['symbol-name'](identifier__1573), '-setter')));
+        ($module)['transform-setter-identifier'] = function B1582(identifier__1583) {
+            return(B1498['symbol'](B1498['concatenate'](B1498['symbol-name'](identifier__1583), '-setter')));
         };
         ($module)['%export']('transform-setter-identifier', ($module)['transform-setter-identifier']);
     }
-    B1488['%annotate-function'](($module)['transform-setter-identifier'], 'transform-setter-identifier', false);
+    B1498['%annotate-function'](($module)['transform-setter-identifier'], 'transform-setter-identifier', false);
 }
 {
     {
-        ($module)['setter-identifier?'] = function B1575(form__1576) {
-            if (($T)(B1488['instance?'](form__1576, B1488['<array>'])))
-                if (($T)(B1488['=='](B1488['size'](form__1576), 2)))
-                    if (($T)(B1488['every?'](B1488['rcurry'](B1488['instance?'], B1488['<symbol>']), form__1576)))
-                        return(B1488['=='](B1488['symbol-name'](B1488['first'](form__1576)), 'setter'));
+        ($module)['setter-identifier?'] = function B1585(form__1586) {
+            if (($T)(B1498['instance?'](form__1586, B1498['<array>'])))
+                if (($T)(B1498['=='](B1498['size'](form__1586), 2)))
+                    if (($T)(B1498['every?'](B1498['rcurry'](B1498['instance?'], B1498['<symbol>']), form__1586)))
+                        return(B1498['=='](B1498['symbol-name'](B1498['first'](form__1586)), 'setter'));
                     else
                         return(false);
                 else
@@ -290,22 +290,22 @@ var B1489 = require('ralph/format');
         };
         ($module)['%export']('setter-identifier?', ($module)['setter-identifier?']);
     }
-    B1488['%annotate-function'](($module)['setter-identifier?'], 'setter-identifier?', false);
+    B1498['%annotate-function'](($module)['setter-identifier?'], 'setter-identifier?', false);
 }
 {
     {
-        ($module)['identifier-name'] = function B1578(identifier__1579) {
-            var B1580 = B1488['symbol-name'];
+        ($module)['identifier-name'] = function B1588(identifier__1589) {
+            var B1590 = B1498['symbol-name'];
             {
-                var B1581 = false;
-                if (($T)(($module)['setter-identifier?'](identifier__1579)))
-                    B1581 = ($module)['transform-setter-identifier'](B1488['second'](identifier__1579));
+                var B1591 = false;
+                if (($T)(($module)['setter-identifier?'](identifier__1589)))
+                    B1591 = ($module)['transform-setter-identifier'](B1498['second'](identifier__1589));
                 else
-                    B1581 = identifier__1579;
-                return(B1580(B1581));
+                    B1591 = identifier__1589;
+                return(B1590(B1591));
             }
         };
         ($module)['%export']('identifier-name', ($module)['identifier-name']);
     }
-    B1488['%annotate-function'](($module)['identifier-name'], 'identifier-name', false);
+    B1498['%annotate-function'](($module)['identifier-name'], 'identifier-name', false);
 }
