@@ -1,0 +1,62 @@
+(define-module ralph/repl/browser-evaluator
+  import: (ralph/format)
+  export: (<evaluator> start-evaluator))
+
+(define-class <evaluator> (<object>))
+
+(define $handlers (make-plain-object))
+
+
+(set! (get $handlers "change-module")
+      (method (evaluator message)
+        (bind-properties (name) message
+          (perform-module-change evaluator name))))
+
+(define-function perform-module-change ((evaluator <evaluator>) name)
+  (bind ((eval (get evaluator "evals" name)))
+    (unless eval
+      (bind ((exports (%eval(format-to-string "require('%s')" name))))
+        (set! eval (get exports "%eval"))
+        (set! (get evaluator "evals" name)
+              eval)))
+    (set! (get evaluator "current-eval")
+          eval)))
+
+(set! (get $handlers "eval-in-module")
+      (method (evaluator message)
+        (bind-properties (code) message
+          (bind-properties (current-eval) evaluator
+            (handler-case
+             (bind ((result (current-eval code)))
+               (send-command evaluator "result"
+                             "result" (description result)))
+             ((<error> condition: condition)
+              (send-command evaluator "exception"
+                            "stack" (get condition "stack"))))))))
+
+(define-function send-command ((evaluator <evaluator>) type #rest data)
+  (. (get evaluator "connection")
+     (send (as-json (apply make-object "type" type data)))))
+
+(define-function handle-message ((evaluator <evaluator>) serialized-message)
+  (bind ((message (parse-json (get serialized-message "data"))))
+    (if-bind (handler (get $handlers (get message "type")))
+      (handler evaluator message))))
+
+(define-function inject-commands! ((evaluator <evaluator>))
+  (%set (%native "$changeModule")
+        (curry change-module evaluator))
+  (%eval "$moduleRoot['%in-module'] = $changeModule"))
+
+(define-function change-module ((evaluator <evaluator>) name)
+  (perform-module-change evaluator name)
+  (send-command evaluator "change-module"
+                "name" name))
+
+(define-function start-evaluator ((evaluator <evaluator>) url)
+  (inject-commands! evaluator)
+  (bind ((connection (%native-call "new WebSocket" url)))
+    (set! (get evaluator "connection")
+          connection)
+    (set! (get connection "onmessage")
+          (curry handle-message evaluator))))
