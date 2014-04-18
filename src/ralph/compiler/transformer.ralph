@@ -73,7 +73,8 @@
   (method (env place value #rest superflous)
     ;; TODO [#B]: (unless (empty? superflous) (warn ...))
     (if (or (instance? place <symbol>)
-            (op? "%get-property" place))
+            (op? "%get-property" place)
+            (op? "%native" place))
         (k env (transformer place env)
                (transformer value env))
         (signal (format-to-string
