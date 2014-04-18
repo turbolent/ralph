@@ -76,15 +76,25 @@
   ;; TODO: close current connection
   (. connection (on "message"
                     (curry handle-message interactor)))
+  (. connection (on "close"
+                    (curry handle-close interactor)))
   (set! (get interactor "connection")
         connection)
   (change-module interactor "ralph/core")
   (update-prompt! interactor))
 
-(define-function start-interactor ((interactor <interactor>))
-  (set! (get interactor "server")
-        (create-server (%object "port" 8080)
-                       (curry handle-connection interactor)))
+(define-function handle-close ((interactor <interactor>))
+  (set! (get interactor "connection") #f)
+  (set! (get interactor "current-environment") #f)
+  (update-prompt! interactor))
+
+(define-function start-server ((interactor <interactor>) port)
+  (bind ((server (create-server (%object "port" port)
+                                (curry handle-connection interactor))))
+    (set! (get interactor "server") server)))
+
+(define-function start-interactor ((interactor <interactor>) #key (port 2342))
+  (start-server interactor port)
   (on-each-line interactor
                 (method (line)
                   (if (active? interactor)
