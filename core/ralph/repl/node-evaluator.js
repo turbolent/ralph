@@ -16,158 +16,72 @@ require('ralph/core');
 }
 var B8 = require('ralph/core');
 {
-    var B9 = require('ralph/format');
+    var B68 = require('ralph/repl/evaluator');
     {
-        var B10 = require('ws');
-        var B11 = require('vm');
+        var B69 = require('ws');
+        var B70 = require('vm');
     }
 }
 {
-    ($module)['<evaluator>'] = B8['%make-class'](B8['<object>'], {}, function LevaluatorG__12() {
+    ($module)['<node-evaluator>'] = B8['%make-class'](B68['<evaluator>'], {}, function Lnode_evaluatorG__71() {
         return(false);
     });
-    ($module)['%export']('<evaluator>', ($module)['<evaluator>']);
+    ($module)['%export']('<node-evaluator>', ($module)['<node-evaluator>']);
 }
-($module)['$handlers'] = B8['make-plain-object']();
-{
-    ($module)['eval-in-context'] = function B14(evaluator__15, code__16) {
-        return(B11['runInContext'](code__16, B8['get'](evaluator__15, 'context')));
-    };
-    B8['%annotate-function'](($module)['eval-in-context'], 'eval-in-context', false);
-}
-B8['get-setter'](($module)['$handlers'], 'change-module', function B19(evaluator__20, message__21) {
-    var B22 = message__21;
+($module)['evaluate'] = B8['%make-method']('evaluate', function B74(evaluator__75, code__76) {
+    var B77 = evaluator__75;
     {
-        var name__23 = B22['name'];
-        return(($module)['perform-module-change'](evaluator__20, name__23));
+        var context__78 = B77['context'];
+        return(B70['runInContext'](code__76, context__78));
     }
-});
-{
-    ($module)['perform-module-change'] = function B25(evaluator__26, name__27) {
-        var eval__28 = B8['get'](evaluator__26, 'evals', name__27);
-        {
-            if (($T)(B8['not'](eval__28))) {
-                var exports__29 = ($module)['eval-in-context'](evaluator__26, B9['format-to-string']('require(\'%s\')', name__27));
-                {
-                    eval__28 = B8['get'](exports__29, '%eval');
-                    B8['get-setter'](evaluator__26, 'evals', name__27, eval__28);
-                }
-            }
-            return(B8['get-setter'](evaluator__26, 'current-eval', eval__28));
-        }
-    };
-    B8['%annotate-function'](($module)['perform-module-change'], 'perform-module-change', false);
-}
-B8['get-setter'](($module)['$handlers'], 'eval-in-module', function B34(evaluator__35, message__36) {
-    var B37 = message__36;
+}, false, ($module)['<node-evaluator>'], ($module)['evaluate']);
+($module)['send-data'] = B8['%make-method']('send-data', function B82(evaluator__83, data__84) {
+    var B85 = B8['get'](evaluator__83, 'connection');
     {
-        var code__38 = B37['code'];
+        var B86 = data__84;
+        return(B85['send'](B86));
+    }
+}, false, ($module)['<node-evaluator>'], ($module)['send-data']);
+($module)['prepare-evaluator'] = B8['%make-method']('prepare-evaluator', function B88(evaluator__89) {
+    return(B8['get-setter'](evaluator__89, 'context', ($module)['make-context']({ '$changeModule': B8['curry'](B68['change-module'], evaluator__89) })));
+}, false, ($module)['<node-evaluator>'], ($module)['prepare-evaluator']);
+($module)['inject-commands!'] = B8['%make-method']('inject-commands!', function B91(evaluator__92) {
+    return(($module)['evaluate'](evaluator__92, '$moduleRoot[\'%in-module\'] = $changeModule'));
+}, false, ($module)['<node-evaluator>'], ($module)['inject-commands!']);
+($module)['connect-to-interactor'] = B8['%make-method']('connect-to-interactor', function B97(evaluator__98, url__99) {
+    var connection__100 = B69['connect'](url__99);
+    {
+        B8['get-setter'](evaluator__98, 'connection', connection__100);
         {
-            var B39 = evaluator__35;
+            var B101 = connection__100;
             {
-                var current_eval__40 = B39['current-eval'];
-                try {
-                    {
-                        var result__41 = current_eval__40(code__38);
-                        return(($module)['send-command'](evaluator__35, 'result', 'result', B8['description'](result__41)));
-                    }
-                } catch (B42) {
-                    if (($T)(B8['instance?'](B42, B8['<error>']))) {
-                        var condition__43 = B42;
-                        return(($module)['send-command'](evaluator__35, 'exception', 'stack', B8['get'](condition__43, 'stack')));
-                    } else
-                        return(false);
+                var B102 = 'message';
+                {
+                    var B103 = B8['curry'](B68['handle-message'], evaluator__98);
+                    return(B101['on'](B102, B103));
                 }
             }
         }
     }
-});
+}, false, ($module)['<node-evaluator>'], ($module)['connect-to-interactor']);
 {
-    ($module)['send-command'] = function B47(evaluator__48, type__49) {
-        var data__50 = $SL.call(arguments, 2);
+    ($module)['make-context'] = function B105(sandbox__106) {
+        var context__107 = B70['createContext'](sandbox__106);
         {
-            var B51 = B8['get'](evaluator__48, 'connection');
+            B8['extend!'](context__107, (global));
             {
-                var B52 = B8['as-json'](B8['apply'](B8['make-object'], 'type', type__49, data__50));
-                return(B51['send'](B52));
-            }
-        }
-    };
-    B8['%annotate-function'](($module)['send-command'], 'send-command', false);
-}
-{
-    ($module)['handle-message'] = function B55(evaluator__56, serialized_message__57) {
-        var message__58 = B8['parse-json'](serialized_message__57);
-        {
-            var B59 = B8['get'](($module)['$handlers'], B8['get'](message__58, 'type'));
-            if (($T)(B59)) {
-                var handler__60 = B59;
-                return(handler__60(evaluator__56, message__58));
-            } else
-                return(false);
-        }
-    };
-    B8['%annotate-function'](($module)['handle-message'], 'handle-message', false);
-}
-{
-    ($module)['inject-commands!'] = function B62(evaluator__63) {
-        return(($module)['eval-in-context'](evaluator__63, '$moduleRoot[\'%in-module\'] = $changeModule'));
-    };
-    B8['%annotate-function'](($module)['inject-commands!'], 'inject-commands!', false);
-}
-{
-    ($module)['change-module'] = function B65(evaluator__66, name__67) {
-        ($module)['perform-module-change'](evaluator__66, name__67);
-        return(($module)['send-command'](evaluator__66, 'change-module', 'name', name__67));
-    };
-    B8['%annotate-function'](($module)['change-module'], 'change-module', false);
-}
-{
-    {
-        ($module)['start-evaluator'] = function B72(evaluator__73, url__74) {
-            B8['get-setter'](evaluator__73, 'context', ($module)['make-context']({ '$changeModule': B8['curry'](($module)['change-module'], evaluator__73) }));
-            {
-                ($module)['inject-commands!'](evaluator__73);
+                B8['get-setter'](context__107, 'global', context__107);
                 {
-                    var connection__75 = B10['connect'](url__74);
+                    B8['get-setter'](context__107, 'global', 'global', context__107);
                     {
-                        B8['get-setter'](evaluator__73, 'connection', connection__75);
+                        B8['get-setter'](context__107, 'module', ($module)['module']);
                         {
-                            var B76 = connection__75;
+                            B8['get-setter'](context__107, 'module', (module));
                             {
-                                var B77 = 'message';
+                                B8['get-setter'](context__107, 'require', (require));
                                 {
-                                    var B78 = B8['curry'](($module)['handle-message'], evaluator__73);
-                                    return(B76['on'](B77, B78));
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        };
-        ($module)['%export']('start-evaluator', ($module)['start-evaluator']);
-    }
-    B8['%annotate-function'](($module)['start-evaluator'], 'start-evaluator', false);
-}
-{
-    ($module)['make-context'] = function B80(sandbox__81) {
-        var context__82 = B11['createContext'](sandbox__81);
-        {
-            B8['extend!'](context__82, (global));
-            {
-                B8['get-setter'](context__82, 'global', context__82);
-                {
-                    B8['get-setter'](context__82, 'global', 'global', context__82);
-                    {
-                        B8['get-setter'](context__82, 'module', ($module)['module']);
-                        {
-                            B8['get-setter'](context__82, 'module', (module));
-                            {
-                                B8['get-setter'](context__82, 'require', (require));
-                                {
-                                    B8['get-setter'](context__82, 'exports', B8['make-plain-object']());
-                                    return(context__82);
+                                    B8['get-setter'](context__107, 'exports', B8['make-plain-object']());
+                                    return(context__107);
                                 }
                             }
                         }

@@ -2,320 +2,320 @@ require('ralph/core');
 {
     var $module = Object.create($moduleRoot);
     {
-        ($module)['%export'] = function B3328(name__3329, value__3330) {
-            var B3332 = (exports);
-            return(B3332[name__3329] = value__3330);
+        ($module)['%export'] = function B3330(name__3331, value__3332) {
+            var B3334 = (exports);
+            return(B3334[name__3331] = value__3332);
         };
         {
-            ($module)['%eval'] = function B3331() {
+            ($module)['%eval'] = function B3333() {
                 return(eval((arguments[0])));
             };
             ($module)['%export']('%eval', ($module)['%eval']);
         }
     }
 }
-var B3333 = require('ralph/core');
+var B3335 = require('ralph/core');
 {
-    var B3334 = require('ralph/compiler/utilities');
+    var B3336 = require('ralph/compiler/utilities');
     {
-        var B3335 = require('ralph/compiler/environment');
+        var B3337 = require('ralph/compiler/environment');
         {
-            var B3336 = require('ralph/compiler/transformer');
-            var B3337 = require('ralph/format');
+            var B3338 = require('ralph/compiler/transformer');
+            var B3339 = require('ralph/format');
         }
     }
 }
 {
-    var B3339 = $S('%get-property', 'ralph/core');
+    var B3341 = $S('%get-property', 'ralph/core');
     {
-        var B3340 = $S('%native', 'ralph/core');
+        var B3342 = $S('%native', 'ralph/core');
         {
-            ($module)['make-module-reference'] = function B3341(identifier__3342) {
+            ($module)['make-module-reference'] = function B3343(identifier__3344) {
                 return([
-                    B3339,
+                    B3341,
                     [
-                        B3340,
+                        B3342,
                         '$module'
                     ],
-                    B3333['symbol-name'](identifier__3342)
+                    B3335['symbol-name'](identifier__3344)
                 ]);
             };
-            B3333['%annotate-function'](($module)['make-module-reference'], 'make-module-reference', false);
+            B3335['%annotate-function'](($module)['make-module-reference'], 'make-module-reference', false);
         }
     }
 }
 {
-    var B3346 = $S('%begin', 'ralph/core');
+    var B3348 = $S('%begin', 'ralph/core');
     {
-        ($module)['wrap-value!'] = function B3347(exp__3348, wrapper__3349) {
-            if (($T)(B3333['instance?'](exp__3348, B3333['<array>']))) {
-                var B3350 = B3333['symbol-name'](B3333['first'](exp__3348));
-                if (($T)(B3333['=='](B3350, '%quote')))
-                    return(exp__3348);
+        ($module)['wrap-value!'] = function B3349(exp__3350, wrapper__3351) {
+            if (($T)(B3335['instance?'](exp__3350, B3335['<array>']))) {
+                var B3352 = B3335['symbol-name'](B3335['first'](exp__3350));
+                if (($T)(B3335['=='](B3352, '%quote')))
+                    return(exp__3350);
                 else {
-                    var B3351 = B3333['=='](B3350, '%begin');
+                    var B3353 = B3335['=='](B3352, '%begin');
                     {
-                        var B3352 = false;
-                        if (($T)(B3351))
-                            B3352 = B3351;
+                        var B3354 = false;
+                        if (($T)(B3353))
+                            B3354 = B3353;
                         else
-                            B3352 = B3333['=='](B3350, '%bind');
-                        if (($T)(B3352)) {
-                            B3333['last-setter'](exp__3348, ($module)['wrap-value!'](B3333['last'](exp__3348), wrapper__3349));
-                            return(exp__3348);
-                        } else if (($T)(B3333['=='](B3350, '%if'))) {
-                            B3333['third-setter'](exp__3348, ($module)['wrap-value!'](B3333['third'](exp__3348), wrapper__3349));
+                            B3354 = B3335['=='](B3352, '%bind');
+                        if (($T)(B3354)) {
+                            B3335['last-setter'](exp__3350, ($module)['wrap-value!'](B3335['last'](exp__3350), wrapper__3351));
+                            return(exp__3350);
+                        } else if (($T)(B3335['=='](B3352, '%if'))) {
+                            B3335['third-setter'](exp__3350, ($module)['wrap-value!'](B3335['third'](exp__3350), wrapper__3351));
                             {
-                                B3333['last-setter'](exp__3348, ($module)['wrap-value!'](B3333['last'](exp__3348), wrapper__3349));
-                                return(exp__3348);
+                                B3335['last-setter'](exp__3350, ($module)['wrap-value!'](B3335['last'](exp__3350), wrapper__3351));
+                                return(exp__3350);
                             }
-                        } else if (($T)(B3333['=='](B3350, '%while')))
+                        } else if (($T)(B3335['=='](B3352, '%while')))
                             return([
-                                B3346,
-                                exp__3348,
-                                ($module)['wrap-value!'](false, wrapper__3349)
+                                B3348,
+                                exp__3350,
+                                ($module)['wrap-value!'](false, wrapper__3351)
                             ]);
-                        else if (($T)(B3333['=='](B3350, '%try'))) {
-                            B3333['second-setter'](exp__3348, ($module)['wrap-value!'](B3333['second'](exp__3348), wrapper__3349));
+                        else if (($T)(B3335['=='](B3352, '%try'))) {
+                            B3335['second-setter'](exp__3350, ($module)['wrap-value!'](B3335['second'](exp__3350), wrapper__3351));
                             {
-                                B3333['last-setter'](exp__3348, ($module)['wrap-value!'](B3333['last'](exp__3348), wrapper__3349));
-                                return(exp__3348);
+                                B3335['last-setter'](exp__3350, ($module)['wrap-value!'](B3335['last'](exp__3350), wrapper__3351));
+                                return(exp__3350);
                             }
                         } else
-                            return(B3333['concatenate'](wrapper__3349, [exp__3348]));
+                            return(B3335['concatenate'](wrapper__3351, [exp__3350]));
                     }
                 }
             } else
-                return(B3333['concatenate'](wrapper__3349, [exp__3348]));
+                return(B3335['concatenate'](wrapper__3351, [exp__3350]));
         };
-        B3333['%annotate-function'](($module)['wrap-value!'], 'wrap-value!', false);
+        B3335['%annotate-function'](($module)['wrap-value!'], 'wrap-value!', false);
     }
 }
 {
-    var B3354 = $S('%native-call', 'ralph/core');
+    var B3356 = $S('%native-call', 'ralph/core');
     {
-        ($module)['wrap-return'] = function B3355(exp__3356) {
-            return(($module)['wrap-value!'](exp__3356, [
-                B3354,
+        ($module)['wrap-return'] = function B3357(exp__3358) {
+            return(($module)['wrap-value!'](exp__3358, [
+                B3356,
                 'return'
             ]));
         };
-        B3333['%annotate-function'](($module)['wrap-return'], 'wrap-return', false);
+        B3335['%annotate-function'](($module)['wrap-return'], 'wrap-return', false);
     }
 }
 {
-    var B3357 = $S('%if', 'ralph/core');
+    var B3359 = $S('%if', 'ralph/core');
     {
-        var B3358 = $S('%while', 'ralph/core');
+        var B3360 = $S('%while', 'ralph/core');
         {
-            var B3359 = $S('%bind', 'ralph/core');
+            var B3361 = $S('%bind', 'ralph/core');
             {
-                var B3360 = $S('%try', 'ralph/core');
+                var B3362 = $S('%try', 'ralph/core');
                 ($module)['$statement-symbols'] = [
-                    B3357,
-                    B3358,
-                    B3346,
                     B3359,
-                    B3360
+                    B3360,
+                    B3348,
+                    B3361,
+                    B3362
                 ];
             }
         }
     }
 }
 {
-    ($module)['generates-statement?'] = function B3362(exp__3363) {
-        if (($T)(B3333['instance?'](exp__3363, B3333['<array>'])))
-            if (($T)(B3333['not'](B3333['empty?'](exp__3363))))
-                return(B3333['member?'](B3333['first'](exp__3363), ($module)['$statement-symbols']));
+    ($module)['generates-statement?'] = function B3364(exp__3365) {
+        if (($T)(B3335['instance?'](exp__3365, B3335['<array>'])))
+            if (($T)(B3335['not'](B3335['empty?'](exp__3365))))
+                return(B3335['member?'](B3335['first'](exp__3365), ($module)['$statement-symbols']));
             else
                 return(false);
         else
             return(false);
     };
-    B3333['%annotate-function'](($module)['generates-statement?'], 'generates-statement?', false);
+    B3335['%annotate-function'](($module)['generates-statement?'], 'generates-statement?', false);
 }
 {
-    ($module)['wrap-true'] = function B3365(exp__3366) {
-        if (($T)(B3333['instance?'](exp__3366, B3333['<boolean>'])))
-            return(B3333['true?'](exp__3366));
+    ($module)['wrap-true'] = function B3367(exp__3368) {
+        if (($T)(B3335['instance?'](exp__3368, B3335['<boolean>'])))
+            return(B3335['true?'](exp__3368));
         else
             return([
                 [
-                    B3340,
+                    B3342,
                     '$T'
                 ],
-                exp__3366
+                exp__3368
             ]);
     };
-    B3333['%annotate-function'](($module)['wrap-true'], 'wrap-true', false);
+    B3335['%annotate-function'](($module)['wrap-true'], 'wrap-true', false);
 }
 {
-    var B3368 = $S('%export');
+    var B3370 = $S('%export');
     {
-        ($module)['wrap-export'] = function B3369(identifier__3370, value__3371, exp__3372, env__3373) {
-            var B3374 = false;
-            if (($T)(B3333['not'](B3335['locally-bound?'](exp__3372, env__3373))))
-                B3374 = B3333['member?'](B3333['symbol-name'](identifier__3370), B3333['get'](env__3373, 'module', 'exports'));
+        ($module)['wrap-export'] = function B3371(identifier__3372, value__3373, exp__3374, env__3375) {
+            var B3376 = false;
+            if (($T)(B3335['not'](B3337['locally-bound?'](exp__3374, env__3375))))
+                B3376 = B3335['member?'](B3335['symbol-name'](identifier__3372), B3335['get'](env__3375, 'module', 'exports'));
             else
-                B3374 = false;
-            if (($T)(B3374))
+                B3376 = false;
+            if (($T)(B3376))
                 return([
-                    B3346,
-                    exp__3372,
+                    B3348,
+                    exp__3374,
                     [
-                        ($module)['make-module-reference'](B3368),
-                        B3333['symbol-name'](identifier__3370),
-                        value__3371
+                        ($module)['make-module-reference'](B3370),
+                        B3335['symbol-name'](identifier__3372),
+                        value__3373
                     ]
                 ]);
             else
-                return(exp__3372);
+                return(exp__3374);
         };
-        B3333['%annotate-function'](($module)['wrap-export'], 'wrap-export', false);
+        B3335['%annotate-function'](($module)['wrap-export'], 'wrap-export', false);
     }
 }
-($module)['*transformers*'] = B3333['make-plain-object']();
+($module)['*transformers*'] = B3335['make-plain-object']();
 {
     {
-        ($module)['transform-statements!'] = function B3380(exp__3381, env__3382) {
-            var B3383 = exp__3381;
-            if (($T)(B3333['instance?'](B3383, B3333['<array>']))) {
-                var name__3384 = B3333['symbol-name'](B3333['first'](exp__3381));
+        ($module)['transform-statements!'] = function B3382(exp__3383, env__3384) {
+            var B3385 = exp__3383;
+            if (($T)(B3335['instance?'](B3385, B3335['<array>']))) {
+                var name__3386 = B3335['symbol-name'](B3335['first'](exp__3383));
                 {
-                    var B3385 = B3333['get'](($module)['*transformers*'], name__3384);
-                    if (($T)(B3385)) {
-                        var transformer__3386 = B3385;
-                        return(B3333['apply'](transformer__3386, env__3382, B3333['rest'](exp__3381)));
+                    var B3387 = B3335['get'](($module)['*transformers*'], name__3386);
+                    if (($T)(B3387)) {
+                        var transformer__3388 = B3387;
+                        return(B3335['apply'](transformer__3388, env__3384, B3335['rest'](exp__3383)));
                     } else
-                        return(B3333['map'](B3333['rcurry'](($module)['transform-statements!'], env__3382), exp__3381));
+                        return(B3335['map'](B3335['rcurry'](($module)['transform-statements!'], env__3384), exp__3383));
                 }
-            } else if (($T)(B3333['instance?'](B3383, B3333['<symbol>']))) {
-                var B3387 = B3334['special-symbol?'](exp__3381);
+            } else if (($T)(B3335['instance?'](B3385, B3335['<symbol>']))) {
+                var B3389 = B3336['special-symbol?'](exp__3383);
                 {
-                    var B3389 = false;
-                    if (($T)(B3387))
-                        B3389 = B3387;
-                    else {
-                        var B3388 = B3335['locally-bound?'](exp__3381, env__3382);
-                        if (($T)(B3388))
-                            B3389 = B3388;
-                        else
-                            B3389 = B3333['get'](exp__3381, 'generated?');
-                    }
+                    var B3391 = false;
                     if (($T)(B3389))
-                        return(exp__3381);
+                        B3391 = B3389;
+                    else {
+                        var B3390 = B3337['locally-bound?'](exp__3383, env__3384);
+                        if (($T)(B3390))
+                            B3391 = B3390;
+                        else
+                            B3391 = B3335['get'](exp__3383, 'generated?');
+                    }
+                    if (($T)(B3391))
+                        return(exp__3383);
                     else
-                        return(($module)['make-module-reference'](exp__3381));
+                        return(($module)['make-module-reference'](exp__3383));
                 }
             } else
-                return(exp__3381);
+                return(exp__3383);
         };
         ($module)['%export']('transform-statements!', ($module)['transform-statements!']);
     }
-    B3333['%annotate-function'](($module)['transform-statements!'], 'transform-statements!', false);
+    B3335['%annotate-function'](($module)['transform-statements!'], 'transform-statements!', false);
 }
 {
-    var B3390 = $S('%quote', 'ralph/core');
-    B3333['get-setter'](($module)['*transformers*'], '%quote', B3336['make-quote-transformer'](B3390));
+    var B3392 = $S('%quote', 'ralph/core');
+    B3335['get-setter'](($module)['*transformers*'], '%quote', B3338['make-quote-transformer'](B3392));
 }
 {
-    var B3392 = $S('%var', 'ralph/core');
+    var B3394 = $S('%var', 'ralph/core');
     {
-        var B3393 = $S('%set', 'ralph/core');
-        B3333['get-setter'](($module)['*transformers*'], '%bind', B3336['make-bind-transformer'](($module)['transform-statements!'], function B3394(env__3395, identifier__3396, valueT__3397, bodyT__3398) {
-            if (($T)(($module)['generates-statement?'](valueT__3397)))
+        var B3395 = $S('%set', 'ralph/core');
+        B3335['get-setter'](($module)['*transformers*'], '%bind', B3338['make-bind-transformer'](($module)['transform-statements!'], function B3396(env__3397, identifier__3398, valueT__3399, bodyT__3400) {
+            if (($T)(($module)['generates-statement?'](valueT__3399)))
                 return([
-                    B3346,
+                    B3348,
                     [
-                        B3392,
-                        identifier__3396,
+                        B3394,
+                        identifier__3398,
                         false
                     ],
-                    ($module)['wrap-value!'](valueT__3397, [
-                        B3393,
-                        identifier__3396
+                    ($module)['wrap-value!'](valueT__3399, [
+                        B3395,
+                        identifier__3398
                     ]),
-                    bodyT__3398
+                    bodyT__3400
                 ]);
             else
                 return([
-                    B3346,
+                    B3348,
                     [
-                        B3392,
-                        identifier__3396,
-                        valueT__3397
+                        B3394,
+                        identifier__3398,
+                        valueT__3399
                     ],
-                    bodyT__3398
+                    bodyT__3400
                 ]);
         }));
     }
 }
 {
-    var B3400 = $S('%method', 'ralph/core');
-    B3333['get-setter'](($module)['*transformers*'], '%method', B3336['make-method-transformer'](($module)['transform-statements!'], function B3401(env__3402, name__3403, parameters__3404, formT__3405) {
+    var B3402 = $S('%method', 'ralph/core');
+    B3335['get-setter'](($module)['*transformers*'], '%method', B3338['make-method-transformer'](($module)['transform-statements!'], function B3403(env__3404, name__3405, parameters__3406, formT__3407) {
         return([
-            B3400,
-            name__3403,
-            parameters__3404,
-            ($module)['wrap-return'](formT__3405)
+            B3402,
+            name__3405,
+            parameters__3406,
+            ($module)['wrap-return'](formT__3407)
         ]);
     }));
 }
-B3333['get-setter'](($module)['*transformers*'], '%set', B3336['make-set-transformer'](($module)['transform-statements!'], function B3407(env__3408, placeT__3409, valueT__3410) {
-    return(($module)['wrap-export'](placeT__3409, placeT__3409, [
-        B3393,
-        placeT__3409,
-        valueT__3410
-    ], env__3408));
+B3335['get-setter'](($module)['*transformers*'], '%set', B3338['make-set-transformer'](($module)['transform-statements!'], function B3409(env__3410, placeT__3411, valueT__3412) {
+    return(($module)['wrap-export'](placeT__3411, placeT__3411, [
+        B3395,
+        placeT__3411,
+        valueT__3412
+    ], env__3410));
 }));
 {
-    var B3418 = [
+    var B3420 = [
             '%var',
             '%define'
         ];
     {
-        var B3419 = false;
+        var B3421 = false;
         {
-            var B3420 = false;
+            var B3422 = false;
             {
-                var B3421 = [B3418];
+                var B3423 = [B3420];
                 {
                     while (true) {
-                        var B3431 = B3333['not'];
+                        var B3433 = B3335['not'];
                         {
-                            var B3422 = B3419;
+                            var B3424 = B3421;
                             {
-                                var B3432 = false;
-                                if (($T)(B3422))
-                                    B3432 = B3422;
+                                var B3434 = false;
+                                if (($T)(B3424))
+                                    B3434 = B3424;
                                 else
-                                    B3432 = B3333['any?'](B3333['empty?'], B3421);
+                                    B3434 = B3335['any?'](B3335['empty?'], B3423);
                                 {
-                                    var B3433 = B3431(B3432);
-                                    if (($T)(B3433)) {
-                                        var name__3423 = B3333['first'](B3418);
+                                    var B3435 = B3433(B3434);
+                                    if (($T)(B3435)) {
+                                        var name__3425 = B3335['first'](B3420);
                                         {
-                                            (function B3424(name__3425) {
-                                                return(B3333['get-setter'](($module)['*transformers*'], name__3425, B3336['make-var-transformer'](($module)['transform-statements!'], function B3426(env__3427, identifier__3428, valueT__3429) {
-                                                    if (($T)(B3333['get'](identifier__3428, 'generated?')))
-                                                        return(($module)['wrap-export'](identifier__3428, identifier__3428, [
-                                                            B3392,
-                                                            identifier__3428,
-                                                            valueT__3429
-                                                        ], env__3427));
+                                            (function B3426(name__3427) {
+                                                return(B3335['get-setter'](($module)['*transformers*'], name__3427, B3338['make-var-transformer'](($module)['transform-statements!'], function B3428(env__3429, identifier__3430, valueT__3431) {
+                                                    if (($T)(B3335['get'](identifier__3430, 'generated?')))
+                                                        return(($module)['wrap-export'](identifier__3430, identifier__3430, [
+                                                            B3394,
+                                                            identifier__3430,
+                                                            valueT__3431
+                                                        ], env__3429));
                                                     else {
-                                                        var place__3430 = ($module)['make-module-reference'](identifier__3428);
-                                                        return(($module)['wrap-export'](identifier__3428, place__3430, [
-                                                            B3393,
-                                                            place__3430,
-                                                            valueT__3429
-                                                        ], env__3427));
+                                                        var place__3432 = ($module)['make-module-reference'](identifier__3430);
+                                                        return(($module)['wrap-export'](identifier__3430, place__3432, [
+                                                            B3395,
+                                                            place__3432,
+                                                            valueT__3431
+                                                        ], env__3429));
                                                     }
                                                 })));
-                                            }(name__3423));
+                                            }(name__3425));
                                             {
-                                                B3418 = B3333['rest'](B3418);
-                                                B3421 = [B3418];
+                                                B3420 = B3335['rest'](B3420);
+                                                B3423 = [B3420];
                                             }
                                         }
                                     } else
@@ -324,70 +324,70 @@ B3333['get-setter'](($module)['*transformers*'], '%set', B3336['make-set-transfo
                             }
                         }
                     }
-                    B3420;
+                    B3422;
                 }
             }
         }
     }
 }
 {
-    var B3435 = $K('count');
+    var B3437 = $K('count');
     {
-        var B3436 = $K('k');
-        B3333['get-setter'](($module)['*transformers*'], '%if', B3336['make-rest-transformer'](($module)['transform-statements!'], B3435, 3, B3436, function B3437(env__3438, predicateT__3439, consequentT__3440, alternateT__3441) {
+        var B3438 = $K('k');
+        B3335['get-setter'](($module)['*transformers*'], '%if', B3338['make-rest-transformer'](($module)['transform-statements!'], B3437, 3, B3438, function B3439(env__3440, predicateT__3441, consequentT__3442, alternateT__3443) {
             return([
-                B3357,
-                ($module)['wrap-true'](predicateT__3439),
-                consequentT__3440,
-                alternateT__3441
+                B3359,
+                ($module)['wrap-true'](predicateT__3441),
+                consequentT__3442,
+                alternateT__3443
             ]);
         }));
     }
 }
-B3333['get-setter'](($module)['*transformers*'], '%while', B3336['make-rest-transformer'](($module)['transform-statements!'], B3435, 2, B3436, function B3443(env__3444, predicateT__3445, formT__3446) {
+B3335['get-setter'](($module)['*transformers*'], '%while', B3338['make-rest-transformer'](($module)['transform-statements!'], B3437, 2, B3438, function B3445(env__3446, predicateT__3447, formT__3448) {
     return([
-        B3358,
-        ($module)['wrap-true'](predicateT__3445),
-        formT__3446
+        B3360,
+        ($module)['wrap-true'](predicateT__3447),
+        formT__3448
     ]);
 }));
-B3333['get-setter'](($module)['*transformers*'], '%try', B3336['make-try-transformer'](($module)['transform-statements!']));
-B3333['get-setter'](($module)['*transformers*'], '%object', B3336['make-object-transformer'](($module)['transform-statements!']));
+B3335['get-setter'](($module)['*transformers*'], '%try', B3338['make-try-transformer'](($module)['transform-statements!']));
+B3335['get-setter'](($module)['*transformers*'], '%object', B3338['make-object-transformer'](($module)['transform-statements!']));
 {
-    var B3453 = $S('%infix', 'ralph/core');
+    var B3455 = $S('%infix', 'ralph/core');
     {
-        var B3454 = [
-                B3354,
-                B3453
+        var B3456 = [
+                B3356,
+                B3455
             ];
         {
-            var B3455 = false;
+            var B3457 = false;
             {
-                var B3456 = false;
+                var B3458 = false;
                 {
-                    var B3457 = [B3454];
+                    var B3459 = [B3456];
                     {
                         while (true) {
-                            var B3462 = B3333['not'];
+                            var B3464 = B3335['not'];
                             {
-                                var B3458 = B3455;
+                                var B3460 = B3457;
                                 {
-                                    var B3463 = false;
-                                    if (($T)(B3458))
-                                        B3463 = B3458;
+                                    var B3465 = false;
+                                    if (($T)(B3460))
+                                        B3465 = B3460;
                                     else
-                                        B3463 = B3333['any?'](B3333['empty?'], B3457);
+                                        B3465 = B3335['any?'](B3335['empty?'], B3459);
                                     {
-                                        var B3464 = B3462(B3463);
-                                        if (($T)(B3464)) {
-                                            var symbol__3459 = B3333['first'](B3454);
+                                        var B3466 = B3464(B3465);
+                                        if (($T)(B3466)) {
+                                            var symbol__3461 = B3335['first'](B3456);
                                             {
-                                                (function B3460(symbol__3461) {
-                                                    return(B3333['get-setter'](($module)['*transformers*'], B3333['symbol-name'](symbol__3461), B3336['make-operator-transformer'](symbol__3461, ($module)['transform-statements!'])));
-                                                }(symbol__3459));
+                                                (function B3462(symbol__3463) {
+                                                    return(B3335['get-setter'](($module)['*transformers*'], B3335['symbol-name'](symbol__3463), B3338['make-operator-transformer'](symbol__3463, ($module)['transform-statements!'])));
+                                                }(symbol__3461));
                                                 {
-                                                    B3454 = B3333['rest'](B3454);
-                                                    B3457 = [B3454];
+                                                    B3456 = B3335['rest'](B3456);
+                                                    B3459 = [B3456];
                                                 }
                                             }
                                         } else
@@ -396,7 +396,7 @@ B3333['get-setter'](($module)['*transformers*'], '%object', B3336['make-object-t
                                 }
                             }
                         }
-                        B3456;
+                        B3458;
                     }
                 }
             }
@@ -404,44 +404,44 @@ B3333['get-setter'](($module)['*transformers*'], '%object', B3336['make-object-t
     }
 }
 {
-    var B3471 = $S('%array', 'ralph/core');
+    var B3473 = $S('%array', 'ralph/core');
     {
-        var B3472 = $K('symbol');
+        var B3474 = $K('symbol');
         {
-            var B3473 = [
-                    B3346,
-                    B3340,
-                    B3471,
-                    B3339
+            var B3475 = [
+                    B3348,
+                    B3342,
+                    B3473,
+                    B3341
                 ];
             {
-                var B3474 = false;
+                var B3476 = false;
                 {
-                    var B3475 = false;
+                    var B3477 = false;
                     {
-                        var B3476 = [B3473];
+                        var B3478 = [B3475];
                         {
                             while (true) {
-                                var B3481 = B3333['not'];
+                                var B3483 = B3335['not'];
                                 {
-                                    var B3477 = B3474;
+                                    var B3479 = B3476;
                                     {
-                                        var B3482 = false;
-                                        if (($T)(B3477))
-                                            B3482 = B3477;
+                                        var B3484 = false;
+                                        if (($T)(B3479))
+                                            B3484 = B3479;
                                         else
-                                            B3482 = B3333['any?'](B3333['empty?'], B3476);
+                                            B3484 = B3335['any?'](B3335['empty?'], B3478);
                                         {
-                                            var B3483 = B3481(B3482);
-                                            if (($T)(B3483)) {
-                                                var symbol__3478 = B3333['first'](B3473);
+                                            var B3485 = B3483(B3484);
+                                            if (($T)(B3485)) {
+                                                var symbol__3480 = B3335['first'](B3475);
                                                 {
-                                                    (function B3479(symbol__3480) {
-                                                        return(B3333['get-setter'](($module)['*transformers*'], B3333['symbol-name'](symbol__3480), B3336['make-rest-transformer'](($module)['transform-statements!'], B3472, symbol__3480)));
-                                                    }(symbol__3478));
+                                                    (function B3481(symbol__3482) {
+                                                        return(B3335['get-setter'](($module)['*transformers*'], B3335['symbol-name'](symbol__3482), B3338['make-rest-transformer'](($module)['transform-statements!'], B3474, symbol__3482)));
+                                                    }(symbol__3480));
                                                     {
-                                                        B3473 = B3333['rest'](B3473);
-                                                        B3476 = [B3473];
+                                                        B3475 = B3335['rest'](B3475);
+                                                        B3478 = [B3475];
                                                     }
                                                 }
                                             } else
@@ -450,7 +450,7 @@ B3333['get-setter'](($module)['*transformers*'], '%object', B3336['make-object-t
                                     }
                                 }
                             }
-                            B3475;
+                            B3477;
                         }
                     }
                 }

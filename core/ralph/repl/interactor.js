@@ -184,19 +184,31 @@ var B8 = require('ralph/core');
     B8['%annotate-function'](($module)['handle-message'], 'handle-message', false);
 }
 {
-    ($module)['handle-connection'] = function B96(interactor__97, connection__98) {
-        var B99 = connection__98;
+    ($module)['handle-connection'] = function B99(interactor__100, connection__101) {
+        var B102 = connection__101;
         {
-            var B100 = 'message';
+            var B103 = 'message';
             {
-                var B101 = B8['curry'](($module)['handle-message'], interactor__97);
+                var B104 = B8['curry'](($module)['handle-message'], interactor__100);
                 {
-                    B99['on'](B100, B101);
+                    B102['on'](B103, B104);
                     {
-                        B8['get-setter'](interactor__97, 'connection', connection__98);
+                        var B105 = connection__101;
                         {
-                            ($module)['change-module'](interactor__97, 'ralph/core');
-                            return(($module)['update-prompt!'](interactor__97));
+                            var B106 = 'close';
+                            {
+                                var B107 = B8['curry'](($module)['handle-close'], interactor__100);
+                                {
+                                    B105['on'](B106, B107);
+                                    {
+                                        B8['get-setter'](interactor__100, 'connection', connection__101);
+                                        {
+                                            ($module)['change-module'](interactor__100, 'ralph/core');
+                                            return(($module)['update-prompt!'](interactor__100));
+                                        }
+                                    }
+                                }
+                            }
                         }
                     }
                 }
@@ -206,19 +218,45 @@ var B8 = require('ralph/core');
     B8['%annotate-function'](($module)['handle-connection'], 'handle-connection', false);
 }
 {
+    ($module)['handle-close'] = function B109(interactor__110) {
+        B8['get-setter'](interactor__110, 'connection', false);
+        {
+            B8['get-setter'](interactor__110, 'current-environment', false);
+            return(($module)['update-prompt!'](interactor__110));
+        }
+    };
+    B8['%annotate-function'](($module)['handle-close'], 'handle-close', false);
+}
+{
+    ($module)['start-server'] = function B112(interactor__113, port__114) {
+        var server__115 = B14['createServer']({ 'port': port__114 }, B8['curry'](($module)['handle-connection'], interactor__113));
+        return(B8['get-setter'](interactor__113, 'server', server__115));
+    };
+    B8['%annotate-function'](($module)['start-server'], 'start-server', false);
+}
+{
     {
-        ($module)['start-interactor'] = function B104(interactor__105) {
-            B8['get-setter'](interactor__105, 'server', B14['createServer']({ 'port': 8080 }, B8['curry'](($module)['handle-connection'], interactor__105)));
+        ($module)['start-interactor'] = function B120(interactor__121) {
+            var B122 = $SL.call(arguments, 1);
             {
-                ($module)['on-each-line'](interactor__105, function B106(line__107) {
-                    if (($T)(($module)['active?'](interactor__105)))
-                        return(($module)['handle-line'](interactor__105, line__107));
-                    else {
-                        B10['format-out']('[inactive]\n');
-                        return(($module)['update-prompt!'](interactor__105));
+                var B123 = B8['%keys'](B122, { 'port': 2342 });
+                {
+                    var port__124 = B123['port'];
+                    {
+                        ($module)['start-server'](interactor__121, port__124);
+                        {
+                            ($module)['on-each-line'](interactor__121, function B125(line__126) {
+                                if (($T)(($module)['active?'](interactor__121)))
+                                    return(($module)['handle-line'](interactor__121, line__126));
+                                else {
+                                    B10['format-out']('[inactive]\n');
+                                    return(($module)['update-prompt!'](interactor__121));
+                                }
+                            });
+                            return(($module)['update-prompt!'](interactor__121));
+                        }
                     }
-                });
-                return(($module)['update-prompt!'](interactor__105));
+                }
             }
         };
         ($module)['%export']('start-interactor', ($module)['start-interactor']);
@@ -226,80 +264,80 @@ var B8 = require('ralph/core');
     B8['%annotate-function'](($module)['start-interactor'], 'start-interactor', false);
 }
 {
-    ($module)['append-line!'] = function B109(interactor__110, line__111) {
-        return(B8['get-setter'](interactor__110, 'current-line', B8['concatenate'](B8['get'](interactor__110, 'current-line'), '\n', line__111)));
+    ($module)['append-line!'] = function B128(interactor__129, line__130) {
+        return(B8['get-setter'](interactor__129, 'current-line', B8['concatenate'](B8['get'](interactor__129, 'current-line'), '\n', line__130)));
     };
     B8['%annotate-function'](($module)['append-line!'], 'append-line!', false);
 }
 {
-    ($module)['eval-in-module'] = function B113(interactor__114, code__115) {
-        return(($module)['send-command'](interactor__114, 'eval-in-module', 'code', code__115));
+    ($module)['eval-in-module'] = function B132(interactor__133, code__134) {
+        return(($module)['send-command'](interactor__133, 'eval-in-module', 'code', code__134));
     };
     B8['%annotate-function'](($module)['eval-in-module'], 'eval-in-module', false);
 }
-B8['get-setter'](($module)['$handlers'], 'result', function B118(interactor__119, message__120) {
-    var B121 = message__120;
+B8['get-setter'](($module)['$handlers'], 'result', function B137(interactor__138, message__139) {
+    var B140 = message__139;
     {
-        var result__122 = B121['result'];
+        var result__141 = B140['result'];
         {
-            B10['format-out']('%s\n', result__122);
-            return(($module)['update-prompt!'](interactor__119));
+            B10['format-out']('%s\n', result__141);
+            return(($module)['update-prompt!'](interactor__138));
         }
     }
 });
-B8['get-setter'](($module)['$handlers'], 'exception', function B125(interactor__126, message__127) {
-    var B128 = message__127;
+B8['get-setter'](($module)['$handlers'], 'exception', function B144(interactor__145, message__146) {
+    var B147 = message__146;
     {
-        var stack__129 = B128['stack'];
+        var stack__148 = B147['stack'];
         {
-            B10['format-out']('%s\n', stack__129);
-            return(($module)['update-prompt!'](interactor__126));
+            B10['format-out']('%s\n', stack__148);
+            return(($module)['update-prompt!'](interactor__145));
         }
     }
 });
-B8['get-setter'](($module)['$handlers'], 'change-module', function B132(interactor__133, message__134) {
-    var B135 = message__134;
+B8['get-setter'](($module)['$handlers'], 'change-module', function B151(interactor__152, message__153) {
+    var B154 = message__153;
     {
-        var name__136 = B135['name'];
-        return(($module)['perform-module-change'](interactor__133, name__136));
+        var name__155 = B154['name'];
+        return(($module)['perform-module-change'](interactor__152, name__155));
     }
 });
 {
-    ($module)['handle-line'] = function B140(interactor__141, line__142) {
-        ($module)['append-line!'](interactor__141, line__142);
+    ($module)['handle-line'] = function B159(interactor__160, line__161) {
+        ($module)['append-line!'](interactor__160, line__161);
         {
-            var B143 = interactor__141;
+            var B162 = interactor__160;
             {
-                var current_line__144 = B143['current-line'];
+                var current_line__163 = B162['current-line'];
                 {
-                    var current_environment__145 = B143['current-environment'];
+                    var current_environment__164 = B162['current-environment'];
                     try {
                         {
-                            var expression__146 = ($module)['read-line'](interactor__141, current_line__144);
+                            var expression__165 = ($module)['read-line'](interactor__160, current_line__163);
                             {
-                                var incompleteQ__147 = B8['=='](expression__146, ($module)['$incomplete']);
+                                var incompleteQ__166 = B8['=='](expression__165, ($module)['$incomplete']);
                                 {
-                                    B8['get-setter'](interactor__141, 'incomplete?', incompleteQ__147);
-                                    if (($T)(incompleteQ__147))
-                                        return(($module)['update-prompt!'](interactor__141));
+                                    B8['get-setter'](interactor__160, 'incomplete?', incompleteQ__166);
+                                    if (($T)(incompleteQ__166))
+                                        return(($module)['update-prompt!'](interactor__160));
                                     else {
-                                        var code__148 = B13['compile-to-string'](expression__146, current_environment__145);
+                                        var code__167 = B13['compile-to-string'](expression__165, current_environment__164);
                                         {
-                                            ($module)['eval-in-module'](interactor__141, code__148);
-                                            return(B8['get-setter'](interactor__141, 'current-line', ''));
+                                            ($module)['eval-in-module'](interactor__160, code__167);
+                                            return(B8['get-setter'](interactor__160, 'current-line', ''));
                                         }
                                     }
                                 }
                             }
                         }
-                    } catch (B149) {
-                        if (($T)(B8['instance?'](B149, B8['<error>']))) {
-                            var condition__150 = B149;
+                    } catch (B168) {
+                        if (($T)(B8['instance?'](B168, B8['<error>']))) {
+                            var condition__169 = B168;
                             {
-                                B10['format-out']('%s\n', B8['get'](condition__150, 'stack'));
+                                B10['format-out']('%s\n', B8['get'](condition__169, 'stack'));
                                 {
-                                    current_line__144 = '';
-                                    return(($module)['update-prompt!'](interactor__141));
+                                    current_line__163 = '';
+                                    return(($module)['update-prompt!'](interactor__160));
                                 }
                             }
                         } else
@@ -312,51 +350,51 @@ B8['get-setter'](($module)['$handlers'], 'change-module', function B132(interact
     B8['%annotate-function'](($module)['handle-line'], 'handle-line', false);
 }
 {
-    ($module)['current-module-name'] = function B153(interactor__154) {
-        var B155 = B8['get'](interactor__154, 'current-environment');
-        if (($T)(B155)) {
-            var env__156 = B155;
-            return(B8['get'](env__156, 'module', 'name'));
+    ($module)['current-module-name'] = function B172(interactor__173) {
+        var B174 = B8['get'](interactor__173, 'current-environment');
+        if (($T)(B174)) {
+            var env__175 = B174;
+            return(B8['get'](env__175, 'module', 'name'));
         } else
             return(false);
     };
     B8['%annotate-function'](($module)['current-module-name'], 'current-module-name', false);
 }
 {
-    ($module)['set-prompt!'] = function B160(interactor__161, prompt__162) {
-        var B163 = B8['get'](interactor__161, 'interface');
+    ($module)['set-prompt!'] = function B179(interactor__180, prompt__181) {
+        var B182 = B8['get'](interactor__180, 'interface');
         {
-            var B164 = prompt__162;
-            return(B163['setPrompt'](B164));
+            var B183 = prompt__181;
+            return(B182['setPrompt'](B183));
         }
     };
     B8['%annotate-function'](($module)['set-prompt!'], 'set-prompt!', false);
 }
 {
-    ($module)['prompt!'] = function B167(interactor__168) {
-        var B169 = B8['get'](interactor__168, 'interface');
-        return(B169['prompt']());
+    ($module)['prompt!'] = function B186(interactor__187) {
+        var B188 = B8['get'](interactor__187, 'interface');
+        return(B188['prompt']());
     };
     B8['%annotate-function'](($module)['prompt!'], 'prompt!', false);
 }
 {
-    ($module)['update-prompt!'] = function B172(interactor__173) {
-        var B174 = ($module)['current-module-name'](interactor__173);
+    ($module)['update-prompt!'] = function B191(interactor__192) {
+        var B193 = ($module)['current-module-name'](interactor__192);
         {
-            var name__175 = false;
-            if (($T)(B174))
-                name__175 = B174;
+            var name__194 = false;
+            if (($T)(B193))
+                name__194 = B193;
             else
-                name__175 = '';
+                name__194 = '';
             {
-                var B176 = false;
-                if (($T)(B8['get'](interactor__173, 'incomplete?')))
-                    B176 = B8['concatenate'](B8['repeat-string'](' ', B8['-'](B8['size'](name__175), 2)), '... ');
+                var B195 = false;
+                if (($T)(B8['get'](interactor__192, 'incomplete?')))
+                    B195 = B8['concatenate'](B8['repeat-string'](' ', B8['-'](B8['size'](name__194), 2)), '... ');
                 else
-                    B176 = B8['concatenate'](name__175, '> ');
+                    B195 = B8['concatenate'](name__194, '> ');
                 {
-                    ($module)['set-prompt!'](interactor__173, B176);
-                    return(($module)['prompt!'](interactor__173));
+                    ($module)['set-prompt!'](interactor__192, B195);
+                    return(($module)['prompt!'](interactor__192));
                 }
             }
         }

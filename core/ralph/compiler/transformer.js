@@ -174,21 +174,26 @@ var B2513 = require('ralph/core');
 }
 {
     {
-        ($module)['make-set-transformer'] = function B2582(transformer__2583, k__2584) {
-            return(function B2585(env__2586, place__2587, value__2588) {
-                var superflous__2589 = $SL.call(arguments, 3);
+        ($module)['make-set-transformer'] = function B2583(transformer__2584, k__2585) {
+            return(function B2586(env__2587, place__2588, value__2589) {
+                var superflous__2590 = $SL.call(arguments, 3);
                 {
-                    var B2590 = B2513['instance?'](place__2587, B2513['<symbol>']);
+                    var B2591 = B2513['instance?'](place__2588, B2513['<symbol>']);
                     {
-                        var B2591 = false;
-                        if (($T)(B2590))
-                            B2591 = B2590;
-                        else
-                            B2591 = B2515['op?']('%get-property', place__2587);
+                        var B2593 = false;
                         if (($T)(B2591))
-                            return(k__2584(env__2586, transformer__2583(place__2587, env__2586), transformer__2583(value__2588, env__2586)));
+                            B2593 = B2591;
+                        else {
+                            var B2592 = B2515['op?']('%get-property', place__2588);
+                            if (($T)(B2592))
+                                B2593 = B2592;
+                            else
+                                B2593 = B2515['op?']('%native', place__2588);
+                        }
+                        if (($T)(B2593))
+                            return(k__2585(env__2587, transformer__2584(place__2588, env__2587), transformer__2584(value__2589, env__2587)));
                         else
-                            return(B2513['signal'](B2514['format-to-string']('Non-symbol identifier or %%get-property in %%set: %=', place__2587)));
+                            return(B2513['signal'](B2514['format-to-string']('Non-symbol identifier or %%get-property in %%set: %=', place__2588)));
                     }
                 }
             });
@@ -198,22 +203,22 @@ var B2513 = require('ralph/core');
     B2513['%annotate-function'](($module)['make-set-transformer'], 'make-set-transformer', false);
 }
 {
-    var B2594 = $S('%define', 'ralph/core');
+    var B2596 = $S('%define', 'ralph/core');
     {
         {
-            ($module)['make-define-transformer'] = function B2595(transformer__2596) {
-                return(function B2597(env__2598, identifier__2599, value__2600) {
-                    var superflous__2601 = $SL.call(arguments, 3);
+            ($module)['make-define-transformer'] = function B2597(transformer__2598) {
+                return(function B2599(env__2600, identifier__2601, value__2602) {
+                    var superflous__2603 = $SL.call(arguments, 3);
                     {
-                        B2515['check-type'](identifier__2599, B2513['<symbol>'], 'Non-symbol identifier in %%define: %=');
+                        B2515['check-type'](identifier__2601, B2513['<symbol>'], 'Non-symbol identifier in %%define: %=');
                         {
-                            var valueT__2602 = transformer__2596(value__2600, env__2598);
+                            var valueT__2604 = transformer__2598(value__2602, env__2600);
                             {
-                                B2516['bind-globally!'](identifier__2599, env__2598);
+                                B2516['bind-globally!'](identifier__2601, env__2600);
                                 return([
-                                    B2594,
-                                    identifier__2599,
-                                    valueT__2602
+                                    B2596,
+                                    identifier__2601,
+                                    valueT__2604
                                 ]);
                             }
                         }
@@ -226,29 +231,29 @@ var B2513 = require('ralph/core');
     }
 }
 {
-    var B2605 = $S('%try', 'ralph/core');
+    var B2607 = $S('%try', 'ralph/core');
     {
         {
-            ($module)['make-try-transformer'] = function B2606(transformer__2607) {
-                return(function B2608(env__2609, protected_form__2610, identifier__2611, handling_form__2612) {
-                    var superfluous__2613 = $SL.call(arguments, 4);
+            ($module)['make-try-transformer'] = function B2608(transformer__2609) {
+                return(function B2610(env__2611, protected_form__2612, identifier__2613, handling_form__2614) {
+                    var superfluous__2615 = $SL.call(arguments, 4);
                     {
-                        B2515['check-type'](identifier__2611, B2513['<symbol>'], 'Non-symbol identifier in %%try: %=');
+                        B2515['check-type'](identifier__2613, B2513['<symbol>'], 'Non-symbol identifier in %%try: %=');
                         {
-                            B2515['check-identifier'](identifier__2611, env__2609, 'External identifier in %%try: %=');
+                            B2515['check-identifier'](identifier__2613, env__2611, 'External identifier in %%try: %=');
                             {
-                                var protected_formT__2614 = transformer__2607(protected_form__2610, env__2609);
+                                var protected_formT__2616 = transformer__2609(protected_form__2612, env__2611);
                                 {
-                                    B2516['bind-locally!'](identifier__2611, env__2609);
+                                    B2516['bind-locally!'](identifier__2613, env__2611);
                                     {
-                                        var handling_formT__2615 = transformer__2607(handling_form__2612, env__2609);
+                                        var handling_formT__2617 = transformer__2609(handling_form__2614, env__2611);
                                         {
-                                            B2516['unbind-locally!'](identifier__2611, env__2609);
+                                            B2516['unbind-locally!'](identifier__2613, env__2611);
                                             return([
-                                                B2605,
-                                                protected_formT__2614,
-                                                identifier__2611,
-                                                handling_formT__2615
+                                                B2607,
+                                                protected_formT__2616,
+                                                identifier__2613,
+                                                handling_formT__2617
                                             ]);
                                         }
                                     }
@@ -265,27 +270,27 @@ var B2513 = require('ralph/core');
 }
 {
     {
-        ($module)['make-var-transformer'] = function B2619(transformer__2620, k__2621) {
-            return(function B2622(env__2623, identifier__2624, value__2625) {
-                var superflous__2626 = $SL.call(arguments, 3);
+        ($module)['make-var-transformer'] = function B2621(transformer__2622, k__2623) {
+            return(function B2624(env__2625, identifier__2626, value__2627) {
+                var superflous__2628 = $SL.call(arguments, 3);
                 {
-                    B2515['check-type'](identifier__2624, B2513['<symbol>'], 'Non-symbol identifier in %%var: %=');
+                    B2515['check-type'](identifier__2626, B2513['<symbol>'], 'Non-symbol identifier in %%var: %=');
                     {
-                        var valueT__2627 = transformer__2620(value__2625, env__2623);
+                        var valueT__2629 = transformer__2622(value__2627, env__2625);
                         {
-                            var module_name__2628 = B2513['get'](identifier__2624, 'module');
+                            var module_name__2630 = B2513['get'](identifier__2626, 'module');
                             {
-                                var B2629 = B2513['not'](module_name__2628);
+                                var B2631 = B2513['not'](module_name__2630);
                                 {
-                                    var B2630 = false;
-                                    if (($T)(B2629))
-                                        B2630 = B2629;
+                                    var B2632 = false;
+                                    if (($T)(B2631))
+                                        B2632 = B2631;
                                     else
-                                        B2630 = B2513['=='](module_name__2628, B2513['get'](env__2623, 'module', 'name'));
+                                        B2632 = B2513['=='](module_name__2630, B2513['get'](env__2625, 'module', 'name'));
                                     {
-                                        if (($T)(B2630))
-                                            B2516['bind-globally!'](identifier__2624, env__2623);
-                                        return(k__2621(env__2623, identifier__2624, valueT__2627));
+                                        if (($T)(B2632))
+                                            B2516['bind-globally!'](identifier__2626, env__2625);
+                                        return(k__2623(env__2625, identifier__2626, valueT__2629));
                                     }
                                 }
                             }
@@ -300,15 +305,15 @@ var B2513 = require('ralph/core');
 }
 {
     {
-        ($module)['make-operator-transformer'] = function B2633(symbol__2634, transformer__2635) {
-            return(function B2636(env__2637, operator_name__2638) {
-                var arguments__2639 = $SL.call(arguments, 2);
+        ($module)['make-operator-transformer'] = function B2635(symbol__2636, transformer__2637) {
+            return(function B2638(env__2639, operator_name__2640) {
+                var arguments__2641 = $SL.call(arguments, 2);
                 {
-                    B2515['check-type'](operator_name__2638, B2513['<string>'], 'Non-string operator-name in %%native-call: %=');
+                    B2515['check-type'](operator_name__2640, B2513['<string>'], 'Non-string operator-name in %%native-call: %=');
                     return(B2513['%concat']([
-                        symbol__2634,
-                        operator_name__2638
-                    ], B2513['map'](B2513['rcurry'](transformer__2635, env__2637), arguments__2639)));
+                        symbol__2636,
+                        operator_name__2640
+                    ], B2513['map'](B2513['rcurry'](transformer__2637, env__2639), arguments__2641)));
                 }
             });
         };
@@ -317,25 +322,25 @@ var B2513 = require('ralph/core');
     B2513['%annotate-function'](($module)['make-operator-transformer'], 'make-operator-transformer', false);
 }
 {
-    var B2643 = $S('%object', 'ralph/core');
+    var B2645 = $S('%object', 'ralph/core');
     {
         {
-            ($module)['make-object-transformer'] = function B2644(transformer__2645) {
-                return(function B2646(env__2647) {
-                    var property_nameSvalues__2648 = $SL.call(arguments, 1);
-                    return(B2513['%concat']([B2643], B2513['reduce1'](B2513['concatenate'], B2513['map'](function B2649(property_nameSvalue__2650) {
-                        var property_name__2651 = property_nameSvalue__2650[0];
+            ($module)['make-object-transformer'] = function B2646(transformer__2647) {
+                return(function B2648(env__2649) {
+                    var property_nameSvalues__2650 = $SL.call(arguments, 1);
+                    return(B2513['%concat']([B2645], B2513['reduce1'](B2513['concatenate'], B2513['map'](function B2651(property_nameSvalue__2652) {
+                        var property_name__2653 = property_nameSvalue__2652[0];
                         {
-                            var value__2652 = property_nameSvalue__2650[1];
+                            var value__2654 = property_nameSvalue__2652[1];
                             {
-                                B2515['check-type'](property_name__2651, B2513['<string>'], 'Non-string property-name in %%object: %=');
+                                B2515['check-type'](property_name__2653, B2513['<string>'], 'Non-string property-name in %%object: %=');
                                 return([
-                                    property_name__2651,
-                                    transformer__2645(value__2652, env__2647)
+                                    property_name__2653,
+                                    transformer__2647(value__2654, env__2649)
                                 ]);
                             }
                         }
-                    }, B2513['partition'](2, property_nameSvalues__2648)))));
+                    }, B2513['partition'](2, property_nameSvalues__2650)))));
                 });
             };
             ($module)['%export']('make-object-transformer', ($module)['make-object-transformer']);
