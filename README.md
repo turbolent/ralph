@@ -36,12 +36,12 @@ To compile a simple "Hello, world!" program:
 
 * Compile the `hello` module:
 
-  `NODE_PATH=core node -e "require('ralph/compiler')['compile-module']('hello')"`
+  `$ NODE_PATH=core node -e "require('ralph/compiler')['compile-module']('hello')"`
 
 * Run the program by opening the `hello` module and calling the `hello` function:
 
   ```
-  NODE_PATH=build node -e "require('hello')['hello']('World')"
+  $ NODE_PATH=build node -e "require('hello')['hello']('World')"
   Hello, World!
   ```
 
