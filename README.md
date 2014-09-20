@@ -21,6 +21,30 @@ and open `index.html` in your browser:
 * `$ NODE_PATH=core node repl.js --remote`
 
 
+To compile a simple "Hello, world!" program:
+
+* Place `hello.ralph` in `src/`:
+ 
+  ```
+  (define-module hello
+    import: (ralph/format-out)
+    export: (hello))
+      
+  (define-function hello (name)
+    (format-out "Hello, %s!" name))
+  ```
+
+* Compile the `hello` module:
+
+  `NODE_PATH=core node -e "require('ralph/compiler')['compile-module']('hello')"`
+
+* Run the program by opening the `hello` module and calling the `hello` function:
+
+  ```
+  NODE_PATH=build node -e "require('hello')['hello']('World')"
+  Hello, World!
+  ```
+
 ## Development
 
 Recompile the compiler and run all tests using:
