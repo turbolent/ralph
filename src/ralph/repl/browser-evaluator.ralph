@@ -1,0 +1,27 @@
+(define-module ralph/repl/browser-evaluator
+  import: (ralph/repl/evaluator)
+  export: (<browser-evaluator>))
+
+(define-class <browser-evaluator> (<evaluator>))
+
+(define-method evaluate ((evaluator <browser-evaluator>) code)
+  (%eval code))
+
+(define-method send-data ((evaluator <browser-evaluator>) data)
+  (. (get evaluator "connection")
+     (send data)))
+
+(define-method prepare-evaluator ((evaluator <browser-evaluator>)))
+
+(define-method inject-commands! ((evaluator <browser-evaluator>))
+  (%set (%native "$changeModule")
+        (curry change-module evaluator))
+  (%eval "$moduleRoot['%in-module'] = $changeModule"))
+
+(define-method connect-to-interactor ((evaluator <browser-evaluator>) url)
+  (bind ((connection (%native-call "new WebSocket" url)))
+    (set! (get evaluator "connection")
+          connection)
+    (set! (get connection "onmessage")
+          (method (message)
+            (handle-message evaluator (get message "data"))))))

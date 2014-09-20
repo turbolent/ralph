@@ -1,0 +1,1 @@
+("ralph/compiler/reader" exports: ("read" "$end-of-file") inline: () dependencies: ("ralph/compiler/syntax-quote" "ralph/regexp" "ralph/format" "ralph/stream" "ralph/core"))

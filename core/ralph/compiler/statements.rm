@@ -1,1 +1,1 @@
-("ralph/compiler/statements" exports: ("transform-statements!") inline: () dependencies: ("ralph/compiler/utilities" "ralph/core"))
+("ralph/compiler/statements" exports: ("transform-statements!") inline: () dependencies: ("ralph/format" "ralph/compiler/transformer" "ralph/compiler/environment" "ralph/compiler/utilities" "ralph/core"))

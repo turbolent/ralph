@@ -1,0 +1,203 @@
+
+(define-module ralph/compiler/macroexpansion.test
+  import: (ralph/test
+           ralph/stream
+           ralph/compiler/reader
+           ralph/compiler/macroexpansion
+           ralph/compiler/special-forms
+           ralph/compiler/macros
+           ralph/compiler/environment.test))
+
+
+(define *environment*
+  (make-test-environment "ralph/compiler/macroexpansion.test"))
+
+(bind ((symbol-macros (make-plain-object)))
+  (set! (get symbol-macros "foo")
+        (method (_)
+          `(when 23 42)))
+  (chain-object (get *environment* "symbol-macros")
+                symbol-macros))
+
+;;;;
+
+
+(set! (get *environment* "macros" "alpha")
+      (method (_ x y)
+        `(beta ,x ,y)))
+
+(set! (get *environment* "macros" "beta")
+      (method (_ x y)
+        `(gamma ,x ,y)))
+
+
+
+(check-equal "macroexpand-1: alpha"
+             `(beta 1 2)
+             (macroexpand-1 '(alpha 1 2) *environment*))
+
+(check-equal "macroexpand: alpha"
+             `(gamma 1 2)
+             (macroexpand '(alpha 1 2) *environment*))
+
+
+
+;; interaction between special forms, macros and symbol macros
+
+
+(set! (get *environment* "symbol-macros" "bar")
+      (method (_)
+        'foo))
+
+(set! (get *environment* "symbol-macros" "when2")
+      (method (_)
+        'when))
+
+
+(check-equal "symbol macro: foo"
+             `(,'+ 1 (%if 23 42 #f))
+             (macroexpand-all
+              '(+ 1 foo)
+              *environment*))
+
+
+
+(check-equal "symbol macro at head"
+             `((%if 23 42 #f) ,'x ,'y)
+             (macroexpand-all
+              '(foo x y)
+              *environment*))
+
+(check-equal "symbol macro at head (two levels)"
+             `((%if 23 42 #f) ,'x ,'y)
+             (macroexpand-all
+              '(bar x y)
+              *environment*))
+
+(check-equal "symbol macro expanding to symbol with macro definition"
+             `(%if ,'x ,'y #f)
+             (macroexpand-all
+              '(when2 x y)
+              *environment*))
+
+(check-equal "symbol macro (two levels)"
+             `(,'+ (%if 23 42 #f) 2)
+             (macroexpand-all
+              '(+ bar 2)
+              *environment*))
+
+(check-equal "macros and special forms shadowing"
+             `(,'+ 1 (%bind (,'quote
+                             ;; quote special form and when macro still works
+                             (%if 5 [(%quote ,'when) 7 8] #f))
+                       (%bind (,'when (%method ,'$1 (,'foo ,'b)
+                                  ;; parameter foo shadows symbol macro
+                                  ;; when macro still works
+                                  (,'not (%if ,'foo
+                                              ,'b
+                                              #f))))
+                          (%begin
+                           ;; TODO [#A]: foo only expands to when, but should completely to if:
+                           ;; (,'- (%if 23 42 #f) ,'xyz)
+                           ;; expansion needs to take symbol's module into account (hygienic expansion),
+                           ;; foo is producing ralph/core::when so shouldn't clash with locally bound when
+                           (,'- (when 23 42) ,'xyz)
+                           ;; when binding shadows when macro
+                           (,'when ,'a ,'b)
+                           ;; quote special form not shadowed
+                           (,'quote (,'when ,'a ,'b))))))
+             (macroexpand-all
+              '(+ 1 (bind ((quote (when 5 (quote (when 7 8))))
+                           (when (method (foo b) (not (when foo b)))))
+                      (- foo xyz)
+                      (when a b)
+                      (quote (when a b))))
+              *environment*))
+
+
+(check-equal "identifiers shadow macros, but not special forms: method"
+             `(%method ,'$2 (,'when ,'quote ,'foo)
+                (%begin
+                 ,'foo
+                 (,'quote (,'when 1 2))
+                 (,'when 3 4)))
+             (macroexpand-all
+              '(method (when quote foo)
+                 foo
+                 (quote (when 1 2))
+                 (when 3 4))
+              *environment*))
+
+(define-function read-form (source)
+  (read (make <string-stream>
+              string: source)
+        *environment*))
+
+
+(set! (get *environment* "special-forms")
+      $internal-special-forms)
+(chain-object (get *environment* "macros")
+              $internal-macros)
+
+
+
+(check-equal "macroexpand: bind"
+             `(%bind (,'a 1)
+                (%bind (,'b (,'+ ,'a 1))
+                  (begin ,'b)))
+             (macroexpand '(bind ((a 1)
+                                  (b (+ a 1)))
+                             b)
+                          *environment*))
+
+(check-equal "macroexpand-1: cond"
+             `(if (,'a)
+                  (begin 1 2)
+                  (cond
+                   (,'b 3)
+                   (else: 4 5)))
+              (macroexpand-1 '(cond
+                               ((a) 1 2)
+                               (b 3)
+                               (else: 4 5))
+                             *environment*))
+
+
+
+(check-equal "macroexpand: prevent expansion of sepcial forms"
+             '(%bind (cond
+                      ((a) b)
+                      (else: c))
+                     d)
+             (macroexpand '(%bind (cond
+                                   ((a) b)
+                                   (else: c))
+                             d)
+                          *environment*))
+
+
+(check-equal "macroexpand-all: prevent expansion of sepcial forms (2)"
+             `(%bind (,'cond ((,'a) ,'b))
+                ,'d)
+             (macroexpand-all '(bind ((cond
+                                       ((a) b)
+                                       (else: c)))
+                                 d)
+                              *environment*))
+
+(reset-symbol-counter!)
+(check-equal "macroexpand-all to IR: define-function"
+             (read-form
+              "(ralph/core::%begin
+                 (ralph/core::%define foo
+                   (ralph/core::%method $1 (a b)
+                     (ralph/core::%bind (all (ralph/core::%native-call \"$SL.call\" %all-arguments 2))
+                       (ralph/core::%bind ($2 (ralph/core::%keys all (ralph/core::%object \"c\" 23 \"d\" #f)))
+                         (ralph/core::%bind (c (ralph/core::%get-property $2 \"c\"))
+                           (ralph/core::%bind (d (ralph/core::%get-property $2 \"d\"))
+                             (ralph/core::%bind (when (ralph/core::%if a b #f))
+                               (when c d))))))))
+                 (ralph/core::%annotate-function foo \"foo\" #f))")
+             (macroexpand-all '(define-function foo ((a <object>) b #rest all #key (c 23) d)
+                                 (bind ((when (when a b))) (when c d)))
+                              *environment*))

@@ -1,7 +1,16 @@
 (define-module ralph/compiler/statements
-  import: (ralph/compiler/utilities)
+  import: (ralph/compiler/utilities
+           ralph/compiler/environment
+           ralph/compiler/transformer
+           ralph/format)
   export: (transform-statements!))
 
+
+(define-function make-module-reference (identifier)
+  `(%get-property (%native "$module") ,(symbol-name identifier)))
+
+;; after ANF: if value of binding is control-flow (%if, %while, etc.):
+;; turn into statement form, then "sink" assignment
 
 ;; "sink"/wrap return value with expression
 ;; e.g. to assign or explicitly return
@@ -9,13 +18,15 @@
 (define-function wrap-value! (exp wrapper)
   (if (instance? exp <array>)
       (select (symbol-name (first exp)) ==
+        (("%quote")
+         exp)
         (("%begin" "%bind")
          ;; wrap body
          (set! (last exp)
                (wrap-value! (last exp) wrapper))
          exp)
         (("%if")
-         ;; wrap then and else
+         ;; wrap consequent and alternate
          (set! (third exp)
                (wrap-value! (third exp) wrapper))
          (set! (last exp)
@@ -35,94 +46,127 @@
          (concatenate wrapper [exp])))
       (concatenate wrapper [exp])))
 
+(define-function wrap-return (exp)
+  (wrap-value! exp `(%native-call "return")))
 
-(define-function add-explicit-return (exp)
-  (wrap-value! exp `(%return)))
+(define $statement-symbols `(%if %while %begin %bind %try))
 
-;; after ANF: if value of binding is control-flow (%if, %while, etc.):
-;; turn into statement form, then "sink" assignment
-
-(define-function statement? (exp)
+(define-function generates-statement? (exp)
   (and (instance? exp <array>)
        (not (empty? exp))
        (member? (first exp)
-                `(%if %while %begin %bind %try))))
+                $statement-symbols)))
 
-(define-function add-explicit-true (exp)
+(define-function wrap-true (exp)
   (if (instance? exp <boolean>)
       (true? exp)
       `((%native "$T") ,exp)))
 
-(define-function transform-statements! (exp env)
-  (if (instance? exp <array>)
-      (select (symbol-name (first exp)) ==
-        (("%method")
-         (set! (last exp)
-               (add-explicit-return
-                (transform-statements! (last exp)
-                                      env)))
-         exp)
-        (("%begin")
-         (destructuring-bind (_ #rest exps) exp
-           (maybe-begin
-            (map (rcurry transform-statements! env)
-                 exps))))
-        (("%bind")
-         (destructuring-bind (_ (var value) body) exp
-           (if (statement? value)
-               `(%bind (,var #f)
-                  (%begin
-                   ,(wrap-value!
-                     (transform-statements! value env)
-                     `(%set ,var))
-                   ,(transform-statements! body env)))
-               `(%bind (,var
-                        ,(transform-statements! value env))
-                  ,(transform-statements! body env)))))
-        (("%if")
-         (destructuring-bind (_ test then else) exp
-           `(%if
-             ;; TODO: only if not boolean
-             ,(add-explicit-true test)
-             ,(transform-statements! then env)
-             ,(transform-statements! else env))))
-        (("%while")
-         (set! (second exp)
-               (add-explicit-true (second exp)))
-         (set! (third exp)
-               (transform-statements! (third exp) env))
-         exp)
-        (("%try")
-         (set! (second exp)
-               (transform-statements! (second exp) exp))
-         (set! (last exp)
-               (transform-statements! (last exp) env))
-         exp)
-        (("%set")
-         (destructuring-bind (_ identifier value) exp
-           (bind ((value* (transform-statements! value env))
-                  (definition-name (symbol-name
-                                    (get env "original-identifier"
-                                         (symbol-name identifier)))))
-             ;; check if exported definition
-             (if (and definition-name
-                      (member? definition-name
-                               (get env "module" "exports")))
-                 (begin
-                  (set! (first exp)
-                        `%begin)
-                  (set! (second exp)
-                        `(%set ,identifier ,value*))
-                  (set! (third exp)
-                        `(%set (%get-property (%native "exports")
-                                              ,definition-name)
-                               ,identifier)))
-                 ;; no re-export, leave as is
-                 (set! (third exp) value*))))
-         exp)
-        (("%define")
-         `(%var (,(last exp) #f)))
-        (else:
-         (map (rcurry transform-statements! env) exp)))
+
+(define-function wrap-export (identifier value exp env)
+  (if (and (not (locally-bound? exp env))
+           (member? (symbol-name identifier)
+                    (get env "module" "exports")))
+      `(%begin
+        ,exp
+        (,(make-module-reference '%export)
+         ,(symbol-name identifier) ,value))
       exp))
 
+;;;;
+
+(define *transformers*
+  (make-plain-object))
+
+(define-function transform-statements! (exp env)
+  (select exp instance?
+    ((<array>)
+     (bind ((name (symbol-name (first exp))))
+       (if-bind (transformer (get *transformers* name))
+         (apply transformer env (rest exp))
+         (map (rcurry transform-statements! env) exp))))
+    ((<symbol>)
+     (if (or (special-symbol? exp)
+             (locally-bound? exp env)
+             (get exp "generated?"))
+         exp
+         (make-module-reference exp)))
+    (else: exp)))
+
+(set! (get *transformers* "%quote")
+      (make-quote-transformer `%quote))
+
+(set! (get *transformers* "%bind")
+      (make-bind-transformer transform-statements!
+                             (method (env identifier value* body*)
+                               (if (generates-statement? value*)
+                                   `(%begin
+                                      (%var ,identifier #f)
+                                      ,(wrap-value! value*
+                                                    `(%set ,identifier))
+                                      ,body*)
+                                   `(%begin
+                                      (%var ,identifier ,value*)
+                                      ,body*)))))
+
+(set! (get *transformers* "%method")
+      (make-method-transformer transform-statements!
+                               (method (env name parameters form*)
+                                 `(%method ,name ,parameters
+                                    ,(wrap-return form*)))))
+
+(set! (get *transformers* "%set")
+      (make-set-transformer transform-statements!
+                            (method (env place* value*)
+                              (wrap-export place* place*
+                                           `(%set ,place* ,value*)
+                                           env))))
+
+(for-each ((name ["%var" "%define"]))
+          ()
+  (set! (get *transformers* name)
+        (make-var-transformer
+          transform-statements!
+          (method (env identifier value*)
+            (if (get identifier "generated?")
+                (wrap-export identifier identifier
+                             `(%var ,identifier ,value*)
+                             env)
+                (bind ((place (make-module-reference identifier)))
+                  (wrap-export identifier place
+                              `(%set ,place ,value*)
+                               env)))))))
+
+(set! (get *transformers* "%if")
+      (make-rest-transformer
+        transform-statements!
+        count: 3
+        k: (method (env predicate* consequent* alternate*)
+             `(%if ,(wrap-true predicate*)
+                   ,consequent*
+                   ,alternate*))))
+
+(set! (get *transformers* "%while")
+      (make-rest-transformer
+        transform-statements!
+        count: 2
+        k: (method (env predicate* form*)
+             `(%while ,(wrap-true predicate*)
+                ,form*))))
+
+(set! (get *transformers* "%try")
+      (make-try-transformer transform-statements!))
+
+(set! (get *transformers* "%object")
+      (make-object-transformer transform-statements!))
+
+(for-each ((symbol `(%native-call %infix)))
+          ()
+  (set! (get *transformers* (symbol-name symbol))
+        (make-operator-transformer symbol transform-statements!)))
+
+(for-each ((symbol `(%begin %native %array %get-property)))
+          ()
+  (set! (get *transformers* (symbol-name symbol))
+        (make-rest-transformer transform-statements!
+                               symbol: symbol)))

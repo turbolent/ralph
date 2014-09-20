@@ -1,0 +1,38 @@
+(define-module ralph/file-stream
+	import: (ralph/stream
+           ralph/file-system
+           (fs rename: ("createWriteStream" make-write-stream)))
+	export: (<file-stream>
+           *standard-output*
+           *standard-error*))
+
+;;;;
+
+(define-class <file-stream> (<stream>)
+  file)
+
+(define-method initialize ((stream <file-stream>) #rest rest #key path file)
+  (apply next-method stream rest)
+  (when (and (not file) path)
+    (set! (get stream "file")
+          (make-write-stream path))))
+
+(define-method stream-write ((stream <file-stream>) (string <string>))
+  (. (get stream "file")
+     ("write" string)))
+
+(define-method stream-close ((stream <file-stream>))
+  (. (get stream "file")
+     ("end")))
+
+
+;;;;
+
+(define *standard-output*
+  (make <file-stream>
+        file: (%get-property (%native "process") "stdout")))
+
+(define *standard-error*
+  (make <file-stream>
+        file: (%get-property (%native "process") "stderr")))
+

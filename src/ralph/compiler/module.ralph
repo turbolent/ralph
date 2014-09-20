@@ -1,0 +1,40 @@
+(define-module ralph/compiler/module
+  export: (<module>
+           find-module/import-name
+           *module-prologue*))
+
+;;;; <module>
+
+(define-class <module> (<object>)
+  name
+  native?
+  ;; [module [name*]]*
+  (imports [])
+  ;; name*
+  (exports [])
+  ;; module-name*
+  (dependencies []))
+
+(define-function find-module/import-name (definition-name module)
+  (any? (method (import)
+          (destructuring-bind (module names) import
+            (any? (method (name)
+                    (destructuring-bind (import-name new-name)
+                        (if (instance? name <array>)
+                            name
+                            [name name])
+                      (when (== definition-name
+                                new-name)
+                        [module import-name])))
+                  names)))
+        (get module "imports")))
+
+(define *module-prologue*
+  `(begin
+     (%native "var $module = Object.create($moduleRoot)")
+     (%define ,'%export (method (,'name ,'value)
+                          (set! (%get-property (%native "exports") ,'name)
+                                ,'value)))
+     (define ,'%eval (method ()
+                       (%native-call "eval" (%native "arguments[0]"))))
+     (,'%export "%eval" ,'%eval)))

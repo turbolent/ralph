@@ -1,0 +1,81 @@
+
+(define-module ralph/compiler/syntax-quote.test
+  import: (ralph/test
+           ralph/compiler/module
+           ralph/compiler/environment
+           ralph/compiler/syntax-quote
+           ralph/compiler/special-forms
+           ralph/compiler/macros
+           ralph/compiler/macroexpansion))
+
+(define $core (make <module> name: "ralph/core"))
+
+(define $all-special-forms
+  (make-plain-object))
+
+(extend! $all-special-forms $internal-special-forms)
+(extend! $all-special-forms $core-special-forms)
+
+(define-function make-environment ()
+  (bind ((module (make <module> name: "ralph/compiler/syntax-quote.test"
+                       imports: [[$core ["+" "-"]]])))
+    (make <environment>
+          module: module
+          special-forms: $all-special-forms
+          macros: $core-macros
+          symbol-macros: $core-symbol-macros)))
+
+(define *environment*
+  (make-environment))
+
+;; TODO: change to qualified symbols once reader supports reading them
+(bind (($core-%array (symbol "%array" "ralph/core"))
+       ($core-concatenate (symbol "concatenate" "ralph/core"))
+       ($core-%concat (symbol "%concat" "ralph/core"))
+       ($foo (symbol "foo" "ralph/compiler/syntax-quote.test"))
+       ($core-plus (symbol "+" "ralph/core"))
+       ($plus (symbol "+" "ralph/compiler/syntax-quote.test"))
+       ($core-minus (symbol "-" "ralph/core"))
+       ($a (symbol "a" "ralph/compiler/syntax-quote.test"))
+       ($b (symbol "b" "ralph/compiler/syntax-quote.test"))
+       ($quote (symbol "quote" "ralph/core"))
+       ($unquote (symbol "unquote" "ralph/core"))
+       ($unquote-splicing (symbol "unquote-splicing" "ralph/core")))
+
+  (check-equal "undefined symbol"
+               [$quote $foo]
+               (syntax-quote-form 'foo *environment*))
+
+  (check-equal "qualified symbol"
+               [$quote  (symbol "foo" "bar")]
+               (syntax-quote-form (symbol "foo" "bar")
+                                  *environment*))
+
+  (check-equal "imported symbol"
+               [$quote $core-plus]
+               (syntax-quote-form '+ *environment*))
+
+  (macroexpand-all '(define + 2)
+                   *environment*)
+
+
+  (check-equal "imported symbol, defined globally"
+               [$quote $plus]
+               (syntax-quote-form '+ *environment*))
+
+  (check-equal "array of symbols"
+               [$core-%array 1 [$quote $foo] [$quote $plus] [$quote $core-minus]]
+               (syntax-quote-form '(1 foo + -)
+                                  *environment*))
+
+
+  (check-equal "syntax-quote, syntax-unquote, syntax-unquote-splicing"
+               [$core-%concat [$core-%array 1 [$quote $foo] 'foo
+                                            [$core-%array [$quote $a] [$quote $b]
+                                                          [$quote $plus] [$quote $core-minus]]
+                                            ['a2 'b2]]
+                              ['a3 'b3]]
+               (syntax-quote-form [1 'foo [$unquote 'foo]
+                                     ['a 'b '+ '-] [$unquote ['a2 'b2]]
+                                     [$unquote-splicing ['a3 'b3]]]
+                                  *environment*)))

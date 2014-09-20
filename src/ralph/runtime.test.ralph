@@ -126,19 +126,43 @@
   (check-equal "parallel-set!: v = 0 set to incremented i still 1"
                1 v))
 
-;; TODO
-; ;; block
-; (check-true "block: without non-local-exit function"
-;             (block () #t))
-; (check-true "block: with non-local-exit function"
-;             (block (return)
-;               (return #t)
-;               #f))
-; (check-equal "block: invoke non-local-exit function with value"
-;              2 (block (foo)
-;                  1
-;                  (foo 2)
-;                  3))
+;; block
+(check-true "block: without non-local-exit function"
+            (block () #t))
+(check-true "block: with non-local-exit function"
+            (block (return)
+              (return #t)
+              #f))
+(check-equal "block: invoke non-local-exit function with value"
+             2 (block (foo)
+                 1
+                 (foo 2)
+                 3))
+(check-equal "block: invoke non-local-exit function from inside nested method"
+             3 (block (exit)
+                 (do (method (item)
+                       (when (== item 3)
+                         (exit item)))
+                     [1 2 3 4])
+                 5))
+(check-equal "block: invoke non-local-exit function from inside another block"
+             [3 5] (bind (inner)
+                   (block (exit1)
+                     1
+                     (set! inner (block (exit2)
+                                   2
+                                   (exit2 3)
+                                   4))
+                     [inner 5])))
+(check-equal "block: invoke outer non-local-exit function from inside another block"
+             3 (bind (inner)
+                 (block (exit1)
+                   1
+                   (set! inner (block (exit2)
+                                 2
+                                 (exit1 3)
+                                 4))
+                   5)))
 
 ;; signal
 (check-condition "signal <error>" <error>
@@ -424,6 +448,22 @@
   (check-equal "get: '1' -> '2' -> '3' = 4"
                4 (get x "1" "2" "3")))
 
+;; handler-case
+(check-equal "handler-case: protected form returns value"
+             2 (bind ((val (handler-case
+                             (begin 1 2)
+                             ((<error> condition: condition)
+                              3))))
+                 val))
+
+(check-equal "handler-case: protected form fails"
+             3 (bind ((val (handler-case
+                             (begin 1 x 2)
+                             ((<error> condition: condition)
+                              3))))
+                 val))
+
+
 ;; if-bind
 (check-true "if-bind: test is true, shouldn't be visible in then"
             (if-bind (a #t)
@@ -469,6 +509,23 @@
 ;; position
 (check-equal "position: find 2 in (1 2 3)"
              1 (position [1 2 3] 2))
+(check-false "position: find 2 in ()"
+             (position [] 2))
+(check-equal "position: find 2 in (1 2 3 2)"
+             1 (position [1 2 3 2] 2))
+
+;; count
+(check-equal "count: 'x in '()"
+             0 (count 'x '()))
+(check-equal "count: 'x in '(a b c d)"
+             0 (count 'x '(a b c d)))
+(check-equal "count: 'x in '(a b x c d)"
+             1 (count 'x '(a b x c d)))
+(check-equal "count: 'x in '(a b x c d x)"
+             2 (count 'x '(a b x c d x)))
+(check-equal "count: 'x in '(a b x c d x x)"
+             3 (count 'x '(a b x c d x x)))
+
 
 ;; <string-stream>
 (bind ((stream (make <string-stream> string: "test")))
@@ -809,6 +866,78 @@
     (check-equal "hygiene: rest" rest ["a" "b" "c"])))
 
 (test-hygiene "a" "b" "c")
+
+
+;; partition
+(check-equal "partition: #1"
+             [[1 2 3] [4 5 6] [7 8]]
+             (partition 3 [1 2 3 4 5 6 7 8]))
+
+(check-equal "partition: #2"
+             [[1 2 3] [4 5 6]]
+             (partition 3 [1 2 3 4 5 6]))
+
+(check-equal "partition: empty array"
+             []
+             (partition 3 []))
+
+;; substring
+(check-equal "substring: only start: 0"
+             "123456789"
+             (substring "123456789" 0))
+(check-equal "substring: only start: 1"
+             "23456789"
+             (substring "123456789" 1))
+(check-equal "substring: only start: 2"
+             "3456789"
+             (substring "123456789" 2))
+(check-equal "substring: start and end: 2, 3"
+             "3"
+             (substring "123456789" 2 end: 3))
+(check-equal "substring: start and end: 2, 4"
+             "34"
+             (substring "123456789" 2 end: 4))
+(check-equal "substring: start and end: 2, 5"
+             "345"
+             (substring "123456789" 2 end: 5))
+(check-equal "substring: start and length: 2, 1"
+             "3"
+             (substring "123456789" 2 length: 1))
+(check-equal "substring: start and length: 2, 2"
+             "34"
+             (substring "123456789" 2 length: 2))
+(check-equal "substring: start and length: 2, 3"
+             "345"
+             (substring "123456789" 2 length: 3))
+(check-equal "substring: start, length and end: 2, 2, 8"
+             "34"
+             (substring "123456789" 2 length: 8 end: 4))
+(check-equal "substring: start, length and end: 2, 8, 4"
+             "34"
+            (substring "123456789" 2 length: 8 end: 4))
+
+
+;; remove-property!
+(bind ((object (%object)))
+  (check-false "remove-property!: removing non-existing property returns false (one, non-existing property)"
+               (remove-property! object "x")))
+
+(bind ((object (%object "x" 1)))
+  (check-equal "remove-property!: removing returns value (one, existing property)"
+               1 (remove-property! object "x"))
+  (check-false "remove-property!: property doesn't exist after removing (one, existing property)"
+               (has? object "x")))
+
+(bind ((object (%object "x" (%object "y" 2))))
+  (check-false "remove-property!: removing non-existing property returns false (two, non-existing properties)"
+               (remove-property! object "z" "y"))
+  (check-equal "remove-property!: properties still exist after trying to remove non-existing properties"
+               2 (get object "x" "y"))
+  (check-equal "remove-property!: removing returns value (two, existing properties)"
+               2 (remove-property! object "x" "y"))
+  (check-true "remove-property!: property doesn't exist after removing (two, existing properties)"
+              (and (has? object "x")
+                   (not (has? (get object "x") "y")))))
 
 
 

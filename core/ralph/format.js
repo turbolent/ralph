@@ -1,129 +1,133 @@
+require('ralph/core');
 {
-var B1183;
-false;
-B1183 = require("ralph/core")}
+    var $module = Object.create($moduleRoot);
+    {
+        ($module)['%export'] = function B1225(name__1226, value__1227) {
+            var B1229 = (exports);
+            return(B1229[name__1226] = value__1227);
+        };
+        {
+            ($module)['%eval'] = function B1228() {
+                return(eval((arguments[0])));
+            };
+            ($module)['%export']('%eval', ($module)['%eval']);
+        }
+    }
+}
+var B1230 = require('ralph/core');
+var B1308 = require('ralph/stream');
 {
-var B1185;
-false;
-B1185 = require("ralph/stream")}
+    ($module)['format-integer'] = function B1310(number__1311) {
+        return(B1230['as-string'](number__1311));
+    };
+    B1230['%annotate-function'](($module)['format-integer'], 'format-integer', false);
+}
 {
-var Mmake_function__1186 = B1183["%make-function"],
-as_string__1187 = B1183["as-string"],
-format_integer__1188;
-false;
-format_integer__1188 = Mmake_function__1186("format_integer", function format_integer__1189 (number__1190)
-{return as_string__1187(number__1190)}, false)}
+    var B1317 = $K('message');
+    {
+        {
+            ($module)['format'] = function B1318(stream__1319, control_string__1320) {
+                var args__1321 = $SL.call(arguments, 2);
+                {
+                    var dispatch__1322 = false;
+                    {
+                        dispatch__1322 = function B1323(char__1324, arg__1325) {
+                            var B1326 = B1230['as-lowercase'](char__1324);
+                            {
+                                var B1327 = B1230['=='](B1326, 's');
+                                {
+                                    var B1334 = false;
+                                    if (($T)(B1327))
+                                        B1334 = B1327;
+                                    else
+                                        B1334 = B1230['=='](B1326, 'c');
+                                    if (($T)(B1334))
+                                        return(B1230['as-string'](arg__1325));
+                                    else if (($T)(B1230['=='](B1326, '='))) {
+                                        var B1328 = B1230['description'](arg__1325);
+                                        if (($T)(B1328))
+                                            return(B1328);
+                                        else
+                                            return('');
+                                    } else if (($T)(B1230['=='](B1326, 'b')))
+                                        return(($module)['format-integer'](arg__1325, 2));
+                                    else if (($T)(B1230['=='](B1326, 'o')))
+                                        return(($module)['format-integer'](arg__1325, 8));
+                                    else if (($T)(B1230['=='](B1326, 'd')))
+                                        return(($module)['format-integer'](arg__1325, 10));
+                                    else if (($T)(B1230['=='](B1326, 'x')))
+                                        return(($module)['format-integer'](arg__1325, 16));
+                                    else if (($T)(B1230['=='](B1326, 'm'))) {
+                                        arg__1325(stream__1319);
+                                        return('');
+                                    } else
+                                        return(B1230['signal'](B1230['make'](B1230['<error>'], B1317, B1230['concatenate']('Unknown format dispatch character ', char__1324))));
+                                }
+                            }
+                        };
+                        {
+                            var index__1329 = 0;
+                            {
+                                while (($T)(B1230['not'](B1230['empty?'](control_string__1320)))) {
+                                    var next_dispatch__1330 = B1230['position'](control_string__1320, '%');
+                                    if (($T)(B1230['>'](next_dispatch__1330, 0))) {
+                                        B1308['stream-write'](stream__1319, B1230['slice'](control_string__1320, 0, next_dispatch__1330));
+                                        control_string__1320 = B1230['slice'](control_string__1320, next_dispatch__1330);
+                                    } else if (($T)(next_dispatch__1330)) {
+                                        var arg__1331 = B1230['element'](args__1321, index__1329);
+                                        {
+                                            var char__1332 = B1230['second'](control_string__1320);
+                                            {
+                                                var percent__1333 = B1230['=='](char__1332, '%');
+                                                {
+                                                    var B1335 = B1308['stream-write'];
+                                                    {
+                                                        var B1336 = false;
+                                                        if (($T)(percent__1333))
+                                                            B1336 = '%';
+                                                        else
+                                                            B1336 = dispatch__1322(char__1332, arg__1331);
+                                                        {
+                                                            B1335(stream__1319, B1336);
+                                                            {
+                                                                control_string__1320 = B1230['slice'](control_string__1320, 2);
+                                                                if (($T)(B1230['not'](percent__1333)))
+                                                                    index__1329 = B1230['+'](index__1329, 1);
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    } else {
+                                        B1308['stream-write'](stream__1319, control_string__1320);
+                                        control_string__1320 = '';
+                                    }
+                                }
+                                return(false);
+                            }
+                        }
+                    }
+                }
+            };
+            ($module)['%export']('format', ($module)['format']);
+        }
+        B1230['%annotate-function'](($module)['format'], 'format', false);
+    }
+}
 {
-var B1228 = $K("message"),
-binaryEE__1194 = B1183["binary=="],
-description__1195 = B1183.description,
-signal__1196 = B1183.signal,
-make__1197 = B1183.make,
-LerrorG__1198 = B1183["<error>"],
-concatenate__1199 = B1183.concatenate,
-as_lowercase__1200 = B1183["as-lowercase"],
-not__1201 = B1183.not,
-emptyQ__1202 = B1183["empty?"],
-G__1203 = B1183[">"],
-stream_write__1204 = B1185["stream-write"],
-slice__1205 = B1183.slice,
-second__1206 = B1183.second,
-element__1207 = B1183.element,
-position__1208 = B1183.position,
-format__1209;
-false;
-format__1209 = Mmake_function__1186("format", function format__1210 (stream__1211, control_string__1212)
-{
-var args__1213 = $SL.call(arguments, 2);
-"Format a string and write it to a stream.";
-var dispatch__1214 = function dispatch__1215 (char__1216, arg__1217)
-{
-var B1191__1218 = as_lowercase__1200(char__1216),
-B1192__1219 = binaryEE__1194(B1191__1218, "s"),
-B1226;
-if ($T(B1192__1219))
-{B1226 = B1192__1219}
-else
-B1226 = binaryEE__1194(B1191__1218, "c");
-if ($T(B1226))
-{return arg__1217}
-else
-if ($T(binaryEE__1194(B1191__1218, "=")))
-{
-var B1193__1220 = description__1195(arg__1217);
-if ($T(B1193__1220))
-{return B1193__1220}
-else
-return ""}
-else
-if ($T(binaryEE__1194(B1191__1218, "b")))
-{return format_integer__1188(arg__1217, 2)}
-else
-if ($T(binaryEE__1194(B1191__1218, "o")))
-{return format_integer__1188(arg__1217, 8)}
-else
-if ($T(binaryEE__1194(B1191__1218, "d")))
-{return format_integer__1188(arg__1217, 10)}
-else
-if ($T(binaryEE__1194(B1191__1218, "x")))
-{return format_integer__1188(arg__1217, 16)}
-else
-if ($T(binaryEE__1194(B1191__1218, "m")))
-{
-arg__1217(stream__1211);
-return ""}
-else
-return signal__1196(make__1197(LerrorG__1198, B1228, concatenate__1199("Unknown format dispatch character ", char__1216)))},
-index__1221 = 0;
-while ($T(not__1201(emptyQ__1202(control_string__1212))))
-{
-var next_dispatch__1222 = position__1208(control_string__1212, "%");
-if ($T(G__1203(next_dispatch__1222, 0)))
-{
-stream_write__1204(stream__1211, slice__1205(control_string__1212, 0, next_dispatch__1222));
-control_string__1212 = slice__1205(control_string__1212, next_dispatch__1222)}
-else
-if ($T(next_dispatch__1222))
-{
-var arg__1223 = element__1207(args__1213, index__1221),
-char__1224 = second__1206(control_string__1212),
-percent__1225 = binaryEE__1194(char__1224, "%"),
-B1227;
-if ($T(percent__1225))
-{B1227 = "%"}
-else
-B1227 = dispatch__1214(char__1224, arg__1223);
-stream_write__1204(stream__1211, B1227);
-control_string__1212 = slice__1205(control_string__1212, 2);
-if ($T(not__1201(percent__1225)))
-{index__1221 = (index__1221 + 1)}}
-else
-{
-stream_write__1204(stream__1211, control_string__1212);
-control_string__1212 = ""}};
-return false}, false);
-exports.format = format__1209}
-{
-var apply__1229 = B1183.apply,
-Tstandard_outT__1230 = B1185["*standard-out*"],
-format_out__1231;
-false;
-format_out__1231 = Mmake_function__1186("format_out", function format_out__1232 (control_string__1233)
-{
-var args__1234 = $SL.call(arguments, 1);
-"Formats arguments to *standard-out*.";
-return apply__1229(format__1209, Tstandard_outT__1230, control_string__1233, args__1234)}, false);
-exports["format-out"] = format_out__1231}
-{
-var stream_contents__1235 = B1185["stream-contents"],
-Lstring_streamG__1236 = B1185["<string-stream>"],
-format_to_string__1237;
-false;
-format_to_string__1237 = Mmake_function__1186("format_to_string", function format_to_string__1238 (control_string__1239)
-{
-var args__1240 = $SL.call(arguments, 1);
-"Process a format string and return the result as another string.\nThis function effectively calls format and returns the result as a string.";
-var stream__1241 = make__1197(Lstring_streamG__1236);
-apply__1229(format__1209, stream__1241, control_string__1239, args__1240);
-return stream_contents__1235(stream__1241)}, false);
-exports["format-to-string"] = format_to_string__1237}
+    {
+        ($module)['format-to-string'] = function B1338(control_string__1339) {
+            var args__1340 = $SL.call(arguments, 1);
+            {
+                var stream__1341 = B1230['make'](B1308['<string-stream>']);
+                {
+                    B1230['apply'](($module)['format'], stream__1341, control_string__1339, args__1340);
+                    return(B1308['stream-contents'](stream__1341));
+                }
+            }
+        };
+        ($module)['%export']('format-to-string', ($module)['format-to-string']);
+    }
+    B1230['%annotate-function'](($module)['format-to-string'], 'format-to-string', false);
+}

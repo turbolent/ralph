@@ -1,0 +1,98 @@
+
+(define-module ralph/compiler/symbol-lifting.test
+  import: (ralph/test
+           ralph/compiler/macroexpansion
+           ralph/compiler/anf
+           ralph/compiler/statements
+           ralph/compiler/symbol-lifting
+           ralph/compiler/environment.test))
+
+
+(define-function make-environment ()
+  (make-test-environment "ralph/compiler/symbol-lifting.test"))
+
+;;;;
+
+(reset-symbol-counter!)
+(bind ((env (make-environment)))
+  (check-equal "lift-symbols: simple"
+               '(ralph/core::%begin
+                  (ralph/core::%define $1 (ralph/core::%quote a))
+                  $1)
+               (lift-symbols
+                (macroexpand-all
+                 '(begin 'a)
+                 env)
+                env)))
+
+
+(reset-symbol-counter!)
+(bind ((env (make-environment)))
+  (check-equal "lift-symbols: multiple uses"
+               '(ralph/core::%begin
+                 (ralph/core::%define $1 (ralph/core::%quote a))
+                 (ralph/core::%begin
+                   (ralph/core::%define $2 (ralph/core::%quote b))
+                   (ralph/core::%begin
+                     (ralph/core::%define $3 (ralph/core::%quote c))
+                     (ralph/core::%bind (a $1)
+                      (ralph/core::%bind (b $2)
+                       (foo a $1 b $2 $3))))))
+               (lift-symbols
+                (macroexpand-all
+                 '(bind ((a 'a)
+                         (b 'b))
+                    (foo
+                     a 'a
+                     b 'b
+                     'c))
+                 env)
+                env)))
+
+
+(reset-symbol-counter!)
+(bind ((env (make-environment)))
+  (check-equal "lift-symbols: method"
+               '(ralph/core::%begin
+                  (ralph/core::%define $2 (ralph/core::%quote a))
+                  (ralph/core::%begin
+                   23
+                   (ralph/core::%method $1 (x)
+                     $2)))
+               (lift-symbols
+                (macroexpand-all
+                 '(begin
+                   23
+                   (method (x)
+                     'a))
+                 env)
+                env)))
+
+
+(reset-symbol-counter!)
+(bind ((env (make-environment)))
+  (check-equal "lift-symbols: begin, if, while"
+               '(ralph/core::%begin
+                  (ralph/core::%define $1 (ralph/core::%quote a))
+                  (ralph/core::%begin
+                    (ralph/core::%define $2 (ralph/core::%quote b))
+                    (ralph/core::%begin
+                      (ralph/core::%define $3 (ralph/core::%quote c))
+                      (ralph/core::%begin
+                        (ralph/core::%if $1
+                             (ralph/core::%while (bar $2)
+                               (ralph/core::%begin $1 23 $3))
+                             $3)
+                        $2))))
+               (lift-symbols
+                (macroexpand-all
+                 '(begin
+                   (if 'a
+                       (while (bar 'b)
+                         'a
+                         23
+                         'c)
+                       'c)
+                   'b)
+                 env)
+                env)))

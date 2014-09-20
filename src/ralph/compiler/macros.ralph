@@ -1,0 +1,634 @@
+
+(define-module ralph/compiler/macros
+  import: (ralph/format
+           ralph/compiler/utilities)
+  export: (;; macros
+           $core-macros
+           $internal-macros
+           ;; symbol macros
+           $core-symbol-macros
+           $internal-symbol-macros))
+
+;;;; utilities
+
+(define-function wrap-keys (form rest-parameter keyword-parameters)
+  (bind ((keyword-parameters*
+          (map (method (parameter)
+                 (if (instance? parameter <array>)
+                     parameter
+                     [parameter #f]))
+               keyword-parameters)))
+    `(bind-properties ,(map first keyword-parameters*)
+         (%keys ,rest-parameter
+                (%object
+                 ,@(reduce1 concatenate
+                            (map (method (parameter)
+                                   (destructuring-bind (key value)
+                                       parameter
+                                     [(symbol-name key) value]))
+                                 keyword-parameters*))))
+       ,form)))
+
+(define-function wrap-rest/keys
+    (form all-parameters normal-parameters
+     rest-parameter keyword-parameters)
+  (bind ((rest? rest-parameter)
+         (rest-parameter (or rest-parameter
+                             (unless (empty? keyword-parameters)
+                               (generate-symbol))))
+         (form* (if (empty? keyword-parameters)
+                    form
+                    (wrap-keys form rest-parameter
+                               keyword-parameters))))
+    (if (or rest? (not (empty? keyword-parameters)))
+        `(bind ((,rest-parameter
+                 (%native-call "$SL.call" ,all-parameters
+                               ,(size normal-parameters))))
+           ,form*)
+        form*)))
+
+(define-function strip-types (parameters)
+  (map (method (parameter)
+         (if (instance? parameter <array>)
+             (first parameter)
+             parameter))
+       parameters))
+
+(define-function named-method (name parameter-list form)
+  (destructuring-bind (normal-parameters
+                       rest-parameter
+                       keyword-parameters)
+      (destructure-parameter-list parameter-list)
+    `(%method ,name
+              ,(strip-types normal-parameters)
+              ,(wrap-rest/keys
+                form
+                '%all-arguments
+                normal-parameters
+                rest-parameter
+                keyword-parameters))))
+
+
+;;;; core macros
+
+(define $core-macros
+  (make-plain-object))
+
+(set! (get $core-macros "when")
+      (method (_ test #rest forms)
+        `(if ,test
+             (begin ,@forms)
+             #f)))
+
+(set! (get $core-macros "unless")
+      (method (_ test #rest forms)
+        `(if (not ,test)
+             (begin ,@forms)
+             #f)))
+
+(set! (get $core-macros "parallel-set!")
+      (method  (_ identifier new-value #rest clauses)
+        (if (empty? clauses)
+            `(set! ,identifier ,new-value)
+            (bind ((value (generate-symbol)))
+              `(bind ((,value ,new-value))
+                 (parallel-set! ,@clauses)
+                 (set! ,identifier ,value))))))
+
+(set! (get $core-macros "cond")
+      (method (_ #rest cases)
+        (unless (empty? cases)
+          (bind ((case (first cases)))
+            (check-type case <array>
+                        "Non-array case in cond: %=")
+            (destructuring-bind (test #rest forms) case
+              (bind ((form `(begin ,@forms)))
+                (if (== test else:)
+                    form
+                    `(if ,test
+                         ,form
+                         (cond ,@(rest cases))))))))))
+
+(set! (get $core-macros "and")
+      (method (_ #rest forms)
+        (select (size forms) ==
+          ((0) #t)
+          ((1) (first forms))
+          (else: `(when ,(first forms)
+                    (and ,@(rest forms)))))))
+
+(set! (get $core-macros "or")
+      (method (_ #rest forms)
+        (select (size forms) ==
+          ((0) #f)
+          ((1) (first forms))
+          (else:
+           (bind ((value (generate-symbol)))
+             `(bind ((,value ,(first forms)))
+                (if ,value
+                    ,value
+                    (or ,@(rest forms)))))))))
+
+(set! (get $core-macros "if-bind")
+      (method (_ binding consequent alternate #rest superflous)
+        ;; TODO [#B]: (unless (empty? superflous) (warn ...))
+        (check-type binding <array>
+                    "Non-array binding in if-bind: %=")
+        (destructuring-bind (var value) binding
+          (bind ((temp (generate-symbol)))
+            `(bind ((,temp ,value))
+               (if ,temp
+                   (bind ((,var ,temp))
+                     ,consequent)
+                   ,alternate))))))
+
+(set! (get $core-macros "until")
+      (method (_ test #rest forms)
+        `(while (not ,test)
+           ,@forms)))
+
+(set! (get $core-macros "dotimes")
+      (method (_ binding #rest forms)
+        (check-type binding <array>
+                    "Non-array binding in dotimes: %=")
+        (bind ((temp (generate-symbol)))
+          (destructuring-bind (var count result) binding
+            (check-type var <symbol>
+                        "Non-symbol var in dotimes: %=")
+            `(bind ((,temp ,count))
+               (for ((,var 0 (inc ,var)))
+                   ((binary>= ,var ,temp) ,(or result #f))
+                 ,@forms))))))
+
+(set! (get $core-macros "for")
+      (method (_ clauses end-clause #rest forms)
+        (check-type clauses <array>
+                    "Non-array set of clauses in for: %=")
+        (check-type end-clause <array>
+                    "Non-array end-clause in for: %=")
+        (bind ((init-clauses [])
+               (next-clauses [])
+               (vars (map first clauses)))
+          (for-each ((clause clauses))
+                    ()
+            (check-type clause <array>
+                        "Non-array clause in for: %=")
+            ;; init form
+            (push-last init-clauses
+                       (slice clause 0 2))
+            ;; next form
+            (push-last next-clauses
+                       (first clause))
+            (push-last next-clauses
+                       (third clause)))
+          ;; result
+          `(bind ,init-clauses
+             (while ,(or (empty? end-clause)
+                         `(not ,(first end-clause)))
+               ;; create closure
+               ((method ,vars ,@forms)
+                ,@vars)
+               (parallel-set! ,@next-clauses))
+             (begin ,@(rest end-clause))))))
+
+(set! (get $core-macros "for-each")
+      (method (_ clauses end-clause #rest forms)
+        (check-type clauses <array>
+                    "Non-array set of clauses in for: %=")
+        (check-type end-clause <array>
+                    "Non-array end-clause in for: %=")
+        (bind ((clauses
+                (map (method (clause)
+                       (check-type clause <array>
+                                   "Non-array clause in for-each: %=")
+                       (cons (generate-symbol)
+                             clause))
+                     clauses))
+               (end? (generate-symbol))
+               (values (generate-symbol))
+               (result (generate-symbol))
+               (form `(begin
+                       ;; rebind variables to create closure
+                       ,(bind ((vars (map second clauses)))
+                          `((method ,vars ,@forms)
+                            ,@vars))
+                       ;; update temporary collection bindings
+                       ,@(map (method (clause)
+                                `(set! ,(first clause)
+                                       (rest ,(first clause))))
+                              clauses)
+                       (set! ,values
+                             (%array ,@(map first clauses))))))
+          ;; evaluate each collection once
+          `(bind (,@(map (method (clause)
+                           (destructuring-bind (temp var values)
+                               clause
+                             [temp values]))
+                         clauses)
+                  (,end? #f)
+                  (,result #f)
+                  (,values (%array ,@(map first clauses))))
+             ;; check exhaustion
+             (until (or ,end? (any? empty? ,values))
+               ;; bind each var to next element
+               (bind ,(map (method (clause)
+                             (destructuring-bind (temp var values) clause
+                               [var `(first ,temp)]))
+                           clauses)
+                 ,(if-bind (end-test (first end-clause))
+                    `(if ,end-test
+                         (begin
+                          (set! ,result
+                                (begin ,@(rest end-clause)))
+                          (set! ,end? #t))
+                         ,form)
+                    form)))
+             ,result))))
+
+(set! (get $core-macros "select")
+      (method (_ value test #rest cases)
+        (bind ((value* (generate-symbol))
+               (test* (if (instance? test <symbol>)
+                          test
+                          (generate-symbol))))
+          (bind-methods ((test-expression (test-value)
+                           [test* value* test-value]))
+            `(bind ,(concatenate
+                     [[value* value]]
+                     (if (instance? test <symbol>)
+                         []
+                         [[test* test]]))
+               (cond
+                ,@(map (method (case)
+                         (check-type case <array>
+                                     "Non-array case in select: %=")
+                         (destructuring-bind (test-forms #rest forms) case
+                           (if (== test-forms else:)
+                               case
+                               (begin
+                                (check-type test-forms <array>
+                                            "Non-array set of test forms in select: %=")
+                                `((or ,@(map test-expression test-forms))
+                                  ,@forms)))))
+                       cases)))))))
+
+(define-function destructure (bindings values form)
+  (if (instance? values <symbol>)
+      (begin
+       (check-type bindings <array>
+                   "Non-array set of bindings while destructuring: %=")
+       (destructuring-bind (normal-parameters
+                            rest-parameter
+                            keyword-parameters)
+           (destructure-parameter-list bindings)
+         (bind ((i (size normal-parameters)))
+           (reduce (method (form binding)
+                     (dec! i)
+                     (if (instance? binding <symbol>)
+                         `(bind ((,binding (%get-property ,values ,i)))
+                            ,form)
+                         (destructure binding
+                                      `(%get-property ,values ,i)
+                                      form)))
+                   (wrap-rest/keys form values
+                                   normal-parameters
+                                   rest-parameter
+                                   keyword-parameters)
+                   (reverse normal-parameters)))))
+      ;; ensure values is only evaluated once
+      (bind ((var (generate-symbol)))
+        `(bind ((,var ,values))
+           ,(destructure bindings var form)))))
+
+(set! (get $core-macros "destructuring-bind")
+      (method (_ bindings values #rest forms)
+        (destructure bindings values
+                     `(begin ,@forms))))
+
+(set! (get $core-macros "bind-properties")
+      (method (_ properties object #rest forms)
+        (bind ((object* (generate-symbol)))
+          `(bind ((,object* ,object)
+                  ,@(map (method (property)
+                           `(,property
+                             (%get-property ,object*
+                                            ,(symbol-name property))))
+                         properties))
+             ,@forms))))
+
+(set! (get $core-macros "bind-methods")
+      (method (_ bindings #rest forms)
+        (check-type bindings <array>
+                    "Non-array set of bindings in bind-methods: %=")
+        `(bind ,(map first bindings)
+           ,@(map (method (binding)
+                    (check-type bindings <array>
+                                "Non-array binding in bind-methods: %=")
+                    (destructuring-bind
+                        (identifier parameter-list #rest forms)
+                        binding
+                      `(set! ,identifier
+                             (method ,parameter-list
+                               ,@forms))))
+                  bindings)
+           ,@forms)))
+
+(set! (get $core-macros "once-only")
+      (method (_ names #rest forms)
+        (bind ((symbols (map (method (name)
+                               (generate-symbol))
+                             names)))
+          `(bind (,@(map (method (symbol)
+                           `(,symbol (generate-symbol)))
+                         symbols))
+             `(bind (,,@(map (method (symbol name)
+                               ``(,,symbol ,,name))
+                             symbols names))
+                ,(bind (,@(map (method (name symbol)
+                                 `(,name ,symbol))
+                               names symbols))
+                   ,@forms))))))
+
+(set! (get $core-macros "inc!")
+      (method (_ object value)
+        `(set! ,object (+ ,object ,(or value 1)))))
+
+(set! (get $core-macros "dec!")
+      (method (_ object value)
+        `(set! ,object (- ,object ,(or value 1)))))
+
+(define-function signal-unsupported-dot-name (property)
+  (signal (format-to-string "Unsupported name for call in dot: %="
+                            property)))
+
+(set! (get $core-macros ".")
+      (method (_ form #rest calls)
+        (reduce (method (form call)
+                  (check-type call <array>
+                              "Non-array call in dot: %=")
+                  (destructuring-bind (property #rest arguments) call
+                    (bind ((bindings (map (method (argument)
+                                            [(generate-symbol) argument])
+                                          arguments))
+                           (form* (generate-symbol)))
+                      ;; prevent lifting through ANF
+                      `(bind ((,form* ,form))
+                         (bind ,bindings
+                           ((%get-property ,form*
+                                           ,(select property instance?
+                                              ((<string>) property)
+                                              ((<symbol>) (symbol-name property))
+                                              (else: (signal-unsupported-dot-name
+                                                      property))))
+                            ,@(map first bindings)))))))
+                form
+                calls)))
+
+(set! (get $core-macros "define-method")
+      (method (env identifier parameter-list #rest forms)
+        (destructuring-bind (setter? identifier)
+            (if (setter-identifier? identifier)
+                [#t (transform-setter-identifier (second identifier))]
+                [#f identifier])
+          (unless (or (instance? identifier <symbol>)
+                      setter?)
+            (signal (format-to-string "Identifier not symbol or setter in define-method: %="
+                                      identifier)))
+          (when (empty? parameter-list)
+            (signal (format-to-string "Empty parameter-list in define-method: %="
+                                      identifier)))
+          (bind ((name (symbol-name identifier))
+                 (definition `(method ,parameter-list
+                                ,@forms)))
+            ;; result
+            `(define ,identifier
+               (%make-method
+                 ,name
+                 ,definition
+                 ,setter?
+                 ,(bind ((head (first parameter-list)))
+                    (if (and (instance? head <array>)
+                             (> (size head) 1))
+                        (second head)
+                        `<object>))
+                 ,identifier))))))
+
+(set! (get $core-macros "define-function")
+      (method (env identifier parameter-list #rest forms)
+        (destructuring-bind (setter? identifier)
+            (if (setter-identifier? identifier)
+                [#t (transform-setter-identifier (second identifier))]
+                [#f identifier])
+          (unless (or (instance? identifier <symbol>)
+                      setter?)
+            (signal (format-to-string "Identifier not symbol or setter in define-function: %="
+                                      identifier)))
+          (bind ((name (symbol-name identifier))
+                 (definition `(method ,parameter-list
+                                ,@forms)))
+            (set! (get env "module" "functions" name)
+                  definition)
+            ;; result
+            `(%begin
+               (define ,identifier ,definition)
+               (%annotate-function ,identifier
+                                   ,name
+                                   ,setter?))))))
+
+(set! (get $core-macros "define-generic")
+      (method (_ identifier arguments #rest superflous)
+        ;; TODO [#B]: (unless (empty? superflous) (warn ...))
+        `(define ,identifier
+           (%make-generic ,(symbol-name identifier)))))
+
+(set! (get $core-macros "define-class")
+      (method (_ identifier superclass #rest properties)
+        `(define ,identifier
+           (%make-class
+            ;; superclass
+            ,(unless (empty? superclass)
+               (first superclass))
+            ;; properties
+            (%object
+             ,@(reduce1 concatenate
+                        (map (method (property)
+                               (if (instance? property <array>)
+                                   [(symbol-name (first property))
+                                    `(method ()
+                                       ,(second property))]
+                                   [(symbol-name property) #f]))
+                             properties)))
+            ;; constructor
+            (%method ,identifier ()
+              (%begin
+               ,@(map (method (property)
+                        `(%set (%get-property (%native "this")
+                                              ,(if (instance? property <array>)
+                                                   (symbol-name (first property))
+                                                   (symbol-name property)))
+                               (%native "undefined")))
+                      properties)))))))
+
+
+(set! (get $core-macros "define-macro")
+      (method (_ identifier parameter-list #rest forms)
+        (check-type identifier <symbol>
+                    "Non-symbol identifier in define-macro: %=")
+        (check-type parameter-list <array>
+                    "Non-array parameter-list in define-macro: %=")
+        `(begin
+          ;; TODO [#A]: properly inject environment (and complete form ?)
+          (define-function ,identifier (,(generate-symbol)
+                                        ,@parameter-list)
+            ,@forms)
+          (set! (%get-property ,identifier "%macro?") #t))))
+
+(set! (get $core-macros "define-symbol-macro")
+      (method (_ identifier parameter-list #rest forms)
+        (check-type identifier <symbol>
+                    "Non-symbol identifier in define-symbol-macro: %=")
+        (check-type parameter-list <array>
+                    "Non-array parameter-list in define-symbol-macro: %=")
+        `(begin
+          ;; TODO: properly inject environment
+          (define-function ,identifier ()
+            ,@forms)
+          (set! (%get-property ,identifier "%symbol-macro?") #t))))
+
+;; TODO [#B]: backend-specific
+(set! (get $core-macros "call-next-method")
+      (method (_ #rest superflous)
+        ;; TODO [#B]: (unless (empty? superflous) (warn ...))
+        `((%get-property next-method "apply")
+          (%native "null") ,'%all-arguments)))
+
+
+(set! (get $core-macros "block")
+      (method  (_ name #rest body)
+        (if-bind (name (and (not (empty? name))
+                            (first name)))
+          (bind ((block-var (generate-symbol))
+                 (condition-var (generate-symbol)))
+            `(bind ((,name (%make-exit-function))
+                    (,block-var (method () ,@body)))
+               (%try (,block-var)
+                     ,condition-var
+                     (if (and (instance? ,condition-var <non-local-exit>)
+                              (%infix "===" (%get-property ,condition-var "identifier")
+                                            (%get-property ,name "identifier")))
+                         (%get-property ,condition-var "return-value")
+                         (signal ,condition-var)))))
+          `(begin ,@body))))
+
+
+
+;; NOTE: define-module: see ralph/compiler
+
+
+;;;; core symbol macros
+
+(define $core-symbol-macros
+  (make-plain-object))
+
+
+(set! (get $core-symbol-macros "next-method")
+      (method (_ #rest superflous)
+        ;; TODO [#B]: (unless (empty? superflous) (warn ...))
+        `(%next-method ,'%this-method)))
+
+
+;;;; internal macros
+
+(define $internal-macros
+  (make-plain-object))
+
+
+(define-function transform-quoted (form)
+  (select form instance?
+    ((<array>)
+     `(%array
+       ,@(map transform-quoted form)))
+    ((<symbol>)
+     `(%quote ,form))
+    (else: form)))
+
+(set! (get $internal-macros "quote")
+      (method (_ form #rest superflous)
+        ;; TODO [#B]: (unless (empty? superflous) (warn ...))
+        ;;            NOTE: also already checked by if
+        (transform-quoted form)))
+
+(set! (get $internal-macros "begin")
+      (method (_ #rest forms)
+        (select (size forms) ==
+          ((0) #f)
+          ((1) (first forms))
+          (else:
+           `(%begin ,@forms)))))
+
+(set! (get $internal-macros "bind")
+      (method (_ bindings #rest forms)
+        (reduce (method (form binding)
+                  `(%bind ,(if (instance? binding <symbol>)
+                               `(,binding #f)
+                               binding)
+                          ,form))
+                `(begin ,@forms)
+                (reverse bindings))))
+
+(set! (get $internal-macros "method")
+      (method (_ parameter-list #rest forms)
+        (named-method (generate-symbol)
+                      parameter-list
+                      `(begin ,@forms))))
+
+(set! (get $internal-macros "while")
+      (method (_ test #rest forms)
+        `(%while ,test
+           (begin ,@forms))))
+
+(set! (get $internal-macros "if")
+      (method (_ test then else #rest superflous)
+        ;; TODO [#B]: (unless (empty? superflous) (warn ...))
+        ;;            NOTE: also already checked by if
+        `(%if ,test ,then ,else)))
+
+(set! (get $internal-macros "set!")
+      (method (_ place #rest new-values)
+        (if (and (instance? place <array>)
+                 (not (== (symbol-name (first place))
+                          "%get-property")))
+            ;; invoke setter
+            `(,(transform-setter-identifier (first place))
+              ,@(rest place)
+              ,@new-values)
+            ;; primitive set
+            ;; TODO [#B]: (unless (empty? (rest values)) (warn ...))
+            `(%set ,place ,(first new-values)))))
+
+(set! (get $internal-macros "define")
+      (method (env identifier value)
+        `(%define ,identifier ,(or value #f))))
+
+(set! (get $internal-macros "handler-case")
+      (method  (_ protected-form #rest cases)
+        (bind ((condition-var (generate-symbol)))
+          `(%try ,protected-form
+                 ,condition-var
+                 (cond
+                  ,@(map (method (case)
+                           (destructuring-bind ((type #key condition) #rest body) case
+                             (concatenate `((instance? ,condition-var ,type))
+                                          (if condition
+                                              `((bind ((,condition ,condition-var))
+                                                  ,@body))
+                                              body))))
+                         cases))))))
+
+
+
+;;;; internal symbol macros
+
+(define $internal-symbol-macros
+  (make-plain-object))
+

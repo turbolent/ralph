@@ -1,16 +1,18 @@
 (define-module ralph/core
   export: (<object> <string> <number> <array>
            <boolean> <function> <error>
-           %make-function true? not size %inherit
+           %annotate-function true? not size %inherit
            %make-class %keywords <keyword> keyword %keys
-           %concat cons as-string as-number as-array as-json
+           %make-exit-function <non-local-exit>
+           %concat cons as-string as-number as-array
+           as-json parse-json
            parse-number parse-integer char-code code-char
            empty? rest last (setter last) first (setter first)
            second (setter second) third (setter third)
            make-array push push-last pop
            pop-last but-last every? reduce1
            reduce reverse! reverse choose
-           find-key position last-position member?
+           find-key position last-position member? count
            sort! sort apply curry
            rcurry always repeatedly identity
            complement compose + - * / type
@@ -20,50 +22,61 @@
            binary<= <= binary> > binary>= >=
            as-object as-uppercase as-lowercase
            join trim replace make-object make-plain-object
-           <symbol> symbol symbol-name external-symbol
+           <symbol> symbol symbol-name
+           destructure-symbol %%symbol
            element (setter element)
            replace-subsequence replace-subsequence!
            remove remove!
            interpose any? map do copy-sequence slice
-           make object-properties object-values initialize
-           <hash-symbol> get (setter get) inc dec split-with
+           object-properties object-values
+           make initialize
+           get (setter get) remove-property!
+           <hash-symbol> inc dec split split-with
            as-hex-string description min max abs
            round floor ceil sin cos atan2 expt sqrt
-           mod *pi* as-radiant even? odd?
-           signal starts-with?
-           as-property-list
-           as-association-list
+           mod $pi as-radiant even? odd?
+           signal starts-with? ends-with?
+           as-property-list as-association-list
            extend! update-with group-by
            chain-object unchain-object
            as-set set-union! set-add!
            set-subtract! set-remove!
-           ;; macros / special forms
-           quote %backquote %comma %at
-           begin %begin set! %set if %if
-           method %method %bind bind define %define
-           %while while dotimes for for-each
-           %plus %minus %times %divide
-           and or when unless cond select
-           handler-case %try bind-properties
-           parallel-set! if-bind
-           destructuring-bind bind-methods
-           inc! dec! call-next-method .
-           define-class define-function
-           define-method define-generic
+           conjoin disjoin ignore
+           reset-symbol-counter! generate-symbol
+           set-timeout clear-timeout
+           set-interval clear-interval
+           partition
+           ;; core special forms
+           quote bind method set! define if
+           begin while handler-case
+           ;; internal special forms
+           %quote %bind %method %set %define %if
+           %begin %while %try %var
+           %native-call %infix %native
+           %object %array %get-property
+           ;; core macros
+           when unless parallel-set! cond
+           and or if-bind until dotimes for
+           for-each select destructuring-bind
+           bind-properties bind-methods
+           inc! dec! .
+           define-function define-method
+           define-class define-generic
            define-module define-macro
            define-symbol-macro
-           %symbol %%symbol %infix %next-method
-           %get-property %native %native-call
-           %call %var %array %object %return)
+           syntax-quote unquote unquote-splicing
+           call-next-method next-method
+           once-only repeat-string substring
+           expression?)
   inline: (not size cons
            as-string as-number as-array as-json
            parse-number char-code empty?
            rest last (setter last) but-last
-           slice %concat reverse!
+           slice %concat reverse! reverse
            first second third
            (setter first) (setter second) (setter third)
            replace push push-last pop pop-last
-           reduce1 as-hex-string starts-with?
+           as-hex-string starts-with?
            as-uppercase as-lowercase trim
            inc dec mod as-radiant even? odd?
            has? signal binary==))
@@ -79,8 +92,8 @@
 (set! (%get-property <error> "%properties")
       (%object "message" #f))
 
-(define %make-function
-  (method (name function setter?)
+(define %annotate-function
+  (method (function name setter?)
     (set! (%get-property function "%name") name)
     (set! (%get-property function "%setter?") setter?)
     function))
@@ -104,30 +117,34 @@
 (%native "$SL = [].slice")
 
 (define-function inc ((number <number>))
-  (%plus number 1))
+  (%infix "+" number 1))
 
 (define-function dec ((number <number>))
-  (%minus number 1))
+  (%infix "-" number 1))
 
 (define-function binary== (object1 object2)
   (%infix "===" object1 object2))
 
 (define-function %inherit (class superclass)
+  (set! (%get-property class "%superclass")
+        superclass)
   (set! (%get-property class "prototype" "__proto__")
         (%get-property superclass "prototype"))
-  (set! (%get-property class "prototype" "__super__")
-        superclass)
+  (bind ((super-properties (%get-property superclass "%properties")))
+    (when (%infix "instanceof" super-properties <object>)
+      (set! (%get-property class "%properties" "__proto__")
+            super-properties)))
   class)
 
-(define-function %make-class (superclass properties)
-  (bind ((class (method ())))
-    (set! (%get-property class "%properties")
-          properties)
-    (when superclass
-      (%inherit class superclass)
-      (set! (%get-property properties "__proto__")
-            (%get-property superclass "%properties")))
-    class))
+(define-function %make-class (superclass properties constructor)
+  (unless constructor
+    (set! constructor (method ())))
+  (set! (%get-property constructor "%properties")
+        properties)
+  (set! (%get-property constructor "%class?") #t)
+  (when superclass
+    (%inherit constructor superclass))
+  constructor)
 
 (define %keywords (%object))
 
@@ -144,6 +161,23 @@
 
 (%native "$K = " keyword)
 
+(define *exit-function-counter* 0)
+
+(define-class <non-local-exit> (<object>))
+
+(define-function %make-exit-function ()
+  (bind ((identifier (inc! *exit-function-counter*))
+         (exit-function (method (return-value)
+                          (bind ((condition (%native-call "new" <non-local-exit>)))
+                            (set! (%get-property condition "identifier")
+                                  identifier)
+                            (set! (%get-property condition "return-value")
+                                  return-value)
+                            (signal condition)))))
+    (set! (%get-property exit-function "identifier")
+          identifier)
+    exit-function))
+
 
 (define-function %concat ((array1 <array>) (array2 <array>))
   (. array1 ("concat" array2)))
@@ -158,8 +192,11 @@
 (define-function as-array (arguments skip)
   (%native-call "$SL.call" arguments (%infix "||" skip 0)))
 
-(define-function as-json (object)
-  (. (%native "JSON") (stringify object)))
+(define-function as-json (value #key (replacer (%native "null"))
+                                     indent)
+  (%native-call "JSON.stringify" value replacer indent))
+
+(define parse-json (%native "JSON.parse"))
 
 (define parse-number (%native "parseFloat"))
 
@@ -168,6 +205,8 @@
 
 (define code-char (%native "String.fromCharCode"))
 
+
+;; TODO: !array.length
 (define-function empty? (sequence)
   (binary== (size sequence) 0))
 
@@ -204,12 +243,12 @@
   elements)
 
 (define-function push ((array <array>) value)
-  (%native array ".unshift(" value ")")
-  array)
+  (. array ("unshift" value))
+  value)
 
 (define-function push-last ((array <array>) value)
-  (%native array ".push(" value ")")
-  array)
+  (. array ("push" value))
+  value)
 
 (define-function pop ((array <array>))
   (. array ("shift")))
@@ -223,15 +262,28 @@
 (define-function slice ((array <array>) start end)
   (. array ("slice" start end)))
 
-(define-function reduce1 ((function <function>) (values <array>))
-  (reduce function (first values) (rest values)))
+(define-function reduce1 ((function <function>) (values <array>) #key from-end?)
+  (if (empty? values)
+      (function)
+      (apply reduce function
+             (%concat
+              (if from-end?
+                  [(last values) (but-last values)]
+                  [(first values) (rest values)])
+              [from-end?: from-end?]))))
 
-(define-function reduce ((function <function>) initial-value (values <array>))
-  (bind ((value initial-value))
-    (dotimes (i (size values))
-      (set! value (function value
-                            (%get-property values i))))
-    value))
+(define-function reduce
+    ((function <function>) initial-value (values <array>) #key from-end?)
+  (bind ((result initial-value))
+    (if from-end?
+        (bind ((values (reverse values)))
+          (dotimes (i (size values))
+            (set! result (function (%get-property values i)
+                                   result))))
+        (dotimes (i (size values))
+          (set! result (function result
+                                 (%get-property values i)))))
+    result))
 
 (define-function reverse! ((array <array>))
   (. array ("reverse")))
@@ -254,7 +306,7 @@
 (define-function apply ((function <function>))
   (bind ((actual (%native-call "$SL.call" %all-arguments 1 -1))
          (last (%get-property %all-arguments
-                              (%minus (size %all-arguments) 1)))
+                              (%infix "-" (size %all-arguments) 1)))
          (arguments (if (binary== last function)
                         actual
                         (%concat actual last))))
@@ -289,7 +341,7 @@
   (if (empty? functions)
       identity
       (method (#rest arguments)
-        (reduce (method (value function)
+        (reduce (method (function value)
                   (function value))
                 (apply (last functions)
                        arguments)
@@ -297,16 +349,16 @@
                 from-end?: #t))))
 
 (define-function binary+ (number1 number2)
-  (%plus number1 number2))
+  (%infix "+" number1 number2))
 
 (define-function binary- (number1 number2)
-  (%minus number1 number2))
+  (%infix "-" number1 number2))
 
 (define-function binary* (number1 number2)
-  (%times number1 number2))
+  (%infix "*" number1 number2))
 
 (define-function binary/ (number1 number2)
-  (%divide number1 number2))
+  (%infix "/" number1 number2))
 
 
 
@@ -317,12 +369,12 @@
 
 (define-function instance? (object type)
   (if object
-      (bind ((ctor (%get-property object "constructor")))
-        (or
-         ;; primitive
-         (binary== ctor type)
-         ;; object
-         (%infix "instanceof" object type)))
+      (%infix "||"
+              ;; object
+              (%infix "instanceof" object type)
+              ;; primitive
+              (binary== (%get-property object "constructor")
+                        type))
       (binary== type <boolean>)))
 
 (%native "$HP = Object.hasOwnProperty")
@@ -331,29 +383,24 @@
   (%native "$HP.call(" object "," property ")"))
 
 (define-function %make-method (name function setter? type existing)
-  (bind ((prototype (%get-property type "prototype"))
-         (existing-method (and (has? prototype name)
-                               (%get-property prototype name)))
-         (generic? (and existing
-                        (has? existing "%generic?")
-                        (%get-property existing "%generic?"))))
-    ;; definition
-    (set! (%get-property function "%name") name)
-    (set! (%get-property function "%setter?") setter?)
-    (set! (%get-property function "%type") type)
-    (set! (%get-property prototype name) function)
-    ;; implicit definition of generic function?
-    (if generic?
-        existing
-        (%make-generic name))))
+  ;; definition
+  (set! (%get-property function "%name") name)
+  (set! (%get-property function "%setter?") setter?)
+  (set! (%get-property function "%type") type)
+  (set! (%get-property type "prototype" name) function)
+  ;; implicit definition of generic function?
+  (if (and existing
+           (%get-property existing "%generic?"))
+      existing
+      (%make-generic name)))
 
 (define-function %make-generic (name)
   (bind ((dispatcher
           (method (object)
-            (bind ((function (%infix "&&"
-                                     (%infix "!==" object (%native "null"))
-                                     (%infix "!==" object (%native "undefined"))
-                                     (%get-property object name))))
+            (bind ((function (%get-property
+                              (%native "(" object "== null ?"
+                                       " false : " object ")")
+                              name)))
               (%infix "&&"
                       function
                       ((%get-property function "apply")
@@ -369,11 +416,10 @@
     (%get-property proto name)))
 
 
-(define-function concatenate (object #rest rest)
-  (reduce (if (instance? object <array>)
-              %concat
-              binary+)
-          object rest))
+(define-function concatenate (#rest values)
+  (if (empty? values)
+      []
+      (reduce1 %concat values)))
 
 (define-function compare ((function <function>) object objects)
   (bind ((failed? #f))
@@ -466,8 +512,8 @@
     result))
 
 ;; <array> <object> or <string> <string>
-(define-function position ((array <array>) element)
-  (bind ((position (. array ("indexOf" element))))
+(define-function position ((array <array>) element #key (start 0))
+  (bind ((position (. array ("indexOf" element start))))
     (when (> position -1)
       position)))
 
@@ -475,6 +521,11 @@
   (bind ((position (. array ("lastIndexOf" element))))
     (when (> position -1)
       position)))
+
+(define-function count (item (array <array>))
+  (for ((result -1 (inc result))
+        (pos 0 (position array item start: (inc pos))))
+       ((not pos) result)))
 
 (define-function as-uppercase ((string <string>))
   (. string ("toUpperCase")))
@@ -511,6 +562,10 @@
 (define-function symbol-name (symbol)
   (get symbol "name"))
 
+(define-function destructure-symbol (symbol)
+  [(get symbol "name")
+   (get symbol "module")])
+
 (define-function %%symbol (name module)
   (bind ((module* (or module "")))
     (or (get %symbols module* name)
@@ -520,6 +575,22 @@
                     module: module)))))
 
 (%native "$S = " %%symbol)
+
+(define *symbol-count* 0)
+
+(define-function reset-symbol-counter! ()
+  (set! *symbol-count* 0))
+
+(define-function generate-symbol (env prefix)
+  (bind ((name (concatenate
+                (if prefix
+                    (concatenate prefix "_")
+                    "$")
+                (as-string (inc! *symbol-count*))))
+         (result (symbol name (when env
+                                (get env "module" "name")))))
+    (set! (get result "generated?") #t)
+    result))
 
 ;; handles keyword arguments
 (define-function %keys (key-values defaults)
@@ -591,14 +662,13 @@
       (set! value
             (function (%get-property values i))))))
 
-(define-function member? (value (array <array>) #key (test ==))
+(define-function member? (value (array <array>) #key (test binary==))
   (any? (method (other-value)
           (test value other-value))
         array))
 
 (define-function every? ((function <function>) (array <array>))
-  (not (any? (method (value)
-               (not (function value)))
+  (not (any? (complement function)
              array)))
 
 (define-function map ((function <function>) #rest arrays)
@@ -641,19 +711,26 @@
     object))
 
 (define-function object-properties (object #key inherited?)
-  (bind ((result []))
-    (if (instance? object <array>)
+  (if (instance? object <array>)
+      (bind ((result []))
         (dotimes (i (size object))
           (push-last result i))
-        (bind (i)
-          (%native "for (" i " in " object ") "
-                   "(" inherited? "||"
-                   "$HP.call(" object ", " i ")) &&"
-                   result ".push(" i ")")))
-    result))
+        result)
+      (if (or inherited?
+          (%infix "!==" (%native-call "typeof" object)
+                        "object"))
+          (bind (i (result []))
+            (%native "for (" i " in " object ") "
+                     "(" inherited? "||"
+                     "$HP.call(" object ", " i ")) &&"
+                     result ".push(" i ")")
+            result)
+          (%native-call "Object.keys" object))))
+
 
 (define-function object-values (object)
-  (map (curry get object)
+  (map (method (property)
+         (get object property))
        (object-properties object)))
 
 (define-generic initialize (object #rest))
@@ -662,17 +739,20 @@
   (bind ((arguments (as-object rest)))
     (if-bind (properties (%get-property (type object)
                                         "%properties"))
-       (do (method (key)
-             (unless (or (has? (%get-property <object> "prototype") key)
-                         (has? object key))
-               (bind ((value (or (%get-property arguments key)
-                                 (bind ((value (%get-property properties key)))
-                                   (when value
-                                     (value))))))
-                 (set! (%get-property object key)
-                       value))))
-           (object-properties properties
-                              inherited?: #t))))
+      (do (method (property)
+            (when (and (not (has? (%get-property <object> "prototype") property))
+                       (%infix "==="
+                               (%native-call "typeof"
+                                             (%get-property object property))
+                               "undefined"))
+              (bind ((value (or (%get-property arguments property)
+                                (bind ((value (%get-property properties property)))
+                                  (when value
+                                    (value))))))
+                (set! (%get-property object property)
+                      value))))
+          (object-properties properties
+                             inherited?: #t))))
   object)
 
 (define-class <hash-symbol> (<object>)
@@ -706,6 +786,22 @@
                object2
                (rest properties/value)))))
 
+
+(define-function remove-property! (object #rest properties)
+  (bind ((result #t))
+    (for-each ((property (but-last properties)))
+              ((not (has? object property))
+               (set! result #f))
+      (set! result (%get-property object property))
+      (set! object result))
+    (when (instance? object <object>)
+      (bind ((value (%get-property object (last properties))))
+        (%native-call "delete" (%get-property object (last properties)))
+        value))))
+
+
+(define-function split (string separator)
+  (. string (split separator)))
 
 (define-function split-with (function array)
   (bind ((a [])
@@ -747,6 +843,12 @@
 (define-method description ((symbol <hash-symbol>))
   (%infix "+" "#" (symbol-name symbol)))
 
+(define-method description ((function <function>))
+  ;; TODO: include %name, and for class also %properties; requires
+  ;;       passing ralph name to %annotate-function and %make-class
+  (if (get function "%class?")
+      "#{class}"
+      "#{function}"))
 
 (define min (%native "Math.min"))
 
@@ -773,12 +875,12 @@
 (define-function mod (number1 number2)
   (%infix "%" number1 number2))
 
-(define *pi* (%native "Math.PI"))
+(define $pi (%native "Math.PI"))
 
-(define *radiant* (%divide *pi* 180))
+(define $radiant (%infix "/" $pi 180))
 
 (define-function as-radiant (number)
-  (%times number *radiant*))
+  (* number $radiant))
 
 (define-function signal ((error <error>))
   (%native-call "throw" error)
@@ -814,7 +916,13 @@
     result))
 
 (define-function starts-with? ((string <string>) (prefix <string>))
-  (binary== (. string ("indexOf" prefix)) 0))
+  (binary== (. string ("indexOf" prefix 0)) 0))
+
+(define-function ends-with? (string suffix)
+  (bind ((start-index (%infix "-" (%get-property string "length")
+                                  (%get-property suffix "length")))
+         (result-index (. string ("indexOf" suffix start-index))))
+    (%binary== result-index start-index)))
 
 (define-function even? (number)
   (binary== (%infix "%" number 2) 0))
@@ -915,3 +1023,71 @@
       (%divide 1 numerator)
       (reduce binary/
               numerator denominators)))
+
+
+(define-function disjoin (predicate1 #rest predicates)
+  (method (#rest arguments)
+    (any? (method (predicate)
+            (apply predicate
+                   arguments))
+          (cons predicate1
+                predicates))))
+
+(define-function conjoin (predicate1 #rest predicates)
+  (method (#rest arguments)
+    (bind ((value #f))
+      (when (every? (method (predicate)
+                      (set! value (apply predicate
+                                         arguments)))
+                    (cons predicate1
+                          predicates))
+        value))))
+
+(define-function ignore ()
+  #f)
+
+(define set-timeout (%native "setTimeout"))
+
+(define clear-timeout (%native "clearTimeout"))
+
+(define set-interval (%native "setInterval"))
+
+(define clear-interval (%native "clearInterval"))
+
+(define-function partition (count elements #key (step count))
+  (bind ((result [])
+         (total (size elements))
+         (last-index 0))
+    (while (< last-index total)
+      (bind ((new-index (+ last-index count)))
+        (push-last result
+                   (copy-sequence elements
+                                  start: last-index
+                                  end: new-index))
+        (set! last-index new-index)))
+    result))
+
+(define-function repeat-string (string count)
+  (bind ((result ""))
+    (while (> count 0)
+      (when (odd? count)
+        (set! result (%concat result string)))
+      (%infix ">>=" count 1)
+      (set! string (%concat string string)))
+    result))
+
+(define-function substring (string start #key end length)
+  (cond
+    ((and end length)
+     (substring string start end: (min end (+ start length))))
+    (end
+     (. string (substring start end)))
+    (length
+     (. string (substr start length)))
+    (else:
+     (. string (substring start)))))
+
+(define-function expression? (form)
+  (and (instance? form <array>)
+       (instance? (first form)
+                  <symbol>)))

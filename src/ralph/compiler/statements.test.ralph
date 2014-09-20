@@ -1,0 +1,124 @@
+
+(define-module ralph/compiler/statements.test
+  import: (ralph/test
+           ralph/compiler/macroexpansion
+           ralph/compiler/anf
+           ralph/compiler/statements
+           ralph/compiler/environment.test))
+
+
+(define *environment*
+  (make-test-environment "ralph/compiler/statements.test"))
+
+
+;;;;
+
+(reset-symbol-counter!)
+(check-equal "statements: or"
+             '(ralph/core::%begin
+                (ralph/core::%var $1 #f)
+                (ralph/core::%begin
+                  (ralph/core::%var $3 #f)
+                  (ralph/core::%if
+                    ((ralph/core::%native "$T") $1)
+                    (ralph/core::%set $3 $1)
+                    (ralph/core::%begin
+                      (ralph/core::%var $2 2)
+                      (ralph/core::%if
+                        ((ralph/core::%native "$T") $2)
+                        (ralph/core::%set $3 $2)
+                        (ralph/core::%set $3 3))))
+                  (foo $3 bar)))
+              (transform-statements!
+               (normalize-term
+                (macroexpand-all
+                 '(foo (or #f 2 3) bar)
+                 *environment*)
+                *environment*)
+               *environment*))
+
+
+(reset-symbol-counter!)
+(check-equal "statements: if exp. in if stmt."
+             '(ralph/core::%begin
+                (ralph/core::%var $1 #f)
+                (ralph/core::%if
+                  ((ralph/core::%native "$T") a)
+                  (ralph/core::%set $1 1)
+                  (ralph/core::%set $1 2))
+                (ralph/core::%if
+                  ((ralph/core::%native "$T") $1)
+                  3
+                  4))
+             (transform-statements!
+               (normalize-term
+                (macroexpand-all
+                 '(if (if a 1 2) 3 4)
+                 *environment*)
+                *environment*)
+               *environment*))
+
+(reset-symbol-counter!)
+(check-equal "statements: while exp. in while stmt."
+             '(ralph/core::%while
+                  ((ralph/core::%native "$T") (> a 2))
+                (ralph/core::%begin
+                  (ralph/core::%var a #f)
+                  (ralph/core::%begin
+                    (ralph/core::%while
+                        ((ralph/core::%native "$T") (< b 3))
+                      (ralph/core::%if
+                        ((ralph/core::%native "$T") a)
+                        (ralph/core::%begin
+                          (ralph/core::%var c #f)
+                          (ralph/core::%if
+                            ((ralph/core::%native "$T") c)
+                            (ralph/core::%set c 5)
+                            (ralph/core::%set c 6))
+                          c)
+                        #f))
+                    (ralph/core::%set a #f))
+                  4))
+             (transform-statements!
+               (normalize-term
+                (macroexpand-all
+                 '(while (> a 2)
+                    (bind ((a (while (< b 3)
+                                (if a
+                                    (bind ((c (if c 5 6)))
+                                      c)
+                                    #f))))
+                      4))
+                 *environment*)
+                *environment*)
+               *environment*))
+
+
+(reset-symbol-counter!)
+(check-equal "statements: value of while applied to method"
+             '(ralph/core::%begin
+                (ralph/core::%var y 5)
+                (ralph/core::%begin
+                  (ralph/core::%var $2 (ralph/core::%method $1 (x)
+                                         (ralph/core::%if
+                                           ((ralph/core::%native "$T") x)
+                                           (ralph/core::%native-call "return" 1)
+                                           (ralph/core::%native-call "return" 2))))
+                  (ralph/core::%begin
+                    (ralph/core::%var $3 #f)
+                    (ralph/core::%begin
+                     (ralph/core::%while
+                         ((ralph/core::%native "$T") (> y 2))
+                       (ralph/core::%set y (ralph/core::- y 1)))
+                     (ralph/core::%set $3 #f))
+                    ($2 $3))))
+             (transform-statements!
+               (normalize-term
+                (macroexpand-all
+                 '(bind ((y 5))
+                    ((method (x) (if x 1 2))
+                     (while (> y 2)
+                       (dec! y))))
+                 *environment*)
+                *environment*)
+               *environment*))

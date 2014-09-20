@@ -1,43 +1,87 @@
 (define-module ralph/compiler/utilities
-  export: (expression? setter-identifier?
-           reset-symbol-counter! generate-symbol
-           maybe-begin destructure-symbol
-           var? set? method? begin? define?
-           *defined* localize
-           bind! bound? unbind!
-           remove-defined-identifiers))
+  import: (ralph/format)
+  export: (check-type
+           check-identifier
+           destructure-parameter-list
+           op?
+           process-import-names
+           transform-setter-identifier
+           setter-identifier?
+           identifier-name
+           special-symbol?))
 
-;;;; utilities
+(define $special-symbol-names 
+        ["%all-arguments" "%this-method"])
 
-(define-function expression? (form)
-  (and (instance? form <array>)
-       (not (empty? form))
-       (instance? (first form) <symbol>)))
+(define-function special-symbol? (symbol)
+  (member? (symbol-name symbol)
+           $special-symbol-names))
 
-(define-function var? (exp)
+(define-function check-type (value type format-string)
+  (unless (instance? value type)
+    (signal (format-to-string format-string value))))
+
+(define-function check-identifier (identifier env format-string)
+  (unless (or (not (get identifier "module"))
+              (== (get identifier "module")
+                  (get env "module" "name")))
+    (signal (format-to-string (or format-string
+                                  "External identifier: %=")
+                              identifier))))
+
+;; => (normal-parameters
+;;     rest-parameter
+;;     keyword-parameters)
+(define-function destructure-parameter-list (list)
+  (bind-methods ((position (symbol)
+                   (find-key list (curry = symbol))))
+    (bind ((rest (position #rest))
+           (key (position #key)))
+      [(copy-sequence list
+                      end: (or rest key
+                               (size list)))
+       (when rest
+         (element list (inc rest)))
+       (when key
+         (copy-sequence list
+                        start: (inc key)))])))
+
+(define-function op? (op exp)
   (and (expression? exp)
        (== (symbol-name (first exp))
-           "%var")))
+           op)))
 
-(define-function set? (exp)
-  (and (expression? exp)
-       (== (symbol-name (first exp))
-           "%set")))
+(define-function process-import-names (all #key only exclude prefix rename)
+  (bind-methods ((resolve (exp)
+                   (if (instance? exp <string>)
+                       exp
+                       (identifier-name exp))))
+    (bind ((names (as-set (if (instance? only <array>)
+                              (map resolve only)
+                              all)))
+           (renamings (as-object (map resolve
+                                      (or rename [])))))
+      ;; remove all from exclude
+      (do (curry remove! names)
+          (map resolve exclude))
+      ;; rename overwrites only
+      (set-union! names
+                  (object-properties renamings))
+      ;; prefix or rename
+      (map (method (name)
+             (if-bind (renaming (get renamings name))
+               [name renaming]
+               (if (instance? prefix <string>)
+                   [name (concatenate prefix name)]
+                   name)))
+           names))))
 
-(define-function define? (exp)
-  (and (expression? exp)
-       (== (symbol-name (first exp))
-           "%define")))
 
-(define-function method? (exp)
-  (and (expression? exp)
-       (== (symbol-name (first exp))
-           "%method")))
+;;;; identifiers
 
-(define-function begin? (exp)
-  (and (expression? exp)
-       (== (symbol-name (first exp))
-           "%begin")))
+(define-function transform-setter-identifier (identifier)
+  (symbol (concatenate (symbol-name identifier)
+                       "-setter")))
 
 (define-function setter-identifier? (form)
   (and (instance? form <array>)
@@ -47,58 +91,9 @@
        (== (symbol-name (first form))
            "setter")))
 
-(define *symbol-count* 0)
-
-(define-function reset-symbol-counter! ()
-  (set! *symbol-count* 0))
-
-(define-function generate-symbol (env prefix)
-  (bind ((name (concatenate
-                (if prefix
-                    (concatenate prefix "_")
-                    "$")
-                (as-string (inc! *symbol-count*))))
-         (result (symbol name (when env
-                                (get env "module" "name")))))
-    (set! (get result "generated?") #t)
-    result))
-
-
-(define-function maybe-begin (expressions)
-  (select (size expressions) ==
-    ((0) #f)
-    ((1) (first expressions))
-    (else:
-     (concatenate `(%begin)
-                  expressions))))
-
-(define-function destructure-symbol (identifier)
-  [(get identifier "name")
-   (get identifier "module")])
-
-(define-function localize (identifier env)
-  (if (get identifier "module")
-      identifier
-      (symbol (symbol-name identifier)
-              (get env "module" "name"))))
-
-(define-function bind! (env identifier)
-  (inc! (get env "binding-count"
-             (symbol-name identifier))))
-
-(define-function bound? (env identifier)
-  (if-bind (count (get env "binding-count"
-                       (symbol-name identifier)))
-    (> count 0)))
-
-(define-function unbind! (env identifier)
-  (dec! (get env "binding-count"
-             (symbol-name identifier))))
-
-(define-function remove-defined-identifiers (identifiers env)
-  (choose (method (identifier)
-            (destructuring-bind (name module-name)
-                (destructure-symbol identifier)
-              (not (get env "defined?"
-                        module-name name))))
-          identifiers))
+(define-function identifier-name (identifier)
+  (symbol-name
+   (if (setter-identifier? identifier)
+       (transform-setter-identifier
+        (second identifier))
+       identifier)))

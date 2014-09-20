@@ -2,21 +2,26 @@
   import: (ralph/compiler/utilities)
   export: (normalize-term))
 
+;;;; based on the linear-time A-normalization algorithm
+;;;; as found in "The Essence of Compiling with Continuations".
+
+;;;; generates-statements? is introduced to fold bindings which 
+;;;; will not generate statements in the resulting JavaScript code
 
 (define-function atomic? (expression)
   (any? (curry instance? expression)
         [<number> <boolean> <string> <symbol> <keyword>]))
 
-(define-function contains-statements? (exp)
+(define-function generates-statements? (exp)
   (if (and (instance? exp <array>)
            (not (empty? exp)))
       (select (symbol-name (first exp)) ==
         (("%begin" "%if" "%while" "%bind" "%try") #t)
         (("%set")
-         (contains-statements? (last exp)))
+         (generates-statements? (last exp)))
         (("%method") #f)
         (else:
-         (any? contains-statements? exp)))
+         (any? generates-statements? exp)))
       #f))
 
 
@@ -27,74 +32,81 @@
   (if (and (instance? exp <array>)
            (not (empty? exp)))
       (select (symbol-name (first exp)) ==
-        (("%method")
-         (destructuring-bind (_ name arguments body) exp
-           (k `(%method ,name ,arguments
-                 ,(normalize-term body env)))))
-        (("%begin")
-         (destructuring-bind (_ exp1 #rest e*) exp
-           (if (empty? e*)
-               (normalize exp1 env k)
-               (normalize exp1 env
-                          (method (aexp1)
-                            `(%begin
-                              ,aexp1
-                              ,(normalize (concatenate
-                                           `(%begin) e*)
-                                          env k)))))))
+        (("%quote")
+         (k exp))
         (("%bind")
-         (destructuring-bind (_ (var value) body) exp
-           (normalize value env
-                      (method (avalue)
-                        `(%bind (,var ,avalue)
-                           ,(normalize body env k))))))
+         (destructuring-bind (_ (identifier value) form) exp
+           (normalize
+            value env
+            (method (value*)
+              `(%bind (,identifier ,value*)
+                 ,(normalize form env k))))))
+        (("%method")
+         (destructuring-bind (_ name parameters form) exp
+           (k `(%method ,name ,parameters
+                 ,(normalize-term form env)))))
+        (("%set")
+         (destructuring-bind (_ place value) exp
+           (if (op? "%get-property" place)
+               (normalize**
+                (rest place) env
+                (method (arguments*)
+                  (normalize-value
+                   value env
+                   (method (value*)
+                     (k `(%set (%get-property ,@arguments*)
+                               ,value*))))))
+               (normalize-value
+                value env
+                (method (value*)
+                  (k `(%set ,place ,value*)))))))
+        (("%define" "%var")
+         (destructuring-bind (op identifier value) exp
+           (normalize-value
+            value env
+            (method (value*)
+              (k `(,op ,identifier ,value*))))))
         (("%if")
-         (destructuring-bind (_ test then else) exp
-           (normalize-value test env
-                            (method (atest)
-                              (k `(%if ,atest
-                                       ,(normalize-term then env)
-                                       ,(normalize-term else env)))))))
+         (destructuring-bind (_ test consequent alternate) exp
+           (normalize-value
+            test env
+            (method (test*)
+              (k `(%if ,test*
+                       ,(normalize-term consequent env)
+                       ,(normalize-term alternate env)))))))
+        (("%begin")
+         (destructuring-bind (_ form #rest forms) exp
+           (if (empty? forms)
+               (normalize form env k)
+               (normalize form env
+                          (method (form*)
+                            `(%begin
+                              ,form*
+                              ,(normalize `(%begin  ,@forms)
+                                          env k)))))))
         (("%while")
-         (destructuring-bind (_ test body) exp
-           (k (if (contains-statements? test)
+         (destructuring-bind (_ test form) exp
+           (k (if (generates-statements? test)
                   `(%while #t
-                     (%begin
-                      ,(normalize-term `(%if ,test
-                                             ,(normalize-term body)
-                                             (%native "break")
-                                             #f)
-                                       env)))
+                     ,(normalize-term `(%if ,test
+                                            ,(normalize-term form)
+                                            (%native "break")
+                                            ;; TODO [#A]: #f ?
+                                            )
+                                      env))
                   `(%while
                     ,(normalize-term test env)
-                    ,(normalize-term body env))))))
+                    ,(normalize-term form env))))))
         (("%try")
-         (destructuring-bind (_ body var catch) exp
-           (k `(%try
-                ,(normalize-term body env)
-                ,var
-                ,(normalize-term catch env)))))
-        (("%set")
-         ;; TODO: always normalize value?
-         (destructuring-bind (_ var value) exp
-           (normalize-value value env
-                            (method (avalue)
-                              (k `(%set ,var ,avalue))))))
-        ;; leave as-is
-        (("%define" "%symbol")
-         (k exp))
+         (destructuring-bind
+             (_ protected-form identifier handling-form) exp
+           (k `(%try ,(normalize-term protected-form env)
+                     ,identifier
+                     ,(normalize-term handling-form env)))))
         (else:
          (cond
-          ((contains-statements? exp)
+          ((generates-statements? exp)
            (normalize-all exp env k))
-          ((and (expression? exp)
-                (member? (first exp)
-                         `(%array %object %get-property %infix
-                           %native %native-call %native-name
-                           %plus %minus %times %divide)))
-           (k (cons (first exp)
-                    (map (rcurry normalize-term env)
-                         (rest exp)))))
           (else:
            (k (map (rcurry normalize-term env)
                    exp))))))
@@ -102,7 +114,7 @@
 
 
 (define-function normalize-value (exp env k)
-  (if (contains-statements? exp)
+  (if (generates-statements? exp)
       (normalize* exp env k)
       (k (if (instance? exp <array>)
              (map (rcurry normalize-term env)
@@ -111,11 +123,11 @@
 
 (define-function normalize* (exp env k)
   (normalize exp env
-             (method (aexp)
-               (if (atomic? aexp)
-                   (k aexp)
-                   (bind ((t (generate-symbol env)))
-                     `(%bind (,t ,aexp)
+             (method (exp*)
+               (if (atomic? exp*)
+                   (k exp*)
+                   (bind ((t (generate-symbol)))
+                     `(%bind (,t ,exp*)
                         ,(k t)))))))
 
 (define-function normalize** (exp* env k)

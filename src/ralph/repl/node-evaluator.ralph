@@ -1,0 +1,50 @@
+(define-module ralph/repl/node-evaluator
+  import: (ralph/repl/evaluator
+           (ws only: (connect))
+           (vm rename: ("createContext" create-context
+                        "runInContext" run-in-context)))
+  export: (<node-evaluator>))
+
+(define-class <node-evaluator> (<evaluator>))
+
+(define-method evaluate ((evaluator <node-evaluator>) code)
+  (bind-properties (context) evaluator
+    (run-in-context code context)))
+
+(define-method send-data ((evaluator <node-evaluator>) data)
+  (. (get evaluator "connection")
+     (send data)))
+
+(define-method prepare-evaluator ((evaluator <node-evaluator>))
+  (set! (get evaluator "context")
+        (make-context (%object "$changeModule"
+                               (curry change-module evaluator)))))
+
+(define-method inject-commands! ((evaluator <node-evaluator>))
+  (evaluate evaluator "$moduleRoot['%in-module'] = $changeModule"))
+
+(define-method connect-to-interactor ((evaluator <node-evaluator>) url)
+  (bind ((connection (connect url)))
+    (set! (get evaluator "connection")
+          connection)
+    (. connection (on "message"
+                      (curry handle-message evaluator)))))
+
+(define-function make-context (sandbox)
+  (bind ((context (create-context sandbox)))
+    (extend! context (%native "global"))
+    (set! (get context "global")
+          context)
+    (set! (get context "global" "global")
+          context)
+    (set! (get context "module")
+          module)
+    (set! (get context "module")
+          (%native "module"))
+    (set! (get context "require")
+          (%native "require"))
+    (set! (get context "exports")
+          (make-plain-object))
+    context))
+
+

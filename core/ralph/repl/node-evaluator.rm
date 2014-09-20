@@ -1,0 +1,1 @@
+("ralph/repl/node-evaluator" exports: ("<node-evaluator>") inline: () dependencies: ("vm" "ws" "ralph/repl/evaluator" "ralph/core"))

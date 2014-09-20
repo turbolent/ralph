@@ -1,0 +1,4 @@
+("escodegen"
+ native?: #t
+ exports: ("attachComments" "generate"
+           "traverse" "version"))

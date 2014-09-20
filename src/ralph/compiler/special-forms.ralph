@@ -1,0 +1,240 @@
+(define-module ralph/compiler/special-forms
+  import: (ralph/format
+           ralph/compiler/utilities
+           ralph/compiler/transformer
+           ralph/compiler/macroexpansion
+           ralph/compiler/environment)
+  export: ($core-special-forms
+           $internal-special-forms))
+
+;; special forms:
+;;   control macro expansion, track bindings (shadowing)
+
+
+;;;; utilities
+
+(define $hash-symbols [#key #rest])
+
+(define-function parameter-list-identifiers (parameter-list)
+  (map (method (parameter)
+         (if (instance? parameter <array>)
+             (first parameter)
+             parameter))
+       (choose (method (parameter)
+                 (not (member? parameter $hash-symbols)))
+               parameter-list)))
+
+;;;; core special forms
+
+(define $core-special-forms
+  (make-plain-object))
+
+(set! (get $core-special-forms "bind")
+      (method (env bindings #rest forms)
+        ;; NOTE: sequential check and bind of identifiers
+        (bind ((identifiers [])
+               (bindings*
+                (map (method (binding)
+                       (bind ((array? (instance? bindings <array>)))
+                         (destructuring-bind (identifier value #rest superflous)
+                             (if array?
+                                 binding
+                                 [binding])
+                           ;; TODO [#B]: (unless (empty? superflous) (warn ...))
+                           (check-type identifier <symbol>
+                                       "Non-symbol identifier in bind: %=")
+                           ;; check if identifier is local
+                           (check-identifier identifier env
+                                             "External identifier in bind: %=")
+                           ;; expand value (before binding identifier)
+                           (bind ((value* (macroexpand-all value env)))
+                             ;; bind identifier, save for unbind
+                             ;; after expanding forms
+                             (bind-locally! identifier env)
+                             (push-last identifiers identifier)
+                             ;; result
+                             (if array?
+                                 `(,identifier ,value*)
+                                 identifier)))))
+                     bindings)))
+          ;; expand forms
+          (bind ((forms* (map (rcurry macroexpand-all env)
+                              forms)))
+            ;; unbind identifiers
+            (do (rcurry unbind-locally! env)
+                identifiers)
+            `(bind (,@bindings*)
+               ,@forms*)))))
+
+(set! (get $core-special-forms "method")
+      (method (env parameter-list #rest forms)
+        ;; determine identifiers introduced through parameter list
+        (bind ((identifiers
+                (parameter-list-identifiers parameter-list)))
+          ;; TODO: check identifiers are symbols
+          ;; check if identifiers are local
+          (do (rcurry check-identifier env
+                      "External identifier in parameter list of method: %=")
+              identifiers)
+          ;; generate new parameter-list: expand keyword default values
+          ;; (before binding identifiers)
+          (bind ((parameter-list*
+                  (destructuring-bind (normal-parameters
+                                       rest-parameter
+                                       keyword-parameters)
+                      (destructure-parameter-list parameter-list)
+                    (concatenate normal-parameters
+                                 (if rest-parameter
+                                     `(#rest ,rest-parameter)
+                                     [])
+                                 (if keyword-parameters
+                                     `(#key
+                                       ,@(map (method (parameter)
+                                                (if (instance? parameter <array>)
+                                                    [(first parameter)
+                                                     (macroexpand-all
+                                                      (second parameter) env)]
+                                                    parameter))
+                                              keyword-parameters))
+                                     [])))))
+            ;; bind identifiers
+            (do (rcurry bind-locally! env)
+                identifiers)
+            ;; expand forms
+            (bind ((forms* (map (rcurry macroexpand-all env)
+                                forms)))
+              ;; unbind identifiers
+              (do (rcurry unbind-locally! env)
+                  identifiers)
+              ;; result
+              `(method ,parameter-list*
+                 ,@forms*))))))
+
+(set! (get $core-special-forms "define")
+      (method (env identifier initial-value #rest superfluous)
+        ;; TODO [#B]: (unless (empty? superflous) (warn ...))
+        (check-type identifier <symbol>
+                    "Non-symbol identifier in define: %=")
+        ;; check if identifier is local
+        (check-identifier identifier env
+                          "External identifier in define: %=")
+        ;; TODO [#A]: warn if identifier is imported
+        ;;            (accidental redefinition)
+        ;; bind identifier
+        (bind-globally! identifier env)
+        ;; result
+        (if initial-value
+            `(define ,identifier
+               ,(macroexpand-all initial-value env))
+            `(define ,identifier))))
+
+(set! (get $core-special-forms "handler-case")
+      (method (env protected-form #rest cases)
+        `(handler-case
+          ,(macroexpand-all protected-form env)
+          ,@(map (method (case)
+                   (check-type case <array>
+                               "Non-array case in handler-case: %=")
+                   (destructuring-bind (binding #rest forms) case
+                     (check-type binding <array>
+                                 "Non-array case-binding in handler-case: %=")
+                     (destructuring-bind (type #key condition) binding
+                       (when condition
+                         (check-type condition <symbol>
+                                     "Non-symbol condition variable in handler-case: %=")
+                         ;; check if identifier is local
+                         (check-identifier condition env
+                                           "External identifier in handler-case: %=")
+                         ;; bind condition
+                         (bind-locally! condition env))
+                       ;; expand type and forms
+                       (bind ((type* (macroexpand-all type env))
+                              (forms* (map (rcurry macroexpand-all env)
+                                           forms)))
+                         (when condition
+                           ;; unbind condition
+                           (unbind-locally! condition env))
+                         ;; result: new case
+                         `((,type* ,@(rest binding)) ,@forms*)))))
+                 cases))))
+
+(set! (get $core-special-forms "quote")
+      (make-quote-transformer `quote))
+
+;; TODO: expansion of place correct ?
+(set! (get $core-special-forms "set!")
+      (make-rest-transformer macroexpand-all
+                             symbol: `set!))
+
+(set! (get $core-special-forms "if")
+      (make-rest-transformer macroexpand-all
+                             symbol: `if
+                             count: 3))
+
+(set! (get $core-special-forms "begin")
+      (make-rest-transformer macroexpand-all
+                             symbol: `begin))
+
+(set! (get $core-special-forms "while")
+      (make-rest-transformer macroexpand-all
+                             symbol: `while))
+
+;;;; internal special forms
+
+(define $internal-special-forms
+  (make-plain-object))
+
+(set! (get $internal-special-forms "%quote")
+      (make-quote-transformer `%quote check?: #t))
+
+(set! (get $internal-special-forms "%bind")
+      (make-bind-transformer macroexpand-all
+                             (method (env identifier value* form*)
+                               `(%bind (,identifier ,value*)
+                                   ,form*))))
+
+(set! (get $internal-special-forms "%method")
+      (make-method-transformer macroexpand-all
+                               (method (env name parameters form*)
+                                 `(%method ,name ,parameters
+                                    ,form*))))
+
+(set! (get $internal-special-forms "%set")
+      (make-set-transformer macroexpand-all
+                            (method (env place* value*)
+                              `(%set ,place* ,value*))))
+
+(set! (get $internal-special-forms "%define")
+      (make-define-transformer macroexpand-all))
+
+(set! (get $internal-special-forms "%if")
+      (make-rest-transformer macroexpand-all
+                             symbol: `%if
+                             count: 3))
+
+(set! (get $internal-special-forms "%while")
+      (make-rest-transformer macroexpand-all
+                             symbol: `%while
+                             count: 2))
+
+(set! (get $internal-special-forms "%try")
+      (make-try-transformer macroexpand-all))
+
+;; like %define, but allows defining external identifiers
+(set! (get $internal-special-forms "%var")
+      (make-var-transformer macroexpand-all
+                            (method (env identifier value*)
+                              `(%var ,identifier ,value*))))
+
+(set! (get $internal-special-forms "%object")
+      (make-object-transformer macroexpand-all))
+
+(for-each ((symbol `(%native-call %infix)))
+          ()
+  (set! (get $internal-special-forms (symbol-name symbol))
+        (make-operator-transformer symbol macroexpand-all)))
+
+(for-each ((symbol `(%begin %native %array %get-property)))
+          ()
+  (set! (get $internal-special-forms (symbol-name symbol))
+        (make-rest-transformer macroexpand-all symbol: symbol)))

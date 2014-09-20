@@ -10,9 +10,7 @@
                         "writeSync" write-sync
                         "readFileSync" read-file-sync
                         "writeFileSync" write-file-sync
-                        "appendFileSync" append-file-sync
-                        "createReadStream" create-read-stream
-                        "createWriteStream" create-write-stream)))
+                        "appendFileSync" append-file-sync)))
   export: (ensure-directories-exist
            path-directory
            path-parent-directory
@@ -21,8 +19,7 @@
            file-type
            read-file
            write-file
-           file-exists?
-           copy-file))
+           file-exists?))
 
 (define resolve-path resolve)
 
@@ -41,9 +38,10 @@
   path)
 
 (define-function path-parent-directory (path)
-  (bind ((path* (strip-trailing-slashes
-                 (path-directory path))))
-    (concatenate (dirname path*) "/")))
+  (concatenate (dirname (if (== (last path "/"))
+                             path
+                             (dirname path)))
+               "/"))
 
 (define-function ensure-directories-exist (path)
   (bind ((directory (path-directory path))
@@ -93,26 +91,3 @@
        append-file-sync
        write-file-sync)
    path content))
-
-(define *buffer-length* (* 64 1024))
-
-;; TODO: ensure-directories-exist?
-(define-function copy-file (old-path new-path #key (if-exists 'signal)
-                                                  append?)
-  (unless (file-exists? old-path)
-    (signal "old path doesn't exist"))
-  (when (and (not append?)
-             (== if-exists 'signal)
-             (file-exists? new-path))
-    (signal "new path exists"))
-  (bind ((buffer (%native-call "new Buffer" *buffer-length*))
-         (source (open-sync old-path "r"))
-         (target (open-sync new-path (if append? "a" "w")))
-         (count 1)
-         (position 0))
-    (while (> count 0)
-      (set! count (read-sync source buffer 0 *buffer-length* position))
-      (write-sync target buffer 0 count)
-      (inc! position count))
-    (close-sync source)
-    (close-sync target)))

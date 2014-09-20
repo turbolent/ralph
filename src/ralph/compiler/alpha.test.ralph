@@ -1,0 +1,121 @@
+
+(define-module ralph/compiler/alpha.test
+  import: (ralph/test
+           ralph/compiler/macroexpansion
+           ralph/compiler/alpha
+           ralph/compiler/environment.test))
+
+
+(define *environment*
+  (make-test-environment "ralph/compiler/alpha.test"))
+
+
+;;;; 
+
+(reset-symbol-counter!)
+(check-equal "alpha-convert: single method"
+             `(%method x_1 (a_2) 1)
+             (alpha-convert-form
+              (macroexpand-all
+               '(%method x (a) 1)
+               *environment*)
+              *environment*))
+
+(reset-symbol-counter!)
+(check-equal "alpha-convert: nested methods"
+             `((%method x_1 (a_2)
+                 ((%method y_3 (a_4)
+                    a_4)
+                  a_2))
+               1)
+             (alpha-convert-form
+              (macroexpand-all
+               '((%method x (a)
+                   ((%method y (a)
+                      a)
+                    a))
+                 1)
+               *environment*)
+              *environment*))
+
+(reset-symbol-counter!)
+(check-equal "alpha-convert: define"
+             `(%begin
+               (%define a #f)
+               (%method x_1 (a_2)
+                 a_2))
+             (alpha-convert-form
+              (macroexpand-all
+               '(%begin
+                 (%define a)
+                 (%method x (a)
+                   a))
+               *environment*)
+              *environment*))
+
+(reset-symbol-counter!)
+(check-equal "alpha-convert: single bind"
+             `(%bind (x_1 1) x_1)
+             (alpha-convert-form
+              (macroexpand-all
+               '(bind ((x 1)) x)
+               *environment*)
+              *environment*))
+
+(reset-symbol-counter!)
+(check-equal "alpha-convert: nested bind"
+             `(%bind (x_2 (%bind (x_1 1) x_1)) x_2)
+             (alpha-convert-form
+              (macroexpand-all
+               '(bind ((x (bind ((x 1)) x))) x)
+               *environment*)
+              *environment*))
+
+
+(reset-symbol-counter!)
+(bind ((expanded
+        (macroexpand-all '(bind ((c 1))
+                            (bind ((a 2)
+                                   (b 3))
+                              (foo 1 c)
+                              (bar a b)))
+                         *environment*)))
+
+  (check-equal ""
+               `(%bind (,'c 1)
+                  (%bind (,'a 2)
+                    (%bind (,'b 3)
+                      (%begin
+                       (,'foo 1 ,'c)
+                       (,'bar ,'a ,'b)))))
+               expanded)
+  (check-equal ""
+               `(%bind (c_1 1)
+                  (%bind (a_2 2)
+                    (%bind (b_3 3)
+                      (%begin
+                       (foo 1 c_1)
+                       (bar a_2 b_3)))))
+               (alpha-convert-form expanded
+                                   *environment*)))
+
+
+(reset-symbol-counter!)
+(bind ((expanded
+        (macroexpand-all '((method (a b)
+                             (foo a b))
+                           1 2)
+                         *environment*)))
+
+  (check-equal ""
+               `((%method ,'$1 (,'a ,'b)
+                   (,'foo ,'a ,'b))
+                 1 2)
+               expanded)
+  (reset-symbol-counter!)
+  (check-equal ""
+               `((%method $1 (a_2 b_3)
+                   (foo a_2 b_3))
+                 1 2)
+               (alpha-convert-form expanded
+                                   *environment*)))

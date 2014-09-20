@@ -1,0 +1,167 @@
+(define-module ralph/compiler/reader
+  import: (ralph/stream
+           ralph/format
+           ralph/regexp
+           ralph/compiler/syntax-quote)
+  export: (read $end-of-file))
+
+(define *number-patterns*
+  (map (curry make <regexp> ignore-case?: #t pattern:)
+       ["^[+-]?0x[0-9a-f]+"
+        "^[+-]?0[0-7]+"
+        "^[+-]?\\d+\\.?\\d*(?:e-?\\d*(?:\\d\\.?|\\.?\\d)\\d*)?"]))
+
+(define *line-pattern*
+  (make <regexp> pattern: "(.*)[\n\r]?"))
+
+(define *whitespace-subpattern*
+  ;; Vertical Tab, Form Feed, No-break space, Byte Order Mark
+  "\t\n\r\u000B\u000C\u00A0\uFEFF ")
+
+(define *whitespace-pattern*
+  (make <regexp> pattern:
+        (concatenate "[" *whitespace-subpattern* "]*")))
+
+(define *atom-pattern*
+  (make <regexp> pattern:
+        (concatenate "[^\\[\\]();`," *whitespace-subpattern* "]+")))
+
+(define-function match-stream ((regexp <regexp>) (stream <stream>))
+  (if-bind (result (match regexp (stream-remaining-contents stream)))
+    (begin
+     (stream-read stream (size (first result)))
+     result)))
+
+(define-function read-line ((stream <stream>))
+  (match-stream *line-pattern* stream))
+
+(define-function read-whitespace ((stream <stream>))
+  (match-stream *whitespace-pattern* stream))
+
+
+(define-function make-atom (value)
+  (select value ==
+    (("#t") #t)
+    (("#f") #f)
+    (("#key") #key)
+    (("#rest") #rest)
+    (else:
+     (if-bind (number (any? (rcurry match value)
+                            *number-patterns*))
+       (as-number (first number))
+       (if (== (last value) ":")
+           (keyword (but-last value))
+           (destructuring-bind (head #rest tail)
+               (split value "::")
+             (if (empty? tail)
+                 (symbol head)
+                 (symbol (reduce1 concatenate tail)
+                         head))))))))
+
+(define-function read-string ((stream <stream>))
+  (bind ((result (make <string-stream>))
+         (char (stream-read-element stream)))
+    (while (not (== char "\""))
+      (when (stream-at-end? stream)
+        (signal "missing end of string"))
+      (stream-write result
+                    (if (== char "\\")
+                        (select (stream-read-element stream) ==
+                          (("\"") "\"")
+                          (("\\") "\\")
+                          (("b") "\b")
+                          (("f") "\f")
+                          (("n") "\n")
+                          (("r") "\r")
+                          (("t") "\t")
+                          (("v") "\v")
+                          (("u")
+                           (code-char
+                            (parse-integer (stream-read stream 4)
+                                           radix: 16)))
+                          (else:
+                           (signal "bad escape sequence")))
+                        char))
+      (set! char (stream-read-element stream)))
+    (stream-contents result)))
+
+
+(define *wrapper-symbols*
+  [`quote `unquote `unquote-splicing])
+
+(define $end-of-file
+  (make-object))
+
+(define-function read ((stream <stream>) env
+                       #key (eof-error? #t)
+                            (eof-value $end-of-file)
+                            (if-incomplete 'signal))
+  (bind ((stack [[]])
+         (ends [])
+         (read? #t)
+         (result #f))
+    (bind-methods ((add-to-stack! (value)
+                     (push-last stack value)
+                     (add-last!))
+                   (add-last! ()
+                     (bind ((value (pop-last stack))
+                            (l (last stack)))
+                       (cond
+                        ((== l `syntax-quote)
+                         (pop-last stack)
+                         (add-to-stack!
+                          (syntax-quote-form value env)))
+                        ((member? l *wrapper-symbols*)
+                         (add-to-stack!
+                          [(pop-last stack) value]))
+                        (else:
+                         (push-last l value))))))
+      (while read?
+        (read-whitespace stream)
+        (if (stream-at-end? stream)
+            (begin
+             (set! read? #f)
+             (if (empty? ends)
+                 (if eof-error?
+                     (signal "EOF before finished")
+                     (set! result eof-value))
+                 (if (== if-incomplete 'signal)
+                     (signal (format-to-string "missing closings: %=" ends))
+                     (set! result if-incomplete))))
+            (bind ((char (stream-read-element stream)))
+              (select char ==
+                ((";")
+                 (read-line stream))
+                (("'")
+                 (push-last stack `quote))
+                (("`")
+                 (push-last stack `syntax-quote))
+                ((",")
+                 (if (== (stream-peek stream) "@")
+                     (begin
+                      (stream-read-element stream)
+                      (push-last stack `unquote-splicing))
+                     (push-last stack `unquote)))
+                (("(")
+                 (push-last ends ")")
+                 (push-last stack []))
+                (("[")
+                 (push-last ends "]")
+                 (push-last stack [`%array]))
+                (((last ends))
+                 (pop-last ends)
+                 (add-last!))
+                ((")" "]")
+                 (signal (format-to-string "too many closings: %=" char)))
+                (("\"")
+                 (add-to-stack! (read-string stream)))
+                (else:
+                 (stream-unread-element stream)
+                 (add-to-stack!
+                  (make-atom (first (match-stream *atom-pattern* stream))))))
+              (when (and (== (size stack) 1)
+                         (not (empty? (first stack))))
+                (set! read? #f)
+                (set! result (first (first stack)))))))
+      result)))
+

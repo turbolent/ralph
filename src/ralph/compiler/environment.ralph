@@ -1,0 +1,126 @@
+(define-module ralph/compiler/environment
+  import: (ralph/compiler/module)
+  export: (<environment>
+           find-macro
+           find-symbol-macro
+           find-special-form
+           special-operator?
+           bind-globally! globally-bound?
+           bind-locally! unbind-locally!
+           locally-bound? bound?
+           resolve-symbol
+           qualify-symbol
+           find-import-identifier
+           make-import-identifier
+           make-import-definition))
+
+;;;; <environment>
+;; * one compiler environment per module
+;; * class representing the compiler's state for a specific module
+;; * macros, symbol-macros and special-forms are plain objects and
+;;   a deep get is used for lookup to allow extending (prepending
+;;   or appending) the set of definitions
+
+(define-class <environment> (<object>)
+  module
+  (persistent? #t)
+  (macros (make-plain-object))
+  (symbol-macros (make-plain-object))
+  (special-forms (make-plain-object))
+  (binding-count (make-plain-object))
+  (global-bindings (make-plain-object)))
+
+;;;; expanders
+;; * both global and local bindings are taken into
+;;   account when finding macros and symbol macros
+;; * bindings are ignored when finding special forms
+
+(define-function find-expander (namespace check-bound? identifier env)
+  (unless (and check-bound?
+               (bound? identifier env))
+    (%get-property env namespace
+                   (symbol-name identifier))))
+
+(define find-macro
+  (curry find-expander "macros" #t))
+
+(define find-symbol-macro
+  (curry find-expander "symbol-macros" #t))
+
+(define find-special-form
+  (curry find-expander "special-forms" #f))
+
+(define-function special-operator? (identifier env)
+  (true? (%get-property (get env "special-forms")
+                        (symbol-name identifier))))
+
+
+;;;; binding
+
+(define-function bind-globally! (identifier env)
+  (set! (get env "global-bindings"
+             (symbol-name identifier))
+        #t))
+
+(define-function globally-bound? (identifier env)
+  (get env "global-bindings"
+       (symbol-name identifier)))
+
+(define-function bind-locally! (identifier env)
+  (bind ((name (symbol-name identifier)))
+    (inc! (get env "binding-count" name))))
+
+(define-function bound? (identifier env)
+  (or (globally-bound? identifier env)
+      (locally-bound? identifier env)))
+
+(define-function locally-bound? (identifier env)
+  (bind ((name (symbol-name identifier)))
+    (if-bind (count (get env "binding-count" name))
+      (> count 0))))
+
+(define-function unbind-locally! (identifier env)
+  (bind ((name (symbol-name identifier)))
+    (dec! (get env "binding-count" name))))
+
+;;;; symbol resolution
+;; global bindings have precedence over imports
+
+(define-function resolve-symbol (symbol env)
+  (if (get symbol "module")
+      symbol
+      (bind ((name (symbol-name symbol))
+             (symbol* 
+              (if-bind (module/import-name
+                        (unless (globally-bound? symbol env)
+                          (find-module/import-name name (get env "module"))))
+                (destructuring-bind (module import-name)
+                    module/import-name
+                  (%%symbol import-name (get module "name")))
+                (%%symbol name (get env "module" "name")))))
+        (when (get symbol "generated?")
+          (set! (get symbol* "generated?") #t))
+        symbol*)))
+
+(define-function qualify-symbol (symbol env)
+  (bind ((symbol* (%%symbol (get symbol "name")
+                    (get env "module" "name"))))
+    (when (get symbol "generated?")
+      (set! (get symbol* "generated?") #t))
+    symbol*))
+
+
+;;;; import identifiers
+
+(define-function find-import-identifier (module-name env)
+  (get env "import-identifiers" module-name))
+
+(define-function make-import-identifier (module-name env)
+  (bind ((identifier (generate-symbol)))
+    (set! (get env "import-identifiers" module-name)
+          identifier)
+    identifier))
+
+(define-function make-import-definition (module-name env)
+  `(%define ,(make-import-identifier module-name env)
+            (%native-call "require" ,module-name)))

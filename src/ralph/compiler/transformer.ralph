@@ -1,0 +1,140 @@
+(define-module ralph/compiler/transformer
+  import: (ralph/format
+           ralph/compiler/utilities
+           ralph/compiler/environment)
+  export: (make-quote-transformer
+           make-rest-transformer
+           make-object-transformer
+           make-operator-transformer
+           make-var-transformer
+           make-try-transformer
+           make-define-transformer
+           make-set-transformer
+           make-method-transformer
+           make-bind-transformer))
+
+
+(define-function make-quote-transformer (symbol #key check?)
+  (method (env value #rest superfluous)
+    ;; TODO [#B]: (unless (empty? superflous) (warn ...))
+    (when check?
+      (check-type value <symbol>
+                  (format-to-string "Non-symbol value in %= %%=" symbol)))
+    `(,symbol ,value)))
+
+(define-function make-rest-transformer (transformer #key count symbol k)
+  (method (env #rest forms)
+    ;; TODO [#B]: (unless (== (size forms) count) (warn ...))
+    (bind ((forms* (map (rcurry transformer env)
+                        (if count
+                            (copy-sequence forms end: count)
+                            forms))))
+      (cond
+        (k (apply k env forms*))
+        (symbol `(,symbol ,@forms*))
+        (else: (signal "rest transformer without symbol or continuation"))))))
+
+(define-function make-bind-transformer (transformer k)
+  (method (env binding form #rest superflous)
+    ;; TODO [#B]: (unless (empty? superflous) (warn ...))
+    (check-type binding <array>
+                "Non-array binding in %%bind: %=")
+    (destructuring-bind (identifier value) binding
+      ;; TODO: check identifier is a symbol
+      (check-identifier identifier env
+                        "External identifier in %%bind: %=")
+      (bind ((value* (transformer value env)))
+        (bind-locally! identifier env)
+        (bind ((form* (transformer form env)))
+          (unbind-locally! identifier env)
+          (k env identifier value* form*))))))
+
+(define-function make-method-transformer (transformer k)
+  (method (env name parameters form #rest superfluous)
+    ;; TODO [#B]: (unless (empty? superflous) (warn ...))
+    (check-type name <symbol>
+            "Non-symbol name in %%method: %=")
+    (bind ((identifiers (cons name parameters)))
+      (do (method (parameter)
+            (check-type parameter <symbol>
+                        "Non-symbol parameter in %%method: %="))
+          parameters)
+      (do (rcurry check-identifier env
+                  "External identifier in parameter list of %%method: %=")
+          identifiers)
+      (do (rcurry bind-locally! env)
+          identifiers)
+      (bind ((form* (transformer form env)))
+        (do (rcurry unbind-locally! env)
+            identifiers)
+        (k env name parameters form*)))))
+
+(define-function make-set-transformer (transformer k)
+  (method (env place value #rest superflous)
+    ;; TODO [#B]: (unless (empty? superflous) (warn ...))
+    (if (or (instance? place <symbol>)
+            (op? "%get-property" place)
+            (op? "%native" place))
+        (k env (transformer place env)
+               (transformer value env))
+        (signal (format-to-string
+                 "Non-symbol identifier or %%get-property in %%set: %="
+                 place)))))
+
+(define-function make-define-transformer (transformer)
+  (method (env identifier value #rest superflous)
+    ;; TODO [#B]: (unless (empty? superflous) (warn ...))
+    (check-type identifier <symbol>
+                "Non-symbol identifier in %%define: %=")
+    (bind ((value* (transformer value env)))
+      (bind-globally! identifier env)
+      `(%define ,identifier ,value*))))
+
+(define-function make-try-transformer (transformer)
+  (method (env protected-form identifier handling-form #rest superfluous)
+     ;; TODO [#B]: (unless (empty? superflous) (warn ...))
+     (check-type identifier <symbol>
+                 "Non-symbol identifier in %%try: %=")
+     (check-identifier identifier env
+                       "External identifier in %%try: %=")
+     (bind ((protected-form* (transformer protected-form env)))
+       (bind-locally! identifier env)
+       (bind ((handling-form* (transformer handling-form env)))
+         (unbind-locally! identifier env)
+         `(%try ,protected-form*
+                ,identifier
+                ,handling-form*)))))
+
+(define-function make-var-transformer (transformer k)
+  (method (env identifier value #rest superflous)
+    ;; TODO [#B]: (unless (empty? superflous) (warn ...))
+    (check-type identifier <symbol>
+                "Non-symbol identifier in %%var: %=")
+    (bind ((value* (transformer value env))
+           (module-name (get identifier "module")))
+      ;; bind identifier if local
+      (when (or (not module-name)
+                (== module-name
+                    (get env "module" "name")))
+        (bind-globally! identifier env))
+      ;; result
+      (k env identifier value*))))
+
+(define-function make-operator-transformer (symbol transformer)
+  (method (env operator-name #rest arguments)
+    (check-type operator-name <string>
+                "Non-string operator-name in %%native-call: %=")
+    `(,symbol ,operator-name
+              ,@(map (rcurry transformer env)
+                     arguments))))
+
+(define-function make-object-transformer (transformer)
+  (method (env #rest property-name/values)
+    `(%object ,@(reduce1 concatenate
+                         (map (method (property-name/value)
+                                (destructuring-bind (property-name value)
+                                    property-name/value
+                                  (check-type property-name <string>
+                                              "Non-string property-name in %%object: %=")
+                                  [property-name (transformer value env)]))
+                              (partition 2 property-name/values))))))

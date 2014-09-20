@@ -1,9 +1,6 @@
 (define-module ralph/stream
   export: (<stream>
            <string-stream>
-           <file-stream>
-           *standard-out*
-           *standard-error*
            stream-close
            stream-open?
            stream-at-end?
@@ -115,21 +112,3 @@
          (get stream "index")))
 
 
-;;;; <file-stream>
-
-(define-class <file-stream> (<stream>)
-  file)
-
-(define-method stream-write ((stream <file-stream>) (string <string>))
-  ((%get-property stream "file" "write") string))
-
-
-;;;;
-
-(define *standard-out*
-  (make <file-stream>
-        file: (%get-property (%native "process") "stdout")))
-
-(define *standard-out*
-  (make <file-stream>
-        file: (%get-property (%native "process") "stderr")))

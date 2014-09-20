@@ -1,0 +1,67 @@
+(define-module ralph/compiler/syntax-quote
+  import: (ralph/compiler/module
+           ralph/compiler/environment
+           ralph/compiler/utilities)
+  export: (syntax-quote-form))
+
+;;;; utilities
+
+(define-function unquoted? (form env)
+  (and (expression? form)
+       (== (resolve-symbol (first form) env)
+           `unquote)))
+
+(define-function unquote-spliced? (form env)
+  (and (expression? form)
+       (== (resolve-symbol (first form) env)
+           `unquote-splicing)))
+
+;;;; syntax-quoting
+
+(define-function syntax-quote-symbol (symbol env)
+  `(quote ,(resolve-symbol symbol env)))
+
+; NOTE: working, but unoptimized version
+; (define-function syntax-quote-array (array env)
+;   (if (unquoted? array env)
+;       (second array)
+;       `(concatenate ,@(map (method (form)
+;                              (if (unquote-spliced? form env)
+;                                  (second form)
+;                                  `(%array ,(if (unquoted? form env)
+;                                                (second form)
+;                                                (syntax-quote-form form env)))))
+;                            array))))
+
+;; NOTE: optimized
+(define-function syntax-quote-array (array env)
+  (if (unquoted? array env)
+      (second array)
+      (bind ((part `(%array)))
+        (reduce (method (result form)
+                  (if (unquote-spliced? form env)
+                      (begin
+                       (set! part #f)
+                       `(%concat ,result
+                                 ,(second form)))
+                      (bind ((form* (if (unquoted? form env)
+                                        (second form)
+                                        (syntax-quote-form form env))))
+                        (if part
+                            (begin
+                             (push-last part form*)
+                             result)
+                            (begin
+                             (set! part `(%array ,form*))
+                             `(%concat ,result ,part))))))
+                part array))))
+
+;; TODO [#B]: turn into methods ?
+
+(define-function syntax-quote-form (form env)
+  (select form instance?
+    ((<array>)
+     (syntax-quote-array form env))
+    ((<symbol>)
+     (syntax-quote-symbol form env))
+    (else: form)))

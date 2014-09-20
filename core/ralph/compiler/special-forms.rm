@@ -1,0 +1,1 @@
+("ralph/compiler/special-forms" exports: ("$core-special-forms" "$internal-special-forms") inline: () dependencies: ("ralph/compiler/environment" "ralph/compiler/macroexpansion" "ralph/compiler/transformer" "ralph/compiler/utilities" "ralph/format" "ralph/core"))

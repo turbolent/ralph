@@ -1,0 +1,28 @@
+
+(define-module ralph/compiler/environment.test
+  import: (ralph/compiler/module
+           ralph/compiler/environment
+           ralph/compiler/macros
+           ralph/compiler/special-forms)
+  export: (make-test-environment))
+
+(define $all-symbol-macros
+  (make-plain-object))
+
+(extend! $all-symbol-macros $internal-symbol-macros)
+(extend! $all-symbol-macros $core-symbol-macros)
+
+(define $all-macros
+  (make-plain-object))
+
+(extend! $all-macros $internal-macros)
+(extend! $all-macros $core-macros)
+
+(define-function make-test-environment (name)
+  (bind ((module (make <module> name: name)))
+    ;; (import-module module "ralph/core")
+    (make <environment>
+          module: module
+          special-forms: $internal-special-forms
+          macros: $all-macros
+          symbol-macros: $all-symbol-macros)))

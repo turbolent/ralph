@@ -1,0 +1,187 @@
+
+
+
+
+;;;; lift-defines (GONE)
+
+
+(reset-symbol-counter!)
+(bind ((module (make-core-environment)))
+  (check-equal "lift-defines: simple"
+               `(%begin
+                 (%define x)
+                 (%begin
+                  #f
+                  (%set x 1)))
+               (lift-defines
+                (macroexpand-all
+                 '(define x 1)
+                 module)
+                module)))
+
+(bind ((module (make-core-environment)))
+  (check-equal "lift-defines: nested"
+               `(%begin
+                 (%define x)
+                 (%if (foo 1)
+                      (%begin
+                       #f
+                       (%set x 1))
+                      #f))
+               (lift-defines
+                (macroexpand-all
+                 '(when (foo 1)
+                    (define x 1))
+                 module)
+                module)))
+
+(reset-symbol-counter!)
+(bind ((module (make-core-environment)))
+  (check-equal "lift-defines: multiple"
+               `(%begin
+                 (%define x)
+                 (%if (foo 1)
+                      (%begin
+                       #f
+                       (%set x 1))
+                      (%begin
+                       #f
+                       (%set x 2))))
+               (lift-defines
+                (macroexpand-all
+                 '(if (foo 1)
+                      (define x 1)
+                      (define x 2))
+                 module)
+                module)))
+
+
+
+;;;; define free variables (GONE)
+
+(reset-symbol-counter!)
+(bind ((module (make-core-environment)))
+  (check-equal "define free variables: use of prior definition"
+               `(%begin
+                 (%begin
+                  (%define foo)
+                  (%begin
+                   (%define bar)
+                   (%begin
+                    (%bind (bar 42)
+                      (%begin
+                       #f
+                       (%set foo (%infix "+" 23 bar))))
+                    (%begin
+                     #f
+                     (%set bar foo))
+                    bar
+                    foo))))
+               (define-free-variables
+                 (lift-defines
+                  (macroexpand-all
+                   '(begin
+                     (bind ((bar 42))
+                       (define foo (%infix "+" 23 bar)))
+                     (define bar foo)
+                     bar
+                     foo)
+                   module)
+                  module)
+                 module)))
+
+(reset-symbol-counter!)
+(bind ((module (make-core-environment)))
+  (check-equal "define free variables: use of future definition"
+               `(%begin
+                 (%begin
+                  (%define foo)
+                  (%begin
+                   (%define bar)
+                   (%begin
+                    (%begin
+                     #f
+                     (%set foo (%method $1 () (bar))))
+                    (%begin
+                     #f
+                     (%set bar (%method $2 () 1)))
+                    (foo)))))
+               (define-free-variables
+                 (lift-defines
+                  (macroexpand-all
+                   '(begin
+                     (define foo
+                       (method ()
+                         (bar)))
+                     (define bar
+                       (method ()
+                         1))
+                     (foo))
+                   module)
+                  module)
+                 module)))
+
+
+
+;;
+
+(reset-symbol-counter!)
+(bind ((module (make-core-environment)))
+  (check-equal "define free variables: use of undefined identifier"
+               `(%begin
+                 (%define bar2)
+                 (%begin
+                  (%define foo2)
+                  (%begin
+                   #f
+                   (%set foo2 (%method $1 ()
+                                  (bar2))))))
+               (define-free-variables
+                 (lift-defines
+                  (macroexpand-all
+                   '(define foo2
+                      (method ()
+                        (bar2)))
+                   module)
+                  module)
+                 module)))
+
+;;
+
+(compile-expression
+ '((bind ((x (method (y)
+               (next-method 3)
+               (+ 1 y))))
+     (if (symbol "a")
+         (while (bar (symbol "b"))
+           (symbol "a")
+           (x 2)
+           (make-object "a" 1 "null" 2)
+           (symbol "c"))
+           (symbol "c"))
+     (symbol "b")))
+ *environment*)
+
+(compile-expression
+ '((. node
+      ("removeClass" "off")
+      ("addClass" "on")
+      (end)))
+ *environment*)
+
+(compile-expression
+ '((. 23 ("valueOf")))
+ *environment*)
+
+(compile-expression
+ '((what foo: 42 about: #rest foo: 2))
+ *environment*)
+
+(compile-expression
+ '((define foo #f)
+   (when (not foo)
+     (unless foo
+       (bind ((not (method (x) x)))
+         (unless foo
+           #t)))))
+ *environment*)

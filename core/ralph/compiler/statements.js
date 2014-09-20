@@ -1,175 +1,460 @@
+require('ralph/core');
 {
-var B2219;
-false;
-B2219 = require("ralph/core")}
+    var $module = Object.create($moduleRoot);
+    {
+        ($module)['%export'] = function B3330(name__3331, value__3332) {
+            var B3334 = (exports);
+            return(B3334[name__3331] = value__3332);
+        };
+        {
+            ($module)['%eval'] = function B3333() {
+                return(eval((arguments[0])));
+            };
+            ($module)['%export']('%eval', ($module)['%eval']);
+        }
+    }
+}
+var B3335 = require('ralph/core');
 {
-var B2221;
-false;
-B2221 = require("ralph/compiler/utilities")}
+    var B3336 = require('ralph/compiler/utilities');
+    {
+        var B3337 = require('ralph/compiler/environment');
+        {
+            var B3338 = require('ralph/compiler/transformer');
+            var B3339 = require('ralph/format');
+        }
+    }
+}
 {
-var B2244 = $S("%begin", "ralph/core"),
-Mmake_function__2224 = B2219["%make-function"],
-instanceQ__2225 = B2219["instance?"],
-LarrayG__2226 = B2219["<array>"],
-binaryEE__2227 = B2219["binary=="],
-last_setter__2228 = B2219["last-setter"],
-last__2229 = B2219.last,
-third_setter__2230 = B2219["third-setter"],
-third__2231 = B2219.third,
-second_setter__2232 = B2219["second-setter"],
-second__2233 = B2219.second,
-concatenate__2234 = B2219.concatenate,
-symbol_name__2235 = B2219["symbol-name"],
-first__2236 = B2219.first,
-wrap_valueN__2237;
-false;
-wrap_valueN__2237 = Mmake_function__2224("wrap_valueN", function wrap_valueN__2238 (exp__2239, wrapper__2240)
-{if ($T(instanceQ__2225(exp__2239, LarrayG__2226)))
+    var B3341 = $S('%get-property', 'ralph/core');
+    {
+        var B3342 = $S('%native', 'ralph/core');
+        {
+            ($module)['make-module-reference'] = function B3343(identifier__3344) {
+                return([
+                    B3341,
+                    [
+                        B3342,
+                        '$module'
+                    ],
+                    B3335['symbol-name'](identifier__3344)
+                ]);
+            };
+            B3335['%annotate-function'](($module)['make-module-reference'], 'make-module-reference', false);
+        }
+    }
+}
 {
-var B2222__2241 = symbol_name__2235(first__2236(exp__2239)),
-B2223__2242 = binaryEE__2227(B2222__2241, "%begin"),
-B2243;
-if ($T(B2223__2242))
-{B2243 = B2223__2242}
-else
-B2243 = binaryEE__2227(B2222__2241, "%bind");
-if ($T(B2243))
+    var B3348 = $S('%begin', 'ralph/core');
+    {
+        ($module)['wrap-value!'] = function B3349(exp__3350, wrapper__3351) {
+            if (($T)(B3335['instance?'](exp__3350, B3335['<array>']))) {
+                var B3352 = B3335['symbol-name'](B3335['first'](exp__3350));
+                if (($T)(B3335['=='](B3352, '%quote')))
+                    return(exp__3350);
+                else {
+                    var B3353 = B3335['=='](B3352, '%begin');
+                    {
+                        var B3354 = false;
+                        if (($T)(B3353))
+                            B3354 = B3353;
+                        else
+                            B3354 = B3335['=='](B3352, '%bind');
+                        if (($T)(B3354)) {
+                            B3335['last-setter'](exp__3350, ($module)['wrap-value!'](B3335['last'](exp__3350), wrapper__3351));
+                            return(exp__3350);
+                        } else if (($T)(B3335['=='](B3352, '%if'))) {
+                            B3335['third-setter'](exp__3350, ($module)['wrap-value!'](B3335['third'](exp__3350), wrapper__3351));
+                            {
+                                B3335['last-setter'](exp__3350, ($module)['wrap-value!'](B3335['last'](exp__3350), wrapper__3351));
+                                return(exp__3350);
+                            }
+                        } else if (($T)(B3335['=='](B3352, '%while')))
+                            return([
+                                B3348,
+                                exp__3350,
+                                ($module)['wrap-value!'](false, wrapper__3351)
+                            ]);
+                        else if (($T)(B3335['=='](B3352, '%try'))) {
+                            B3335['second-setter'](exp__3350, ($module)['wrap-value!'](B3335['second'](exp__3350), wrapper__3351));
+                            {
+                                B3335['last-setter'](exp__3350, ($module)['wrap-value!'](B3335['last'](exp__3350), wrapper__3351));
+                                return(exp__3350);
+                            }
+                        } else
+                            return(B3335['concatenate'](wrapper__3351, [exp__3350]));
+                    }
+                }
+            } else
+                return(B3335['concatenate'](wrapper__3351, [exp__3350]));
+        };
+        B3335['%annotate-function'](($module)['wrap-value!'], 'wrap-value!', false);
+    }
+}
 {
-last_setter__2228(exp__2239, wrap_valueN__2238(last__2229(exp__2239), wrapper__2240));
-return exp__2239}
-else
-if ($T(binaryEE__2227(B2222__2241, "%if")))
+    var B3356 = $S('%native-call', 'ralph/core');
+    {
+        ($module)['wrap-return'] = function B3357(exp__3358) {
+            return(($module)['wrap-value!'](exp__3358, [
+                B3356,
+                'return'
+            ]));
+        };
+        B3335['%annotate-function'](($module)['wrap-return'], 'wrap-return', false);
+    }
+}
 {
-third_setter__2230(exp__2239, wrap_valueN__2238(third__2231(exp__2239), wrapper__2240));
-last_setter__2228(exp__2239, wrap_valueN__2238(last__2229(exp__2239), wrapper__2240));
-return exp__2239}
-else
-if ($T(binaryEE__2227(B2222__2241, "%while")))
-{return [B2244, exp__2239, wrap_valueN__2238(false, wrapper__2240)]}
-else
-if ($T(binaryEE__2227(B2222__2241, "%try")))
+    var B3359 = $S('%if', 'ralph/core');
+    {
+        var B3360 = $S('%while', 'ralph/core');
+        {
+            var B3361 = $S('%bind', 'ralph/core');
+            {
+                var B3362 = $S('%try', 'ralph/core');
+                ($module)['$statement-symbols'] = [
+                    B3359,
+                    B3360,
+                    B3348,
+                    B3361,
+                    B3362
+                ];
+            }
+        }
+    }
+}
 {
-second_setter__2232(exp__2239, wrap_valueN__2238(second__2233(exp__2239), wrapper__2240));
-last_setter__2228(exp__2239, wrap_valueN__2238(last__2229(exp__2239), wrapper__2240));
-return exp__2239}
-else
-return concatenate__2234(wrapper__2240, [exp__2239])}
-else
-return concatenate__2234(wrapper__2240, [exp__2239])}, false)}
+    ($module)['generates-statement?'] = function B3364(exp__3365) {
+        if (($T)(B3335['instance?'](exp__3365, B3335['<array>'])))
+            if (($T)(B3335['not'](B3335['empty?'](exp__3365))))
+                return(B3335['member?'](B3335['first'](exp__3365), ($module)['$statement-symbols']));
+            else
+                return(false);
+        else
+            return(false);
+    };
+    B3335['%annotate-function'](($module)['generates-statement?'], 'generates-statement?', false);
+}
 {
-var B2248 = $S("%return", "ralph/core"),
-add_explicit_return__2245;
-false;
-add_explicit_return__2245 = Mmake_function__2224("add_explicit_return", function add_explicit_return__2246 (exp__2247)
-{return wrap_valueN__2237(exp__2247, [B2248])}, false)}
+    ($module)['wrap-true'] = function B3367(exp__3368) {
+        if (($T)(B3335['instance?'](exp__3368, B3335['<boolean>'])))
+            return(B3335['true?'](exp__3368));
+        else
+            return([
+                [
+                    B3342,
+                    '$T'
+                ],
+                exp__3368
+            ]);
+    };
+    B3335['%annotate-function'](($module)['wrap-true'], 'wrap-true', false);
+}
 {
-var B2255 = $S("%if", "ralph/core"),
-B2256 = $S("%while", "ralph/core"),
-B2257 = $S("%bind", "ralph/core"),
-B2258 = $S("%try", "ralph/core"),
-not__2249 = B2219.not,
-emptyQ__2250 = B2219["empty?"],
-memberQ__2251 = B2219["member?"],
-statementQ__2252;
-false;
-statementQ__2252 = Mmake_function__2224("statementQ", function statementQ__2253 (exp__2254)
-{if ($T(instanceQ__2225(exp__2254, LarrayG__2226)))
-{if ($T(not__2249(emptyQ__2250(exp__2254))))
-{return memberQ__2251(first__2236(exp__2254), [B2255, B2256, B2244, B2257, B2258])}}}, false)}
+    var B3370 = $S('%export');
+    {
+        ($module)['wrap-export'] = function B3371(identifier__3372, value__3373, exp__3374, env__3375) {
+            var B3376 = false;
+            if (($T)(B3335['not'](B3337['locally-bound?'](exp__3374, env__3375))))
+                B3376 = B3335['member?'](B3335['symbol-name'](identifier__3372), B3335['get'](env__3375, 'module', 'exports'));
+            else
+                B3376 = false;
+            if (($T)(B3376))
+                return([
+                    B3348,
+                    exp__3374,
+                    [
+                        ($module)['make-module-reference'](B3370),
+                        B3335['symbol-name'](identifier__3372),
+                        value__3373
+                    ]
+                ]);
+            else
+                return(exp__3374);
+        };
+        B3335['%annotate-function'](($module)['wrap-export'], 'wrap-export', false);
+    }
+}
+($module)['*transformers*'] = B3335['make-plain-object']();
 {
-var B2264 = $S("%native", "ralph/core"),
-LbooleanG__2259 = B2219["<boolean>"],
-trueQ__2260 = B2219["true?"],
-add_explicit_true__2261;
-false;
-add_explicit_true__2261 = Mmake_function__2224("add_explicit_true", function add_explicit_true__2262 (exp__2263)
-{if ($T(instanceQ__2225(exp__2263, LbooleanG__2259)))
-{return trueQ__2260(exp__2263)}
-else
-return [[B2264, "$T"], exp__2263]}, false)}
+    {
+        ($module)['transform-statements!'] = function B3382(exp__3383, env__3384) {
+            var B3385 = exp__3383;
+            if (($T)(B3335['instance?'](B3385, B3335['<array>']))) {
+                var name__3386 = B3335['symbol-name'](B3335['first'](exp__3383));
+                {
+                    var B3387 = B3335['get'](($module)['*transformers*'], name__3386);
+                    if (($T)(B3387)) {
+                        var transformer__3388 = B3387;
+                        return(B3335['apply'](transformer__3388, env__3384, B3335['rest'](exp__3383)));
+                    } else
+                        return(B3335['map'](B3335['rcurry'](($module)['transform-statements!'], env__3384), exp__3383));
+                }
+            } else if (($T)(B3335['instance?'](B3385, B3335['<symbol>']))) {
+                var B3389 = B3336['special-symbol?'](exp__3383);
+                {
+                    var B3391 = false;
+                    if (($T)(B3389))
+                        B3391 = B3389;
+                    else {
+                        var B3390 = B3337['locally-bound?'](exp__3383, env__3384);
+                        if (($T)(B3390))
+                            B3391 = B3390;
+                        else
+                            B3391 = B3335['get'](exp__3383, 'generated?');
+                    }
+                    if (($T)(B3391))
+                        return(exp__3383);
+                    else
+                        return(($module)['make-module-reference'](exp__3383));
+                }
+            } else
+                return(exp__3383);
+        };
+        ($module)['%export']('transform-statements!', ($module)['transform-statements!']);
+    }
+    B3335['%annotate-function'](($module)['transform-statements!'], 'transform-statements!', false);
+}
 {
-var B2294 = $S("%set", "ralph/core"),
-B2295 = $S("%get-property", "ralph/core"),
-B2296 = $S("%var", "ralph/core"),
-maybe_begin__2267 = B2221["maybe-begin"],
-map__2268 = B2219.map,
-rcurry__2269 = B2219.rcurry,
-get__2270 = B2219.get,
-first_setter__2271 = B2219["first-setter"],
-transform_statementsN__2272;
-false;
-transform_statementsN__2272 = Mmake_function__2224("transform_statementsN", function transform_statementsN__2273 (exp__2274, env__2275)
-{if ($T(instanceQ__2225(exp__2274, LarrayG__2226)))
+    var B3392 = $S('%quote', 'ralph/core');
+    B3335['get-setter'](($module)['*transformers*'], '%quote', B3338['make-quote-transformer'](B3392));
+}
 {
-var B2265__2276 = symbol_name__2235(first__2236(exp__2274));
-if ($T(binaryEE__2227(B2265__2276, "%method")))
+    var B3394 = $S('%var', 'ralph/core');
+    {
+        var B3395 = $S('%set', 'ralph/core');
+        B3335['get-setter'](($module)['*transformers*'], '%bind', B3338['make-bind-transformer'](($module)['transform-statements!'], function B3396(env__3397, identifier__3398, valueT__3399, bodyT__3400) {
+            if (($T)(($module)['generates-statement?'](valueT__3399)))
+                return([
+                    B3348,
+                    [
+                        B3394,
+                        identifier__3398,
+                        false
+                    ],
+                    ($module)['wrap-value!'](valueT__3399, [
+                        B3395,
+                        identifier__3398
+                    ]),
+                    bodyT__3400
+                ]);
+            else
+                return([
+                    B3348,
+                    [
+                        B3394,
+                        identifier__3398,
+                        valueT__3399
+                    ],
+                    bodyT__3400
+                ]);
+        }));
+    }
+}
 {
-last_setter__2228(exp__2274, add_explicit_return__2245(transform_statementsN__2273(last__2229(exp__2274), env__2275)));
-return exp__2274}
-else
-if ($T(binaryEE__2227(B2265__2276, "%begin")))
+    var B3402 = $S('%method', 'ralph/core');
+    B3335['get-setter'](($module)['*transformers*'], '%method', B3338['make-method-transformer'](($module)['transform-statements!'], function B3403(env__3404, name__3405, parameters__3406, formT__3407) {
+        return([
+            B3402,
+            name__3405,
+            parameters__3406,
+            ($module)['wrap-return'](formT__3407)
+        ]);
+    }));
+}
+B3335['get-setter'](($module)['*transformers*'], '%set', B3338['make-set-transformer'](($module)['transform-statements!'], function B3409(env__3410, placeT__3411, valueT__3412) {
+    return(($module)['wrap-export'](placeT__3411, placeT__3411, [
+        B3395,
+        placeT__3411,
+        valueT__3412
+    ], env__3410));
+}));
 {
-var ____2277 = exp__2274[0],
-exps__2278 = $SL.call(exp__2274, 1);
-return maybe_begin__2267(map__2268(rcurry__2269(transform_statementsN__2273, env__2275), exps__2278))}
-else
-if ($T(binaryEE__2227(B2265__2276, "%bind")))
+    var B3420 = [
+            '%var',
+            '%define'
+        ];
+    {
+        var B3421 = false;
+        {
+            var B3422 = false;
+            {
+                var B3423 = [B3420];
+                {
+                    while (true) {
+                        var B3433 = B3335['not'];
+                        {
+                            var B3424 = B3421;
+                            {
+                                var B3434 = false;
+                                if (($T)(B3424))
+                                    B3434 = B3424;
+                                else
+                                    B3434 = B3335['any?'](B3335['empty?'], B3423);
+                                {
+                                    var B3435 = B3433(B3434);
+                                    if (($T)(B3435)) {
+                                        var name__3425 = B3335['first'](B3420);
+                                        {
+                                            (function B3426(name__3427) {
+                                                return(B3335['get-setter'](($module)['*transformers*'], name__3427, B3338['make-var-transformer'](($module)['transform-statements!'], function B3428(env__3429, identifier__3430, valueT__3431) {
+                                                    if (($T)(B3335['get'](identifier__3430, 'generated?')))
+                                                        return(($module)['wrap-export'](identifier__3430, identifier__3430, [
+                                                            B3394,
+                                                            identifier__3430,
+                                                            valueT__3431
+                                                        ], env__3429));
+                                                    else {
+                                                        var place__3432 = ($module)['make-module-reference'](identifier__3430);
+                                                        return(($module)['wrap-export'](identifier__3430, place__3432, [
+                                                            B3395,
+                                                            place__3432,
+                                                            valueT__3431
+                                                        ], env__3429));
+                                                    }
+                                                })));
+                                            }(name__3425));
+                                            {
+                                                B3420 = B3335['rest'](B3420);
+                                                B3423 = [B3420];
+                                            }
+                                        }
+                                    } else
+                                        break;
+                                }
+                            }
+                        }
+                    }
+                    B3422;
+                }
+            }
+        }
+    }
+}
 {
-var ____2279 = exp__2274[0],
-B2266__2280 = exp__2274[1],
-var__2281 = B2266__2280[0],
-value__2282 = B2266__2280[1],
-body__2283 = exp__2274[2];
-if ($T(statementQ__2252(value__2282)))
-{return [B2257, [var__2281, false], [B2244, wrap_valueN__2237(transform_statementsN__2273(value__2282, env__2275), [B2294, var__2281]), transform_statementsN__2273(body__2283, env__2275)]]}
-else
-return [B2257, [var__2281, transform_statementsN__2273(value__2282, env__2275)], transform_statementsN__2273(body__2283, env__2275)]}
-else
-if ($T(binaryEE__2227(B2265__2276, "%if")))
+    var B3437 = $K('count');
+    {
+        var B3438 = $K('k');
+        B3335['get-setter'](($module)['*transformers*'], '%if', B3338['make-rest-transformer'](($module)['transform-statements!'], B3437, 3, B3438, function B3439(env__3440, predicateT__3441, consequentT__3442, alternateT__3443) {
+            return([
+                B3359,
+                ($module)['wrap-true'](predicateT__3441),
+                consequentT__3442,
+                alternateT__3443
+            ]);
+        }));
+    }
+}
+B3335['get-setter'](($module)['*transformers*'], '%while', B3338['make-rest-transformer'](($module)['transform-statements!'], B3437, 2, B3438, function B3445(env__3446, predicateT__3447, formT__3448) {
+    return([
+        B3360,
+        ($module)['wrap-true'](predicateT__3447),
+        formT__3448
+    ]);
+}));
+B3335['get-setter'](($module)['*transformers*'], '%try', B3338['make-try-transformer'](($module)['transform-statements!']));
+B3335['get-setter'](($module)['*transformers*'], '%object', B3338['make-object-transformer'](($module)['transform-statements!']));
 {
-var ____2284 = exp__2274[0],
-test__2285 = exp__2274[1],
-then__2286 = exp__2274[2],
-else__2287 = exp__2274[3];
-return [B2255, add_explicit_true__2261(test__2285), transform_statementsN__2273(then__2286, env__2275), transform_statementsN__2273(else__2287, env__2275)]}
-else
-if ($T(binaryEE__2227(B2265__2276, "%while")))
+    var B3455 = $S('%infix', 'ralph/core');
+    {
+        var B3456 = [
+                B3356,
+                B3455
+            ];
+        {
+            var B3457 = false;
+            {
+                var B3458 = false;
+                {
+                    var B3459 = [B3456];
+                    {
+                        while (true) {
+                            var B3464 = B3335['not'];
+                            {
+                                var B3460 = B3457;
+                                {
+                                    var B3465 = false;
+                                    if (($T)(B3460))
+                                        B3465 = B3460;
+                                    else
+                                        B3465 = B3335['any?'](B3335['empty?'], B3459);
+                                    {
+                                        var B3466 = B3464(B3465);
+                                        if (($T)(B3466)) {
+                                            var symbol__3461 = B3335['first'](B3456);
+                                            {
+                                                (function B3462(symbol__3463) {
+                                                    return(B3335['get-setter'](($module)['*transformers*'], B3335['symbol-name'](symbol__3463), B3338['make-operator-transformer'](symbol__3463, ($module)['transform-statements!'])));
+                                                }(symbol__3461));
+                                                {
+                                                    B3456 = B3335['rest'](B3456);
+                                                    B3459 = [B3456];
+                                                }
+                                            }
+                                        } else
+                                            break;
+                                    }
+                                }
+                            }
+                        }
+                        B3458;
+                    }
+                }
+            }
+        }
+    }
+}
 {
-second_setter__2232(exp__2274, add_explicit_true__2261(second__2233(exp__2274)));
-third_setter__2230(exp__2274, transform_statementsN__2273(third__2231(exp__2274), env__2275));
-return exp__2274}
-else
-if ($T(binaryEE__2227(B2265__2276, "%try")))
-{
-second_setter__2232(exp__2274, transform_statementsN__2273(second__2233(exp__2274), exp__2274));
-last_setter__2228(exp__2274, transform_statementsN__2273(last__2229(exp__2274), env__2275));
-return exp__2274}
-else
-if ($T(binaryEE__2227(B2265__2276, "%set")))
-{
-var ____2288 = exp__2274[0],
-identifier__2289 = exp__2274[1],
-value__2290 = exp__2274[2],
-valueT__2291 = transform_statementsN__2273(value__2290, env__2275),
-definition_name__2292 = symbol_name__2235(get__2270(env__2275, "original-identifier", symbol_name__2235(identifier__2289))),
-B2293;
-if ($T(definition_name__2292))
-{B2293 = memberQ__2251(definition_name__2292, get__2270(env__2275, "module", "exports"))}
-else
-B2293 = false;
-if ($T(B2293))
-{
-first_setter__2271(exp__2274, B2244);
-second_setter__2232(exp__2274, [B2294, identifier__2289, valueT__2291]);
-third_setter__2230(exp__2274, [B2294, [B2295, [B2264, "exports"], definition_name__2292], identifier__2289])}
-else
-third_setter__2230(exp__2274, valueT__2291);
-return exp__2274}
-else
-if ($T(binaryEE__2227(B2265__2276, "%define")))
-{return [B2296, [last__2229(exp__2274), false]]}
-else
-return map__2268(rcurry__2269(transform_statementsN__2273, env__2275), exp__2274)}
-else
-return exp__2274}, false);
-exports["transform-statements!"] = transform_statementsN__2272}
+    var B3473 = $S('%array', 'ralph/core');
+    {
+        var B3474 = $K('symbol');
+        {
+            var B3475 = [
+                    B3348,
+                    B3342,
+                    B3473,
+                    B3341
+                ];
+            {
+                var B3476 = false;
+                {
+                    var B3477 = false;
+                    {
+                        var B3478 = [B3475];
+                        {
+                            while (true) {
+                                var B3483 = B3335['not'];
+                                {
+                                    var B3479 = B3476;
+                                    {
+                                        var B3484 = false;
+                                        if (($T)(B3479))
+                                            B3484 = B3479;
+                                        else
+                                            B3484 = B3335['any?'](B3335['empty?'], B3478);
+                                        {
+                                            var B3485 = B3483(B3484);
+                                            if (($T)(B3485)) {
+                                                var symbol__3480 = B3335['first'](B3475);
+                                                {
+                                                    (function B3481(symbol__3482) {
+                                                        return(B3335['get-setter'](($module)['*transformers*'], B3335['symbol-name'](symbol__3482), B3338['make-rest-transformer'](($module)['transform-statements!'], B3474, symbol__3482)));
+                                                    }(symbol__3480));
+                                                    {
+                                                        B3475 = B3335['rest'](B3475);
+                                                        B3478 = [B3475];
+                                                    }
+                                                }
+                                            } else
+                                                break;
+                                        }
+                                    }
+                                }
+                            }
+                            B3477;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,320 @@
+(define-module ralph/pretty
+  import: (ralph/stream
+           ralph/format))
+
+;;;; an implementation of Christian Lindig's "Strictly Pretty",
+;;;; a strict variant of Philip Wadler's "A prettier printer"
+
+
+;;;; document
+
+(define-class <document> (<object>))
+
+
+;; empty
+
+(define-class <empty-document> (<document>))
+
+(define $empty-document
+  (make <empty-document>))
+
+(define-method description ((document <empty-document>))
+  "#{empty-document}")
+
+(define-function empty-document? (document)
+  (instance? document <empty-document>))
+
+
+;; combination
+
+(define-class <combined-document> (<document>)
+  left
+  right)
+
+(define-method description ((document <combined-document>))
+  (bind-properties (left right) document
+    (format-to-string "#{combined-document left=%= right=%=}"
+                      left right)))
+
+(define-function combine-documents (#rest documents)
+  (select (size documents) ==
+    ((0) $empty-document)
+    ((1) (first documents))
+    ((2) (make <combined-document>
+               left: (first documents)
+               right: (second documents)))
+    (else:
+     (reduce1 combine-documents documents
+              from-end?: #t))))
+
+
+;; text
+
+(define-class <text-document> (<document>)
+  text)
+
+(define-method description ((document <text-document>))
+  (format-to-string "#{text-document \"%s\"}"
+                    (get document "text")))
+
+(define-function as-text-document (text)
+  (make <text-document> text: text))
+
+
+
+
+;; nesting
+
+(define-class <nested-document> (<document>)
+  level
+  document)
+
+(define-method description ((nested-document <nested-document>))
+  (bind-properties (level document) nested-document
+    (format-to-string "#{nested-document level=%= document=%=}"
+                      level document)))
+
+(define-function nest-document (level document)
+  (make <nested-document>
+        level: level
+        document: document))
+
+
+;; break
+
+(define-class <break-document> (<document>)
+  text)
+
+(define-method description ((document <break-document>))
+    (format-to-string "#{break-document text=\"%s\"}"
+                      (get document "text")))
+
+(define-function break-with (text)
+  (make <break-document> text: text))
+
+(define $break (break-with " "))
+
+
+;; group
+
+(define-class <group-document> (<document>)
+  document)
+
+(define-method description ((document <group-document>))
+  (format-to-string "#{group-document document=%=}"
+                    (get document "document")))
+
+(define-function group-document (document)
+  (make <group-document> document: document))
+
+
+;; connect
+
+;; connects two documents with an optional line break
+
+(define-function connect-documents (left right #key (break $break))
+  (cond ((empty-document? left) right)
+        ((empty-document? right) left)
+        (else: (combine-documents left break right))))
+
+
+;;; other
+
+(define-function binary-document (nesting left operand right)
+  (group-document
+   (nest-document nesting
+                  (connect-documents
+                   (group-document (connect-documents left operand))
+                   right))))
+
+
+
+;;;; simple document
+
+(define-class <simple-document> (<object>))
+
+
+;; empty
+
+(define-class <empty-simple-document> (<simple-document>))
+
+(define $empty-simple-document
+  (make <empty-simple-document>))
+
+(define-method description ((document <empty-simple-document>))
+  "#{empty-simple-document}")
+
+;; noop
+(define-method render-simple-document ((document <empty-simple-document>) stream))
+
+
+;; text
+
+(define-class <text-simple-document> (<simple-document>)
+  text
+  next-document)
+
+(define-method description ((document <text-simple-document>))
+  (bind-properties (text next-document) document
+    (format-to-string "#{text-simple-document text=\"%s\" next-document=%=}"
+                      text next-document)))
+
+(define-method render-simple-document ((document <text-simple-document>) stream)
+  (bind-properties (text next-document) document
+    (stream-write stream text)
+    (render-simple-document next-document stream)))
+
+
+;; line
+
+(define-class <line-simple-document> (<simple-document>)
+  indentation
+  document)
+
+(define-method description ((line-document <line-simple-document>))
+  (bind-properties (indentation document) line-document
+    (format-to-string "#{line-simple-document indentation=%d document=%=}"
+                      indentation document)))
+
+(define-method render-simple-document ((line-document <line-simple-document>) stream)
+  (bind-properties (indentation document) line-document
+    (stream-write stream "\n")
+    (dotimes (_ indentation)
+      (stream-write stream " "))
+    (render-simple-document document stream)))
+
+
+
+;;;; transformation
+
+(define-function fits? (width triples)
+  (when (>= width 0)
+    (or (empty? triples)
+        (destructuring-bind ((indent mode current-document) #rest rest)
+            triples
+          (select current-document instance?
+            ((<empty-document>)
+             (fits? width rest))
+            ((<combined-document>)
+             (bind-properties (left right) current-document
+               (fits? width (concatenate [[indent mode left]
+                                          [indent mode right]]
+                                         rest))))
+            ((<nested-document>)
+             (bind-properties (level document) current-document
+               (fits? width (cons [(+ indent level) mode document]
+                                  rest))))
+            ((<text-document>)
+             (bind-properties (text) current-document
+               (fits? (- width (size text)) rest)))
+            ((<group-document>)
+             (bind-properties (document) current-document
+               (fits? width (cons [indent 'flat document]
+                                  rest))))
+            ((<break-document>)
+             (bind-properties (text) current-document
+               (or (== mode 'break)
+                   (fits? (- width (size text)) rest)))))))))
+
+
+
+(define-function transform-documents (width consumed documents)
+  (if (empty? documents)
+      $empty-simple-document
+      (destructuring-bind ((indent mode current-document) #rest rest)
+          documents
+        (select current-document instance?
+          ((<empty-document>)
+           (transform-documents width consumed rest))
+          ((<combined-document>)
+           (bind-properties (left right) current-document
+             (transform-documents width consumed
+                                  (concatenate [[indent mode left]
+                                                [indent mode right]]
+                                               rest))))
+          ((<nested-document>)
+           (bind-properties (level document) current-document
+             (transform-documents width consumed
+                                  (cons [(+ indent level) mode document]
+                                        rest))))
+          ((<text-document>)
+           (bind-properties (text) current-document
+             (make <text-simple-document>
+                   text: text
+                   next-document: (transform-documents
+                                   width (+ consumed (size text)) rest))))
+          ((<break-document>)
+           (bind-properties (text) current-document
+             (if (== mode 'flat)
+                 (make <text-simple-document>
+                       text: text
+                       next-document: (transform-documents
+                                       width (+ consumed (size text)) rest))
+                 (make <line-simple-document>
+                       indentation: indent
+                       document: (transform-documents
+                                  width indent rest)))))
+          ((<group-document>)
+           (bind-properties (document) current-document
+             (bind ((mode* (if (fits? (- width consumed)
+                                      (cons [indent 'flat document]
+                                            rest))
+                               'flat
+                               'break)))
+               (transform-documents width consumed
+                                    (cons [indent mode* document]
+                                          rest)))))
+          (else:
+           $empty-simple-document)))))
+
+(define-function as-simple-document (document width)
+  (transform-documents width 0 [[0 'flat (group-document document)]]))
+
+(define-function pretty-print (stream document width)
+  (render-simple-document (as-simple-document document width)
+                          stream))
+
+
+; (define-function conditional-document (nesting conditional expr1 expr2)
+;   (group-document
+;    (connect-documents
+;     (group-document
+;      (nest-document nesting
+;                     (connect-documents
+;                      (as-text-document "if")
+;                      conditional)))
+;     (connect-documents (group-document
+;                         (nest-document nesting
+;                                        (connect-documents
+;                                         (as-text-document "then")
+;                                         expr1)))
+;                        (group-document
+;                         (nest-document nesting
+;                                        (connect-documents
+;                                         (as-text-document "else")
+;                                         expr2)))))))
+;
+; (bind ((condition (binary-document 2
+;                                    (as-text-document "a")
+;                                    (as-text-document "==")
+;                                    (as-text-document "b")))
+;        (expr1 (binary-document 2
+;                                (as-text-document "a")
+;                                (as-text-document "<<")
+;                                (as-text-document "2")))
+;        (expr2 (binary-document 2
+;                                (as-text-document "a")
+;                                (as-text-document "+")
+;                                (as-text-document "b")))
+;        (document (conditional-document 2 condition expr1 expr2)))
+;   (for-each ((width [32 15 10 8 7 6]))
+;             ()
+;     (bind ((simple-document (as-simple-document document width)))
+;       ; (format-out "document: %=\n" document)
+;       ; (format-out "simple document: %=\n" simple-document)
+;       (format-out "width: %d\n" width)
+;       (format-out ">>>\n")
+;       (render-simple-document simple-document *standard-output*)
+;       (format-out "\n<<<\n======\n"))))
+
+

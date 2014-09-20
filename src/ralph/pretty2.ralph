@@ -1,0 +1,180 @@
+(define-module ralph/pretty2
+  import: (ralph/stream
+           ralph/file-stream
+           ralph/format)
+  export: (pretty-print
+           *printers*))
+
+;; based on "genwrite.scm" by Marc Feeley
+
+(define-function write-string (env string column)
+  (stream-write (get env "stream") string)
+  (+ column (size string)))
+
+(define-function write-description (env object column)
+  (write-string env
+                (description object)
+                column))
+
+(define-function write-spaces (env count column)
+  (write-string env
+                (repeat-string " " count)
+                column))
+
+(define-function write-indent (env to column)
+  (if (< to column)
+      (and (write-string env "\n" column)
+           (write-spaces env to 0))
+      (write-spaces env (- to column) column)))
+
+; (item1
+;  item2
+;  item3)
+(define-function print-list (list env column print-item)
+  (bind ((column2 (write-string env "(" column)))
+    (print-down list env
+                column2 column2
+                print-item)))
+
+; (head item1
+;       item2
+;       item3)
+(define-function print-call (call env column print-item)
+  (bind ((column2 (write-string env "(" column))
+         (column3 (write-description env (first call)
+                                         column2)))
+    (print-down (rest call) env
+                column3 (inc column3)
+                print-item)))
+
+(define-function print-down (list env column1 column2 print-item)
+  (bind ((column column1))
+    (for-each ((item list))
+              ()
+      (bind ((column* (write-indent env column2 column)))
+        (set! column (print-object item env column* print-item))))
+    (write-string env ")" column)))
+
+(define-function print-object (object env column print-item)
+  (if (instance? object <array>)
+      ;; try writing the description and see if it would still fit
+      (bind ((left (- (get env "width") column))
+             (result (description object))
+             (width (size result)))
+        (if (and (< width left)
+                 (< width (get env "max-array-width")))
+            (write-string env result column)
+            (print-item object env column)))
+      (write-description env object column)))
+
+(define-function print-expression (expression env column)
+  (if (expression? expression)
+      (bind ((head (first expression)))
+        (if-bind (printer (get env "printers" (symbol-name head)))
+          (printer expression env column)
+          (if (> (size (description head))
+                 (get env "max-call-head-width"))
+              (print-general expression env column #f
+                             #f #f print-expression)
+              (print-call expression env column
+                          print-expression))))
+      (print-list expression env column
+                  print-expression)))
+
+(define-function print-general1 (rest env column1 column2 column3
+                                 printer1 printer2 printer3)
+  (if (and printer1
+           (not (empty? rest)))
+       (destructuring-bind (value #rest rest*) rest
+         (bind ((column (write-indent env column3 column2))
+                (column2* (print-object value env column printer1)))
+           (print-general2 rest* env column1 column2* column3
+                           printer2 printer3)))
+       (print-general2 rest env column1 column2 column3
+                       printer2 printer3)))
+
+(define-function print-general2 (rest env column1 column2 column3
+                                 printer2 printer3)
+  (if (and printer2
+           (not (empty? rest)))
+       (destructuring-bind (value #rest rest*) rest
+         (bind ((column (write-indent env column3 column2))
+                (column2* (print-object value env column printer2)))
+           (print-general3 rest* env column1 column2*
+                           printer3)))
+       (print-general3 rest env column1 column2
+                       printer3)))
+
+(define-function print-general3 (rest env column1 column2
+                                 printer3)
+  (print-down rest env column2 column1 printer3))
+
+(define-function print-general (expression env column named?
+                                printer1 printer2 printer3)
+  (destructuring-bind (head #rest rest) expression
+    (bind ((column2 (write-string env "(" column))
+           (column3 (write-description env head column2)))
+      (if (and named?
+               (not (empty? rest)))
+          (destructuring-bind (name #rest rest*) rest
+            (bind ((column4 (write-string env " " column3))
+                   (column5 (write-description env name column4)))
+              (print-general1 rest* env
+                              (+ column (get env "indent-general"))
+                              column5 (inc column5)
+                              printer1 printer2 printer3)))
+          (print-general1 rest env
+                          (+ column (get env "indent-general"))
+                          column3 (inc column3)
+                          printer1 printer2 printer3)))))
+
+(define-function print-expression-list (list env column)
+  (print-list list env column print-expression))
+
+(define-function print-begin (expression env column)
+  (print-general expression env column #f #f #f print-expression))
+
+;; TODO: improve: always break after binding
+(define-function print-bind (expression env column)
+  (print-general expression env column #f
+                 print-expression-list #f print-expression))
+
+;; TODO: improve: always break after condition
+(define-function print-cond (expression env column)
+  (print-call expression env column print-expression-list))
+
+(define-function print-define-function (expression env column)
+  (print-general expression env column #t
+                 print-expression-list #f print-expression))
+
+(define-function print-define (expression env column)
+  (print-general expression env column #t
+                 #f #f print-expression))
+
+;; TODO: add more printers
+(define *printers*
+  (make-object
+    "begin" print-begin
+    "bind" print-bind
+    "cond" print-cond
+    "define" print-define
+    "define-function" print-define-function))
+
+(define-function pretty-print (object #key (stream (make <string-stream>))
+                                           (width 60)
+                                           (max-call-head-width 10)
+                                           (max-array-width 26)
+                                           (indent-general 2)
+                                           (printers *printers*))
+  ;; pass constant parameters in an object
+  (bind ((env (make-object "stream" stream
+                           "width" width
+                           "max-call-head-width" max-call-head-width
+                           "max-array-width" max-array-width
+                           "indent-general" indent-general
+                           "printers" printers)))
+    (if (instance? object <array>)
+        (print-expression object env 0)
+        (print-object object env 0 print-expression))
+    (when (instance? stream <string-stream>)
+      (stream-contents stream))))

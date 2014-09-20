@@ -1,5 +1,7 @@
 (define-module ralph/test
-  import: (ralph/format)
+  import: (ralph/format
+           ralph/format-out
+           ralph/pretty2)
   export: (check-equal
            check-true
            check-false
@@ -19,44 +21,50 @@
               (if *quiet* "\n" "")
               description explanation))
 
+(define-function format-expected/actual (title expected-value test-value)
+  (format-to-string (concatenate title
+                                 "\n------\nExpected:\n%s"
+                                 "\n------\nActual:\n%s")
+                    (pretty-print expected-value)
+                    (pretty-print test-value)))
+
 (define-function check-equal ((description <string>) expected-value test-value)
   (if (= expected-value test-value)
       (report-success description
-                      (format-to-string "Values are equal: %=, %="
-                                        expected-value test-value))
+                      (format-expected/actual "Values are equal:"
+                                              expected-value test-value))
       (report-failure description
-                      (format-to-string "Values should be equal: %=, %="
-                                        expected-value test-value))))
+                      (format-expected/actual "Values should be equal:"
+                                              expected-value test-value))))
 
-(define-function check-unequal ((description <string>)
-                                expected-value test-value)
+(define-function check-unequal ((description <string>) expected-value test-value)
   (if (not (= expected-value test-value))
       (report-success description
-                      (format-to-string "Values aren't equal: %=, %="
-                                        expected-value test-value))
+                      (format-expected/actual "Values aren't equal:"
+                                              expected-value test-value))
       (report-failure description
-                      (format-to-string "Values shouldn't be equal: %=, %="
-                                        expected-value test-value))))
+                      (format-expected/actual "Values shouldn't be equal:"
+                                              expected-value test-value))))
 
 
 (define-function check-true ((description <string>) expression)
   (if expression
       (report-success description
-                      (format-to-string "Expression is true: %="
-                                        expression))
+                      (format-to-string "Expression is true:\n%s"
+                                        (pretty-print expression)))
       (report-failure description
-                      (format-to-string "Expression should be true: %="
-                                        expression))))
+                      (format-to-string "Expression should be true:\n%s"
+                                        (pretty-print expression)))))
 
 
 (define-function check-false ((description <string>) expression)
   (if (not expression)
       (report-success description
-                      (format-to-string "Expression is false: %="
-                                        expression))
+                      (format-to-string "Expression is false:\n%s"
+                                        (pretty-print expression)))
       (report-failure description
-                      (format-to-string "Expression should be false: %="
-                                        expression))))
+                      (format-to-string "Expression should be false:\n%s"
+                                        (pretty-print expression)))))
 
 
 (define-function check-condition ((description <string>)
@@ -82,16 +90,17 @@
     (report-success description "No error was signaled."))
    ((<error> condition: condition)
     (report-failure description
-                    (format-to-string "Condition %= shouldn't have been signaled."
-                                      condition)))))
+                    (format-to-string
+                      "Condition %= shouldn't have been signaled."
+                      condition)))))
 
 
 (define-function check-instance? ((description <string>)
                                   (value-type <class>) value)
   (if (instance? value value-type)
       (report-success description
-                      (format-to-string "Value is of instance %=: %="
-                                        value-type value))
+                      (format-to-string "Value is of instance %=:\n%s"
+                                        value-type (pretty-print value)))
       (report-failure description
-                      (format-to-string "Value should be of instance %=: %="
-                                        value-type value))))
+                      (format-to-string "Value should be of instance %=:\n%s"
+                                        value-type (pretty-print value)))))
