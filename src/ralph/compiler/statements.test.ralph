@@ -28,7 +28,15 @@
                         ((ralph/core::%native "$T") $2)
                         (ralph/core::%set $3 $2)
                         (ralph/core::%set $3 3))))
-                  (foo $3 bar)))
+                  ((ralph/core::%get-property
+                     (ralph/core::%native
+                       "$module")
+                     "foo")
+                   $3
+                   (ralph/core::%get-property
+                     (ralph/core::%native
+                       "$module")
+                     "bar"))))
               (transform-statements!
                (normalize-term
                 (macroexpand-all
@@ -43,7 +51,11 @@
              '(ralph/core::%begin
                 (ralph/core::%var $1 #f)
                 (ralph/core::%if
-                  ((ralph/core::%native "$T") a)
+                  ((ralph/core::%native "$T")
+                   (ralph/core::%get-property
+                    (ralph/core::%native
+                      "$module")
+                    "a"))
                   (ralph/core::%set $1 1)
                   (ralph/core::%set $1 2))
                 (ralph/core::%if
@@ -60,35 +72,61 @@
 
 (reset-symbol-counter!)
 (check-equal "statements: while exp. in while stmt."
-             '(ralph/core::%while
-                  ((ralph/core::%native "$T") (> a 2))
-                (ralph/core::%begin
-                  (ralph/core::%var a #f)
-                  (ralph/core::%begin
-                    (ralph/core::%while
-                        ((ralph/core::%native "$T") (< b 3))
-                      (ralph/core::%if
-                        ((ralph/core::%native "$T") a)
-                        (ralph/core::%begin
-                          (ralph/core::%var c #f)
-                          (ralph/core::%if
-                            ((ralph/core::%native "$T") c)
-                            (ralph/core::%set c 5)
-                            (ralph/core::%set c 6))
-                          c)
-                        #f))
-                    (ralph/core::%set a #f))
-                  4))
+              '(ralph/core::%begin
+                 (ralph/core::%var a 3)
+                 (ralph/core::%begin
+                   (ralph/core::%var b 2)
+                   (ralph/core::%while
+                     ((ralph/core::%native
+                        "$T")
+                      ((ralph/core::%get-property
+                         (ralph/core::%native
+                           "$module")
+                         ">")
+                       a
+                       2))
+                     (ralph/core::%begin
+                       (ralph/core::%var a #f)
+                       (ralph/core::%begin
+                         (ralph/core::%while
+                           ((ralph/core::%native
+                              "$T")
+                            ((ralph/core::%get-property
+                               (ralph/core::%native
+                                 "$module")
+                               "<")
+                             b
+                             3))
+                           (ralph/core::%if
+                             ((ralph/core::%native
+                                "$T")
+                              a)
+                             (ralph/core::%begin
+                               (ralph/core::%var c #f)
+                               (ralph/core::%if
+                                 ((ralph/core::%native
+                                    "$T")
+                                  (ralph/core::%get-property
+                                    (ralph/core::%native
+                                      "$module")
+                                    "c"))
+                                 (ralph/core::%set c 5)
+                                 (ralph/core::%set c 6))
+                               c)
+                             #f))
+                         (ralph/core::%set a #f))
+                       4))))
              (transform-statements!
                (normalize-term
                 (macroexpand-all
-                 '(while (> a 2)
-                    (bind ((a (while (< b 3)
-                                (if a
-                                    (bind ((c (if c 5 6)))
-                                      c)
-                                    #f))))
-                      4))
+                 '(bind ((a 3) (b 2))
+                    (while (> a 2)
+                      (bind ((a (while (< b 3)
+                                  (if a
+                                      (bind ((c (if c 5 6)))
+                                        c)
+                                      #f))))
+                        4)))
                  *environment*)
                 *environment*)
                *environment*))
@@ -99,18 +137,42 @@
              '(ralph/core::%begin
                 (ralph/core::%var y 5)
                 (ralph/core::%begin
-                  (ralph/core::%var $2 (ralph/core::%method $1 (x)
-                                         (ralph/core::%if
-                                           ((ralph/core::%native "$T") x)
-                                           (ralph/core::%native-call "return" 1)
-                                           (ralph/core::%native-call "return" 2))))
+                  (ralph/core::%var
+                    $2
+                    (ralph/core::%method
+                      $1
+                      (x)
+                      (ralph/core::%if
+                        ((ralph/core::%native
+                           "$T")
+                         x)
+                        (ralph/core::%native-call
+                          "return"
+                          1)
+                        (ralph/core::%native-call
+                          "return"
+                          2))))
                   (ralph/core::%begin
                     (ralph/core::%var $3 #f)
                     (ralph/core::%begin
-                     (ralph/core::%while
-                         ((ralph/core::%native "$T") (> y 2))
-                       (ralph/core::%set y (ralph/core::- y 1)))
-                     (ralph/core::%set $3 #f))
+                      (ralph/core::%while
+                        ((ralph/core::%native
+                           "$T")
+                         ((ralph/core::%get-property
+                            (ralph/core::%native
+                              "$module")
+                            ">")
+                          y
+                          2))
+                        (ralph/core::%set
+                          y
+                          ((ralph/core::%get-property
+                             (ralph/core::%native
+                               "$module")
+                             "-")
+                           y
+                           1)))
+                      (ralph/core::%set $3 #f))
                     ($2 $3))))
              (transform-statements!
                (normalize-term
