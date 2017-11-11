@@ -1,4 +1,6 @@
-{"dependencies": {
-    "ws": "*",
-    "escodegen": "*"
-}}
+{
+  "dependencies": {
+    "ws": "1.1.x",
+    "escodegen": "1.9.x"
+  }
+}
