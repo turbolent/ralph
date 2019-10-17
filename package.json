@@ -1,6 +1,6 @@
 {
   "dependencies": {
-    "ws": "1.1.x",
+    "ws": "7.1.x",
     "escodegen": "1.9.x"
   }
 }
